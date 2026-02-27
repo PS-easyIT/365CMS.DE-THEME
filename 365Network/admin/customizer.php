@@ -447,18 +447,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'theme_customizer')) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
-        $resetTab = $_POST['active_section'] ?? $activeTab;
+        $resetTab   = $_POST['active_section'] ?? $activeTab;
         if (!isset($config[$resetTab])) {
             $resetTab = $activeTab;
         }
+        $resetFailed = false;
         foreach ($config[$resetTab]['sections'] as $fieldKey => $fieldConfig) {
             $default = $fieldConfig['default'] ?? '';
             if (is_bool($default)) {
                 $default = $default ? '1' : '0';
             }
-            $customizer->set($resetTab, $fieldKey, (string)$default);
+            if (!$customizer->set($resetTab, $fieldKey, (string)$default)) {
+                $resetFailed = true;
+            }
         }
-        $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$resetTab]['title']) . '&ldquo; auf Standardwerte zurückgesetzt.';
+        if ($resetFailed) {
+            $error = 'Einstellungen konnten nicht zurückgesetzt werden. Bitte Fehler-Log prüfen.';
+        } else {
+            $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$resetTab]['title']) . '&ldquo; auf Standardwerte zurückgesetzt.';
+        }
     }
 }
 
@@ -492,13 +499,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             if (!isset($config[$saveTab])) {
                 $saveTab = $activeTab;
             }
+            $saveFailed = false;
             foreach ($config[$saveTab]['sections'] as $fieldKey => $fieldConfig) {
                 $inputName = "{$saveTab}_{$fieldKey}";
                 // logo_url: nur speichern wenn explizit befüllt (Datei-Upload hat Vorrang)
                 if ($saveTab === 'header' && $fieldKey === 'logo_url') {
                     $postVal = $_POST[$inputName] ?? '';
                     if ($postVal !== '') {
-                        $customizer->set($saveTab, $fieldKey, $postVal);
+                        if (!$customizer->set($saveTab, $fieldKey, $postVal)) {
+                            $saveFailed = true;
+                        }
                     }
                     continue;
                 }
@@ -510,9 +520,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 } else {
                     $value = $_POST[$inputName] ?? '';
                 }
-                $customizer->set($saveTab, $fieldKey, $value);
+                if (!$customizer->set($saveTab, $fieldKey, $value)) {
+                    $saveFailed = true;
+                }
             }
-            $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$saveTab]['title']) . '&ldquo; gespeichert.';
+            if ($saveFailed) {
+                $error = 'Einstellungen konnten nicht gespeichert werden. Bitte Fehler-Log prüfen (evtl. fehlt die DB-Tabelle oder es liegt ein Datenbank-Fehler vor).';
+            } else {
+                $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$saveTab]['title']) . '&ldquo; gespeichert.';
+            }
         }
     }
 }
