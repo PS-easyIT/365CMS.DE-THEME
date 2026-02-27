@@ -532,6 +532,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 }
+
+// Token EINMAL generieren – mehrfaches generateToken() für dieselbe Action
+// überschreibt den Session-Eintrag und macht zuvor gesendete Tokens ungültig.
+$csrfToken = Security::instance()->generateToken('theme_customizer');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -578,7 +582,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <form method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" enctype="multipart/form-data">
             <input type="hidden" name="action" value="save_theme_options">
             <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
-            <input type="hidden" name="csrf_token" value="<?php echo Security::instance()->generateToken('theme_customizer'); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
 
             <div class="customizer-layout">
 
@@ -691,16 +695,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         </div>
                     </div>
 
-                    <!-- Verstecktes Reset-Formular -->
-                    <form id="reset-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" style="display:none;">
-                        <input type="hidden" name="action" value="reset_theme_tab">
-                        <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
-                        <input type="hidden" name="csrf_token" value="<?php echo Security::instance()->generateToken('theme_customizer'); ?>">
-                    </form>
                     <?php endif; ?>
                 </div>
             </div>
         </form>
+
+    <!-- Verstecktes Reset-Formular (außerhalb des Haupt-Forms, verschachtelte Forms sind invalid HTML) -->
+    <?php if (isset($config[$activeTab])): ?>
+    <form id="reset-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" style="display:none;">
+        <input type="hidden" name="action" value="reset_theme_tab">
+        <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
+        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+    </form>
+    <?php endif; ?>
 
     </div><!-- /.admin-content -->
 
