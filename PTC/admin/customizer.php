@@ -469,6 +469,56 @@ $config = [
                 'type'        => 'text',
                 'default'     => '',
             ],
+
+            // ── Network Bar ──
+            'show_network_bar' => [
+                'label'       => 'Network Bar anzeigen',
+                'description' => 'Zeigt die Netzwerk-Leiste unter dem Footer.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'network_bar_name' => [
+                'label'       => 'Network Bar – Name',
+                'description' => 'Name/Label links in der Network Bar.',
+                'type'        => 'text',
+                'default'     => 'Andreas Hepp',
+            ],
+            'network_bar_link1_label' => [
+                'label'       => 'Link 1 – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'PHIN IT',
+            ],
+            'network_bar_link1_url' => [
+                'label'       => 'Link 1 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://phinit.de',
+            ],
+            'network_bar_link2_label' => [
+                'label'       => 'Link 2 – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '365CMS',
+            ],
+            'network_bar_link2_url' => [
+                'label'       => 'Link 2 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://365cms.de',
+            ],
+            'network_bar_link3_label' => [
+                'label'       => 'Link 3 – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '365 Network',
+            ],
+            'network_bar_link3_url' => [
+                'label'       => 'Link 3 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://365network.de',
+            ],
         ],
     ],
 
@@ -1230,6 +1280,26 @@ $config = [
                 'type'        => 'text',
                 'default'     => '',
             ],
+
+            // ── Microsoft Booking Integration ──
+            'events_booking_url' => [
+                'label'       => '📅 MS Booking – Embed-URL',
+                'description' => 'Vollständige Microsoft Booking URL für das Inline-Buchungsformular. Leer = keine Anzeige.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'events_booking_title' => [
+                'label'       => 'MS Booking – Überschrift',
+                'description' => 'Text über dem Buchungsformular.',
+                'type'        => 'text',
+                'default'     => 'Online-Termin buchen',
+            ],
+            'events_booking_height' => [
+                'label'       => 'MS Booking – Höhe (px)',
+                'description' => 'Höhe des Booking-Iframes in Pixeln.',
+                'type'        => 'number',
+                'default'     => 600,
+            ],
         ],
     ],
 
@@ -1946,6 +2016,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '🎨 Footer-Farben'      => ['footer_bg_color', 'footer_text_color', 'footer_link_color'],
                                 '📝 Footer-Inhalte'     => ['footer_tagline', 'footer_address', 'footer_phone', 'footer_email', 'copyright_text'],
                                 '🌐 Social Media'       => ['social_facebook', 'social_instagram', 'social_linkedin', 'social_xing', 'social_youtube'],
+                                '🔗 Network Bar'        => ['show_network_bar', 'network_bar_name', 'network_bar_link1_label', 'network_bar_link1_url', 'network_bar_link2_label', 'network_bar_link2_url', 'network_bar_link3_label', 'network_bar_link3_url'],
                             ],
                             'buttons' => [
                                 '📐 Button-Form'        => ['button_border_radius', 'button_padding_x', 'button_padding_y'],
@@ -1953,7 +2024,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                             ],
                             'services' => [
                                 '⚙️ Allgemeine Einstellungen' => ['show_services', 'services_tag', 'services_title', 'services_subtitle'],
-                                '📐 Layout & Design'          => ['services_columns', 'services_bg_style', 'services_card_style', 'services_icon_style', 'services_show_hover', 'services_max_items'],
+                                '📐 Layout & Design'          => ['services_columns', 'services_bg_style', 'services_card_style', 'services_icon_style', 'services_show_hover', 'services_show_icons', 'services_max_items'],
                                 '🔗 CTA-Button'               => ['services_show_cta', 'services_cta_label', 'services_cta_url'],
                                 '🔶 Service 1'                => ['service_1_icon', 'service_1_title', 'service_1_text', 'service_1_url'],
                                 '🔶 Service 2'                => ['service_2_icon', 'service_2_title', 'service_2_text', 'service_2_url'],
@@ -1963,12 +2034,17 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '🔶 Service 6'                => ['service_6_icon', 'service_6_title', 'service_6_text', 'service_6_url'],
                                 '🔶 Service 7 (optional)'     => ['service_7_icon', 'service_7_title', 'service_7_text', 'service_7_url'],
                                 '🔶 Service 8 (optional)'     => ['service_8_icon', 'service_8_title', 'service_8_text', 'service_8_url'],
+                                '🔶 Service 9 (optional)'     => ['service_9_icon', 'service_9_title', 'service_9_text', 'service_9_url'],
+                                '🔶 Service 10 (optional)'    => ['service_10_icon', 'service_10_title', 'service_10_text', 'service_10_url'],
+                                '🔶 Service 11 (optional)'    => ['service_11_icon', 'service_11_title', 'service_11_text', 'service_11_url'],
+                                '🔶 Service 12 (optional)'    => ['service_12_icon', 'service_12_title', 'service_12_text', 'service_12_url'],
                             ],
                             'events' => [
                                 '⚙️ Allgemeine Einstellungen' => ['show_events', 'events_tag', 'events_title', 'events_subtitle'],
                                 '📐 Layout & Design'          => ['events_source', 'events_max_items', 'events_columns', 'events_bg_style', 'events_card_style', 'events_show_date_badge', 'events_link_text'],
                                 '📭 Platzhalter'              => ['events_show_empty', 'events_empty_text', 'events_empty_hint'],
                                 '🔗 CTA-Button'               => ['events_show_cta', 'events_cta_label', 'events_cta_url'],
+                                '📅 MS Booking'               => ['events_booking_url', 'events_booking_title', 'events_booking_height'],
                                 '📌 Termin 1'                 => ['event_1_title', 'event_1_date', 'event_1_text', 'event_1_url'],
                                 '📌 Termin 2'                 => ['event_2_title', 'event_2_date', 'event_2_text', 'event_2_url'],
                                 '📌 Termin 3'                 => ['event_3_title', 'event_3_date', 'event_3_text', 'event_3_url'],
