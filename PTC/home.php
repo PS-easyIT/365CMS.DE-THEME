@@ -87,11 +87,12 @@ $servicesCtaUrl   = (string) $svcGet('services_cta_url', '/leistungen');
 $serviceCards = [];
 for ($i = 1; $i <= 12; $i++) {
     $icon  = trim((string) $svcGet("service_{$i}_icon", ''));
+    $image = trim((string) $svcGet("service_{$i}_image", ''));
     $title = trim((string) $svcGet("service_{$i}_title", ''));
     $text  = trim((string) $svcGet("service_{$i}_text", ''));
     $url   = trim((string) $svcGet("service_{$i}_url", ''));
-    if ($icon !== '' || $title !== '') {
-        $serviceCards[] = ['icon' => $icon, 'title' => $title, 'text' => $text, 'url' => $url];
+    if ($icon !== '' || $title !== '' || $image !== '') {
+        $serviceCards[] = ['icon' => $icon, 'image' => $image, 'title' => $title, 'text' => $text, 'url' => $url];
     }
 }
 if (count($serviceCards) > $servicesMaxItems) {
@@ -228,19 +229,27 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
         <div class="ptc-services-grid" data-cols="<?php echo htmlspecialchars($servicesCols, ENT_QUOTES, 'UTF-8'); ?>" data-card-style="<?php echo htmlspecialchars($servicesCardStyle, ENT_QUOTES, 'UTF-8'); ?>" data-icon-style="<?php echo htmlspecialchars($servicesIconStyle, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $servicesShowHover ? ' data-hover="true"' : ''; ?> data-icons="<?php echo $servicesShowIcons ? 'visible' : 'hidden'; ?>">
 
             <?php foreach ($serviceCards as $card): ?>
-            <article class="ptc-service-card">
-                <?php if ($card['icon'] !== ''): ?>
+            <article class="ptc-service-card<?php echo $card['image'] !== '' ? ' ptc-service-card--has-image' : ''; ?>">
+                <?php if ($card['image'] !== ''): ?>
+                    <div class="ptc-service-image">
+                        <img src="<?php echo htmlspecialchars($card['image'], ENT_QUOTES, 'UTF-8'); ?>"
+                             alt="<?php echo htmlspecialchars($card['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                             loading="lazy">
+                    </div>
+                <?php elseif ($card['icon'] !== ''): ?>
                     <div class="ptc-service-icon"><?php echo htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8'); ?></div>
                 <?php endif; ?>
-                <?php if ($card['title'] !== ''): ?>
-                    <h3><?php echo htmlspecialchars($card['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
-                <?php endif; ?>
-                <?php if ($card['text'] !== ''): ?>
-                    <p><?php echo htmlspecialchars($card['text'], ENT_QUOTES, 'UTF-8'); ?></p>
-                <?php endif; ?>
-                <?php if ($card['url'] !== ''): ?>
-                    <a href="<?php echo htmlspecialchars($card['url'], ENT_QUOTES, 'UTF-8'); ?>" class="ptc-service-link">Mehr erfahren →</a>
-                <?php endif; ?>
+                <div class="ptc-service-body">
+                    <?php if ($card['title'] !== ''): ?>
+                        <h3><?php echo htmlspecialchars($card['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                    <?php endif; ?>
+                    <?php if ($card['text'] !== ''): ?>
+                        <p><?php echo htmlspecialchars($card['text'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <?php endif; ?>
+                    <?php if ($card['url'] !== ''): ?>
+                        <a href="<?php echo htmlspecialchars($card['url'], ENT_QUOTES, 'UTF-8'); ?>" class="ptc-service-link">Mehr erfahren →</a>
+                    <?php endif; ?>
+                </div>
             </article>
             <?php endforeach; ?>
 

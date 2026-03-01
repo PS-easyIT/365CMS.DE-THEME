@@ -63,7 +63,7 @@ if ($showSidebar) {
              ORDER BY c.name ASC
              LIMIT 15"
         );
-        $categories = $catStmt->fetchAll() ?: [];
+        $categories = $catStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
         $tagStmt = $db->execute(
             "SELECT tags FROM {$prefix}posts WHERE status = 'published' AND tags IS NOT NULL AND tags != ''"

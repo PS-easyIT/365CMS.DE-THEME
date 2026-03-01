@@ -212,7 +212,7 @@ $config = [
                 'label'       => 'Dienstleistungen Hintergrund',
                 'description' => 'Hintergrundfarbe der Dienstleistungen-Sektion.',
                 'type'        => 'color',
-                'default'     => '#F8F9FA',
+                'default'     => '#FFFFFF',
             ],
             'services_card_bg' => [
                 'label'       => 'Dienstleistungen Karte',
@@ -224,19 +224,19 @@ $config = [
                 'label'       => 'Termine Hintergrund',
                 'description' => 'Hintergrundfarbe der Termine-Sektion.',
                 'type'        => 'color',
-                'default'     => '#FFFFFF',
+                'default'     => '#F0F4F8',
             ],
             'events_card_bg' => [
                 'label'       => 'Termine Karte',
                 'description' => 'Hintergrundfarbe der Event-Karten.',
                 'type'        => 'color',
-                'default'     => '#F8F9FA',
+                'default'     => '#FFFFFF',
             ],
             'faq_bg_color' => [
                 'label'       => 'FAQ Hintergrund',
                 'description' => 'Hintergrundfarbe der FAQ-Sektion.',
                 'type'        => 'color',
-                'default'     => '#F8F9FA',
+                'default'     => '#FFFFFF',
             ],
             'faq_item_bg' => [
                 'label'       => 'FAQ Akkordeon',
@@ -778,6 +778,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '🎯',
             ],
+            'service_1_image' => [
+                'label'       => 'Service 1 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_1_title' => [
                 'label'       => 'Service 1 – Titel',
                 'description' => '',
@@ -803,6 +809,12 @@ $config = [
                 'description' => '',
                 'type'        => 'text',
                 'default'     => '🏗️',
+            ],
+            'service_2_image' => [
+                'label'       => 'Service 2 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
             ],
             'service_2_title' => [
                 'label'       => 'Service 2 – Titel',
@@ -830,6 +842,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '🎓',
             ],
+            'service_3_image' => [
+                'label'       => 'Service 3 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_3_title' => [
                 'label'       => 'Service 3 – Titel',
                 'description' => '',
@@ -855,6 +873,12 @@ $config = [
                 'description' => '',
                 'type'        => 'text',
                 'default'     => '🤝',
+            ],
+            'service_4_image' => [
+                'label'       => 'Service 4 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
             ],
             'service_4_title' => [
                 'label'       => 'Service 4 – Titel',
@@ -882,6 +906,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '🔄',
             ],
+            'service_5_image' => [
+                'label'       => 'Service 5 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_5_title' => [
                 'label'       => 'Service 5 – Titel',
                 'description' => '',
@@ -908,6 +938,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '🚀',
             ],
+            'service_6_image' => [
+                'label'       => 'Service 6 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_6_title' => [
                 'label'       => 'Service 6 – Titel',
                 'description' => '',
@@ -931,6 +967,12 @@ $config = [
             'service_7_icon' => [
                 'label'       => '🔶 Service 7 – Icon (Emoji)',
                 'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_7_image' => [
+                'label'       => 'Service 7 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
                 'type'        => 'text',
                 'default'     => '',
             ],
@@ -960,6 +1002,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '',
             ],
+            'service_8_image' => [
+                'label'       => 'Service 8 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_8_title' => [
                 'label'       => 'Service 8 – Titel',
                 'description' => '',
@@ -983,6 +1031,12 @@ $config = [
             'service_9_icon' => [
                 'label'       => '🔶 Service 9 – Icon (Emoji)',
                 'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_9_image' => [
+                'label'       => 'Service 9 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
                 'type'        => 'text',
                 'default'     => '',
             ],
@@ -1012,6 +1066,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '',
             ],
+            'service_10_image' => [
+                'label'       => 'Service 10 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_10_title' => [
                 'label'       => 'Service 10 – Titel',
                 'description' => '',
@@ -1038,6 +1098,12 @@ $config = [
                 'type'        => 'text',
                 'default'     => '',
             ],
+            'service_11_image' => [
+                'label'       => 'Service 11 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
             'service_11_title' => [
                 'label'       => 'Service 11 – Titel',
                 'description' => '',
@@ -1061,6 +1127,12 @@ $config = [
             'service_12_icon' => [
                 'label'       => '🔶 Service 12 – Icon (Emoji)',
                 'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_12_image' => [
+                'label'       => 'Service 12 – Bild (URL)',
+                'description' => 'Bild-URL. Wird anstelle des Icons links neben dem Titel angezeigt.',
                 'type'        => 'text',
                 'default'     => '',
             ],
@@ -2099,6 +2171,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                             'faq'      => '❓ FAQ',
                         ]],
                         ['key' => 'footer'],
+                        ['key' => 'blog'],
                         ['key' => 'buttons'],
                         ['key' => 'advanced'],
                     ];
@@ -2295,18 +2368,18 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '⚙️ Allgemeine Einstellungen' => ['show_services', 'services_tag', 'services_title', 'services_subtitle'],
                                 '📐 Layout & Design'          => ['services_columns', 'services_bg_style', 'services_card_style', 'services_icon_style', 'services_show_hover', 'services_show_icons', 'services_max_items'],
                                 '🔗 CTA-Button'               => ['services_show_cta', 'services_cta_label', 'services_cta_url'],
-                                '🔶 Service 1'                => ['service_1_icon', 'service_1_title', 'service_1_text', 'service_1_url'],
-                                '🔶 Service 2'                => ['service_2_icon', 'service_2_title', 'service_2_text', 'service_2_url'],
-                                '🔶 Service 3'                => ['service_3_icon', 'service_3_title', 'service_3_text', 'service_3_url'],
-                                '🔶 Service 4'                => ['service_4_icon', 'service_4_title', 'service_4_text', 'service_4_url'],
-                                '🔶 Service 5'                => ['service_5_icon', 'service_5_title', 'service_5_text', 'service_5_url'],
-                                '🔶 Service 6'                => ['service_6_icon', 'service_6_title', 'service_6_text', 'service_6_url'],
-                                '🔶 Service 7 (optional)'     => ['service_7_icon', 'service_7_title', 'service_7_text', 'service_7_url'],
-                                '🔶 Service 8 (optional)'     => ['service_8_icon', 'service_8_title', 'service_8_text', 'service_8_url'],
-                                '🔶 Service 9 (optional)'     => ['service_9_icon', 'service_9_title', 'service_9_text', 'service_9_url'],
-                                '🔶 Service 10 (optional)'    => ['service_10_icon', 'service_10_title', 'service_10_text', 'service_10_url'],
-                                '🔶 Service 11 (optional)'    => ['service_11_icon', 'service_11_title', 'service_11_text', 'service_11_url'],
-                                '🔶 Service 12 (optional)'    => ['service_12_icon', 'service_12_title', 'service_12_text', 'service_12_url'],
+                                '🔶 Service 1'                => ['service_1_icon', 'service_1_image', 'service_1_title', 'service_1_text', 'service_1_url'],
+                                '🔶 Service 2'                => ['service_2_icon', 'service_2_image', 'service_2_title', 'service_2_text', 'service_2_url'],
+                                '🔶 Service 3'                => ['service_3_icon', 'service_3_image', 'service_3_title', 'service_3_text', 'service_3_url'],
+                                '🔶 Service 4'                => ['service_4_icon', 'service_4_image', 'service_4_title', 'service_4_text', 'service_4_url'],
+                                '🔶 Service 5'                => ['service_5_icon', 'service_5_image', 'service_5_title', 'service_5_text', 'service_5_url'],
+                                '🔶 Service 6'                => ['service_6_icon', 'service_6_image', 'service_6_title', 'service_6_text', 'service_6_url'],
+                                '🔶 Service 7 (optional)'     => ['service_7_icon', 'service_7_image', 'service_7_title', 'service_7_text', 'service_7_url'],
+                                '🔶 Service 8 (optional)'     => ['service_8_icon', 'service_8_image', 'service_8_title', 'service_8_text', 'service_8_url'],
+                                '🔶 Service 9 (optional)'     => ['service_9_icon', 'service_9_image', 'service_9_title', 'service_9_text', 'service_9_url'],
+                                '🔶 Service 10 (optional)'    => ['service_10_icon', 'service_10_image', 'service_10_title', 'service_10_text', 'service_10_url'],
+                                '🔶 Service 11 (optional)'    => ['service_11_icon', 'service_11_image', 'service_11_title', 'service_11_text', 'service_11_url'],
+                                '🔶 Service 12 (optional)'    => ['service_12_icon', 'service_12_image', 'service_12_title', 'service_12_text', 'service_12_url'],
                             ],
                             'events' => [
                                 '⚙️ Allgemeine Einstellungen' => ['show_events', 'events_tag', 'events_title', 'events_subtitle'],

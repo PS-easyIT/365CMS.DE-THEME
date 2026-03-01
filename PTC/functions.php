@@ -155,11 +155,11 @@ final class PTC_Theme
             // ── Sektions-Farben ──
             $vars['--ptc-hero-bg']          = $c->get('colors', 'hero_bg_color',      '#F8F9FA');
             $vars['--ptc-hero-bg-to']       = $c->get('colors', 'hero_bg_to',         '#F1F5F9');
-            $vars['--ptc-services-bg']      = $c->get('colors', 'services_bg_color',  '#F8F9FA');
+            $vars['--ptc-services-bg']      = $c->get('colors', 'services_bg_color',  '#FFFFFF');
             $vars['--ptc-service-card-bg']  = $c->get('colors', 'services_card_bg',   '#FFFFFF');
-            $vars['--ptc-events-bg']        = $c->get('colors', 'events_bg_color',    '#FFFFFF');
-            $vars['--ptc-event-card-bg']    = $c->get('colors', 'events_card_bg',     '#F8F9FA');
-            $vars['--ptc-faq-bg']           = $c->get('colors', 'faq_bg_color',       '#F8F9FA');
+            $vars['--ptc-events-bg']        = $c->get('colors', 'events_bg_color',    '#F0F4F8');
+            $vars['--ptc-event-card-bg']    = $c->get('colors', 'events_card_bg',     '#FFFFFF');
+            $vars['--ptc-faq-bg']           = $c->get('colors', 'faq_bg_color',       '#FFFFFF');
             $vars['--ptc-faq-item-bg']      = $c->get('colors', 'faq_item_bg',        '#FFFFFF');
             $vars['--ptc-network-bar-bg']   = $c->get('colors', 'network_bar_bg',     '#000D1A');
             $vars['--ptc-network-bar-text'] = $c->get('colors', 'network_bar_text',   'rgba(255,255,255,0.35)');
