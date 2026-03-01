@@ -1,7 +1,7 @@
 {
   "name": "PTC GmbH – Personal & Bildung",
   "slug": "PTC",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "PHIN IT Solutions / Andreas Hepp",
   "description": "Corporate Theme für Personaldienstleistungen – PTC GmbH. Marineblau + Gold CI. Fokus auf Seriosität, Klarheit und Vertrauen. Sektionen: Hero, Dienstleistungen, Termine, FAQ, Kontakt.",
   "tags": ["corporate", "personal", "dienstleistung", "bildung", "responsive", "business"],
@@ -256,6 +256,48 @@
           "type": "color",
           "default": "#FFFFFF",
           "description": "Textfarbe in der Netzwerk-Leiste"
+        },
+        "blog_hero_bg": {
+          "label": "Blog Hero Hintergrund",
+          "type": "color",
+          "default": "#002D5D",
+          "description": "Hintergrundfarbe des Blog-Hero-Bereichs"
+        },
+        "blog_hero_text": {
+          "label": "Blog Hero Text",
+          "type": "color",
+          "default": "#FFFFFF",
+          "description": "Textfarbe im Blog-Hero-Bereich"
+        },
+        "blog_content_bg": {
+          "label": "Blog Inhalt Hintergrund",
+          "type": "color",
+          "default": "#F8F9FA",
+          "description": "Hintergrundfarbe des Blog-Inhaltsbereichs"
+        },
+        "blog_card_bg": {
+          "label": "Blog Karte Hintergrund",
+          "type": "color",
+          "default": "#FFFFFF",
+          "description": "Hintergrundfarbe der Blog-Karten"
+        },
+        "blog_card_title": {
+          "label": "Blog Karte Titel",
+          "type": "color",
+          "default": "#002D5D",
+          "description": "Titelfarbe auf Blog-Karten"
+        },
+        "blog_category_bg": {
+          "label": "Kategorie-Badge Hintergrund",
+          "type": "color",
+          "default": "#FDF5E6",
+          "description": "Hintergrundfarbe der Kategorie-Badges"
+        },
+        "blog_category_text": {
+          "label": "Kategorie-Badge Text",
+          "type": "color",
+          "default": "#B8860B",
+          "description": "Textfarbe der Kategorie-Badges"
         }
       }
     },

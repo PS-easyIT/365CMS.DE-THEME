@@ -130,22 +130,32 @@ $gridClass = $blogLayout === 'list'
                             $pImage    = $p['featured_image'] ?? '';
                             $pUrl      = htmlspecialchars($siteUrl . '/blog/' . $pSlug, ENT_QUOTES, 'UTF-8');
                             $pAuthor   = htmlspecialchars($p['author_name'] ?? 'Redaktion', ENT_QUOTES, 'UTF-8');
+                            $pTags     = array_filter(array_map('trim', explode(',', $p['tags'] ?? '')));
+                            $hasImage  = $showFeatured && $pImage;
                         ?>
-                        <article class="ptc-blog-card">
-                            <?php if ($showFeatured && $pImage) : ?>
+                        <article class="ptc-blog-card<?php echo $hasImage ? ' ptc-blog-card--has-image' : ''; ?>">
+                            <?php if ($hasImage) : ?>
                             <a href="<?php echo $pUrl; ?>" class="ptc-blog-card__image">
                                 <img src="<?php echo htmlspecialchars($pImage, ENT_QUOTES, 'UTF-8'); ?>"
                                      alt="<?php echo $pTitle; ?>" loading="lazy">
                             </a>
                             <?php endif; ?>
                             <div class="ptc-blog-card__body">
-                                <?php if ($showCategory && $pCat) : ?>
-                                    <a href="<?php echo htmlspecialchars($siteUrl . '/blog?category=' . urlencode($pCatSlug), ENT_QUOTES, 'UTF-8'); ?>"
-                                       class="ptc-blog-card__category"><?php echo $pCat; ?></a>
-                                <?php endif; ?>
                                 <h2 class="ptc-blog-card__title">
                                     <a href="<?php echo $pUrl; ?>"><?php echo $pTitle; ?></a>
                                 </h2>
+                                <div class="ptc-blog-card__tags-row">
+                                    <?php if ($showCategory && $pCat) : ?>
+                                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog?category=' . urlencode($pCatSlug), ENT_QUOTES, 'UTF-8'); ?>"
+                                           class="ptc-blog-card__category"><?php echo $pCat; ?></a>
+                                    <?php endif; ?>
+                                    <?php foreach ($pTags as $pTag) :
+                                        $tEsc = htmlspecialchars($pTag, ENT_QUOTES, 'UTF-8');
+                                    ?>
+                                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog?tag=' . urlencode($pTag), ENT_QUOTES, 'UTF-8'); ?>"
+                                           class="ptc-blog-card__tag"><?php echo $tEsc; ?></a>
+                                    <?php endforeach; ?>
+                                </div>
                                 <?php if ($showExcerpt && $pExcerpt) : ?>
                                     <p class="ptc-blog-card__excerpt"><?php echo $pExcerpt; ?></p>
                                 <?php endif; ?>

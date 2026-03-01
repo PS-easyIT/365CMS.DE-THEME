@@ -164,6 +164,15 @@ final class PTC_Theme
             $vars['--ptc-network-bar-bg']   = $c->get('colors', 'network_bar_bg',     '#000D1A');
             $vars['--ptc-network-bar-text'] = $c->get('colors', 'network_bar_text',   'rgba(255,255,255,0.35)');
 
+            // ── Blog-Farben ──
+            $vars['--ptc-blog-hero-bg']      = $c->get('colors', 'blog_hero_bg',       '#002D5D');
+            $vars['--ptc-blog-hero-text']    = $c->get('colors', 'blog_hero_text',     '#FFFFFF');
+            $vars['--ptc-blog-content-bg']   = $c->get('colors', 'blog_content_bg',    '#F8F9FA');
+            $vars['--ptc-blog-card-bg']      = $c->get('colors', 'blog_card_bg',       '#FFFFFF');
+            $vars['--ptc-blog-card-title']   = $c->get('colors', 'blog_card_title',    '#002D5D');
+            $vars['--ptc-blog-cat-bg']       = $c->get('colors', 'blog_category_bg',   '#FDF5E6');
+            $vars['--ptc-blog-cat-text']     = $c->get('colors', 'blog_category_text', '#B8860B');
+
             // ── Buttons ──
             $vars['--ptc-btn-radius']    = $c->get('buttons', 'button_border_radius', '8') . 'px';
             $vars['--ptc-btn-px']        = $c->get('buttons', 'button_padding_x',     '2') . 'rem';

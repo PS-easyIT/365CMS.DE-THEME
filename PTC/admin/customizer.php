@@ -256,6 +256,50 @@ $config = [
                 'type'        => 'color',
                 'default'     => '#FFFFFF59',
             ],
+
+            // ── Blog-Farben ─────────────────────────────────────
+            'blog_hero_bg' => [
+                'label'       => 'Blog Hero Hintergrund',
+                'description' => 'Hintergrundfarbe des Blog-Hero-Bereichs.',
+                'type'        => 'color',
+                'default'     => '#002D5D',
+            ],
+            'blog_hero_text' => [
+                'label'       => 'Blog Hero Text',
+                'description' => 'Textfarbe im Blog-Hero-Bereich.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF',
+            ],
+            'blog_content_bg' => [
+                'label'       => 'Blog Inhalt Hintergrund',
+                'description' => 'Hintergrundfarbe des Blog-Inhaltsbereichs.',
+                'type'        => 'color',
+                'default'     => '#F8F9FA',
+            ],
+            'blog_card_bg' => [
+                'label'       => 'Blog Karte Hintergrund',
+                'description' => 'Hintergrundfarbe der Blog-Karten.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF',
+            ],
+            'blog_card_title' => [
+                'label'       => 'Blog Karte Titel',
+                'description' => 'Titelfarbe auf Blog-Karten.',
+                'type'        => 'color',
+                'default'     => '#002D5D',
+            ],
+            'blog_category_bg' => [
+                'label'       => 'Kategorie-Badge Hintergrund',
+                'description' => 'Hintergrundfarbe der Kategorie-Badges.',
+                'type'        => 'color',
+                'default'     => '#FDF5E6',
+            ],
+            'blog_category_text' => [
+                'label'       => 'Kategorie-Badge Text',
+                'description' => 'Textfarbe der Kategorie-Badges.',
+                'type'        => 'color',
+                'default'     => '#B8860B',
+            ],
         ],
     ],
 
@@ -2211,6 +2255,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                             '📅 Termine'                => ['events_bg_color', 'events_card_bg'],
                             '❓ FAQ'                     => ['faq_bg_color', 'faq_item_bg'],
                             '🔗 Network-Bar'            => ['network_bar_bg', 'network_bar_text'],
+                            '📰 Blog'                   => ['blog_hero_bg', 'blog_hero_text', 'blog_content_bg', 'blog_card_bg', 'blog_card_title', 'blog_category_bg', 'blog_category_text'],
                         ];
                     ?>
                     <div class="admin-card">
