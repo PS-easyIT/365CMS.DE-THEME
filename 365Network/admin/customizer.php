@@ -316,11 +316,23 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
+            'login_btn_icon_only' => [
+                'label'       => 'Anmelden-Button: Nur Icon',
+                'description' => 'Zeigt nur das 🔑-Icon ohne Text – macht den Button schmaler.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
             'show_register_btn' => [
                 'label'       => 'Registrieren-Button anzeigen',
                 'description' => 'Zeigt den Registrieren-Button für nicht angemeldete Besucher.',
                 'type'        => 'checkbox',
                 'default'     => true,
+            ],
+            'register_btn_icon_only' => [
+                'label'       => 'Registrieren-Button: Nur Icon',
+                'description' => 'Zeigt nur das ✏️-Icon ohne Text – macht den Button schmaler.',
+                'type'        => 'checkbox',
+                'default'     => false,
             ],
             'profile_show_dashboard' => [
                 'label'       => 'Profil-Menü: Dashboard-Link',
@@ -1113,7 +1125,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                                 '🖼️ Logo' => ['logo_url', 'logo_max_height'],
                                 '🎨 Header-Farben' => ['header_bg_color', 'header_text_color', 'header_accent_color'],
                                 '📐 Header-Layout' => ['header_height', 'show_header_shadow'],
-                                '🔍 Header-Buttons' => ['show_search_btn', 'show_login_btn', 'show_register_btn'],
+                                '🔍 Header-Buttons' => ['show_search_btn', 'show_login_btn', 'login_btn_icon_only', 'show_register_btn', 'register_btn_icon_only'],
                                 '👤 Profil-Dropdown' => ['profile_show_dashboard', 'profile_show_expert', 'profile_show_company', 'profile_show_events', 'profile_show_speaker'],
                             ],
                             'footer' => [

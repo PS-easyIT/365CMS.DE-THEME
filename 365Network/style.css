@@ -1703,6 +1703,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
 .btn-lg { padding: 0.75rem 1.5rem; font-size: 0.9375rem; }
 .btn-normal { padding: 0.5rem 1rem; font-size: 0.8125rem; }
+.btn-icon-only { padding: 0.375rem 0.5rem; line-height: 1; font-size: 1rem; }
 
 /* ===== Forms ===== */
 .form-group { margin-bottom: var(--spacing-md); }

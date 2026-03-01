@@ -304,11 +304,23 @@
           "default": true,
           "description": "Zeigt den Login-Button für nicht angemeldete Besucher"
         },
+        "login_btn_icon_only": {
+          "label": "Anmelden-Button: Nur Icon",
+          "type": "checkbox",
+          "default": false,
+          "description": "Zeigt nur das Icon ohne Text – macht den Button schmaler"
+        },
         "show_register_btn": {
           "label": "Registrieren-Button anzeigen",
           "type": "checkbox",
           "default": true,
           "description": "Zeigt den Registrieren-Button für nicht angemeldete Besucher"
+        },
+        "register_btn_icon_only": {
+          "label": "Registrieren-Button: Nur Icon",
+          "type": "checkbox",
+          "default": false,
+          "description": "Zeigt nur das Icon ohne Text – macht den Button schmaler"
         },
         "profile_show_dashboard": {
           "label": "Profil-Menü: Dashboard-Link",

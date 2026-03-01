@@ -33,7 +33,9 @@ try {
     $_headerLogoUrl     = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
     $_showSearchBtn     = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_search_btn', true), FILTER_VALIDATE_BOOLEAN);
     $_showLoginBtn      = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_login_btn', true), FILTER_VALIDATE_BOOLEAN);
+    $_loginIconOnly     = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'login_btn_icon_only', false), FILTER_VALIDATE_BOOLEAN);
     $_showRegisterBtn   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_register_btn', true), FILTER_VALIDATE_BOOLEAN);
+    $_registerIconOnly  = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'register_btn_icon_only', false), FILTER_VALIDATE_BOOLEAN);
     $_showNetworkAnim   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('effects', 'show_network_animation', true), FILTER_VALIDATE_BOOLEAN);
     $_animSpeed         = (string)\CMS\Services\ThemeCustomizer::instance()->get('effects', 'animation_speed', 'slow');
     $_animNodeCount     = (int)\CMS\Services\ThemeCustomizer::instance()->get('effects', 'animation_node_count', 25);
@@ -48,7 +50,9 @@ try {
     $_headerLogoUrl   = '';
     $_showSearchBtn   = true;
     $_showLoginBtn    = true;
+    $_loginIconOnly   = false;
     $_showRegisterBtn = true;
+    $_registerIconOnly = false;
     $_showNetworkAnim = true;
     $_animSpeed       = 'slow';
     $_animNodeCount   = 25;
@@ -226,13 +230,17 @@ $_hasSpeakers  = $_pluginMgr->isPluginActive('cms-speakers');
                         </div>
                     <?php else : ?>
                         <?php if ($_showLoginBtn) : ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login" class="btn btn-sm btn-outline-light">
-                                Anmelden
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login"
+                               class="btn btn-sm btn-outline-light<?php echo $_loginIconOnly ? ' btn-icon-only' : ''; ?>"
+                               <?php echo $_loginIconOnly ? 'aria-label="Anmelden" title="Anmelden"' : ''; ?>>
+                                🔑<?php if (!$_loginIconOnly) : ?> Anmelden<?php endif; ?>
                             </a>
                         <?php endif; ?>
                         <?php if ($_showRegisterBtn) : ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register" class="btn btn-sm btn-accent">
-                                Registrieren
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register"
+                               class="btn btn-sm btn-accent<?php echo $_registerIconOnly ? ' btn-icon-only' : ''; ?>"
+                               <?php echo $_registerIconOnly ? 'aria-label="Registrieren" title="Registrieren"' : ''; ?>>
+                                ✏️<?php if (!$_registerIconOnly) : ?> Registrieren<?php endif; ?>
                             </a>
                         <?php endif; ?>
                     <?php endif; ?>
