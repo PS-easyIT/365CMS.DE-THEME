@@ -436,6 +436,82 @@ HTML;
             // Keine Ausgabe
         }
     }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Homepage-Sidebar: Default-Widgets
+    // Jedes Widget prüft, ob das zugehörige Plugin aktiv ist.
+    // Plugins können diese Defaults per removeAction() entfernen
+    // und ihre eigenen per addAction('home_sidebar_widget', ...) registrieren.
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Default-Widget: Buchungsportal (Placeholder)
+     *
+     * Wird angezeigt, solange kein Buchungs-Plugin aktiv ist.
+     * Plugin entfernt dieses Widget mit:
+     *   \CMS\Hooks::removeAction('home_sidebar_widget', [IT_Expert_Network_Theme::instance(), 'renderSidebarBookingWidget'], 10);
+     */
+    public function renderSidebarBookingWidget(): void
+    {
+        ?>
+        <div class="sidebar-panel widget-zone" data-widget="booking">
+            <h3>📅 Buchungsportal</h3>
+            <p class="widget-zone__hint">
+                Hier können Buchungs-Plugins Termine und Verfügbarkeiten anzeigen.
+            </p>
+            <div class="widget-zone__placeholder">
+                <span class="widget-zone__icon">📅</span>
+                <span class="widget-zone__text">Plugin-Slot: Buchung</span>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Default-Widget: Feed-Aggregator (Placeholder)
+     *
+     * Wird durch das cms-feed Plugin ersetzt:
+     *   \CMS\Hooks::removeAction('home_sidebar_widget', [IT_Expert_Network_Theme::instance(), 'renderSidebarFeedWidget'], 20);
+     *   \CMS\Hooks::addAction('home_sidebar_widget', [$feedPlugin, 'renderHomepageWidget'], 20);
+     */
+    public function renderSidebarFeedWidget(): void
+    {
+        ?>
+        <div class="sidebar-panel widget-zone" data-widget="feed">
+            <h3>📰 Feed-Aggregator</h3>
+            <p class="widget-zone__hint">
+                Das cms-feed Plugin zeigt hier aktuelle Beiträge und News-Streams an.
+            </p>
+            <div class="widget-zone__placeholder">
+                <span class="widget-zone__icon">📰</span>
+                <span class="widget-zone__text">Plugin-Slot: Feed</span>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Default-Widget: Job-Anzeigen Ersteller (Placeholder)
+     *
+     * Wird durch das cms-jobprofile-generator Plugin ersetzt:
+     *   \CMS\Hooks::removeAction('home_sidebar_widget', [IT_Expert_Network_Theme::instance(), 'renderSidebarJobWidget'], 30);
+     *   \CMS\Hooks::addAction('home_sidebar_widget', [$jpgPlugin, 'renderHomepageWidget'], 30);
+     */
+    public function renderSidebarJobWidget(): void
+    {
+        ?>
+        <div class="sidebar-panel widget-zone" data-widget="jobs">
+            <h3>💼 Job-Anzeigen</h3>
+            <p class="widget-zone__hint">
+                Das cms-jobprofile-generator Plugin zeigt hier aktuelle Stellenprofile an.
+            </p>
+            <div class="widget-zone__placeholder">
+                <span class="widget-zone__icon">💼</span>
+                <span class="widget-zone__text">Plugin-Slot: Jobs</span>
+            </div>
+        </div>
+        <?php
+    }
 }
 
 // Theme initialisieren
