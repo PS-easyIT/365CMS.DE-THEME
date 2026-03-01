@@ -328,6 +328,15 @@ a:hover {
     border-top: 1px solid var(--ptc-gray-100);
 }
 
+.ptc-drawer-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ptc-gray-100);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 /* Spacer for fixed header */
 .ptc-content {
     padding-top: 72px;
@@ -1021,7 +1030,298 @@ a:hover {
 }
 
 /* ============================================================================
-   15. Responsive
+   15. Auth Pages (Login / Register)
+   ============================================================================ */
+.ptc-auth-section {
+    background: linear-gradient(135deg, var(--ptc-offwhite) 0%, var(--ptc-gray-50) 100%);
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    padding: 3rem 1.5rem;
+}
+
+.ptc-auth-wrap {
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+}
+
+.ptc-auth-card {
+    background: var(--ptc-white);
+    border-radius: var(--ptc-radius-lg);
+    box-shadow: var(--ptc-shadow-lg);
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--ptc-gray-100);
+}
+
+.ptc-auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.ptc-auth-logo-img {
+    height: 52px;
+    width: auto;
+    margin: 0 auto 0.75rem;
+}
+
+.ptc-auth-logo svg {
+    margin: 0 auto 0.75rem;
+    display: block;
+}
+
+.ptc-auth-logo h1 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--ptc-navy);
+    margin-bottom: 0.25rem;
+}
+
+.ptc-auth-logo p {
+    font-size: 0.9rem;
+    color: var(--ptc-text-light);
+}
+
+.ptc-auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ptc-gray-100);
+}
+
+.ptc-auth-footer p {
+    font-size: 0.875rem;
+    color: var(--ptc-text-light);
+    margin-bottom: 0.5rem;
+}
+
+.ptc-auth-footer a {
+    color: var(--ptc-gold-dark);
+    font-weight: 600;
+}
+
+.ptc-auth-footer a:hover {
+    color: var(--ptc-navy);
+}
+
+/* ============================================================================
+   16. Forms (Auth & allgemein)
+   ============================================================================ */
+.ptc-form-group {
+    margin-bottom: 1.25rem;
+}
+
+.ptc-form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ptc-text);
+    margin-bottom: 0.375rem;
+}
+
+.ptc-form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    color: var(--ptc-text);
+    background: var(--ptc-white);
+    border: 2px solid var(--ptc-gray-100);
+    border-radius: var(--ptc-radius-sm);
+    transition: var(--ptc-ease-fast);
+    line-height: 1.5;
+}
+
+.ptc-form-control:focus {
+    outline: none;
+    border-color: var(--ptc-navy);
+    box-shadow: 0 0 0 3px rgba(0, 45, 93, 0.1);
+}
+
+.ptc-form-control::placeholder {
+    color: var(--ptc-gray-300);
+}
+
+.ptc-form-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ptc-text-light);
+    margin-top: 0.25rem;
+}
+
+.ptc-form-checkbox {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.ptc-form-checkbox input[type="checkbox"] {
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--ptc-navy);
+}
+
+.ptc-form-checkbox label {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ptc-text-light);
+    cursor: pointer;
+}
+
+.ptc-form-checkbox label a {
+    color: var(--ptc-gold-dark);
+    font-weight: 600;
+}
+
+/* ============================================================================
+   17. Alerts
+   ============================================================================ */
+.ptc-alert {
+    padding: 0.875rem 1rem;
+    border-radius: var(--ptc-radius-sm);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+
+.ptc-alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.ptc-alert-success {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.ptc-alert-info {
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+/* ============================================================================
+   18. Profile Dropdown (Header)
+   ============================================================================ */
+.ptc-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.ptc-profile-dropdown {
+    position: relative;
+}
+
+.ptc-profile-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    background: transparent;
+    border: 1px solid var(--ptc-gray-100);
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--ptc-text);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-profile-toggle:hover {
+    background: var(--ptc-gray-50);
+    border-color: var(--ptc-gray-200);
+}
+
+.ptc-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--ptc-navy);
+    color: var(--ptc-white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.ptc-profile-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ptc-profile-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 200px;
+    background: var(--ptc-white);
+    border: 1px solid var(--ptc-gray-100);
+    border-radius: var(--ptc-radius);
+    box-shadow: var(--ptc-shadow-lg);
+    padding: 0.5rem 0;
+    z-index: calc(var(--z-header) + 5);
+}
+
+.ptc-profile-dropdown.is-open .ptc-profile-menu {
+    display: block;
+}
+
+.ptc-profile-menu a {
+    display: block;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    color: var(--ptc-text);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-profile-menu a:hover {
+    background: var(--ptc-gray-50);
+    color: var(--ptc-navy);
+}
+
+.ptc-profile-divider {
+    height: 1px;
+    background: var(--ptc-gray-100);
+    margin: 0.375rem 0;
+}
+
+/* ============================================================================
+   19. Hero Badge
+   ============================================================================ */
+.ptc-hero-badge {
+    display: inline-block;
+    padding: 0.375rem 1rem;
+    background: var(--ptc-gray-50);
+    border: 1px solid var(--ptc-gray-100);
+    color: var(--ptc-gold-dark);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.25rem;
+}
+
+/* ============================================================================
+   20. Small button variant
+   ============================================================================ */
+.btn-ptc-sm {
+    padding: 0.4375rem 0.875rem;
+    font-size: 0.825rem;
+}
+
+/* ============================================================================
+   21. Responsive
    ============================================================================ */
 
 /* ≤ 1024px – Tablet */
@@ -1031,6 +1331,10 @@ a:hover {
     }
 
     .ptc-header-cta {
+        display: none;
+    }
+
+    .ptc-profile-name {
         display: none;
     }
 
@@ -1154,5 +1458,13 @@ a:hover {
 
     .ptc-service-card {
         padding: 1.5rem 1.25rem;
+    }
+
+    .ptc-auth-card {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .ptc-auth-section {
+        padding: 2rem 1rem;
     }
 }

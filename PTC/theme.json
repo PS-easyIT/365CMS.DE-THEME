@@ -14,10 +14,13 @@
   },
 
   "templates": {
-    "home":  "home.php",
-    "page":  "page.php",
-    "404":   "404.php",
-    "error": "error.php"
+    "home":     "home.php",
+    "page":     "page.php",
+    "login":    "login.php",
+    "register": "register.php",
+    "search":   "search.php",
+    "404":      "404.php",
+    "error":    "error.php"
   },
 
   "partials": {
