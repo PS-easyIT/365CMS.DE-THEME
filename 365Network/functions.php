@@ -67,11 +67,17 @@ class IT_Expert_Network_Theme
         \CMS\Hooks::addAction('cms_init', [$this, 'seedDefaultMenus']);
 
         // ── Homepage: Default-Sidebar-Widgets registrieren ──────────
+        // Widgets lesen Customizer-Einstellungen aus der Kategorie 'sidebar'.
         // Plugins können diese per removeAction() ersetzen oder eigene
         // per addAction('home_sidebar_widget', ...) mit passender Priorität einhängen.
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarBookingWidget'],  10);
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarFeedWidget'],     20);
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarJobWidget'],      30);
+        \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarBlogWidget'],     40);
+        \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarCustomHtml'],     90);
+
+        // Sidebar CSS-Variablen aus Customizer injizieren
+        \CMS\Hooks::addAction('head', [$this, 'outputSidebarStyles'], 26);
     }
     
     /**
@@ -439,23 +445,92 @@ HTML;
 
     // ═══════════════════════════════════════════════════════════════════
     // Homepage-Sidebar: Default-Widgets
-    // Jedes Widget prüft, ob das zugehörige Plugin aktiv ist.
+    // Jedes Widget liest Customizer-Einstellungen (Kategorie: sidebar).
     // Plugins können diese Defaults per removeAction() entfernen
     // und ihre eigenen per addAction('home_sidebar_widget', ...) registrieren.
     // ═══════════════════════════════════════════════════════════════════
 
+    /** Sidebar-Customizer-Setting lesen */
+    private function getSidebarSetting(string $key, $default = '')
+    {
+        static $cache = null;
+        if ($cache === null) {
+            try {
+                $cache = \CMS\Services\ThemeCustomizer::instance()->getCategory('sidebar');
+            } catch (\Throwable $e) {
+                $cache = [];
+            }
+        }
+        return $cache[$key] ?? $default;
+    }
+
+    private function sidebarBool(string $key, bool $default = true): bool
+    {
+        return filter_var($this->getSidebarSetting($key, $default), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Sidebar CSS-Variablen aus Customizer
+     */
+    public function outputSidebarStyles(): void
+    {
+        $bg      = $this->getSidebarSetting('sidebar_bg_color', '#ffffff');
+        $border  = $this->getSidebarSetting('sidebar_border_color', '#e2e8f0');
+        $radius  = $this->getSidebarSetting('sidebar_border_radius', 12);
+        $padding = $this->getSidebarSetting('sidebar_padding', 1.25);
+        $tSize   = $this->getSidebarSetting('sidebar_title_size', 1.0);
+        $tColor  = $this->getSidebarSetting('sidebar_title_color', '#1e293b');
+        $txtColor = $this->getSidebarSetting('sidebar_text_color', '#475569');
+        $gap     = $this->getSidebarSetting('sidebar_gap', 1.25);
+        $shadow  = $this->sidebarBool('sidebar_shadow', true);
+        $width   = (int)$this->getSidebarSetting('sidebar_width', 340);
+
+        $css = "/* 365Network – Sidebar Customizer */\n";
+        $css .= ".dashboard-sidebar {\n";
+        $css .= "    --sidebar-widget-bg: {$bg};\n";
+        $css .= "    --sidebar-widget-border: {$border};\n";
+        $css .= "    --sidebar-widget-radius: {$radius}px;\n";
+        $css .= "    --sidebar-widget-padding: {$padding}rem;\n";
+        $css .= "    --sidebar-title-size: {$tSize}rem;\n";
+        $css .= "    --sidebar-title-color: {$tColor};\n";
+        $css .= "    --sidebar-text-color: {$txtColor};\n";
+        $css .= "    --sidebar-gap: {$gap}rem;\n";
+        $css .= "    gap: var(--sidebar-gap);\n";
+        if ($width !== 340) {
+            $css .= "    width: {$width}px;\n";
+            $css .= "    min-width: {$width}px;\n";
+        }
+        $css .= "}\n";
+        $css .= ".dashboard-sidebar .sidebar-panel {\n";
+        $css .= "    background: var(--sidebar-widget-bg);\n";
+        $css .= "    border: 1px solid var(--sidebar-widget-border);\n";
+        $css .= "    border-radius: var(--sidebar-widget-radius);\n";
+        $css .= "    padding: var(--sidebar-widget-padding);\n";
+        $css .= "    color: var(--sidebar-text-color);\n";
+        if ($shadow) {
+            $css .= "    box-shadow: 0 1px 4px rgba(0,0,0,.06);\n";
+        }
+        $css .= "}\n";
+        $css .= ".dashboard-sidebar .sidebar-panel h3 {\n";
+        $css .= "    font-size: var(--sidebar-title-size);\n";
+        $css .= "    color: var(--sidebar-title-color);\n";
+        $css .= "}\n";
+
+        echo '<style id="cms-sidebar-customizer">' . "\n" . $css . '</style>' . "\n";
+    }
+
     /**
      * Default-Widget: Buchungsportal (Placeholder)
-     *
-     * Wird angezeigt, solange kein Buchungs-Plugin aktiv ist.
-     * Plugin entfernt dieses Widget mit:
-     *   \CMS\Hooks::removeAction('home_sidebar_widget', [IT_Expert_Network_Theme::instance(), 'renderSidebarBookingWidget'], 10);
      */
     public function renderSidebarBookingWidget(): void
     {
+        if (!$this->sidebarBool('show_booking_widget', true)) {
+            return;
+        }
+        $title = htmlspecialchars((string)$this->getSidebarSetting('booking_widget_title', '📅 Buchungsportal'), ENT_QUOTES, 'UTF-8');
         ?>
         <div class="sidebar-panel widget-zone" data-widget="booking">
-            <h3>📅 Buchungsportal</h3>
+            <h3><?php echo $title; ?></h3>
             <p class="widget-zone__hint">
                 Hier können Buchungs-Plugins Termine und Verfügbarkeiten anzeigen.
             </p>
@@ -468,40 +543,78 @@ HTML;
     }
 
     /**
-     * Default-Widget: Feed-Aggregator (Placeholder)
-     *
-     * Wird durch das cms-feed Plugin ersetzt:
-     *   \CMS\Hooks::removeAction('home_sidebar_widget', [IT_Expert_Network_Theme::instance(), 'renderSidebarFeedWidget'], 20);
-     *   \CMS\Hooks::addAction('home_sidebar_widget', [$feedPlugin, 'renderHomepageWidget'], 20);
+     * Default-Widget: Feed-Aggregator
+     * Zeigt echte Feed-Beiträge aus dem cms-feed Plugin (oder Placeholder wenn nicht aktiv).
      */
     public function renderSidebarFeedWidget(): void
     {
+        if (!$this->sidebarBool('show_feed_widget', true)) {
+            return;
+        }
+        $title = htmlspecialchars((string)$this->getSidebarSetting('feed_widget_title', '📰 Feed-Aggregator'), ENT_QUOTES, 'UTF-8');
+        $count = max(1, min(10, (int)$this->getSidebarSetting('feed_widget_count', 5)));
+
+        $hasFeed = \CMS\PluginManager::instance()->isPluginActive('cms-feed');
+        $items = [];
+
+        if ($hasFeed) {
+            try {
+                $db = \CMS\Database::instance();
+                $prefix = $db->prefix();
+                $stmt = $db->execute(
+                    "SELECT fi.id, fi.title, fi.link, fi.description, fi.image_url, fi.author, fi.pub_date
+                     FROM {$prefix}feed_items fi
+                     WHERE fi.is_hidden = 0
+                     ORDER BY fi.pub_date DESC
+                     LIMIT " . $count
+                );
+                $items = $stmt->fetchAll() ?: [];
+            } catch (\Throwable $e) { /* feed_items ggf. nicht vorhanden */ }
+        }
         ?>
-        <div class="sidebar-panel widget-zone" data-widget="feed">
-            <h3>📰 Feed-Aggregator</h3>
-            <p class="widget-zone__hint">
-                Das cms-feed Plugin zeigt hier aktuelle Beiträge und News-Streams an.
-            </p>
-            <div class="widget-zone__placeholder">
-                <span class="widget-zone__icon">📰</span>
-                <span class="widget-zone__text">Plugin-Slot: Feed</span>
-            </div>
+        <div class="sidebar-panel" data-widget="feed">
+            <h3><?php echo $title; ?></h3>
+            <?php if (!empty($items)) : ?>
+                <ul class="sidebar-feed-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
+                    <?php foreach ($items as $item) :
+                        $iTitle = htmlspecialchars(_field($item, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
+                        $iLink  = htmlspecialchars(_field($item, 'link', '#'), ENT_QUOTES, 'UTF-8');
+                        $iDate  = _field($item, 'pub_date', '');
+                        $iDateF = $iDate ? date('d.m.Y', strtotime($iDate)) : '';
+                    ?>
+                    <li style="border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.625rem;">
+                        <a href="<?php echo $iLink; ?>" target="_blank" rel="noopener noreferrer"
+                           style="color:var(--sidebar-title-color, #1e293b);text-decoration:none;font-size:.85rem;font-weight:500;display:block;">
+                            <?php echo $iTitle; ?>
+                        </a>
+                        <?php if ($iDateF) : ?>
+                            <span style="font-size:.75rem;color:var(--muted-color, #94a3b8);">📅 <?php echo $iDateF; ?></span>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else : ?>
+                <div class="widget-zone__placeholder">
+                    <span class="widget-zone__icon">📰</span>
+                    <span class="widget-zone__text"><?php echo $hasFeed ? 'Noch keine Feed-Beiträge vorhanden.' : 'Plugin-Slot: Feed'; ?></span>
+                </div>
+            <?php endif; ?>
         </div>
         <?php
     }
 
     /**
-     * Default-Widget: Job-Anzeigen Ersteller (Placeholder)
-     *
-     * Wird durch das cms-jobprofile-generator Plugin ersetzt:
-     *   \CMS\Hooks::removeAction('home_sidebar_widget', [IT_Expert_Network_Theme::instance(), 'renderSidebarJobWidget'], 30);
-     *   \CMS\Hooks::addAction('home_sidebar_widget', [$jpgPlugin, 'renderHomepageWidget'], 30);
+     * Default-Widget: Job-Anzeigen
      */
     public function renderSidebarJobWidget(): void
     {
+        if (!$this->sidebarBool('show_jobs_widget', true)) {
+            return;
+        }
+        $title = htmlspecialchars((string)$this->getSidebarSetting('jobs_widget_title', '💼 Job-Anzeigen'), ENT_QUOTES, 'UTF-8');
         ?>
         <div class="sidebar-panel widget-zone" data-widget="jobs">
-            <h3>💼 Job-Anzeigen</h3>
+            <h3><?php echo $title; ?></h3>
             <p class="widget-zone__hint">
                 Das cms-jobprofile-generator Plugin zeigt hier aktuelle Stellenprofile an.
             </p>
@@ -509,6 +622,83 @@ HTML;
                 <span class="widget-zone__icon">💼</span>
                 <span class="widget-zone__text">Plugin-Slot: Jobs</span>
             </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Sidebar-Widget: Aktuelle Blog-Beiträge
+     * Zeigt die neuesten Beiträge aus der CMS posts-Tabelle.
+     */
+    public function renderSidebarBlogWidget(): void
+    {
+        if (!$this->sidebarBool('show_blog_widget', true)) {
+            return;
+        }
+        $title = htmlspecialchars((string)$this->getSidebarSetting('blog_widget_title', '📝 Aktuelle Beiträge'), ENT_QUOTES, 'UTF-8');
+        $count = max(1, min(10, (int)$this->getSidebarSetting('blog_widget_count', 5)));
+
+        $posts = [];
+        try {
+            $db = \CMS\Database::instance();
+            $prefix = $db->prefix();
+            $stmt = $db->execute(
+                "SELECT id, title, slug, excerpt, published_at
+                 FROM {$prefix}posts
+                 WHERE status = 'published'
+                 ORDER BY published_at DESC
+                 LIMIT " . $count
+            );
+            $posts = $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) { /* posts-Tabelle ggf. nicht vorhanden */ }
+
+        $siteUrl = SITE_URL;
+        ?>
+        <div class="sidebar-panel" data-widget="blog">
+            <h3><?php echo $title; ?></h3>
+            <?php if (!empty($posts)) : ?>
+                <ul class="sidebar-blog-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
+                    <?php foreach ($posts as $post) :
+                        $pTitle = htmlspecialchars(_field($post, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
+                        $pSlug  = _field($post, 'slug', '');
+                        $pDate  = _field($post, 'published_at', '');
+                        $pDateF = $pDate ? date('d.m.Y', strtotime($pDate)) : '';
+                        $pUrl   = htmlspecialchars($siteUrl . '/blog/' . $pSlug, ENT_QUOTES, 'UTF-8');
+                    ?>
+                    <li style="border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.625rem;">
+                        <a href="<?php echo $pUrl; ?>"
+                           style="color:var(--sidebar-title-color, #1e293b);text-decoration:none;font-size:.85rem;font-weight:500;display:block;">
+                            <?php echo $pTitle; ?>
+                        </a>
+                        <?php if ($pDateF) : ?>
+                            <span style="font-size:.75rem;color:var(--muted-color, #94a3b8);">📅 <?php echo $pDateF; ?></span>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog"
+                   style="display:inline-block;margin-top:.75rem;font-size:.8rem;color:var(--accent-color);text-decoration:none;font-weight:600;">
+                    Alle Beiträge →
+                </a>
+            <?php else : ?>
+                <p style="font-size:.85rem;color:var(--muted-color, #94a3b8);">Noch keine Beiträge vorhanden.</p>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Sidebar-Widget: Eigenes HTML aus Customizer
+     */
+    public function renderSidebarCustomHtml(): void
+    {
+        $html = trim((string)$this->getSidebarSetting('sidebar_custom_html', ''));
+        if (empty($html)) {
+            return;
+        }
+        ?>
+        <div class="sidebar-panel" data-widget="custom-html">
+            <?php echo $html; ?>
         </div>
         <?php
     }

@@ -15,10 +15,22 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$results = $results ?? [];
-$query   = $query ?? '';
-$siteUrl = SITE_URL;
-$count   = count($results);
+$results  = $results ?? [];
+$query    = $query ?? '';
+$type     = $type ?? '';
+$location = $location ?? '';
+$filter   = $filter ?? '';
+$siteUrl  = SITE_URL;
+$count    = count($results);
+
+// Typ-Badge-Mapping
+$typeBadges = [
+    'page'    => ['label' => 'Seite',   'bg' => '#dbeafe', 'color' => '#1e40af'],
+    'expert'  => ['label' => 'Experte', 'bg' => '#d1fae5', 'color' => '#065f46'],
+    'company' => ['label' => 'Firma',   'bg' => '#fef3c7', 'color' => '#92400e'],
+    'speaker' => ['label' => 'Speaker', 'bg' => '#ede9fe', 'color' => '#5b21b6'],
+    'event'   => ['label' => 'Event',   'bg' => '#fce7f3', 'color' => '#9d174d'],
+];
 ?>
 
 <main id="main" class="site-main" role="main">
@@ -61,7 +73,9 @@ $count   = count($results);
                         $resultTitle   = is_array($result) ? ($result['title'] ?? '') : ($result->title ?? '');
                         $resultSlug    = is_array($result) ? ($result['slug'] ?? '') : ($result->slug ?? '');
                         $resultExcerpt = is_array($result) ? ($result['meta_description'] ?? $result['content'] ?? '') : ($result->meta_description ?? $result->content ?? '');
+                        $resultType    = is_array($result) ? ($result['_type'] ?? 'page') : ($result->_type ?? 'page');
                         $resultUrl     = htmlspecialchars($siteUrl . '/' . $resultSlug, ENT_QUOTES, 'UTF-8');
+                        $badge         = $typeBadges[$resultType] ?? $typeBadges['page'];
 
                         // Excerpt kürzen
                         if (mb_strlen(strip_tags($resultExcerpt)) > 200) {
@@ -75,6 +89,9 @@ $count   = count($results);
                                 <a href="<?php echo $resultUrl; ?>">
                                     <?php echo htmlspecialchars($resultTitle, ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
+                                <span style="display:inline-block;font-size:.7rem;font-weight:600;padding:.15rem .5rem;border-radius:4px;background:<?php echo $badge['bg']; ?>;color:<?php echo $badge['color']; ?>;vertical-align:middle;margin-left:.5rem;">
+                                    <?php echo htmlspecialchars($badge['label']); ?>
+                                </span>
                             </h2>
                             <?php if ($resultExcerpt && trim($resultExcerpt) !== '') : ?>
                                 <p class="search-result-excerpt">

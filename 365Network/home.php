@@ -287,30 +287,30 @@ $layoutClass = match ($homepageLayout) {
             <?php endif; ?>
 
             <?php if ($showHeroSearch) : ?>
-            <!-- Erweiterte Suche (Customizer: homepage.show_hero_search) -->
+            <!-- Übergreifende Suche: Experten, Firmen, Speaker, Events (Customizer: homepage.show_hero_search) -->
             <form class="hero-search" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search" method="GET">
                 <div class="hero-search-row">
                     <div class="hero-search-field" style="flex:2;">
-                        <label for="hero-q">Experte/Spezialisierung</label>
-                        <input type="search" id="hero-q" name="q" placeholder="Python, Cloud Security, SAP …" autocomplete="off">
+                        <label for="hero-q">Suchbegriff</label>
+                        <input type="search" id="hero-q" name="q" placeholder="Experten, Firmen, Speaker, Events …" autocomplete="off">
                     </div>
                     <div class="hero-search-field">
                         <label for="hero-location">Standort</label>
                         <input type="text" id="hero-location" name="location" placeholder="Stadt oder Remote">
                     </div>
                     <div class="hero-search-field">
-                        <label for="hero-level">Expertise-Level</label>
-                        <select id="hero-level" name="level">
-                            <option value="">Alle Level</option>
-                            <option value="junior">Junior</option>
-                            <option value="mid">Mid-Level</option>
-                            <option value="senior">Senior</option>
-                            <option value="lead">Lead / Principal</option>
+                        <label for="hero-type">Bereich</label>
+                        <select id="hero-type" name="type">
+                            <option value="">Alle Bereiche</option>
+                            <?php if ($hasExperts) : ?><option value="experts">Experten</option><?php endif; ?>
+                            <?php if ($hasCompanies) : ?><option value="companies">Firmen</option><?php endif; ?>
+                            <?php if ($hasSpeakers) : ?><option value="speakers">Speaker</option><?php endif; ?>
+                            <?php if ($hasEvents) : ?><option value="events">Events</option><?php endif; ?>
                         </select>
                     </div>
                     <div class="hero-search-field">
-                        <label for="hero-certs">Zertifizierungen</label>
-                        <input type="text" id="hero-certs" name="certifications" placeholder="AWS, Azure, CISSP …">
+                        <label for="hero-filter">Filter</label>
+                        <input type="text" id="hero-filter" name="filter" placeholder="Skills, Branche, Tags …">
                     </div>
                     <button type="submit" class="hero-search-btn" aria-label="Suchen">🔍</button>
                 </div>

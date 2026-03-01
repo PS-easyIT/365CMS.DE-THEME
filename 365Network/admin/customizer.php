@@ -591,6 +591,154 @@ $config = [
         ],
     ],
 
+    'sidebar' => [
+        'title' => '📌 Sidebar (Startseite)',
+        'sections' => [
+            'sidebar_enabled' => [
+                'label'       => 'Sidebar auf der Startseite anzeigen',
+                'description' => 'Aktiviert die Sidebar im Dashboard-Layout der Startseite.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_position' => [
+                'label'       => 'Sidebar-Position',
+                'description' => 'Auf welcher Seite die Sidebar angezeigt wird.',
+                'type'        => 'select',
+                'options'     => [
+                    'right' => 'Rechts (Standard)',
+                    'left'  => 'Links',
+                ],
+                'default'     => 'right',
+            ],
+            'sidebar_width' => [
+                'label'       => 'Sidebar-Breite (px)',
+                'description' => 'Breite der Sidebar in Pixeln (Standard: 340).',
+                'type'        => 'number',
+                'default'     => 340,
+            ],
+            'sidebar_bg_color' => [
+                'label'       => 'Sidebar-Hintergrundfarbe',
+                'description' => 'Hintergrundfarbe der Sidebar-Panels.',
+                'type'        => 'color',
+                'default'     => '#ffffff',
+            ],
+            'sidebar_border_color' => [
+                'label'       => 'Sidebar-Rahmenfarbe',
+                'description' => 'Rahmenfarbe der Sidebar-Panels.',
+                'type'        => 'color',
+                'default'     => '#e2e8f0',
+            ],
+            'sidebar_border_radius' => [
+                'label'       => 'Sidebar-Eckenradius (px)',
+                'description' => 'Rundung der Sidebar-Panels.',
+                'type'        => 'number',
+                'default'     => 12,
+            ],
+            'sidebar_padding' => [
+                'label'       => 'Sidebar-Innenabstand (rem)',
+                'description' => 'Innenabstand der Sidebar-Panels.',
+                'type'        => 'number',
+                'default'     => 1.25,
+            ],
+            'sidebar_title_size' => [
+                'label'       => 'Widget-Titel-Größe (rem)',
+                'description' => 'Schriftgröße der Sidebar-Widget-Überschriften.',
+                'type'        => 'number',
+                'default'     => 1.0,
+            ],
+            'sidebar_title_color' => [
+                'label'       => 'Widget-Titel-Farbe',
+                'description' => 'Textfarbe der Widget-Überschriften.',
+                'type'        => 'color',
+                'default'     => '#1e293b',
+            ],
+            'sidebar_text_color' => [
+                'label'       => 'Sidebar-Textfarbe',
+                'description' => 'Standard-Textfarbe in der Sidebar.',
+                'type'        => 'color',
+                'default'     => '#475569',
+            ],
+            'sidebar_gap' => [
+                'label'       => 'Abstand zwischen Widgets (rem)',
+                'description' => 'Vertikaler Abstand zwischen Sidebar-Widgets.',
+                'type'        => 'number',
+                'default'     => 1.25,
+            ],
+            'sidebar_shadow' => [
+                'label'       => 'Widget-Schatten anzeigen',
+                'description' => 'Subtiler Schatten um Sidebar-Panels.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_booking_widget' => [
+                'label'       => 'Buchungsportal-Widget anzeigen',
+                'description' => 'Zeigt das Buchungsportal-Placeholder-Widget (bis ein Plugin es ersetzt).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'booking_widget_title' => [
+                'label'       => 'Buchungsportal-Überschrift',
+                'description' => 'Titel des Buchungsportal-Widgets.',
+                'type'        => 'text',
+                'default'     => '📅 Buchungsportal',
+            ],
+            'show_feed_widget' => [
+                'label'       => 'Feed/News-Widget anzeigen',
+                'description' => 'Zeigt das Feed-Aggregator-Widget (cms-feed Plugin oder Placeholder).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'feed_widget_title' => [
+                'label'       => 'Feed-Widget-Überschrift',
+                'description' => 'Titel des Feed-Widgets.',
+                'type'        => 'text',
+                'default'     => '📰 Feed-Aggregator',
+            ],
+            'feed_widget_count' => [
+                'label'       => 'Anzahl Feed-Beiträge',
+                'description' => 'Maximale Anzahl angezeigter Beiträge im Feed-Widget (1–10).',
+                'type'        => 'number',
+                'default'     => 5,
+            ],
+            'show_jobs_widget' => [
+                'label'       => 'Job-Anzeigen-Widget anzeigen',
+                'description' => 'Zeigt das Job-Anzeigen-Widget (cms-jobprofile-generator Plugin oder Placeholder).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'jobs_widget_title' => [
+                'label'       => 'Job-Widget-Überschrift',
+                'description' => 'Titel des Job-Anzeigen-Widgets.',
+                'type'        => 'text',
+                'default'     => '💼 Job-Anzeigen',
+            ],
+            'show_blog_widget' => [
+                'label'       => 'Blog-Beiträge-Widget anzeigen',
+                'description' => 'Zeigt die neuesten Blog-Beiträge in der Sidebar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'blog_widget_title' => [
+                'label'       => 'Blog-Widget-Überschrift',
+                'description' => 'Titel des Blog-Widgets.',
+                'type'        => 'text',
+                'default'     => '📝 Aktuelle Beiträge',
+            ],
+            'blog_widget_count' => [
+                'label'       => 'Anzahl Blog-Beiträge',
+                'description' => 'Maximale Anzahl angezeigter Beiträge (1–10).',
+                'type'        => 'number',
+                'default'     => 5,
+            ],
+            'sidebar_custom_html' => [
+                'label'       => 'Eigenes HTML-Widget',
+                'description' => 'Zusätzliches HTML in der Sidebar (z. B. Banner, Partnerlogos). Wird nach allen Widgets angezeigt.',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+        ],
+    ],
+
     'effects' => [
         'title' => '✨ Effekte & Animationen',
         'sections' => [
@@ -958,7 +1106,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                         </div>
                     </div>
 
-                    <?php elseif ($activeTab === 'header' || $activeTab === 'footer' || $activeTab === 'buttons'):
+                    <?php elseif ($activeTab === 'header' || $activeTab === 'footer' || $activeTab === 'buttons' || $activeTab === 'sidebar'):
                         // ── Header / Footer / Buttons: 2-Spalten-Karten-Layout ──────
                         $tabCardGroups = [
                             'header' => [
@@ -976,6 +1124,16 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                             'buttons' => [
                                 '📐 Button-Form' => ['button_border_radius', 'button_padding_x', 'button_padding_y'],
                                 '🔤 Button-Text' => ['button_font_weight', 'button_transform'],
+                            ],
+                            'sidebar' => [
+                                '⚙️ Sidebar-Grundeinstellungen' => ['sidebar_enabled', 'sidebar_position', 'sidebar_width', 'sidebar_gap'],
+                                '🎨 Sidebar-Design' => ['sidebar_bg_color', 'sidebar_border_color', 'sidebar_border_radius', 'sidebar_padding', 'sidebar_shadow'],
+                                '🔤 Sidebar-Typografie' => ['sidebar_title_size', 'sidebar_title_color', 'sidebar_text_color'],
+                                '📅 Buchungsportal-Widget' => ['show_booking_widget', 'booking_widget_title'],
+                                '📰 Feed-Widget' => ['show_feed_widget', 'feed_widget_title', 'feed_widget_count'],
+                                '💼 Job-Widget' => ['show_jobs_widget', 'jobs_widget_title'],
+                                '📝 Blog-Widget' => ['show_blog_widget', 'blog_widget_title', 'blog_widget_count'],
+                                '🧩 Eigenes HTML' => ['sidebar_custom_html'],
                             ],
                         ];
                         $cardGroups = $tabCardGroups[$activeTab] ?? [];

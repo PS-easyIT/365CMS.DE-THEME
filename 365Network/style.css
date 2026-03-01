@@ -2235,11 +2235,12 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     pointer-events: none;
     z-index: 0;
     opacity: var(--network-animation-opacity, 0.15);
+    clip-path: inset(0);  /* Canvas auf Header-Bereich begrenzen ohne overflow:hidden */
 }
 
 .site-header {
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden entfernt – schnitt Profil-Dropdown ab */
 }
 
 .site-header .header-container {
