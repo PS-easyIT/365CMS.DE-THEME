@@ -897,6 +897,74 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     gap: 1.25rem;
 }
 
+/* ===== Layout-Varianten (via Customizer) ===== */
+.dashboard-layout--sidebar-left {
+    grid-template-columns: 320px 1fr;
+}
+.dashboard-layout--sidebar-left .dashboard-sidebar {
+    order: -1;
+}
+
+.dashboard-layout--full-width {
+    grid-template-columns: 1fr;
+}
+.dashboard-layout--full-width .dashboard-sidebar {
+    display: none;
+}
+
+/* ===== Hero Subtitle ===== */
+.hero-subtitle {
+    font-size: 1rem;
+    color: var(--muted-color);
+    margin-top: 0.5rem;
+    font-weight: 400;
+    max-width: 600px;
+}
+
+/* ===== Widget-Zones (Placeholder-Panels in Sidebar) ===== */
+.widget-zone {
+    position: relative;
+}
+
+.widget-zone h3 {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    margin: 0 0 0.75rem 0;
+}
+
+.widget-zone__hint {
+    font-size: 0.8rem;
+    color: rgb(255 255 255 / 0.5);
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+}
+
+.widget-zone__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border: 2px dashed rgb(255 255 255 / 0.12);
+    border-radius: var(--radius-sm);
+    text-align: center;
+}
+
+.widget-zone__icon {
+    font-size: 1.5rem;
+}
+
+.widget-zone__text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgb(255 255 255 / 0.4);
+}
+
 /* ===== Section Headers ===== */
 .section-header {
     display: flex;
@@ -1848,11 +1916,23 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     .dashboard-layout {
         grid-template-columns: 1fr 280px;
     }
+    .dashboard-layout--sidebar-left {
+        grid-template-columns: 280px 1fr;
+    }
+    .dashboard-layout--full-width {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 1024px) {
     .dashboard-layout {
         grid-template-columns: 1fr;
+    }
+    .dashboard-layout--sidebar-left {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-layout--sidebar-left .dashboard-sidebar {
+        order: 0;
     }
 
     .header-container { padding: 0 1.25rem; }
@@ -2013,6 +2093,10 @@ body.dark-mode .auth-card {
 body.dark-mode .sidebar-panel {
     background: #020617;
     border: 1px solid #1e293b;
+}
+
+body.dark-mode .widget-zone__placeholder {
+    border-color: rgb(255 255 255 / 0.06);
 }
 
 body.dark-mode .hero-section {
