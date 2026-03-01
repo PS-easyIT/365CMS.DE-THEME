@@ -115,6 +115,38 @@
                 setTimeout(function () { el.remove(); }, 400);
             }, delay);
         });
+
+        // ===== Profile Dropdown =====
+        var profileDropdown = document.getElementById('ptcProfileDropdown');
+        if (profileDropdown) {
+            var profileToggle = profileDropdown.querySelector('.ptc-profile-toggle');
+            if (profileToggle) {
+                profileToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var isOpen = profileDropdown.classList.toggle('is-open');
+                    profileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+            }
+            // Schließen per Klick außerhalb
+            document.addEventListener('click', function (e) {
+                if (!profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('is-open');
+                    if (profileToggle) {
+                        profileToggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+            // Schließen per Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && profileDropdown.classList.contains('is-open')) {
+                    profileDropdown.classList.remove('is-open');
+                    if (profileToggle) {
+                        profileToggle.setAttribute('aria-expanded', 'false');
+                        profileToggle.focus();
+                    }
+                }
+            });
+        }
     }
 
     // Entry point

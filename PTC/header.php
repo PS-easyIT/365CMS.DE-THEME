@@ -146,26 +146,26 @@ $_headerCtaUrl  = (string) ptc_customizer_get('header', 'header_cta_url', '/#kon
 
         <div class="ptc-drawer-actions">
             <?php if ($isLoggedIn): ?>
-                <a href="<?php echo $siteUrl; ?>/member" class="btn-ptc btn-ptc-accent" style="width:100%;justify-content:center;display:flex;">
+                <a href="<?php echo $siteUrl; ?>/member" class="btn-ptc btn-ptc-accent ptc-drawer-btn">
                     📊 Dashboard
                 </a>
-                <a href="<?php echo $siteUrl; ?>/logout" class="btn-ptc btn-ptc-ghost" style="width:100%;justify-content:center;display:flex;margin-top:.5rem;">
+                <a href="<?php echo $siteUrl; ?>/logout" class="btn-ptc btn-ptc-ghost ptc-drawer-btn">
                     🚪 Abmelden
                 </a>
             <?php else: ?>
                 <?php if ($_showLoginBtn): ?>
-                    <a href="<?php echo $siteUrl; ?>/login" class="btn-ptc btn-ptc-ghost" style="width:100%;justify-content:center;display:flex;">
+                    <a href="<?php echo $siteUrl; ?>/login" class="btn-ptc btn-ptc-ghost ptc-drawer-btn">
                         Anmelden
                     </a>
                 <?php endif; ?>
                 <?php if ($_showRegBtn): ?>
-                    <a href="<?php echo $siteUrl; ?>/register" class="btn-ptc btn-ptc-accent" style="width:100%;justify-content:center;display:flex;margin-top:.5rem;">
+                    <a href="<?php echo $siteUrl; ?>/register" class="btn-ptc btn-ptc-accent ptc-drawer-btn">
                         Registrieren
                     </a>
                 <?php endif; ?>
                 <?php if ($_headerCtaText !== '' && !$_showLoginBtn && !$_showRegBtn): ?>
                     <a href="<?php echo htmlspecialchars($_headerCtaUrl, ENT_QUOTES, 'UTF-8'); ?>"
-                       class="btn-ptc btn-ptc-accent" style="width:100%;justify-content:center;display:flex;">
+                       class="btn-ptc btn-ptc-accent ptc-drawer-btn">
                         <?php echo htmlspecialchars($_headerCtaText, ENT_QUOTES, 'UTF-8'); ?>
                     </a>
                 <?php endif; ?>

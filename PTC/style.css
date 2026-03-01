@@ -337,6 +337,12 @@ a:hover {
     gap: 0.5rem;
 }
 
+.ptc-drawer-btn {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
 /* Spacer for fixed header */
 .ptc-content {
     padding-top: 72px;
@@ -1318,6 +1324,91 @@ a:hover {
 .btn-ptc-sm {
     padding: 0.4375rem 0.875rem;
     font-size: 0.825rem;
+}
+
+/* ============================================================================
+   20b. Search Results
+   ============================================================================ */
+.ptc-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ptc-search-item {
+    background: var(--ptc-white);
+    border: 1px solid var(--ptc-gray-100);
+    border-radius: var(--ptc-radius);
+    padding: 1.25rem 1.5rem;
+    transition: var(--ptc-ease);
+}
+
+.ptc-search-item:hover {
+    border-color: var(--ptc-gray-200);
+    box-shadow: var(--ptc-shadow-sm);
+}
+
+.ptc-search-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ptc-navy);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.ptc-search-title a {
+    color: var(--ptc-navy);
+}
+
+.ptc-search-title a:hover {
+    color: var(--ptc-gold-dark);
+}
+
+.ptc-search-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.ptc-search-excerpt {
+    font-size: 0.9rem;
+    color: var(--ptc-text-light);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.ptc-search-url a {
+    font-size: 0.8rem;
+    color: var(--ptc-gold-dark);
+}
+
+.ptc-search-url a:hover {
+    color: var(--ptc-navy);
+}
+
+/* ============================================================================
+   20c. Empty State
+   ============================================================================ */
+.ptc-empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--ptc-text-light);
+}
+
+.ptc-empty-state p strong {
+    color: var(--ptc-text);
+}
+
+.ptc-text-muted {
+    color: var(--ptc-slate);
+    font-size: 0.9rem;
 }
 
 /* ============================================================================
