@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 $siteUrl      = SITE_URL;
 $themeManager = \CMS\ThemeManager::instance();
 $siteTitle    = $themeManager->getSiteTitle();
+$logoUrl      = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
 $error        = theme_get_flash('error');
 $success      = theme_get_flash('success');
 
@@ -27,19 +28,26 @@ $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
 
             <!-- Logo -->
             <div class="auth-logo">
-                <svg class="network-icon" style="width:56px;height:56px;color:var(--primary-color);margin:0 auto 0.75rem;display:block;"
-                     viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <circle cx="30" cy="30" r="6" fill="currentColor"/>
-                    <circle cx="15" cy="15" r="5" fill="currentColor"/>
-                    <circle cx="45" cy="15" r="5" fill="currentColor"/>
-                    <circle cx="15" cy="45" r="5" fill="currentColor"/>
-                    <circle cx="45" cy="45" r="5" fill="currentColor"/>
-                    <line x1="30" y1="30" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
-                    <line x1="30" y1="30" x2="45" y2="15" stroke="currentColor" stroke-width="2"/>
-                    <line x1="30" y1="30" x2="15" y2="45" stroke="currentColor" stroke-width="2"/>
-                    <line x1="30" y1="30" x2="45" y2="45" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <h1><?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?></h1>
+                <?php if (!empty($logoUrl)) : ?>
+                    <img src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                         alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>"
+                         loading="eager"
+                         style="max-height:60px;height:auto;margin:0 auto 0.75rem;display:block;">
+                <?php else : ?>
+                    <svg class="network-icon" style="width:56px;height:56px;color:var(--primary-color);margin:0 auto 0.75rem;display:block;"
+                         viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="30" cy="30" r="6" fill="currentColor"/>
+                        <circle cx="15" cy="15" r="5" fill="currentColor"/>
+                        <circle cx="45" cy="15" r="5" fill="currentColor"/>
+                        <circle cx="15" cy="45" r="5" fill="currentColor"/>
+                        <circle cx="45" cy="45" r="5" fill="currentColor"/>
+                        <line x1="30" y1="30" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+                        <line x1="30" y1="30" x2="45" y2="15" stroke="currentColor" stroke-width="2"/>
+                        <line x1="30" y1="30" x2="15" y2="45" stroke="currentColor" stroke-width="2"/>
+                        <line x1="30" y1="30" x2="45" y2="45" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h1><?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?></h1>
+                <?php endif; ?>
                 <p>Erstelle dein kostenloses Konto</p>
             </div>
 
