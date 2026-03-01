@@ -559,67 +559,6 @@
           "default": "",
           "description": "Optionales Hintergrundbild im Hero-Bereich"
         },
-        "show_services": {
-          "label": "Dienstleistungen-Sektion anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Service-Cards Bereich"
-        },
-        "services_title": {
-          "label": "Dienstleistungen-Überschrift",
-          "type": "text",
-          "default": "Unsere Dienstleistungen",
-          "description": "Titel über der Dienstleistungs-Sektion"
-        },
-        "services_subtitle": {
-          "label": "Dienstleistungen-Untertitel",
-          "type": "text",
-          "default": "Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen.",
-          "description": "Kurze Beschreibung unter dem Titel"
-        },
-        "services_columns": {
-          "label": "Spaltenanzahl (Cards)",
-          "type": "select",
-          "options": { "2": "2 Spalten", "3": "3 Spalten (Standard)" },
-          "default": "3",
-          "description": "Anzahl Service-Cards pro Zeile"
-        },
-        "show_events": {
-          "label": "Termine-Sektion anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Bereich 'Aktuelle Termine'"
-        },
-        "events_title": {
-          "label": "Termine-Überschrift",
-          "type": "text",
-          "default": "Aktuelle Termine & Angebote",
-          "description": "Titel über der Termine-Sektion"
-        },
-        "events_subtitle": {
-          "label": "Termine-Untertitel",
-          "type": "text",
-          "default": "Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen.",
-          "description": "Beschreibung unter dem Titel"
-        },
-        "show_faq": {
-          "label": "FAQ-Sektion anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Häufig gestellte Fragen"
-        },
-        "faq_title": {
-          "label": "FAQ-Überschrift",
-          "type": "text",
-          "default": "Häufig gestellte Fragen",
-          "description": "Titel über dem FAQ-Bereich"
-        },
-        "faq_subtitle": {
-          "label": "FAQ-Untertitel",
-          "type": "text",
-          "default": "Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen.",
-          "description": "Beschreibung unter dem FAQ-Titel"
-        },
         "show_cta": {
           "label": "CTA-Sektion anzeigen",
           "type": "checkbox",
@@ -662,6 +601,105 @@
           "default": "/#dienstleistungen",
           "description": "Ziel-URL des zweiten CTA-Buttons"
         }
+      }
+    },
+
+    "services": {
+      "label": "Dienstleistungen",
+      "description": "Service-Karten (bis zu 8) mit Icon, Titel, Beschreibung und optionalem Link.",
+      "settings": {
+        "show_services":      { "label": "Sektion anzeigen",           "type": "checkbox", "default": true },
+        "services_tag":       { "label": "Tag-Text",                   "type": "text",     "default": "Unsere Leistungen" },
+        "services_title":     { "label": "Überschrift",                "type": "text",     "default": "Unsere Dienstleistungen" },
+        "services_subtitle":  { "label": "Untertitel",                 "type": "textarea", "default": "Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen." },
+        "services_columns":   { "label": "Spalten",                    "type": "select",   "options": { "2": "2", "3": "3", "4": "4" }, "default": "3" },
+        "services_bg_style":  { "label": "Hintergrund-Stil",           "type": "select",   "options": { "default": "Transparent", "alt": "Weiß", "navy": "Navy" }, "default": "default" },
+        "services_card_style":{ "label": "Card-Design",                "type": "select",   "options": { "bordered": "Rahmen", "shadow": "Schatten", "flat": "Flach", "filled": "Gefüllt" }, "default": "bordered" },
+        "services_icon_style":{ "label": "Icon-Stil",                  "type": "select",   "options": { "circle": "Kreis", "square": "Quadrat", "plain": "Nur Emoji", "large": "Groß" }, "default": "circle" },
+        "services_max_items": { "label": "Max. sichtbare Karten",      "type": "number",   "default": 6 },
+        "services_show_cta":  { "label": "CTA-Button anzeigen",        "type": "checkbox", "default": false },
+        "services_cta_label": { "label": "CTA-Button Text",            "type": "text",     "default": "Alle Leistungen entdecken" },
+        "services_cta_url":   { "label": "CTA-Button URL",             "type": "text",     "default": "/leistungen" },
+        "service_1_icon":     { "label": "Service 1 Icon",             "type": "text",     "default": "🎯" },
+        "service_1_title":    { "label": "Service 1 Titel",            "type": "text",     "default": "Aktivierung und Vermittlung" },
+        "service_1_text":     { "label": "Service 1 Beschreibung",     "type": "textarea", "default": "" },
+        "service_1_url":      { "label": "Service 1 Link",             "type": "text",     "default": "" },
+        "service_2_icon":     { "label": "Service 2 Icon",             "type": "text",     "default": "🏗️" },
+        "service_2_title":    { "label": "Service 2 Titel",            "type": "text",     "default": "Logistiklehrwerkstatt" },
+        "service_2_text":     { "label": "Service 2 Beschreibung",     "type": "textarea", "default": "" },
+        "service_2_url":      { "label": "Service 2 Link",             "type": "text",     "default": "" },
+        "service_3_icon":     { "label": "Service 3 Icon",             "type": "text",     "default": "🎓" },
+        "service_3_title":    { "label": "Service 3 Titel",            "type": "text",     "default": "Akademie und Bildung" },
+        "service_3_text":     { "label": "Service 3 Beschreibung",     "type": "textarea", "default": "" },
+        "service_3_url":      { "label": "Service 3 Link",             "type": "text",     "default": "" },
+        "service_4_icon":     { "label": "Service 4 Icon",             "type": "text",     "default": "🤝" },
+        "service_4_title":    { "label": "Service 4 Titel",            "type": "text",     "default": "Personalvermittlung" },
+        "service_4_text":     { "label": "Service 4 Beschreibung",     "type": "textarea", "default": "" },
+        "service_4_url":      { "label": "Service 4 Link",             "type": "text",     "default": "" },
+        "service_5_icon":     { "label": "Service 5 Icon",             "type": "text",     "default": "🔄" },
+        "service_5_title":    { "label": "Service 5 Titel",            "type": "text",     "default": "Arbeitnehmerüberlassung" },
+        "service_5_text":     { "label": "Service 5 Beschreibung",     "type": "textarea", "default": "" },
+        "service_5_url":      { "label": "Service 5 Link",             "type": "text",     "default": "" },
+        "service_6_icon":     { "label": "Service 6 Icon",             "type": "text",     "default": "🚀" },
+        "service_6_title":    { "label": "Service 6 Titel",            "type": "text",     "default": "Ausbildung" },
+        "service_6_text":     { "label": "Service 6 Beschreibung",     "type": "textarea", "default": "" },
+        "service_6_url":      { "label": "Service 6 Link",             "type": "text",     "default": "" }
+      }
+    },
+
+    "events": {
+      "label": "Termine",
+      "description": "Aktuelle Termine – automatisch aus cms-events Plugin oder manuell gepflegt (bis zu 6 Einträge).",
+      "settings": {
+        "show_events":        { "label": "Sektion anzeigen",           "type": "checkbox", "default": true },
+        "events_tag":         { "label": "Tag-Text",                   "type": "text",     "default": "Veranstaltungen" },
+        "events_title":       { "label": "Überschrift",                "type": "text",     "default": "Aktuelle Termine & Angebote" },
+        "events_subtitle":    { "label": "Untertitel",                 "type": "textarea", "default": "Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen." },
+        "events_source":      { "label": "Datenquelle",               "type": "select",   "options": { "auto": "Automatisch", "plugin": "Nur Plugin", "manual": "Nur manuell" }, "default": "auto" },
+        "events_max_items":   { "label": "Maximale Anzahl",           "type": "number",   "default": 6 },
+        "events_columns":     { "label": "Spalten",                    "type": "select",   "options": { "2": "2", "3": "3", "4": "4" }, "default": "3" },
+        "events_bg_style":    { "label": "Hintergrund-Stil",           "type": "select",   "options": { "alt": "Weiß", "default": "Transparent", "navy": "Navy" }, "default": "alt" },
+        "events_show_date_badge": { "label": "Datums-Badge",          "type": "checkbox", "default": true },
+        "events_link_text":   { "label": "Link-Text",                  "type": "text",     "default": "Mehr erfahren →" },
+        "events_show_empty":  { "label": "Platzhalter anzeigen",       "type": "checkbox", "default": true },
+        "events_empty_text":  { "label": "Platzhaltertext",            "type": "text",     "default": "Neue Termine werden in Kürze veröffentlicht" },
+        "events_show_cta":    { "label": "CTA-Button anzeigen",        "type": "checkbox", "default": false },
+        "events_cta_label":   { "label": "CTA-Button Text",            "type": "text",     "default": "Alle Termine ansehen" },
+        "events_cta_url":     { "label": "CTA-Button URL",             "type": "text",     "default": "/termine" }
+      }
+    },
+
+    "faq": {
+      "label": "FAQ",
+      "description": "Häufig gestellte Fragen – bis zu 8 Frage-Antwort-Paare.",
+      "settings": {
+        "show_faq":           { "label": "Sektion anzeigen",           "type": "checkbox", "default": true },
+        "faq_tag":            { "label": "Tag-Text",                   "type": "text",     "default": "Wissenswertes" },
+        "faq_title":          { "label": "Überschrift",                "type": "text",     "default": "Häufig gestellte Fragen" },
+        "faq_subtitle":       { "label": "Untertitel",                 "type": "textarea", "default": "Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen." },
+        "faq_style":          { "label": "Darstellungs-Stil",          "type": "select",   "options": { "accordion": "Akkordeon", "open": "Alle geöffnet" }, "default": "accordion" },
+        "faq_max_width":      { "label": "Maximale Breite (px)",       "type": "number",   "default": 720 },
+        "faq_bg_style":       { "label": "Hintergrund-Stil",           "type": "select",   "options": { "default": "Transparent", "alt": "Weiß" }, "default": "default" },
+        "faq_show_cta":       { "label": "CTA anzeigen",               "type": "checkbox", "default": false },
+        "faq_cta_text":       { "label": "CTA-Hinweistext",            "type": "text",     "default": "Ihre Frage war nicht dabei?" },
+        "faq_cta_label":      { "label": "CTA-Button Text",            "type": "text",     "default": "Kontaktieren Sie uns" },
+        "faq_cta_url":        { "label": "CTA-Button URL",             "type": "text",     "default": "/#kontakt" },
+        "faq_1_question":     { "label": "Frage 1",                    "type": "text",     "default": "Was sind Ihre Personaldienstleistungen?" },
+        "faq_1_answer":       { "label": "Antwort 1",                  "type": "textarea", "default": "" },
+        "faq_2_question":     { "label": "Frage 2",                    "type": "text",     "default": "Was ist Arbeitnehmerüberlassung?" },
+        "faq_2_answer":       { "label": "Antwort 2",                  "type": "textarea", "default": "" },
+        "faq_3_question":     { "label": "Frage 3",                    "type": "text",     "default": "Welche Weiterbildungen bieten Sie an?" },
+        "faq_3_answer":       { "label": "Antwort 3",                  "type": "textarea", "default": "" },
+        "faq_4_question":     { "label": "Frage 4",                    "type": "text",     "default": "" },
+        "faq_4_answer":       { "label": "Antwort 4",                  "type": "textarea", "default": "" },
+        "faq_5_question":     { "label": "Frage 5",                    "type": "text",     "default": "" },
+        "faq_5_answer":       { "label": "Antwort 5",                  "type": "textarea", "default": "" },
+        "faq_6_question":     { "label": "Frage 6",                    "type": "text",     "default": "" },
+        "faq_6_answer":       { "label": "Antwort 6",                  "type": "textarea", "default": "" },
+        "faq_7_question":     { "label": "Frage 7",                    "type": "text",     "default": "" },
+        "faq_7_answer":       { "label": "Antwort 7",                  "type": "textarea", "default": "" },
+        "faq_8_question":     { "label": "Frage 8",                    "type": "text",     "default": "" },
+        "faq_8_answer":       { "label": "Antwort 8",                  "type": "textarea", "default": "" }
       }
     },
 

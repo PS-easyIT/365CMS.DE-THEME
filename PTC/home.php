@@ -24,11 +24,38 @@ $hpBool = function (string $key, bool $default = true) use ($hpGet): bool {
     return filter_var($hpGet($key, $default), FILTER_VALIDATE_BOOLEAN);
 };
 
+// ── Services (eigene Kategorie) ──────────────────────────────────────────────
+$svc = ptc_customizer_category('services');
+$svcGet = function (string $key, mixed $default = '') use ($svc): mixed {
+    return $svc[$key] ?? $default;
+};
+$svcBool = function (string $key, bool $default = true) use ($svcGet): bool {
+    return filter_var($svcGet($key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
+// ── Events (eigene Kategorie) ────────────────────────────────────────────────
+$evt = ptc_customizer_category('events');
+$evtGet = function (string $key, mixed $default = '') use ($evt): mixed {
+    return $evt[$key] ?? $default;
+};
+$evtBool = function (string $key, bool $default = true) use ($evtGet): bool {
+    return filter_var($evtGet($key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
+// ── FAQ (eigene Kategorie) ───────────────────────────────────────────────────
+$faqCat = ptc_customizer_category('faq');
+$faqGet = function (string $key, mixed $default = '') use ($faqCat): mixed {
+    return $faqCat[$key] ?? $default;
+};
+$faqBool = function (string $key, bool $default = true) use ($faqGet): bool {
+    return filter_var($faqGet($key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
 // Sektions-Sichtbarkeit
 $showHero     = $hpBool('show_hero', true);
-$showServices = $hpBool('show_services', true);
-$showEvents   = $hpBool('show_events', true);
-$showFaq      = $hpBool('show_faq', true);
+$showServices = $svcBool('show_services', true);
+$showEvents   = $evtBool('show_events', true);
+$showFaq      = $faqBool('show_faq', true);
 $showCta      = $hpBool('show_cta', true);
 
 // Hero
@@ -42,17 +69,73 @@ $heroCta2Url      = (string) $hpGet('hero_cta_secondary_url', '#kontakt');
 $heroBgImage      = (string) $hpGet('hero_bg_image', '');
 
 // Services
-$servicesTitle    = (string) $hpGet('services_title', 'Unsere Dienstleistungen');
-$servicesSubtitle = (string) $hpGet('services_subtitle', 'Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen.');
-$servicesCols     = (string) $hpGet('services_columns', '3');
+$servicesTag      = (string) $svcGet('services_tag', 'Unsere Leistungen');
+$servicesTitle    = (string) $svcGet('services_title', 'Unsere Dienstleistungen');
+$servicesSubtitle = (string) $svcGet('services_subtitle', 'Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen.');
+$servicesCols     = (string) $svcGet('services_columns', '3');
+$servicesBgStyle  = (string) $svcGet('services_bg_style', 'default');
+$servicesCardStyle = (string) $svcGet('services_card_style', 'bordered');
+$servicesIconStyle = (string) $svcGet('services_icon_style', 'circle');
+$servicesShowHover = $svcBool('services_show_hover', true);
+$servicesMaxItems  = (int) $svcGet('services_max_items', 6);
+$servicesShowCta  = $svcBool('services_show_cta', false);
+$servicesCtaLabel = (string) $svcGet('services_cta_label', 'Alle Leistungen entdecken');
+$servicesCtaUrl   = (string) $svcGet('services_cta_url', '/leistungen');
+
+// Dynamische Service-Karten (1–8)
+$serviceCards = [];
+for ($i = 1; $i <= 8; $i++) {
+    $icon  = trim((string) $svcGet("service_{$i}_icon", ''));
+    $title = trim((string) $svcGet("service_{$i}_title", ''));
+    $text  = trim((string) $svcGet("service_{$i}_text", ''));
+    $url   = trim((string) $svcGet("service_{$i}_url", ''));
+    if ($icon !== '' || $title !== '') {
+        $serviceCards[] = ['icon' => $icon, 'title' => $title, 'text' => $text, 'url' => $url];
+    }
+}
+if (count($serviceCards) > $servicesMaxItems) {
+    $serviceCards = array_slice($serviceCards, 0, $servicesMaxItems);
+}
 
 // Events
-$eventsTitle      = (string) $hpGet('events_title', 'Aktuelle Termine & Angebote');
-$eventsSubtitle   = (string) $hpGet('events_subtitle', 'Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen.');
+$eventsTag          = (string) $evtGet('events_tag', 'Veranstaltungen');
+$eventsTitle        = (string) $evtGet('events_title', 'Aktuelle Termine & Angebote');
+$eventsSubtitle     = (string) $evtGet('events_subtitle', 'Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen.');
+$eventsSource       = (string) $evtGet('events_source', 'auto');
+$eventsMaxItems     = (int) $evtGet('events_max_items', 6);
+$eventsCols         = (string) $evtGet('events_columns', '3');
+$eventsBgStyle      = (string) $evtGet('events_bg_style', 'alt');
+$eventsCardStyle    = (string) $evtGet('events_card_style', 'bordered');
+$eventsDateBadge    = $evtBool('events_show_date_badge', true);
+$eventsLinkText     = (string) $evtGet('events_link_text', 'Mehr erfahren →');
+$eventsShowEmpty    = $evtBool('events_show_empty', true);
+$eventsEmptyText    = (string) $evtGet('events_empty_text', 'Neue Termine werden in Kürze veröffentlicht');
+$eventsEmptyHint    = (string) $evtGet('events_empty_hint', 'Schauen Sie bald wieder vorbei oder kontaktieren Sie uns direkt.');
+$eventsShowCta      = $evtBool('events_show_cta', false);
+$eventsCtaLabel     = (string) $evtGet('events_cta_label', 'Alle Termine ansehen');
+$eventsCtaUrl       = (string) $evtGet('events_cta_url', '/termine');
 
 // FAQ
-$faqTitle         = (string) $hpGet('faq_title', 'Häufig gestellte Fragen');
-$faqSubtitle      = (string) $hpGet('faq_subtitle', 'Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen.');
+$faqTag            = (string) $faqGet('faq_tag', 'Wissenswertes');
+$faqTitle          = (string) $faqGet('faq_title', 'Häufig gestellte Fragen');
+$faqSubtitle       = (string) $faqGet('faq_subtitle', 'Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen.');
+$faqStyle          = (string) $faqGet('faq_style', 'accordion');
+$faqMaxWidth       = (int) $faqGet('faq_max_width', 720);
+$faqBgStyle        = (string) $faqGet('faq_bg_style', 'default');
+$faqShowCta        = $faqBool('faq_show_cta', false);
+$faqCtaText        = (string) $faqGet('faq_cta_text', 'Ihre Frage war nicht dabei?');
+$faqCtaLabel       = (string) $faqGet('faq_cta_label', 'Kontaktieren Sie uns');
+$faqCtaUrl         = (string) $faqGet('faq_cta_url', '/#kontakt');
+
+// Dynamische FAQ-Items (1–8)
+$faqItems = [];
+for ($i = 1; $i <= 8; $i++) {
+    $q = trim((string) $faqGet("faq_{$i}_question", ''));
+    $a = trim((string) $faqGet("faq_{$i}_answer", ''));
+    if ($q !== '') {
+        $faqItems[] = ['question' => $q, 'answer' => $a];
+    }
+}
 
 // CTA
 $ctaTitle         = (string) $hpGet('cta_title', 'Bereit für den nächsten Karriereschritt?');
@@ -127,56 +210,51 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
 <?php if ($showServices): ?>
 <!-- ██ DIENSTLEISTUNGEN ██████████████████████████████████████████████████ -->
-<section class="ptc-section" id="dienstleistungen">
+<section class="ptc-section<?php echo $servicesBgStyle === 'alt' ? ' ptc-section-alt' : ($servicesBgStyle === 'navy' ? ' ptc-section-navy' : ''); ?>" id="dienstleistungen">
     <div class="ptc-container">
 
         <div class="ptc-section-head">
-            <span class="ptc-section-tag">Unsere Leistungen</span>
+            <?php if ($servicesTag !== ''): ?>
+                <span class="ptc-section-tag"><?php echo htmlspecialchars($servicesTag, ENT_QUOTES, 'UTF-8'); ?></span>
+            <?php endif; ?>
             <h2><?php echo htmlspecialchars($servicesTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
             <?php if ($servicesSubtitle !== ''): ?>
                 <p><?php echo htmlspecialchars($servicesSubtitle, ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
         </div>
 
-        <div class="ptc-services-grid" data-cols="<?php echo htmlspecialchars($servicesCols, ENT_QUOTES, 'UTF-8'); ?>">
+        <?php if (!empty($serviceCards)): ?>
+        <div class="ptc-services-grid" data-cols="<?php echo htmlspecialchars($servicesCols, ENT_QUOTES, 'UTF-8'); ?>" data-card-style="<?php echo htmlspecialchars($servicesCardStyle, ENT_QUOTES, 'UTF-8'); ?>" data-icon-style="<?php echo htmlspecialchars($servicesIconStyle, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $servicesShowHover ? ' data-hover="true"' : ''; ?>>
 
+            <?php foreach ($serviceCards as $card): ?>
             <article class="ptc-service-card">
-                <div class="ptc-service-icon">🎯</div>
-                <h3>Aktivierung und Vermittlung</h3>
-                <p>Förderung für Ihren Erfolg – individuelle Aktivierungsmaßnahmen und passgenaue Vermittlung in den Arbeitsmarkt.</p>
+                <?php if ($card['icon'] !== ''): ?>
+                    <div class="ptc-service-icon"><?php echo htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8'); ?></div>
+                <?php endif; ?>
+                <?php if ($card['title'] !== ''): ?>
+                    <h3><?php echo htmlspecialchars($card['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                <?php endif; ?>
+                <?php if ($card['text'] !== ''): ?>
+                    <p><?php echo htmlspecialchars($card['text'], ENT_QUOTES, 'UTF-8'); ?></p>
+                <?php endif; ?>
+                <?php if ($card['url'] !== ''): ?>
+                    <a href="<?php echo htmlspecialchars($card['url'], ENT_QUOTES, 'UTF-8'); ?>" class="ptc-service-link">Mehr erfahren →</a>
+                <?php endif; ?>
             </article>
-
-            <article class="ptc-service-card">
-                <div class="ptc-service-icon">🏗️</div>
-                <h3>Logistiklehrwerkstatt</h3>
-                <p>Fachpraxis auf höchstem Niveau – praxisnahe Qualifizierung in Logistik, Lagerwirtschaft und Gabelstaplerführung.</p>
-            </article>
-
-            <article class="ptc-service-card">
-                <div class="ptc-service-icon">🎓</div>
-                <h3>Akademie und Bildung</h3>
-                <p>Individuelle Coachings, Führungskräfte-Workshops und zertifizierte Weiterbildungsprogramme für Ihre Karriere.</p>
-            </article>
-
-            <article class="ptc-service-card">
-                <div class="ptc-service-icon">🤝</div>
-                <h3>Personalvermittlung</h3>
-                <p>Den perfekten Job finden – wir bringen qualifizierte Fachkräfte und Unternehmen zusammen.</p>
-            </article>
-
-            <article class="ptc-service-card">
-                <div class="ptc-service-icon">🔄</div>
-                <h3>Arbeitnehmerüberlassung</h3>
-                <p>Flexibilität für Ihr Unternehmen – temporäre Fachkräfte genau dann, wenn Sie sie brauchen.</p>
-            </article>
-
-            <article class="ptc-service-card">
-                <div class="ptc-service-icon">🚀</div>
-                <h3>Ausbildung</h3>
-                <p>Start in Ihre berufliche Zukunft – Ausbildungsplätze und Einstiegsprogramme für junge Talente.</p>
-            </article>
+            <?php endforeach; ?>
 
         </div>
+        <?php endif; ?>
+
+        <?php if ($servicesShowCta && $servicesCtaLabel !== ''): ?>
+        <div class="ptc-section-cta">
+            <a href="<?php echo htmlspecialchars($servicesCtaUrl, ENT_QUOTES, 'UTF-8'); ?>"
+               class="btn-ptc btn-ptc-accent btn-ptc-lg">
+                <?php echo htmlspecialchars($servicesCtaLabel, ENT_QUOTES, 'UTF-8'); ?>
+            </a>
+        </div>
+        <?php endif; ?>
+
     </div>
 </section>
 <?php endif; ?>
@@ -185,10 +263,13 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
 <?php if ($showEvents): ?>
 <!-- ██ AKTUELLE TERMINE ██████████████████████████████████████████████████ -->
-<section class="ptc-section ptc-section-alt" id="termine">
+<section class="ptc-section<?php echo $eventsBgStyle === 'alt' ? ' ptc-section-alt' : ($eventsBgStyle === 'navy' ? ' ptc-section-navy' : ''); ?>" id="termine">
     <div class="ptc-container">
 
         <div class="ptc-section-head">
+            <?php if ($eventsTag !== ''): ?>
+                <span class="ptc-section-tag"><?php echo htmlspecialchars($eventsTag, ENT_QUOTES, 'UTF-8'); ?></span>
+            <?php endif; ?>
             <h2><?php echo htmlspecialchars($eventsTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
             <?php if ($eventsSubtitle !== ''): ?>
                 <p><?php echo htmlspecialchars($eventsSubtitle, ENT_QUOTES, 'UTF-8'); ?></p>
@@ -197,51 +278,102 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
         <?php
         // Versuche Events aus dem Plugin zu laden
-        $hasEventsPlugin = \CMS\PluginManager::instance()->isPluginActive('cms-events');
         $events = [];
+        $usePlugin = ($eventsSource === 'auto' || $eventsSource === 'plugin');
+        $useManual = ($eventsSource === 'auto' || $eventsSource === 'manual');
 
-        if ($hasEventsPlugin) {
+        if ($usePlugin && \CMS\PluginManager::instance()->isPluginActive('cms-events')) {
             try {
                 $db     = \CMS\Database::instance();
                 $prefix = $db->prefix();
                 $stmt   = $db->prepare(
-                    "SELECT * FROM {$prefix}events WHERE status = 'published' AND event_date >= CURDATE() ORDER BY event_date ASC LIMIT 5"
+                    "SELECT * FROM {$prefix}events WHERE status = 'published' AND event_date >= CURDATE() ORDER BY event_date ASC LIMIT ?"
                 );
-                $stmt->execute();
+                $stmt->execute([$eventsMaxItems]);
                 $events = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             } catch (\Throwable $e) {
                 $events = [];
             }
         }
+
+        // Manuelle Termine als Fallback (oder als einzige Quelle)
+        if (empty($events) && $useManual) {
+            for ($i = 1; $i <= 6; $i++) {
+                $eTitle = trim((string) $evtGet("event_{$i}_title", ''));
+                if ($eTitle !== '') {
+                    $events[] = [
+                        'title'      => $eTitle,
+                        'event_date' => trim((string) $evtGet("event_{$i}_date", '')),
+                        'text'       => trim((string) $evtGet("event_{$i}_text", '')),
+                        'url'        => trim((string) $evtGet("event_{$i}_url", '')),
+                        'is_manual'  => true,
+                    ];
+                }
+            }
+        }
         ?>
 
         <?php if (!empty($events)): ?>
-            <div class="ptc-events-grid">
+            <div class="ptc-events-grid" data-cols="<?php echo htmlspecialchars($eventsCols, ENT_QUOTES, 'UTF-8'); ?>" data-card-style="<?php echo htmlspecialchars($eventsCardStyle, ENT_QUOTES, 'UTF-8'); ?>">
                 <?php foreach ($events as $event): ?>
                     <article class="ptc-event-card">
+                        <?php if ($eventsDateBadge): ?>
                         <div class="ptc-event-date">
                             <span class="ptc-event-icon">📅</span>
                             <strong><?php
-                                $d = new \DateTime($event['event_date']);
-                                echo htmlspecialchars($d->format('d. M.'), ENT_QUOTES, 'UTF-8');
+                                if (!empty($event['event_date'])) {
+                                    if (!empty($event['is_manual'])) {
+                                        echo htmlspecialchars($event['event_date'], ENT_QUOTES, 'UTF-8');
+                                    } else {
+                                        $d = new \DateTime($event['event_date']);
+                                        echo htmlspecialchars($d->format('d. M.'), ENT_QUOTES, 'UTF-8');
+                                    }
+                                } else {
+                                    echo 'Demnächst';
+                                }
                             ?></strong>
                         </div>
+                        <?php endif; ?>
                         <h4><?php echo htmlspecialchars($event['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?></h4>
-                        <a href="<?php echo $siteUrl; ?>/events/<?php echo (int)$event['id']; ?>" class="ptc-event-link">Mehr erfahren →</a>
+                        <?php if (!empty($event['text'])): ?>
+                            <p style="color:var(--ptc-muted);font-size:.9rem;margin:.5rem 0;"><?php echo htmlspecialchars($event['text'], ENT_QUOTES, 'UTF-8'); ?></p>
+                        <?php endif; ?>
+                        <?php
+                        $eventUrl = '';
+                        if (!empty($event['url'])) {
+                            $eventUrl = $event['url'];
+                        } elseif (!empty($event['id']) && empty($event['is_manual'])) {
+                            $eventUrl = $siteUrl . '/events/' . (int)$event['id'];
+                        }
+                        if ($eventUrl !== ''):
+                        ?>
+                            <a href="<?php echo htmlspecialchars($eventUrl, ENT_QUOTES, 'UTF-8'); ?>" class="ptc-event-link"><?php echo htmlspecialchars($eventsLinkText, ENT_QUOTES, 'UTF-8'); ?></a>
+                        <?php endif; ?>
                     </article>
                 <?php endforeach; ?>
             </div>
-        <?php else: ?>
+        <?php elseif ($eventsShowEmpty): ?>
             <div class="ptc-events-grid">
                 <article class="ptc-event-card">
                     <div class="ptc-event-date">
                         <span class="ptc-event-icon">📅</span>
                         <strong>Demnächst</strong>
                     </div>
-                    <h4>Neue Termine werden in Kürze veröffentlicht</h4>
-                    <p style="color:var(--ptc-muted);font-size:.9rem;">Schauen Sie bald wieder vorbei oder kontaktieren Sie uns direkt.</p>
+                    <h4><?php echo htmlspecialchars($eventsEmptyText, ENT_QUOTES, 'UTF-8'); ?></h4>
+                    <?php if ($eventsEmptyHint !== ''): ?>
+                        <p style="color:var(--ptc-muted);font-size:.9rem;"><?php echo htmlspecialchars($eventsEmptyHint, ENT_QUOTES, 'UTF-8'); ?></p>
+                    <?php endif; ?>
                 </article>
             </div>
+        <?php endif; ?>
+
+        <?php if ($eventsShowCta && $eventsCtaLabel !== ''): ?>
+        <div class="ptc-section-cta">
+            <a href="<?php echo htmlspecialchars($eventsCtaUrl, ENT_QUOTES, 'UTF-8'); ?>"
+               class="btn-ptc btn-ptc-accent btn-ptc-lg">
+                <?php echo htmlspecialchars($eventsCtaLabel, ENT_QUOTES, 'UTF-8'); ?>
+            </a>
+        </div>
         <?php endif; ?>
 
     </div>
@@ -250,42 +382,48 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
 <?php \CMS\Hooks::doAction('home_after_events'); ?>
 
-<?php if ($showFaq): ?>
+<?php if ($showFaq && !empty($faqItems)): ?>
 <!-- ██ HÄUFIG GESTELLTE FRAGEN ██████████████████████████████████████████ -->
-<section class="ptc-section" id="faq">
+<section class="ptc-section<?php echo $faqBgStyle === 'alt' ? ' ptc-section-alt' : ''; ?>" id="faq">
     <div class="ptc-container">
 
         <div class="ptc-section-head">
+            <?php if ($faqTag !== ''): ?>
+                <span class="ptc-section-tag"><?php echo htmlspecialchars($faqTag, ENT_QUOTES, 'UTF-8'); ?></span>
+            <?php endif; ?>
             <h2><?php echo htmlspecialchars($faqTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
             <?php if ($faqSubtitle !== ''): ?>
                 <p><?php echo htmlspecialchars($faqSubtitle, ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
         </div>
 
-        <div class="ptc-faq-list">
+        <div class="ptc-faq-list"<?php if ($faqMaxWidth > 0): ?> style="max-width:<?php echo $faqMaxWidth; ?>px;margin-left:auto;margin-right:auto;"<?php endif; ?>>
 
-            <details class="ptc-faq-item">
-                <summary>Was sind Ihre Personaldienstleistungen?</summary>
+            <?php foreach ($faqItems as $item): ?>
+            <details class="ptc-faq-item"<?php echo $faqStyle === 'open' ? ' open' : ''; ?>>
+                <summary><?php echo htmlspecialchars($item['question'], ENT_QUOTES, 'UTF-8'); ?></summary>
                 <div class="ptc-faq-answer">
-                    <p>Wir bieten ein breites Spektrum an Personaldienstleistungen: Von der klassischen Personalvermittlung über Arbeitnehmerüberlassung bis hin zu individuellen Bildungs- und Qualifizierungsangeboten in unserer Akademie und Logistiklehrwerkstatt.</p>
+                    <p><?php echo nl2br(htmlspecialchars($item['answer'], ENT_QUOTES, 'UTF-8')); ?></p>
                 </div>
             </details>
-
-            <details class="ptc-faq-item">
-                <summary>Was ist Arbeitnehmerüberlassung?</summary>
-                <div class="ptc-faq-answer">
-                    <p>Bei der Arbeitnehmerüberlassung stellen wir Ihnen qualifizierte Mitarbeiter temporär zur Verfügung. Sie profitieren von Flexibilität, während die Fachkräfte bei uns angestellt bleiben. So können Sie schnell auf Personalbedarfe reagieren.</p>
-                </div>
-            </details>
-
-            <details class="ptc-faq-item">
-                <summary>Welche Weiterbildungen bieten Sie an?</summary>
-                <div class="ptc-faq-answer">
-                    <p>Unsere Akademie bietet Führungskräfte-Workshops, Gabelstaplerschulungen, individuelle Coachings und zertifizierte Weiterbildungsprogramme. Alle Angebote werden praxisnah durchgeführt und können auf Ihre Bedürfnisse angepasst werden.</p>
-                </div>
-            </details>
+            <?php endforeach; ?>
 
         </div>
+
+        <?php if ($faqShowCta): ?>
+        <div class="ptc-section-cta" style="margin-top:2rem;">
+            <?php if ($faqCtaText !== ''): ?>
+                <p style="color:var(--ptc-muted);margin-bottom:.75rem;"><?php echo htmlspecialchars($faqCtaText, ENT_QUOTES, 'UTF-8'); ?></p>
+            <?php endif; ?>
+            <?php if ($faqCtaLabel !== ''): ?>
+                <a href="<?php echo htmlspecialchars($faqCtaUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                   class="btn-ptc btn-ptc-accent">
+                    <?php echo htmlspecialchars($faqCtaLabel, ENT_QUOTES, 'UTF-8'); ?>
+                </a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
     </div>
 </section>
 <?php endif; ?>

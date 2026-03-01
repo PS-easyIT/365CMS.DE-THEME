@@ -505,25 +505,29 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    max-height: 480px;
 }
 
 /* Hero-Bild neben dem Text im Kasten */
 .ptc-hero-image-box {
     width: 100%;
     max-width: 520px;
+    max-height: 100%;
     border-radius: var(--ptc-radius-lg);
     overflow: hidden;
     box-shadow: var(--ptc-shadow-lg);
     background: var(--ptc-white);
-    border: 1px solid var(--ptc-border);
+    border: 1px solid var(--ptc-gray-100);
 }
 
 .ptc-hero-image-box .ptc-hero-img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    max-height: 480px;
     object-fit: cover;
-    aspect-ratio: 4 / 3;
+    object-position: center;
 }
 
 .ptc-hero-image-placeholder {
@@ -552,6 +556,23 @@ a:hover {
 
 .ptc-section-alt {
     background: var(--ptc-white);
+}
+
+.ptc-section-navy {
+    background: var(--ptc-navy);
+}
+.ptc-section-navy .ptc-section-head h2,
+.ptc-section-navy .ptc-section-head p,
+.ptc-section-navy .ptc-section-tag {
+    color: var(--ptc-white);
+}
+.ptc-section-navy .ptc-section-tag {
+    color: var(--ptc-gold);
+}
+
+.ptc-section-cta {
+    text-align: center;
+    margin-top: 2.5rem;
 }
 
 .ptc-section-head {
@@ -592,6 +613,8 @@ a:hover {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
 }
+.ptc-services-grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+.ptc-services-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
 
 .ptc-service-card {
     background: var(--ptc-white);
@@ -652,6 +675,18 @@ a:hover {
     line-height: 1.6;
 }
 
+.ptc-service-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ptc-gold-dark);
+    transition: var(--ptc-ease-fast);
+}
+.ptc-service-link:hover {
+    color: var(--ptc-navy);
+}
+
 /* ============================================================================
    9. Events Grid (Termine)
    ============================================================================ */
@@ -660,6 +695,8 @@ a:hover {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
 }
+.ptc-events-grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+.ptc-events-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
 
 .ptc-event-card {
     background: var(--ptc-offwhite);
@@ -1453,6 +1490,7 @@ a:hover {
 
     .ptc-hero-visual {
         order: -1;
+        max-height: 320px;
     }
 
     .ptc-hero-image-box {
