@@ -17,9 +17,15 @@ if (empty($page) || !is_array($page)) {
     return;
 }
 
-$pageTitle   = $page['title']   ?? '';
-$pageContent = $page['content'] ?? '';
-$updatedAt   = $page['updated_at'] ?? '';
+/* ─── Customizer-Einstellungen ─── */
+$showTitle      = ptc_customizer_get('blog', 'page_show_title',          '1');
+$showFeatured   = ptc_customizer_get('blog', 'page_show_featured_image', '1');
+$pageMaxWidth   = (int) ptc_customizer_get('blog', 'page_max_width',    '960');
+
+$pageTitle      = $page['title']          ?? '';
+$pageContent    = $page['content']        ?? '';
+$updatedAt      = $page['updated_at']     ?? '';
+$featuredImage  = $page['featured_image'] ?? '';
 
 $allowedTags = '<p><br><strong><b><em><i><u><s>'
     . '<h1><h2><h3><h4><h5><h6>'
@@ -28,24 +34,33 @@ $allowedTags = '<p><br><strong><b><em><i><u><s>'
     . '<blockquote><pre><code>'
     . '<table><thead><tbody><tr><th><td>'
     . '<div><span><section><article><aside>'
-    . '<hr><figure><figcaption>';
+    . '<hr><figure><figcaption><iframe><video><audio><source>';
 ?>
 
+<?php if ($showTitle && $pageTitle && trim($pageTitle) !== '') : ?>
 <section class="ptc-page-hero">
     <div class="ptc-container">
-        <?php if ($pageTitle && trim($pageTitle) !== '') : ?>
-            <h1><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></h1>
-        <?php endif; ?>
+        <h1><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></h1>
         <?php if ($updatedAt && trim($updatedAt) !== '') : ?>
             <p>Zuletzt aktualisiert: <?php echo htmlspecialchars(date('d.m.Y', strtotime($updatedAt)), ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>
     </div>
 </section>
+<?php endif; ?>
+
+<?php if ($showFeatured && $featuredImage) : ?>
+<div class="ptc-page-featured">
+    <div class="ptc-container">
+        <img src="<?php echo htmlspecialchars($featuredImage, ENT_QUOTES, 'UTF-8'); ?>"
+             alt="<?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?>" loading="lazy">
+    </div>
+</div>
+<?php endif; ?>
 
 <div class="ptc-page-content">
     <div class="ptc-container">
         <?php if ($pageContent && trim($pageContent) !== '') : ?>
-            <div class="ptc-prose" style="max-width:780px;">
+            <div class="ptc-prose sun-editor-editable" style="max-width:<?php echo $pageMaxWidth; ?>px;">
                 <?php echo strip_tags($pageContent, $allowedTags); ?>
             </div>
         <?php else : ?>

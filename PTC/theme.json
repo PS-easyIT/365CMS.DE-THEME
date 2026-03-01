@@ -457,6 +457,12 @@
           "type": "text",
           "default": "/#kontakt",
           "description": "Ziel-URL des CTA-Buttons"
+        },
+        "header_animation": {
+          "label": "Header Hintergrund-Animation",
+          "type": "select",
+          "default": "none",
+          "description": "Dezente Animation im Header-Hintergrund"
         }
       }
     },
@@ -465,6 +471,12 @@
       "label": "Footer",
       "description": "Farben, Texte, Kontaktdaten und Social-Links im Footer.",
       "settings": {
+        "footer_width": {
+          "label": "Footer-Breite",
+          "type": "select",
+          "default": "full",
+          "description": "Volle Breite oder Content-Breite"
+        },
         "footer_bg_color": {
           "label": "Footer-Hintergrund",
           "type": "color",
@@ -874,6 +886,33 @@
         "faq_7_answer":       { "label": "Antwort 7",                  "type": "textarea", "default": "" },
         "faq_8_question":     { "label": "Frage 8",                    "type": "text",     "default": "" },
         "faq_8_answer":       { "label": "Antwort 8",                  "type": "textarea", "default": "" }
+      }
+    },
+
+    "blog": {
+      "label": "Blog & Seiten",
+      "description": "Einstellungen für Blog-Übersicht, Einzelbeiträge und statische Seiten.",
+      "settings": {
+        "blog_layout":                 { "label": "Blog-Layout",                    "type": "select",   "default": "grid" },
+        "blog_columns":                { "label": "Spaltenanzahl (Grid)",            "type": "select",   "default": "3" },
+        "blog_show_sidebar":           { "label": "Sidebar anzeigen",               "type": "checkbox", "default": "1" },
+        "blog_show_featured_image":    { "label": "Beitragsbild anzeigen",          "type": "checkbox", "default": "1" },
+        "blog_show_excerpt":           { "label": "Textauszug anzeigen",            "type": "checkbox", "default": "1" },
+        "blog_show_date":              { "label": "Datum anzeigen",                 "type": "checkbox", "default": "1" },
+        "blog_show_author":            { "label": "Autor anzeigen",                 "type": "checkbox", "default": "1" },
+        "blog_show_category":          { "label": "Kategorie-Badge anzeigen",       "type": "checkbox", "default": "1" },
+        "blog_hero_title":             { "label": "Blog-Überschrift",               "type": "text",     "default": "Unser Blog" },
+        "blog_hero_subtitle":          { "label": "Blog-Untertitel",                "type": "text",     "default": "Aktuelle Beiträge, Einblicke und Neuigkeiten" },
+        "blog_single_show_featured":   { "label": "Beitragsbild auf Einzelseite",   "type": "checkbox", "default": "1" },
+        "blog_single_show_author":     { "label": "Autor auf Einzelseite",          "type": "checkbox", "default": "1" },
+        "blog_single_show_date":       { "label": "Datum auf Einzelseite",          "type": "checkbox", "default": "1" },
+        "blog_single_show_tags":       { "label": "Tags auf Einzelseite",           "type": "checkbox", "default": "1" },
+        "blog_single_show_related":    { "label": "Ähnliche Beiträge anzeigen",     "type": "checkbox", "default": "1" },
+        "blog_single_show_reading_time": { "label": "Lesezeit anzeigen",            "type": "checkbox", "default": "1" },
+        "blog_single_max_width":       { "label": "Maximale Artikelbreite (px)",     "type": "number",  "default": "820" },
+        "page_show_title":             { "label": "Seitentitel anzeigen",           "type": "checkbox", "default": "1" },
+        "page_show_featured_image":    { "label": "Beitragsbild auf Seiten",        "type": "checkbox", "default": "1" },
+        "page_max_width":              { "label": "Maximale Seitenbreite (px)",      "type": "number",  "default": "960" }
       }
     },
 
