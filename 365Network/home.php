@@ -487,36 +487,31 @@ $layoutClass = match ($homepageLayout) {
                             $evDate     = _field($event, 'start_date', _field($event, 'event_date', ''));
                             $evLocation = htmlspecialchars(_field($event, 'location', _field($event, 'venue', '')), ENT_QUOTES, 'UTF-8');
                             $evId       = (int)_field($event, 'id', '0');
-                            $evDay = $evDate ? date('d', strtotime($evDate)) : '--';
+                            $evDay   = $evDate ? date('d', strtotime($evDate)) : '--';
                             $evMonth = $evDate ? ($monthsDE[(int)date('n', strtotime($evDate))] ?? '') : '';
-                            $evYear = $evDate ? date('Y', strtotime($evDate)) : '';
+                            $evYear  = $evDate ? date('Y', strtotime($evDate)) : '';
+                            $evUrl   = htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8') . '/events/' . $evId;
+                            $evDateLabel = $evDate ? $evDay . '. ' . $evMonth . ' ' . $evYear : '';
                         ?>
-                            <article class="event-card">
-                                <div class="event-date-block">
-                                    <div class="event-date-day"><?php echo $evDay; ?></div>
-                                    <div class="event-date-month"><?php echo htmlspecialchars($evMonth, ENT_QUOTES, 'UTF-8'); ?></div>
-                                </div>
+                            <a href="<?php echo $evUrl; ?>" class="event-card">
+                                <?php if ($evDateLabel) : ?>
+                                    <span class="event-date-pill">📅 <?php echo htmlspecialchars($evDateLabel, ENT_QUOTES, 'UTF-8'); ?></span>
+                                <?php endif; ?>
                                 <div class="event-info">
-                                    <h3 class="event-title">
-                                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events/<?php echo $evId; ?>"
-                                           style="color:inherit;text-decoration:none;">
-                                            <?php echo $evTitle; ?>
-                                        </a>
-                                    </h3>
-                                    <div class="event-meta">
-                                        <?php if ($evLocation) : ?>
-                                            <span>📍 <?php echo $evLocation; ?></span>
-                                        <?php endif; ?>
-                                        <?php if ($evYear) : ?>
-                                            <span>📅 <?php echo $evYear; ?></span>
-                                        <?php endif; ?>
-                                    </div>
+                                    <h3 class="event-title"><?php echo $evTitle; ?></h3>
+                                    <?php if ($evLocation || $evYear) : ?>
+                                        <div class="event-meta">
+                                            <?php if ($evLocation) : ?>
+                                                <span>📍 <?php echo $evLocation; ?></span>
+                                            <?php endif; ?>
+                                            <?php if ($evYear) : ?>
+                                                <span>📅 <?php echo $evYear; ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <span class="event-more">Mehr erfahren →</span>
                                 </div>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events/<?php echo $evId; ?>"
-                                   class="btn btn-sm btn-outline" style="align-self:center;flex-shrink:0;">
-                                    Details
-                                </a>
-                            </article>
+                            </a>
                         <?php endforeach; ?>
                     </div>
                 <?php else : ?>
