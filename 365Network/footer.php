@@ -36,30 +36,43 @@ $copyrightText = str_replace(
             <div class="footer-container">
                 <?php if ($showNetworkWidgets) : ?>
                 <div class="footer-widgets">
+                    <!-- Über uns -->
                     <div class="footer-widget">
                         <h3 class="footer-widget-title"><?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?></h3>
                         <p><?php echo nl2br(htmlspecialchars($footerText, ENT_QUOTES, 'UTF-8')); ?></p>
                     </div>
+                    <!-- Verzeichnisse -->
                     <div class="footer-widget">
-                        <h3 class="footer-widget-title">Schnellzugriff</h3>
+                        <h3 class="footer-widget-title">Verzeichnisse</h3>
                         <ul style="list-style:none;padding:0;margin:0;">
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/it-experts">IT-Experten</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies">Unternehmen</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/experts">Branchen-Spezialisten</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies">KMU Netzwerk</a></li>
                             <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events">Events</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/marketplace">Marketplace</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers">Speaker</a></li>
                         </ul>
                     </div>
+                    <!-- Ressourcen -->
                     <div class="footer-widget">
-                        <h3 class="footer-widget-title">Mitglieder</h3>
+                        <h3 class="footer-widget-title">Ressourcen</h3>
                         <ul style="list-style:none;padding:0;margin:0;">
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/whitepapers">Whitepapers</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/webinare">Webinare</a></li>
                             <?php if ($isLoggedIn) : ?>
                                 <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member">Mein Dashboard</a></li>
-                                <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/profile">Mein Profil</a></li>
-                                <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/logout">Abmelden</a></li>
                             <?php else : ?>
                                 <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login">Anmelden</a></li>
-                                <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register">Registrieren</a></li>
                             <?php endif; ?>
+                        </ul>
+                    </div>
+                    <!-- Rechtliches -->
+                    <div class="footer-widget">
+                        <h3 class="footer-widget-title">Rechtliches</h3>
+                        <ul style="list-style:none;padding:0;margin:0;">
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/kontakt">Kontakt</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/impressum">Impressum</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/datenschutz">Datenschutz</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/agb">AGB</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/sitemap">Sitemap</a></li>
                         </ul>
                     </div>
                 </div>

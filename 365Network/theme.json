@@ -1,83 +1,125 @@
 {
   "name": "365Network",
   "slug": "365network",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "author": "PHINIT.DE / Andreas Hepp",
-  "description": "Das offizielle 365Network-Theme – professionell, charakterstark, editorial. Deep Navy + Warm Amber.",
+  "description": "IT-Networking-Dashboard – Deep Navy & Gold, modulares Kachel-Layout für Experten, Firmen, Events & Speaker.",
   "tags": ["professional", "editorial", "responsive", "cms", "network", "dark-mode"],
-  "supports": ["dark-mode", "custom-logo", "sticky-header", "custom-css"],
+  "supports": ["dark-mode", "custom-logo", "sticky-header", "custom-css", "network-animation"],
 
   "customization": {
 
     "colors": {
       "label": "Farben",
-      "description": "Globale Farbpalette des Themes – Primär-, Sekundär- und Akzentfarben.",
+      "description": "Globale Farbpalette – Deep Navy & Gold. Core-Farben + theme-spezifische Erweiterungen.",
       "settings": {
         "primary_color": {
-          "label": "Primärfarbe",
+          "label": "Primärfarbe (Deep Navy)",
           "type": "color",
-          "default": "#1e3a5f",
-          "description": "Hauptfarbe für Buttons, Links und Akzente"
+          "default": "#0c1526",
+          "description": "Hauptfarbe – Header, Footer, dunkle UI-Elemente"
+        },
+        "primary_hover": {
+          "label": "Primärfarbe (Hover)",
+          "type": "color",
+          "default": "#162040",
+          "description": "Hover-Zustand der Primärfarbe – dunklere Navy-Variante"
+        },
+        "primary_light": {
+          "label": "Primärfarbe (Hell)",
+          "type": "color",
+          "default": "#1a2a42",
+          "description": "Helle Variante – Badge-Hintergründe, Borders auf dunklem Grund"
         },
         "secondary_color": {
-          "label": "Sekundärfarbe",
+          "label": "Sekundärfarbe (Grau)",
           "type": "color",
-          "default": "#152d4a",
-          "description": "Hover-Zustand von Buttons und Links"
+          "default": "#64748b",
+          "description": "Graue UI-Farbe – Meta-Texte, Labels, sekundäre Informationen"
         },
         "accent_color": {
-          "label": "Akzentfarbe",
+          "label": "Akzentfarbe (Gold)",
           "type": "color",
-          "default": "#b45309",
-          "description": "Hervorhebungen, Tags, Badges und Navigation-Akzente"
+          "default": "#c8952e",
+          "description": "Gold-Akzent – CTAs, Tags, Highlights, Navigation"
+        },
+        "accent_hover": {
+          "label": "Akzentfarbe (Hover)",
+          "type": "color",
+          "default": "#a67a24",
+          "description": "Dunklere Gold-Variante für Hover-Zustände"
+        },
+        "accent_light": {
+          "label": "Akzentfarbe (Hell)",
+          "type": "color",
+          "default": "#d4a84a",
+          "description": "Hellere Gold-Variante für dezente Highlights"
         },
         "text_color": {
           "label": "Textfarbe",
           "type": "color",
-          "default": "#1c1917",
-          "description": "Haupttextfarbe"
+          "default": "#1e293b",
+          "description": "Hauptfarbe für Fließtext und Body-Content"
+        },
+        "heading_color": {
+          "label": "Überschriftenfarbe",
+          "type": "color",
+          "default": "#0f172a",
+          "description": "Farbe aller Überschriften (h1–h6)"
+        },
+        "text_light": {
+          "label": "Helle Textfarbe",
+          "type": "color",
+          "default": "#e2e8f0",
+          "description": "Helle Textfarbe – für dunkle Hintergründe (Header, Footer, Hero)"
         },
         "bg_color": {
-          "label": "Hintergrundfarbe",
+          "label": "Seitenhintergrund",
           "type": "color",
-          "default": "#faf9f7",
-          "description": "Seitenhintergrund (warmes Off-White)"
+          "default": "#f8fafc",
+          "description": "Hintergrundfarbe des Content-Bereichs"
+        },
+        "bg_secondary": {
+          "label": "Sekundärer Hintergrund",
+          "type": "color",
+          "default": "#f1f5f9",
+          "description": "Hintergrund für Body, Cards, Sidebar-Bereiche"
         },
         "link_color": {
           "label": "Linkfarbe",
           "type": "color",
-          "default": "#b45309",
-          "description": "Standard-Linkfarbe im Content"
+          "default": "#c8952e",
+          "description": "Standard-Linkfarbe im Content-Bereich"
         },
         "link_hover_color": {
           "label": "Link Hover-Farbe",
           "type": "color",
-          "default": "#b45309",
+          "default": "#a67a24",
           "description": "Linkfarbe beim Hover-Zustand"
         },
         "muted_color": {
           "label": "Gedämpfte Textfarbe",
           "type": "color",
-          "default": "#78716c",
-          "description": "Sekundärer, schwächerer Text (Meta-Infos etc.)"
+          "default": "#94a3b8",
+          "description": "Sehr dezenter Text – Timestamps, Platzhalter, Hints"
         },
         "border_color": {
           "label": "Rahmenfarbe",
           "type": "color",
-          "default": "#e7e5e4",
-          "description": "Standard-Rahmenfarbe für Trennlinien und Cards"
+          "default": "#e2e8f0",
+          "description": "Standard-Rahmenfarbe für Trennlinien, Cards und Inputs"
         },
         "success_color": {
           "label": "Erfolgsfarbe",
           "type": "color",
           "default": "#22c55e",
-          "description": "Positivmeldungen und Status-Badges"
+          "description": "Positivmeldungen und Status-Badges (Grün)"
         },
         "error_color": {
           "label": "Fehlerfarbe",
           "type": "color",
           "default": "#ef4444",
-          "description": "Fehlermeldungen und Warnungen"
+          "description": "Fehlermeldungen und Warnungen (Rot)"
         }
       }
     },
@@ -99,8 +141,8 @@
             "poppins": "Poppins",
             "raleway": "Raleway"
           },
-          "default": "inter",
-          "description": "Schriftart für Fließtext"
+          "default": "system",
+          "description": "Schriftart für Fließtext – System-Standard für optimale Performance"
         },
         "font_family_heading": {
           "label": "Überschriften-Schriftart",
@@ -116,8 +158,8 @@
             "poppins": "Poppins",
             "raleway": "Raleway"
           },
-          "default": "georgia",
-          "description": "Schriftart für Überschriften"
+          "default": "system",
+          "description": "Schriftart für Überschriften (sans-serif passend zum Dashboard-Design)"
         },
         "font_size_base": {
           "label": "Basis-Schriftgröße (px)",
@@ -160,7 +202,7 @@
         "container_width": {
           "label": "Container-Breite (px)",
           "type": "number",
-          "default": 1200,
+          "default": 1400,
           "min": 800,
           "max": 1920,
           "description": "Maximale Breite des Inhaltsbereichs in Pixeln"
@@ -201,26 +243,32 @@
     },
 
     "header": {
-      "label": "Header",
-      "description": "Farben, Höhe und Verhalten der Navigationsleiste.",
+      "label": "Header & Logo",
+      "description": "Farben, Höhe, Verhalten und Funktionen der Navigationsleiste.",
       "settings": {
         "logo_url": {
           "label": "Header Logo",
           "type": "image",
           "default": "",
-          "description": "Logo-Bild im Header (JPG, PNG, WebP, SVG – max. 2 MB). Leer lassen für Standard-Icon."
+          "description": "Logo-Bild im Header (JPG, PNG, WebP, SVG – max. 2 MB). Leer = Netzwerk-Icon."
         },
         "header_bg_color": {
           "label": "Header-Hintergrund",
           "type": "color",
-          "default": "#ffffff",
-          "description": "Hintergrundfarbe der Navigationsleiste"
+          "default": "#0c1526",
+          "description": "Hintergrundfarbe der Navigationsleiste (Deep Navy)"
         },
         "header_text_color": {
           "label": "Header-Textfarbe",
           "type": "color",
-          "default": "#1c1917",
-          "description": "Farbe von Navigationslinks und Logo-Text"
+          "default": "#e2e8f0",
+          "description": "Farbe von Navigationslinks und Logo-Text (hell auf dunkel)"
+        },
+        "header_accent_color": {
+          "label": "Header-Akzentfarbe",
+          "type": "color",
+          "default": "#c8952e",
+          "description": "Akzentfarbe im Header – aktive Links, Badges, Highlights"
         },
         "header_height": {
           "label": "Header-Höhe (px)",
@@ -242,31 +290,49 @@
           "label": "Header-Schatten anzeigen",
           "type": "checkbox",
           "default": true,
-          "description": "Schatten unterhalb der Navigationsleiste"
+          "description": "Subtiler Schatten unterhalb der Navigationsleiste"
+        },
+        "show_search_btn": {
+          "label": "Such-Button anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Such-Button im Header an"
+        },
+        "show_login_btn": {
+          "label": "Anmelden-Button anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Login-Button für nicht angemeldete Besucher"
+        },
+        "show_register_btn": {
+          "label": "Registrieren-Button anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Registrieren-Button für nicht angemeldete Besucher"
         }
       }
     },
 
     "footer": {
       "label": "Footer",
-      "description": "Hintergrund- und Textfarben des Footerbereichs sowie Inhalte.",
+      "description": "Hintergrund- und Textfarben, Inhalte und Social-Media-Links im Footer.",
       "settings": {
         "footer_bg_color": {
           "label": "Footer-Hintergrund",
           "type": "color",
-          "default": "#1c1917",
-          "description": "Hintergrundfarbe des Footers"
+          "default": "#0c1526",
+          "description": "Hintergrundfarbe des Footers (Deep Navy)"
         },
         "footer_text_color": {
           "label": "Footer-Textfarbe",
           "type": "color",
-          "default": "#a8a29e",
+          "default": "#94a3b8",
           "description": "Textfarbe im Footer-Bereich"
         },
         "footer_link_color": {
           "label": "Footer-Linkfarbe",
           "type": "color",
-          "default": "#e7e5e4",
+          "default": "#e2e8f0",
           "description": "Farbe der Links im Footer"
         },
         "footer_text": {
@@ -279,13 +345,37 @@
           "label": "Netzwerk-Widgets anzeigen",
           "type": "checkbox",
           "default": true,
-          "description": "Aktiviert den oberen Footer-Bereich mit Experten/Unternehmen-Links (spezifisch für IT Network)"
+          "description": "Zeigt den oberen Footer-Bereich mit Experten/Unternehmen-Links"
         },
         "copyright_text": {
           "label": "Copyright-Text",
           "type": "text",
-          "default": "&copy; {year} {site_title}. Alle Rechte vorbehalten.",
-          "description": "Copyright-Zeile unten. Platzhalter: {year}, {site_title}. HINWEIS: Entfernen des Copyrights ist nur mit gültiger Lizenz erlaubt (Autor: Andreas Hepp | PhinIT.DE)."
+          "default": "© {year} {site_title}. Alle Rechte vorbehalten.",
+          "description": "Platzhalter: {year}, {site_title}. Entfernen nur mit gültiger Lizenz (PhinIT.DE)."
+        },
+        "social_twitter": {
+          "label": "Twitter / X URL",
+          "type": "text",
+          "default": "",
+          "description": "Vollständige URL zum Twitter/X-Profil (leer = ausgeblendet)"
+        },
+        "social_instagram": {
+          "label": "Instagram URL",
+          "type": "text",
+          "default": "",
+          "description": "Vollständige URL zum Instagram-Profil (leer = ausgeblendet)"
+        },
+        "social_linkedin": {
+          "label": "LinkedIn URL",
+          "type": "text",
+          "default": "",
+          "description": "Vollständige URL zum LinkedIn-Profil (leer = ausgeblendet)"
+        },
+        "social_youtube": {
+          "label": "YouTube URL",
+          "type": "text",
+          "default": "",
+          "description": "Vollständige URL zum YouTube-Kanal (leer = ausgeblendet)"
         }
       }
     },
@@ -346,15 +436,188 @@
       }
     },
 
+    "homepage": {
+      "label": "Startseite",
+      "description": "Sektionen, Inhalte und Layout der Homepage. Jede Sektion bietet Hooks für Plugin-Injektionen.",
+      "settings": {
+        "show_hero": {
+          "label": "Hero-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt die große Hero-Sektion mit Suchleiste und Statistiken"
+        },
+        "hero_title": {
+          "label": "Hero-Überschrift",
+          "type": "text",
+          "default": "Führendes Verzeichnis für IT-Experten & Unternehmen",
+          "description": "Hauptüberschrift in der Hero-Sektion. Kann per Landing-Page oder Plugin-Filter überschrieben werden."
+        },
+        "hero_subtitle": {
+          "label": "Hero-Untertitel",
+          "type": "text",
+          "default": "",
+          "description": "Optionaler Untertitel unter der Überschrift (leer = ausgeblendet)"
+        },
+        "show_hero_search": {
+          "label": "Suchformular anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt die erweiterte Suche in der Hero-Sektion"
+        },
+        "show_stats_bar": {
+          "label": "Statistik-Leiste anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt Experten/Firmen/Events/Speaker-Zähler. Plugins können eigene Stats per Filter 'home_stats' hinzufügen."
+        },
+        "show_experts_section": {
+          "label": "Experten-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt die neuesten Experten-Profile. Benötigt cms-experts Plugin."
+        },
+        "experts_section_title": {
+          "label": "Experten-Überschrift",
+          "type": "text",
+          "default": "Aktuelle Experten",
+          "description": "Titel über der Experten-Sektion"
+        },
+        "experts_limit": {
+          "label": "Anzahl Experten",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 12,
+          "description": "Maximale Anzahl angezeigter Experten-Cards"
+        },
+        "show_events_section": {
+          "label": "Events-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt kommende Events und Konferenzen. Benötigt cms-events Plugin."
+        },
+        "events_section_title": {
+          "label": "Events-Überschrift",
+          "type": "text",
+          "default": "Kommende Events & Konferenzen",
+          "description": "Titel über der Events-Sektion"
+        },
+        "events_limit": {
+          "label": "Anzahl Events",
+          "type": "number",
+          "default": 4,
+          "min": 1,
+          "max": 12,
+          "description": "Maximale Anzahl angezeigter Events"
+        },
+        "show_companies_section": {
+          "label": "Firmen-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt die prominentesten Firmenprofile. Benötigt cms-companies Plugin."
+        },
+        "companies_section_title": {
+          "label": "Firmen-Überschrift",
+          "type": "text",
+          "default": "Top Firmen im Fokus",
+          "description": "Titel über der Firmen-Sektion"
+        },
+        "companies_limit": {
+          "label": "Anzahl Firmen",
+          "type": "number",
+          "default": 4,
+          "min": 1,
+          "max": 12,
+          "description": "Maximale Anzahl angezeigter Firmen-Cards"
+        },
+        "show_sidebar": {
+          "label": "Sidebar anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt die rechte Sidebar. Plugin-Widgets registrieren sich über Hook 'home_sidebar_widget'."
+        },
+        "homepage_layout": {
+          "label": "Seitenlayout",
+          "type": "select",
+          "options": {
+            "sidebar-right": "Sidebar rechts (Standard)",
+            "sidebar-left": "Sidebar links",
+            "full-width": "Volle Breite (ohne Sidebar)"
+          },
+          "default": "sidebar-right",
+          "description": "Layout der Startseite – Volle Breite deaktiviert die Sidebar"
+        },
+        "show_events_strip": {
+          "label": "Events-Fussleiste anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Horizontale Events-Vorschau am Ende der Seite"
+        }
+      }
+    },
+
+    "effects": {
+      "label": "Effekte & Animationen",
+      "description": "Visuelle Effekte wie die Netzwerk-Animation im Header.",
+      "settings": {
+        "show_network_animation": {
+          "label": "Netzwerk-Animation im Header",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt eine dezente Partikel-/Netzwerk-Animation im Header-Hintergrund"
+        },
+        "animation_speed": {
+          "label": "Animations-Geschwindigkeit",
+          "type": "select",
+          "options": {
+            "slow": "Langsam (entspannt)",
+            "normal": "Normal",
+            "fast": "Schnell (dynamisch)"
+          },
+          "default": "slow",
+          "description": "Bewegungsgeschwindigkeit der Netzwerk-Partikel"
+        },
+        "animation_opacity": {
+          "label": "Animations-Deckkraft (%)",
+          "type": "number",
+          "default": 15,
+          "min": 5,
+          "max": 50,
+          "step": 5,
+          "description": "Sichtbarkeit der Animation (niedrig = dezenter)"
+        },
+        "animation_node_count": {
+          "label": "Anzahl Netzwerk-Knoten",
+          "type": "number",
+          "default": 25,
+          "min": 8,
+          "max": 60,
+          "description": "Partikelanzahl der Netzwerk-Animation"
+        }
+      }
+    },
+
     "advanced": {
       "label": "Erweitert",
-      "description": "Eigenes CSS, das am Ende aller Theme-Styles eingefügt wird.",
+      "description": "Custom Code, Tracking und erweiterte Einstellungen.",
       "settings": {
         "custom_css": {
           "label": "Eigenes CSS",
           "type": "textarea",
           "default": "",
-          "description": "Zusätzliches CSS, das am Ende aller Theme-Styles angehängt wird. Überschreibt beliebige Stile."
+          "description": "Zusätzliches CSS am Ende aller Theme-Styles. Überschreibt beliebige Stile."
+        },
+        "custom_head_code": {
+          "label": "Custom Head Code (Tracking, Meta)",
+          "type": "textarea",
+          "default": "",
+          "description": "Wird im <head> ausgegeben. Nur vertrauenswürdigen Code einfügen!"
+        },
+        "custom_footer_code": {
+          "label": "Custom Footer Code (Analytics, Widgets)",
+          "type": "textarea",
+          "default": "",
+          "description": "Wird vor </body> ausgegeben."
         }
       }
     }

@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('THEME_VERSION', '2.1.0');
+define('THEME_VERSION', '3.0.0');
 define('THEME_DIR', THEME_PATH . '365Network/');
 define('THEME_URL_BASE', \CMS\ThemeManager::instance()->getThemeUrl());
 
@@ -40,24 +40,38 @@ class IT_Expert_Network_Theme
         \CMS\Hooks::addAction('head', [$this, 'outputMetaTags']);
         \CMS\Hooks::addAction('head', [$this, 'outputGoogleFonts'], 5);
         \CMS\Hooks::addAction('head', [$this, 'outputCustomStyles'], 20);
+        \CMS\Hooks::addAction('head', [$this, 'outputDerivedStyles'], 25);
 
         // Performance Hints
         \CMS\Hooks::addAction('head', [$this, 'outputPreconnect'], 1);
         
         // Custom Header Code (SEO/Tracking)
         \CMS\Hooks::addAction('head', [$this, 'outputCustomHeaderCode'], 99);
+        
+        // Custom Head Code from Customizer (Tracking etc.)
+        \CMS\Hooks::addAction('head', [$this, 'outputCustomizerHeadCode'], 98);
 
         // Footer Scripts
         \CMS\Hooks::addAction('before_footer', [$this, 'enqueueScripts']);
         
         // Cookie Banner
         \CMS\Hooks::addAction('before_footer', [$this, 'outputCookieBanner'], 10);
+        
+        // Custom Footer Code from Customizer
+        \CMS\Hooks::addAction('body_end', [$this, 'outputCustomizerFooterCode'], 50);
 
         // Theme-Menüpositionen registrieren
         \CMS\Hooks::addFilter('register_menu_locations', [$this, 'registerMenuLocations']);
 
         // Standard-Menüeinträge beim ersten Start automatisch anlegen
         \CMS\Hooks::addAction('cms_init', [$this, 'seedDefaultMenus']);
+
+        // ── Homepage: Default-Sidebar-Widgets registrieren ──────────
+        // Plugins können diese per removeAction() ersetzen oder eigene
+        // per addAction('home_sidebar_widget', ...) mit passender Priorität einhängen.
+        \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarBookingWidget'],  10);
+        \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarFeedWidget'],     20);
+        \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarJobWidget'],      30);
     }
     
     /**
@@ -154,6 +168,7 @@ HTML;
         $locations[] = ['slug' => 'primary', 'label' => 'Hauptmenü (Header)'];
         $locations[] = ['slug' => 'mobile',  'label' => 'Mobiles Menü'];
         $locations[] = ['slug' => 'footer',  'label' => 'Footer-Navigation'];
+        $locations[] = ['slug' => 'speaker', 'label' => 'Speaker-Menü'];
         return $locations;
     }
 
@@ -169,14 +184,17 @@ HTML;
             'primary' => [
                 ['label' => 'Startseite',  'url' => '/',          'target' => '_self'],
                 ['label' => 'Experten',    'url' => '/experts',   'target' => '_self'],
-                ['label' => 'Unternehmen', 'url' => '/companies', 'target' => '_self'],
+                ['label' => 'Firmen',      'url' => '/companies', 'target' => '_self'],
                 ['label' => 'Events',      'url' => '/events',    'target' => '_self'],
+                ['label' => 'Speaker',     'url' => '/speakers',  'target' => '_self'],
+                ['label' => 'Kontakt',     'url' => '/kontakt',   'target' => '_self'],
             ],
             'mobile'  => [
                 ['label' => 'Startseite',  'url' => '/',          'target' => '_self'],
                 ['label' => 'Experten',    'url' => '/experts',   'target' => '_self'],
-                ['label' => 'Unternehmen', 'url' => '/companies', 'target' => '_self'],
+                ['label' => 'Firmen',      'url' => '/companies', 'target' => '_self'],
                 ['label' => 'Events',      'url' => '/events',    'target' => '_self'],
+                ['label' => 'Speaker',     'url' => '/speakers',  'target' => '_self'],
                 ['label' => 'Login',       'url' => '/login',     'target' => '_self'],
             ],
             'footer'  => [
@@ -227,7 +245,7 @@ HTML;
         echo '<meta name="description" content="' . $siteDesc . '">' . "\n";
         echo '<meta property="og:site_name" content="' . $siteTitle . '">' . "\n";
         echo '<meta property="og:url" content="' . $siteUrl . '">' . "\n";
-        echo '<meta name="theme-color" content="#1e3a5f">' . "\n";
+        echo '<meta name="theme-color" content="#0c1526">' . "\n";
         echo '<meta name="robots" content="index,follow">' . "\n";
     }
 
@@ -316,6 +334,106 @@ HTML;
             }
         } catch (\Throwable $e) {
             // ThemeCustomizer nicht verfügbar – Default CSS aus style.css greift
+        }
+    }
+
+    /**
+     * Derived CSS: Korrigiert Core-Mapping-Konflikte und erweitert um theme-spezifische Variablen.
+     *
+     * Problem: Core-ThemeCustomizer mappt:
+     *   secondary_color → --secondary-color AND --primary-hover (Konflikt: Grau vs Navy)
+     *   bg_color        → --background-color, --bg-secondary, --light-bg (Triple-Map, sollten verschieden sein)
+     *
+     * Lösung: Diese Methode läuft NACH generateCSS() und überschreibt die fehlerhaften Mappings
+     * mit den korrekten Werten aus den theme-spezifischen Customizer-Keys.
+     */
+    public function outputDerivedStyles(): void
+    {
+        try {
+            $customizer = \CMS\Services\ThemeCustomizer::instance();
+            $colors  = $customizer->getCategory('colors');
+            $header  = $customizer->getCategory('header');
+            $effects = $customizer->getCategory('effects');
+
+            $css = "/* 365Network – Derived Overrides */\n:root {\n";
+
+            // ── Fix 1: secondary_color → --primary-hover Korrektur ──
+            // Core setzt --primary-hover auf den secondary_color Wert (Grau).
+            // Wir überschreiben --primary-hover mit dem dedizierten primary_hover Key.
+            $primaryHover = $colors['primary_hover'] ?? '#162040';
+            $css .= "    --primary-hover: {$primaryHover};\n";
+
+            // ── Fix 2: bg_color Triple-Mapping Korrektur ──
+            // Core setzt --bg-secondary und --light-bg auf denselben Wert wie --background-color.
+            // Wir überschreiben sie mit dem dedizierten bg_secondary Key.
+            $bgSecondary = $colors['bg_secondary'] ?? '#f1f5f9';
+            $css .= "    --bg-secondary: {$bgSecondary};\n";
+            $css .= "    --light-bg: {$bgSecondary};\n";
+
+            // ── Theme-spezifische Farb-Variablen (nicht im Core-Mapping) ──
+            $primaryLight = $colors['primary_light'] ?? '#1a2a42';
+            $css .= "    --primary-light: {$primaryLight};\n";
+
+            $accentHover = $colors['accent_hover'] ?? '#a67a24';
+            $css .= "    --accent-hover: {$accentHover};\n";
+
+            $accentLight = $colors['accent_light'] ?? '#d4a84a';
+            $css .= "    --accent-light: {$accentLight};\n";
+
+            $headingColor = $colors['heading_color'] ?? '#0f172a';
+            $css .= "    --heading-color: {$headingColor};\n";
+
+            $textLight = $colors['text_light'] ?? '#e2e8f0';
+            $css .= "    --text-light: {$textLight};\n";
+
+            // ── Header-Akzentfarbe & Border ──
+            $headerAccent = $header['header_accent_color'] ?? '#c8952e';
+            $css .= "    --header-text-secondary: {$headerAccent};\n";
+            $css .= "    --header-border: {$primaryLight};\n";
+
+            // ── Netzwerk-Animation ──
+            $animOpacity = (int)($effects['animation_opacity'] ?? 15);
+            $css .= "    --network-animation-opacity: " . ($animOpacity / 100) . ";\n";
+
+            $css .= "}\n";
+
+            echo '<style id="cms-theme-derived">' . "\n" . $css . '</style>' . "\n";
+        } catch (\Throwable $e) {
+            // Fallback: style.css Defaults bleiben erhalten
+        }
+    }
+
+    /**
+     * Custom Head Code aus Customizer (Tracking-Scripts, zusätzliche Meta-Tags)
+     */
+    public function outputCustomizerHeadCode(): void
+    {
+        try {
+            $customizer = \CMS\Services\ThemeCustomizer::instance();
+            $code = $customizer->get('advanced', 'custom_head_code', '');
+            if (!empty(trim((string)$code))) {
+                echo "\n<!-- Customizer Head Code -->\n";
+                echo (string)$code . "\n";
+            }
+        } catch (\Throwable $e) {
+            // Keine Ausgabe
+        }
+    }
+
+    /**
+     * Custom Footer Code aus Customizer (Analytics, Widgets)
+     */
+    public function outputCustomizerFooterCode(): void
+    {
+        try {
+            $customizer = \CMS\Services\ThemeCustomizer::instance();
+            $code = $customizer->get('advanced', 'custom_footer_code', '');
+            if (!empty(trim((string)$code))) {
+                echo "\n<!-- Customizer Footer Code -->\n";
+                echo (string)$code . "\n";
+            }
+        } catch (\Throwable $e) {
+            // Keine Ausgabe
         }
     }
 }
