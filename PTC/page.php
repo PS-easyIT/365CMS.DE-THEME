@@ -19,6 +19,7 @@ if (empty($page) || !is_array($page)) {
 
 /* ─── Customizer-Einstellungen ─── */
 $showTitle      = ptc_customizer_get('blog', 'page_show_title',          '1');
+$showUpdated    = ptc_customizer_get('blog', 'page_show_updated',        '1');
 $showFeatured   = ptc_customizer_get('blog', 'page_show_featured_image', '1');
 $pageMaxWidth   = (int) ptc_customizer_get('blog', 'page_max_width',    '960');
 
@@ -41,7 +42,7 @@ $allowedTags = '<p><br><strong><b><em><i><u><s>'
 <section class="ptc-page-hero">
     <div class="ptc-container">
         <h1><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></h1>
-        <?php if ($updatedAt && trim($updatedAt) !== '') : ?>
+        <?php if ($showUpdated && $updatedAt && trim($updatedAt) !== '') : ?>
             <p>Zuletzt aktualisiert: <?php echo htmlspecialchars(date('d.m.Y', strtotime($updatedAt)), ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>
     </div>

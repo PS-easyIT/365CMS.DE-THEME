@@ -1954,6 +1954,12 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => '1',
             ],
+            'page_show_updated' => [
+                'label'       => '„Zuletzt aktualisiert“ anzeigen',
+                'description' => 'Datum der letzten Aktualisierung unter dem Seitentitel.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
             'page_show_featured_image' => [
                 'label'       => 'Beitragsbild auf Seiten',
                 'description' => 'Beitragsbild auf statischen Seiten anzeigen.',
@@ -2474,7 +2480,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '📰 Blog-Übersicht'       => ['blog_layout', 'blog_columns', 'blog_show_sidebar', 'blog_hero_title', 'blog_hero_subtitle'],
                                 '🖼️ Blog-Karten'          => ['blog_show_featured_image', 'blog_show_excerpt', 'blog_show_date', 'blog_show_author', 'blog_show_category'],
                                 '📄 Einzelbeitrag'        => ['blog_single_show_featured', 'blog_single_show_author', 'blog_single_show_date', 'blog_single_show_tags', 'blog_single_show_reading_time', 'blog_single_show_related', 'blog_single_max_width'],
-                                '📃 Seiten-Einstellungen' => ['page_show_title', 'page_show_featured_image', 'page_max_width'],
+                                '📃 Seiten-Einstellungen' => ['page_show_title', 'page_show_updated', 'page_show_featured_image', 'page_max_width'],
                             ],
                         ];
                         $cardGroups = $tabCardGroups[$activeTab] ?? [];
