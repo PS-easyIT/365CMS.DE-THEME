@@ -471,6 +471,16 @@ $config = [
     'homepage' => [
         'title' => '🏠 Startseite',
         'sections' => [
+            'homepage_mode' => [
+                'label'       => 'Startseiten-Modus',
+                'description' => 'Theme-Startseite: Hero/Sektionen aus dem Customizer. Landing Page: Daten aus dem CMS Landing-Page-Editor.',
+                'type'        => 'select',
+                'options'     => [
+                    'theme'        => 'Theme-Startseite (Customizer)',
+                    'landing_page' => 'CMS Landing Page',
+                ],
+                'default'     => 'theme',
+            ],
             'show_hero' => [
                 'label'       => 'Hero-Sektion anzeigen',
                 'description' => 'Zeigt die große Hero-Sektion mit Suchleiste und Statistiken.',
@@ -880,6 +890,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                     <?php elseif ($activeTab === 'homepage'):
                         // ── Startseite: 2-Spalten-Karten-Layout ──────────────────────
                         $homepageGroups = [
+                            '⚙️ Startseiten-Modus' => ['homepage_mode'],
                             '🎬 Hero-Sektion' => ['show_hero', 'hero_title', 'hero_subtitle', 'show_hero_search', 'show_stats_bar'],
                             '👨‍💻 Experten-Bereich' => ['show_experts_section', 'experts_section_title', 'experts_limit'],
                             '📅 Events-Bereich' => ['show_events_section', 'events_section_title', 'events_limit'],
@@ -929,6 +940,125 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                                         <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
                                                class="form-control" style="width:120px;" min="1" max="12">
+
+                                    <?php else: ?>
+                                        <input type="<?php echo htmlspecialchars($field['type']); ?>"
+                                               id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               class="form-control">
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($field['description'])): ?>
+                                        <small class="form-text"><?php echo $field['description']; ?></small>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'header' || $activeTab === 'footer' || $activeTab === 'buttons'):
+                        // ── Header / Footer / Buttons: 2-Spalten-Karten-Layout ──────
+                        $tabCardGroups = [
+                            'header' => [
+                                '🖼️ Logo' => ['logo_url', 'logo_max_height'],
+                                '🎨 Header-Farben' => ['header_bg_color', 'header_text_color', 'header_accent_color'],
+                                '📐 Header-Layout' => ['header_height', 'show_header_shadow'],
+                                '🔍 Header-Buttons' => ['show_search_btn', 'show_login_btn', 'show_register_btn'],
+                                '👤 Profil-Dropdown' => ['profile_show_dashboard', 'profile_show_expert', 'profile_show_company', 'profile_show_events', 'profile_show_speaker'],
+                            ],
+                            'footer' => [
+                                '🎨 Footer-Farben' => ['footer_bg_color', 'footer_text_color', 'footer_link_color'],
+                                '📝 Footer-Inhalte' => ['footer_text', 'copyright_text', 'show_network_widgets'],
+                                '🌐 Social Media' => ['social_twitter', 'social_instagram', 'social_linkedin', 'social_youtube'],
+                            ],
+                            'buttons' => [
+                                '📐 Button-Form' => ['button_border_radius', 'button_padding_x', 'button_padding_y'],
+                                '🔤 Button-Text' => ['button_font_weight', 'button_transform'],
+                            ],
+                        ];
+                        $cardGroups = $tabCardGroups[$activeTab] ?? [];
+                    ?>
+                    <div class="admin-card">
+                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <div class="homepage-cards-grid">
+                            <?php foreach ($cardGroups as $groupTitle => $groupKeys): ?>
+                            <div class="homepage-card">
+                                <h4><?php echo $groupTitle; ?></h4>
+                                <?php foreach ($groupKeys as $fieldKey):
+                                    if (!isset($currentSection['sections'][$fieldKey])) { continue; }
+                                    $field     = $currentSection['sections'][$fieldKey];
+                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                                    $inputId   = "field_{$activeTab}_{$fieldKey}";
+                                    $inputName = "{$activeTab}_{$fieldKey}";
+                                ?>
+                                <div class="form-group">
+                                    <label for="<?php echo $inputId; ?>" class="form-label">
+                                        <?php echo htmlspecialchars($field['label']); ?>
+                                    </label>
+
+                                    <?php if ($field['type'] === 'image_upload'): ?>
+                                        <?php $previewUrl = $val ? htmlspecialchars((string)$val) : ''; ?>
+                                        <div style="display:flex;flex-direction:column;gap:10px;">
+                                            <div id="logo-preview-wrap" style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:6px;padding:12px;display:flex;align-items:center;gap:12px;min-height:60px;">
+                                                <?php if ($previewUrl): ?>
+                                                    <img id="logo-preview-img" src="<?php echo $previewUrl; ?>" alt="Logo" style="max-height:48px;max-width:200px;">
+                                                <?php else: ?>
+                                                    <span id="logo-preview-img" style="color:#94a3b8;font-size:.85rem;">🖼️ Noch kein Logo ausgewählt</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div style="display:flex;align-items:center;gap:8px;">
+                                                <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:.45rem .9rem;background:#3b82f6;color:#fff;border-radius:5px;font-size:.85rem;font-weight:600;">
+                                                    📁 Bild hochladen
+                                                    <input type="file" name="logo_upload_file" accept="image/*"
+                                                           style="display:none;" onchange="previewLogoUpload(this)">
+                                                </label>
+                                                <span style="color:#64748b;font-size:.8rem;">oder URL eingeben:</span>
+                                            </div>
+                                            <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                                   value="<?php echo $previewUrl; ?>" class="form-control"
+                                                   placeholder="https://..." oninput="syncLogoUrlPreview(this.value)">
+                                        </div>
+
+                                    <?php elseif ($field['type'] === 'color'): ?>
+                                        <div style="display:flex;align-items:center;gap:10px;">
+                                            <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                                   value="<?php echo htmlspecialchars((string)$val); ?>"
+                                                   style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
+                                            <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                                   class="form-control" style="width:120px;"
+                                                   onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                        </div>
+
+                                    <?php elseif ($field['type'] === 'checkbox'): ?>
+                                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
+                                            <input type="checkbox" id="<?php echo $inputId; ?>"
+                                                   name="<?php echo $inputName; ?>" value="1"
+                                                   <?php echo $val ? 'checked' : ''; ?>>
+                                            <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                        </div>
+
+                                    <?php elseif ($field['type'] === 'textarea'): ?>
+                                        <textarea id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                                  class="form-control" rows="3"
+                                        ><?php echo htmlspecialchars((string)$val); ?></textarea>
+
+                                    <?php elseif ($field['type'] === 'select'): ?>
+                                        <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                                class="form-control">
+                                            <?php foreach ($field['options'] as $optVal => $optLabel): ?>
+                                            <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
+                                                <?php echo (string)$val === (string)$optVal ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($optLabel); ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+
+                                    <?php elseif ($field['type'] === 'number'): ?>
+                                        <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               class="form-control" style="width:120px;">
 
                                     <?php else: ?>
                                         <input type="<?php echo htmlspecialchars($field['type']); ?>"
@@ -1032,7 +1162,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <?php endif; /* colors / homepage / standard tab */ ?>
+                    <?php endif; /* colors / homepage / header / footer / buttons / standard tab */ ?>
 
                     <!-- Sticky Speichern-Leiste -->
                     <div class="admin-card form-actions-card">

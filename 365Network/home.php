@@ -201,22 +201,23 @@ if ($showFallbackContent) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 5. LANDING-PAGE OVERRIDE (überschreibt Customizer-Hero-Titel falls vorhanden)
+// 5. LANDING-PAGE OVERRIDE (nur wenn Startseiten-Modus = 'landing_page')
 // ═══════════════════════════════════════════════════════════════════════════════
 
-try {
-    $landingService = \CMS\Services\LandingPageService::getInstance();
-    $landingHeader  = $landingService->getHeader();
-    // Nur überschreiben wenn ein echter LandingPage-Eintrag in der DB existiert (id !== null)
-    if (!empty($landingHeader['id'])) {
+$homepageMode = (string)$hpSetting('homepage_mode', 'theme');
+
+if ($homepageMode === 'landing_page') {
+    try {
+        $landingService = \CMS\Services\LandingPageService::getInstance();
+        $landingHeader  = $landingService->getHeader();
         if (!empty($landingHeader['title'])) {
             $heroTitle = $landingHeader['title'];
         }
         if (!empty($landingHeader['subtitle'])) {
             $heroSubtitle = $landingHeader['subtitle'];
         }
-    }
-} catch (\Throwable $e) { /* LandingPageService nicht verfügbar */ }
+    } catch (\Throwable $e) { /* LandingPageService nicht verfügbar */ }
+}
 
 // ── Filter: Hero-Texte für Plugins filterbar ──
 $heroTitle    = \CMS\Hooks::applyFilters('home_hero_title', $heroTitle);

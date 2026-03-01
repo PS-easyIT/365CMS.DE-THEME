@@ -470,6 +470,16 @@
       "label": "Startseite",
       "description": "Sektionen, Inhalte und Layout der Homepage. Jede Sektion bietet Hooks für Plugin-Injektionen.",
       "settings": {
+        "homepage_mode": {
+          "label": "Startseiten-Modus",
+          "type": "select",
+          "default": "theme",
+          "options": {
+            "theme": "Theme-Startseite (Customizer)",
+            "landing_page": "CMS Landing Page"
+          },
+          "description": "Theme-Startseite nutzt Customizer-Einstellungen. Landing Page nutzt den CMS Landing-Page-Editor."
+        },
         "show_hero": {
           "label": "Hero-Sektion anzeigen",
           "type": "checkbox",
