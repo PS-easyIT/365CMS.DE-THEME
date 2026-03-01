@@ -458,6 +458,18 @@ $config = [
                 'type'        => 'number',
                 'default'     => 48,
             ],
+            'nav_font_size' => [
+                'label'       => 'Menü-Schriftgröße (rem)',
+                'description' => 'Schriftgröße der Hauptmenüpunkte (Standard: 0.9).',
+                'type'        => 'number',
+                'default'     => '0.9',
+            ],
+            'nav_sub_font_size' => [
+                'label'       => 'Untermenü-Schriftgröße (rem)',
+                'description' => 'Schriftgröße der Untermenüpunkte (Standard: 0.85).',
+                'type'        => 'number',
+                'default'     => '0.85',
+            ],
             'show_header_shadow' => [
                 'label'       => 'Header-Schatten anzeigen',
                 'description' => 'Subtiler Schatten unterhalb der Navigationsleiste.',
@@ -2394,7 +2406,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                             'header' => [
                                 '🖼️ Logo'              => ['logo_url', 'logo_text', 'logo_max_height'],
                                 '🎨 Header-Farben'      => ['header_bg_color', 'header_text_color', 'header_accent_color'],
-                                '📐 Header-Layout'      => ['header_height', 'show_header_shadow'],
+                                '📐 Header-Layout'      => ['header_height', 'show_header_shadow', 'nav_font_size', 'nav_sub_font_size'],
                                 '🔗 Header-Aktionen'    => ['show_login_btn', 'show_register_btn', 'header_cta_text', 'header_cta_url'],
                                 '✨ Animation'           => ['header_animation'],
                             ],

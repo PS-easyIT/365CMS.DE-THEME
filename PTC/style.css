@@ -337,7 +337,7 @@ a:hover {
 .ptc-nav li a {
     display: block;
     padding: 0.5rem 0.875rem;
-    font-size: 0.9rem;
+    font-size: var(--ptc-nav-font-size, 0.9rem);
     font-weight: 500;
     color: var(--ptc-text-light);
     border-radius: var(--ptc-radius-sm);
@@ -430,7 +430,7 @@ a:hover {
 .ptc-submenu li a {
     display: block;
     padding: 0.6rem 1.25rem;
-    font-size: 0.85rem;
+    font-size: var(--ptc-nav-sub-font, 0.85rem);
     font-weight: 400;
     color: var(--ptc-text-light);
     white-space: nowrap;

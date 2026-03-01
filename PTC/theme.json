@@ -470,6 +470,18 @@
           "max": 100,
           "description": "Maximale Höhe des Site-Logos"
         },
+        "nav_font_size": {
+          "label": "Menü-Schriftgröße (rem)",
+          "type": "number",
+          "default": "0.9",
+          "description": "Schriftgröße der Hauptmenüpunkte"
+        },
+        "nav_sub_font_size": {
+          "label": "Untermenü-Schriftgröße (rem)",
+          "type": "number",
+          "default": "0.85",
+          "description": "Schriftgröße der Untermenüpunkte"
+        },
         "show_header_shadow": {
           "label": "Header-Schatten anzeigen",
           "type": "checkbox",
