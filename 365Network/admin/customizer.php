@@ -603,6 +603,93 @@ $config = [
         ],
     ],
 
+    'homepage_cta' => [
+        'title' => '📣 Startseite – Call-to-Action',
+        'sections' => [
+            'cta_enabled' => [
+                'label'       => 'CTA-Sektion anzeigen',
+                'description' => 'Aktiviert den Call-to-Action-Banner auf der Startseite.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'cta_title' => [
+                'label'       => 'CTA-Überschrift',
+                'description' => 'Hauptüberschrift des CTA-Banners.',
+                'type'        => 'text',
+                'default'     => 'Bereit, Teil unseres Netzwerks zu werden?',
+            ],
+            'cta_text' => [
+                'label'       => 'CTA-Beschreibung',
+                'description' => 'Beschreibungstext unter der Überschrift (leer = ausgeblendet).',
+                'type'        => 'textarea',
+                'default'     => 'Registriere dich jetzt und vernetze dich mit IT-Experten, Unternehmen und Events.',
+            ],
+            'cta_button_text' => [
+                'label'       => 'Button-Text',
+                'description' => 'Beschriftung des CTA-Buttons.',
+                'type'        => 'text',
+                'default'     => 'Jetzt registrieren',
+            ],
+            'cta_button_url' => [
+                'label'       => 'Button-URL',
+                'description' => 'Ziel-URL des CTA-Buttons (relativ oder absolut).',
+                'type'        => 'text',
+                'default'     => '/register',
+            ],
+            'cta_button_secondary_text' => [
+                'label'       => 'Sekundärer Button-Text',
+                'description' => 'Optionaler zweiter Button (leer = ausgeblendet).',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'cta_button_secondary_url' => [
+                'label'       => 'Sekundärer Button-URL',
+                'description' => 'Ziel-URL des zweiten Buttons.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'cta_style' => [
+                'label'       => 'CTA-Stil',
+                'description' => 'Farbschema des CTA-Banners.',
+                'type'        => 'select',
+                'options'     => [
+                    'dark'     => 'Dunkel (Navy)',
+                    'accent'   => 'Akzentfarbe (Gold)',
+                    'gradient' => 'Gradient (Navy → Blau)',
+                    'light'    => 'Hell (Weiß)',
+                ],
+                'default'     => 'dark',
+            ],
+            'cta_alignment' => [
+                'label'       => 'Textausrichtung',
+                'description' => 'Ausrichtung von Text und Buttons.',
+                'type'        => 'select',
+                'options'     => [
+                    'center' => 'Zentriert',
+                    'left'   => 'Links',
+                ],
+                'default'     => 'center',
+            ],
+            'cta_size' => [
+                'label'       => 'CTA-Größe',
+                'description' => 'Vertikales Padding des CTA-Banners.',
+                'type'        => 'select',
+                'options'     => [
+                    'compact' => 'Kompakt',
+                    'normal'  => 'Normal',
+                    'large'   => 'Groß',
+                ],
+                'default'     => 'normal',
+            ],
+            'cta_show_logged_in' => [
+                'label'       => 'Auch für eingeloggte User anzeigen',
+                'description' => 'Wenn deaktiviert, wird der CTA nur für Gäste angezeigt.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+        ],
+    ],
+
     'sidebar' => [
         'title' => '📌 Sidebar (Startseite)',
         'sections' => [

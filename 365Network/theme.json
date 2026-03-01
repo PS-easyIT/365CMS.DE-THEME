@@ -608,6 +608,94 @@
       }
     },
 
+    "homepage_cta": {
+      "label": "Startseite – Call-to-Action",
+      "description": "Full-Width CTA-Banner auf der Startseite. Wird zwischen Hauptinhalt und Events-Fussleiste angezeigt.",
+      "settings": {
+        "cta_enabled": {
+          "label": "CTA-Sektion anzeigen",
+          "type": "checkbox",
+          "default": false,
+          "description": "Aktiviert den Call-to-Action-Banner auf der Startseite"
+        },
+        "cta_title": {
+          "label": "CTA-Überschrift",
+          "type": "text",
+          "default": "Bereit, Teil unseres Netzwerks zu werden?",
+          "description": "Hauptüberschrift des CTA-Banners"
+        },
+        "cta_text": {
+          "label": "CTA-Beschreibung",
+          "type": "textarea",
+          "default": "Registriere dich jetzt und vernetze dich mit IT-Experten, Unternehmen und Events.",
+          "description": "Beschreibungstext unter der Überschrift (leer = ausgeblendet)"
+        },
+        "cta_button_text": {
+          "label": "Button-Text",
+          "type": "text",
+          "default": "Jetzt registrieren",
+          "description": "Beschriftung des CTA-Buttons"
+        },
+        "cta_button_url": {
+          "label": "Button-URL",
+          "type": "text",
+          "default": "/register",
+          "description": "Ziel-URL des CTA-Buttons (relativ oder absolut)"
+        },
+        "cta_button_secondary_text": {
+          "label": "Sekundärer Button-Text",
+          "type": "text",
+          "default": "",
+          "description": "Optionaler zweiter Button (leer = ausgeblendet)"
+        },
+        "cta_button_secondary_url": {
+          "label": "Sekundärer Button-URL",
+          "type": "text",
+          "default": "",
+          "description": "Ziel-URL des zweiten Buttons"
+        },
+        "cta_style": {
+          "label": "CTA-Stil",
+          "type": "select",
+          "options": {
+            "dark": "Dunkel (Navy)",
+            "accent": "Akzentfarbe (Gold)",
+            "gradient": "Gradient (Navy → Blau)",
+            "light": "Hell (Weiß)"
+          },
+          "default": "dark",
+          "description": "Farbschema des CTA-Banners"
+        },
+        "cta_alignment": {
+          "label": "Textausrichtung",
+          "type": "select",
+          "options": {
+            "center": "Zentriert",
+            "left": "Links"
+          },
+          "default": "center",
+          "description": "Ausrichtung von Text und Buttons"
+        },
+        "cta_size": {
+          "label": "CTA-Größe",
+          "type": "select",
+          "options": {
+            "compact": "Kompakt",
+            "normal": "Normal",
+            "large": "Groß"
+          },
+          "default": "normal",
+          "description": "Vertikales Padding des CTA-Banners"
+        },
+        "cta_show_logged_in": {
+          "label": "Auch für eingeloggte User anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Wenn deaktiviert, wird der CTA nur für Gäste angezeigt"
+        }
+      }
+    },
+
     "sidebar": {
       "label": "Sidebar (Startseite)",
       "description": "Sidebar-Layout, Widgets und Design-Einstellungen für die Startseite.",

@@ -724,6 +724,68 @@ $layoutClass = match ($homepageLayout) {
     ?>
 
     <?php
+    // ═════════════════════════════════════════════════════════════════════════
+    // CTA-SEKTION (Customizer: homepage_cta)
+    // ═════════════════════════════════════════════════════════════════════════
+    $_cta = [];
+    try {
+        $_cta = \CMS\Services\ThemeCustomizer::instance()->getCategory('homepage_cta');
+    } catch (\Throwable $e) {
+        $_cta = [];
+    }
+    $ctaEnabled      = filter_var($_cta['cta_enabled'] ?? false, FILTER_VALIDATE_BOOLEAN);
+    $ctaShowLoggedIn = filter_var($_cta['cta_show_logged_in'] ?? true, FILTER_VALIDATE_BOOLEAN);
+    $ctaVisible      = $ctaEnabled && ($ctaShowLoggedIn || !$isLoggedIn);
+
+    if ($ctaVisible) :
+        $ctaTitle       = (string)($_cta['cta_title'] ?? 'Bereit, Teil unseres Netzwerks zu werden?');
+        $ctaText        = (string)($_cta['cta_text'] ?? '');
+        $ctaBtnText     = (string)($_cta['cta_button_text'] ?? 'Jetzt registrieren');
+        $ctaBtnUrl      = (string)($_cta['cta_button_url'] ?? '/register');
+        $ctaBtn2Text    = (string)($_cta['cta_button_secondary_text'] ?? '');
+        $ctaBtn2Url     = (string)($_cta['cta_button_secondary_url'] ?? '');
+        $ctaStyle       = (string)($_cta['cta_style'] ?? 'dark');
+        $ctaAlignment   = (string)($_cta['cta_alignment'] ?? 'center');
+        $ctaSize        = (string)($_cta['cta_size'] ?? 'normal');
+
+        // URL-Auflösung (relative URLs → absolut)
+        if ($ctaBtnUrl && $ctaBtnUrl[0] === '/') {
+            $ctaBtnUrl = $siteUrl . $ctaBtnUrl;
+        }
+        if ($ctaBtn2Url && $ctaBtn2Url[0] === '/') {
+            $ctaBtn2Url = $siteUrl . $ctaBtn2Url;
+        }
+
+        $ctaClasses = 'homepage-cta';
+        $ctaClasses .= ' homepage-cta--' . htmlspecialchars($ctaStyle, ENT_QUOTES, 'UTF-8');
+        $ctaClasses .= ' homepage-cta--' . htmlspecialchars($ctaAlignment, ENT_QUOTES, 'UTF-8');
+        $ctaClasses .= ' homepage-cta--' . htmlspecialchars($ctaSize, ENT_QUOTES, 'UTF-8');
+    ?>
+    <section class="<?php echo $ctaClasses; ?>" data-section="cta">
+        <div class="homepage-cta-inner">
+            <?php if (!empty($ctaTitle)) : ?>
+                <h2 class="homepage-cta-title"><?php echo htmlspecialchars($ctaTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
+            <?php endif; ?>
+            <?php if (!empty($ctaText)) : ?>
+                <p class="homepage-cta-text"><?php echo htmlspecialchars($ctaText, ENT_QUOTES, 'UTF-8'); ?></p>
+            <?php endif; ?>
+            <div class="homepage-cta-actions">
+                <?php if (!empty($ctaBtnText)) : ?>
+                    <a href="<?php echo htmlspecialchars($ctaBtnUrl, ENT_QUOTES, 'UTF-8'); ?>" class="homepage-cta-btn homepage-cta-btn--primary">
+                        <?php echo htmlspecialchars($ctaBtnText, ENT_QUOTES, 'UTF-8'); ?>
+                    </a>
+                <?php endif; ?>
+                <?php if (!empty($ctaBtn2Text)) : ?>
+                    <a href="<?php echo htmlspecialchars($ctaBtn2Url, ENT_QUOTES, 'UTF-8'); ?>" class="homepage-cta-btn homepage-cta-btn--secondary">
+                        <?php echo htmlspecialchars($ctaBtn2Text, ENT_QUOTES, 'UTF-8'); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <?php
     // HOOK: home_before_strip
     \CMS\Hooks::doAction('home_before_strip');
     ?>

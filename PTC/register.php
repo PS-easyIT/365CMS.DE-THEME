@@ -40,7 +40,6 @@ $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
                         <path d="M10 12h5v3h-5zM10 17h5v3h-5zM10 22h5v3h-5zM17 12h9v3h-9zM17 17h7v3h-7zM17 22h5v3h-5z" fill="var(--ptc-gold, #D4A017)"/>
                     </svg>
                 <?php endif; ?>
-                <h1><?php echo $siteTitle; ?></h1>
                 <p>Erstelle dein kostenloses Konto</p>
             </div>
 
