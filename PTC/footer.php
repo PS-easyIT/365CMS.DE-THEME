@@ -130,6 +130,41 @@ $activeSocials = array_filter($socialLinks, fn($s) => $s['url'] !== '');
 
     <?php \CMS\Hooks::doAction('footer'); ?>
 
+    <?php
+    // ── Network Bar ──────────────────────────────────────────────────────────
+    $showNetworkBar = filter_var(ptc_customizer_get('footer', 'show_network_bar', true), FILTER_VALIDATE_BOOLEAN);
+    if ($showNetworkBar):
+        $nbName = trim((string) ptc_customizer_get('footer', 'network_bar_name', 'Andreas Hepp'));
+        $nbLinks = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $lbl = trim((string) ptc_customizer_get('footer', "network_bar_link{$i}_label", ''));
+            $url = trim((string) ptc_customizer_get('footer', "network_bar_link{$i}_url", ''));
+            if ($lbl !== '' && $url !== '') {
+                $nbLinks[] = ['label' => $lbl, 'url' => $url];
+            }
+        }
+    ?>
+    <div class="ptc-network-bar">
+        <div class="ptc-container">
+            <div class="ptc-network-inner">
+                <?php if ($nbName !== ''): ?>
+                    <span class="ptc-network-label"><?php echo htmlspecialchars($nbName, ENT_QUOTES, 'UTF-8'); ?></span>
+                <?php endif; ?>
+                <?php if (!empty($nbLinks)): ?>
+                    <div class="ptc-network-links">
+                        <?php foreach ($nbLinks as $link): ?>
+                            <a href="<?php echo htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8'); ?>"
+                               target="_blank" rel="noopener noreferrer">
+                                <?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
 </div><!-- /.ptc-site -->
 
 <?php \CMS\Hooks::doAction('body_end'); ?>

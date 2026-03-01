@@ -1789,6 +1789,8 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
         .customizer-nav a { display: block; padding: 1rem 1.5rem; color: #64748b; text-decoration: none; border-left: 3px solid transparent; transition: all .2s; font-size: .9rem; }
         .customizer-nav a:hover { background: #f8fafc; color: var(--admin-primary, #3b82f6); }
         .customizer-nav a.active { background: #eff6ff; color: var(--admin-primary, #3b82f6); border-left-color: var(--admin-primary, #3b82f6); font-weight: 600; }
+        .customizer-nav-group-label { display: block; padding: .6rem 1.5rem .3rem; font-size: .72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; border-top: 1px solid #f1f5f9; margin-top: .25rem; }
+        .customizer-nav a.customizer-nav-sub { padding-left: 2.25rem; font-size: .85rem; }
         .customizer-content { flex: 1; }
         .form-actions-card { position: sticky; bottom: 1rem; z-index: 10; }
 
@@ -1818,6 +1820,8 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
             .customizer-nav { width: 100%; display: flex; flex-wrap: wrap; gap: 0; }
             .customizer-nav a { border-left: none; border-bottom: 3px solid transparent; padding: .75rem 1rem; font-size: .8rem; }
             .customizer-nav a.active { border-bottom-color: var(--admin-primary, #3b82f6); }
+            .customizer-nav a.customizer-nav-sub { padding-left: 1rem; }
+            .customizer-nav-group-label { padding: .4rem .75rem .15rem; border-top: none; margin-top: 0; }
         }
     </style>
 </head>
@@ -1853,12 +1857,40 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
 
                 <!-- Tab-Navigation -->
                 <nav class="customizer-nav">
-                    <?php foreach ($config as $key => $tab): ?>
-                        <a href="?tab=<?php echo $key; ?>"
-                           class="<?php echo $activeTab === $key ? 'active' : ''; ?>">
-                            <?php echo htmlspecialchars($tab['title']); ?>
+                    <?php
+                    // Navigationsstruktur mit Gruppierung
+                    $navStructure = [
+                        ['key' => 'colors'],
+                        ['key' => 'typography'],
+                        ['key' => 'layout'],
+                        ['key' => 'header'],
+                        ['group' => '🏠 Startseite', 'items' => [
+                            'homepage' => '🎬 Hero & CTA',
+                            'services' => '🛠️ Dienstleistungen',
+                            'events'   => '📅 Termine',
+                            'faq'      => '❓ FAQ',
+                        ]],
+                        ['key' => 'footer'],
+                        ['key' => 'buttons'],
+                        ['key' => 'advanced'],
+                    ];
+                    $homepageSubTabs = ['homepage', 'services', 'events', 'faq'];
+                    foreach ($navStructure as $navItem):
+                        if (isset($navItem['group'])):
+                    ?>
+                        <span class="customizer-nav-group-label"><?php echo $navItem['group']; ?></span>
+                        <?php foreach ($navItem['items'] as $subKey => $subLabel): ?>
+                            <a href="?tab=<?php echo $subKey; ?>"
+                               class="customizer-nav-sub<?php echo $activeTab === $subKey ? ' active' : ''; ?>">
+                                <?php echo htmlspecialchars($subLabel); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <a href="?tab=<?php echo $navItem['key']; ?>"
+                           class="<?php echo $activeTab === $navItem['key'] ? 'active' : ''; ?>">
+                            <?php echo htmlspecialchars($config[$navItem['key']]['title'] ?? ''); ?>
                         </a>
-                    <?php endforeach; ?>
+                    <?php endif; endforeach; ?>
                 </nav>
 
                 <!-- Inhaltsbereich -->
@@ -1868,9 +1900,11 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                     <?php if ($activeTab === 'colors'):
                         // ── Farben: 3-Spalten-Karten-Layout ──────────────────────
                         $colorGroups = [
-                            '🎨 Markenfarben' => ['primary_color', 'primary_hover', 'primary_light', 'accent_color', 'accent_hover', 'accent_light', 'secondary_color'],
-                            '📝 Text & Links' => ['text_color', 'heading_color', 'text_light', 'muted_color', 'link_color', 'link_hover_color'],
-                            '🖼️ Hintergrund & Status' => ['bg_color', 'bg_secondary', 'border_color', 'success_color', 'error_color'],
+                            '🎨 Markenfarben'          => ['primary_color', 'primary_hover', 'primary_light', 'accent_color', 'accent_hover', 'accent_light', 'secondary_color'],
+                            '📝 Text & Links'           => ['text_color', 'heading_color', 'text_light', 'muted_color', 'link_color', 'link_hover_color'],
+                            '🖼️ Hintergrund & Status'  => ['bg_color', 'bg_secondary', 'border_color', 'success_color', 'error_color'],
+                            '📢 CTA-Sektion'            => ['cta_bg_color', 'cta_bg_to', 'cta_text_color'],
+                            '🖼️ Seitenränder'          => ['side_margin_color', 'side_accent_color', 'side_accent_width'],
                         ];
                     ?>
                     <div class="admin-card">

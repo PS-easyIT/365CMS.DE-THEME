@@ -141,6 +141,17 @@ final class PTC_Theme
             $vars['--ptc-footer-text'] = $c->get('footer', 'footer_text_color', '#94a3b8');
             $vars['--ptc-footer-link'] = $c->get('footer', 'footer_link_color', '#F8F9FA');
 
+            // ── CTA-Sektion ──
+            $vars['--ptc-cta-bg']      = $c->get('colors', 'cta_bg_color',   '#002D5D');
+            $vars['--ptc-cta-bg-to']   = $c->get('colors', 'cta_bg_to',      '#001F42');
+            $vars['--ptc-cta-text']    = $c->get('colors', 'cta_text_color',  '#FFFFFF');
+
+            // ── Seitenränder ──
+            $vars['--ptc-side-color']  = $c->get('colors', 'side_margin_color', '#EDF1F5');
+            $vars['--ptc-side-accent'] = $c->get('colors', 'side_accent_color', '#002D5D');
+            $sideWidth                 = (int) $c->get('colors', 'side_accent_width', 0);
+            $vars['--ptc-side-width']  = $sideWidth . 'px';
+
             // ── Buttons ──
             $vars['--ptc-btn-radius']    = $c->get('buttons', 'button_border_radius', '8') . 'px';
             $vars['--ptc-btn-px']        = $c->get('buttons', 'button_padding_x',     '2') . 'rem';

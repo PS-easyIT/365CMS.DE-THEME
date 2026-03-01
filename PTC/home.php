@@ -77,14 +77,15 @@ $servicesBgStyle  = (string) $svcGet('services_bg_style', 'default');
 $servicesCardStyle = (string) $svcGet('services_card_style', 'bordered');
 $servicesIconStyle = (string) $svcGet('services_icon_style', 'circle');
 $servicesShowHover = $svcBool('services_show_hover', true);
+$servicesShowIcons = $svcBool('services_show_icons', true);
 $servicesMaxItems  = (int) $svcGet('services_max_items', 6);
 $servicesShowCta  = $svcBool('services_show_cta', false);
 $servicesCtaLabel = (string) $svcGet('services_cta_label', 'Alle Leistungen entdecken');
 $servicesCtaUrl   = (string) $svcGet('services_cta_url', '/leistungen');
 
-// Dynamische Service-Karten (1–8)
+// Dynamische Service-Karten (1–12)
 $serviceCards = [];
-for ($i = 1; $i <= 8; $i++) {
+for ($i = 1; $i <= 12; $i++) {
     $icon  = trim((string) $svcGet("service_{$i}_icon", ''));
     $title = trim((string) $svcGet("service_{$i}_title", ''));
     $text  = trim((string) $svcGet("service_{$i}_text", ''));
@@ -224,7 +225,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
         </div>
 
         <?php if (!empty($serviceCards)): ?>
-        <div class="ptc-services-grid" data-cols="<?php echo htmlspecialchars($servicesCols, ENT_QUOTES, 'UTF-8'); ?>" data-card-style="<?php echo htmlspecialchars($servicesCardStyle, ENT_QUOTES, 'UTF-8'); ?>" data-icon-style="<?php echo htmlspecialchars($servicesIconStyle, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $servicesShowHover ? ' data-hover="true"' : ''; ?>>
+        <div class="ptc-services-grid" data-cols="<?php echo htmlspecialchars($servicesCols, ENT_QUOTES, 'UTF-8'); ?>" data-card-style="<?php echo htmlspecialchars($servicesCardStyle, ENT_QUOTES, 'UTF-8'); ?>" data-icon-style="<?php echo htmlspecialchars($servicesIconStyle, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $servicesShowHover ? ' data-hover="true"' : ''; ?> data-icons="<?php echo $servicesShowIcons ? 'visible' : 'hidden'; ?>">
 
             <?php foreach ($serviceCards as $card): ?>
             <article class="ptc-service-card">
@@ -373,6 +374,26 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
                class="btn-ptc btn-ptc-accent btn-ptc-lg">
                 <?php echo htmlspecialchars($eventsCtaLabel, ENT_QUOTES, 'UTF-8'); ?>
             </a>
+        </div>
+        <?php endif; ?>
+
+        <?php
+        // MS Booking Integration
+        $bookingUrl   = trim((string) $evtGet('events_booking_url', ''));
+        $bookingTitle = trim((string) $evtGet('events_booking_title', 'Online-Termin buchen'));
+        $bookingHeight = (int) $evtGet('events_booking_height', 600);
+        if ($bookingUrl !== ''):
+        ?>
+        <div class="ptc-booking-embed" style="margin-top:2.5rem;">
+            <?php if ($bookingTitle !== ''): ?>
+                <h3 style="text-align:center;margin-bottom:1.25rem;"><?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?></h3>
+            <?php endif; ?>
+            <iframe src="<?php echo htmlspecialchars($bookingUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                    width="100%" height="<?php echo $bookingHeight; ?>"
+                    frameborder="0" scrolling="yes"
+                    style="border:0;border-radius:var(--ptc-radius, 8px);background:#fff;"
+                    title="<?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?>"
+                    loading="lazy"></iframe>
         </div>
         <?php endif; ?>
 
