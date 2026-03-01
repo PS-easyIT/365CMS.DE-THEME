@@ -342,6 +342,28 @@ a:hover {
     color: var(--ptc-text-light);
     border-radius: var(--ptc-radius-sm);
     transition: var(--ptc-ease-fast);
+    position: relative;
+}
+
+.ptc-nav > ul > li > a::after {
+    content: '';
+    position: absolute;
+    left: 0.875rem;
+    right: 0.875rem;
+    bottom: 0;
+    height: 2px;
+    background: var(--ptc-gold);
+    opacity: 0.35;
+    transition: height 0.2s ease, opacity 0.2s ease;
+}
+
+.ptc-nav > ul > li > a:hover::after {
+    opacity: 0.6;
+}
+
+.ptc-nav > ul > li.active > a::after {
+    height: 3px;
+    opacity: 1;
 }
 
 .ptc-nav li a:hover,
