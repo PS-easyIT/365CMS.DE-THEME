@@ -135,8 +135,8 @@ final class PTC_Theme
             $vars['--ptc-header-accent']  = $c->get('header', 'header_accent_color', '#D4A017');
             $vars['--ptc-header-height']  = $c->get('header', 'header_height',       '72') . 'px';
             $vars['--ptc-logo-height']    = $c->get('header', 'logo_max_height',     '48') . 'px';
-            $vars['--ptc-nav-font-size']  = $c->get('header', 'nav_font_size',       '0.9') . 'rem';
-            $vars['--ptc-nav-sub-font']   = $c->get('header', 'nav_sub_font_size',   '0.85') . 'rem';
+            $vars['--ptc-nav-font-size']  = $c->get('header', 'nav_font_size',       '14') . 'px';
+            $vars['--ptc-nav-sub-font']   = $c->get('header', 'nav_sub_font_size',   '13') . 'px';
 
             // ── Footer ──
             $vars['--ptc-footer-bg']   = $c->get('footer', 'footer_bg_color',   '#001A33');
