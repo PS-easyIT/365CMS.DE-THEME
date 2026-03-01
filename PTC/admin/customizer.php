@@ -154,6 +154,46 @@ $config = [
                 'type'        => 'color',
                 'default'     => '#ef4444',
             ],
+
+            // ── CTA-Sektion ──
+            'cta_bg_color' => [
+                'label'       => 'CTA-Hintergrund (Verlauf Start)',
+                'description' => 'Startfarbe des CTA-Sektions-Hintergrund-Verlaufs.',
+                'type'        => 'color',
+                'default'     => '#002D5D',
+            ],
+            'cta_bg_to' => [
+                'label'       => 'CTA-Hintergrund (Verlauf Ende)',
+                'description' => 'Endfarbe des CTA-Sektions-Verlaufs.',
+                'type'        => 'color',
+                'default'     => '#001F42',
+            ],
+            'cta_text_color' => [
+                'label'       => 'CTA-Textfarbe',
+                'description' => 'Textfarbe innerhalb der CTA-Sektion.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF',
+            ],
+
+            // ── Seitenränder ──
+            'side_margin_color' => [
+                'label'       => 'Seitenrand-Hintergrund',
+                'description' => 'Hintergrundfarbe der Seitenränder (links/rechts). Dezent anders als Content.',
+                'type'        => 'color',
+                'default'     => '#EDF1F5',
+            ],
+            'side_accent_color' => [
+                'label'       => 'Seitenrand-Akzent',
+                'description' => 'Optionale farbige Akzentlinie am linken und rechten Seitenrand. Leer/transparent = deaktiviert.',
+                'type'        => 'color',
+                'default'     => '#002D5D',
+            ],
+            'side_accent_width' => [
+                'label'       => 'Seitenrand-Akzent Breite (px)',
+                'description' => 'Breite der Seitenrand-Akzentlinie (0 = keine Linie).',
+                'type'        => 'number',
+                'default'     => 0,
+            ],
         ],
     ],
 
@@ -565,9 +605,15 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
+            'services_show_icons' => [
+                'label'       => 'Icons anzeigen',
+                'description' => 'Zeigt die Emoji-Icons auf den Service-Karten. Deaktiviert = nur Titel und Text.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
             'services_max_items' => [
                 'label'       => 'Maximale Anzahl sichtbarer Karten',
-                'description' => 'Wie viele Service-Karten maximal angezeigt werden (1–8).',
+                'description' => 'Wie viele Service-Karten maximal angezeigt werden (1–12).',
                 'type'        => 'number',
                 'default'     => 6,
             ],
@@ -793,6 +839,110 @@ $config = [
             ],
             'service_8_url' => [
                 'label'       => 'Service 8 – Link (optional)',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+
+            // ── Service 9 ──
+            'service_9_icon' => [
+                'label'       => '🔶 Service 9 – Icon (Emoji)',
+                'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_9_title' => [
+                'label'       => 'Service 9 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_9_text' => [
+                'label'       => 'Service 9 – Beschreibung',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'service_9_url' => [
+                'label'       => 'Service 9 – Link (optional)',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+
+            // ── Service 10 ──
+            'service_10_icon' => [
+                'label'       => '🔶 Service 10 – Icon (Emoji)',
+                'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_10_title' => [
+                'label'       => 'Service 10 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_10_text' => [
+                'label'       => 'Service 10 – Beschreibung',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'service_10_url' => [
+                'label'       => 'Service 10 – Link (optional)',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+
+            // ── Service 11 ──
+            'service_11_icon' => [
+                'label'       => '🔶 Service 11 – Icon (Emoji)',
+                'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_11_title' => [
+                'label'       => 'Service 11 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_11_text' => [
+                'label'       => 'Service 11 – Beschreibung',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'service_11_url' => [
+                'label'       => 'Service 11 – Link (optional)',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+
+            // ── Service 12 ──
+            'service_12_icon' => [
+                'label'       => '🔶 Service 12 – Icon (Emoji)',
+                'description' => 'Leer = Karte nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_12_title' => [
+                'label'       => 'Service 12 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'service_12_text' => [
+                'label'       => 'Service 12 – Beschreibung',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'service_12_url' => [
+                'label'       => 'Service 12 – Link (optional)',
                 'description' => '',
                 'type'        => 'text',
                 'default'     => '',
@@ -1463,6 +1613,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'ptc_customizer')) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
+        // Track uploaded file fields to avoid overwriting with stale POST values
+        $uploadedFields = [];
+
         // Logo-Upload
         if (!empty($_FILES['logo_upload_file']['tmp_name'])) {
             $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
@@ -1476,6 +1629,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $destPath    = $uploadDir . '/' . $newFileName;
                 if (move_uploaded_file($_FILES['logo_upload_file']['tmp_name'], $destPath)) {
                     $customizer->set('header', 'logo_url', UPLOAD_URL . '/theme-logos/' . $newFileName);
+                    $uploadedFields['header:logo_url'] = true;
                 } else {
                     $error = 'Logo-Upload fehlgeschlagen. Bitte prüfen Sie die Schreibrechte auf uploads/theme-logos/';
                 }
@@ -1497,6 +1651,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $destPath    = $uploadDir . '/' . $newFileName;
                 if (move_uploaded_file($_FILES['hero_bg_upload_file']['tmp_name'], $destPath)) {
                     $customizer->set('homepage', 'hero_bg_image', UPLOAD_URL . '/theme-images/' . $newFileName);
+                    $uploadedFields['homepage:hero_bg_image'] = true;
                 } else {
                     $error = 'Bild-Upload fehlgeschlagen. Bitte prüfen Sie die Schreibrechte.';
                 }
@@ -1514,15 +1669,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             foreach ($config[$saveTab]['sections'] as $fieldKey => $fieldConfig) {
                 $inputName = "{$saveTab}_{$fieldKey}";
 
-                // Bild-Uploads: nur speichern wenn explizit befüllt (Datei-Upload hat Vorrang)
+                // Bild-Uploads: Skip wenn bereits per Datei-Upload gespeichert
                 if ($fieldConfig['type'] === 'image_upload') {
-                    $postVal = $_POST[$inputName] ?? '';
-                    if ($postVal !== '' || $fieldKey === 'logo_url' || $fieldKey === 'hero_bg_image') {
-                        // File upload already handled above
-                        if ($postVal !== '') {
-                            if (!$customizer->set($saveTab, $fieldKey, $postVal)) {
-                                $saveFailed = true;
-                            }
+                    if (isset($uploadedFields["{$saveTab}:{$fieldKey}"])) {
+                        continue; // Datei-Upload hat Vorrang
+                    }
+                    $postVal = trim($_POST[$inputName] ?? '');
+                    if ($postVal !== '') {
+                        if (!$customizer->set($saveTab, $fieldKey, $postVal)) {
+                            $saveFailed = true;
                         }
                     }
                     continue;
