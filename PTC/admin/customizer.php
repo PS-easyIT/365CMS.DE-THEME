@@ -28,7 +28,7 @@ if (!Auth::instance()->isAdmin()) {
 $sidebarPaths = [
     dirname(__DIR__, 2) . '/../CMS/admin/partials/admin-menu.php',
     ABSPATH . 'admin/partials/admin-menu.php',
-    CMS_PATH . 'admin/partials/admin-menu.php',
+    dirname(ABSPATH) . '/admin/partials/admin-menu.php',
 ];
 foreach ($sidebarPaths as $sp) {
     if (file_exists($sp)) {

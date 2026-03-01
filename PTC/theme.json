@@ -40,40 +40,652 @@
   },
 
   "customization": {
-    "header": {
-      "label": "Header & Logo",
-      "settings": {
-        "logo_url": {
-          "label": "Logo-Bild URL",
-          "type": "image",
-          "default": ""
-        },
-        "logo_type": {
-          "label": "Logo Typ",
-          "type": "select",
-          "default": "text"
-        },
-        "logo_text": {
-          "label": "Wordmark-Text",
-          "type": "text",
-          "default": "PTC GmbH"
-        }
-      }
-    },
+
     "colors": {
       "label": "Farben",
+      "description": "Marken-, Text-, Hintergrund- und Statusfarben der PTC Corporate Identity.",
       "settings": {
         "primary_color": {
-          "label": "Primärfarbe (Marineblau)",
+          "label": "Primärfarbe (Navy)",
           "type": "color",
-          "default": "#002D5D"
+          "default": "#002D5D",
+          "description": "Hauptfarbe – Marineblau der PTC Corporate Identity"
+        },
+        "primary_hover": {
+          "label": "Primärfarbe Hover",
+          "type": "color",
+          "default": "#001F42",
+          "description": "Dunklerer Ton für Hover-Zustände"
+        },
+        "primary_light": {
+          "label": "Primärfarbe Hell",
+          "type": "color",
+          "default": "#E8F0FE",
+          "description": "Aufgehellt für Hintergründe und Badges"
         },
         "accent_color": {
           "label": "Akzentfarbe (Gold)",
           "type": "color",
-          "default": "#D4A017"
+          "default": "#D4A017",
+          "description": "Gold – CTAs, Highlights, Akzente"
+        },
+        "accent_hover": {
+          "label": "Akzentfarbe Hover",
+          "type": "color",
+          "default": "#B8860B",
+          "description": "Dunkleres Gold für Hover-Zustände"
+        },
+        "accent_light": {
+          "label": "Akzentfarbe Hell",
+          "type": "color",
+          "default": "#FDF5E6",
+          "description": "Heller Goldton für dezente Markierungen"
+        },
+        "secondary_color": {
+          "label": "Sekundärfarbe (Slate)",
+          "type": "color",
+          "default": "#607D8B",
+          "description": "Schiefergrau für Nebenelemente"
+        },
+        "text_color": {
+          "label": "Textfarbe",
+          "type": "color",
+          "default": "#334155",
+          "description": "Standard-Fließtextfarbe"
+        },
+        "heading_color": {
+          "label": "Überschriftenfarbe",
+          "type": "color",
+          "default": "#002D5D",
+          "description": "Farbe aller Überschriften (h1–h6)"
+        },
+        "text_light": {
+          "label": "Helle Textfarbe",
+          "type": "color",
+          "default": "#F8F9FA",
+          "description": "Für dunkle Hintergründe (Header, Footer, Hero)"
+        },
+        "muted_color": {
+          "label": "Gedämpfte Textfarbe",
+          "type": "color",
+          "default": "#94a3b8",
+          "description": "Timestamps, Platzhalter, Hints"
+        },
+        "bg_color": {
+          "label": "Seitenhintergrund",
+          "type": "color",
+          "default": "#F8F9FA",
+          "description": "Hintergrundfarbe des Content-Bereichs (Off-White)"
+        },
+        "bg_secondary": {
+          "label": "Sekundärer Hintergrund",
+          "type": "color",
+          "default": "#F1F5F9",
+          "description": "Hintergrund für Cards und alternierende Sektionen"
+        },
+        "link_color": {
+          "label": "Linkfarbe",
+          "type": "color",
+          "default": "#002D5D",
+          "description": "Standard-Linkfarbe im Content-Bereich"
+        },
+        "link_hover_color": {
+          "label": "Link Hover-Farbe",
+          "type": "color",
+          "default": "#D4A017",
+          "description": "Linkfarbe beim Hover-Zustand"
+        },
+        "border_color": {
+          "label": "Rahmenfarbe",
+          "type": "color",
+          "default": "#E2E8F0",
+          "description": "Standard-Rahmenfarbe für Trennlinien und Cards"
+        },
+        "success_color": {
+          "label": "Erfolgsfarbe",
+          "type": "color",
+          "default": "#22c55e",
+          "description": "Positivmeldungen und Status-Badges"
+        },
+        "error_color": {
+          "label": "Fehlerfarbe",
+          "type": "color",
+          "default": "#ef4444",
+          "description": "Fehlermeldungen und Warnungen"
+        }
+      }
+    },
+
+    "typography": {
+      "label": "Typografie",
+      "description": "Schriftarten, Größen, Zeilenhöhe und Gewichtung.",
+      "settings": {
+        "font_family_base": {
+          "label": "Basis-Schriftart",
+          "type": "select",
+          "options": {
+            "system": "System-Standard",
+            "inter": "Inter",
+            "roboto": "Roboto",
+            "open-sans": "Open Sans",
+            "lato": "Lato",
+            "montserrat": "Montserrat",
+            "poppins": "Poppins",
+            "raleway": "Raleway"
+          },
+          "default": "system",
+          "description": "Schriftart für Fließtext"
+        },
+        "font_family_heading": {
+          "label": "Überschriften-Schriftart",
+          "type": "select",
+          "options": {
+            "system": "System-Standard",
+            "georgia": "Georgia (Serif)",
+            "inter": "Inter",
+            "roboto": "Roboto",
+            "open-sans": "Open Sans",
+            "lato": "Lato",
+            "montserrat": "Montserrat",
+            "poppins": "Poppins",
+            "raleway": "Raleway"
+          },
+          "default": "system",
+          "description": "Schriftart für alle Überschriften"
+        },
+        "font_size_base": {
+          "label": "Basis-Schriftgröße (px)",
+          "type": "number",
+          "default": 16,
+          "min": 12,
+          "max": 24,
+          "description": "Schriftgröße des Fließtexts (px)"
+        },
+        "line_height_base": {
+          "label": "Zeilenhöhe",
+          "type": "number",
+          "default": 1.6,
+          "min": 1.2,
+          "max": 2.5,
+          "step": 0.1,
+          "description": "Zeilenhöhe des Fließtexts (Faktor)"
+        },
+        "font_weight_heading": {
+          "label": "Überschriften-Gewicht",
+          "type": "select",
+          "options": {
+            "400": "Regular (400)",
+            "500": "Medium (500)",
+            "600": "Semi-Bold (600)",
+            "700": "Bold (700)",
+            "800": "Extra-Bold (800)",
+            "900": "Black (900)"
+          },
+          "default": "700",
+          "description": "Font-Weight für alle Überschriften"
+        }
+      }
+    },
+
+    "layout": {
+      "label": "Layout",
+      "description": "Container, Abstände, Eckenradius und Sticky-Header.",
+      "settings": {
+        "container_width": {
+          "label": "Container-Breite (px)",
+          "type": "number",
+          "default": 1280,
+          "min": 800,
+          "max": 1920,
+          "description": "Maximale Breite des Inhaltsbereichs"
+        },
+        "content_padding": {
+          "label": "Content-Padding (rem)",
+          "type": "number",
+          "default": 2,
+          "min": 0.5,
+          "max": 6,
+          "step": 0.25,
+          "description": "Horizontaler Innenabstand des Containers"
+        },
+        "border_radius": {
+          "label": "Eckenradius (px)",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 32,
+          "description": "Standard-Rundung für Cards, Buttons und Felder"
+        },
+        "section_spacing": {
+          "label": "Sektionsabstand (rem)",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 10,
+          "step": 0.5,
+          "description": "Vertikaler Abstand zwischen Seitenbereichen"
+        },
+        "enable_sticky_header": {
+          "label": "Sticky Header aktivieren",
+          "type": "checkbox",
+          "default": true,
+          "description": "Header bleibt beim Scrollen oben fixiert"
+        }
+      }
+    },
+
+    "header": {
+      "label": "Header & Logo",
+      "description": "Logo, Farben, Höhe und Aktions-Buttons im Header.",
+      "settings": {
+        "logo_url": {
+          "label": "Header Logo",
+          "type": "image",
+          "default": "",
+          "description": "Logo-Bild (JPG, PNG, WebP, SVG). Leer = Text-Logo."
+        },
+        "logo_text": {
+          "label": "Logo-Text (Wordmark)",
+          "type": "text",
+          "default": "PTC GmbH",
+          "description": "Text-Logo als Fallback"
+        },
+        "header_bg_color": {
+          "label": "Header-Hintergrund",
+          "type": "color",
+          "default": "#002D5D",
+          "description": "Hintergrundfarbe der Navigationsleiste"
+        },
+        "header_text_color": {
+          "label": "Header-Textfarbe",
+          "type": "color",
+          "default": "#F8F9FA",
+          "description": "Farbe von Navigationslinks und Logo-Text"
+        },
+        "header_accent_color": {
+          "label": "Header-Akzentfarbe",
+          "type": "color",
+          "default": "#D4A017",
+          "description": "Aktive Links, Hover-Zustand"
+        },
+        "header_height": {
+          "label": "Header-Höhe (px)",
+          "type": "number",
+          "default": 72,
+          "min": 48,
+          "max": 120,
+          "description": "Höhe der Navigationsleiste"
+        },
+        "logo_max_height": {
+          "label": "Logo-Maximalhöhe (px)",
+          "type": "number",
+          "default": 48,
+          "min": 24,
+          "max": 100,
+          "description": "Maximale Höhe des Site-Logos"
+        },
+        "show_header_shadow": {
+          "label": "Header-Schatten anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Subtiler Schatten unterhalb der Navigationsleiste"
+        },
+        "show_login_btn": {
+          "label": "Anmelden-Button anzeigen",
+          "type": "checkbox",
+          "default": false,
+          "description": "Login-Button für nicht angemeldete Besucher"
+        },
+        "show_register_btn": {
+          "label": "Registrieren-Button anzeigen",
+          "type": "checkbox",
+          "default": false,
+          "description": "Registrieren-Button für nicht angemeldete Besucher"
+        },
+        "header_cta_text": {
+          "label": "Header CTA-Button Text",
+          "type": "text",
+          "default": "Kontakt",
+          "description": "Text des CTA-Buttons im Header (leer = ausgeblendet)"
+        },
+        "header_cta_url": {
+          "label": "Header CTA-Button URL",
+          "type": "text",
+          "default": "/#kontakt",
+          "description": "Ziel-URL des CTA-Buttons"
+        }
+      }
+    },
+
+    "footer": {
+      "label": "Footer",
+      "description": "Farben, Texte, Kontaktdaten und Social-Links im Footer.",
+      "settings": {
+        "footer_bg_color": {
+          "label": "Footer-Hintergrund",
+          "type": "color",
+          "default": "#001A33",
+          "description": "Hintergrundfarbe im Footer"
+        },
+        "footer_text_color": {
+          "label": "Footer-Textfarbe",
+          "type": "color",
+          "default": "#94a3b8",
+          "description": "Textfarbe im Footer"
+        },
+        "footer_link_color": {
+          "label": "Footer-Linkfarbe",
+          "type": "color",
+          "default": "#F8F9FA",
+          "description": "Farbe der Links im Footer"
+        },
+        "footer_tagline": {
+          "label": "Footer-Beschreibungstext",
+          "type": "textarea",
+          "default": "PTC GmbH – Ihr Partner für Bildung, Karriere und Zukunft.",
+          "description": "Text im ersten Footer-Widget"
+        },
+        "footer_address": {
+          "label": "Adresse / Kontakt",
+          "type": "textarea",
+          "default": "PTC GmbH\nMusterstraße 1\n12345 Musterstadt",
+          "description": "Adressdaten im Kontakt-Widget"
+        },
+        "footer_phone": {
+          "label": "Telefon",
+          "type": "text",
+          "default": "",
+          "description": "Telefonnummer im Footer-Kontaktbereich"
+        },
+        "footer_email": {
+          "label": "E-Mail",
+          "type": "text",
+          "default": "",
+          "description": "E-Mail im Footer-Kontaktbereich"
+        },
+        "copyright_text": {
+          "label": "Copyright-Text",
+          "type": "text",
+          "default": "© {year} {site_title}. Alle Rechte vorbehalten.",
+          "description": "Platzhalter: {year}, {site_title}"
+        },
+        "social_facebook": {
+          "label": "Facebook URL",
+          "type": "text",
+          "default": "",
+          "description": "URL zum Facebook-Profil (leer = ausgeblendet)"
+        },
+        "social_instagram": {
+          "label": "Instagram URL",
+          "type": "text",
+          "default": "",
+          "description": "URL zum Instagram-Profil (leer = ausgeblendet)"
+        },
+        "social_linkedin": {
+          "label": "LinkedIn URL",
+          "type": "text",
+          "default": "",
+          "description": "URL zum LinkedIn-Profil (leer = ausgeblendet)"
+        },
+        "social_xing": {
+          "label": "Xing URL",
+          "type": "text",
+          "default": "",
+          "description": "URL zum Xing-Profil (leer = ausgeblendet)"
+        },
+        "social_youtube": {
+          "label": "YouTube URL",
+          "type": "text",
+          "default": "",
+          "description": "URL zum YouTube-Kanal (leer = ausgeblendet)"
+        }
+      }
+    },
+
+    "buttons": {
+      "label": "Buttons",
+      "description": "Eckenradius, Padding, Schriftgewicht und Textstil.",
+      "settings": {
+        "button_border_radius": {
+          "label": "Button-Eckenradius (px)",
+          "type": "number",
+          "default": 8,
+          "min": 0,
+          "max": 50,
+          "description": "Eckenrundung aller regulären Buttons"
+        },
+        "button_padding_x": {
+          "label": "Button-Padding horizontal (rem)",
+          "type": "number",
+          "default": 2,
+          "min": 0.5,
+          "max": 4,
+          "step": 0.25,
+          "description": "Horizontaler Innenabstand"
+        },
+        "button_padding_y": {
+          "label": "Button-Padding vertikal (rem)",
+          "type": "number",
+          "default": 0.875,
+          "min": 0.25,
+          "max": 2,
+          "step": 0.125,
+          "description": "Vertikaler Innenabstand"
+        },
+        "button_font_weight": {
+          "label": "Button-Schriftgewicht",
+          "type": "select",
+          "options": {
+            "400": "Regular (400)",
+            "500": "Medium (500)",
+            "600": "Semi-Bold (600)",
+            "700": "Bold (700)"
+          },
+          "default": "600",
+          "description": "Schriftgewicht aller Buttons"
+        },
+        "button_transform": {
+          "label": "Button-Textumwandlung",
+          "type": "select",
+          "options": {
+            "none": "Normal",
+            "uppercase": "GROSSBUCHSTABEN",
+            "capitalize": "Erster Buchstabe groß"
+          },
+          "default": "none",
+          "description": "Textformatierung für Button-Beschriftungen"
+        }
+      }
+    },
+
+    "homepage": {
+      "label": "Startseite",
+      "description": "Sektionen der Homepage: Hero, Dienstleistungen, Termine, FAQ, CTA.",
+      "settings": {
+        "show_hero": {
+          "label": "Hero-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Große Hero-Sektion mit Badge, Überschrift und CTAs"
+        },
+        "hero_badge": {
+          "label": "Hero-Badge Text",
+          "type": "text",
+          "default": "Ihr Partner für Bildung, Karriere und Zukunft",
+          "description": "Kleiner Badge-Text über der Überschrift"
+        },
+        "hero_title": {
+          "label": "Hero-Überschrift",
+          "type": "text",
+          "default": "Willkommen bei <span class=\"highlight\">PTC GmbH</span> – Ihr Partner für Personaldienstleistungen.",
+          "description": "Hauptüberschrift (HTML erlaubt)"
+        },
+        "hero_text": {
+          "label": "Hero-Beschreibungstext",
+          "type": "textarea",
+          "default": "Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Logistiklehrwerkstatt – alles aus einer Hand.",
+          "description": "Einleitungstext unter der Überschrift"
+        },
+        "hero_cta_primary_label": {
+          "label": "Primärer CTA-Button Text",
+          "type": "text",
+          "default": "Entdecken Sie Ihre Möglichkeiten",
+          "description": "Beschriftung des Haupt-Buttons"
+        },
+        "hero_cta_primary_url": {
+          "label": "Primärer CTA-Button URL",
+          "type": "text",
+          "default": "#dienstleistungen",
+          "description": "Ziel-URL des Haupt-Buttons"
+        },
+        "hero_cta_secondary_label": {
+          "label": "Sekundärer CTA-Button Text",
+          "type": "text",
+          "default": "Kontakt aufnehmen",
+          "description": "Beschriftung des zweiten Buttons (leer = ausgeblendet)"
+        },
+        "hero_cta_secondary_url": {
+          "label": "Sekundärer CTA-Button URL",
+          "type": "text",
+          "default": "#kontakt",
+          "description": "Ziel-URL des zweiten Buttons"
+        },
+        "hero_bg_image": {
+          "label": "Hero-Hintergrundbild",
+          "type": "image",
+          "default": "",
+          "description": "Optionales Hintergrundbild im Hero-Bereich"
+        },
+        "show_services": {
+          "label": "Dienstleistungen-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Service-Cards Bereich"
+        },
+        "services_title": {
+          "label": "Dienstleistungen-Überschrift",
+          "type": "text",
+          "default": "Unsere Dienstleistungen",
+          "description": "Titel über der Dienstleistungs-Sektion"
+        },
+        "services_subtitle": {
+          "label": "Dienstleistungen-Untertitel",
+          "type": "text",
+          "default": "Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen.",
+          "description": "Kurze Beschreibung unter dem Titel"
+        },
+        "services_columns": {
+          "label": "Spaltenanzahl (Cards)",
+          "type": "select",
+          "options": { "2": "2 Spalten", "3": "3 Spalten (Standard)" },
+          "default": "3",
+          "description": "Anzahl Service-Cards pro Zeile"
+        },
+        "show_events": {
+          "label": "Termine-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Bereich 'Aktuelle Termine'"
+        },
+        "events_title": {
+          "label": "Termine-Überschrift",
+          "type": "text",
+          "default": "Aktuelle Termine & Angebote",
+          "description": "Titel über der Termine-Sektion"
+        },
+        "events_subtitle": {
+          "label": "Termine-Untertitel",
+          "type": "text",
+          "default": "Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen.",
+          "description": "Beschreibung unter dem Titel"
+        },
+        "show_faq": {
+          "label": "FAQ-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Häufig gestellte Fragen"
+        },
+        "faq_title": {
+          "label": "FAQ-Überschrift",
+          "type": "text",
+          "default": "Häufig gestellte Fragen",
+          "description": "Titel über dem FAQ-Bereich"
+        },
+        "faq_subtitle": {
+          "label": "FAQ-Untertitel",
+          "type": "text",
+          "default": "Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen.",
+          "description": "Beschreibung unter dem FAQ-Titel"
+        },
+        "show_cta": {
+          "label": "CTA-Sektion anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Call-to-Action-Bereich am Seitenende"
+        },
+        "cta_title": {
+          "label": "CTA-Überschrift",
+          "type": "text",
+          "default": "Bereit für den nächsten Karriereschritt?",
+          "description": "Überschrift des CTA-Bereichs"
+        },
+        "cta_text": {
+          "label": "CTA-Beschreibungstext",
+          "type": "textarea",
+          "default": "Ob Arbeitnehmer auf Jobsuche oder Unternehmen mit Personalbedarf – sprechen Sie uns an. Wir finden die passende Lösung für Sie.",
+          "description": "Text im CTA-Bereich"
+        },
+        "cta_button_label": {
+          "label": "CTA-Button Text",
+          "type": "text",
+          "default": "Jetzt Kontakt aufnehmen",
+          "description": "Beschriftung des CTA-Buttons"
+        },
+        "cta_button_url": {
+          "label": "CTA-Button URL",
+          "type": "text",
+          "default": "/#kontakt",
+          "description": "Ziel-URL des CTA-Buttons"
+        },
+        "cta_secondary_label": {
+          "label": "CTA zweiter Button Text",
+          "type": "text",
+          "default": "Unsere Leistungen entdecken",
+          "description": "Zweiter CTA-Button (leer = ausgeblendet)"
+        },
+        "cta_secondary_url": {
+          "label": "CTA zweiter Button URL",
+          "type": "text",
+          "default": "/#dienstleistungen",
+          "description": "Ziel-URL des zweiten CTA-Buttons"
+        }
+      }
+    },
+
+    "advanced": {
+      "label": "Erweitert",
+      "description": "Custom Code, Tracking und erweiterte Einstellungen.",
+      "settings": {
+        "custom_css": {
+          "label": "Eigenes CSS",
+          "type": "textarea",
+          "default": "",
+          "description": "Zusätzliches CSS am Ende aller Theme-Styles"
+        },
+        "custom_head_code": {
+          "label": "Custom Head Code (Tracking, Meta)",
+          "type": "textarea",
+          "default": "",
+          "description": "Wird im <head> ausgegeben"
+        },
+        "custom_footer_code": {
+          "label": "Custom Footer Code (Analytics, Widgets)",
+          "type": "textarea",
+          "default": "",
+          "description": "Wird vor </body> ausgegeben"
         }
       }
     }
+
   }
 }

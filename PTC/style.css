@@ -492,6 +492,25 @@ a:hover {
     justify-content: center;
 }
 
+/* Hero-Bild neben dem Text im Kasten */
+.ptc-hero-image-box {
+    width: 100%;
+    max-width: 520px;
+    border-radius: var(--ptc-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--ptc-shadow-lg);
+    background: var(--ptc-white);
+    border: 1px solid var(--ptc-border);
+}
+
+.ptc-hero-image-box .ptc-hero-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+}
+
 .ptc-hero-image-placeholder {
     width: 100%;
     max-width: 480px;
@@ -1038,7 +1057,12 @@ a:hover {
     }
 
     .ptc-hero-visual {
-        display: none;
+        order: -1;
+    }
+
+    .ptc-hero-image-box {
+        max-width: 400px;
+        margin: 0 auto;
     }
 
     .ptc-services-grid {

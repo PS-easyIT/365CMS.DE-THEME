@@ -40,6 +40,7 @@ final class PTC_Theme
 
         // Footer-Scripts
         \CMS\Hooks::addAction('before_footer', [$this, 'enqueueScripts'], 10);
+        \CMS\Hooks::addAction('body_end', [$this, 'outputCustomFooterCode'], 99);
 
         // Menüpositionen
         \CMS\Hooks::addFilter('register_menu_locations', [$this, 'registerMenuLocations']);
@@ -78,18 +79,117 @@ final class PTC_Theme
     public function outputCustomStyles(): void
     {
         try {
-            $customizer = \CMS\Services\ThemeCustomizer::instance();
-            $primary = $customizer->get('colors', 'primary_color', '#002D5D');
-            $accent  = $customizer->get('colors', 'accent_color', '#D4A017');
-        } catch (\Throwable $e) {
-            $primary = '#002D5D';
-            $accent  = '#D4A017';
-        }
+            $c = \CMS\Services\ThemeCustomizer::instance();
 
-        echo '<style>:root{'
-            . '--ptc-navy:' . htmlspecialchars($primary, ENT_QUOTES, 'UTF-8') . ';'
-            . '--ptc-gold:' . htmlspecialchars($accent, ENT_QUOTES, 'UTF-8') . ';'
-            . '}</style>' . "\n";
+            // ── Farben ──
+            $vars = [
+                '--ptc-navy'        => $c->get('colors', 'primary_color',   '#002D5D'),
+                '--ptc-navy-dark'   => $c->get('colors', 'primary_hover',   '#001F42'),
+                '--ptc-navy-light'  => $c->get('colors', 'primary_light',   '#E8F0FE'),
+                '--ptc-gold'        => $c->get('colors', 'accent_color',    '#D4A017'),
+                '--ptc-gold-dark'   => $c->get('colors', 'accent_hover',    '#B8860B'),
+                '--ptc-gold-light'  => $c->get('colors', 'accent_light',    '#FDF5E6'),
+                '--ptc-slate'       => $c->get('colors', 'secondary_color', '#607D8B'),
+                '--ptc-text'        => $c->get('colors', 'text_color',      '#334155'),
+                '--ptc-heading'     => $c->get('colors', 'heading_color',   '#002D5D'),
+                '--ptc-white'       => $c->get('colors', 'text_light',      '#F8F9FA'),
+                '--ptc-muted'       => $c->get('colors', 'muted_color',     '#94a3b8'),
+                '--ptc-bg'          => $c->get('colors', 'bg_color',        '#F8F9FA'),
+                '--ptc-bg-alt'      => $c->get('colors', 'bg_secondary',    '#F1F5F9'),
+                '--ptc-link'        => $c->get('colors', 'link_color',      '#002D5D'),
+                '--ptc-link-hover'  => $c->get('colors', 'link_hover_color','#D4A017'),
+                '--ptc-border'      => $c->get('colors', 'border_color',    '#E2E8F0'),
+                '--ptc-success'     => $c->get('colors', 'success_color',   '#22c55e'),
+                '--ptc-error'       => $c->get('colors', 'error_color',     '#ef4444'),
+            ];
+
+            // ── Typografie ──
+            $fontMap = [
+                'system'     => "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                'inter'      => "'Inter', sans-serif",
+                'roboto'     => "'Roboto', sans-serif",
+                'open-sans'  => "'Open Sans', sans-serif",
+                'lato'       => "'Lato', sans-serif",
+                'montserrat' => "'Montserrat', sans-serif",
+                'poppins'    => "'Poppins', sans-serif",
+                'raleway'    => "'Raleway', sans-serif",
+                'georgia'    => "Georgia, 'Times New Roman', serif",
+            ];
+            $fontBase    = $c->get('typography', 'font_family_base',    'system');
+            $fontHeading = $c->get('typography', 'font_family_heading', 'system');
+            $vars['--ptc-font-body']    = $fontMap[$fontBase]    ?? $fontMap['system'];
+            $vars['--ptc-font-heading'] = $fontMap[$fontHeading] ?? $fontMap['system'];
+            $vars['--ptc-font-size']    = $c->get('typography', 'font_size_base',     '16') . 'px';
+            $vars['--ptc-line-height']  = (string)$c->get('typography', 'line_height_base',  '1.6');
+            $vars['--ptc-heading-weight'] = (string)$c->get('typography', 'font_weight_heading', '700');
+
+            // ── Layout ──
+            $vars['--ptc-container-width']  = $c->get('layout', 'container_width',  '1280') . 'px';
+            $vars['--ptc-content-padding']  = $c->get('layout', 'content_padding',  '2') . 'rem';
+            $vars['--ptc-radius']           = $c->get('layout', 'border_radius',    '12') . 'px';
+            $vars['--ptc-section-spacing']  = $c->get('layout', 'section_spacing',  '5') . 'rem';
+
+            // ── Header ──
+            $vars['--ptc-header-bg']      = $c->get('header', 'header_bg_color',     '#002D5D');
+            $vars['--ptc-header-text']    = $c->get('header', 'header_text_color',   '#F8F9FA');
+            $vars['--ptc-header-accent']  = $c->get('header', 'header_accent_color', '#D4A017');
+            $vars['--ptc-header-height']  = $c->get('header', 'header_height',       '72') . 'px';
+            $vars['--ptc-logo-height']    = $c->get('header', 'logo_max_height',     '48') . 'px';
+
+            // ── Footer ──
+            $vars['--ptc-footer-bg']   = $c->get('footer', 'footer_bg_color',   '#001A33');
+            $vars['--ptc-footer-text'] = $c->get('footer', 'footer_text_color', '#94a3b8');
+            $vars['--ptc-footer-link'] = $c->get('footer', 'footer_link_color', '#F8F9FA');
+
+            // ── Buttons ──
+            $vars['--ptc-btn-radius']    = $c->get('buttons', 'button_border_radius', '8') . 'px';
+            $vars['--ptc-btn-px']        = $c->get('buttons', 'button_padding_x',     '2') . 'rem';
+            $vars['--ptc-btn-py']        = $c->get('buttons', 'button_padding_y',     '0.875') . 'rem';
+            $vars['--ptc-btn-weight']    = (string)$c->get('buttons', 'button_font_weight', '600');
+            $vars['--ptc-btn-transform'] = (string)$c->get('buttons', 'button_transform',   'none');
+
+            // ── CSS ausgeben ──
+            $css = ':root{';
+            foreach ($vars as $prop => $val) {
+                $css .= htmlspecialchars($prop, ENT_QUOTES, 'UTF-8') . ':' . htmlspecialchars((string)$val, ENT_QUOTES, 'UTF-8') . ';';
+            }
+            $css .= '}';
+            echo '<style>' . $css . '</style>' . "\n";
+
+            // ── Eigenes CSS ──
+            $customCss = trim((string)$c->get('advanced', 'custom_css', ''));
+            if ($customCss !== '') {
+                echo '<style>' . $customCss . '</style>' . "\n";
+            }
+
+            // ── Custom Head Code ──
+            $headCode = trim((string)$c->get('advanced', 'custom_head_code', ''));
+            if ($headCode !== '') {
+                echo $headCode . "\n";
+            }
+
+        } catch (\Throwable $e) {
+            // Fallback bei Fehler
+            echo '<style>:root{'
+                . '--ptc-navy:#002D5D;--ptc-gold:#D4A017;'
+                . '}</style>' . "\n";
+        }
+    }
+
+    /**
+     * Custom Footer Code aus dem Customizer ausgeben
+     */
+    public function outputCustomFooterCode(): void
+    {
+        try {
+            $c = \CMS\Services\ThemeCustomizer::instance();
+            $footerCode = trim((string)$c->get('advanced', 'custom_footer_code', ''));
+            if ($footerCode !== '') {
+                echo $footerCode . "\n";
+            }
+        } catch (\Throwable $e) {
+            // Stille Fehlerbehandlung
+        }
     }
 
     // ── Meta Tags ────────────────────────────────────────────────────────────
@@ -225,5 +325,113 @@ if (!function_exists('ptc_site_title')) {
     function ptc_site_title(): string
     {
         return htmlspecialchars(\CMS\ThemeManager::instance()->getSiteTitle(), ENT_QUOTES, 'UTF-8');
+    }
+}
+
+/**
+ * Customizer-Wert abrufen (Kurzform für Templates)
+ *
+ * Verwendung:
+ *   $color = ptc_customizer_get('colors', 'primary_color', '#002D5D');
+ *   $logo  = ptc_customizer_get('header', 'logo_url');
+ *
+ * @param string $section  Customizer-Kategorie (colors, typography, layout, header, footer, buttons, homepage, advanced)
+ * @param string $key      Einstellungs-Schlüssel innerhalb der Kategorie
+ * @param mixed  $default  Fallback-Wert wenn nicht gesetzt
+ * @return mixed
+ */
+if (!function_exists('ptc_customizer_get')) {
+    function ptc_customizer_get(string $section, string $key, mixed $default = ''): mixed
+    {
+        return \CMS\Services\ThemeCustomizer::instance()->get($section, $key, $default);
+    }
+}
+
+/**
+ * Gesamte Customizer-Kategorie als Array abrufen
+ *
+ * Verwendung:
+ *   $colors = ptc_customizer_category('colors');
+ *   echo $colors['primary_color'] ?? '#002D5D';
+ *
+ * @param string $section  Customizer-Kategorie
+ * @return array<string, mixed>
+ */
+if (!function_exists('ptc_customizer_category')) {
+    function ptc_customizer_category(string $section): array
+    {
+        return \CMS\Services\ThemeCustomizer::instance()->getCategory($section) ?: [];
+    }
+}
+
+/**
+ * Customizer-Wert HTML-escaped ausgeben (für Template-Attribute/Texte)
+ *
+ * Verwendung:
+ *   <h1><?php ptc_customizer_echo('header', 'site_tagline', 'Ihr Partner für Personal'); ?></h1>
+ *   <div style="color: <?php ptc_customizer_echo('colors', 'primary_color', '#002D5D'); ?>">
+ *
+ * @param string $section  Customizer-Kategorie
+ * @param string $key      Einstellungs-Schlüssel
+ * @param mixed  $default  Fallback-Wert
+ */
+if (!function_exists('ptc_customizer_echo')) {
+    function ptc_customizer_echo(string $section, string $key, mixed $default = ''): void
+    {
+        echo htmlspecialchars(
+            (string) \CMS\Services\ThemeCustomizer::instance()->get($section, $key, $default),
+            ENT_QUOTES,
+            'UTF-8'
+        );
+    }
+}
+
+// ── Auth & Security Helpers ────────────────────────────────────────────────────
+
+/**
+ * CSRF-Token generieren
+ */
+if (!function_exists('theme_csrf_token')) {
+    function theme_csrf_token(string $action = 'form'): string
+    {
+        return \CMS\Security::instance()->generateToken($action);
+    }
+}
+
+/**
+ * CSRF-Token als Hidden-Input ausgeben
+ */
+if (!function_exists('theme_csrf_field')) {
+    function theme_csrf_field(string $action = 'form'): void
+    {
+        $token = theme_csrf_token($action);
+        echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+    }
+}
+
+/**
+ * Flash-Message aus Session lesen & löschen
+ */
+if (!function_exists('theme_get_flash')) {
+    function theme_get_flash(string $type = 'error'): string
+    {
+        $key = ($type === 'success') ? 'success' : 'error';
+        $msg = $_SESSION[$key] ?? '';
+        unset($_SESSION[$key]);
+        return $msg;
+    }
+}
+
+/**
+ * Eingeloggter Benutzer?
+ */
+if (!function_exists('theme_is_logged_in')) {
+    function theme_is_logged_in(): bool
+    {
+        try {
+            return \CMS\Auth::instance()->isLoggedIn();
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }
