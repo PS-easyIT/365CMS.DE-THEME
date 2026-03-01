@@ -1,6 +1,6 @@
 # PTC Theme – Changelog
 
-## 1.1.0 (2025-06)
+## 1.1.0 (2026-03-01)
 
 ### Neue Features
 - **Services erweitert:** Bis zu 12 Service-Karten (vorher 8)
@@ -28,7 +28,7 @@
 - Network Bar responsive (Stack bei ≤768px)
 - MS Booking Iframe responsive (`max-width: 100%`)
 
-## 1.0.0 (2025-03)
+## 1.0.0 (2026-02-14)
 
 ### Erstveröffentlichung
 - Corporate Theme für PTC GmbH Personaldienstleistungen
