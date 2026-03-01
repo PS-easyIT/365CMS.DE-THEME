@@ -27,6 +27,11 @@ $copyrightText = str_replace(
     $copyrightTpl
 );
 
+// Footer-Breite: full = volle Breite, content = gleich wie Content (Standard)
+$footerWidth = (string) ptc_customizer_get('footer', 'footer_width', 'full');
+$footerClass = 'ptc-footer' . ($footerWidth === 'full' ? ' ptc-footer--full' : '');
+$networkBarClass = 'ptc-network-bar' . ($footerWidth === 'full' ? ' ptc-network-bar--full' : '');
+
 // Social-Links
 $socialLinks = [
     'facebook'  => ['url' => (string) ptc_customizer_get('footer', 'social_facebook', ''),  'label' => 'Facebook',  'icon' => 'f'],
@@ -41,7 +46,7 @@ $activeSocials = array_filter($socialLinks, fn($s) => $s['url'] !== '');
 
     <?php \CMS\Hooks::doAction('before_footer'); ?>
 
-    <footer class="ptc-footer" id="ptc-footer" role="contentinfo">
+    <footer class="<?php echo $footerClass; ?>" id="ptc-footer" role="contentinfo">
         <div class="ptc-container">
             <div class="ptc-footer-grid">
 
@@ -139,7 +144,7 @@ $activeSocials = array_filter($socialLinks, fn($s) => $s['url'] !== '');
             }
         }
     ?>
-    <div class="ptc-network-bar">
+    <div class="<?php echo $networkBarClass; ?>">
         <div class="ptc-container">
             <div class="ptc-network-inner">
                 <?php if ($nbName !== ''): ?>

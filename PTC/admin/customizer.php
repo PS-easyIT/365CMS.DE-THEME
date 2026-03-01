@@ -444,6 +444,19 @@ $config = [
                 'type'        => 'text',
                 'default'     => '/#kontakt',
             ],
+            'header_animation' => [
+                'label'       => 'Header Hintergrund-Animation',
+                'description' => 'Dezente Animation im Header-Hintergrund (optional).',
+                'type'        => 'select',
+                'options'     => [
+                    'none'      => 'Keine Animation',
+                    'gradient'  => 'Sanfter Farbverlauf',
+                    'particles' => 'Schwebende Partikel',
+                    'pulse'     => 'Goldener Lichtstreifen',
+                    'wave'      => 'Wellenlinie (unterer Rand)',
+                ],
+                'default'     => 'none',
+            ],
         ],
     ],
 
@@ -453,6 +466,16 @@ $config = [
     'footer' => [
         'title' => '🔻 Footer',
         'sections' => [
+            'footer_width' => [
+                'label'       => 'Footer-Breite',
+                'description' => 'Volle Breite (wie Header) oder gleiche Breite wie Content-Bereich.',
+                'type'        => 'select',
+                'options'     => [
+                    'full'    => 'Volle Breite',
+                    'content' => 'Content-Breite',
+                ],
+                'default'     => 'full',
+            ],
             'footer_bg_color' => [
                 'label'       => 'Footer-Hintergrundfarbe',
                 'description' => 'Hintergrundfarbe des Footer-Bereichs.',
@@ -1670,6 +1693,149 @@ $config = [
     ],
 
     // ─────────────────────────────────────────────────────────────
+    // BLOG & SEITEN
+    // ─────────────────────────────────────────────────────────────
+    'blog' => [
+        'title' => '📰 Blog & Seiten',
+        'sections' => [
+
+            // ── Blog-Übersicht ─────────────────────────────
+            'blog_layout' => [
+                'label'       => 'Blog-Layout',
+                'description' => 'Darstellung der Beitragsübersicht.',
+                'type'        => 'select',
+                'options'     => [
+                    'grid' => 'Kacheln (Grid)',
+                    'list' => 'Liste',
+                ],
+                'default'     => 'grid',
+            ],
+            'blog_columns' => [
+                'label'       => 'Spaltenanzahl (Grid)',
+                'description' => 'Anzahl der Spalten im Grid-Layout.',
+                'type'        => 'select',
+                'options'     => [
+                    '2' => '2 Spalten',
+                    '3' => '3 Spalten',
+                ],
+                'default'     => '3',
+            ],
+            'blog_show_sidebar' => [
+                'label'       => 'Sidebar anzeigen',
+                'description' => 'Seitenleiste mit Kategorien, Tags und Suche.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_show_featured_image' => [
+                'label'       => 'Beitragsbild anzeigen',
+                'description' => 'Beitragsbild in der Übersicht anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_show_excerpt' => [
+                'label'       => 'Textauszug anzeigen',
+                'description' => 'Kurzbeschreibung unter dem Titel anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_show_date' => [
+                'label'       => 'Datum anzeigen',
+                'description' => 'Veröffentlichungsdatum in der Übersicht.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_show_author' => [
+                'label'       => 'Autor anzeigen',
+                'description' => 'Autorname unter den Beiträgen.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_show_category' => [
+                'label'       => 'Kategorie-Badge anzeigen',
+                'description' => 'Kategorie als farbiges Badge auf der Karte.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_hero_title' => [
+                'label'       => 'Blog-Überschrift',
+                'description' => 'Titel im Hero-Bereich der Blog-Seite.',
+                'type'        => 'text',
+                'default'     => 'Unser Blog',
+            ],
+            'blog_hero_subtitle' => [
+                'label'       => 'Blog-Untertitel',
+                'description' => 'Kurzer Text unter der Blog-Überschrift.',
+                'type'        => 'text',
+                'default'     => 'Aktuelle Beiträge, Einblicke und Neuigkeiten',
+            ],
+
+            // ── Einzelbeitrag (Single) ─────────────────────
+            'blog_single_show_featured' => [
+                'label'       => 'Beitragsbild auf Einzelseite',
+                'description' => 'Großes Beitragsbild am Anfang des Artikels.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_single_show_author' => [
+                'label'       => 'Autor auf Einzelseite',
+                'description' => 'Autorname und -info im Artikel anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_single_show_date' => [
+                'label'       => 'Datum auf Einzelseite',
+                'description' => 'Veröffentlichungsdatum im Artikel.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_single_show_tags' => [
+                'label'       => 'Tags auf Einzelseite',
+                'description' => 'Schlagwörter am Ende des Artikels.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_single_show_related' => [
+                'label'       => 'Ähnliche Beiträge anzeigen',
+                'description' => 'Verwandte Beiträge unter dem Artikel.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_single_show_reading_time' => [
+                'label'       => 'Lesezeit anzeigen',
+                'description' => 'Geschätzte Lesezeit im Artikelkopf.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'blog_single_max_width' => [
+                'label'       => 'Maximale Artikelbreite (px)',
+                'description' => 'Max. Breite des Artikelinhalts für bessere Lesbarkeit.',
+                'type'        => 'number',
+                'default'     => '820',
+            ],
+
+            // ── Seiten-Einstellungen ───────────────────────
+            'page_show_title' => [
+                'label'       => 'Seitentitel anzeigen',
+                'description' => 'Seitentitel als Hero / Seitenüberschrift anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'page_show_featured_image' => [
+                'label'       => 'Beitragsbild auf Seiten',
+                'description' => 'Beitragsbild auf statischen Seiten anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => '1',
+            ],
+            'page_max_width' => [
+                'label'       => 'Maximale Seitenbreite (px)',
+                'description' => 'Max. Breite des Seiteninhalts.',
+                'type'        => 'number',
+                'default'     => '960',
+            ],
+        ],
+    ],
+
+    // ─────────────────────────────────────────────────────────────
     // ERWEITERT
     // ─────────────────────────────────────────────────────────────
     'advanced' => [
@@ -2104,7 +2270,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                         </div>
                     </div>
 
-                    <?php elseif ($activeTab === 'header' || $activeTab === 'footer' || $activeTab === 'buttons' || $activeTab === 'services' || $activeTab === 'events' || $activeTab === 'faq'):
+                    <?php elseif ($activeTab === 'header' || $activeTab === 'footer' || $activeTab === 'buttons' || $activeTab === 'services' || $activeTab === 'events' || $activeTab === 'faq' || $activeTab === 'blog'):
                         // ── Header / Footer / Buttons / Services / Events / FAQ: 2-Spalten-Karten-Layout ──
                         $tabCardGroups = [
                             'header' => [
@@ -2112,8 +2278,10 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '🎨 Header-Farben'      => ['header_bg_color', 'header_text_color', 'header_accent_color'],
                                 '📐 Header-Layout'      => ['header_height', 'show_header_shadow'],
                                 '🔗 Header-Aktionen'    => ['show_login_btn', 'show_register_btn', 'header_cta_text', 'header_cta_url'],
+                                '✨ Animation'           => ['header_animation'],
                             ],
                             'footer' => [
+                                '📐 Footer-Layout'       => ['footer_width'],
                                 '🎨 Footer-Farben'      => ['footer_bg_color', 'footer_text_color', 'footer_link_color'],
                                 '📝 Footer-Inhalte'     => ['footer_tagline', 'footer_address', 'footer_phone', 'footer_email', 'copyright_text'],
                                 '🌐 Social Media'       => ['social_facebook', 'social_instagram', 'social_linkedin', 'social_xing', 'social_youtube'],
@@ -2165,6 +2333,12 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '💬 Frage 6'                  => ['faq_6_question', 'faq_6_answer'],
                                 '💬 Frage 7 (optional)'       => ['faq_7_question', 'faq_7_answer'],
                                 '💬 Frage 8 (optional)'       => ['faq_8_question', 'faq_8_answer'],
+                            ],
+                            'blog' => [
+                                '📰 Blog-Übersicht'       => ['blog_layout', 'blog_columns', 'blog_show_sidebar', 'blog_hero_title', 'blog_hero_subtitle'],
+                                '🖼️ Blog-Karten'          => ['blog_show_featured_image', 'blog_show_excerpt', 'blog_show_date', 'blog_show_author', 'blog_show_category'],
+                                '📄 Einzelbeitrag'        => ['blog_single_show_featured', 'blog_single_show_author', 'blog_single_show_date', 'blog_single_show_tags', 'blog_single_show_reading_time', 'blog_single_show_related', 'blog_single_max_width'],
+                                '📃 Seiten-Einstellungen' => ['page_show_title', 'page_show_featured_image', 'page_max_width'],
                             ],
                         ];
                         $cardGroups = $tabCardGroups[$activeTab] ?? [];

@@ -46,6 +46,7 @@ $_showLoginBtn  = filter_var(ptc_customizer_get('header', 'show_login_btn', fals
 $_showRegBtn    = filter_var(ptc_customizer_get('header', 'show_register_btn', false), FILTER_VALIDATE_BOOLEAN);
 $_headerCtaText = (string) ptc_customizer_get('header', 'header_cta_text', 'Kontakt');
 $_headerCtaUrl  = (string) ptc_customizer_get('header', 'header_cta_url', '/#kontakt');
+$_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'none');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -62,7 +63,10 @@ $_headerCtaUrl  = (string) ptc_customizer_get('header', 'header_cta_url', '/#kon
 
 <div class="ptc-site">
 
-    <header class="ptc-header" id="ptc-masthead">
+    <header class="ptc-header" id="ptc-masthead"<?php echo $_headerAnim !== 'none' ? ' data-header-anim="' . htmlspecialchars($_headerAnim, ENT_QUOTES, 'UTF-8') . '"' : ''; ?>>
+        <?php if ($_headerAnim !== 'none'): ?>
+            <div class="ptc-header-anim" aria-hidden="true"></div>
+        <?php endif; ?>
         <div class="ptc-container">
             <div class="ptc-header-inner">
 

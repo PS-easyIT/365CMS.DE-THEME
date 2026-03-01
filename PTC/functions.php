@@ -325,13 +325,33 @@ if (!function_exists('ptc_nav_menu')) {
             $isActive = ($path === '' || $path === '/')
                 ? ($requestUri === '' || $requestUri === '/')
                 : str_starts_with($requestUri, $path);
-            $class  = $isActive ? ' class="active"' : '';
+            $hasChildren = !empty($item['children']) && is_array($item['children']);
+            $classes = [];
+            if ($isActive) { $classes[] = 'active'; }
+            if ($hasChildren) { $classes[] = 'has-children'; }
+            $classAttr = !empty($classes) ? ' class="' . implode(' ', $classes) . '"' : '';
             $target = !empty($item['target']) && $item['target'] === '_blank'
                 ? ' target="_blank" rel="noopener noreferrer"'
                 : '';
             $url   = htmlspecialchars($item['url'],   ENT_QUOTES, 'UTF-8');
             $label = htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8');
-            echo '<li' . $class . '><a href="' . $url . '"' . $target . '>' . $label . '</a></li>' . "\n";
+            echo '<li' . $classAttr . '><a href="' . $url . '"' . $target . '>' . $label . '</a>' . "\n";
+
+            // Untermenü ausgeben
+            if ($hasChildren) {
+                echo '<ul class="ptc-submenu">' . "\n";
+                foreach ($item['children'] as $child) {
+                    $cUrl    = htmlspecialchars($child['url']   ?? '#', ENT_QUOTES, 'UTF-8');
+                    $cLabel  = htmlspecialchars($child['label'] ?? '',  ENT_QUOTES, 'UTF-8');
+                    $cTarget = (!empty($child['target']) && $child['target'] === '_blank')
+                        ? ' target="_blank" rel="noopener noreferrer"'
+                        : '';
+                    echo '<li><a href="' . $cUrl . '"' . $cTarget . '>' . $cLabel . '</a></li>' . "\n";
+                }
+                echo '</ul>' . "\n";
+            }
+
+            echo '</li>' . "\n";
         }
         echo '</ul>' . "\n";
     }
