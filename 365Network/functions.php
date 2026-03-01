@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('THEME_VERSION', '3.0.0');
+define('THEME_VERSION', '3.2.0');
 define('THEME_DIR', THEME_PATH . '365Network/');
 define('THEME_URL_BASE', \CMS\ThemeManager::instance()->getThemeUrl());
 

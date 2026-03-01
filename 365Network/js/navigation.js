@@ -65,6 +65,44 @@
             if (e.key === 'Escape') {
                 closeMobileMenu();
                 closeSearchOverlay();
+                closeProfileDropdown();
+            }
+        });
+
+        // ===== Profile Dropdown =====
+        var profileToggle = document.getElementById('profileToggle');
+        var profileMenu   = document.getElementById('profileMenu');
+
+        function openProfileDropdown() {
+            if (!profileMenu || !profileToggle) return;
+            profileMenu.classList.add('is-open');
+            profileMenu.setAttribute('aria-hidden', 'false');
+            profileToggle.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeProfileDropdown() {
+            if (!profileMenu || !profileToggle) return;
+            profileMenu.classList.remove('is-open');
+            profileMenu.setAttribute('aria-hidden', 'true');
+            profileToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        if (profileToggle) {
+            profileToggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (profileMenu && profileMenu.classList.contains('is-open')) {
+                    closeProfileDropdown();
+                } else {
+                    openProfileDropdown();
+                }
+            });
+        }
+
+        // Klick außerhalb schließt Dropdown
+        document.addEventListener('click', function (e) {
+            var dropdown = document.getElementById('profileDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                closeProfileDropdown();
             }
         });
 

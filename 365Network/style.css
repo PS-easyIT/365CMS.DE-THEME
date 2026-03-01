@@ -446,6 +446,188 @@ a:hover { color: var(--link-hover-color, var(--accent-hover)); }
     font-weight: 500;
 }
 
+/* ── Profil-Dropdown ───────────────────────────────────────────────── */
+.profile-dropdown {
+    position: relative;
+}
+
+.profile-dropdown .admin-profile {
+    border: 1px solid var(--header-border);
+    background: rgb(255 255 255 / 0.06);
+}
+
+.profile-dropdown .admin-profile[aria-expanded="true"] {
+    background: rgb(255 255 255 / 0.12);
+    border-color: var(--accent-color);
+}
+
+.profile-chevron {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.profile-dropdown .admin-profile[aria-expanded="true"] .profile-chevron {
+    transform: rotate(180deg);
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 260px;
+    background: var(--header-bg, #0c1526);
+    border: 1px solid var(--primary-light, #1a2a42);
+    border-radius: var(--border-radius, 8px);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.35);
+    z-index: var(--z-overlay, 1200);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    padding: 0.5rem 0;
+}
+
+.profile-dropdown-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.profile-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+}
+
+.profile-dropdown-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm, 6px);
+    background: var(--accent-color, #c8952e);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.profile-dropdown-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-light, #e2e8f0);
+}
+
+.profile-dropdown-role {
+    font-size: 0.75rem;
+    color: var(--muted-color, #94a3b8);
+}
+
+.profile-dropdown-divider {
+    height: 1px;
+    background: var(--primary-light, #1a2a42);
+    margin: 0.375rem 0;
+}
+
+.profile-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    color: var(--text-light, #e2e8f0);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.profile-dropdown-item:hover {
+    background: var(--primary-light, #1a2a42);
+    color: var(--accent-color, #c8952e);
+}
+
+.profile-dropdown-item--danger:hover {
+    color: var(--error-color, #ef4444);
+}
+
+.profile-dropdown-icon {
+    font-size: 1rem;
+    width: 1.25rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* ── Feed-Grid (Blog/Feed-Fallback auf Homepage) ──────────────────── */
+.feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.feed-card {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: var(--border-radius, 8px);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.feed-card:hover {
+    box-shadow: var(--shadow-md, 0 4px 12px -1px rgb(0 0 0 / 0.12));
+    transform: translateY(-2px);
+}
+
+.feed-card-image {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: var(--bg-secondary, #f1f5f9);
+}
+
+.feed-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.feed-card-body {
+    padding: 1.125rem;
+}
+
+.feed-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 0.5rem 0;
+    color: var(--heading-color, #0f172a);
+}
+
+.feed-card-excerpt {
+    font-size: 0.85rem;
+    color: var(--secondary-color, #64748b);
+    line-height: 1.5;
+    margin: 0 0 0.75rem 0;
+}
+
+.feed-card-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--muted-color, #94a3b8);
+}
+
+/* Dark Mode for Feed Cards */
+body.dark-mode .feed-card {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .feed-card-title {
+    color: var(--text-light, #e2e8f0);
+}
+
 /* Dark Mode Toggle in Header */
 .theme-toggle {
     background: transparent;
@@ -1960,6 +2142,21 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
 
     .site-description { display: none; }
     .admin-profile-name { display: none; }
+
+    /* Profil-Dropdown auf Mobil: volle Breite */
+    .profile-dropdown-menu {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        min-width: 100%;
+        border-radius: var(--border-radius-lg, 16px) var(--border-radius-lg, 16px) 0 0;
+    }
+
+    .feed-grid {
+        grid-template-columns: 1fr;
+    }
 
     .hero-section { padding: 1.5rem 0; }
     .hero-title { font-size: 1.25rem; }

@@ -31,12 +31,19 @@ try {
 
 try {
     $_headerLogoUrl     = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
-    $_showSearchBtn     = (bool)\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_search_btn', true);
-    $_showLoginBtn      = (bool)\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_login_btn', true);
-    $_showRegisterBtn   = (bool)\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_register_btn', true);
-    $_showNetworkAnim   = (bool)\CMS\Services\ThemeCustomizer::instance()->get('effects', 'show_network_animation', true);
+    $_showSearchBtn     = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_search_btn', true), FILTER_VALIDATE_BOOLEAN);
+    $_showLoginBtn      = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_login_btn', true), FILTER_VALIDATE_BOOLEAN);
+    $_showRegisterBtn   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_register_btn', true), FILTER_VALIDATE_BOOLEAN);
+    $_showNetworkAnim   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('effects', 'show_network_animation', true), FILTER_VALIDATE_BOOLEAN);
     $_animSpeed         = (string)\CMS\Services\ThemeCustomizer::instance()->get('effects', 'animation_speed', 'slow');
     $_animNodeCount     = (int)\CMS\Services\ThemeCustomizer::instance()->get('effects', 'animation_node_count', 25);
+
+    // Profil-Dropdown-Einstellungen
+    $_profileShowDashboard = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_dashboard', true), FILTER_VALIDATE_BOOLEAN);
+    $_profileShowExpert    = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_expert', true), FILTER_VALIDATE_BOOLEAN);
+    $_profileShowCompany   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_company', true), FILTER_VALIDATE_BOOLEAN);
+    $_profileShowEvents    = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_events', true), FILTER_VALIDATE_BOOLEAN);
+    $_profileShowSpeaker   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_speaker', true), FILTER_VALIDATE_BOOLEAN);
 } catch (\Throwable $e) {
     $_headerLogoUrl   = '';
     $_showSearchBtn   = true;
@@ -45,6 +52,11 @@ try {
     $_showNetworkAnim = true;
     $_animSpeed       = 'slow';
     $_animNodeCount   = 25;
+    $_profileShowDashboard = true;
+    $_profileShowExpert    = true;
+    $_profileShowCompany   = true;
+    $_profileShowEvents    = true;
+    $_profileShowSpeaker   = true;
 }
 
 // User-Initialen für Avatar
@@ -59,6 +71,13 @@ if ($currentUser) {
         ? ($currentUser['display_name'] ?? $currentUser['username'] ?? 'Benutzer')
         : ($currentUser->display_name ?? $currentUser->username ?? 'Benutzer');
 }
+
+// Plugin-Verfügbarkeit für Profil-Dropdown
+$_pluginMgr   = \CMS\PluginManager::instance();
+$_hasExperts   = $_pluginMgr->isPluginActive('cms-experts');
+$_hasCompanies = $_pluginMgr->isPluginActive('cms-companies');
+$_hasEvents    = $_pluginMgr->isPluginActive('cms-events');
+$_hasSpeakers  = $_pluginMgr->isPluginActive('cms-speakers');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -132,15 +151,79 @@ if ($currentUser) {
                             Quick-Notificationen
                         </a>
 
-                        <!-- Admin Profile -->
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/<?php echo $isAdmin ? 'admin' : 'member'; ?>"
-                           class="admin-profile" aria-label="Profil">
-                            <span class="admin-profile-avatar"><?php echo htmlspecialchars($userInitials, ENT_QUOTES, 'UTF-8'); ?></span>
-                            <span class="admin-profile-name"><?php echo htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?></span>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </a>
+                        <!-- Profil-Dropdown -->
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <button type="button" class="admin-profile" id="profileToggle"
+                                    aria-expanded="false" aria-haspopup="true" aria-controls="profileMenu">
+                                <span class="admin-profile-avatar"><?php echo htmlspecialchars($userInitials, ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="admin-profile-name"><?php echo htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?></span>
+                                <svg class="profile-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </button>
+                            <div class="profile-dropdown-menu" id="profileMenu" role="menu" aria-hidden="true">
+                                <div class="profile-dropdown-header">
+                                    <span class="profile-dropdown-avatar"><?php echo htmlspecialchars($userInitials, ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <div>
+                                        <div class="profile-dropdown-name"><?php echo htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?></div>
+                                        <div class="profile-dropdown-role"><?php echo $isAdmin ? 'Administrator' : 'Mitglied'; ?></div>
+                                    </div>
+                                </div>
+                                <div class="profile-dropdown-divider"></div>
+
+                                <?php if ($_profileShowDashboard) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/<?php echo $isAdmin ? 'admin' : 'member'; ?>"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">📊</span>
+                                    Dashboard
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($_profileShowExpert && $_hasExperts) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/expert-profile"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">👤</span>
+                                    Experten-Profil
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($_profileShowCompany && $_hasCompanies) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/companies"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">🏢</span>
+                                    Firmenprofil
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($_profileShowEvents && $_hasEvents) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/events"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">📅</span>
+                                    Meine Events
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($_profileShowSpeaker && $_hasSpeakers) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/speaker-profile"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">🎤</span>
+                                    Speaker-Profil
+                                </a>
+                                <?php endif; ?>
+
+                                <div class="profile-dropdown-divider"></div>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/settings"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">⚙️</span>
+                                    Einstellungen
+                                </a>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/logout"
+                                   class="profile-dropdown-item profile-dropdown-item--danger" role="menuitem">
+                                    <span class="profile-dropdown-icon">🚪</span>
+                                    Abmelden
+                                </a>
+                            </div>
+                        </div>
                     <?php else : ?>
                         <?php if ($_showLoginBtn) : ?>
                             <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login" class="btn btn-sm btn-outline-light">

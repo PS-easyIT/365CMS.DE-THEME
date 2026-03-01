@@ -322,6 +322,36 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
+            'profile_show_dashboard' => [
+                'label'       => 'Profil-Menü: Dashboard-Link',
+                'description' => 'Zeigt den Link zum Member-/Admin-Dashboard im Profil-Dropdown.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'profile_show_expert' => [
+                'label'       => 'Profil-Menü: Experten-Profil',
+                'description' => 'Zeigt den Link zum eigenen Experten-Profil (benötigt cms-experts).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'profile_show_company' => [
+                'label'       => 'Profil-Menü: Firmenprofil',
+                'description' => 'Zeigt den Link zur Firmenübersicht (benötigt cms-companies).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'profile_show_events' => [
+                'label'       => 'Profil-Menü: Meine Events',
+                'description' => 'Zeigt den Link zu eigenen Events (benötigt cms-events).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'profile_show_speaker' => [
+                'label'       => 'Profil-Menü: Speaker-Profil',
+                'description' => 'Zeigt den Link zum Speaker-Profil (benötigt cms-speakers).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
         ],
     ],
 
@@ -738,6 +768,27 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
         .customizer-nav a.active { background: #eff6ff; color: var(--admin-primary, #3b82f6); border-left-color: var(--admin-primary, #3b82f6); font-weight: 600; }
         .customizer-content { flex: 1; }
         .form-actions-card { position: sticky; bottom: 1rem; z-index: 10; }
+
+        /* ── Farben-Tab: 3-Spalten-Karten-Layout ── */
+        .color-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .color-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; }
+        .color-card h4 { margin: 0 0 1rem 0; font-size: .95rem; font-weight: 700; color: #1e293b; padding-bottom: .75rem; border-bottom: 1px solid #f1f5f9; }
+        .color-card .form-group { margin-bottom: 1rem; }
+        .color-card .form-group:last-child { margin-bottom: 0; }
+        .color-card .form-label { font-size: .82rem; margin-bottom: .25rem; }
+        .color-card .form-text { font-size: .75rem; }
+        @media (max-width: 1200px) { .color-cards-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 800px) { .color-cards-grid { grid-template-columns: 1fr; } }
+
+        /* ── Startseite-Tab: 2-Spalten-Karten-Layout ── */
+        .homepage-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+        .homepage-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; }
+        .homepage-card h4 { margin: 0 0 1rem 0; font-size: .95rem; font-weight: 700; color: #1e293b; padding-bottom: .75rem; border-bottom: 1px solid #f1f5f9; }
+        .homepage-card .form-group { margin-bottom: 1rem; }
+        .homepage-card .form-group:last-child { margin-bottom: 0; }
+        .homepage-card .form-label { font-size: .85rem; margin-bottom: .25rem; }
+        .homepage-card .form-text { font-size: .78rem; }
+        @media (max-width: 900px) { .homepage-cards-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="admin-body">
@@ -783,6 +834,121 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                 <!-- Inhaltsbereich -->
                 <div class="customizer-content">
                     <?php if (isset($config[$activeTab])): $currentSection = $config[$activeTab]; ?>
+                    <?php if ($activeTab === 'colors'):
+                        // ── Farben: 3-Spalten-Karten-Layout ──────────────────────
+                        $colorGroups = [
+                            '🎨 Markenfarben' => ['primary_color', 'primary_hover', 'primary_light', 'secondary_color', 'accent_color', 'accent_hover', 'accent_light'],
+                            '📝 Text & Links' => ['text_color', 'heading_color', 'text_light', 'muted_color', 'link_color', 'link_hover_color'],
+                            '🖼️ Hintergrund & Status' => ['bg_color', 'bg_secondary', 'border_color', 'success_color', 'error_color'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <div class="color-cards-grid">
+                            <?php foreach ($colorGroups as $groupTitle => $groupKeys): ?>
+                            <div class="color-card">
+                                <h4><?php echo $groupTitle; ?></h4>
+                                <?php foreach ($groupKeys as $fieldKey):
+                                    if (!isset($currentSection['sections'][$fieldKey])) { continue; }
+                                    $field     = $currentSection['sections'][$fieldKey];
+                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                                    $inputId   = "field_{$activeTab}_{$fieldKey}";
+                                    $inputName = "{$activeTab}_{$fieldKey}";
+                                ?>
+                                <div class="form-group">
+                                    <label for="<?php echo $inputId; ?>" class="form-label">
+                                        <?php echo htmlspecialchars($field['label']); ?>
+                                    </label>
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
+                                        <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               class="form-control" style="width:120px;"
+                                               onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                    </div>
+                                    <?php if (!empty($field['description'])): ?>
+                                        <small class="form-text"><?php echo $field['description']; ?></small>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'homepage'):
+                        // ── Startseite: 2-Spalten-Karten-Layout ──────────────────────
+                        $homepageGroups = [
+                            '🎬 Hero-Sektion' => ['show_hero', 'hero_title', 'hero_subtitle', 'show_hero_search', 'show_stats_bar'],
+                            '👨‍💻 Experten-Bereich' => ['show_experts_section', 'experts_section_title', 'experts_limit'],
+                            '📅 Events-Bereich' => ['show_events_section', 'events_section_title', 'events_limit'],
+                            '🏢 Firmen-Bereich' => ['show_companies_section', 'companies_section_title', 'companies_limit'],
+                            '📐 Layout & Sidebar' => ['show_sidebar', 'homepage_layout'],
+                            '📌 Zusätzliche Bereiche' => ['show_events_strip'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <div class="homepage-cards-grid">
+                            <?php foreach ($homepageGroups as $groupTitle => $groupKeys): ?>
+                            <div class="homepage-card">
+                                <h4><?php echo $groupTitle; ?></h4>
+                                <?php foreach ($groupKeys as $fieldKey):
+                                    if (!isset($currentSection['sections'][$fieldKey])) { continue; }
+                                    $field     = $currentSection['sections'][$fieldKey];
+                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                                    $inputId   = "field_{$activeTab}_{$fieldKey}";
+                                    $inputName = "{$activeTab}_{$fieldKey}";
+                                ?>
+                                <div class="form-group">
+                                    <label for="<?php echo $inputId; ?>" class="form-label">
+                                        <?php echo htmlspecialchars($field['label']); ?>
+                                    </label>
+
+                                    <?php if ($field['type'] === 'checkbox'): ?>
+                                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
+                                            <input type="checkbox" id="<?php echo $inputId; ?>"
+                                                   name="<?php echo $inputName; ?>" value="1"
+                                                   <?php echo $val ? 'checked' : ''; ?>>
+                                            <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                        </div>
+
+                                    <?php elseif ($field['type'] === 'select'): ?>
+                                        <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                                class="form-control">
+                                            <?php foreach ($field['options'] as $optVal => $optLabel): ?>
+                                            <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
+                                                <?php echo (string)$val === (string)$optVal ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($optLabel); ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+
+                                    <?php elseif ($field['type'] === 'number'): ?>
+                                        <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               class="form-control" style="width:120px;" min="1" max="12">
+
+                                    <?php else: ?>
+                                        <input type="<?php echo htmlspecialchars($field['type']); ?>"
+                                               id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               class="form-control">
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($field['description'])): ?>
+                                        <small class="form-text"><?php echo $field['description']; ?></small>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php else: ?>
+                    <!-- Alle anderen Tabs: Standard-Rendering -->
                     <div class="admin-card">
                         <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
 
@@ -866,6 +1032,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                         </div>
                         <?php endforeach; ?>
                     </div>
+                    <?php endif; /* colors / homepage / standard tab */ ?>
 
                     <!-- Sticky Speichern-Leiste -->
                     <div class="admin-card form-actions-card">

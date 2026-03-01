@@ -1,7 +1,7 @@
 {
   "name": "365Network",
   "slug": "365network",
-  "version": "3.0.0",
+  "version": "3.2.0",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "IT-Networking-Dashboard – Deep Navy & Gold, modulares Kachel-Layout für Experten, Firmen, Events & Speaker.",
   "tags": ["professional", "editorial", "responsive", "cms", "network", "dark-mode"],
@@ -309,6 +309,36 @@
           "type": "checkbox",
           "default": true,
           "description": "Zeigt den Registrieren-Button für nicht angemeldete Besucher"
+        },
+        "profile_show_dashboard": {
+          "label": "Profil-Menü: Dashboard-Link",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Link zum Member-/Admin-Dashboard im Profil-Dropdown"
+        },
+        "profile_show_expert": {
+          "label": "Profil-Menü: Experten-Profil",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Link zum eigenen Experten-Profil (benötigt cms-experts)"
+        },
+        "profile_show_company": {
+          "label": "Profil-Menü: Firmenprofil",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Link zur Firmenübersicht (benötigt cms-companies)"
+        },
+        "profile_show_events": {
+          "label": "Profil-Menü: Meine Events",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Link zu eigenen Events (benötigt cms-events)"
+        },
+        "profile_show_speaker": {
+          "label": "Profil-Menü: Speaker-Profil",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt den Link zum Speaker-Profil (benötigt cms-speakers)"
         }
       }
     },

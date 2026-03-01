@@ -63,15 +63,21 @@ $hpSetting = function (string $key, $default = '') use ($_hp) {
     return $_hp[$key] ?? $default;
 };
 
+// Hilfsfunktion: Sicher Boolean auslesen (robust gegen DB-Strings '0','1','true','false')
+$hpBool = function (string $key, bool $default = true) use ($hpSetting): bool {
+    $val = $hpSetting($key, $default);
+    return filter_var($val, FILTER_VALIDATE_BOOLEAN);
+};
+
 // ── Sektions-Sichtbarkeit ──
-$showHero       = (bool)$hpSetting('show_hero', true);
-$showHeroSearch = (bool)$hpSetting('show_hero_search', true);
-$showStatsBar   = (bool)$hpSetting('show_stats_bar', true);
-$showExperts    = (bool)$hpSetting('show_experts_section', true);
-$showEvents     = (bool)$hpSetting('show_events_section', true);
-$showCompanies  = (bool)$hpSetting('show_companies_section', true);
-$showSidebar    = (bool)$hpSetting('show_sidebar', true);
-$showStrip      = (bool)$hpSetting('show_events_strip', true);
+$showHero       = $hpBool('show_hero', true);
+$showHeroSearch = $hpBool('show_hero_search', true);
+$showStatsBar   = $hpBool('show_stats_bar', true);
+$showExperts    = $hpBool('show_experts_section', true);
+$showEvents     = $hpBool('show_events_section', true);
+$showCompanies  = $hpBool('show_companies_section', true);
+$showSidebar    = $hpBool('show_sidebar', true);
+$showStrip      = $hpBool('show_events_strip', true);
 
 // ── Sektions-Texte ──
 $heroTitle      = (string)$hpSetting('hero_title', 'Führendes Verzeichnis für IT-Experten & Unternehmen');
@@ -96,6 +102,7 @@ $hasExperts   = $pluginMgr->isPluginActive('cms-experts');
 $hasCompanies = $pluginMgr->isPluginActive('cms-companies');
 $hasEvents    = $pluginMgr->isPluginActive('cms-events');
 $hasSpeakers  = $pluginMgr->isPluginActive('cms-speakers');
+$hasFeed      = $pluginMgr->isPluginActive('cms-feed');
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 4. DATEN LADEN (nur wenn Sektionen aktiv)
@@ -162,6 +169,37 @@ if (($showEvents || $showStrip) && $hasEvents) {
     } catch (\Throwable $e) { /* */ }
 }
 
+// ── Blog/Feed-Fallback: Letzte Beiträge laden wenn Hauptsektionen deaktiviert ──
+$fallbackPosts = [];
+$showFallbackContent = (!$showExperts && !$showEvents && !$showCompanies);
+if ($showFallbackContent) {
+    // Priorität 1: Posts aus der CMS Blog-Tabelle
+    try {
+        $stmt = $db->execute(
+            "SELECT id, title, slug, excerpt, featured_image, author_id, published_at
+             FROM {$prefix}posts
+             WHERE status = 'published'
+             ORDER BY published_at DESC
+             LIMIT 6"
+        );
+        $fallbackPosts = $stmt->fetchAll() ?: [];
+    } catch (\Throwable $e) { /* posts-Tabelle ggf. nicht vorhanden */ }
+
+    // Priorität 2: Feed-Items aus cms-feed Plugin (wenn Blog leer)
+    if (empty($fallbackPosts) && $hasFeed) {
+        try {
+            $stmt = $db->execute(
+                "SELECT fi.id, fi.title, fi.link, fi.description, fi.image_url, fi.author, fi.pub_date
+                 FROM {$prefix}feed_items fi
+                 WHERE fi.is_hidden = 0
+                 ORDER BY fi.pub_date DESC
+                 LIMIT 6"
+            );
+            $fallbackPosts = $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) { /* feed_items-Tabelle ggf. nicht vorhanden */ }
+    }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // 5. LANDING-PAGE OVERRIDE (überschreibt Customizer-Hero-Titel falls vorhanden)
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -169,11 +207,14 @@ if (($showEvents || $showStrip) && $hasEvents) {
 try {
     $landingService = \CMS\Services\LandingPageService::getInstance();
     $landingHeader  = $landingService->getHeader();
-    if (!empty($landingHeader['title'])) {
-        $heroTitle = $landingHeader['title'];
-    }
-    if (!empty($landingHeader['subtitle'])) {
-        $heroSubtitle = $landingHeader['subtitle'];
+    // Nur überschreiben wenn ein echter LandingPage-Eintrag in der DB existiert (id !== null)
+    if (!empty($landingHeader['id'])) {
+        if (!empty($landingHeader['title'])) {
+            $heroTitle = $landingHeader['title'];
+        }
+        if (!empty($landingHeader['subtitle'])) {
+            $heroSubtitle = $landingHeader['subtitle'];
+        }
     }
 } catch (\Throwable $e) { /* LandingPageService nicht verfügbar */ }
 
@@ -543,6 +584,78 @@ $layoutClass = match ($homepageLayout) {
             // z.B. Branchen-Übersicht, Featured-Partner-Banner.
             \CMS\Hooks::doAction('home_after_companies');
             ?>
+            <?php endif; ?>
+
+            <?php if ($showFallbackContent && !empty($fallbackPosts)) : ?>
+            <!-- ─── Blog/Feed-Fallback (Hero-Only Modus) ─────────────────── -->
+            <section class="dashboard-section" data-section="feed-fallback" id="home-feed">
+                <div class="section-header">
+                    <h2>📰 Aktuelle Beiträge</h2>
+                    <?php if ($hasFeed) : ?>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/feeds" class="section-link">Alle anzeigen →</a>
+                    <?php else : ?>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blogs" class="section-link">Alle anzeigen →</a>
+                    <?php endif; ?>
+                </div>
+
+                <div class="feed-grid">
+                    <?php foreach ($fallbackPosts as $post) :
+                        // Universelle Feld-Ablesung (Posts vs Feed-Items)
+                        $pTitle = htmlspecialchars(_field($post, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
+                        $pExcerpt = _field($post, 'excerpt', _field($post, 'description', ''));
+                        if (mb_strlen($pExcerpt) > 160) {
+                            $pExcerpt = mb_substr($pExcerpt, 0, 157) . '…';
+                        }
+                        $pExcerpt = htmlspecialchars(strip_tags($pExcerpt), ENT_QUOTES, 'UTF-8');
+                        $pImage = _field($post, 'featured_image', _field($post, 'image_url', ''));
+                        $pDate = _field($post, 'published_at', _field($post, 'pub_date', ''));
+                        $pDateFormatted = $pDate ? date('d.m.Y', strtotime($pDate)) : '';
+                        $pAuthor = htmlspecialchars(_field($post, 'author', ''), ENT_QUOTES, 'UTF-8');
+
+                        // Link: Blog-Posts → /blogs/slug, Feed-Items → externer Link
+                        $pSlug = _field($post, 'slug', '');
+                        $pLink = _field($post, 'link', '');
+                        if ($pSlug) {
+                            $pUrl = htmlspecialchars($siteUrl . '/blogs/' . $pSlug, ENT_QUOTES, 'UTF-8');
+                            $pTarget = '';
+                        } elseif ($pLink) {
+                            $pUrl = htmlspecialchars($pLink, ENT_QUOTES, 'UTF-8');
+                            $pTarget = ' target="_blank" rel="noopener noreferrer"';
+                        } else {
+                            $pUrl = '#';
+                            $pTarget = '';
+                        }
+                    ?>
+                        <article class="feed-card">
+                            <?php if ($pImage) : ?>
+                                <div class="feed-card-image">
+                                    <img src="<?php echo htmlspecialchars($pImage, ENT_QUOTES, 'UTF-8'); ?>"
+                                         alt="<?php echo $pTitle; ?>"
+                                         loading="lazy" width="400" height="200">
+                                </div>
+                            <?php endif; ?>
+                            <div class="feed-card-body">
+                                <h3 class="feed-card-title">
+                                    <a href="<?php echo $pUrl; ?>"<?php echo $pTarget; ?> style="color:inherit;text-decoration:none;">
+                                        <?php echo $pTitle; ?>
+                                    </a>
+                                </h3>
+                                <?php if ($pExcerpt) : ?>
+                                    <p class="feed-card-excerpt"><?php echo $pExcerpt; ?></p>
+                                <?php endif; ?>
+                                <div class="feed-card-meta">
+                                    <?php if ($pDateFormatted) : ?>
+                                        <span>📅 <?php echo $pDateFormatted; ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($pAuthor) : ?>
+                                        <span>✍️ <?php echo $pAuthor; ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
             <?php endif; ?>
 
             <?php
