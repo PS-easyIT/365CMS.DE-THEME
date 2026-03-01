@@ -718,7 +718,7 @@ function meridian_get_categories(int $limit = 0): array
             $sql .= ' LIMIT ' . $limit;
         }
         $cats = $db->get_results($sql);
-        return $cats ? (array)$cats : [];
+        return $cats ? array_map(fn($c) => (array)$c, $cats) : [];
     } catch (\Throwable $e) {
         return [];
     }
