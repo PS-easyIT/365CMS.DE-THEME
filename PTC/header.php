@@ -43,7 +43,9 @@ if ($currentUser) {
 // Customizer-Einstellungen
 $_logoUrl       = ptc_customizer_get('header', 'logo_url', '');
 $_showLoginBtn  = filter_var(ptc_customizer_get('header', 'show_login_btn', false), FILTER_VALIDATE_BOOLEAN);
+$_loginIconOnly = filter_var(ptc_customizer_get('header', 'login_btn_icon_only', false), FILTER_VALIDATE_BOOLEAN);
 $_showRegBtn    = filter_var(ptc_customizer_get('header', 'show_register_btn', false), FILTER_VALIDATE_BOOLEAN);
+$_regIconOnly   = filter_var(ptc_customizer_get('header', 'register_btn_icon_only', false), FILTER_VALIDATE_BOOLEAN);
 $_headerCtaText = (string) ptc_customizer_get('header', 'header_cta_text', 'Kontakt');
 $_headerCtaUrl  = (string) ptc_customizer_get('header', 'header_cta_url', '/#kontakt');
 $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'none');
@@ -114,10 +116,18 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
                         </div>
                     <?php else: ?>
                         <?php if ($_showLoginBtn): ?>
-                            <a href="<?php echo $siteUrl; ?>/login" class="btn-ptc btn-ptc-ghost btn-ptc-sm">Anmelden</a>
+                            <a href="<?php echo $siteUrl; ?>/login"
+                               class="btn-ptc btn-ptc-ghost btn-ptc-sm<?php echo $_loginIconOnly ? ' btn-ptc-icon-only' : ''; ?>"
+                               <?php echo $_loginIconOnly ? 'aria-label="Anmelden" title="Anmelden"' : ''; ?>>
+                                🔑<?php if (!$_loginIconOnly): ?> Anmelden<?php endif; ?>
+                            </a>
                         <?php endif; ?>
                         <?php if ($_showRegBtn): ?>
-                            <a href="<?php echo $siteUrl; ?>/register" class="btn-ptc btn-ptc-accent btn-ptc-sm">Registrieren</a>
+                            <a href="<?php echo $siteUrl; ?>/register"
+                               class="btn-ptc btn-ptc-accent btn-ptc-sm<?php echo $_regIconOnly ? ' btn-ptc-icon-only' : ''; ?>"
+                               <?php echo $_regIconOnly ? 'aria-label="Registrieren" title="Registrieren"' : ''; ?>>
+                                ✏️<?php if (!$_regIconOnly): ?> Registrieren<?php endif; ?>
+                            </a>
                         <?php endif; ?>
                         <?php if ($_headerCtaText !== ''): ?>
                             <a href="<?php echo htmlspecialchars($_headerCtaUrl, ENT_QUOTES, 'UTF-8'); ?>"
@@ -159,12 +169,12 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
             <?php else: ?>
                 <?php if ($_showLoginBtn): ?>
                     <a href="<?php echo $siteUrl; ?>/login" class="btn-ptc btn-ptc-ghost ptc-drawer-btn">
-                        Anmelden
+                        🔑 Anmelden
                     </a>
                 <?php endif; ?>
                 <?php if ($_showRegBtn): ?>
                     <a href="<?php echo $siteUrl; ?>/register" class="btn-ptc btn-ptc-accent ptc-drawer-btn">
-                        Registrieren
+                        ✏️ Registrieren
                     </a>
                 <?php endif; ?>
                 <?php if ($_headerCtaText !== ''): ?>

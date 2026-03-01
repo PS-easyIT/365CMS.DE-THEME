@@ -488,9 +488,21 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => false,
             ],
+            'login_btn_icon_only' => [
+                'label'       => 'Anmelden-Button: Nur Icon',
+                'description' => 'Zeigt nur das 🔑-Icon ohne Text – macht den Button schmaler.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
             'show_register_btn' => [
                 'label'       => 'Registrieren-Button anzeigen',
                 'description' => 'Zeigt den Registrieren-Button für nicht angemeldete Besucher.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'register_btn_icon_only' => [
+                'label'       => 'Registrieren-Button: Nur Icon',
+                'description' => 'Zeigt nur das ✏️-Icon ohne Text – macht den Button schmaler.',
                 'type'        => 'checkbox',
                 'default'     => false,
             ],
@@ -2419,7 +2431,7 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                                 '🖼️ Logo'              => ['logo_url', 'logo_text', 'logo_max_height'],
                                 '🎨 Header-Farben'      => ['header_bg_color', 'header_text_color', 'header_accent_color'],
                                 '📐 Header-Layout'      => ['header_height', 'show_header_shadow', 'nav_font_size', 'nav_sub_font_size'],
-                                '🔗 Header-Aktionen'    => ['show_login_btn', 'show_register_btn', 'header_cta_text', 'header_cta_url'],
+                                '🔗 Header-Aktionen'    => ['show_login_btn', 'login_btn_icon_only', 'show_register_btn', 'register_btn_icon_only', 'header_cta_text', 'header_cta_url'],
                                 '✨ Animation'           => ['header_animation'],
                             ],
                             'footer' => [
