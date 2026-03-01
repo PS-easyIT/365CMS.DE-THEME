@@ -595,7 +595,7 @@ $layoutClass = match ($homepageLayout) {
                     <?php if ($hasFeed) : ?>
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/feeds" class="section-link">Alle anzeigen →</a>
                     <?php else : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blogs" class="section-link">Alle anzeigen →</a>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog" class="section-link">Alle anzeigen →</a>
                     <?php endif; ?>
                 </div>
 
@@ -617,7 +617,7 @@ $layoutClass = match ($homepageLayout) {
                         $pSlug = _field($post, 'slug', '');
                         $pLink = _field($post, 'link', '');
                         if ($pSlug) {
-                            $pUrl = htmlspecialchars($siteUrl . '/blogs/' . $pSlug, ENT_QUOTES, 'UTF-8');
+                            $pUrl = htmlspecialchars($siteUrl . '/blog/' . $pSlug, ENT_QUOTES, 'UTF-8');
                             $pTarget = '';
                         } elseif ($pLink) {
                             $pUrl = htmlspecialchars($pLink, ENT_QUOTES, 'UTF-8');

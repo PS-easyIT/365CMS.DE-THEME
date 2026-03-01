@@ -35,8 +35,9 @@ class IT_Expert_Network_Theme
 
     private function __construct()
     {
-        // Assets im <head> einbinden
-        \CMS\Hooks::addAction('head', [$this, 'enqueueStyles']);
+        // Assets im <head> einbinden – Priority 15: NACH Plugin-CSS (10) laden,
+        // damit Theme-Overrides für Plugin-Elemente (Experts, Events, …) greifen.
+        \CMS\Hooks::addAction('head', [$this, 'enqueueStyles'], 15);
         \CMS\Hooks::addAction('head', [$this, 'outputMetaTags']);
         \CMS\Hooks::addAction('head', [$this, 'outputGoogleFonts'], 5);
         \CMS\Hooks::addAction('head', [$this, 'outputCustomStyles'], 20);

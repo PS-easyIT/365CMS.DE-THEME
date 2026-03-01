@@ -784,3 +784,168 @@ if (class_exists('IT_Expert_Network_Theme')) {
 | `--radius-md` | Standard Border-Radius (8px) |
 | `--muted-color` | Gedämpfte Textfarbe (#64748b) |
 | `--accent-color` | Gold-Akzent (#c8952e) |
+
+---
+
+## Sidebar-Customizer (NEU)
+
+> Seit Version 2.1 verfügt das Theme über einen vollständigen Sidebar-Customizer.
+> Einstellungen werden in der Kategorie `sidebar` des ThemeCustomizers gespeichert.
+
+### Verfügbare Settings
+
+| Key | Typ | Default | Beschreibung |
+|---|---|---|---|
+| `sidebar_enabled` | bool | `true` | Sidebar anzeigen/verbergen |
+| `sidebar_position` | string | `right` | Position (`left` oder `right`) |
+| `sidebar_width` | int | `340` | Breite in Pixel |
+| `sidebar_bg_color` | color | `#ffffff` | Hintergrundfarbe der Widgets |
+| `sidebar_border_color` | color | `#e2e8f0` | Rahmenfarbe |
+| `sidebar_border_radius` | int | `12` | Border-Radius in px |
+| `sidebar_padding` | float | `1.25` | Innenabstand in rem |
+| `sidebar_title_size` | float | `1.0` | Titel-Schriftgröße in rem |
+| `sidebar_title_color` | color | `#1e293b` | Titel-Textfarbe |
+| `sidebar_text_color` | color | `#475569` | Body-Textfarbe |
+| `sidebar_gap` | float | `1.25` | Abstand zwischen Widgets in rem |
+| `sidebar_shadow` | bool | `true` | Box-Shadow aktivieren |
+| `show_booking_widget` | bool | `true` | Buchungs-Widget anzeigen |
+| `booking_widget_title` | string | `📅 Buchungsportal` | Widget-Titel |
+| `show_feed_widget` | bool | `true` | Feed-Widget anzeigen |
+| `feed_widget_title` | string | `📰 Feed-Aggregator` | Widget-Titel |
+| `feed_widget_count` | int | `5` | Anzahl Feed-Items |
+| `show_jobs_widget` | bool | `true` | Jobs-Widget anzeigen |
+| `jobs_widget_title` | string | `💼 Job-Anzeigen` | Widget-Titel |
+| `show_blog_widget` | bool | `true` | Blog-Widget anzeigen |
+| `blog_widget_title` | string | `📝 Aktuelle Beiträge` | Widget-Titel |
+| `blog_widget_count` | int | `5` | Anzahl Blog-Beiträge |
+| `sidebar_custom_html` | text | `''` | Eigener HTML-Block |
+
+### Widget an Customizer-Setting koppeln
+
+Plugins die eigene Sidebar-Widgets registrieren, können die Customizer-Settings nutzen:
+
+```php
+public function renderWidget(): void
+{
+    // Prüfen ob das Widget im Customizer aktiviert ist
+    try {
+        $show = \CMS\Services\ThemeCustomizer::instance()
+            ->getSetting('sidebar', 'show_mein_widget', true);
+        if (!filter_var($show, FILTER_VALIDATE_BOOLEAN)) {
+            return;
+        }
+    } catch (\Throwable $e) {
+        // Ohne Customizer: immer anzeigen
+    }
+    
+    // Widget ausgeben ...
+}
+```
+
+### CSS-Variablen der Sidebar
+
+Die Sidebar injiziert folgende CSS Custom Properties (via `<head>`):
+
+```css
+.dashboard-sidebar {
+    --sidebar-widget-bg: #ffffff;
+    --sidebar-widget-border: #e2e8f0;
+    --sidebar-widget-radius: 12px;
+    --sidebar-widget-padding: 1.25rem;
+    --sidebar-title-size: 1rem;
+    --sidebar-title-color: #1e293b;
+    --sidebar-text-color: #475569;
+    --sidebar-gap: 1.25rem;
+}
+```
+
+Plugins sollten diese Variablen in ihren Sidebar-Widgets verwenden:
+
+```css
+.sidebar-panel[data-widget="mein-plugin"] {
+    background: var(--sidebar-widget-bg, #fff);
+    border: 1px solid var(--sidebar-widget-border, #e2e8f0);
+    border-radius: var(--sidebar-widget-radius, 12px);
+    padding: var(--sidebar-widget-padding, 1.25rem);
+}
+.sidebar-panel[data-widget="mein-plugin"] h3 {
+    font-size: var(--sidebar-title-size, 1rem);
+    color: var(--sidebar-title-color, #1e293b);
+}
+```
+
+---
+
+## Hero-Suche (Multi-Plugin)
+
+Die Hero-Suche durchsucht jetzt alle aktiven Plugin-Bereiche:
+
+| Plugin | Suchbereich | DB-Tabelle |
+|---|---|---|
+| cms-experts | Experten-Profile | `{prefix}experts` |
+| cms-companies | Firmen-Profile | `{prefix}companies` |
+| cms-speakers | Speaker-Profile | `{prefix}speakers` |
+| cms-events | Veranstaltungen | `{prefix}events` |
+| (Core) | CMS-Seiten | `{prefix}pages` |
+
+### Suchparameter
+
+| Parameter | Typ | Beschreibung |
+|---|---|---|
+| `q` | string | Suchbegriff (durchsucht Titel/Name) |
+| `type` | string | Filter nach Bereich: `expert`, `company`, `speaker`, `event` |
+| `location` | string | Standort-Filter (durchsucht Standort-Felder) |
+| `filter` | string | Zusatz-Filter (durchsucht Beschreibungen) |
+
+### Ergebnis-Typen
+
+Jedes Ergebnis hat ein `result_type`-Feld:
+
+```php
+$result->result_type  // 'page', 'expert', 'company', 'speaker', 'event'
+$result->title        // Titel / Name
+$result->slug         // URL-Slug
+$result->excerpt      // Beschreibung / Auszug
+```
+
+---
+
+## Blog-Templates
+
+Das Theme stellt zwei Blog-Templates bereit:
+
+| Template | Route | Datei |
+|---|---|---|
+| Blog-Liste | `/blog` | `blog.php` |
+| Einzelbeitrag | `/blog/:slug` | `blog-single.php` |
+
+### Router-Variablen (blog.php)
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `$posts` | array | Beiträge der aktuellen Seite |
+| `$total` | int | Gesamtanzahl Beiträge |
+| `$currentPage` | int | Aktuelle Seite |
+| `$totalPages` | int | Gesamtzahl Seiten |
+| `$perPage` | int | Beiträge pro Seite |
+
+### Router-Variablen (blog-single.php)
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `$post` | stdObject | Post-Objekt mit allen Feldern |
+
+Post-Objekt enthält: `id`, `title`, `slug`, `content`, `excerpt`, `published_at`, `author_id`, `author_name`, `category_id`, `category_name`, `featured_image`, `tags`, `views`, `status`
+
+### CSS-Klassen (Blog)
+
+| Klasse | Beschreibung |
+|---|---|
+| `.blog-card` | Blog-Card in der Übersicht |
+| `.blog-card__title` | Titel-Link |
+| `.blog-card__category` | Kategorie-Badge |
+| `.blog-card__meta` | Meta-Zeile (Autor, Datum) |
+| `.blog-article` | Artikel-Container (Single) |
+| `.blog-article__content` | Content-Bereich |
+| `.blog-related__card` | Verwandte-Artikel-Card |
+| `.tag-pill` | Tag-Badge |
