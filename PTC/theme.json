@@ -977,6 +977,7 @@
         "blog_single_show_reading_time": { "label": "Lesezeit anzeigen",            "type": "checkbox", "default": "1" },
         "blog_single_max_width":       { "label": "Maximale Artikelbreite (px)",     "type": "number",  "default": "820" },
         "page_show_title":             { "label": "Seitentitel anzeigen",           "type": "checkbox", "default": "1" },
+        "page_show_updated":           { "label": "Zuletzt aktualisiert anzeigen", "type": "checkbox", "default": "1" },
         "page_show_featured_image":    { "label": "Beitragsbild auf Seiten",        "type": "checkbox", "default": "1" },
         "page_max_width":              { "label": "Maximale Seitenbreite (px)",      "type": "number",  "default": "960" }
       }
