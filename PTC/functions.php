@@ -152,6 +152,18 @@ final class PTC_Theme
             $sideWidth                 = (int) $c->get('colors', 'side_accent_width', 0);
             $vars['--ptc-side-width']  = $sideWidth . 'px';
 
+            // ── Sektions-Farben ──
+            $vars['--ptc-hero-bg']          = $c->get('colors', 'hero_bg_color',      '#F8F9FA');
+            $vars['--ptc-hero-bg-to']       = $c->get('colors', 'hero_bg_to',         '#F1F5F9');
+            $vars['--ptc-services-bg']      = $c->get('colors', 'services_bg_color',  '#F8F9FA');
+            $vars['--ptc-service-card-bg']  = $c->get('colors', 'services_card_bg',   '#FFFFFF');
+            $vars['--ptc-events-bg']        = $c->get('colors', 'events_bg_color',    '#FFFFFF');
+            $vars['--ptc-event-card-bg']    = $c->get('colors', 'events_card_bg',     '#F8F9FA');
+            $vars['--ptc-faq-bg']           = $c->get('colors', 'faq_bg_color',       '#F8F9FA');
+            $vars['--ptc-faq-item-bg']      = $c->get('colors', 'faq_item_bg',        '#FFFFFF');
+            $vars['--ptc-network-bar-bg']   = $c->get('colors', 'network_bar_bg',     '#000D1A');
+            $vars['--ptc-network-bar-text'] = $c->get('colors', 'network_bar_text',   'rgba(255,255,255,0.35)');
+
             // ── Buttons ──
             $vars['--ptc-btn-radius']    = $c->get('buttons', 'button_border_radius', '8') . 'px';
             $vars['--ptc-btn-px']        = $c->get('buttons', 'button_padding_x',     '2') . 'rem';
@@ -220,9 +232,10 @@ final class PTC_Theme
 
     public function registerMenuLocations(array $locations): array
     {
-        $locations[] = ['slug' => 'primary',      'label' => 'Hauptnavigation (Header)'];
-        $locations[] = ['slug' => 'footer-nav',   'label' => 'Footer-Navigation'];
-        $locations[] = ['slug' => 'footer-legal', 'label' => 'Footer Rechtliche Links'];
+        $locations[] = ['slug' => 'primary',          'label' => 'Hauptnavigation (Header)'];
+        $locations[] = ['slug' => 'footer-nav',       'label' => 'Footer-Navigation'];
+        $locations[] = ['slug' => 'footer-services',  'label' => 'Footer Dienstleistungen'];
+        $locations[] = ['slug' => 'footer-legal',     'label' => 'Footer Rechtliche Links'];
         return $locations;
     }
 
@@ -249,6 +262,12 @@ final class PTC_Theme
                 ['label' => 'Dienstleistungen',       'url' => '/#dienstleistungen',      'target' => '_self'],
                 ['label' => 'Über uns',               'url' => '/#ueber-uns',             'target' => '_self'],
                 ['label' => 'Kontakt',                'url' => '/#kontakt',               'target' => '_self'],
+            ],
+            'footer-services' => [
+                ['label' => 'Personalvermittlung',    'url' => '/#dienstleistungen',      'target' => '_self'],
+                ['label' => 'Arbeitnehmerüberlassung','url' => '/#dienstleistungen',      'target' => '_self'],
+                ['label' => 'Akademie & Bildung',     'url' => '/#dienstleistungen',      'target' => '_self'],
+                ['label' => 'Logistiklehrwerkstatt',  'url' => '/#dienstleistungen',      'target' => '_self'],
             ],
             'footer-legal' => [
                 ['label' => 'Impressum',              'url' => '/impressum',              'target' => '_self'],

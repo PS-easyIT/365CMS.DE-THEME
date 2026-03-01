@@ -86,11 +86,17 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Sticky footer wrapper */
+/* Sticky footer wrapper – centered content column with side margins */
 .ptc-site {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    max-width: var(--ptc-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--ptc-bg, var(--ptc-offwhite));
+    box-shadow: 0 0 60px -12px rgba(0, 45, 93, 0.08);
+    position: relative;
 }
 
 /* Subtile Seitenrand-Akzente */
@@ -491,7 +497,7 @@ a:hover {
    6. Hero Section
    ============================================================================ */
 .ptc-hero {
-    background: linear-gradient(135deg, var(--ptc-offwhite) 0%, var(--ptc-gray-50) 100%);
+    background: linear-gradient(135deg, var(--ptc-hero-bg, var(--ptc-offwhite)) 0%, var(--ptc-hero-bg-to, var(--ptc-gray-50)) 100%);
     padding: 5rem 0 4rem;
     position: relative;
     overflow: hidden;
@@ -600,6 +606,17 @@ a:hover {
     background: var(--ptc-white);
 }
 
+/* Sektions-Hintergrundfarben via Customizer */
+.ptc-section[data-section="services"] {
+    background: var(--ptc-services-bg, var(--ptc-offwhite));
+}
+.ptc-section[data-section="events"] {
+    background: var(--ptc-events-bg, var(--ptc-white));
+}
+.ptc-section[data-section="faq"] {
+    background: var(--ptc-faq-bg, var(--ptc-offwhite));
+}
+
 .ptc-section-navy {
     background: var(--ptc-navy);
 }
@@ -659,7 +676,7 @@ a:hover {
 .ptc-services-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
 
 .ptc-service-card {
-    background: var(--ptc-white);
+    background: var(--ptc-service-card-bg, var(--ptc-white));
     border-radius: var(--ptc-radius);
     padding: 2rem 1.5rem;
     box-shadow: var(--ptc-shadow-sm);
@@ -769,7 +786,7 @@ a:hover {
 .ptc-events-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
 
 .ptc-event-card {
-    background: var(--ptc-offwhite);
+    background: var(--ptc-event-card-bg, var(--ptc-offwhite));
     border: 1px solid var(--ptc-gray-100);
     border-radius: var(--ptc-radius);
     padding: 1.5rem;
@@ -849,7 +866,7 @@ a:hover {
 }
 
 .ptc-faq-item {
-    background: var(--ptc-white);
+    background: var(--ptc-faq-item-bg, var(--ptc-white));
     border: 1px solid var(--ptc-gray-100);
     border-radius: var(--ptc-radius);
     overflow: hidden;
@@ -1067,7 +1084,7 @@ a:hover {
    14. Footer
    ============================================================================ */
 .ptc-footer {
-    background: var(--ptc-navy);
+    background: var(--ptc-footer-bg, var(--ptc-navy));
     color: rgba(255, 255, 255, 0.8);
     padding: 4rem 0 0;
 }
@@ -1169,10 +1186,10 @@ a:hover {
 
 /* Network Bar */
 .ptc-network-bar {
-    background: #000d1a;
+    background: var(--ptc-network-bar-bg, #000d1a);
     padding: 0.75rem 0;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--ptc-network-bar-text, rgba(255, 255, 255, 0.35));
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 

@@ -88,12 +88,7 @@ $activeSocials = array_filter($socialLinks, fn($s) => $s['url'] !== '');
                 <!-- Dienstleistungen -->
                 <div class="ptc-footer-col">
                     <h4>Dienstleistungen</h4>
-                    <ul>
-                        <li><a href="<?php echo $siteUrl; ?>/#dienstleistungen">Personalvermittlung</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/#dienstleistungen">Arbeitnehmerüberlassung</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/#dienstleistungen">Akademie & Bildung</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/#dienstleistungen">Logistiklehrwerkstatt</a></li>
-                    </ul>
+                    <?php ptc_nav_menu('footer-services'); ?>
                 </div>
 
                 <!-- Kontakt -->

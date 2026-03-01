@@ -194,6 +194,68 @@ $config = [
                 'type'        => 'number',
                 'default'     => 0,
             ],
+
+            // ── Sektions-Hintergrundfarben ──
+            'hero_bg_color' => [
+                'label'       => 'Hero-Hintergrund (Start)',
+                'description' => 'Startfarbe des Hero-Verlaufs auf der Startseite.',
+                'type'        => 'color',
+                'default'     => '#F8F9FA',
+            ],
+            'hero_bg_to' => [
+                'label'       => 'Hero-Hintergrund (Ende)',
+                'description' => 'Endfarbe des Hero-Verlaufs.',
+                'type'        => 'color',
+                'default'     => '#F1F5F9',
+            ],
+            'services_bg_color' => [
+                'label'       => 'Dienstleistungen Hintergrund',
+                'description' => 'Hintergrundfarbe der Dienstleistungen-Sektion.',
+                'type'        => 'color',
+                'default'     => '#F8F9FA',
+            ],
+            'services_card_bg' => [
+                'label'       => 'Dienstleistungen Karte',
+                'description' => 'Hintergrundfarbe der Service-Karten.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF',
+            ],
+            'events_bg_color' => [
+                'label'       => 'Termine Hintergrund',
+                'description' => 'Hintergrundfarbe der Termine-Sektion.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF',
+            ],
+            'events_card_bg' => [
+                'label'       => 'Termine Karte',
+                'description' => 'Hintergrundfarbe der Event-Karten.',
+                'type'        => 'color',
+                'default'     => '#F8F9FA',
+            ],
+            'faq_bg_color' => [
+                'label'       => 'FAQ Hintergrund',
+                'description' => 'Hintergrundfarbe der FAQ-Sektion.',
+                'type'        => 'color',
+                'default'     => '#F8F9FA',
+            ],
+            'faq_item_bg' => [
+                'label'       => 'FAQ Akkordeon',
+                'description' => 'Hintergrundfarbe der einzelnen FAQ-Einträge.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF',
+            ],
+            'network_bar_bg' => [
+                'label'       => 'Network-Bar Hintergrund',
+                'description' => 'Hintergrundfarbe der Network-Bar am Seitenende.',
+                'type'        => 'color',
+                'default'     => '#000D1A',
+            ],
+            'network_bar_text' => [
+                'label'       => 'Network-Bar Text',
+                'description' => 'Textfarbe der Network-Bar.',
+                'type'        => 'color',
+                'default'     => '#FFFFFF59',
+            ],
         ],
     ],
 
@@ -1905,6 +1967,11 @@ $csrfToken = Security::instance()->generateToken('ptc_customizer');
                             '🖼️ Hintergrund & Status'  => ['bg_color', 'bg_secondary', 'border_color', 'success_color', 'error_color'],
                             '📢 CTA-Sektion'            => ['cta_bg_color', 'cta_bg_to', 'cta_text_color'],
                             '🖼️ Seitenränder'          => ['side_margin_color', 'side_accent_color', 'side_accent_width'],
+                            '🎬 Hero-Sektion'           => ['hero_bg_color', 'hero_bg_to'],
+                            '🛠️ Dienstleistungen'      => ['services_bg_color', 'services_card_bg'],
+                            '📅 Termine'                => ['events_bg_color', 'events_card_bg'],
+                            '❓ FAQ'                     => ['faq_bg_color', 'faq_item_bg'],
+                            '🔗 Network-Bar'            => ['network_bar_bg', 'network_bar_text'],
                         ];
                     ?>
                     <div class="admin-card">

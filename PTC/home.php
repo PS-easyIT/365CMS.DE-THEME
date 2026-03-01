@@ -211,7 +211,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
 <?php if ($showServices): ?>
 <!-- ██ DIENSTLEISTUNGEN ██████████████████████████████████████████████████ -->
-<section class="ptc-section<?php echo $servicesBgStyle === 'alt' ? ' ptc-section-alt' : ($servicesBgStyle === 'navy' ? ' ptc-section-navy' : ''); ?>" id="dienstleistungen">
+<section class="ptc-section<?php echo $servicesBgStyle === 'alt' ? ' ptc-section-alt' : ($servicesBgStyle === 'navy' ? ' ptc-section-navy' : ''); ?>" id="dienstleistungen" data-section="services">
     <div class="ptc-container">
 
         <div class="ptc-section-head">
@@ -264,7 +264,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
 <?php if ($showEvents): ?>
 <!-- ██ AKTUELLE TERMINE ██████████████████████████████████████████████████ -->
-<section class="ptc-section<?php echo $eventsBgStyle === 'alt' ? ' ptc-section-alt' : ($eventsBgStyle === 'navy' ? ' ptc-section-navy' : ''); ?>" id="termine">
+<section class="ptc-section<?php echo $eventsBgStyle === 'alt' ? ' ptc-section-alt' : ($eventsBgStyle === 'navy' ? ' ptc-section-navy' : ''); ?>" id="termine" data-section="events">
     <div class="ptc-container">
 
         <div class="ptc-section-head">
@@ -405,7 +405,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 
 <?php if ($showFaq && !empty($faqItems)): ?>
 <!-- ██ HÄUFIG GESTELLTE FRAGEN ██████████████████████████████████████████ -->
-<section class="ptc-section<?php echo $faqBgStyle === 'alt' ? ' ptc-section-alt' : ''; ?>" id="faq">
+<section class="ptc-section<?php echo $faqBgStyle === 'alt' ? ' ptc-section-alt' : ''; ?>" id="faq" data-section="faq">
     <div class="ptc-container">
 
         <div class="ptc-section-head">
