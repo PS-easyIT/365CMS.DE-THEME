@@ -345,7 +345,7 @@ a:hover {
     position: relative;
 }
 
-.ptc-nav > ul > li > a::after {
+.ptc-nav > ul > li > a::before {
     content: '';
     position: absolute;
     left: 0.875rem;
@@ -357,11 +357,11 @@ a:hover {
     transition: height 0.2s ease, opacity 0.2s ease;
 }
 
-.ptc-nav > ul > li > a:hover::after {
+.ptc-nav > ul > li > a:hover::before {
     opacity: 0.6;
 }
 
-.ptc-nav > ul > li.active > a::after {
+.ptc-nav > ul > li.active > a::before {
     height: 3px;
     opacity: 1;
 }
