@@ -28,7 +28,7 @@
 - Network Bar responsive (Stack bei ≤768px)
 - MS Booking Iframe responsive (`max-width: 100%`)
 
-## 1.0.0 (2026-02-14)
+## 1.0.0 (2026-02-21)
 
 ### Erstveröffentlichung
 - Corporate Theme für PTC GmbH Personaldienstleistungen
