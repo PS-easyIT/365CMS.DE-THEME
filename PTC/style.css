@@ -1,0 +1,1134 @@
+/*
+Theme Name: PTC GmbH – Personal & Bildung
+Theme URI: https://ptc-gmbh.de
+Author: PHIN IT Solutions / Andreas Hepp
+Author URI: https://phin.network
+Description: Corporate Theme für PTC GmbH Personaldienstleistungen. Marineblau (#002D5D) + Gold (#D4A017) CI. Seriosität, Klarheit, Vertrauen. Sektionen: Hero, Dienstleistungen, Termine, FAQ, Kontakt.
+Version: 1.0.0
+Requires PHP: 8.1
+License: GNU General Public License v2 or later
+*/
+
+/* ============================================================================
+   1. CSS Custom Properties (Design Tokens – PTC Corporate Identity)
+   ============================================================================ */
+:root {
+    /* Brand Colors – Marineblau + Gold */
+    --ptc-navy:         #002D5D;
+    --ptc-navy-dark:    #001F42;
+    --ptc-navy-light:   #003A75;
+    --ptc-gold:         #D4A017;
+    --ptc-gold-dark:    #B8860B;
+    --ptc-gold-light:   #F0D060;
+
+    /* Neutrals */
+    --ptc-white:        #FFFFFF;
+    --ptc-offwhite:     #F8F9FA;
+    --ptc-gray-50:      #F1F5F9;
+    --ptc-gray-100:     #E2E8F0;
+    --ptc-gray-200:     #CBD5E1;
+    --ptc-gray-300:     #94A3B8;
+    --ptc-slate:        #607D8B;
+    --ptc-text:         #1A1A2E;
+    --ptc-text-light:   #475569;
+
+    /* Semantic */
+    --ptc-success:      #2E7D32;
+    --ptc-error:        #C62828;
+
+    /* Layout */
+    --ptc-max-width:    1240px;
+    --ptc-radius:       10px;
+    --ptc-radius-lg:    16px;
+    --ptc-radius-sm:    6px;
+
+    /* Shadows – dezent & professionell */
+    --ptc-shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.06);
+    --ptc-shadow:       0 4px 16px -2px rgb(0 45 93 / 0.08);
+    --ptc-shadow-lg:    0 12px 40px -4px rgb(0 45 93 / 0.12);
+    --ptc-shadow-gold:  0 4px 20px -2px rgb(212 160 23 / 0.20);
+
+    /* Transitions */
+    --ptc-ease:         all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ptc-ease-fast:    all 0.15s ease;
+
+    /* Typography */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+    /* Z-Index Scale */
+    --z-header:       1000;
+    --z-mobile-menu:  1100;
+    --z-overlay:      1200;
+    --z-modal:        1300;
+}
+
+/* ============================================================================
+   2. Reset & Base
+   ============================================================================ */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--ptc-text);
+    background: var(--ptc-offwhite);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    color: var(--ptc-navy);
+    text-decoration: none;
+    transition: var(--ptc-ease-fast);
+}
+
+a:hover {
+    color: var(--ptc-gold-dark);
+}
+
+*:focus-visible {
+    outline: 3px solid var(--ptc-gold);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+/* Skip Link */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    background: var(--ptc-navy);
+    color: var(--ptc-white);
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--ptc-radius-sm);
+    z-index: calc(var(--z-header) + 10);
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 0.5rem;
+}
+
+/* ============================================================================
+   3. Container
+   ============================================================================ */
+.ptc-container {
+    width: 100%;
+    max-width: var(--ptc-max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* ============================================================================
+   4. Header
+   ============================================================================ */
+.ptc-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-header);
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--ptc-gray-100);
+    transition: var(--ptc-ease);
+}
+
+.ptc-header.scrolled {
+    box-shadow: var(--ptc-shadow);
+}
+
+.ptc-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    gap: 2rem;
+}
+
+/* Logo */
+.ptc-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.ptc-logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.ptc-logo-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ptc-navy);
+    letter-spacing: -0.02em;
+}
+
+/* Desktop Nav */
+.ptc-nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.ptc-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 0.25rem;
+}
+
+.ptc-nav li a {
+    display: block;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ptc-text-light);
+    border-radius: var(--ptc-radius-sm);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-nav li a:hover,
+.ptc-nav li.active a {
+    color: var(--ptc-navy);
+    background: var(--ptc-gray-50);
+}
+
+.ptc-nav li.active a {
+    font-weight: 600;
+}
+
+/* Header CTA */
+.ptc-header-cta {
+    flex-shrink: 0;
+}
+
+/* Mobile Toggle */
+.ptc-mobile-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--ptc-radius-sm);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-mobile-toggle:hover {
+    background: var(--ptc-gray-50);
+}
+
+.ptc-mobile-toggle .line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--ptc-navy);
+    border-radius: 2px;
+    transition: var(--ptc-ease);
+}
+
+.ptc-mobile-toggle.is-active .line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.ptc-mobile-toggle.is-active .line:nth-child(2) {
+    opacity: 0;
+}
+
+.ptc-mobile-toggle.is-active .line:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Overlay & Drawer */
+.ptc-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 45, 93, 0.5);
+    z-index: var(--z-overlay);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.ptc-mobile-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ptc-mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    max-width: 85vw;
+    background: var(--ptc-white);
+    z-index: var(--z-mobile-menu);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 5rem 1.5rem 2rem;
+    overflow-y: auto;
+    box-shadow: var(--ptc-shadow-lg);
+}
+
+.ptc-mobile-drawer.is-open {
+    transform: translateX(0);
+}
+
+.ptc-mobile-drawer ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ptc-mobile-drawer li a {
+    display: block;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ptc-text);
+    border-radius: var(--ptc-radius-sm);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-mobile-drawer li a:hover,
+.ptc-mobile-drawer li.active a {
+    background: var(--ptc-gray-50);
+    color: var(--ptc-navy);
+}
+
+.ptc-drawer-cta {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ptc-gray-100);
+}
+
+/* Spacer for fixed header */
+.ptc-content {
+    padding-top: 72px;
+}
+
+/* ============================================================================
+   5. Buttons
+   ============================================================================ */
+
+/* Base */
+.btn-ptc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    text-decoration: none;
+    border: 2px solid transparent;
+    border-radius: var(--ptc-radius);
+    cursor: pointer;
+    transition: var(--ptc-ease);
+    line-height: 1.4;
+}
+
+.btn-ptc-lg {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+}
+
+/* Primary (Navy) */
+.btn-ptc-primary {
+    background: var(--ptc-navy);
+    color: var(--ptc-white);
+    border-color: var(--ptc-navy);
+}
+
+.btn-ptc-primary:hover {
+    background: var(--ptc-navy-light);
+    border-color: var(--ptc-navy-light);
+    color: var(--ptc-white);
+    box-shadow: var(--ptc-shadow);
+}
+
+/* Accent (Gold) */
+.btn-ptc-accent {
+    background: var(--ptc-gold);
+    color: var(--ptc-navy-dark);
+    border-color: var(--ptc-gold);
+    font-weight: 700;
+}
+
+.btn-ptc-accent:hover {
+    background: var(--ptc-gold-dark);
+    border-color: var(--ptc-gold-dark);
+    color: var(--ptc-white);
+    box-shadow: var(--ptc-shadow-gold);
+}
+
+/* Ghost */
+.btn-ptc-ghost {
+    background: transparent;
+    color: var(--ptc-navy);
+    border-color: var(--ptc-gray-200);
+}
+
+.btn-ptc-ghost:hover {
+    border-color: var(--ptc-navy);
+    background: var(--ptc-gray-50);
+    color: var(--ptc-navy);
+}
+
+/* White (für dunkle Hintergründe) */
+.btn-ptc-white {
+    background: var(--ptc-white);
+    color: var(--ptc-navy);
+    border-color: var(--ptc-white);
+    font-weight: 700;
+}
+
+.btn-ptc-white:hover {
+    background: var(--ptc-gold);
+    border-color: var(--ptc-gold);
+    color: var(--ptc-navy-dark);
+    box-shadow: var(--ptc-shadow-gold);
+}
+
+/* Outline White */
+.btn-ptc-outline-white {
+    background: transparent;
+    color: var(--ptc-white);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-ptc-outline-white:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.7);
+    color: var(--ptc-white);
+}
+
+/* ============================================================================
+   6. Hero Section
+   ============================================================================ */
+.ptc-hero {
+    background: linear-gradient(135deg, var(--ptc-offwhite) 0%, var(--ptc-gray-50) 100%);
+    padding: 5rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ptc-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 45, 93, 0.04) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.ptc-hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.ptc-hero-content h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--ptc-navy);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+.ptc-hero-content h1 .highlight {
+    color: var(--ptc-gold-dark);
+}
+
+.ptc-hero-lead {
+    font-size: 1.125rem;
+    color: var(--ptc-text-light);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 540px;
+}
+
+.ptc-hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ptc-hero-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ptc-hero-image-placeholder {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(145deg, var(--ptc-navy) 0%, var(--ptc-navy-light) 100%);
+    border-radius: var(--ptc-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--ptc-shadow-lg);
+}
+
+.ptc-hero-image-placeholder span {
+    font-size: 5rem;
+    filter: grayscale(0.3);
+}
+
+/* ============================================================================
+   7. Section (generic)
+   ============================================================================ */
+.ptc-section {
+    padding: 5rem 0;
+}
+
+.ptc-section-alt {
+    background: var(--ptc-white);
+}
+
+.ptc-section-head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 3rem;
+}
+
+.ptc-section-tag {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ptc-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+}
+
+.ptc-section-head h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--ptc-navy);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.015em;
+}
+
+.ptc-section-head p {
+    font-size: 1.05rem;
+    color: var(--ptc-text-light);
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   8. Services Grid (Dienstleistungen)
+   ============================================================================ */
+.ptc-services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.ptc-service-card {
+    background: var(--ptc-white);
+    border-radius: var(--ptc-radius);
+    padding: 2rem 1.5rem;
+    box-shadow: var(--ptc-shadow-sm);
+    border: 1px solid var(--ptc-gray-100);
+    transition: var(--ptc-ease);
+    position: relative;
+    overflow: hidden;
+}
+
+.ptc-service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--ptc-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ptc-service-card:hover {
+    box-shadow: var(--ptc-shadow);
+    transform: translateY(-2px);
+    border-color: var(--ptc-gray-200);
+}
+
+.ptc-service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.ptc-service-icon {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: var(--ptc-gray-50);
+    border-radius: var(--ptc-radius);
+}
+
+.ptc-service-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ptc-navy);
+    margin-bottom: 0.625rem;
+}
+
+.ptc-service-card p {
+    font-size: 0.9rem;
+    color: var(--ptc-text-light);
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   9. Events Grid (Termine)
+   ============================================================================ */
+.ptc-events-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.ptc-event-card {
+    background: var(--ptc-offwhite);
+    border: 1px solid var(--ptc-gray-100);
+    border-radius: var(--ptc-radius);
+    padding: 1.5rem;
+    transition: var(--ptc-ease);
+}
+
+.ptc-event-card:hover {
+    box-shadow: var(--ptc-shadow);
+    border-color: var(--ptc-gray-200);
+}
+
+.ptc-event-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+    font-size: 0.875rem;
+    color: var(--ptc-text-light);
+}
+
+.ptc-event-icon {
+    font-size: 1.1rem;
+}
+
+.ptc-event-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ptc-navy);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.ptc-event-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ptc-gold-dark);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-event-link:hover {
+    color: var(--ptc-navy);
+}
+
+/* ============================================================================
+   10. FAQ
+   ============================================================================ */
+.ptc-faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ptc-faq-item {
+    background: var(--ptc-white);
+    border: 1px solid var(--ptc-gray-100);
+    border-radius: var(--ptc-radius);
+    overflow: hidden;
+    transition: var(--ptc-ease);
+}
+
+.ptc-faq-item[open] {
+    border-color: var(--ptc-gray-200);
+    box-shadow: var(--ptc-shadow-sm);
+}
+
+.ptc-faq-item summary {
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ptc-navy);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.ptc-faq-item summary::after {
+    content: '∨';
+    font-size: 1.25rem;
+    color: var(--ptc-slate);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.ptc-faq-item[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.ptc-faq-item summary:hover {
+    background: var(--ptc-gray-50);
+}
+
+.ptc-faq-answer {
+    padding: 0 1.5rem 1.25rem;
+    font-size: 0.95rem;
+    color: var(--ptc-text-light);
+    line-height: 1.7;
+}
+
+/* ============================================================================
+   11. CTA Section
+   ============================================================================ */
+.ptc-cta-section {
+    background: linear-gradient(135deg, var(--ptc-navy) 0%, var(--ptc-navy-dark) 100%);
+    padding: 5rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ptc-cta-section::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(212, 160, 23, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.ptc-cta-section h2 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--ptc-white);
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.ptc-cta-section p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 560px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+    position: relative;
+}
+
+.ptc-cta-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+/* ============================================================================
+   12. Page Hero (Unterseiten)
+   ============================================================================ */
+.ptc-page-hero {
+    background: linear-gradient(135deg, var(--ptc-navy) 0%, var(--ptc-navy-dark) 100%);
+    padding: 3.5rem 0 2.5rem;
+    text-align: center;
+}
+
+.ptc-page-hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--ptc-white);
+    margin-bottom: 0.5rem;
+}
+
+.ptc-page-hero p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+}
+
+.ptc-hero-overline {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================================
+   13. Page Content (Unterseiten)
+   ============================================================================ */
+.ptc-page-content {
+    padding: 3rem 0 5rem;
+}
+
+.ptc-prose {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--ptc-text);
+}
+
+.ptc-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ptc-navy);
+    margin: 2rem 0 0.75rem;
+}
+
+.ptc-prose h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ptc-navy);
+    margin: 1.5rem 0 0.5rem;
+}
+
+.ptc-prose p {
+    margin-bottom: 1rem;
+}
+
+.ptc-prose a {
+    color: var(--ptc-gold-dark);
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+}
+
+.ptc-prose a:hover {
+    border-bottom-color: var(--ptc-gold-dark);
+}
+
+.ptc-prose ul, .ptc-prose ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.ptc-prose li {
+    margin-bottom: 0.375rem;
+}
+
+.ptc-prose blockquote {
+    border-left: 3px solid var(--ptc-gold);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    background: var(--ptc-gray-50);
+    border-radius: 0 var(--ptc-radius-sm) var(--ptc-radius-sm) 0;
+    color: var(--ptc-text-light);
+    font-style: italic;
+}
+
+.ptc-prose img {
+    border-radius: var(--ptc-radius);
+    margin: 1.5rem 0;
+}
+
+.ptc-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+.ptc-prose th, .ptc-prose td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--ptc-gray-100);
+}
+
+.ptc-prose th {
+    font-weight: 600;
+    color: var(--ptc-navy);
+    background: var(--ptc-gray-50);
+}
+
+/* ============================================================================
+   14. Footer
+   ============================================================================ */
+.ptc-footer {
+    background: var(--ptc-navy);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 4rem 0 0;
+}
+
+.ptc-footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+}
+
+.ptc-footer-brand p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.ptc-footer .ptc-logo--footer .ptc-logo-text {
+    color: var(--ptc-white);
+}
+
+.ptc-social {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.ptc-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--ptc-white);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: var(--ptc-ease-fast);
+    text-decoration: none;
+}
+
+.ptc-social a:hover {
+    background: var(--ptc-gold);
+    color: var(--ptc-navy-dark);
+}
+
+.ptc-footer-col h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ptc-white);
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.ptc-footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ptc-footer-col a {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    transition: var(--ptc-ease-fast);
+}
+
+.ptc-footer-col a:hover {
+    color: var(--ptc-gold);
+}
+
+/* Footer Bottom Bar */
+.ptc-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.ptc-footer-legal ul {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+}
+
+.ptc-footer-legal a {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.ptc-footer-legal a:hover {
+    color: var(--ptc-gold);
+}
+
+/* ============================================================================
+   15. Responsive
+   ============================================================================ */
+
+/* ≤ 1024px – Tablet */
+@media (max-width: 1024px) {
+    .ptc-nav {
+        display: none;
+    }
+
+    .ptc-header-cta {
+        display: none;
+    }
+
+    .ptc-mobile-toggle {
+        display: flex;
+    }
+
+    .ptc-hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .ptc-hero-content h1 {
+        font-size: 2.25rem;
+    }
+
+    .ptc-hero-lead {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ptc-hero-actions {
+        justify-content: center;
+    }
+
+    .ptc-hero-visual {
+        display: none;
+    }
+
+    .ptc-services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ptc-events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ptc-footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+}
+
+/* ≤ 768px – Mobile */
+@media (max-width: 768px) {
+    .ptc-hero {
+        padding: 3rem 0 2.5rem;
+    }
+
+    .ptc-hero-content h1 {
+        font-size: 1.875rem;
+    }
+
+    .ptc-section {
+        padding: 3.5rem 0;
+    }
+
+    .ptc-section-head h2 {
+        font-size: 1.625rem;
+    }
+
+    .ptc-services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ptc-events-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ptc-cta-section h2 {
+        font-size: 1.75rem;
+    }
+
+    .ptc-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .ptc-footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+/* ≤ 480px – Small Mobile */
+@media (max-width: 480px) {
+    .ptc-container {
+        padding: 0 1rem;
+    }
+
+    .ptc-hero-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .ptc-hero-lead {
+        font-size: 1rem;
+    }
+
+    .ptc-hero-actions {
+        flex-direction: column;
+    }
+
+    .ptc-hero-actions .btn-ptc {
+        width: 100%;
+    }
+
+    .ptc-cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ptc-cta-actions .btn-ptc {
+        width: 100%;
+    }
+
+    .ptc-service-card {
+        padding: 1.5rem 1.25rem;
+    }
+}

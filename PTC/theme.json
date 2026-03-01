@@ -1,0 +1,79 @@
+{
+  "name": "PTC GmbH – Personal & Bildung",
+  "slug": "PTC",
+  "version": "1.0.0",
+  "author": "PHIN IT Solutions / Andreas Hepp",
+  "description": "Corporate Theme für Personaldienstleistungen – PTC GmbH. Marineblau + Gold CI. Fokus auf Seriosität, Klarheit und Vertrauen. Sektionen: Hero, Dienstleistungen, Termine, FAQ, Kontakt.",
+  "tags": ["corporate", "personal", "dienstleistung", "bildung", "responsive", "business"],
+  "supports": ["custom-logo", "sticky-header", "custom-css"],
+
+  "menus": {
+    "primary":      "Hauptmenü (Header)",
+    "footer-nav":   "Footer-Navigation",
+    "footer-legal": "Rechtliche Links"
+  },
+
+  "templates": {
+    "home":  "home.php",
+    "page":  "page.php",
+    "404":   "404.php",
+    "error": "error.php"
+  },
+
+  "partials": {
+    "header": "header.php",
+    "footer": "footer.php"
+  },
+
+  "settings": {
+    "hero_badge": "Ihr Partner für Bildung, Karriere und Zukunft",
+    "hero_headline": "Willkommen bei <span class=\"highlight\">PTC GmbH</span> – Ihr Partner für Personaldienstleistungen.",
+    "hero_text": "Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Logistiklehrwerkstatt – alles aus einer Hand.",
+    "hero_cta_primary_label": "Entdecken Sie Ihre Möglichkeiten",
+    "hero_cta_primary_url": "#dienstleistungen",
+    "hero_cta_secondary_label": "Kontakt aufnehmen",
+    "hero_cta_secondary_url": "#kontakt",
+    "about_heading": "Über PTC – Kompetenz, die bewegt",
+    "cta_heading": "Bereit für den nächsten Karriereschritt?",
+    "cta_text": "Ob Arbeitnehmer auf Jobsuche oder Unternehmen mit Personalbedarf – sprechen Sie uns an. Wir finden die passende Lösung für Sie.",
+    "footer_tagline": "PTC GmbH – Ihr Partner für Bildung, Karriere und Zukunft."
+  },
+
+  "customization": {
+    "header": {
+      "label": "Header & Logo",
+      "settings": {
+        "logo_url": {
+          "label": "Logo-Bild URL",
+          "type": "image",
+          "default": ""
+        },
+        "logo_type": {
+          "label": "Logo Typ",
+          "type": "select",
+          "default": "text"
+        },
+        "logo_text": {
+          "label": "Wordmark-Text",
+          "type": "text",
+          "default": "PTC GmbH"
+        }
+      }
+    },
+    "colors": {
+      "label": "Farben",
+      "settings": {
+        "primary_color": {
+          "label": "Primärfarbe (Marineblau)",
+          "type": "color",
+          "default": "#002D5D"
+        },
+        "accent_color": {
+          "label": "Akzentfarbe (Gold)",
+          "type": "color",
+          "default": "#D4A017"
+        }
+      }
+    }
+  }
+}

@@ -596,6 +596,155 @@
       }
     },
 
+    "sidebar": {
+      "label": "Sidebar (Startseite)",
+      "description": "Sidebar-Layout, Widgets und Design-Einstellungen für die Startseite.",
+      "settings": {
+        "sidebar_enabled": {
+          "label": "Sidebar auf der Startseite anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Aktiviert die Sidebar im Dashboard-Layout der Startseite."
+        },
+        "sidebar_position": {
+          "label": "Sidebar-Position",
+          "type": "select",
+          "options": {
+            "right": "Rechts (Standard)",
+            "left": "Links"
+          },
+          "default": "right",
+          "description": "Auf welcher Seite die Sidebar angezeigt wird."
+        },
+        "sidebar_width": {
+          "label": "Sidebar-Breite (px)",
+          "type": "number",
+          "default": 340,
+          "description": "Breite der Sidebar in Pixeln (Standard: 340)."
+        },
+        "sidebar_bg_color": {
+          "label": "Sidebar-Hintergrundfarbe",
+          "type": "color",
+          "default": "#ffffff",
+          "description": "Hintergrundfarbe der Sidebar-Panels."
+        },
+        "sidebar_border_color": {
+          "label": "Sidebar-Rahmenfarbe",
+          "type": "color",
+          "default": "#e2e8f0",
+          "description": "Rahmenfarbe der Sidebar-Panels."
+        },
+        "sidebar_border_radius": {
+          "label": "Sidebar-Eckenradius (px)",
+          "type": "number",
+          "default": 12,
+          "description": "Rundung der Sidebar-Panels."
+        },
+        "sidebar_padding": {
+          "label": "Sidebar-Innenabstand (rem)",
+          "type": "number",
+          "default": 1.25,
+          "description": "Innenabstand der Sidebar-Panels."
+        },
+        "sidebar_title_size": {
+          "label": "Widget-Titel-Größe (rem)",
+          "type": "number",
+          "default": 1.0,
+          "description": "Schriftgröße der Sidebar-Widget-Überschriften."
+        },
+        "sidebar_title_color": {
+          "label": "Widget-Titel-Farbe",
+          "type": "color",
+          "default": "#1e293b",
+          "description": "Textfarbe der Widget-Überschriften."
+        },
+        "sidebar_text_color": {
+          "label": "Sidebar-Textfarbe",
+          "type": "color",
+          "default": "#475569",
+          "description": "Standard-Textfarbe in der Sidebar."
+        },
+        "sidebar_gap": {
+          "label": "Abstand zwischen Widgets (rem)",
+          "type": "number",
+          "default": 1.25,
+          "description": "Vertikaler Abstand zwischen Sidebar-Widgets."
+        },
+        "sidebar_shadow": {
+          "label": "Widget-Schatten anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Subtiler Schatten um Sidebar-Panels."
+        },
+        "show_booking_widget": {
+          "label": "Buchungsportal-Widget anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt das Buchungsportal-Placeholder-Widget (bis ein Plugin es ersetzt)."
+        },
+        "booking_widget_title": {
+          "label": "Buchungsportal-Überschrift",
+          "type": "text",
+          "default": "📅 Buchungsportal",
+          "description": "Titel des Buchungsportal-Widgets."
+        },
+        "show_feed_widget": {
+          "label": "Feed/News-Widget anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt das Feed-Aggregator-Widget (cms-feed Plugin oder Placeholder)."
+        },
+        "feed_widget_title": {
+          "label": "Feed-Widget-Überschrift",
+          "type": "text",
+          "default": "📰 Feed-Aggregator",
+          "description": "Titel des Feed-Widgets."
+        },
+        "feed_widget_count": {
+          "label": "Anzahl Feed-Beiträge",
+          "type": "number",
+          "default": 5,
+          "description": "Maximale Anzahl angezeigter Beiträge im Feed-Widget (1–10)."
+        },
+        "show_jobs_widget": {
+          "label": "Job-Anzeigen-Widget anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt das Job-Anzeigen-Widget (cms-jobprofile-generator Plugin oder Placeholder)."
+        },
+        "jobs_widget_title": {
+          "label": "Job-Widget-Überschrift",
+          "type": "text",
+          "default": "💼 Job-Anzeigen",
+          "description": "Titel des Job-Anzeigen-Widgets."
+        },
+        "show_blog_widget": {
+          "label": "Blog-Beiträge-Widget anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt die neuesten Blog-Beiträge in der Sidebar."
+        },
+        "blog_widget_title": {
+          "label": "Blog-Widget-Überschrift",
+          "type": "text",
+          "default": "📝 Aktuelle Beiträge",
+          "description": "Titel des Blog-Widgets."
+        },
+        "blog_widget_count": {
+          "label": "Anzahl Blog-Beiträge",
+          "type": "number",
+          "default": 5,
+          "description": "Maximale Anzahl angezeigter Beiträge (1–10)."
+        },
+        "sidebar_custom_html": {
+          "label": "Eigenes HTML-Widget",
+          "type": "textarea",
+          "default": "",
+          "description": "Zusätzliches HTML in der Sidebar (z. B. Banner, Partnerlogos). Wird nach allen Widgets angezeigt."
+        }
+      }
+    },
+
     "effects": {
       "label": "Effekte & Animationen",
       "description": "Visuelle Effekte wie die Netzwerk-Animation im Header.",

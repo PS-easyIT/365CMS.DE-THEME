@@ -46,6 +46,11 @@
       "slug": "technexus",
       "name": "TechNexus",
       "manifest": "THEMES/technexus/update.json"
+    },
+    {
+      "slug": "PTC",
+      "name": "PTC GmbH – Personal & Bildung",
+      "manifest": "THEMES/PTC/update.json"
     }
   ]
 }

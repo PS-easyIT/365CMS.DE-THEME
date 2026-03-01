@@ -1172,15 +1172,15 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     font-weight: 600;
 }
 
-/* ===== Expert Cards ===== */
-.experts-grid {
+/* ===== Expert Cards (Homepage only – scoped to avoid overriding plugin CSS) ===== */
+.dashboard-section .experts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
 }
 
-.expert-card {
+.dashboard-section .expert-card {
     background: #ffffff;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -1188,19 +1188,19 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     transition: box-shadow 0.2s ease, transform 0.15s ease;
 }
 
-.expert-card:hover {
+.dashboard-section .expert-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
-.expert-card-header {
+.dashboard-section .expert-card-header {
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
     margin-bottom: 0.75rem;
 }
 
-.expert-avatar {
+.dashboard-section .expert-avatar {
     width: 56px;
     height: 56px;
     border-radius: var(--radius-sm);
@@ -1209,7 +1209,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     background: var(--bg-secondary);
 }
 
-.expert-avatar-placeholder {
+.dashboard-section .expert-avatar-placeholder {
     width: 56px;
     height: 56px;
     border-radius: var(--radius-sm);
@@ -1223,12 +1223,12 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     flex-shrink: 0;
 }
 
-.expert-info {
+.dashboard-section .expert-info {
     flex: 1;
     min-width: 0;
 }
 
-.expert-name {
+.dashboard-section .expert-name {
     font-size: 0.9375rem;
     font-weight: 700;
     color: var(--heading-color);
@@ -1238,7 +1238,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     text-overflow: ellipsis;
 }
 
-.expert-title {
+.dashboard-section .expert-title {
     font-size: 0.75rem;
     color: var(--secondary-color);
     line-height: 1.4;
@@ -1249,7 +1249,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     overflow: hidden;
 }
 
-.expert-badge {
+.dashboard-section .expert-badge {
     display: inline-block;
     padding: 0.125rem 0.5rem;
     background: rgb(200 149 46 / 0.12);
@@ -1260,14 +1260,14 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     margin-top: 0.25rem;
 }
 
-.expert-tags {
+.dashboard-section .expert-tags {
     display: flex;
     gap: 0.25rem;
     flex-wrap: wrap;
     margin-bottom: 0.75rem;
 }
 
-.expert-tag {
+.dashboard-section .expert-tag {
     padding: 0.125rem 0.5rem;
     background: var(--bg-secondary);
     border-radius: var(--radius-sm);
@@ -1276,7 +1276,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     font-weight: 500;
 }
 
-.expert-meta {
+.dashboard-section .expert-meta {
     display: flex;
     gap: 0.75rem;
     font-size: 0.75rem;
@@ -1284,7 +1284,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     margin-bottom: 0.75rem;
 }
 
-.expert-card-footer {
+.dashboard-section .expert-card-footer {
     padding-top: 0.75rem;
     border-top: 1px solid var(--border-color);
 }
@@ -2119,7 +2119,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
 
     .header-container { padding: 0 1.25rem; }
 
-    .experts-grid {
+    .dashboard-section .experts-grid {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }
 
@@ -2183,7 +2183,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
         gap: 1rem;
     }
 
-    .experts-grid {
+    .dashboard-section .experts-grid {
         grid-template-columns: 1fr;
     }
 
@@ -2268,7 +2268,7 @@ body.dark-mode {
 }
 
 body.dark-mode .site-content { background-color: var(--background-color); }
-body.dark-mode .expert-card,
+body.dark-mode .dashboard-section .expert-card,
 body.dark-mode .company-card,
 body.dark-mode .event-card,
 body.dark-mode .card,
@@ -2301,7 +2301,7 @@ body.dark-mode .hero-section {
     background: #020617;
 }
 
-body.dark-mode .expert-tag {
+body.dark-mode .dashboard-section .expert-tag {
     background: #334155;
     color: #94a3b8;
 }

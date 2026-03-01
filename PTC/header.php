@@ -1,0 +1,96 @@
+<?php
+/**
+ * PTC Theme – Header
+ *
+ * @package PTC_Theme
+ */
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+$tm       = \CMS\ThemeManager::instance();
+$title    = ptc_site_title();
+$siteUrl  = ptc_site_url();
+
+try {
+    $_logoUrl = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
+} catch (\Throwable $_e) {
+    $_logoUrl = '';
+}
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php echo $title; ?></title>
+    <?php \CMS\Hooks::doAction('head'); ?>
+</head>
+
+<body>
+<?php \CMS\Hooks::doAction('body_start'); ?>
+<a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+
+<div class="ptc-site">
+
+    <header class="ptc-header" id="ptc-masthead">
+        <div class="ptc-container">
+            <div class="ptc-header-inner">
+
+                <!-- Logo -->
+                <a href="<?php echo $siteUrl; ?>/" class="ptc-logo" aria-label="<?php echo $title; ?>">
+                    <?php if (!empty($_logoUrl)) : ?>
+                        <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                             alt="<?php echo $title; ?>" class="ptc-logo-img">
+                    <?php else : ?>
+                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="18" cy="18" r="18" fill="#002D5D"/>
+                            <path d="M10 12h5v3h-5zM10 17h5v3h-5zM10 22h5v3h-5zM17 12h9v3h-9zM17 17h7v3h-7zM17 22h5v3h-5z" fill="#D4A017"/>
+                        </svg>
+                        <span class="ptc-logo-text"><?php echo $title; ?></span>
+                    <?php endif; ?>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="ptc-nav" id="ptc-main-nav" aria-label="Hauptnavigation">
+                    <?php ptc_nav_menu('primary'); ?>
+                </nav>
+
+                <!-- Header CTA -->
+                <div class="ptc-header-cta">
+                    <a href="<?php echo $siteUrl; ?>/#kontakt" class="btn-ptc btn-ptc-accent">
+                        Kontakt
+                    </a>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <button class="ptc-mobile-toggle" id="ptcMobileToggle"
+                        aria-label="Menü öffnen" aria-expanded="false" aria-controls="ptcMobileDrawer"
+                        type="button">
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                </button>
+
+            </div>
+        </div>
+    </header>
+
+    <?php \CMS\Hooks::doAction('after_header'); ?>
+
+    <!-- Mobile Overlay & Drawer -->
+    <div class="ptc-mobile-overlay" id="ptcMobileOverlay" role="presentation"></div>
+    <nav id="ptcMobileDrawer" class="ptc-mobile-drawer" aria-label="Mobile Navigation" aria-hidden="true">
+        <?php ptc_nav_menu('primary'); ?>
+        <div class="ptc-drawer-cta">
+            <a href="<?php echo $siteUrl; ?>/#kontakt"
+               class="btn-ptc btn-ptc-accent"
+               style="width:100%;justify-content:center;display:flex;">
+                Kontakt aufnehmen
+            </a>
+        </div>
+    </nav>
+
+    <main id="main-content" class="ptc-content">
