@@ -76,6 +76,8 @@ $showStatsBar   = $hpBool('show_stats_bar', true);
 $showExperts    = $hpBool('show_experts_section', true);
 $showEvents     = $hpBool('show_events_section', true);
 $showCompanies  = $hpBool('show_companies_section', true);
+$showSpeakers   = $hpBool('show_speakers_section', true);
+$showJobs       = $hpBool('show_jobs_section', false);
 $showSidebar    = $hpBool('show_sidebar', true);
 $showStrip      = $hpBool('show_events_strip', true);
 
@@ -85,11 +87,15 @@ $heroSubtitle   = (string)$hpSetting('hero_subtitle', '');
 $expertsTitle   = (string)$hpSetting('experts_section_title', 'Aktuelle Experten');
 $eventsTitle    = (string)$hpSetting('events_section_title', 'Kommende Events & Konferenzen');
 $companiesTitle = (string)$hpSetting('companies_section_title', 'Top Firmen im Fokus');
+$speakersTitle  = (string)$hpSetting('speakers_section_title', 'Featured Speaker');
+$jobsTitle      = (string)$hpSetting('jobs_section_title', 'Aktuelle Stellen');
 
 // ── Limits ──
 $expertsLimit   = max(1, min(12, (int)$hpSetting('experts_limit', 3)));
 $eventsLimit    = max(1, min(12, (int)$hpSetting('events_limit', 4)));
 $companiesLimit = max(1, min(12, (int)$hpSetting('companies_limit', 4)));
+$speakersLimit  = max(1, min(12, (int)$hpSetting('speakers_limit', 4)));
+$jobsLimit      = max(1, min(15, (int)$hpSetting('jobs_limit', 5)));
 
 // ── Layout ──
 $homepageLayout = (string)$hpSetting('homepage_layout', 'sidebar-right');
@@ -103,6 +109,8 @@ $hasCompanies = $pluginMgr->isPluginActive('cms-companies');
 $hasEvents    = $pluginMgr->isPluginActive('cms-events');
 $hasSpeakers  = $pluginMgr->isPluginActive('cms-speakers');
 $hasFeed      = $pluginMgr->isPluginActive('cms-feed');
+$hasJobs      = $pluginMgr->isPluginActive('cms-jobprofile-generator');
+$hasBooking   = $pluginMgr->isPluginActive('cms-booking');
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 4. DATEN LADEN (nur wenn Sektionen aktiv)
@@ -121,8 +129,13 @@ if ($showStatsBar || $showHero) {
         'experts'   => [$hasExperts,   "SELECT COUNT(*) as cnt FROM {$prefix}experts WHERE status = 'active'"],
         'companies' => [$hasCompanies, "SELECT COUNT(*) as cnt FROM {$prefix}companies WHERE status = 'active'"],
         'events'    => [$hasEvents,    "SELECT COUNT(*) as cnt FROM {$prefix}events WHERE status = 'active'"],
-        'speakers'  => [$hasSpeakers,  "SELECT COUNT(*) as cnt FROM {$prefix}event_speakers WHERE status = 'active'"],
+        'speakers'  => [$hasSpeakers,  "SELECT COUNT(*) as cnt FROM {$prefix}speakers WHERE status = 'active'"],
+        'jobs'      => [$hasJobs,      "SELECT COUNT(*) as cnt FROM {$prefix}jpg_profiles WHERE status = 'published'"],
     ];
+    if (isset($stats['jobs'])) {
+        // Schon im Array vorhanden? Nein – hinzufügen
+    }
+    $stats['jobs'] = ['icon' => '💼', 'label' => 'Stellen', 'value' => 0, 'visible' => $hasJobs];
     foreach ($statQueries as $key => [$active, $sql]) {
         if ($active) {
             try {
@@ -141,7 +154,14 @@ $experts = [];
 if ($showExperts && $hasExperts) {
     try {
         $stmt = $db->execute(
-            "SELECT * FROM {$prefix}experts WHERE status = 'active' ORDER BY created_at DESC LIMIT " . $expertsLimit
+            "SELECT e.*,
+                    CONCAT(e.first_name, ' ', e.last_name) AS display_name,
+                    (SELECT GROUP_CONCAT(skill_name ORDER BY skill_name SEPARATOR ', ')
+                     FROM {$prefix}expert_skills WHERE expert_id = e.id) AS skills
+             FROM {$prefix}experts e
+             WHERE e.status = 'active'
+             ORDER BY e.created_at DESC
+             LIMIT " . $expertsLimit
         );
         $experts = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }
@@ -163,15 +183,51 @@ $events = [];
 if (($showEvents || $showStrip) && $hasEvents) {
     try {
         $stmt = $db->execute(
-            "SELECT * FROM {$prefix}events WHERE status = 'active' AND start_date >= CURDATE() ORDER BY start_date ASC LIMIT " . $eventsLimit
+            "SELECT * FROM {$prefix}events WHERE status = 'published' AND event_date >= CURDATE() ORDER BY event_date ASC LIMIT " . $eventsLimit
         );
         $events = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }
 }
 
+// ── Speaker ──
+$speakers = [];
+if ($showSpeakers && $hasSpeakers) {
+    try {
+        $stmt = $db->execute(
+            "SELECT s.*,
+                    CONCAT(s.first_name, ' ', s.last_name) AS name,
+                    s.photo_url AS photo,
+                    (SELECT COUNT(*) FROM {$prefix}speaker_events se WHERE se.speaker_id = s.id) AS total_events,
+                    (SELECT GROUP_CONCAT(topic_name ORDER BY sort_order SEPARATOR ', ')
+                     FROM {$prefix}speaker_topics WHERE speaker_id = s.id LIMIT 3) AS topics
+             FROM {$prefix}speakers s
+             WHERE s.status = 'active'
+             ORDER BY s.is_featured DESC, s.created_at DESC
+             LIMIT " . $speakersLimit
+        );
+        $speakers = $stmt->fetchAll() ?: [];
+    } catch (\Throwable $e) { /* */ }
+}
+
+// ── Jobs ──
+$jobs = [];
+if ($showJobs && $hasJobs) {
+    try {
+        $stmt = $db->execute(
+            "SELECT p.id, p.title, p.slug, p.location, p.employment_type AS job_type,
+                    p.salary_min, p.salary_max, p.salary_currency, p.published_at
+             FROM {$prefix}jpg_profiles p
+             WHERE p.status = 'published'
+             ORDER BY p.published_at DESC, p.created_at DESC
+             LIMIT " . $jobsLimit
+        );
+        $jobs = $stmt->fetchAll() ?: [];
+    } catch (\Throwable $e) { /* */ }
+}
+
 // ── Blog/Feed-Fallback: Letzte Beiträge laden wenn Hauptsektionen deaktiviert ──
 $fallbackPosts = [];
-$showFallbackContent = (!$showExperts && !$showEvents && !$showCompanies);
+$showFallbackContent = (!$showExperts && !$showEvents && !$showCompanies && !$showSpeakers && !$showJobs);
 if ($showFallbackContent) {
     // Priorität 1: Posts aus der CMS Blog-Tabelle
     try {
@@ -402,13 +458,13 @@ $layoutClass = match ($homepageLayout) {
                 <?php if (!empty($experts)) : ?>
                     <div class="experts-grid">
                         <?php foreach ($experts as $expert) :
-                            $eName  = htmlspecialchars(_field($expert, 'name', _field($expert, 'display_name', 'Unbekannt')), ENT_QUOTES, 'UTF-8');
-                            $eTitle = htmlspecialchars(_field($expert, 'title', _field($expert, 'job_title', '')), ENT_QUOTES, 'UTF-8');
-                            $ePhoto = _field($expert, 'photo', _field($expert, 'avatar', ''));
+                            $eName  = htmlspecialchars(trim(_field($expert, 'display_name', trim(_field($expert, 'first_name', '') . ' ' . _field($expert, 'last_name', '')))) ?: 'Unbekannt', ENT_QUOTES, 'UTF-8');
+                            $eTitle = htmlspecialchars(_field($expert, 'position', ''), ENT_QUOTES, 'UTF-8');
+                            $ePhoto = _field($expert, 'photo_url', '');
                             $eId    = (int)_field($expert, 'id', '0');
-                            $eSkills = _field($expert, 'skills', _field($expert, 'specializations', ''));
+                            $eSkills = _field($expert, 'skills', '');
                             $eYears  = _field($expert, 'experience_years', '');
-                            $eAvail  = _field($expert, 'availability', '');
+                            $eAvail  = _field($expert, 'availability', _field($expert, 'location_city', ''));
                             $skillTags = $eSkills ? array_slice(array_map('trim', explode(',', $eSkills)), 0, 3) : [];
                             $initials = mb_strtoupper(mb_substr($eName, 0, 2));
                         ?>
@@ -484,8 +540,9 @@ $layoutClass = match ($homepageLayout) {
                     <div class="events-list">
                         <?php foreach ($events as $event) :
                             $evTitle    = htmlspecialchars(_field($event, 'title', 'Event'), ENT_QUOTES, 'UTF-8');
-                            $evDate     = _field($event, 'start_date', _field($event, 'event_date', ''));
-                            $evLocation = htmlspecialchars(_field($event, 'location', _field($event, 'venue', '')), ENT_QUOTES, 'UTF-8');
+                            $evDate     = _field($event, 'event_date', '');
+                            $evCity     = _field($event, 'city', '');
+                            $evLocation = htmlspecialchars(_field($event, 'location', $evCity), ENT_QUOTES, 'UTF-8');
                             $evId       = (int)_field($event, 'id', '0');
                             $evDay   = $evDate ? date('d', strtotime($evDate)) : '--';
                             $evMonth = $evDate ? ($monthsDE[(int)date('n', strtotime($evDate))] ?? '') : '';
@@ -542,9 +599,9 @@ $layoutClass = match ($homepageLayout) {
                 <?php if (!empty($companies)) : ?>
                     <div class="companies-grid">
                         <?php foreach ($companies as $company) :
-                            $cName = htmlspecialchars(_field($company, 'name', _field($company, 'company_name', 'Unbekannt')), ENT_QUOTES, 'UTF-8');
-                            $cLogo = _field($company, 'logo', _field($company, 'logo_url', ''));
-                            $cDesc = htmlspecialchars(_field($company, 'description', _field($company, 'short_description', '')), ENT_QUOTES, 'UTF-8');
+                            $cName = htmlspecialchars(_field($company, 'name', 'Unbekannt'), ENT_QUOTES, 'UTF-8');
+                            $cLogo = _field($company, 'logo_url', '');
+                            $cDesc = htmlspecialchars(mb_substr(strip_tags(_field($company, 'description', '')), 0, 150), ENT_QUOTES, 'UTF-8');
                             $cId   = (int)_field($company, 'id', '0');
                         ?>
                             <article class="company-card">
@@ -579,6 +636,107 @@ $layoutClass = match ($homepageLayout) {
             // HOOK: home_after_companies
             // z.B. Branchen-Übersicht, Featured-Partner-Banner.
             \CMS\Hooks::doAction('home_after_companies');
+            ?>
+            <?php endif; ?>
+
+            <?php if ($showSpeakers) : ?>
+            <!-- ─── Speaker-Sektion ──────────────────────────────────────── -->
+            <section class="dashboard-section" data-section="speakers" id="home-speakers">
+                <div class="section-header">
+                    <h2>🎤 <?php echo htmlspecialchars($speakersTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers" class="section-link">Alle Speaker →</a>
+                </div>
+
+                <?php if ($hasSpeakers && !empty($speakers)) : ?>
+                <div class="speakers-hp-grid">
+                    <?php foreach ($speakers as $sp) :
+                        $spId      = (int)(is_array($sp) ? ($sp['id'] ?? 0) : ($sp->id ?? 0));
+                        $spName    = htmlspecialchars(is_array($sp) ? ($sp['name'] ?? '') : ($sp->name ?? ''), ENT_QUOTES, 'UTF-8');
+                        $spTitle   = htmlspecialchars(is_array($sp) ? ($sp['title'] ?? '') : ($sp->title ?? ''), ENT_QUOTES, 'UTF-8');
+                        $spPhoto   = is_array($sp) ? ($sp['photo'] ?? '') : ($sp->photo ?? '');
+                        $spEvents  = (int)(is_array($sp) ? ($sp['total_events'] ?? 0) : ($sp->total_events ?? 0));
+                        $spTopics  = is_array($sp) ? ($sp['topics'] ?? '') : ($sp->topics ?? '');
+                        $topicArr  = $spTopics ? array_slice(array_map('trim', explode(',', $spTopics)), 0, 2) : [];
+                        $initials  = mb_strtoupper(mb_substr($spName, 0, 2));
+                    ?>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/speakers/' . $spId, ENT_QUOTES, 'UTF-8'); ?>" class="speaker-hp-card">
+                        <?php if ($spPhoto) : ?>
+                            <img class="speaker-hp-avatar" src="<?php echo htmlspecialchars($spPhoto, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo $spName; ?>" loading="lazy" width="64" height="64">
+                        <?php else : ?>
+                            <div class="speaker-dir-avatar-placeholder" style="width:64px;height:64px;font-size:1.1rem;"><?php echo $initials; ?></div>
+                        <?php endif; ?>
+                        <div class="speaker-hp-info">
+                            <strong><?php echo $spName; ?></strong>
+                            <?php if ($spTitle) : ?><small><?php echo $spTitle; ?></small><?php endif; ?>
+                            <?php if (!empty($topicArr)) : ?>
+                                <div class="speaker-hp-topics"><?php echo htmlspecialchars(implode(' · ', $topicArr), ENT_QUOTES, 'UTF-8'); ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if ($spEvents > 0) : ?><span class="speaker-events-count">🎤 <?php echo $spEvents; ?></span><?php endif; ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+
+                <?php elseif ($hasSpeakers) : ?>
+                <div class="empty-state" style="padding:2rem;">
+                    <div class="empty-state-icon">🎤</div>
+                    <p>Noch keine Speaker im Verzeichnis.</p>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers" class="btn btn-secondary btn-sm">Verzeichnis öffnen</a>
+                </div>
+                <?php else : ?>
+                <p style="color:var(--secondary-color);font-size:.9rem;">Das <strong>cms-speakers</strong> Plugin aktivieren, um Speaker anzuzeigen. <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers" style="color:var(--accent-color);">Mehr erfahren →</a></p>
+                <?php endif; ?>
+            </section>
+
+            <?php
+            \CMS\Hooks::doAction('home_after_speakers');
+            ?>
+            <?php endif; ?>
+
+            <?php if ($showJobs) : ?>
+            <!-- ─── Stellenmarkt-Sektion ─────────────────────────────────── -->
+            <section class="dashboard-section" data-section="jobs" id="home-jobs">
+                <div class="section-header">
+                    <h2>💼 <?php echo htmlspecialchars($jobsTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs" class="section-link">Alle Stellen →</a>
+                </div>
+
+                <?php if ($hasJobs && !empty($jobs)) : ?>
+                <div class="jobs-hp-list">
+                    <?php foreach ($jobs as $job) :
+                        $jId      = (int)(is_array($job) ? ($job['id'] ?? 0) : ($job->id ?? 0));
+                        $jTitle   = htmlspecialchars(is_array($job) ? ($job['title'] ?? '') : ($job->title ?? ''), ENT_QUOTES, 'UTF-8');
+                        $jCompany = htmlspecialchars(is_array($job) ? ($job['company_name'] ?? '') : ($job->company_name ?? ''), ENT_QUOTES, 'UTF-8');
+                        $jType    = is_array($job) ? ($job['job_type'] ?? '') : ($job->job_type ?? '');
+                        $jLoc     = htmlspecialchars(is_array($job) ? ($job['location'] ?? '') : ($job->location ?? ''), ENT_QUOTES, 'UTF-8');
+                        $jobTypeLabels = ['fulltime' => '👔 Vollzeit', 'parttime' => '⏰ Teilzeit', 'freelance' => '🧑‍💻 Freelance', 'internship' => '🎓 Praktikum', 'remote' => '🏠 Remote'];
+                        $jTypeLabel = $jobTypeLabels[$jType] ?? '';
+                    ?>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/jobs/' . $jId, ENT_QUOTES, 'UTF-8'); ?>" class="job-hp-card">
+                        <div class="job-hp-info">
+                            <strong><?php echo $jTitle; ?></strong>
+                            <div class="job-hp-meta">
+                                <?php if ($jCompany) : ?><span>🏢 <?php echo $jCompany; ?></span><?php endif; ?>
+                                <?php if ($jLoc) : ?><span>📍 <?php echo $jLoc; ?></span><?php endif; ?>
+                            </div>
+                        </div>
+                        <?php if ($jTypeLabel) : ?><span class="job-type-badge"><?php echo htmlspecialchars($jTypeLabel, ENT_QUOTES); ?></span><?php endif; ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+
+                <?php elseif ($hasJobs) : ?>
+                <div class="empty-state" style="padding:2rem;">
+                    <div class="empty-state-icon">💼</div>
+                    <p>Keine offenen Stellen derzeit.</p>
+                </div>
+                <?php else : ?>
+                <p style="color:var(--secondary-color);font-size:.9rem;">Das <strong>cms-jobprofile-generator</strong> Plugin aktivieren, um Stellen anzuzeigen. <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs" style="color:var(--accent-color);">Zum Stellenmarkt →</a></p>
+                <?php endif; ?>
+            </section>
+
+            <?php
+            \CMS\Hooks::doAction('home_after_jobs');
             ?>
             <?php endif; ?>
 

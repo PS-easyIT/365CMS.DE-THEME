@@ -142,6 +142,51 @@
                 if (e.target === searchOverlay) closeSearchOverlay();
             });
         }
+
+        // Filter Drawer (Directory-Seiten)
+        initFilterDrawer();
+    }
+
+    // ── Mobile Filter Drawer ─────────────────────────────────────────────────
+    function initFilterDrawer() {
+        var toggleBtn = document.getElementById('mobileFilterToggle');
+        var overlay   = document.getElementById('mobileFilterOverlay');
+        var filters   = document.getElementById('directoryFilters');
+        var closeBtn  = document.getElementById('filterDrawerClose');
+        var applyBtn  = document.getElementById('filterDrawerApply');
+        if (!toggleBtn || !filters) return;
+
+        function openDrawer() {
+            filters.classList.add('is-open');
+            if (overlay) { overlay.classList.add('is-visible'); }
+            document.body.classList.add('filter-drawer-open');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            filters.focus && filters.focus();
+        }
+        function closeDrawer() {
+            filters.classList.remove('is-open');
+            if (overlay) { overlay.classList.remove('is-visible'); }
+            document.body.classList.remove('filter-drawer-open');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            toggleBtn.focus();
+        }
+        toggleBtn.addEventListener('click', function () {
+            filters.classList.contains('is-open') ? closeDrawer() : openDrawer();
+        });
+        if (overlay)   { overlay.addEventListener('click', closeDrawer); }
+        if (closeBtn)  { closeBtn.addEventListener('click', closeDrawer); }
+        if (applyBtn)  { applyBtn.addEventListener('click', closeDrawer); }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && filters.classList.contains('is-open')) {
+                closeDrawer();
+            }
+        });
+        // Schließen wenn viewport größer als Drawer-Breakpoint wird
+        if (window.matchMedia) {
+            window.matchMedia('(min-width:1024px)').addEventListener('change', function (mq) {
+                if (mq.matches) { closeDrawer(); }
+            });
+        }
     }
 
     // Sicherer Einstiegspunkt: funktioniert egal ob DOM schon bereit oder nicht

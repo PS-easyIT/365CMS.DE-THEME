@@ -54,10 +54,13 @@ $copyrightText = str_replace(
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Verzeichnisse</h3>
                         <ul style="list-style:none;padding:0;margin:0;">
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/experts">Branchen-Spezialisten</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies">KMU Netzwerk</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events">Events</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers">Speaker</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/experts">👤 Experten</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies">🏢 Firmen</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events">📅 Events</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers">🎤 Speaker</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs">💼 Stellenmarkt</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/feeds">📰 Feed-Aggregator</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/booking">📆 Buchungsportal</a></li>
                         </ul>
                     </div>
                     <!-- Ressourcen -->

@@ -1,0 +1,496 @@
+{
+  "name": "CMS Phinit",
+  "slug": "cms-phinit",
+  "version": "1.0.0",
+  "author": "phinIT – Andreas Hepp",
+  "author_uri": "https://phinit.de",
+  "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
+  "requires_cms": "2.0.0",
+  "tags": ["blog", "it", "dark-mode", "responsive", "sidebar"],
+  "templates": {
+    "home":   "index.php",
+    "page":   "page.php",
+    "post":   "post.php",
+    "404":    "404.php",
+    "error":  "error.php",
+    "search": "search.php"
+  },
+  "post_templates": [
+    {
+      "id":          "default",
+      "label":       "Standard (mit TOC-Sidebar)",
+      "description": "2-Spalten-Layout: Artikel + sticky Sidebar mit automatisch generiertem Inhaltsverzeichnis, Kategorien-Widget und Social-Icons.",
+      "file":        "post.php",
+      "features":    ["sidebar", "toc", "comments", "prev-next", "share-buttons"]
+    },
+    {
+      "id":          "wide",
+      "label":       "Vollbreite (ohne Sidebar)",
+      "description": "Einzelne zentrierte Spalte (max. 860 px) mit aufklappbarem Inline-TOC. Ideal für lange Tutorials und Guides.",
+      "file":        "post-wide.php",
+      "features":    ["toc-inline", "comments", "prev-next", "share-buttons"]
+    },
+    {
+      "id":          "tech",
+      "label":       "Tech-Artikel (mit Tech-Karte)",
+      "description": "Wie Standard, jedoch mit einer Tech-Karte vor dem Artikel-Body: Betriebssystem, Version, Voraussetzungen und Schwierigkeit. Metadaten aus post[meta].",
+      "file":        "post-tech.php",
+      "features":    ["sidebar", "toc", "tech-card", "comments", "prev-next", "share-buttons"],
+      "meta_fields": {
+        "os":            { "label": "Betriebssystem",    "type": "text",    "placeholder": "Windows Server 2022" },
+        "version":       { "label": "Version",           "type": "text",    "placeholder": "PowerShell 7.4" },
+        "last_tested":   { "label": "Zuletzt getestet",  "type": "date"  },
+        "difficulty":    { "label": "Schwierigkeit",     "type": "select",  "options": ["beginner","intermediate","advanced","expert"] },
+        "prerequisites": { "label": "Voraussetzungen",   "type": "array",   "placeholder": "Admin-Rechte" },
+        "time_needed":   { "label": "Benötigte Zeit",    "type": "text",    "placeholder": "30 Minuten" }
+      }
+    }
+  ],
+  "page_templates": [
+    {
+      "id":          "default",
+      "label":       "Standard (mit Sidebar)",
+      "description": "2-Spalten-Layout: Seiteninhalt + Sidebar mit Social-Icons und Navigations-Widget.",
+      "file":        "page.php",
+      "features":    ["sidebar", "breadcrumbs"]
+    },
+    {
+      "id":          "wide",
+      "label":       "Vollbreite (ohne Sidebar)",
+      "description": "Zentrierte Einzelspalte (max. 860 px). Ideal für Datenschutzerklärung, Impressum, FAQ und Über-mich-Seiten.",
+      "file":        "page-wide.php",
+      "features":    ["breadcrumbs"]
+    },
+    {
+      "id":          "landing",
+      "label":       "Landing Page (Hero + Cards)",
+      "description": "Vollbreite-Landing-Page mit Gradient-Hero, Feature-Cards-Grid und optionalem CTA-Banner. Konfiguration via page[meta].",
+      "file":        "page-landing.php",
+      "features":    ["hero", "feature-cards", "cta-banner"],
+      "meta_fields": {
+        "hero_subtitle":    { "label": "Hero-Untertitel",            "type": "textarea" },
+        "hero_cta_label":   { "label": "CTA-Button-Text (primär)",   "type": "text" },
+        "hero_cta_url":     { "label": "CTA-Button-URL (primär)",    "type": "url" },
+        "hero_cta2_label":  { "label": "CTA-Button-Text (sekundär)", "type": "text" },
+        "hero_cta2_url":    { "label": "CTA-Button-URL (sekundär)",  "type": "url" },
+        "features":         { "label": "Feature-Cards",              "type": "array-of-objects", "fields": ["icon","title","text","url"] },
+        "cta_title":        { "label": "CTA-Banner Titel",           "type": "text" },
+        "cta_text":         { "label": "CTA-Banner Text",            "type": "textarea" },
+        "cta_button_label": { "label": "CTA-Banner Button-Text",     "type": "text" },
+        "cta_button_url":   { "label": "CTA-Banner Button-URL",      "type": "url" }
+      }
+    }
+  ],
+  "partials": {
+    "header": "header.php",
+    "footer": "footer.php"
+  },
+  "menus": {
+    "primary": "Hauptnavigation",
+    "footer":  "Footer-Navigation"
+  },
+  "supports": {
+    "dark_mode":     true,
+    "sticky_header": true,
+    "toc_sidebar":   true,
+    "scroll_progress": true,
+    "back_to_top":   true,
+    "consent_banner": true,
+    "reading_time":  true,
+    "schema_org":    true
+  },
+  "customization": {
+    "colors": {
+      "label": "Farben",
+      "fields": {
+        "primary_color": {
+          "label": "Primärfarbe (Header-Hintergrund)",
+          "type": "color",
+          "default": "#1e3a5f"
+        },
+        "primary_dark": {
+          "label": "Primärfarbe Dunkel",
+          "type": "color",
+          "default": "#0f2240"
+        },
+        "accent_color": {
+          "label": "Akzentfarbe (Gold)",
+          "type": "color",
+          "default": "#e8a838"
+        },
+        "accent_teal": {
+          "label": "Akzentfarbe Teal",
+          "type": "color",
+          "default": "#0d9488"
+        },
+        "text_primary": {
+          "label": "Primärer Text",
+          "type": "color",
+          "default": "#1e293b"
+        },
+        "text_secondary": {
+          "label": "Sekundärer Text",
+          "type": "color",
+          "default": "#64748b"
+        },
+        "bg_primary": {
+          "label": "Seiten-Hintergrund",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        "bg_secondary": {
+          "label": "Sekundärer Hintergrund",
+          "type": "color",
+          "default": "#f1f5f9"
+        },
+        "border_color": {
+          "label": "Trennlinienfarbe",
+          "type": "color",
+          "default": "#e2e8f0"
+        }
+      }
+    },
+    "typography": {
+      "label": "Typografie",
+      "fields": {
+        "font_family": {
+          "label": "Schriftart",
+          "type": "select",
+          "default": "system",
+          "options": {
+            "system": "System-Font (Standard)",
+            "inter":  "Inter (Google Fonts)",
+            "roboto": "Roboto (Google Fonts)"
+          }
+        },
+        "font_size_base": {
+          "label": "Basis-Schriftgröße (px)",
+          "type": "number",
+          "default": 16,
+          "min": 12,
+          "max": 22
+        },
+        "line_height": {
+          "label": "Zeilenhöhe",
+          "type": "number",
+          "default": 1.7,
+          "step": 0.05,
+          "min": 1.3,
+          "max": 2.2
+        },
+        "heading_weight": {
+          "label": "Überschriften Schriftstärke",
+          "type": "select",
+          "default": "700",
+          "options": {
+            "600": "Semi-Bold (600)",
+            "700": "Bold (700)",
+            "800": "Extra-Bold (800)"
+          }
+        }
+      }
+    },
+    "header": {
+      "label": "Header",
+      "fields": {
+        "logo_url": {
+          "label": "Logo-URL (leer = Text-Logo)",
+          "type": "text",
+          "default": ""
+        },
+        "logo_alt": {
+          "label": "Logo Alt-Text",
+          "type": "text",
+          "default": "phinIT Logo"
+        },
+        "logo_width": {
+          "label": "Logo-Breite (px)",
+          "type": "number",
+          "default": 160,
+          "min": 60,
+          "max": 400
+        },
+        "site_tagline": {
+          "label": "Tagline im Header",
+          "type": "text",
+          "default": "IT-Wissen für den Alltag"
+        },
+        "show_search": {
+          "label": "Suchfeld anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_dark_toggle": {
+          "label": "Dark-Mode-Toggle anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_rss_link": {
+          "label": "RSS-Link anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "rss_url": {
+          "label": "RSS-Feed-URL",
+          "type": "text",
+          "default": "/feed.xml"
+        },
+        "sticky_header": {
+          "label": "Sticky Header aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_quicklinks_bar": {
+          "label": "Quicklinks-Leiste anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "quicklinks": {
+          "label": "Quicklinks (JSON-Array)",
+          "type": "json",
+          "default": [
+            {"label": "PowerShell Glossar",       "url": "/powershell/glossar"},
+            {"label": "M365 Anleitungen",         "url": "/microsoft-365"},
+            {"label": "Linux Bash Cheatsheet",    "url": "/linux/bash-cheatsheet"},
+            {"label": "Datenschutz-Templates",    "url": "/datenschutz"}
+          ]
+        }
+      }
+    },
+    "footer": {
+      "label": "Footer",
+      "fields": {
+        "footer_description": {
+          "label": "Footer-Beschreibungstext",
+          "type": "textarea",
+          "default": "IT-Anleitungen, Tutorials und Best Practices für Systemadministratoren und IT-Profis."
+        },
+        "copyright_text": {
+          "label": "Copyright-Text",
+          "type": "text",
+          "default": "phinIT – Andreas Hepp. Alle Rechte vorbehalten."
+        },
+        "footer_col2_title": {
+          "label": "2. Spalten-Titel",
+          "type": "text",
+          "default": "Themen"
+        },
+        "footer_col3_title": {
+          "label": "3. Spalten-Titel",
+          "type": "text",
+          "default": "Rechtliches"
+        },
+        "show_consent_banner": {
+          "label": "Cookie-Consent-Banner anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "consent_text": {
+          "label": "Consent-Banner-Text",
+          "type": "textarea",
+          "default": "Diese Website verwendet technisch notwendige Cookies. Mit dem Klick auf \"Akzeptieren\" stimmst du der Nutzung zu."
+        },
+        "show_back_to_top": {
+          "label": "Nach-oben-Button anzeigen",
+          "type": "checkbox",
+          "default": true
+        }
+      }
+    },
+    "social": {
+      "label": "Social Media",
+      "fields": {
+        "linkedin_url": {
+          "label": "LinkedIn-Profil-URL",
+          "type": "url",
+          "default": ""
+        },
+        "github_url": {
+          "label": "GitHub-Profil-URL",
+          "type": "url",
+          "default": "https://github.com/phinit-de"
+        },
+        "mastodon_url": {
+          "label": "Mastodon-URL",
+          "type": "url",
+          "default": ""
+        },
+        "twitter_url": {
+          "label": "Twitter/X-Profil-URL",
+          "type": "url",
+          "default": ""
+        },
+        "rss_feed_url": {
+          "label": "RSS-Feed-URL",
+          "type": "url",
+          "default": "/feed.xml"
+        }
+      }
+    },
+    "homepage": {
+      "label": "Startseite",
+      "fields": {
+        "featured_posts_count": {
+          "label": "Anzahl Featured-Beiträge",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 6
+        },
+        "grid_posts_per_page": {
+          "label": "Beiträge pro Seite im Grid",
+          "type": "number",
+          "default": 9,
+          "min": 3,
+          "max": 24
+        },
+        "show_info_cards": {
+          "label": "Kategorie-Info-Cards anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_feed_section": {
+          "label": "RSS-Feed-Sektion anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "featured_section_title": {
+          "label": "Titel der Featured-Sektion",
+          "type": "text",
+          "default": "Aktuelle Beiträge"
+        },
+        "grid_section_title": {
+          "label": "Titel des Beitrags-Grids",
+          "type": "text",
+          "default": "Alle Artikel"
+        }
+      }
+    },
+    "post": {
+      "label": "Beitrags-Ansicht",
+      "fields": {
+        "show_toc": {
+          "label": "Inhaltsverzeichnis anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_reading_time": {
+          "label": "Lesezeit anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_share_buttons": {
+          "label": "Share-Buttons anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_post_nav": {
+          "label": "Vor-/Zurück-Navigation anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_comments": {
+          "label": "Kommentarbereich anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_author_box": {
+          "label": "Autoren-Box anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "author_name": {
+          "label": "Autoren-Name",
+          "type": "text",
+          "default": "Andreas Hepp"
+        },
+        "author_bio": {
+          "label": "Autoren-Bio",
+          "type": "textarea",
+          "default": "IT-Administrator, Blogger und PowerShell-Enthusiast. Schreibt über Microsoft 365, Linux und IT-Sicherheit."
+        },
+        "author_avatar_url": {
+          "label": "Autoren-Avatar-URL",
+          "type": "url",
+          "default": ""
+        }
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "fields": {
+        "container_width": {
+          "label": "Maximale Container-Breite (px)",
+          "type": "number",
+          "default": 1280,
+          "min": 900,
+          "max": 1920
+        },
+        "sidebar_position": {
+          "label": "Sidebar-Position (Beiträge)",
+          "type": "select",
+          "default": "right",
+          "options": {
+            "right": "Rechts",
+            "left":  "Links",
+            "none":  "Keine Sidebar"
+          }
+        },
+        "border_radius": {
+          "label": "Eckenradius für Cards (px)",
+          "type": "number",
+          "default": 8,
+          "min": 0,
+          "max": 24
+        },
+        "show_scroll_progress": {
+          "label": "Lesefortschrittsbalken anzeigen",
+          "type": "checkbox",
+          "default": true
+        }
+      }
+    },
+    "performance": {
+      "label": "Performance",
+      "fields": {
+        "lazy_load_images": {
+          "label": "Bilder lazy-laden",
+          "type": "checkbox",
+          "default": true
+        },
+        "enable_animations": {
+          "label": "Scroll-Animationen aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
+        "preconnect_google_fonts": {
+          "label": "Google Fonts preconnect",
+          "type": "checkbox",
+          "default": false
+        }
+      }
+    },
+    "advanced": {
+      "label": "Erweitert",
+      "fields": {
+        "head_code": {
+          "label": "Zusätzlicher Code im &lt;head&gt;",
+          "type": "textarea",
+          "default": "",
+          "description": "HTML-Code (Analytics-Snippet, Verification-Tags, …)"
+        },
+        "custom_css": {
+          "label": "Eigenes CSS",
+          "type": "textarea",
+          "default": "",
+          "description": "Zusätzliches CSS – wird nach dem Theme-Stylesheet eingefügt."
+        },
+        "footer_code": {
+          "label": "Code vor &lt;/body&gt;",
+          "type": "textarea",
+          "default": ""
+        }
+      }
+    }
+  }
+}

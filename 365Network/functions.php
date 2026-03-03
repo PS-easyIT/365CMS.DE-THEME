@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('THEME_VERSION', '3.2.0');
+define('THEME_VERSION', '3.4.1');
 define('THEME_DIR', THEME_PATH . '365Network/');
 define('THEME_URL_BASE', \CMS\ThemeManager::instance()->getThemeUrl());
 
@@ -73,6 +73,7 @@ class IT_Expert_Network_Theme
         // per addAction('home_sidebar_widget', ...) mit passender Priorität einhängen.
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarBookingWidget'],  10);
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarFeedWidget'],     20);
+        \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarSpeakersWidget'], 25);
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarJobWidget'],      30);
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarBlogWidget'],     40);
         \CMS\Hooks::addAction('home_sidebar_widget', [$this, 'renderSidebarCustomHtml'],     90);
@@ -202,6 +203,8 @@ HTML;
                 ['label' => 'Firmen',      'url' => '/companies', 'target' => '_self'],
                 ['label' => 'Events',      'url' => '/events',    'target' => '_self'],
                 ['label' => 'Speaker',     'url' => '/speakers',  'target' => '_self'],
+                ['label' => 'Jobs',        'url' => '/jobs',      'target' => '_self'],
+                ['label' => 'Feeds',       'url' => '/feeds',     'target' => '_self'],
                 ['label' => 'Login',       'url' => '/login',     'target' => '_self'],
             ],
             'footer'  => [
@@ -599,6 +602,74 @@ HTML;
                     <span class="widget-zone__icon">📰</span>
                     <span class="widget-zone__text"><?php echo $hasFeed ? 'Noch keine Feed-Beiträge vorhanden.' : 'Plugin-Slot: Feed'; ?></span>
                 </div>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Default-Widget: Featured Speaker
+     * Zeigt aktuelle Speaker aus dem cms-speakers Plugin (oder Placeholder wenn nicht aktiv).
+     */
+    public function renderSidebarSpeakersWidget(): void
+    {
+        $hasSpeakers = \CMS\PluginManager::instance()->isPluginActive('cms-speakers');
+        $items = [];
+
+        if ($hasSpeakers) {
+            try {
+                $db = \CMS\Database::instance();
+                $prefix = $db->prefix();
+                $stmt = $db->execute(
+                    "SELECT id, name, topics, avatar_url, total_events
+                     FROM {$prefix}event_speakers
+                     WHERE status = 'active'
+                     ORDER BY total_events DESC, id DESC
+                     LIMIT 4"
+                );
+                $items = $stmt->fetchAll() ?: [];
+            } catch (\Throwable $e) { /* event_speakers ggf. nicht vorhanden */ }
+        }
+
+        if (!$hasSpeakers && empty($items)) {
+            return; // Kein Widget wenn Plugin nicht aktiv
+        }
+        $siteUrl = SITE_URL;
+        ?>
+        <div class="sidebar-panel" data-widget="speakers">
+            <h3>🎤 Featured Speaker</h3>
+            <?php if (!empty($items)) : ?>
+                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.625rem;">
+                    <?php foreach ($items as $sp) :
+                        $spName   = htmlspecialchars(_field($sp, 'name', 'Speaker'), ENT_QUOTES, 'UTF-8');
+                        $spTopics = _field($sp, 'topics', '');
+                        $spFirst  = $spTopics ? htmlspecialchars(explode(',', $spTopics)[0], ENT_QUOTES, 'UTF-8') : '';
+                        $spEvents = (int)_field($sp, 'total_events', 0);
+                        $spId     = (int)_field($sp, 'id', 0);
+                    ?>
+                    <li style="display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.5rem;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-color,#c8952e);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0;">
+                            <?php echo mb_strtoupper(mb_substr($spName, 0, 1)); ?>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <a href="<?php echo htmlspecialchars($siteUrl . '/speakers/' . $spId, ENT_QUOTES, 'UTF-8'); ?>"
+                               style="color:var(--sidebar-title-color,#1e293b);text-decoration:none;font-size:.83rem;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                <?php echo $spName; ?>
+                            </a>
+                            <?php if ($spFirst) : ?>
+                                <span style="font-size:.72rem;color:var(--muted-color,#94a3b8);"><?php echo $spFirst; ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <?php if ($spEvents > 0) : ?>
+                            <span style="font-size:.72rem;color:var(--accent-color,#c8952e);white-space:nowrap;"><?php echo $spEvents; ?> Events</span>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers"
+                   style="display:inline-block;margin-top:.75rem;font-size:.8rem;color:var(--accent-color);text-decoration:none;font-weight:600;">
+                    Alle Speaker →
+                </a>
             <?php endif; ?>
         </div>
         <?php

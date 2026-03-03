@@ -364,6 +364,18 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
+            'profile_show_jobs' => [
+                'label'       => 'Profil-Menü: Stellenmarkt',
+                'description' => 'Zeigt den Link zum Stellenmarkt im Profil-Dropdown (benötigt cms-jobprofile-generator).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'profile_show_booking' => [
+                'label'       => 'Profil-Menü: Buchungsportal',
+                'description' => 'Zeigt den Link zum Buchungsportal im Profil-Dropdown (benötigt cms-booking).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
         ],
     ],
 
@@ -599,6 +611,42 @@ $config = [
                 'description' => 'Horizontale Events-Vorschau am Ende der Seite.',
                 'type'        => 'checkbox',
                 'default'     => true,
+            ],
+            'show_speakers_section' => [
+                'label'       => 'Speaker-Sektion anzeigen',
+                'description' => 'Featured Speaker auf der Startseite (benötigt cms-speakers Plugin).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'speakers_section_title' => [
+                'label'       => 'Speaker-Überschrift',
+                'description' => 'Titel über der Speaker-Sektion.',
+                'type'        => 'text',
+                'default'     => 'Featured Speaker',
+            ],
+            'speakers_limit' => [
+                'label'       => 'Anzahl Speaker',
+                'description' => 'Maximale Anzahl angezeigter Speaker-Cards (1–12).',
+                'type'        => 'number',
+                'default'     => 4,
+            ],
+            'show_jobs_section' => [
+                'label'       => 'Stellen-Sektion anzeigen',
+                'description' => 'Aktuelle Stellenanzeigen auf der Startseite (benötigt cms-jobprofile-generator Plugin).',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'jobs_section_title' => [
+                'label'       => 'Stellen-Überschrift',
+                'description' => 'Titel über der Stellen-Sektion.',
+                'type'        => 'text',
+                'default'     => 'Aktuelle Stellen',
+            ],
+            'jobs_limit' => [
+                'label'       => 'Anzahl Stellen',
+                'description' => 'Maximale Anzahl angezeigter Stellen (1–15).',
+                'type'        => 'number',
+                'default'     => 5,
             ],
         ],
     ],
@@ -838,6 +886,206 @@ $config = [
         ],
     ],
 
+    'speakers' => [
+        'title' => '🎤 Speaker-Verzeichnis',
+        'sections' => [
+            'speakers_per_page' => [
+                'label'       => 'Speaker pro Seite',
+                'description' => 'Anzahl der Speaker-Karten pro Seite im Verzeichnis.',
+                'type'        => 'number',
+                'default'     => 12,
+            ],
+            'speakers_default_sort' => [
+                'label'       => 'Standard-Sortierung',
+                'description' => 'Voreingestellte Sortierung im Speaker-Verzeichnis.',
+                'type'        => 'select',
+                'options'     => [
+                    'latest' => 'Neueste zuerst',
+                    'name'   => 'Name (A–Z)',
+                    'events' => 'Meiste Events',
+                ],
+                'default'     => 'latest',
+            ],
+            'speakers_show_event_count' => [
+                'label'       => 'Event-Zähler anzeigen',
+                'description' => 'Zeigt die Anzahl der Event-Teilnahmen auf der Speaker-Card.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'speakers_show_topics' => [
+                'label'       => 'Themen-Tags anzeigen',
+                'description' => 'Zeigt Topic-Tags auf der Speaker-Card.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'speakers_hero_title' => [
+                'label'       => 'Verzeichnis-Titel',
+                'description' => 'Überschrift der Speaker-Verzeichnis-Seite.',
+                'type'        => 'text',
+                'default'     => 'Speaker & Referenten',
+            ],
+            'speakers_hero_subtitle' => [
+                'label'       => 'Verzeichnis-Untertitel',
+                'description' => 'Beschreibungstext unter dem Titel (leer = ausgeblendet).',
+                'type'        => 'text',
+                'default'     => 'Entdecke erfahrene Speaker und Referenten aus der IT-Branche.',
+            ],
+        ],
+    ],
+
+    'jobs' => [
+        'title' => '💼 Stellenmarkt',
+        'sections' => [
+            'jobs_per_page' => [
+                'label'       => 'Stellen pro Seite',
+                'description' => 'Anzahl der Stellenanzeigen pro Seite.',
+                'type'        => 'number',
+                'default'     => 15,
+            ],
+            'jobs_default_sort' => [
+                'label'       => 'Standard-Sortierung',
+                'description' => 'Voreingestellte Sortierung im Stellenmarkt.',
+                'type'        => 'select',
+                'options'     => [
+                    'latest'   => 'Neueste zuerst',
+                    'salary'   => 'Gehalt absteigend',
+                    'title'    => 'Titel (A–Z)',
+                ],
+                'default'     => 'latest',
+            ],
+            'jobs_show_salary' => [
+                'label'       => 'Gehalt anzeigen',
+                'description' => 'Gehaltsangaben auf Job-Cards sichtbar machen.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'jobs_show_remote_badge' => [
+                'label'       => 'Remote-Badge anzeigen',
+                'description' => 'Markiert Remote-Jobs mit einem Badge.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'jobs_enable_alert' => [
+                'label'       => 'Job-Alert-Funktion aktivieren',
+                'description' => 'Zeigt den "Job Alert erstellen"-Button für eingeloggte Nutzer.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'jobs_hero_title' => [
+                'label'       => 'Stellenmarkt-Titel',
+                'description' => 'Überschrift der Stellenmarkt-Seite.',
+                'type'        => 'text',
+                'default'     => 'IT-Stellenmarkt',
+            ],
+            'jobs_hero_subtitle' => [
+                'label'       => 'Stellenmarkt-Untertitel',
+                'description' => 'Beschreibungstext unter dem Titel.',
+                'type'        => 'text',
+                'default'     => 'Finde deinen nächsten Job in der IT-Branche.',
+            ],
+        ],
+    ],
+
+    'feeds' => [
+        'title' => '📰 Feed-Aggregator',
+        'sections' => [
+            'feeds_per_page' => [
+                'label'       => 'Beiträge pro Seite',
+                'description' => 'Anzahl der Feed-Beiträge pro Seite im Aggregator.',
+                'type'        => 'number',
+                'default'     => 18,
+            ],
+            'feeds_default_sort' => [
+                'label'       => 'Standard-Sortierung',
+                'description' => 'Voreingestellte Sortierung im Feed-Aggregator.',
+                'type'        => 'select',
+                'options'     => [
+                    'latest' => 'Neueste zuerst',
+                    'title'  => 'Titel (A–Z)',
+                ],
+                'default'     => 'latest',
+            ],
+            'feeds_show_source' => [
+                'label'       => 'Quellenangabe anzeigen',
+                'description' => 'Zeigt den Feed-Namen als Quellenangabe auf der Karte.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'feeds_open_external' => [
+                'label'       => 'Links in neuem Tab öffnen',
+                'description' => 'Öffnet Feed-Artikel in einem neuen Browser-Tab.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'feeds_hero_title' => [
+                'label'       => 'Aggregator-Titel',
+                'description' => 'Überschrift der Feed-Aggregator-Seite.',
+                'type'        => 'text',
+                'default'     => 'IT-News & Feeds',
+            ],
+            'feeds_hero_subtitle' => [
+                'label'       => 'Aggregator-Untertitel',
+                'description' => 'Beschreibungstext unter dem Titel.',
+                'type'        => 'text',
+                'default'     => 'Aktuelle News und Beiträge aus der IT-Welt.',
+            ],
+        ],
+    ],
+
+    'booking' => [
+        'title' => '📅 Buchungsportal',
+        'sections' => [
+            'booking_enabled' => [
+                'label'       => 'Buchungsportal aktivieren',
+                'description' => 'Schaltet das Buchungsportal-Frontend frei.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'booking_require_login' => [
+                'label'       => 'Anmeldung erforderlich',
+                'description' => 'Buchen ist nur für eingeloggte Mitglieder möglich.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'booking_show_history' => [
+                'label'       => 'Buchungsverlauf anzeigen',
+                'description' => 'Zeigt dem Nutzer seine eigenen Buchungen in der Sidebar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'booking_history_count' => [
+                'label'       => 'Buchungsverlauf-Anzahl',
+                'description' => 'Maximale Anzahl angezeigter eigener Buchungen (1–20).',
+                'type'        => 'number',
+                'default'     => 10,
+            ],
+            'booking_show_expert_sidebar' => [
+                'label'       => 'Experten-Sidebar anzeigen',
+                'description' => 'Zeigt verfügbare Experten in der Booking-Sidebar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'booking_hero_title' => [
+                'label'       => 'Buchungsportal-Titel',
+                'description' => 'Überschrift der Buchungsportal-Seite.',
+                'type'        => 'text',
+                'default'     => 'Buchungsportal',
+            ],
+            'booking_hero_subtitle' => [
+                'label'       => 'Buchungsportal-Untertitel',
+                'description' => 'Beschreibungstext unter dem Titel.',
+                'type'        => 'text',
+                'default'     => 'Buche jetzt einen Termin mit unserem Team oder IT-Experten.',
+            ],
+            'booking_intro_text' => [
+                'label'       => 'Einführungstext',
+                'description' => 'Text über dem Buchungsformular (leer = ausgeblendet).',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+        ],
+    ],
+
     'effects' => [
         'title' => '✨ Effekte & Animationen',
         'sections' => [
@@ -896,6 +1144,7 @@ $config = [
             ],
         ],
     ],
+
 
 ];
 
@@ -1108,7 +1357,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
-                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                                     $inputId   = "field_{$activeTab}_{$fieldKey}";
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
@@ -1155,7 +1404,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
-                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                                     $inputId   = "field_{$activeTab}_{$fieldKey}";
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
@@ -1246,7 +1495,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
-                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                                    $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                                     $inputId   = "field_{$activeTab}_{$fieldKey}";
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
@@ -1340,7 +1589,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
                         <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
 
                         <?php foreach ($currentSection['sections'] as $fieldKey => $field):
-                            $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
+                            $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                             $inputId   = "field_{$activeTab}_{$fieldKey}";
                             $inputName = "{$activeTab}_{$fieldKey}";
                         ?>

@@ -46,6 +46,8 @@ try {
     $_profileShowCompany   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_company', true), FILTER_VALIDATE_BOOLEAN);
     $_profileShowEvents    = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_events', true), FILTER_VALIDATE_BOOLEAN);
     $_profileShowSpeaker   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_speaker', true), FILTER_VALIDATE_BOOLEAN);
+    $_profileShowJobs      = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_jobs', true), FILTER_VALIDATE_BOOLEAN);
+    $_profileShowBooking   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_booking', true), FILTER_VALIDATE_BOOLEAN);
 } catch (\Throwable $e) {
     $_headerLogoUrl   = '';
     $_showSearchBtn   = true;
@@ -61,6 +63,8 @@ try {
     $_profileShowCompany   = true;
     $_profileShowEvents    = true;
     $_profileShowSpeaker   = true;
+    $_profileShowJobs      = true;
+    $_profileShowBooking   = true;
 }
 
 // User-Initialen für Avatar
@@ -82,6 +86,8 @@ $_hasExperts   = $_pluginMgr->isPluginActive('cms-experts');
 $_hasCompanies = $_pluginMgr->isPluginActive('cms-companies');
 $_hasEvents    = $_pluginMgr->isPluginActive('cms-events');
 $_hasSpeakers  = $_pluginMgr->isPluginActive('cms-speakers');
+$_hasJobs      = $_pluginMgr->isPluginActive('cms-jobprofile-generator');
+$_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -212,6 +218,22 @@ $_hasSpeakers  = $_pluginMgr->isPluginActive('cms-speakers');
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">🎤</span>
                                     Speaker-Profil
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($_profileShowJobs && $_hasJobs) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">💼</span>
+                                    Stellenmarkt
+                                </a>
+                                <?php endif; ?>
+
+                                <?php if ($_profileShowBooking && $_hasBooking) : ?>
+                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/booking"
+                                   class="profile-dropdown-item" role="menuitem">
+                                    <span class="profile-dropdown-icon">📅</span>
+                                    Meine Buchungen
                                 </a>
                                 <?php endif; ?>
 

@@ -1,325 +1,1331 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PHINIT.DE – Microsoft 365 & Cloud Intelligence für IT-Profis</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    /* ══════════════════════════════════════
-       VARS & RESET
-    ══════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>365CMS Theme – PHINIT.DE Style Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   365CMS THEME – style.css (embedded preview)
+   Version: 1.0.0 | Author: Andy @ phinit.de
+   ═══════════════════════════════════════════════════════════════ */
 
-    :root {
-      --hdr1: #1a2232; --hdr2: #1e2a3e; --hdr3: #162030;
-      --accent: #4a9eff; --accent2: #2d7dd2;
-      --accent-soft: rgba(74,158,255,.12);
-      --text-nav: #c8d4e4; --text-bright: #ffffff; --text-dim: #7a8898;
-      --border: rgba(255,255,255,.07);
-      --page-bg: #f0f2f5; --card-bg: #ffffff; --card-border: #dde3ea;
-      --font-brand: 'Barlow Condensed', sans-serif;
-      --font-ui: 'Barlow', sans-serif;
-      --font-code: 'JetBrains Mono', monospace;
-      --r: 5px; --max: 960px;
-    }
+/* ── 1. CUSTOM PROPERTIES & RESET ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: var(--font-ui);
-      background: var(--page-bg);
-      color: #2a3240;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+:root {
+  /* Brand */
+  --primary-color:   #1e3a5f;
+  --primary-dark:    #0f2340;
+  --primary-mid:     #1a3255;
+  --primary-light:   #2a4f7c;
+  --accent-color:    #e8a838;
+  --accent-hover:    #d4922a;
+  --accent-blue:     #4a9eff;
+  --accent-blue2:    #2d7dd2;
+  --accent-soft:     rgba(74,158,255,.10);
 
-    a { color: inherit; text-decoration: none; transition: 0.2s ease-in-out; }
+  /* Backgrounds */
+  --bg-primary:      #ffffff;
+  --bg-secondary:    #f1f5f9;
+  --bg-dark:         #0a0f1a;
+  --bg-header1:      #111827;
+  --bg-header2:      #162030;
+  --bg-header3:      #0e1a28;
 
-    /* UX: Reading Progress */
-    #scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: var(--accent); z-index: 2000; }
+  /* Text */
+  --text-primary:    #1e293b;
+  --text-secondary:  #4a5568;
+  --text-muted:      #7a8898;
+  --text-nav:        #c8d4e4;
+  --text-bright:     #ffffff;
 
-    /* ══════════════════════════════════════
-       HEADER (Full Width Bars / Centered Content)
-    ══════════════════════════════════════ */
-    header { position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .bar-full { width: 100%; display: flex; justify-content: center; }
-    .bar-inner { width: 100%; max-width: var(--max); padding: 0 1.25rem; display: flex; align-items: center; height: 100%; }
+  /* Borders */
+  --border-light:    #dde3ea;
+  --border-dark:     rgba(255,255,255,.07);
+  --border-accent:   var(--accent-blue2);
 
-    .util-bg { background: var(--hdr1); height: 34px; border-bottom: 1px solid var(--border); }
-    .main-bg { background: var(--hdr2); height: 46px; border-bottom: 1px solid var(--border); }
-    .sub-bg  { background: var(--hdr3); height: 30px; border-bottom: 2px solid var(--accent2); }
+  /* Typography */
+  --font-brand:      'Barlow Condensed', sans-serif;
+  --font-ui:         'Barlow', sans-serif;
+  --font-code:       'JetBrains Mono', monospace;
 
-    .logo-name { font-family: var(--font-brand); font-size: 1.2rem; font-weight: 700; text-transform: uppercase; color: #fff; letter-spacing: .05em; }
-    .logo-name span { color: var(--accent); }
-    
-    .nav-links { display: flex; height: 100%; }
-    .nav-links a { display: flex; align-items: center; padding: 0 1rem; color: var(--text-nav); font-family: var(--font-brand); font-weight: 600; text-transform: uppercase; border-bottom: 3px solid transparent; font-size: 0.85rem; }
-    .nav-links a:hover { color: #fff; border-bottom-color: var(--accent); background: rgba(255,255,255,0.03); }
+  /* Layout */
+  --max-width:       1060px;
+  --radius:          4px;
+  --radius-md:       6px;
+  --shadow-sm:       0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:       0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:       0 10px 30px rgba(0,0,0,.14);
+  --transition:      0.18s ease;
+}
 
-    .sub-nav { display: flex; gap: 1.5rem; }
-    .sub-nav a { font-size: 0.7rem; color: #5a7088; font-weight: 700; text-transform: uppercase; }
-    .sub-nav a:hover { color: var(--accent); }
+/* Dark Mode Override */
+body.dark-mode {
+  --bg-primary:      #111827;
+  --bg-secondary:    #0d1520;
+  --text-primary:    #e2e8f0;
+  --text-secondary:  #94a3b8;
+  --border-light:    #1e2d3d;
+  --bg-dark:         #050810;
+}
+body.dark-mode .card,
+body.dark-mode .article-card,
+body.dark-mode .tile,
+body.dark-mode .info-card,
+body.dark-mode .feed-card,
+body.dark-mode .comment-form,
+body.dark-mode .comment-item { background: #162030; border-color: #1e2d3d; }
+body.dark-mode .post-body { background: #111827; }
 
-    /* ══════════════════════════════════════
-       CONTENT COMPONENTS
-    ══════════════════════════════════════ */
-    .page { max-width: var(--max); margin: 1.5rem auto; padding: 0 1rem; width: 100%; flex: 1; }
-    .section-hdr { background: var(--hdr2); color: #fff; padding: 8px 15px; font-family: var(--font-brand); text-transform: uppercase; font-size: 0.85rem; border-radius: var(--r) var(--r) 0 0; display: flex; align-items: center; gap: 8px; border-left: 3px solid var(--accent); margin-top: 1rem; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+a { color: inherit; text-decoration: none; transition: var(--transition); }
+img { max-width: 100%; display: block; }
 
-    /* GitHub Repo Card */
-    .repo-card { background: var(--hdr2); border: 1px solid var(--accent2); border-radius: var(--r); padding: 1.25rem; display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; color: #fff; }
-    .repo-icon { width: 55px; height: 55px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .repo-btn { background: var(--accent2); color: #fff; padding: 10px 20px; border-radius: 3px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
-    .repo-btn:hover { background: var(--accent); }
+/* ── 2. READING PROGRESS ──────────────────────────────────────── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0;
+  width: 0%; height: 3px;
+  background: linear-gradient(90deg, var(--accent-blue2), var(--accent-color));
+  z-index: 3000; transition: width .1s linear;
+}
 
-    /* Badge Style on Images */
-    .badge { position: absolute; top: 10px; left: 10px; background: var(--accent2); color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; z-index: 5; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+/* ── 3. STICKY HEADER ─────────────────────────────────────────── */
+#site-header {
+  position: sticky; top: 0; z-index: 1000;
+  box-shadow: 0 3px 20px rgba(0,0,0,.35);
+}
 
-    /* List Style News Cards (4 Stück) */
-    .news-list { display: flex; flex-direction: column; gap: 1px; margin-bottom: 2rem; border-radius: var(--r); overflow: hidden; border: 1px solid var(--card-border); }
-    .list-card { background: #fff; display: flex; transition: 0.2s; border-bottom: 1px solid #f0f4f8; }
-    .list-card:hover { background: #fcfdfe; }
-    .list-thumb { width: 180px; height: 110px; background: #1a2232; overflow: hidden; flex-shrink: 0; position: relative; }
-    .list-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.3s; }
-    .list-card:hover .list-thumb img { transform: scale(1.05); }
-    .list-body { padding: 1rem 1.5rem; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-    .list-body h4 { font-size: 1.1rem; color: var(--hdr1); margin-bottom: 4px; font-weight: 700; line-height: 1.3; }
-    .list-body p { font-size: 0.85rem; color: #5a6878; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .meta-line { font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+/* Bar layout helper */
+.hdr-bar { width: 100%; display: flex; justify-content: center; }
+.hdr-inner {
+  width: 100%; max-width: var(--max-width);
+  padding: 0 1.25rem;
+  display: flex; align-items: center; height: 100%;
+}
 
-    /* Info Cards (2er Grid) */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-    .info-card { background: #fff; border: 1px solid var(--card-border); padding: 1.75rem; border-radius: var(--r); border-top: 4px solid var(--accent); }
-    .info-card h3 { font-family: var(--font-brand); text-transform: uppercase; font-size: 1.1rem; margin-bottom: 10px; color: var(--hdr1); }
-    .info-card p { font-size: 0.9rem; color: #5a6878; margin-bottom: 1rem; }
+/* Bar 1: Utility (logo + util links) */
+.hdr-util {
+  background: var(--bg-header1);
+  height: 36px;
+  border-bottom: 1px solid var(--border-dark);
+}
+.site-logo {
+  font-family: var(--font-brand);
+  font-size: 1.25rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+  color: #fff;
+}
+.site-logo span { color: var(--accent-blue); }
+.hdr-util-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 1.25rem;
+}
+.hdr-util-right a {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; color: #4a6080;
+  letter-spacing: .04em;
+}
+.hdr-util-right a:hover { color: var(--accent-blue); }
 
-    /* Grid Cards (3x3) */
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
-    .tile { background: #fff; border: 1px solid var(--card-border); border-radius: var(--r); overflow: hidden; transition: 0.2s; position: relative; }
-    .tile:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .tile-thumb { height: 130px; background: #1e2a3e; overflow: hidden; position: relative; }
-    .tile-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
-    .tile-body { padding: 1rem; }
-    .tile-title { font-size: 0.95rem; font-weight: 700; color: var(--hdr1); line-height: 1.35; margin-bottom: 10px; height: 2.7em; overflow: hidden; }
-    .tile-date { font-size: 10px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; }
+/* Bar 2: Main nav */
+.hdr-main {
+  background: var(--bg-header2);
+  height: 48px;
+  border-bottom: 1px solid var(--border-dark);
+}
+.main-nav { display: flex; height: 100%; }
+.main-nav a {
+  display: flex; align-items: center;
+  padding: 0 1.1rem;
+  color: var(--text-nav);
+  font-family: var(--font-brand);
+  font-weight: 600; font-size: 0.88rem;
+  text-transform: uppercase; letter-spacing: .04em;
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+}
+.main-nav a:hover,
+.main-nav a.active {
+  color: #fff;
+  border-bottom-color: var(--accent-blue);
+  background: rgba(255,255,255,.03);
+}
+.hdr-search {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+}
+.hdr-search input {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  color: #fff; font-size: 12px; width: 180px;
+  font-family: var(--font-ui);
+  outline: none; transition: var(--transition);
+}
+.hdr-search input::placeholder { color: #5a7088; }
+.hdr-search input:focus { border-color: var(--accent-blue2); background: rgba(255,255,255,.10); width: 220px; }
+.hdr-search button {
+  background: var(--accent-blue2);
+  border: none; color: #fff;
+  padding: 5px 12px; border-radius: var(--radius);
+  cursor: pointer; font-size: 12px; font-family: var(--font-brand);
+  font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+}
+.hdr-search button:hover { background: var(--accent-blue); }
 
-    /* RSS News */
-    .feed-card { background: #fff; border: 1px solid var(--card-border); border-top: none; border-radius: 0 0 var(--r) var(--r); }
-    .feed-item { padding: 12px 15px; border-bottom: 1px solid #f0f4f8; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 600; color: #334155; }
-    .feed-item:hover { background: #f8fafc; color: var(--accent2); }
-    .feed-item span { font-size: 10px; color: var(--text-dim); font-weight: 400; }
+/* Bar 3: Quicklinks sub-nav */
+.hdr-sub {
+  background: var(--bg-header3);
+  height: 30px;
+  border-bottom: 2px solid var(--accent-blue2);
+}
+.sub-nav { display: flex; gap: 0; }
+.sub-nav a {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+  color: #3a5570; padding: 0 1rem;
+  display: flex; align-items: center; height: 30px;
+  border-right: 1px solid rgba(255,255,255,.04);
+  transition: var(--transition);
+}
+.sub-nav a:hover { color: var(--accent-blue); background: rgba(255,255,255,.02); }
 
-    /* ══════════════════════════════════════
-       FOOTER (Full Width Architecture)
-    ══════════════════════════════════════ */
-    footer { background: var(--footer-top); color: var(--text-nav); border-top: 4px solid var(--accent2); margin-top: 4rem; }
-    .ft-main-bg { width: 100%; display: flex; justify-content: center; }
-    .ft-inner { max-width: var(--max); margin: 0 auto; padding: 4rem 1.25rem 3rem; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 3rem; }
-    
-    .ft-brand h5 { color: #fff; font-family: var(--font-brand); font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 1rem; }
-    .ft-brand h5 span { color: var(--accent); }
-    .ft-brand p { font-size: 0.85rem; line-height: 1.7; opacity: 0.7; margin-bottom: 1.5rem; }
-    
-    .ft-social { display: flex; gap: 10px; }
-    .ft-social a { width: 32px; height: 32px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); }
-    .ft-social a:hover { border-color: var(--accent); background: var(--accent-soft); }
+/* Burger */
+.burger-btn {
+  display: none;
+  flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+  margin-left: auto;
+}
+.burger-btn span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text-nav); border-radius: 2px;
+  transition: var(--transition);
+}
+.mobile-menu {
+  display: none;
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--bg-header2);
+  border-top: 1px solid var(--border-dark);
+  padding: 1rem 1.25rem;
+  z-index: 999;
+}
+.mobile-menu a {
+  display: block; padding: 10px 0;
+  color: var(--text-nav); font-size: 0.9rem; font-weight: 600;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  font-family: var(--font-brand); text-transform: uppercase;
+}
+.mobile-menu.open { display: block; }
 
-    .ft-col h6 { color: #fff; font-family: var(--font-brand); text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-    .ft-col a { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
-    .ft-col a:hover { color: var(--accent); padding-left: 4px; }
+/* ── 4. PAGE WRAPPER ──────────────────────────────────────────── */
+.page-wrap {
+  max-width: var(--max-width);
+  margin: 1.75rem auto;
+  padding: 0 1.25rem;
+  width: 100%; flex: 1;
+}
 
-    .ft-bar-bg { width: 100%; display: flex; justify-content: center; background: #111826; border-top: 1px solid rgba(255,255,255,0.03); }
-    .ft-bar-inner { max-width: var(--max); margin: 0 auto; width: 100%; padding: 1rem 1.25rem; display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
-    .ft-bar-inner a { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #4a5a70; }
+/* ── 5. SECTION HEADER LABELS ─────────────────────────────────── */
+.section-label {
+  background: var(--bg-header2);
+  color: #fff;
+  padding: 8px 14px;
+  font-family: var(--font-brand);
+  font-weight: 700; font-size: 0.82rem;
+  text-transform: uppercase; letter-spacing: .07em;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex; align-items: center; gap: 8px;
+  border-left: 3px solid var(--accent-blue);
+  margin-bottom: 0;
+}
+.section-label.gold { border-left-color: var(--accent-color); }
+.section-label + * { border-radius: 0 0 var(--radius-md) var(--radius-md) !important; }
 
-    .ft-partner-bg { background: #0a0d13; }
-    .ft-partner-inner a { color: #2d3b4d; font-size: 10px; text-transform: none; }
-    .ft-partner-inner a:hover { color: var(--accent2); }
+/* ── 6. BUTTONS ───────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: var(--radius);
+  font-family: var(--font-brand); font-weight: 700;
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: .06em;
+  border: 2px solid transparent; cursor: pointer;
+  transition: var(--transition); white-space: nowrap;
+}
+.btn-primary {
+  background: var(--primary-color); color: #fff;
+  border-color: var(--primary-color);
+}
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-accent {
+  background: var(--accent-color); color: #1a1a1a;
+  border-color: var(--accent-color);
+}
+.btn-accent:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-outline {
+  background: transparent; color: var(--accent-blue2);
+  border-color: var(--accent-blue2);
+}
+.btn-outline:hover { background: var(--accent-blue2); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 0.72rem; }
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border-color: var(--border-light);
+}
+.btn-ghost:hover { border-color: var(--accent-blue2); color: var(--accent-blue2); }
 
-    .ft-copy { background: #0a0d13; padding: 1.5rem 1rem; text-align: center; font-size: 11px; color: #2a3544; border-top: 1px solid rgba(255,255,255,0.02); }
+/* ── 7. BADGES ────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .06em;
+  border-radius: 3px;
+}
+.badge-primary { background: var(--accent-blue2); color: #fff; }
+.badge-accent   { background: var(--accent-color); color: #1a1a1a; }
+.badge-success  { background: #16a34a; color: #fff; }
+.badge-danger   { background: #dc2626; color: #fff; }
+.badge-neutral  { background: #334155; color: #94a3b8; }
+/* Thumbnail overlay badge */
+.thumb-badge {
+  position: absolute; top: 9px; left: 9px;
+  background: var(--accent-blue2); color: #fff;
+  font-size: 9px; font-weight: 800;
+  padding: 3px 8px; border-radius: 3px;
+  text-transform: uppercase; letter-spacing: .05em;
+  z-index: 5; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
 
-    @media (max-width: 850px) { .grid-2, .grid-3, .ft-inner { grid-template-columns: 1fr; } .list-card { flex-direction: column; } .list-thumb { width: 100%; height: 140px; } }
-  </style>
+/* ── 8. ARTICLE CARDS (HORIZONTAL) ───────────────────────────── */
+.article-list {
+  display: flex; flex-direction: column; gap: 1px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden; margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+.article-card {
+  background: var(--bg-primary);
+  display: flex;
+  transition: background var(--transition);
+  border-bottom: 1px solid #f0f4f8;
+}
+.article-card:last-child { border-bottom: none; }
+.article-card:hover { background: #fafcfe; }
+.article-thumb {
+  width: 190px; height: 115px;
+  background: var(--bg-header2);
+  overflow: hidden; flex-shrink: 0;
+  position: relative;
+}
+.article-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: .82; transition: transform 0.35s ease, opacity 0.35s ease;
+}
+.article-card:hover .article-thumb img { transform: scale(1.06); opacity: .9; }
+.article-body {
+  padding: 1rem 1.5rem;
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+}
+.article-body h4 {
+  font-size: 1.08rem; font-weight: 700;
+  color: var(--primary-dark); line-height: 1.3;
+  margin-bottom: 5px;
+}
+.article-card:hover .article-body h4 { color: var(--accent-blue2); }
+.article-body p {
+  font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; margin-bottom: 6px;
+}
+.article-meta {
+  font-size: 10px; color: var(--text-muted);
+  font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+}
+.article-meta span { color: var(--accent-blue2); margin-right: 6px; }
+
+/* ── 9. TILE CARDS (GRID 3-SPALTIG) ──────────────────────────── */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; margin-bottom: 2rem;
+}
+.tile {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden; position: relative;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.tile:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-blue2);
+  box-shadow: var(--shadow-md);
+}
+.tile-thumb {
+  height: 128px; background: var(--bg-header2);
+  overflow: hidden; position: relative;
+}
+.tile-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: .75; transition: transform 0.35s ease;
+}
+.tile:hover .tile-thumb img { transform: scale(1.07); }
+.tile-body { padding: 0.9rem 1rem; }
+.tile-title {
+  font-size: 0.92rem; font-weight: 700;
+  color: var(--text-primary); line-height: 1.35;
+  margin-bottom: 8px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: 2.5em;
+}
+.tile-date { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+
+/* ── 10. INFO CARDS (2ER GRID) ────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+.info-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-top: 4px solid var(--accent-blue);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+.info-card:hover { box-shadow: var(--shadow-md); }
+.info-card.gold { border-top-color: var(--accent-color); }
+.info-card h3 {
+  font-family: var(--font-brand); text-transform: uppercase;
+  font-size: 1.05rem; font-weight: 700; letter-spacing: .04em;
+  margin-bottom: 10px; color: var(--primary-dark);
+}
+.info-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 1.1rem; }
+.info-card-link {
+  color: var(--accent-blue2); font-weight: 700;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+}
+.info-card-link:hover { color: var(--primary-color); }
+
+/* ── 11. RSS / FEED SECTION ───────────────────────────────────── */
+.feed-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light); border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  overflow: hidden; margin-bottom: 2rem;
+}
+.feed-item {
+  padding: 11px 15px;
+  border-bottom: 1px solid #f0f4f8;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.84rem; font-weight: 600; color: #334155;
+  transition: background var(--transition), color var(--transition);
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-item:hover { background: #f8fafc; color: var(--accent-blue2); }
+.feed-date { font-size: 10px; color: var(--text-muted); font-weight: 500; white-space: nowrap; margin-left: 1rem; }
+
+/* ── 12. FEATURED REPO CARD ───────────────────────────────────── */
+.repo-card {
+  background: var(--bg-header2);
+  border: 1px solid var(--accent-blue2);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  margin-bottom: 2rem; color: #fff;
+  box-shadow: 0 4px 20px rgba(45,125,210,.15);
+}
+.repo-icon {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,.08);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: 1px solid rgba(255,255,255,.12);
+}
+.repo-card h3 {
+  font-family: var(--font-brand); text-transform: uppercase;
+  font-size: 1rem; font-weight: 700; margin-bottom: 4px;
+}
+.repo-card p { font-size: 0.83rem; opacity: .75; }
+
+/* ── 13. FLUID TYPOGRAPHY ─────────────────────────────────────── */
+h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; }
+h2 { font-size: clamp(1.25rem, 2.8vw, 1.9rem); font-weight: 700; line-height: 1.25; }
+h3 { font-size: clamp(1.05rem, 2.2vw, 1.4rem); font-weight: 700; line-height: 1.3; }
+
+/* ── 14. POST SINGLE LAYOUT ───────────────────────────────────── */
+.post-hero {
+  position: relative; width: 100%; height: 340px;
+  background: var(--bg-header2); overflow: hidden;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: 0;
+}
+.post-hero img {
+  width: 100%; height: 100%; object-fit: cover; opacity: .55;
+}
+.post-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,15,30,.9) 0%, rgba(10,15,30,.2) 100%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 2.5rem;
+}
+.post-hero-overlay h1 { color: #fff; margin-bottom: 0.75rem; }
+.post-meta-bar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: #8baac8;
+}
+.post-meta-bar .sep { color: #2a4060; }
+
+.post-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem; align-items: start;
+  margin-bottom: 3rem;
+}
+.post-body {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 2.25rem;
+}
+.post-body p { font-size: 0.97rem; line-height: 1.8; color: var(--text-primary); margin-bottom: 1.25rem; }
+.post-body h2 { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); margin: 2rem 0 0.75rem; border-bottom: 2px solid var(--bg-secondary); padding-bottom: 6px; }
+.post-body h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary-color); margin: 1.5rem 0 0.5rem; }
+.post-body code {
+  font-family: var(--font-code); font-size: 0.85em;
+  background: #f1f5f9; color: #e8a838;
+  padding: 1px 6px; border-radius: 3px;
+  border: 1px solid #dde3ea;
+}
+.post-body pre {
+  background: #0d1520; color: #c8d4e4;
+  padding: 1.25rem; border-radius: var(--radius-md);
+  overflow-x: auto; margin: 1.25rem 0;
+  font-family: var(--font-code); font-size: 0.85rem;
+  line-height: 1.6; border: 1px solid #1e2d3d;
+  border-left: 3px solid var(--accent-blue2);
+}
+.post-body pre code { background: none; color: inherit; padding: 0; border: none; }
+.post-body ul, .post-body ol {
+  padding-left: 1.5rem; margin-bottom: 1.25rem;
+}
+.post-body li { margin-bottom: 6px; font-size: 0.97rem; line-height: 1.7; color: var(--text-primary); }
+.post-body blockquote {
+  border-left: 3px solid var(--accent-blue2);
+  background: #f8fafc; padding: 1rem 1.5rem;
+  margin: 1.25rem 0; border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-secondary); font-style: italic;
+}
+
+/* Sidebar */
+.post-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+.sidebar-widget {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.widget-header {
+  background: var(--bg-header2);
+  color: #fff; padding: 9px 14px;
+  font-family: var(--font-brand); font-weight: 700; font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: .07em;
+  border-left: 3px solid var(--accent-blue);
+}
+
+/* TOC */
+.toc { padding: 1rem 1.25rem; }
+.toc ol { padding-left: 1.25rem; counter-reset: toc-counter; list-style: none; }
+.toc li { counter-increment: toc-counter; margin-bottom: 6px; position: relative; }
+.toc li::before {
+  content: counter(toc-counter) ".";
+  color: var(--accent-blue2); font-weight: 700; font-size: 11px;
+  margin-right: 6px;
+}
+.toc a {
+  font-size: 0.82rem; color: var(--text-secondary); font-weight: 600;
+  line-height: 1.4;
+}
+.toc a:hover { color: var(--accent-blue2); }
+.toc .toc-sub { padding-left: 1rem; margin-top: 4px; }
+.toc .toc-sub li::before { color: var(--text-muted); font-weight: 500; }
+.toc .toc-sub a { font-weight: 500; color: var(--text-muted); }
+
+/* Social Icons Widget */
+.social-icons { padding: 1rem; display: flex; flex-wrap: wrap; gap: 8px; }
+.social-icon-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 12px; border-radius: var(--radius);
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  transition: var(--transition); flex: 1; min-width: 110px;
+}
+.social-icon-btn.linkedin { background: #0a66c2; color: #fff; }
+.social-icon-btn.github   { background: #24292e; color: #fff; }
+.social-icon-btn.rss      { background: #f26522; color: #fff; }
+.social-icon-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+/* Sticky TOC on scroll */
+.sticky-widget { position: sticky; top: 1rem; }
+
+/* ── 15. COMMENTS ─────────────────────────────────────────────── */
+.comments-section { margin-top: 2.5rem; }
+.comment-form {
+  background: var(--bg-primary); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); padding: 1.75rem; margin-bottom: 2rem;
+}
+.comment-form h3 { margin-bottom: 1rem; color: var(--primary-dark); font-size: 1.1rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+.form-control {
+  padding: 9px 12px; border: 1px solid var(--border-light);
+  border-radius: var(--radius); font-family: var(--font-ui); font-size: 0.88rem;
+  color: var(--text-primary); background: var(--bg-secondary);
+  transition: border-color var(--transition);
+  outline: none;
+}
+.form-control:focus { border-color: var(--accent-blue2); background: var(--bg-primary); }
+textarea.form-control { resize: vertical; min-height: 110px; }
+.comment-item {
+  background: var(--bg-primary); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1rem;
+  display: flex; gap: 1rem;
+}
+.comment-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--primary-color);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 1rem; flex-shrink: 0;
+}
+.comment-content { flex: 1; }
+.comment-author { font-weight: 700; font-size: 0.88rem; color: var(--primary-dark); }
+.comment-date { font-size: 10px; color: var(--text-muted); margin-left: 8px; }
+.comment-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-top: 6px; }
+
+/* ── 16. PAGINATION ───────────────────────────────────────────── */
+.pagination {
+  display: flex; justify-content: center; align-items: center;
+  gap: 6px; margin: 2rem 0 3rem;
+}
+.page-btn {
+  min-width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius); font-size: 13px; font-weight: 600;
+  color: var(--text-secondary); background: var(--bg-primary);
+  transition: var(--transition); cursor: pointer;
+}
+.page-btn:hover { border-color: var(--accent-blue2); color: var(--accent-blue2); }
+.page-btn.active { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+.page-btn.disabled { opacity: .4; pointer-events: none; }
+
+/* ── 17. FOOTER ───────────────────────────────────────────────── */
+#site-footer {
+  background: #0d1828;
+  color: var(--text-nav);
+  border-top: 3px solid var(--accent-blue2);
+  margin-top: 3rem;
+}
+.ft-main {
+  max-width: var(--max-width); margin: 0 auto;
+  padding: 3.5rem 1.25rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 2.5rem;
+}
+.ft-brand h5 {
+  font-family: var(--font-brand); font-size: 1.4rem; font-weight: 700;
+  color: #fff; letter-spacing: .06em; margin-bottom: 1rem;
+}
+.ft-brand h5 span { color: var(--accent-blue); }
+.ft-brand p { font-size: 0.83rem; line-height: 1.7; opacity: .65; margin-bottom: 1.25rem; }
+.ft-social { display: flex; gap: 8px; }
+.ft-social a {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.ft-social a:hover { border-color: var(--accent-blue); background: var(--accent-soft); }
+.ft-col h6 {
+  color: #fff; font-family: var(--font-brand);
+  font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,.06); padding-bottom: 8px;
+}
+.ft-col a {
+  display: block; font-size: 0.83rem; color: var(--text-muted);
+  margin-bottom: 9px; transition: var(--transition);
+}
+.ft-col a:hover { color: var(--accent-blue); padding-left: 4px; }
+
+.ft-partner-bar {
+  background: #080d15;
+  border-top: 1px solid rgba(255,255,255,.03);
+  padding: 0.9rem 1.25rem;
+  display: flex; flex-wrap: wrap; gap: 1.5rem;
+  justify-content: center; max-width: var(--max-width);
+  margin: 0 auto;
+}
+.ft-partner-bar a { font-size: 10px; color: #253545; }
+.ft-partner-bar a:hover { color: var(--accent-blue2); }
+.ft-copy {
+  background: #080d15;
+  text-align: center; font-size: 11px; color: #1e2d3d;
+  padding: 1rem; border-top: 1px solid rgba(255,255,255,.02);
+}
+
+/* ── 18. ANIMATIONS ───────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+[data-anim] { opacity: 0; }
+[data-anim].anim-in { animation: fadeUp 0.5s ease forwards; }
+.anim-fade-up { animation: fadeUp 0.5s ease forwards; }
+
+/* ── 19. VIEW SWITCHER (preview only) ─────────────────────────── */
+.preview-switcher {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  display: flex; flex-direction: column; gap: 8px; z-index: 9999;
+}
+.preview-btn {
+  background: var(--primary-color);
+  color: #fff; border: none;
+  padding: 10px 16px; border-radius: var(--radius);
+  font-family: var(--font-brand); font-size: 0.75rem;
+  font-weight: 700; text-transform: uppercase; cursor: pointer;
+  box-shadow: var(--shadow-md); transition: var(--transition);
+  letter-spacing: .04em;
+}
+.preview-btn.active,
+.preview-btn:hover { background: var(--accent-blue2); }
+.preview-label {
+  background: rgba(10,15,26,.85); color: #fff;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; text-align: center; padding: 5px 8px;
+  border-radius: var(--radius); opacity: .7;
+}
+
+/* ── 20. RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .ft-main { grid-template-columns: 1.2fr 1fr 1fr; }
+  .ft-col:last-child { display: none; }
+  .post-layout { grid-template-columns: 1fr 250px; }
+}
+@media (max-width: 768px) {
+  .main-nav, .hdr-search { display: none; }
+  .burger-btn { display: flex; }
+  .grid-2, .grid-3, .ft-main { grid-template-columns: 1fr; }
+  .post-layout { grid-template-columns: 1fr; }
+  .post-sidebar { display: none; }
+  .article-thumb { width: 130px; height: 90px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .ft-col:nth-child(n+3) { display: none; }
+  .hdr-sub { display: none; }
+  .repo-card { flex-direction: column; text-align: center; }
+}
+
+/* ── 21. DARK MODE TOGGLE BUTTON ──────────────────────────────── */
+#dm-toggle {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  color: #fff; padding: 4px 10px;
+  border-radius: var(--radius); cursor: pointer;
+  font-size: 11px; font-family: var(--font-brand); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+#dm-toggle:hover { border-color: var(--accent-blue); }
+</style>
 </head>
 <body>
 
 <div id="scroll-progress"></div>
 
-<header>
-  <div class="bar-full util-bg"><div class="bar-inner"><div class="logo-name">PHIN<span>IT</span>.DE</div></div></div>
-  <div class="bar-full main-bg">
-    <div class="bar-inner">
-      <nav class="nav-links">
-        <a href="#">Dashboard</a><a href="#">Knowledge Base</a><a href="#">PowerShell</a><a href="#">Security</a>
-      </nav>
-      <div style="margin-left: auto; color: var(--accent); font-weight: 700; font-size: 0.8rem; font-family: var(--font-brand);">[ ADMIN CONSOLE ]</div>
+<!-- ═══════════════════════════════════════════════════
+     PREVIEW SWITCHER
+═══════════════════════════════════════════════════ -->
+<div class="preview-switcher">
+  <div class="preview-label">Vorschau</div>
+  <button class="preview-btn active" onclick="showView('index')">Startseite</button>
+  <button class="preview-btn" onclick="showView('post')">Einzelartikel</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER (header.php)
+═══════════════════════════════════════════════════ -->
+<header id="site-header">
+  <!-- Bar 1: Utility -->
+  <div class="hdr-bar" style="background:var(--bg-header1);">
+    <div class="hdr-inner" style="height:36px;">
+      <div class="site-logo">365<span>CMS</span>.DE</div>
+      <div class="hdr-util-right">
+        <a href="#">Über mich</a>
+        <a href="#">Kontakt</a>
+        <button id="dm-toggle" onclick="toggleDark()">◐ Dark</button>
+      </div>
+      <button class="burger-btn" onclick="toggleMenu()" aria-label="Menü öffnen">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
-  <div class="bar-full sub-bg">
-    <div class="bar-inner">
+
+  <!-- Bar 2: Main Nav -->
+  <div class="hdr-bar" style="background:var(--bg-header2);">
+    <div class="hdr-inner" style="height:48px;">
+      <nav class="main-nav">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Knowledge Base</a>
+        <a href="#">PowerShell</a>
+        <a href="#">Security</a>
+        <a href="#">Exchange</a>
+      </nav>
+      <div class="hdr-search">
+        <input type="text" placeholder="Artikel suchen…">
+        <button>Suche</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bar 3: Quicklinks -->
+  <div class="hdr-bar" style="background:var(--bg-header3); border-bottom:2px solid var(--accent-blue2);">
+    <div class="hdr-inner" style="height:30px;">
       <nav class="sub-nav">
-        <a href="#">Exchange</a><a href="#">Entra ID</a><a href="#">Intune</a><a href="#">Compliance</a><a href="#">Graph API</a>
+        <a href="#">Entra ID</a>
+        <a href="#">Intune</a>
+        <a href="#">Compliance</a>
+        <a href="#">Graph API</a>
+        <a href="#">Purview</a>
+        <a href="#">SharePoint</a>
+        <a href="#">Teams</a>
       </nav>
     </div>
   </div>
+
+  <!-- Mobile Menu -->
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="#">Dashboard</a>
+    <a href="#">Knowledge Base</a>
+    <a href="#">PowerShell</a>
+    <a href="#">Security</a>
+    <a href="#">Exchange</a>
+    <a href="#">Über mich</a>
+    <a href="#">Kontakt</a>
+  </nav>
 </header>
 
-<div class="page">
-  
-  <div class="repo-card">
-    <div class="repo-icon"><svg width="30" height="30" fill="#fff" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></div>
+
+<!-- ═══════════════════════════════════════════════════
+     VIEW: STARTSEITE (index.php)
+═══════════════════════════════════════════════════ -->
+<div id="view-index">
+<div class="page-wrap">
+
+  <!-- GitHub Repo CTA -->
+  <div class="repo-card" data-anim>
+    <div class="repo-icon">
+      <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    </div>
     <div style="flex:1">
-      <h3 style="font-family:var(--font-brand); text-transform:uppercase;">PhinIT Script-Repository</h3>
-      <p style="font-size:0.85rem; opacity:0.8">Open-Source PowerShell Module für M365 Administration. Code-Signed & Enterprise-Ready.</p>
+      <h3>PS-easyIT Script-Repository</h3>
+      <p>25+ Code-signierte PowerShell-Module für M365 Administration. Enterprise-ready & Open Source.</p>
     </div>
-    <a href="#" class="repo-btn">ZUM GITHUB REPO</a>
+    <span class="badge badge-accent" style="margin-right:0.5rem;">25+ Repos</span>
+    <a href="#" class="btn btn-accent btn-sm">Zum GitHub →</a>
   </div>
 
-  <div class="news-list">
-    <div class="list-card">
-      <div class="list-thumb"><span class="badge">Security</span><img src="https://picsum.photos/id/1/320/200"></div>
-      <div class="list-body">
-        <h4>Multi-Tenant Apps: Zugriff jetzt granular einschränken</h4>
-        <p>Ein Leitfaden zur Implementierung von Tenant-Einschränkungen für Drittanbieter-Applikationen in Entra ID. Schützen Sie Ihre Daten vor unbefugtem Zugriff.</p>
-        <div class="meta-line">23. FEBRUAR 2026 • 8 MIN LESEZEIT</div>
+  <!-- Section: Aktuell -->
+  <div class="section-label">
+    <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8"/></svg>
+    Aktuell
+  </div>
+  <div class="article-list" data-anim>
+    <div class="article-card">
+      <div class="article-thumb">
+        <span class="thumb-badge">Security</span>
+        <img src="https://picsum.photos/id/1/320/200" alt="Security">
+      </div>
+      <div class="article-body">
+        <h4>Multi-Tenant Apps: Zugriff granular einschränken mit Entra ID Tenant Restrictions v2</h4>
+        <p>Ein Leitfaden zur Implementierung von Tenant-Einschränkungen für Drittanbieter-Applikationen in Entra ID. Schützen Sie Ihre Daten vor unbefugtem Zugriff über cross-tenant Verbindungen.</p>
+        <div class="article-meta"><span>Security</span>23. Februar 2026 · 8 Min. Lesezeit</div>
       </div>
     </div>
-    <div class="list-card">
-      <div class="list-thumb"><span class="badge">PowerShell</span><img src="https://picsum.photos/id/60/320/200"></div>
-      <div class="list-body">
-        <h4>Graph API: User Lifecycle Automatisierung v2.4</h4>
-        <p>Vollautomatisches Onboarding inklusive Lizenzzuweisung und Teams-Mitgliedschaft. Wir stellen das neue PowerShell-Framework vor.</p>
-        <div class="meta-line">21. FEBRUAR 2026 • 12 MIN LESEZEIT</div>
+    <div class="article-card">
+      <div class="article-thumb">
+        <span class="thumb-badge">PowerShell</span>
+        <img src="https://picsum.photos/id/60/320/200" alt="PowerShell">
+      </div>
+      <div class="article-body">
+        <h4>Graph API: User Lifecycle Automatisierung v2.4 – Vollautomatisches Onboarding</h4>
+        <p>Vollautomatisches Onboarding inklusive Lizenzzuweisung, Teams-Mitgliedschaft und Mailbox-Konfiguration. Das neue PowerShell-Framework im Praxistest.</p>
+        <div class="article-meta"><span>PowerShell</span>21. Februar 2026 · 12 Min. Lesezeit</div>
       </div>
     </div>
-    <div class="list-card">
-      <div class="list-thumb"><span class="badge">Compliance</span><img src="https://picsum.photos/id/201/320/200"></div>
-      <div class="list-body">
-        <h4>Purview | DLP Custom Dialoge im neuen Outlook</h4>
-        <p>Nutzen Sie kontextsensitive Warnmeldungen, um Datenabfluss aktiv durch Benutzerinteraktion zu verhindern. Best Practices für DLP-Regelsätze.</p>
-        <div class="meta-line">18. FEBRUAR 2026 • 6 MIN LESEZEIT</div>
+    <div class="article-card">
+      <div class="article-thumb">
+        <span class="thumb-badge">Compliance</span>
+        <img src="https://picsum.photos/id/201/320/200" alt="Compliance">
+      </div>
+      <div class="article-body">
+        <h4>Purview | DLP Custom Dialoge im neuen Outlook – Best Practices</h4>
+        <p>Kontextsensitive Warnmeldungen zur aktiven Verhinderung von Datenabfluss. Best Practices für DLP-Regelsätze in Microsoft Purview 2026.</p>
+        <div class="article-meta"><span>Compliance</span>18. Februar 2026 · 6 Min. Lesezeit</div>
       </div>
     </div>
-    <div class="list-card">
-      <div class="list-thumb"><span class="badge">Exchange</span><img src="https://picsum.photos/id/2/320/200"></div>
-      <div class="list-body">
-        <h4>Exchange Online: Endgültiger Zeitplan für EWS Abschaltung</h4>
-        <p>Microsoft hat die Deadline auf Mai 2027 festgeschrieben. Erfahren Sie, welche Systeme Sie jetzt zwingend auf die Graph API umstellen müssen.</p>
-        <div class="meta-line">15. FEBRUAR 2026 • 10 MIN LESEZEIT</div>
+    <div class="article-card">
+      <div class="article-thumb">
+        <span class="thumb-badge">Exchange</span>
+        <img src="https://picsum.photos/id/2/320/200" alt="Exchange">
+      </div>
+      <div class="article-body">
+        <h4>Exchange Online: Endgültiger Zeitplan für EWS-Abschaltung Mai 2027</h4>
+        <p>Microsoft hat die Deadline festgeschrieben. Erfahren Sie, welche Systeme Sie jetzt auf die Graph API umstellen müssen und wie die Migration aussieht.</p>
+        <div class="article-meta"><span>Exchange</span>15. Februar 2026 · 10 Min. Lesezeit</div>
       </div>
     </div>
   </div>
 
-  <div class="grid-2">
+  <!-- 2er-Grid Kategorien -->
+  <div class="grid-2" data-anim>
     <div class="info-card">
       <h3>🖥️ Admin Anleitungen</h3>
-      <p>Exklusive Tutorials für die tägliche Administration Ihrer Microsoft 365 Umgebung. Von Teams bis SharePoint Online.</p>
-      <a href="#" style="color:var(--accent2); font-weight:700; font-size:11px; text-transform:uppercase;">Alle Anleitungen →</a>
+      <p>Exklusive Schritt-für-Schritt-Tutorials für die tägliche Microsoft 365 Administration. Von Exchange Online bis SharePoint, von Intune bis Teams.</p>
+      <a href="#" class="info-card-link">Alle Anleitungen ansehen →</a>
     </div>
-    <div class="info-card" style="border-top-color: var(--accent2);">
-      <h3>🔒 DSGVO & Compliance</h3>
-      <p>Konfigurations-Checklisten und Best Practices für Purview, Security Center und Datenschutz-Beauftragte.</p>
-      <a href="#" style="color:var(--accent2); font-weight:700; font-size:11px; text-transform:uppercase;">Compliance-Center →</a>
-    </div>
-  </div>
-
-  <div class="section-hdr">Deep-Dive Archiv</div>
-  <div class="grid-3">
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Intune</span><img src="https://picsum.photos/id/119/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">App Protection Policies für iOS</h4><div class="tile-date">12. Feb 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Security</span><img src="https://picsum.photos/id/20/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">Defender for Identity Setup Guide</h4><div class="tile-date">08. Feb 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Azure</span><img src="https://picsum.photos/id/48/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">Entra ID Connect Health Check</h4><div class="tile-date">05. Feb 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Teams</span><img src="https://picsum.photos/id/160/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">Governance Automatisierung</h4><div class="tile-date">01. Feb 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Hardening</span><img src="https://picsum.photos/id/101/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">M365 Tenant Hardening v3</h4><div class="tile-date">28. Jan 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Modern Auth</span><img src="https://picsum.photos/id/102/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">Modern Auth Migrationstools</h4><div class="tile-date">22. Jan 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Purview</span><img src="https://picsum.photos/id/103/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">eDiscovery: Advanced Review</h4><div class="tile-date">15. Jan 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Graph</span><img src="https://picsum.photos/id/104/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">App Permissions Audit .ps1</h4><div class="tile-date">10. Jan 2026</div></div>
-    </div>
-    <div class="tile">
-      <div class="tile-thumb"><span class="badge">Storage</span><img src="https://picsum.photos/id/106/300/150"></div>
-      <div class="tile-body"><h4 class="tile-title">OneDrive Security Policies</h4><div class="tile-date">02. Jan 2026</div></div>
+    <div class="info-card gold">
+      <h3>🔒 DSGVO &amp; Compliance</h3>
+      <p>Konfigurations-Checklisten und Best Practices für Microsoft Purview, Defender for Cloud und Datenschutzbeauftragte im Unternehmen.</p>
+      <a href="#" class="info-card-link">Compliance-Center →</a>
     </div>
   </div>
 
-  <div class="grid-2">
+  <!-- 3-spaltig Deep-Dive Archiv -->
+  <div class="section-label gold">Deep-Dive Archiv</div>
+  <div class="grid-3" data-anim style="margin-top:0; border-top:none;">
+    <div class="tile">
+      <div class="tile-thumb"><span class="thumb-badge">Intune</span><img src="https://picsum.photos/id/119/300/150" alt="Intune"></div>
+      <div class="tile-body"><h4 class="tile-title">App Protection Policies für iOS & Android</h4><div class="tile-date">12. Feb 2026</div></div>
+    </div>
+    <div class="tile">
+      <div class="tile-thumb"><span class="thumb-badge">Security</span><img src="https://picsum.photos/id/20/300/150" alt="Security"></div>
+      <div class="tile-body"><h4 class="tile-title">Defender for Identity: Setup & Konfiguration</h4><div class="tile-date">08. Feb 2026</div></div>
+    </div>
+    <div class="tile">
+      <div class="tile-thumb"><span class="thumb-badge">Entra ID</span><img src="https://picsum.photos/id/48/300/150" alt="Azure"></div>
+      <div class="tile-body"><h4 class="tile-title">Entra ID Connect Health Check 2026</h4><div class="tile-date">05. Feb 2026</div></div>
+    </div>
+    <div class="tile">
+      <div class="tile-thumb"><span class="thumb-badge">Teams</span><img src="https://picsum.photos/id/160/300/150" alt="Teams"></div>
+      <div class="tile-body"><h4 class="tile-title">Teams Governance Automatisierung mit Graph</h4><div class="tile-date">01. Feb 2026</div></div>
+    </div>
+    <div class="tile">
+      <div class="tile-thumb"><span class="thumb-badge">Hardening</span><img src="https://picsum.photos/id/101/300/150" alt="Hardening"></div>
+      <div class="tile-body"><h4 class="tile-title">M365 Tenant Hardening v3 – Checkliste</h4><div class="tile-date">28. Jan 2026</div></div>
+    </div>
+    <div class="tile">
+      <div class="tile-thumb"><span class="thumb-badge">Graph API</span><img src="https://picsum.photos/id/104/300/150" alt="Graph"></div>
+      <div class="tile-body"><h4 class="tile-title">App Permissions Audit mit PowerShell</h4><div class="tile-date">22. Jan 2026</div></div>
+    </div>
+  </div>
+
+  <!-- RSS Feeds 2-spaltig -->
+  <div class="grid-2" data-anim>
     <div>
-      <div class="section-hdr">Borns IT-Blog</div>
+      <div class="section-label">
+        <svg width="10" height="10" fill="#f26522" viewBox="0 0 24 24"><path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.831c10.555.062 19.111 8.613 19.173 19.169h4.827c-.063-13.221-10.776-23.93-24-24z"/></svg>
+        Borns IT-Blog
+      </div>
       <div class="feed-card">
-        <a href="#" class="feed-item">Windows Notepad CVE Patching... <span>23.02.</span></a>
-        <a href="#" class="feed-item">Microsoft Edge Passwort Update... <span>22.02.</span></a>
+        <a href="#" class="feed-item">Windows Notepad kritische CVE – Patch jetzt verfügbar<span class="feed-date">23.02.26</span></a>
+        <a href="#" class="feed-item">Microsoft Edge: Passkey-Update für Unternehmensnutzer<span class="feed-date">22.02.26</span></a>
+        <a href="#" class="feed-item">BitLocker Bypass via TPM – Was Admins wissen müssen<span class="feed-date">21.02.26</span></a>
+        <a href="#" class="feed-item">Windows Update 2026-02: Bekannte Probleme mit WSUS<span class="feed-date">20.02.26</span></a>
       </div>
     </div>
     <div>
-      <div class="section-hdr">Heise IT-News</div>
+      <div class="section-label">
+        <svg width="10" height="10" fill="#f26522" viewBox="0 0 24 24"><path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.831c10.555.062 19.111 8.613 19.173 19.169h4.827c-.063-13.221-10.776-23.93-24-24z"/></svg>
+        Heise IT-News
+      </div>
       <div class="feed-card">
-        <a href="#" class="feed-item">Linux Kernel 7.0 Release Notes... <span>23.02.</span></a>
-        <a href="#" class="feed-item">KI: GitHub Copilot Trends 2026... <span>23.02.</span></a>
+        <a href="#" class="feed-item">Linux Kernel 7.0 Release: Was ist neu?<span class="feed-date">23.02.26</span></a>
+        <a href="#" class="feed-item">KI: GitHub Copilot Enterprise – Trends 2026<span class="feed-date">23.02.26</span></a>
+        <a href="#" class="feed-item">EU AI Act: Neue Pflichten für Unternehmens-KI ab April<span class="feed-date">22.02.26</span></a>
+        <a href="#" class="feed-item">Quantencomputing: IBM Roadmap bis 2030<span class="feed-date">21.02.26</span></a>
       </div>
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <a href="#" class="page-btn disabled">← Zurück</a>
+    <a href="#" class="page-btn active">1</a>
+    <a href="#" class="page-btn">2</a>
+    <a href="#" class="page-btn">3</a>
+    <span class="page-btn" style="border:none;background:none;color:var(--text-muted);">…</span>
+    <a href="#" class="page-btn">12</a>
+    <a href="#" class="page-btn">Weiter →</a>
   </div>
 
 </div>
+</div><!-- /view-index -->
 
-<footer>
-  <div class="ft-main-bg">
-    <div class="ft-inner">
+
+<!-- ═══════════════════════════════════════════════════
+     VIEW: EINZELARTIKEL (post.php)
+═══════════════════════════════════════════════════ -->
+<div id="view-post" style="display:none;">
+<div class="page-wrap">
+
+  <!-- Post Hero -->
+  <div class="post-hero">
+    <img src="https://picsum.photos/id/0/1200/400" alt="Artikel Hero">
+    <div class="post-hero-overlay">
+      <div class="post-meta-bar" style="margin-bottom:0.75rem;">
+        <span class="badge badge-primary">Exchange Online</span>
+        <span class="badge badge-neutral">Migration</span>
+      </div>
+      <h1>Exchange Online: Der endgültige Migrationsguide von EWS zur Graph API</h1>
+      <div class="post-meta-bar" style="margin-top:0.5rem;">
+        <span>Andy Schuon</span>
+        <span class="sep">·</span>
+        <span>23. Februar 2026</span>
+        <span class="sep">·</span>
+        <span>10 Min. Lesezeit</span>
+        <span class="sep">·</span>
+        <span>3 Kommentare</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post 2-column layout -->
+  <div class="post-layout">
+
+    <!-- Main Content -->
+    <div>
+      <div class="post-body">
+        <p>Microsoft hat die <strong>Abschaltung der Exchange Web Services (EWS) API</strong> für Mai 2027 endgültig bestätigt. Für IT-Administratoren bedeutet dies: Jetzt besteht dringender Handlungsbedarf, alle EWS-abhängigen Systeme auf die <code>Microsoft Graph API</code> umzustellen.</p>
+
+        <h2 id="hintergrund">Hintergrund: Warum EWS abgeschaltet wird</h2>
+        <p>EWS wurde ursprünglich als SOAP-basiertes Protokoll für Exchange Server 2007 eingeführt und war lange die Standardschnittstelle für Drittanbieter-Integrationen. Mit der zunehmenden Cloud-Fokussierung von Microsoft und der Einführung der modernen Graph API verliert EWS jedoch an Bedeutung.</p>
+
+        <h3 id="betroffen">Welche Systeme sind betroffen?</h3>
+        <p>Folgende Anwendungstypen nutzen typischerweise EWS und müssen migriert werden:</p>
+        <ul>
+          <li>Backup-Lösungen mit Postfach-Zugriff (z.B. Veeam, ArcServe)</li>
+          <li>CRM-Systeme mit Outlook-Synchronisation</li>
+          <li>Legacy PowerShell-Skripte mit <code>EWSManagedAPI</code></li>
+          <li>Kalender- und Raumbuchungssysteme</li>
+          <li>Drittanbieter E-Mail-Archivierungslösungen</li>
+        </ul>
+
+        <h2 id="migration">Die Migration zur Graph API</h2>
+        <p>Die gute Nachricht: Die Graph API bietet für nahezu alle EWS-Funktionen eine moderne Entsprechung. Das folgende Skript zeigt exemplarisch, wie ein Postfach-Zugriff mit dem Graph PowerShell SDK realisiert wird:</p>
+
+        <pre><code># EWS → Graph API Migration
+# Verbindung mit Microsoft Graph
+Connect-MgGraph -Scopes "Mail.Read","Calendars.Read"
+
+# Alle Postfächer eines Benutzers abfragen
+$messages = Get-MgUserMessage -UserId "admin@contoso.com" `
+    -Filter "isRead eq false" `
+    -Select "subject,from,receivedDateTime" `
+    -Top 50
+
+$messages | Select-Object Subject, ReceivedDateTime</code></pre>
+
+        <h3 id="permissions">App-Permissions konfigurieren</h3>
+        <p>Für den automatisierten Zugriff ohne Benutzerinteraktion (Daemon-Apps, Skripte) sind <strong>Application Permissions</strong> erforderlich. Diese müssen von einem Global Administrator in Entra ID genehmigt werden.</p>
+
+        <blockquote>Tipp: Verwenden Sie das Prinzip der minimalen Rechtevergabe (Least Privilege). Nicht jede App benötigt <code>Mail.ReadWrite</code> – oft reicht <code>Mail.Read</code> vollständig aus.</blockquote>
+
+        <h2 id="checkliste">Migrations-Checkliste</h2>
+        <p>Gehen Sie diese Punkte systematisch durch, bevor Sie EWS-Verbindungen deaktivieren:</p>
+        <ol>
+          <li>Inventarisierung aller EWS-nutzenden Anwendungen mit <code>Get-EWSUsage.ps1</code></li>
+          <li>App-Registrierung in Entra ID für jede Anwendung anlegen</li>
+          <li>Graph API Permissions gemäß Least-Privilege-Prinzip zuweisen</li>
+          <li>Parallelbetrieb testen (EWS + Graph gleichzeitig aktiv)</li>
+          <li>Monitoring einrichten: Graph API Fehlerrate überwachen</li>
+          <li>EWS schrittweise deaktivieren, beginnend mit nicht-kritischen Systemen</li>
+        </ol>
+
+        <!-- Tags -->
+        <div style="margin-top:2rem; padding-top:1.25rem; border-top:1px solid var(--border-light); display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="badge badge-primary">Exchange Online</span>
+          <span class="badge badge-neutral">EWS</span>
+          <span class="badge badge-neutral">Graph API</span>
+          <span class="badge badge-neutral">Migration</span>
+          <span class="badge badge-neutral">PowerShell</span>
+        </div>
+
+        <!-- Share -->
+        <div style="margin-top:1.25rem; display:flex; align-items:center; gap:10px;">
+          <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.05em;">Teilen:</span>
+          <a href="#" class="btn btn-primary btn-sm">LinkedIn</a>
+          <a href="#" class="btn btn-ghost btn-sm">Twitter/X</a>
+          <a href="#" class="btn btn-ghost btn-sm">E-Mail</a>
+        </div>
+      </div><!-- /post-body -->
+
+      <!-- Kommentare -->
+      <div class="comments-section">
+        <h3 style="margin-bottom:1.25rem; font-size:1.1rem; color:var(--primary-dark);">3 Kommentare</h3>
+
+        <div class="comment-item">
+          <div class="comment-avatar">M</div>
+          <div class="comment-content">
+            <span class="comment-author">Markus F.</span>
+            <span class="comment-date">20. Feb 2026, 14:32 Uhr</span>
+            <p class="comment-text">Sehr hilfreicher Artikel! Wir haben genau dieses Problem gerade in unserem Unternehmen. Die Inventarisierung mit dem PS-Skript hat einige versteckte EWS-Verbindungen aufgedeckt, die wir gar nicht auf dem Schirm hatten.</p>
+          </div>
+        </div>
+
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:var(--accent-blue2);">S</div>
+          <div class="comment-content">
+            <span class="comment-author">Stefan R.</span>
+            <span class="comment-date">21. Feb 2026, 09:15 Uhr</span>
+            <p class="comment-text">Habt ihr Erfahrungen mit ArcServe und dem Graph API Connector? Der Hersteller sagt, das Feature ist "in Entwicklung" – typisch. Wir müssen jetzt manuell Abfragen umbauen.</p>
+          </div>
+        </div>
+
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:var(--accent-color); color:#1a1a1a;">A</div>
+          <div class="comment-content">
+            <span class="comment-author">Andy (Autor)</span>
+            <span class="comment-date">21. Feb 2026, 11:40 Uhr</span>
+            <p class="comment-text">@Stefan: ArcServe hat laut Roadmap einen Graph-basierten Connector für Q2 2026 angekündigt. Bis dahin empfehle ich den Hybrid-Betrieb über einen lokalen Exchange-Endpunkt als Proxy.</p>
+          </div>
+        </div>
+
+        <!-- Kommentar-Formular -->
+        <div class="comment-form">
+          <h3>Kommentar hinterlassen</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="c-name">Name *</label>
+              <input type="text" id="c-name" class="form-control" placeholder="Max Mustermann">
+            </div>
+            <div class="form-group">
+              <label for="c-email">E-Mail *</label>
+              <input type="email" id="c-email" class="form-control" placeholder="max@example.com">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label for="c-text">Kommentar *</label>
+            <textarea id="c-text" class="form-control" placeholder="Ihr Kommentar…"></textarea>
+          </div>
+          <button class="btn btn-primary">Kommentar absenden</button>
+        </div>
+      </div><!-- /comments -->
+    </div><!-- /main content -->
+
+    <!-- Sidebar -->
+    <aside class="post-sidebar">
+
+      <!-- TOC Widget -->
+      <div class="sidebar-widget sticky-widget">
+        <div class="widget-header">Inhaltsverzeichnis</div>
+        <nav class="toc">
+          <ol>
+            <li><a href="#hintergrund">Hintergrund: Warum EWS abgeschaltet wird</a></li>
+            <li>
+              <a href="#betroffen">Welche Systeme sind betroffen?</a>
+            </li>
+            <li>
+              <a href="#migration">Die Migration zur Graph API</a>
+              <ol class="toc-sub">
+                <li><a href="#permissions">App-Permissions konfigurieren</a></li>
+              </ol>
+            </li>
+            <li><a href="#checkliste">Migrations-Checkliste</a></li>
+          </ol>
+        </nav>
+
+        <!-- Social Icons Widget (integriert) -->
+        <div class="widget-header" style="border-top:1px solid var(--border-light);">Folgen &amp; Teilen</div>
+        <div class="social-icons">
+          <a href="#" class="social-icon-btn linkedin">
+            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            LinkedIn
+          </a>
+          <a href="#" class="social-icon-btn github">
+            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="#" class="social-icon-btn rss">
+            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.831c10.555.062 19.111 8.613 19.173 19.169h4.827c-.063-13.221-10.776-23.93-24-24z"/></svg>
+            RSS Feed
+          </a>
+        </div>
+
+        <!-- Related Posts Widget -->
+        <div class="widget-header" style="border-top:1px solid var(--border-light);">Verwandte Artikel</div>
+        <div style="padding:0.75rem 1rem;">
+          <a href="#" style="display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:1px solid var(--border-light); color:var(--text-secondary); font-size:0.82rem; font-weight:600; transition:var(--transition);"
+             onmouseover="this.style.color='var(--accent-blue2)'" onmouseout="this.style.color='var(--text-secondary)'">
+            <span style="color:var(--accent-blue2); flex-shrink:0;">›</span>
+            Graph API: Grundlagen für M365-Admins
+          </a>
+          <a href="#" style="display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:1px solid var(--border-light); color:var(--text-secondary); font-size:0.82rem; font-weight:600; transition:var(--transition);"
+             onmouseover="this.style.color='var(--accent-blue2)'" onmouseout="this.style.color='var(--text-secondary)'">
+            <span style="color:var(--accent-blue2); flex-shrink:0;">›</span>
+            App-Registrierung in Entra ID: Schritt für Schritt
+          </a>
+          <a href="#" style="display:flex; align-items:flex-start; gap:8px; padding:8px 0; color:var(--text-secondary); font-size:0.82rem; font-weight:600; transition:var(--transition);"
+             onmouseover="this.style.color='var(--accent-blue2)'" onmouseout="this.style.color='var(--text-secondary)'">
+            <span style="color:var(--accent-blue2); flex-shrink:0;">›</span>
+            Exchange Hybrid: Koexistenz-Konfiguration 2026
+          </a>
+        </div>
+      </div><!-- /sticky-widget -->
+
+    </aside><!-- /sidebar -->
+
+  </div><!-- /post-layout -->
+
+</div>
+</div><!-- /view-post -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER (footer.php)
+═══════════════════════════════════════════════════ -->
+<footer id="site-footer">
+  <div style="background:#0d1828;">
+    <div class="ft-main">
       <div class="ft-brand">
-        <h5>PHIN<span>IT</span>.DE</h5>
-        <p>Professionelle M365 Administration und Cloud-Security. Von MVP-Experten für IT-Profis entwickelt.</p>
+        <h5>365<span style="color:var(--accent-blue);">CMS</span>.DE</h5>
+        <p>Professionelle Microsoft 365 Administration und Cloud-Security. Von einem ehemaligen Microsoft MVP für IT-Profis entwickelt.</p>
         <div class="ft-social">
           <a href="#" aria-label="LinkedIn"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
           <a href="#" aria-label="GitHub"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
           <a href="#" aria-label="RSS"><svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.831c10.555.062 19.111 8.613 19.173 19.169h4.827c-.063-13.221-10.776-23.93-24-24z"/></svg></a>
         </div>
       </div>
-      <div class="ft-col"><h6>Themen</h6><a href="#">Exchange Online</a><a href="#">Entra ID</a><a href="#">PowerShell</a><a href="#">Intune</a></div>
-      <div class="ft-col"><h6>Ressourcen</h6><a href="#">M365 Glossar</a><a href="#">Checklisten</a><a href="#">Scripts</a><a href="#">GitHub</a></div>
-      <div class="ft-col"><h6>Rechtliches</h6><a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">Kontakt</a><a href="#">Support</a></div>
+      <div class="ft-col">
+        <h6>Themen</h6>
+        <a href="#">Exchange Online</a>
+        <a href="#">Entra ID</a>
+        <a href="#">PowerShell</a>
+        <a href="#">Intune</a>
+        <a href="#">Microsoft Purview</a>
+      </div>
+      <div class="ft-col">
+        <h6>Ressourcen</h6>
+        <a href="#">M365 Glossar</a>
+        <a href="#">Checklisten</a>
+        <a href="#">Scripts &amp; Tools</a>
+        <a href="#">GitHub Repos</a>
+        <a href="#">Über den Autor</a>
+      </div>
+      <div class="ft-col">
+        <h6>Rechtliches</h6>
+        <a href="#">Impressum</a>
+        <a href="#">Datenschutz</a>
+        <a href="#">Kontakt</a>
+        <a href="#">Support</a>
+      </div>
     </div>
   </div>
 
-  <div class="ft-bar-bg ft-partner-bg">
-    <div class="ft-bar-inner ft-partner-inner">
-      <a href="#">Andreas Hepp</a><a href="#">365network.de</a><a href="#">phscripts.de</a><a href="#">ms365insights.de</a><a href="#">setupdates.com</a><a href="#">servertrend.com</a><a href="#">phun.network</a>
+  <div style="background:#080d15; border-top:1px solid rgba(255,255,255,.03);">
+    <div class="ft-partner-bar">
+      <a href="#">phinit.de</a>
+      <a href="#">phscripts.de</a>
+      <a href="#">ms365insights.de</a>
+      <a href="#">365network.de</a>
+      <a href="#">setupdates.com</a>
+      <a href="#">servertrend.com</a>
+      <a href="#">phun.network</a>
     </div>
   </div>
 
-  <div class="ft-copy">© 2026 PHINIT.DE – Powered by 365CMS.de – Cloud Intelligence for Professionals</div>
+  <div class="ft-copy">
+    © 2026 365CMS.DE – Powered by 365CMS – Cloud Intelligence for Professionals
+  </div>
 </footer>
 
+
 <script>
-  // UX: Reading Progress Bar
-  window.onscroll = function() {
-    let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    let scrolled = (winScroll / height) * 100;
-    document.getElementById("scroll-progress").style.width = scrolled + "%";
-  };
+/* ═══════════════════════════════════════════════
+   navigation.js (assets/js/navigation.js)
+═══════════════════════════════════════════════ */
+
+// Reading Progress Bar
+window.addEventListener('scroll', () => {
+  const scrolled = document.documentElement.scrollTop;
+  const total    = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  document.getElementById('scroll-progress').style.width = (scrolled / total * 100) + '%';
+});
+
+// Burger Menu Toggle
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// Dark Mode Toggle
+function toggleDark() {
+  document.body.classList.toggle('dark-mode');
+  const btn = document.getElementById('dm-toggle');
+  btn.textContent = document.body.classList.contains('dark-mode') ? '☀ Hell' : '◐ Dark';
+}
+
+// View Switcher (preview only)
+function showView(view) {
+  document.getElementById('view-index').style.display = view === 'index' ? '' : 'none';
+  document.getElementById('view-post').style.display  = view === 'post'  ? '' : 'none';
+  document.querySelectorAll('.preview-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && view === 'index') || (i === 1 && view === 'post'));
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// IntersectionObserver for [data-anim] elements
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('anim-in');
+      }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('[data-anim]').forEach(el => observer.observe(el));
+
+// Active nav highlight on scroll (post view)
+const sections = document.querySelectorAll('[id]');
+const tocLinks = document.querySelectorAll('.toc a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  tocLinks.forEach(link => {
+    link.style.color = link.getAttribute('href') === '#' + current
+      ? 'var(--accent-blue2)' : '';
+    link.style.fontWeight = link.getAttribute('href') === '#' + current ? '700' : '';
+  });
+});
 </script>
 
 </body>

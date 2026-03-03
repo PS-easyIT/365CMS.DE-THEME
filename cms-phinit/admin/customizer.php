@@ -1,0 +1,1838 @@
+<?php
+/**
+ * CMS Phinit Theme – Customizer (Admin)
+ *
+ * Umfangreiche Anpassungsmöglichkeiten für das technische Tech-Blog-Theme
+ * inspiriert von phinit.de – IT-Profi, Deep Navy, Gold, Code-Ästhetik.
+ *
+ * @package CMS_Phinit_Theme
+ */
+
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+use CMS\Auth;
+use CMS\Security;
+use CMS\Services\ThemeCustomizer;
+
+if (!Auth::instance()->isAdmin()) {
+    header('Location: ' . SITE_URL);
+    exit;
+}
+
+// ── Admin-Sidebar laden ──────────────────────────────────────────────────────
+$sidebarPaths = [
+    dirname(__DIR__, 2) . '/../CMS/admin/partials/admin-menu.php',
+    ABSPATH . 'admin/partials/admin-menu.php',
+    dirname(ABSPATH) . '/admin/partials/admin-menu.php',
+];
+foreach ($sidebarPaths as $sp) {
+    if (file_exists($sp)) {
+        require_once $sp;
+        break;
+    }
+}
+
+// ── 1. Konfiguration aller Tabs & Felder ─────────────────────────────────────
+$config = [
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // FARBEN
+    // ═══════════════════════════════════════════════════════════════════════
+    'colors' => [
+        'title' => '🎨 Farben',
+        'sections' => [
+
+            // ── Markenfarben ──
+            'primary_color' => [
+                'label'       => 'Primärfarbe (Navy)',
+                'description' => 'Hauptfarbe – Dunkelblau für Header, Links und Akzente.',
+                'type'        => 'color',
+                'default'     => '#1e3a5f',
+            ],
+            'primary_dark' => [
+                'label'       => 'Primärfarbe Dunkel',
+                'description' => 'Noch dunkleres Navy für Hover-Zustände.',
+                'type'        => 'color',
+                'default'     => '#0f2340',
+            ],
+            'primary_mid' => [
+                'label'       => 'Primärfarbe Mittel',
+                'description' => 'Mittleres Navy – Header Bar 2.',
+                'type'        => 'color',
+                'default'     => '#1a3255',
+            ],
+            'primary_light' => [
+                'label'       => 'Primärfarbe Hell',
+                'description' => 'Aufgehelltes Navy für Badge-Hintergründe.',
+                'type'        => 'color',
+                'default'     => '#2a4f7c',
+            ],
+            'accent_color' => [
+                'label'       => 'Akzentfarbe (Gold/Amber)',
+                'description' => 'Goldton für CTAs, Highlights und spezielle Badges.',
+                'type'        => 'color',
+                'default'     => '#e8a838',
+            ],
+            'accent_hover' => [
+                'label'       => 'Akzentfarbe Hover',
+                'description' => 'Dunkleres Gold für Hover-Zustände.',
+                'type'        => 'color',
+                'default'     => '#d4922a',
+            ],
+            'accent_blue' => [
+                'label'       => 'Akzentfarbe Blau (IT)',
+                'description' => 'Technik-Blau für Links, TOC, Code-Hervorhebungen.',
+                'type'        => 'color',
+                'default'     => '#4a9eff',
+            ],
+            'accent_blue2' => [
+                'label'       => 'Akzentfarbe Blau 2 (satt)',
+                'description' => 'Satteres Blau für Buttons und aktive Badges.',
+                'type'        => 'color',
+                'default'     => '#2d7dd2',
+            ],
+
+            // ── Header-Hintergründe ──
+            'bg_header1' => [
+                'label'       => 'Header Bar 1 Hintergrund',
+                'description' => 'Utility-Bar (Logo + Util-Links) Hintergrundfarbe.',
+                'type'        => 'color',
+                'default'     => '#111827',
+            ],
+            'bg_header2' => [
+                'label'       => 'Header Bar 2 Hintergrund',
+                'description' => 'Haupt-Navigation Hintergrundfarbe.',
+                'type'        => 'color',
+                'default'     => '#162030',
+            ],
+            'bg_header3' => [
+                'label'       => 'Header Bar 3 Hintergrund',
+                'description' => 'Quicklinks-Subbar Hintergrundfarbe.',
+                'type'        => 'color',
+                'default'     => '#0e1a28',
+            ],
+
+            // ── Seite & Inhalt ──
+            'bg_primary' => [
+                'label'       => 'Content-Hintergrund',
+                'description' => 'Hintergrundfarbe von Cards, Post-Body, Sidebar-Widgets.',
+                'type'        => 'color',
+                'default'     => '#ffffff',
+            ],
+            'bg_secondary' => [
+                'label'       => 'Seitenhintergrund',
+                'description' => 'Hintergrundfarbe der gesamten Seite (body).',
+                'type'        => 'color',
+                'default'     => '#f1f5f9',
+            ],
+            'bg_dark' => [
+                'label'       => 'Dunkelbereich-Hintergrund',
+                'description' => 'Sehr dunkler Hintergrund für spezielle Dark-Sektionen.',
+                'type'        => 'color',
+                'default'     => '#0a0f1a',
+            ],
+
+            // ── Text ──
+            'text_primary' => [
+                'label'       => 'Primäre Textfarbe',
+                'description' => 'Standard-Fließtextfarbe.',
+                'type'        => 'color',
+                'default'     => '#1e293b',
+            ],
+            'text_secondary' => [
+                'label'       => 'Sekundäre Textfarbe',
+                'description' => 'Beschreibungstext, Subtitles.',
+                'type'        => 'color',
+                'default'     => '#4a5568',
+            ],
+            'text_muted' => [
+                'label'       => 'Gedämpfte Textfarbe',
+                'description' => 'Timestamps, Meta-Infos, Platzhalter.',
+                'type'        => 'color',
+                'default'     => '#7a8898',
+            ],
+            'text_nav' => [
+                'label'       => 'Navigationstext-Farbe',
+                'description' => 'Textfarbe der Navigationslinks im Header.',
+                'type'        => 'color',
+                'default'     => '#c8d4e4',
+            ],
+
+            // ── Rahmen ──
+            'border_light' => [
+                'label'       => 'Rahmen (hell)',
+                'description' => 'Standard-Rahmenfarbe für Cards und Elemente.',
+                'type'        => 'color',
+                'default'     => '#dde3ea',
+            ],
+
+            // ── Footer ──
+            'footer_bg' => [
+                'label'       => 'Footer Hintergrundfarbe',
+                'description' => 'Haupthintergrund des Footers.',
+                'type'        => 'color',
+                'default'     => '#0d1828',
+            ],
+            'footer_bottom_bg' => [
+                'label'       => 'Footer Bottom-Bar Hintergrundfarbe',
+                'description' => 'Partner-Bar und Copyright-Zeile.',
+                'type'        => 'color',
+                'default'     => '#080d15',
+            ],
+            'footer_border' => [
+                'label'       => 'Footer-Oberrand (Akzentlinie)',
+                'description' => 'Farbe der Trennlinie am oberen Footer-Rand.',
+                'type'        => 'color',
+                'default'     => '#2d7dd2',
+            ],
+
+            // ── Status-Farben ──
+            'success_color' => [
+                'label'       => 'Erfolgsfarbe',
+                'description' => 'Grün für Erfolgsmeldungen und Status-OK.',
+                'type'        => 'color',
+                'default'     => '#16a34a',
+            ],
+            'error_color' => [
+                'label'       => 'Fehlerfarbe',
+                'description' => 'Rot für Fehlermeldungen und Warnungen.',
+                'type'        => 'color',
+                'default'     => '#dc2626',
+            ],
+
+            // ── Reading Progress Bar ──
+            'progress_bar_start' => [
+                'label'       => 'Lese-Fortschrittsbalken (Farbe Start)',
+                'description' => 'Startfarbe des Lese-Fortschrittsbalkens ganz oben.',
+                'type'        => 'color',
+                'default'     => '#2d7dd2',
+            ],
+            'progress_bar_end' => [
+                'label'       => 'Lese-Fortschrittsbalken (Farbe Ende)',
+                'description' => 'Endfarbe des Lese-Fortschrittsbalkens.',
+                'type'        => 'color',
+                'default'     => '#e8a838',
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // TYPOGRAFIE
+    // ═══════════════════════════════════════════════════════════════════════
+    'typography' => [
+        'title' => '🔤 Typografie',
+        'sections' => [
+            'font_family_ui' => [
+                'label'       => 'UI-Schriftart (Fließtext)',
+                'description' => 'Schriftart für allgemeinen Text, Navigation, Forms.',
+                'type'        => 'select',
+                'options'     => [
+                    'barlow'      => 'Barlow (Standard IT-Tech)',
+                    'system'      => 'System-Standard',
+                    'inter'       => 'Inter',
+                    'roboto'      => 'Roboto',
+                    'open-sans'   => 'Open Sans',
+                    'lato'        => 'Lato',
+                    'montserrat'  => 'Montserrat',
+                    'poppins'     => 'Poppins',
+                    'source-sans' => 'Source Sans 3',
+                    'nunito'      => 'Nunito',
+                ],
+                'default'     => 'barlow',
+            ],
+            'font_family_brand' => [
+                'label'       => 'Brand-Schriftart (Überschriften & Navigation)',
+                'description' => 'Schriftart für Seitenname, Überschriften, Navigationsitems.',
+                'type'        => 'select',
+                'options'     => [
+                    'barlow-condensed' => 'Barlow Condensed (Standard)',
+                    'barlow'           => 'Barlow',
+                    'system'           => 'System-Standard',
+                    'roboto-condensed' => 'Roboto Condensed',
+                    'oswald'           => 'Oswald',
+                    'montserrat'       => 'Montserrat',
+                    'rajdhani'         => 'Rajdhani',
+                    'exo2'             => 'Exo 2',
+                ],
+                'default'     => 'barlow-condensed',
+            ],
+            'font_family_code' => [
+                'label'       => 'Code-Schriftart',
+                'description' => 'Monospace-Schriftart für Code-Blöcke und inline-Code.',
+                'type'        => 'select',
+                'options'     => [
+                    'jetbrains-mono' => 'JetBrains Mono (Standard)',
+                    'fira-code'      => 'Fira Code',
+                    'source-code'    => 'Source Code Pro',
+                    'cascadia'       => 'Cascadia Code',
+                    'system-mono'    => 'System Monospace',
+                ],
+                'default'     => 'jetbrains-mono',
+            ],
+            'font_size_base' => [
+                'label'       => 'Basis-Schriftgröße (px)',
+                'description' => 'Schriftgröße des Fließtexts.',
+                'type'        => 'number',
+                'default'     => 14.5,
+            ],
+            'font_size_post' => [
+                'label'       => 'Artikel-Schriftgröße (px)',
+                'description' => 'Schriftgröße im Post-Body für bessere Lesbarkeit.',
+                'type'        => 'number',
+                'default'     => 15.5,
+            ],
+            'line_height_base' => [
+                'label'       => 'Zeilenhöhe',
+                'description' => 'Zeilenhöhe des Fließtexts (Faktor, z. B. 1.55).',
+                'type'        => 'number',
+                'default'     => 1.55,
+            ],
+            'line_height_post' => [
+                'label'       => 'Zeilenhöhe Artikel',
+                'description' => 'Zeilenhöhe im Post-Body (Standard: 1.8 für bessere Lesbarkeit).',
+                'type'        => 'number',
+                'default'     => 1.8,
+            ],
+            'font_weight_heading' => [
+                'label'       => 'Überschriften-Gewicht',
+                'description' => 'Font-Weight für h1–h3.',
+                'type'        => 'select',
+                'options'     => [
+                    '400' => 'Regular (400)',
+                    '500' => 'Medium (500)',
+                    '600' => 'Semi-Bold (600)',
+                    '700' => 'Bold (700)',
+                    '800' => 'Extra-Bold (800)',
+                    '900' => 'Black (900)',
+                ],
+                'default'     => '700',
+            ],
+            'font_weight_nav' => [
+                'label'       => 'Navigation-Gewicht',
+                'description' => 'Font-Weight für Navigationslinks.',
+                'type'        => 'select',
+                'options'     => [
+                    '400' => 'Regular (400)',
+                    '500' => 'Medium (500)',
+                    '600' => 'Semi-Bold (600)',
+                    '700' => 'Bold (700)',
+                    '800' => 'Extra-Bold (800)',
+                ],
+                'default'     => '600',
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // LAYOUT
+    // ═══════════════════════════════════════════════════════════════════════
+    'layout' => [
+        'title' => '📐 Layout',
+        'sections' => [
+            'container_width' => [
+                'label'       => 'Container-Breite (px)',
+                'description' => 'Maximale Breite des Inhaltsbereichs.',
+                'type'        => 'number',
+                'default'     => 1060,
+            ],
+            'sidebar_width' => [
+                'label'       => 'Sidebar-Breite (px)',
+                'description' => 'Breite der Artikel-Sidebar (rechts, Desktop).',
+                'type'        => 'number',
+                'default'     => 280,
+            ],
+            'border_radius' => [
+                'label'       => 'Eckenradius Standard (px)',
+                'description' => 'Rundung für Cards, Felder und kleinere Elemente.',
+                'type'        => 'number',
+                'default'     => 4,
+            ],
+            'border_radius_md' => [
+                'label'       => 'Eckenradius Mittel (px)',
+                'description' => 'Rundung für Cards, Bilder und Widgets.',
+                'type'        => 'number',
+                'default'     => 6,
+            ],
+            'enable_sticky_header' => [
+                'label'       => 'Sticky Header aktivieren',
+                'description' => 'Header fixiert beim Scrollen oben (scrolled-Klasse).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'enable_progress_bar' => [
+                'label'       => 'Lese-Fortschrittsbalken anzeigen',
+                'description' => 'Schmaler Balken ganz oben zeigt Leseprogress im Artikel.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'enable_back_to_top' => [
+                'label'       => '„Zurück nach oben"-Button anzeigen',
+                'description' => 'Button erscheint nach 400px Scrollen unten rechts.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'enable_dark_mode_toggle' => [
+                'label'       => 'Dark Mode Toggle anzeigen',
+                'description' => 'Schalter (☀/🌙) im Header für Besucher.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'enable_scroll_animations' => [
+                'label'       => 'Scroll-Animationen aktivieren',
+                'description' => 'Elemente mit [data-anim] faden beim Einrollen ein.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_position' => [
+                'label'       => 'Sidebar-Position (Artikel)',
+                'description' => 'Gibt an, auf welcher Seite die Sidebar beim Artikel liegt.',
+                'type'        => 'select',
+                'options'     => [
+                    'right' => 'Rechts (Standard)',
+                    'left'  => 'Links',
+                    'none'  => 'Keine Sidebar (Standard: post-wide)',
+                ],
+                'default'     => 'right',
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // HEADER & NAVIGATION
+    // ═══════════════════════════════════════════════════════════════════════
+    'header' => [
+        'title' => '🖥️ Header & Navigation',
+        'sections' => [
+
+            // ── Logo & Marke ──
+            'logo_text_part1' => [
+                'label'       => 'Logo-Text (Teil 1)',
+                'description' => 'Erster Teil des Text-Logos (z. B. "365" oder "PHINIT").',
+                'type'        => 'text',
+                'default'     => '365',
+            ],
+            'logo_text_part2' => [
+                'label'       => 'Logo-Text (Teil 2, farbig)',
+                'description' => 'Zweiter Teil des Logos – wird farbig hervorgehoben.',
+                'type'        => 'text',
+                'default'     => 'CMS',
+            ],
+            'logo_text_suffix' => [
+                'label'       => 'Logo-Text Suffix',
+                'description' => 'Optional: Suffix hinter dem Logo (z. B. ".DE").',
+                'type'        => 'text',
+                'default'     => '.DE',
+            ],
+            'logo_url' => [
+                'label'       => 'Logo-Bild URL',
+                'description' => 'Bild-Logo (PNG/SVG). Leer = Text-Logo.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'logo_max_height' => [
+                'label'       => 'Logo-Maximalhöhe (px)',
+                'description' => 'Maximale Höhe des Bild-Logos.',
+                'type'        => 'number',
+                'default'     => 28,
+            ],
+            'logo_accent_color' => [
+                'label'       => 'Logo Akzent-Farbe',
+                'description' => 'Farbe des farbigen Logo-Teils (Teil 2).',
+                'type'        => 'color',
+                'default'     => '#4a9eff',
+            ],
+
+            // ── Bar 1 (Utility) ──
+            'util_bar_height' => [
+                'label'       => 'Utility-Bar Höhe (px)',
+                'description' => 'Höhe der obersten Header-Bar (Logo + Utils).',
+                'type'        => 'number',
+                'default'     => 36,
+            ],
+            'show_util_links' => [
+                'label'       => 'Util-Links anzeigen',
+                'description' => 'Zeigt Zusatzlinks (z. B. „Über mich", „Kontakt") rechts in der Utility-Bar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'util_link1_text' => [
+                'label'       => 'Util-Link 1 – Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Über mich',
+            ],
+            'util_link1_url' => [
+                'label'       => 'Util-Link 1 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/ueber-mich',
+            ],
+            'util_link2_text' => [
+                'label'       => 'Util-Link 2 – Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Kontakt',
+            ],
+            'util_link2_url' => [
+                'label'       => 'Util-Link 2 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kontakt',
+            ],
+            'util_link3_text' => [
+                'label'       => 'Util-Link 3 – Text',
+                'description' => 'Leer = nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'util_link3_url' => [
+                'label'       => 'Util-Link 3 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+
+            // ── Bar 2 (Haupt-Navigation) ──
+            'main_nav_height' => [
+                'label'       => 'Hauptnavigation Höhe (px)',
+                'description' => 'Höhe der mittleren Header-Bar mit Hauptmenü.',
+                'type'        => 'number',
+                'default'     => 48,
+            ],
+            'show_search_bar' => [
+                'label'       => 'Suchleiste im Header anzeigen',
+                'description' => 'Zeigt das Suchfeld rechts in der Hauptnavigation.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'search_placeholder' => [
+                'label'       => 'Suchfeld Platzhaltertext',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Artikel suchen…',
+            ],
+
+            // ── Bar 3 (Quicklinks) ──
+            'show_quicklinks' => [
+                'label'       => 'Quicklinks-Bar anzeigen',
+                'description' => 'Zeigt die untere Subnavigation (z. B. Entra ID, Intune, …).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sub_bar_height' => [
+                'label'       => 'Quicklinks-Bar Höhe (px)',
+                'description' => 'Höhe der Quicklinks-Subnavigation.',
+                'type'        => 'number',
+                'default'     => 30,
+            ],
+            'quicklink1_text' => [
+                'label'       => '⚡ Quicklink 1 Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Entra ID',
+            ],
+            'quicklink1_url' => [
+                'label'       => 'Quicklink 1 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/entra-id',
+            ],
+            'quicklink2_text' => [
+                'label'       => '⚡ Quicklink 2 Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Intune',
+            ],
+            'quicklink2_url' => [
+                'label'       => 'Quicklink 2 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/intune',
+            ],
+            'quicklink3_text' => [
+                'label'       => '⚡ Quicklink 3 Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Compliance',
+            ],
+            'quicklink3_url' => [
+                'label'       => 'Quicklink 3 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/compliance',
+            ],
+            'quicklink4_text' => [
+                'label'       => '⚡ Quicklink 4 Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Graph API',
+            ],
+            'quicklink4_url' => [
+                'label'       => 'Quicklink 4 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/graph-api',
+            ],
+            'quicklink5_text' => [
+                'label'       => '⚡ Quicklink 5 Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'PowerShell',
+            ],
+            'quicklink5_url' => [
+                'label'       => 'Quicklink 5 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/powershell',
+            ],
+            'quicklink6_text' => [
+                'label'       => '⚡ Quicklink 6 Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Security',
+            ],
+            'quicklink6_url' => [
+                'label'       => 'Quicklink 6 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/security',
+            ],
+            'quicklink7_text' => [
+                'label'       => '⚡ Quicklink 7 Text',
+                'description' => 'Leer = nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => 'Exchange',
+            ],
+            'quicklink7_url' => [
+                'label'       => 'Quicklink 7 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/exchange',
+            ],
+            'quicklink8_text' => [
+                'label'       => '⚡ Quicklink 8 Text',
+                'description' => 'Leer = nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'quicklink8_url' => [
+                'label'       => 'Quicklink 8 URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // FOOTER
+    // ═══════════════════════════════════════════════════════════════════════
+    'footer' => [
+        'title' => '🔻 Footer',
+        'sections' => [
+            'footer_brand_name' => [
+                'label'       => 'Markenname im Footer',
+                'description' => 'Seitenname im Footer-Logo (kann Platzhalter {year} nutzen).',
+                'type'        => 'text',
+                'default'     => '365CMS.DE',
+            ],
+            'footer_tagline' => [
+                'label'       => 'Footer-Beschreibungstext',
+                'description' => 'Kurzer Text unter dem Footer-Logo.',
+                'type'        => 'textarea',
+                'default'     => 'Professionelle Microsoft 365 Administration und Cloud-Security. Von einem erfahrenen IT-Profi für IT-Profis.',
+            ],
+            'footer_col2_title' => [
+                'label'       => 'Spalte 2 Titel',
+                'description' => 'Überschrift der zweiten Footer-Spalte.',
+                'type'        => 'text',
+                'default'     => 'Themen',
+            ],
+            'footer_col3_title' => [
+                'label'       => 'Spalte 3 Titel',
+                'description' => 'Überschrift der dritten Footer-Spalte.',
+                'type'        => 'text',
+                'default'     => 'Ressourcen',
+            ],
+            'footer_col4_title' => [
+                'label'       => 'Spalte 4 Titel',
+                'description' => 'Überschrift der vierten Footer-Spalte.',
+                'type'        => 'text',
+                'default'     => 'Rechtliches',
+            ],
+            'copyright_text' => [
+                'label'       => 'Copyright-Text',
+                'description' => 'Copyright-Zeile unten. Platzhalter: {year}, {site_title}.',
+                'type'        => 'text',
+                'default'     => '© {year} {site_title} – Powered by 365CMS – Cloud Intelligence for Professionals',
+            ],
+            'show_footer_social' => [
+                'label'       => 'Social Icons im Footer anzeigen',
+                'description' => 'Zeigt Social-Media-Icons unten links im Footer.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+
+            // ── Partner/Network Bar ──
+            'show_network_bar' => [
+                'label'       => 'Partner/Network-Bar anzeigen',
+                'description' => 'Zeigt die Partnernetzwerk-Leiste unter dem Footer.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'network_bar_link1_label' => [
+                'label'       => '🔗 Network-Bar Link 1 – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'phinit.de',
+            ],
+            'network_bar_link1_url' => [
+                'label'       => 'Network-Bar Link 1 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://phinit.de',
+            ],
+            'network_bar_link2_label' => [
+                'label'       => '🔗 Network-Bar Link 2 – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'phscripts.de',
+            ],
+            'network_bar_link2_url' => [
+                'label'       => 'Network-Bar Link 2 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://phscripts.de',
+            ],
+            'network_bar_link3_label' => [
+                'label'       => '🔗 Network-Bar Link 3 – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '365network.de',
+            ],
+            'network_bar_link3_url' => [
+                'label'       => 'Network-Bar Link 3 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://365network.de',
+            ],
+            'network_bar_link4_label' => [
+                'label'       => '🔗 Network-Bar Link 4 – Label',
+                'description' => 'Leer = nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => 'ms365insights.de',
+            ],
+            'network_bar_link4_url' => [
+                'label'       => 'Network-Bar Link 4 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://ms365insights.de',
+            ],
+            'network_bar_link5_label' => [
+                'label'       => '🔗 Network-Bar Link 5 – Label',
+                'description' => 'Leer = nicht angezeigt.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'network_bar_link5_url' => [
+                'label'       => 'Network-Bar Link 5 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // STARTSEITE
+    // ═══════════════════════════════════════════════════════════════════════
+    'homepage' => [
+        'title' => '🏠 Startseite',
+        'sections' => [
+
+            // ── GitHub / Repo-Card ──
+            'show_repo_card' => [
+                'label'       => 'Repo-Card anzeigen',
+                'description' => 'Hebt GitHub-Repository oder Hauptprojekt prominent hervor.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'repo_card_title' => [
+                'label'       => 'Repo-Card Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'PS-easyIT Script-Repository',
+            ],
+            'repo_card_description' => [
+                'label'       => 'Repo-Card Beschreibung',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => '25+ Code-signierte PowerShell-Module für M365 Administration. Enterprise-ready & Open Source.',
+            ],
+            'repo_card_badge' => [
+                'label'       => 'Repo-Card Badge-Text',
+                'description' => 'Kleiner farbiger Badge rechts (z. B. "25+ Repos").',
+                'type'        => 'text',
+                'default'     => '25+ Repos',
+            ],
+            'repo_card_btn_text' => [
+                'label'       => 'Repo-Card Button Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Zum GitHub →',
+            ],
+            'repo_card_btn_url' => [
+                'label'       => 'Repo-Card Button URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://github.com/phinit/',
+            ],
+
+            // ── Artikel-Liste ──
+            'show_article_list' => [
+                'label'       => 'Aktuelle Artikel-Liste anzeigen',
+                'description' => 'Horizontale Artikel-Karten als Hauptinhalt.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'article_list_label' => [
+                'label'       => 'Artikel-Liste Sektion-Label',
+                'description' => 'Kleines Label über der Artikel-Liste.',
+                'type'        => 'text',
+                'default'     => 'Aktuell',
+            ],
+            'article_list_count' => [
+                'label'       => 'Anzahl Artikel in der Hauptliste',
+                'description' => 'Wie viele Artikel in der horizontalen Liste angezeigt werden.',
+                'type'        => 'number',
+                'default'     => 4,
+            ],
+            'article_thumb_width' => [
+                'label'       => 'Artikel-Thumbnail Breite (px)',
+                'description' => 'Breite der Vorschaubilder in der Artikelliste.',
+                'type'        => 'number',
+                'default'     => 190,
+            ],
+            'article_thumb_height' => [
+                'label'       => 'Artikel-Thumbnail Höhe (px)',
+                'description' => 'Höhe der Vorschaubilder in der Artikelliste.',
+                'type'        => 'number',
+                'default'     => 115,
+            ],
+            'show_article_excerpt' => [
+                'label'       => 'Artikel-Auszug anzeigen',
+                'description' => 'Zeigt eine kurze Zusammenfassung unter dem Titel.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_article_meta' => [
+                'label'       => 'Artikel-Meta anzeigen',
+                'description' => 'Zeigt Kategorie, Datum und Lesezeit in der Liste.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_article_badge' => [
+                'label'       => 'Kategorie-Badge auf Thumbnail',
+                'description' => 'Kleines farbiges Badge mit Kategoriename oben links.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+
+            // ── Kategorie-Cards (Info-Grid) ──
+            'show_info_grid' => [
+                'label'       => 'Kategorie-Cards anzeigen',
+                'description' => '2er-Grid mit Kategorie-Übersichts-Cards.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'info_card1_title' => [
+                'label'       => 'Info-Card 1 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '🖥️ Admin Anleitungen',
+            ],
+            'info_card1_text' => [
+                'label'       => 'Info-Card 1 – Text',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => 'Schritt-für-Schritt-Tutorials für Microsoft 365 Administration.',
+            ],
+            'info_card1_link_text' => [
+                'label'       => 'Info-Card 1 – Link-Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Alle Anleitungen ansehen →',
+            ],
+            'info_card1_link_url' => [
+                'label'       => 'Info-Card 1 – Link URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/anleitungen',
+            ],
+            'info_card1_style' => [
+                'label'       => 'Info-Card 1 – Stil',
+                'description' => '',
+                'type'        => 'select',
+                'options'     => ['default' => 'Standard (Blau)', 'gold' => 'Gold-Akzent'],
+                'default'     => 'default',
+            ],
+            'info_card2_title' => [
+                'label'       => 'Info-Card 2 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '🔒 DSGVO & Compliance',
+            ],
+            'info_card2_text' => [
+                'label'       => 'Info-Card 2 – Text',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => 'Konfigurationsanleitungen und Best Practices für Microsoft Purview und Datenschutz.',
+            ],
+            'info_card2_link_text' => [
+                'label'       => 'Info-Card 2 – Link-Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Compliance-Center →',
+            ],
+            'info_card2_link_url' => [
+                'label'       => 'Info-Card 2 – Link URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/kategorie/compliance',
+            ],
+            'info_card2_style' => [
+                'label'       => 'Info-Card 2 – Stil',
+                'description' => '',
+                'type'        => 'select',
+                'options'     => ['default' => 'Standard (Blau)', 'gold' => 'Gold-Akzent'],
+                'default'     => 'gold',
+            ],
+
+            // ── 3er-Grid (Deep-Dive) ──
+            'show_tile_grid' => [
+                'label'       => 'Deep-Dive Archiv-Grid anzeigen',
+                'description' => 'Zeigt das 3-spaltige Kachel-Grid mit älteren Artikeln.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'tile_grid_label' => [
+                'label'       => 'Grid-Sektion Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Deep-Dive Archiv',
+            ],
+            'tile_grid_count' => [
+                'label'       => 'Anzahl Kacheln im Grid',
+                'description' => 'Wie viele Artikel im 3er-Kachel-Grid angezeigt werden.',
+                'type'        => 'number',
+                'default'     => 6,
+            ],
+            'tile_grid_columns' => [
+                'label'       => 'Grid-Spaltenanzahl',
+                'description' => '',
+                'type'        => 'select',
+                'options'     => ['2' => '2 Spalten', '3' => '3 Spalten (Standard)', '4' => '4 Spalten'],
+                'default'     => '3',
+            ],
+
+            // ── RSS-Feed-Sektionen ──
+            'show_feed_section' => [
+                'label'       => 'RSS-Feed-Sektion anzeigen',
+                'description' => 'Zeigt externe RSS-Feed-Blöcke (z. B. Borns Blog, Heise).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'feed1_channel_id' => [
+                'label'       => '📡 Feed 1 – Kanal (cms-feed)',
+                'description' => 'Wähle einen Feed-Kanal aus dem cms-feed Plugin. Kanäle werden dort unter Plugins › Feed-Manager verwaltet.',
+                'type'        => 'select',
+                'options'     => ['0' => '— Kein Feed —'],
+                'default'     => '0',
+            ],
+            'feed1_count' => [
+                'label'       => 'Feed 1 – Anzahl Einträge',
+                'description' => '',
+                'type'        => 'number',
+                'default'     => 5,
+            ],
+            'feed2_channel_id' => [
+                'label'       => '📡 Feed 2 – Kanal (cms-feed)',
+                'description' => 'Wähle einen zweiten Feed-Kanal aus dem cms-feed Plugin.',
+                'type'        => 'select',
+                'options'     => ['0' => '— Kein Feed —'],
+                'default'     => '0',
+            ],
+            'feed2_count' => [
+                'label'       => 'Feed 2 – Anzahl Einträge',
+                'description' => '',
+                'type'        => 'number',
+                'default'     => 5,
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // BEITRÄGE (POST)
+    // ═══════════════════════════════════════════════════════════════════════
+    'posts' => [
+        'title' => '📝 Beiträge',
+        'sections' => [
+
+            // ── Hero / Kopfbereich ──
+            'post_hero_height' => [
+                'label'       => 'Post-Hero Höhe (px)',
+                'description' => 'Höhe des großen Artikelheaders mit Bild und Titel.',
+                'type'        => 'number',
+                'default'     => 340,
+            ],
+            'show_post_hero' => [
+                'label'       => 'Post-Hero-Bild anzeigen',
+                'description' => 'Zeigt das Titelbild des Artikels als großen Hero-Banner.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_post_meta' => [
+                'label'       => 'Artikel-Meta anzeigen',
+                'description' => 'Zeigt Autor, Datum, Lesezeit und Kommentaranzahl unter dem Titel.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_reading_time' => [
+                'label'       => 'Lesezeit anzeigen',
+                'description' => 'Geschätzte Lesezeit im Artikelkopf.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'reading_time_wpm' => [
+                'label'       => 'Wörter pro Minute (Lesezeit)',
+                'description' => 'Basis für die Lesezeit-Berechnung (Standard: 220 Wörter/Min).',
+                'type'        => 'number',
+                'default'     => 220,
+            ],
+
+            // ── Inhaltsverzeichnis (TOC) ──
+            'show_toc' => [
+                'label'       => 'Inhaltsverzeichnis (TOC) anzeigen',
+                'description' => 'Zeigt das Inhaltsverzeichnis in der Sidebar des Artikels.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'toc_sticky' => [
+                'label'       => 'TOC sticky (haftet beim Scrollen)',
+                'description' => 'Inhaltsverzeichnis folgt beim Scrollen nach unten.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'toc_min_headings' => [
+                'label'       => 'TOC mind. X Überschriften',
+                'description' => 'Erst ab dieser Anzahl von H2/H3 wird das TOC eingeblendet.',
+                'type'        => 'number',
+                'default'     => 2,
+            ],
+            'toc_header_text' => [
+                'label'       => 'TOC Widget-Titel',
+                'description' => 'Bezeichnung des Inhaltsverzeichnis-Widgets.',
+                'type'        => 'text',
+                'default'     => 'Inhaltsverzeichnis',
+            ],
+
+            // ── Sidebar-Widgets ──
+            'show_sidebar_social' => [
+                'label'       => 'Social-Widget in Sidebar anzeigen',
+                'description' => 'Zeigt Social-Media-Buttons in der Artikel-Sidebar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_social_header' => [
+                'label'       => 'Social-Widget Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Folgen & Teilen',
+            ],
+            'show_sidebar_related' => [
+                'label'       => 'Verwandte Artikel in Sidebar',
+                'description' => 'Zeigt verwandte Artikel-Links in der Sidebar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_related_header' => [
+                'label'       => 'Verwandte Artikel Widget-Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Verwandte Artikel',
+            ],
+            'related_count' => [
+                'label'       => 'Anzahl verwandter Artikel',
+                'description' => '',
+                'type'        => 'number',
+                'default'     => 4,
+            ],
+
+            // ── Share-Buttons ──
+            'show_share_buttons' => [
+                'label'       => 'Share-Buttons im Artikel anzeigen',
+                'description' => 'Zeigt Link-Kopierer und Social-Share am Ende des Artikels.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_share_linkedin' => [
+                'label'       => 'LinkedIn Share-Button',
+                'description' => '',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_share_twitter' => [
+                'label'       => 'Twitter/X Share-Button',
+                'description' => '',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_share_email' => [
+                'label'       => 'E-Mail Share-Button',
+                'description' => '',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_share_copy' => [
+                'label'       => 'Link-Kopierer anzeigen',
+                'description' => 'Kopiert die Artikel-URL in die Zwischenablage.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+
+            // ── Tech-Card (für post-tech Template) ──
+            'show_tech_card' => [
+                'label'       => 'Tech-Infocard (post-tech Template)',
+                'description' => 'Zeigt die Tech-Sidebar mit OS, Version, Schwierigkeitsgrad.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'tech_card_header' => [
+                'label'       => 'Tech-Card Widget-Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Tech-Details',
+            ],
+
+            // ── Kommentare ──
+            'show_comments' => [
+                'label'       => 'Kommentarbereich anzeigen',
+                'description' => 'Zeigt das Kommentarformular und bestehende Kommentare.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'comments_header' => [
+                'label'       => 'Kommentare Abschnittstitel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Kommentare',
+            ],
+            'comment_form_header' => [
+                'label'       => 'Kommentarformular Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Kommentar hinterlassen',
+            ],
+
+            // ── Tags ──
+            'show_post_tags' => [
+                'label'       => 'Schlagwörter (Tags) anzeigen',
+                'description' => 'Zeigt die Tags-Badges am Ende des Artikelinhalts.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SOCIAL MEDIA
+    // ═══════════════════════════════════════════════════════════════════════
+    'social' => [
+        'title' => '🌐 Social Media',
+        'sections' => [
+            'social_linkedin' => [
+                'label'       => 'LinkedIn URL',
+                'description' => 'Vollständige LinkedIn-Profil-URL (leer = ausgeblendet).',
+                'type'        => 'text',
+                'default'     => 'https://www.linkedin.com/in/andreashepp/',
+            ],
+            'social_github' => [
+                'label'       => 'GitHub URL',
+                'description' => 'Vollständige GitHub-Profil oder Organisations-URL.',
+                'type'        => 'text',
+                'default'     => 'https://github.com/phinit/',
+            ],
+            'social_twitter' => [
+                'label'       => 'Twitter/X URL',
+                'description' => 'Vollständige Twitter/X-Profil-URL.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'social_mastodon' => [
+                'label'       => 'Mastodon URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'social_rss' => [
+                'label'       => 'RSS-Feed URL',
+                'description' => 'URL des RSS-Feeds dieses Blogs.',
+                'type'        => 'text',
+                'default'     => '/feed.xml',
+            ],
+            'social_youtube' => [
+                'label'       => 'YouTube URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'social_xing' => [
+                'label'       => 'Xing URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'social_label_linkedin' => [
+                'label'       => 'LinkedIn Button-Label',
+                'description' => 'Text-Label im Social-Widget der Sidebar.',
+                'type'        => 'text',
+                'default'     => 'LinkedIn',
+            ],
+            'social_label_github' => [
+                'label'       => 'GitHub Button-Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'GitHub',
+            ],
+            'social_label_rss' => [
+                'label'       => 'RSS Button-Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'RSS Feed',
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ERWEITERT
+    // ═══════════════════════════════════════════════════════════════════════
+    'advanced' => [
+        'title' => '🔧 Erweitert',
+        'sections' => [
+            'custom_css' => [
+                'label'       => 'Eigenes CSS',
+                'description' => 'Zusätzliches CSS, das ans Ende der Theme-Styles angehängt wird. Überschreibt alle Theme-Styles.',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'custom_head_code' => [
+                'label'       => 'Custom Head Code',
+                'description' => 'Wird im &lt;head&gt; ausgegeben (Tracking-Pixel, Fonts, Meta-Tags). Nur vertrauenswürdigen Code einfügen!',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'custom_footer_code' => [
+                'label'       => 'Custom Footer Code',
+                'description' => 'Wird vor &lt;/body&gt; ausgegeben (Analytics, Widget-Scripts).',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'google_analytics_id' => [
+                'label'       => 'Google Analytics Measurement-ID',
+                'description' => 'Format: G-XXXXXXXXXX. Leer = kein Tracking.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'cache_buster_css' => [
+                'label'       => 'CSS Cache-Buster Version',
+                'description' => 'Manueller Versionswert für das CSS (Standard: Datei-Timestamp).',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+        ],
+    ],
+];
+
+// ── 2. Customizer-Instanz ────────────────────────────────────────────────────
+$customizer = ThemeCustomizer::instance();
+if (class_exists('\CMS\ThemeManager')) {
+    $customizer->setTheme(\CMS\ThemeManager::instance()->getActiveThemeSlug());
+}
+
+// cms-feed Kanal-Optionen dynamisch laden
+$_cmsFeedChannelOptions = ['0' => '— Kein Feed —'];
+if (class_exists('CMS_Feed_Database')) {
+    try {
+        foreach (CMS_Feed_Database::instance()->get_channels(0) as $_ch) {
+            if (!empty($_ch['is_active'])) {
+                $_cmsFeedChannelOptions[(string)$_ch['id']] = htmlspecialchars(
+                    $_ch['name'] . (isset($_ch['category_name']) ? ' (' . $_ch['category_name'] . ')' : ''),
+                    ENT_QUOTES
+                );
+            }
+        }
+    } catch (\Throwable $_e) {}
+}
+$config['homepage']['sections']['feed1_channel_id']['options'] = $_cmsFeedChannelOptions;
+$config['homepage']['sections']['feed2_channel_id']['options'] = $_cmsFeedChannelOptions;
+
+$activeTab = $_GET['tab'] ?? 'colors';
+if (!isset($config[$activeTab])) {
+    $activeTab = 'colors';
+}
+
+$csrfToken = Security::instance()->generateToken('phinit_customizer');
+
+// ── 3. Speichern & Zurücksetzen ──────────────────────────────────────────────
+$success = null;
+$error   = null;
+
+// -- Reset --
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'reset_theme_tab') {
+    if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'phinit_customizer')) {
+        $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
+    } else {
+        $resetTab = $_POST['active_section'] ?? $activeTab;
+        if (!isset($config[$resetTab])) {
+            $resetTab = $activeTab;
+        }
+        $resetFailed = false;
+        foreach ($config[$resetTab]['sections'] as $fieldKey => $fieldConfig) {
+            $def = $fieldConfig['default'] ?? '';
+            if (is_bool($def)) {
+                $def = $def ? '1' : '0';
+            }
+            if (!$customizer->set($resetTab, $fieldKey, (string)$def)) {
+                $resetFailed = true;
+            }
+        }
+        if ($resetFailed) {
+            $error = 'Einige Einstellungen konnten nicht zurückgesetzt werden.';
+        } else {
+            $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$resetTab]['title']) . '&ldquo; auf Standardwerte zurückgesetzt.';
+        }
+    }
+}
+
+// -- Save --
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_theme_options') {
+    if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'phinit_customizer')) {
+        $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
+    } else {
+        $savedTab = $_POST['active_section'] ?? $activeTab;
+        if (!isset($config[$savedTab])) {
+            $savedTab = $activeTab;
+        }
+        $saveFailed = false;
+        foreach ($config[$savedTab]['sections'] as $fieldKey => $fieldConfig) {
+            $inputName = "{$savedTab}_{$fieldKey}";
+            if ($fieldConfig['type'] === 'checkbox') {
+                $val = isset($_POST[$inputName]) ? '1' : '0';
+            } else {
+                $val = $_POST[$inputName] ?? '';
+                // Textarea: nur für trusted-Felder (advanced) kein strip_tags
+                if ($fieldConfig['type'] === 'textarea' && !in_array($savedTab, ['advanced'], true)) {
+                    $val = strip_tags((string)$val);
+                }
+            }
+            if (!$customizer->set($savedTab, $fieldKey, (string)$val)) {
+                $saveFailed = true;
+            }
+        }
+        if ($saveFailed) {
+            $error = 'Einige Einstellungen konnten nicht gespeichert werden. Bitte Fehler-Log prüfen.';
+        } else {
+            $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$savedTab]['title'] ?? $savedTab) . '&ldquo; gespeichert.';
+        }
+    }
+}
+
+// ── Helper: Einzelfeld rendern ───────────────────────────────────────────────
+function phinit_render_field(string $tab, string $fieldKey, array $field, mixed $val): void
+{
+    $inputId   = "field_{$tab}_{$fieldKey}";
+    $inputName = "{$tab}_{$fieldKey}";
+    $val       = (string)$val;
+    ?>
+    <div class="form-group" style="margin-bottom:1.1rem;">
+        <label for="<?php echo $inputId; ?>" class="form-label">
+            <?php echo htmlspecialchars($field['label']); ?>
+        </label>
+
+        <?php if ($field['type'] === 'color'): ?>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+                <input type="color"
+                       id="<?php echo $inputId; ?>"
+                       name="<?php echo $inputName; ?>"
+                       value="<?php echo htmlspecialchars($val ?: '#000000'); ?>"
+                       style="height:38px;width:52px;padding:2px;border:1px solid #dde3ea;border-radius:4px;cursor:pointer;"
+                       oninput="document.getElementById('<?php echo $inputId; ?>_text').value=this.value;">
+                <input type="text"
+                       id="<?php echo $inputId; ?>_text"
+                       value="<?php echo htmlspecialchars($val); ?>"
+                       class="form-control"
+                       style="width:130px;font-family:monospace;"
+                       oninput="document.getElementById('<?php echo $inputId; ?>').value=this.value;"
+                       onchange="document.getElementById('<?php echo $inputName; ?>_hidden').value=this.value;"
+                       name="">
+                <input type="hidden" id="<?php echo $inputName; ?>_hidden" name="<?php echo $inputName; ?>" value="<?php echo htmlspecialchars($val); ?>">
+            </div>
+
+        <?php elseif ($field['type'] === 'checkbox'): ?>
+            <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
+                <input type="checkbox"
+                       id="<?php echo $inputId; ?>"
+                       name="<?php echo $inputName; ?>"
+                       value="1"
+                       <?php echo $val && $val !== '0' ? 'checked' : ''; ?>>
+                <label for="<?php echo $inputId; ?>" style="cursor:pointer;font-weight:400;">Aktivieren</label>
+            </div>
+
+        <?php elseif ($field['type'] === 'select'): ?>
+            <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>" class="form-control" style="margin-top:4px;">
+                <?php foreach ($field['options'] as $optVal => $optLabel): ?>
+                <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
+                    <?php echo $val === (string)$optVal ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($optLabel); ?>
+                </option>
+                <?php endforeach; ?>
+            </select>
+
+        <?php elseif ($field['type'] === 'textarea'): ?>
+            <textarea id="<?php echo $inputId; ?>"
+                      name="<?php echo $inputName; ?>"
+                      class="form-control"
+                      rows="3"
+                      style="margin-top:4px;"><?php echo htmlspecialchars($val); ?></textarea>
+
+        <?php elseif ($field['type'] === 'number'): ?>
+            <input type="number"
+                   id="<?php echo $inputId; ?>"
+                   name="<?php echo $inputName; ?>"
+                   value="<?php echo htmlspecialchars($val); ?>"
+                   class="form-control"
+                   step="<?php echo $field['step'] ?? 'any'; ?>"
+                   <?php echo isset($field['min']) ? 'min="' . $field['min'] . '"' : ''; ?>
+                   <?php echo isset($field['max']) ? 'max="' . $field['max'] . '"' : ''; ?>
+                   style="max-width:140px;margin-top:4px;">
+
+        <?php else: ?>
+            <input type="text"
+                   id="<?php echo $inputId; ?>"
+                   name="<?php echo $inputName; ?>"
+                   value="<?php echo htmlspecialchars($val); ?>"
+                   class="form-control"
+                   style="margin-top:4px;">
+        <?php endif; ?>
+
+        <?php if (!empty($field['description'])): ?>
+            <small class="form-text"><?php echo htmlspecialchars($field['description']); ?></small>
+        <?php endif; ?>
+    </div>
+    <?php
+}
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Phinit Customizer – <?php echo htmlspecialchars(defined('SITE_NAME') ? SITE_NAME : '365CMS'); ?></title>
+    <link rel="stylesheet" href="<?php echo defined('SITE_URL') ? SITE_URL : ''; ?>/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo defined('SITE_URL') ? SITE_URL : ''; ?>/assets/css/admin.css?v=20260401">
+    <?php if (function_exists('renderAdminSidebarStyles')) { renderAdminSidebarStyles(); } ?>
+    <style>
+        /* ── Customizer Layout ─────────────────── */
+        .customizer-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .customizer-nav {
+            background: var(--card-bg, #fff);
+            border: var(--card-border, 1px solid #e2e8f0);
+            border-radius: var(--card-radius, 10px);
+            padding: .5rem 0;
+            position: sticky;
+            top: 1rem;
+        }
+        .customizer-nav a {
+            display: flex;
+            align-items: center;
+            padding: .6rem 1rem;
+            font-size: .875rem;
+            color: #475569;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all .15s;
+        }
+        .customizer-nav a:hover {
+            background: #f8fafc;
+            color: var(--admin-primary, #3b82f6);
+        }
+        .customizer-nav a.active {
+            background: var(--admin-primary-light, #eff6ff);
+            color: var(--admin-primary, #3b82f6);
+            border-left-color: var(--admin-primary, #3b82f6);
+            font-weight: 600;
+        }
+        .customizer-nav a.nav-sub {
+            padding-left: 1.5rem;
+            font-size: .82rem;
+        }
+        .customizer-nav-group {
+            padding: .5rem 1rem .25rem;
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            margin-top: .25rem;
+        }
+        .customizer-content { min-width: 0; }
+
+        /* ── Farb-Grid ─────────────────────────── */
+        .color-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+        .color-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.1rem;
+        }
+        .color-card h4 {
+            font-size: .82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #475569;
+            margin-bottom: .8rem;
+            padding-bottom: .4rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* ── Section-Grid ──────────────────────── */
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .field-group-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.1rem;
+        }
+        .field-group-card h4 {
+            font-size: .82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #475569;
+            margin-bottom: .8rem;
+            padding-bottom: .4rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* ── Form-Actions ──────────────────────── */
+        .customizer-actions {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            background: var(--card-bg, #fff);
+            border: var(--card-border, 1px solid #e2e8f0);
+            border-radius: var(--card-radius, 10px);
+            padding: 1.1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .customizer-actions span {
+            font-size: .85rem;
+            color: #64748b;
+            margin-left: auto;
+        }
+
+        @media (max-width: 960px) {
+            .customizer-layout { grid-template-columns: 1fr; }
+            .customizer-nav {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                padding: .25rem;
+            }
+            .customizer-nav a { border-left: none; border-bottom: 2px solid transparent; padding: .5rem .75rem; font-size: .78rem; }
+            .customizer-nav a.active { border-bottom-color: var(--admin-primary, #3b82f6); border-left: none; }
+            .customizer-nav-group { display: none; }
+            .color-cards-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+        }
+    </style>
+</head>
+<body class="admin-body">
+
+    <?php if (function_exists('renderAdminSidebar')) { renderAdminSidebar('theme-customizer'); } ?>
+
+    <div class="admin-content">
+
+        <div class="admin-page-header">
+            <div>
+                <h2>🎨 Theme Customizer – CMS Phinit</h2>
+                <p>Passe Farben, Typografie, Header, Footer und alle Seitenbereiche individuell an.</p>
+            </div>
+            <div class="header-actions">
+                <a href="<?php echo defined('SITE_URL') ? htmlspecialchars(SITE_URL) : '/'; ?>/" target="_blank" class="btn btn-secondary">🌐 Seite ansehen</a>
+            </div>
+        </div>
+
+        <?php if ($success): ?>
+            <div class="alert alert-success">✅ <?php echo $success; ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-error">❌ <?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+
+        <form method="POST"
+              action="?tab=<?php echo htmlspecialchars($activeTab); ?>"
+              id="customizer-form">
+            <input type="hidden" name="action" value="save_theme_options">
+            <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+
+            <!-- Save-Bar -->
+            <div class="customizer-actions">
+                <button type="submit" name="action" value="save_theme_options" class="btn btn-primary">
+                    💾 Einstellungen speichern
+                </button>
+                <button type="submit" name="action" value="reset_theme_tab"
+                        class="btn btn-secondary"
+                        onclick="return confirm('Alle Einstellungen dieses Tabs auf Standardwerte zurücksetzen?');">
+                    ↩️ Tab zurücksetzen
+                </button>
+                <span id="unsaved-hint" style="display:none;color:#f59e0b;">⚠️ Ungespeicherte Änderungen</span>
+            </div>
+
+            <div class="customizer-layout">
+
+                <!-- ── Tab-Navigation ── -->
+                <nav class="customizer-nav">
+                    <?php
+                    $navGroups = [
+                        null      => ['colors', 'typography', 'layout'],
+                        'Design'  => ['header', 'footer'],
+                        'Inhalte' => ['homepage', 'posts'],
+                        'Extra'   => ['social', 'advanced'],
+                    ];
+                    foreach ($navGroups as $groupLabel => $tabs):
+                        if ($groupLabel !== null): ?>
+                            <div class="customizer-nav-group">📂 <?php echo htmlspecialchars($groupLabel); ?></div>
+                        <?php endif;
+                        foreach ($tabs as $tabKey):
+                            if (!isset($config[$tabKey])) { continue; }
+                    ?>
+                        <a href="?tab=<?php echo $tabKey; ?>"
+                           class="<?php echo $activeTab === $tabKey ? 'active' : ''; ?>">
+                            <?php echo htmlspecialchars($config[$tabKey]['title']); ?>
+                        </a>
+                    <?php endforeach;
+                    endforeach; ?>
+                </nav>
+
+                <!-- ── Tab-Inhalt ── -->
+                <div class="customizer-content">
+                    <?php if (isset($config[$activeTab])): ?>
+                    <?php $currentTab = $config[$activeTab]; ?>
+
+                    <?php if ($activeTab === 'colors'):
+                        // Farben in thematische Gruppen aufteilen
+                        $colorGroups = [
+                            '🎨 Markenfarben'        => ['primary_color', 'primary_dark', 'primary_mid', 'primary_light', 'accent_color', 'accent_hover'],
+                            '💻 Tech-Akzente'        => ['accent_blue', 'accent_blue2'],
+                            '🖼️ Header-Hintergründe' => ['bg_header1', 'bg_header2', 'bg_header3'],
+                            '📄 Seite & Content'     => ['bg_primary', 'bg_secondary', 'bg_dark'],
+                            '📝 Textfarben'          => ['text_primary', 'text_secondary', 'text_muted', 'text_nav'],
+                            '🔲 Rahmen'              => ['border_light'],
+                            '🔻 Footer'              => ['footer_bg', 'footer_bottom_bg', 'footer_border'],
+                            '✅ Status-Farben'       => ['success_color', 'error_color'],
+                            '📊 Progress Bar'        => ['progress_bar_start', 'progress_bar_end'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>🎨 Farben</h3>
+                        <div class="color-cards-grid">
+                            <?php foreach ($colorGroups as $groupTitle => $groupKeys): ?>
+                            <div class="color-card">
+                                <h4><?php echo $groupTitle; ?></h4>
+                                <?php foreach ($groupKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'header'):
+                        $headerGroups = [
+                            '🏷️ Logo & Marke'      => ['logo_text_part1', 'logo_text_part2', 'logo_text_suffix', 'logo_url', 'logo_max_height', 'logo_accent_color'],
+                            '🔝 Utility-Bar (Bar 1)' => ['util_bar_height', 'show_util_links', 'util_link1_text', 'util_link1_url', 'util_link2_text', 'util_link2_url', 'util_link3_text', 'util_link3_url'],
+                            '🧭 Hauptnavigation (Bar 2)' => ['main_nav_height', 'show_search_bar', 'search_placeholder'],
+                            '⚡ Quicklinks (Bar 3)' => ['show_quicklinks', 'sub_bar_height', 'quicklink1_text', 'quicklink1_url', 'quicklink2_text', 'quicklink2_url', 'quicklink3_text', 'quicklink3_url', 'quicklink4_text', 'quicklink4_url', 'quicklink5_text', 'quicklink5_url', 'quicklink6_text', 'quicklink6_url', 'quicklink7_text', 'quicklink7_url', 'quicklink8_text', 'quicklink8_url'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>🖥️ Header & Navigation</h3>
+                        <div class="field-grid">
+                            <?php foreach ($headerGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'homepage'):
+                        $homepageGroups = [
+                            '📌 Repo-Card'         => ['show_repo_card', 'repo_card_title', 'repo_card_description', 'repo_card_badge', 'repo_card_btn_text', 'repo_card_btn_url'],
+                            '📰 Artikel-Liste'     => ['show_article_list', 'article_list_label', 'article_list_count', 'article_thumb_width', 'article_thumb_height', 'show_article_excerpt', 'show_article_meta', 'show_article_badge'],
+                            '🗂️ Kategorie-Cards'   => ['show_info_grid', 'info_card1_title', 'info_card1_text', 'info_card1_link_text', 'info_card1_link_url', 'info_card1_style', 'info_card2_title', 'info_card2_text', 'info_card2_link_text', 'info_card2_link_url', 'info_card2_style'],
+                            '🧱 Kachel-Grid'       => ['show_tile_grid', 'tile_grid_label', 'tile_grid_count', 'tile_grid_columns'],
+                            '📡 RSS-Feeds'         => ['show_feed_section', 'feed1_title', 'feed1_url', 'feed1_count', 'feed2_title', 'feed2_url', 'feed2_count'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>🏠 Startseite</h3>
+                        <div class="field-grid">
+                            <?php foreach ($homepageGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'posts'):
+                        $postGroups = [
+                            '🖼️ Hero & Meta'        => ['post_hero_height', 'show_post_hero', 'show_post_meta', 'show_reading_time', 'reading_time_wpm'],
+                            '📖 Inhaltsverzeichnis'  => ['show_toc', 'toc_sticky', 'toc_min_headings', 'toc_header_text'],
+                            '📌 Sidebar-Widgets'     => ['show_sidebar_social', 'sidebar_social_header', 'show_sidebar_related', 'sidebar_related_header', 'related_count'],
+                            '🔗 Share-Buttons'       => ['show_share_buttons', 'show_share_linkedin', 'show_share_twitter', 'show_share_email', 'show_share_copy'],
+                            '💻 Tech-Card'           => ['show_tech_card', 'tech_card_header'],
+                            '💬 Kommentare & Tags'   => ['show_comments', 'comments_header', 'comment_form_header', 'show_post_tags'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>📝 Beiträge</h3>
+                        <div class="field-grid">
+                            <?php foreach ($postGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'footer'):
+                        $footerGroups = [
+                            '🏷️ Brand & Text'    => ['footer_brand_name', 'footer_tagline', 'footer_col2_title', 'footer_col3_title', 'footer_col4_title', 'copyright_text', 'show_footer_social'],
+                            '🔗 Network/Partner-Bar' => ['show_network_bar', 'network_bar_link1_label', 'network_bar_link1_url', 'network_bar_link2_label', 'network_bar_link2_url', 'network_bar_link3_label', 'network_bar_link3_url', 'network_bar_link4_label', 'network_bar_link4_url', 'network_bar_link5_label', 'network_bar_link5_url'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>🔻 Footer</h3>
+                        <div class="field-grid">
+                            <?php foreach ($footerGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php else:
+                        // Standard-Layout für typography, layout, social, advanced
+                    ?>
+                    <div class="admin-card">
+                        <h3><?php echo htmlspecialchars($currentTab['title']); ?></h3>
+                        <?php foreach ($currentTab['sections'] as $fk => $f):
+                            $val = $customizer->get($activeTab, $fk, $f['default']);
+
+                            // Für advanced: textarea bekommt mehr Zeilen
+                            if ($activeTab === 'advanced' && $f['type'] === 'textarea') {
+                                $f['rows'] = 8;
+                            }
+                            phinit_render_field($activeTab, $fk, $f, $val);
+                        endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php endif; ?>
+                </div><!-- /.customizer-content -->
+
+            </div><!-- /.customizer-layout -->
+        </form>
+
+    </div><!-- /.admin-content -->
+
+    <script src="<?php echo defined('SITE_URL') ? htmlspecialchars(SITE_URL) : ''; ?>/assets/js/admin.js"></script>
+    <script>
+    // Ungespeicherte Änderungen anzeigen
+    (function () {
+        const form    = document.getElementById('customizer-form');
+        const hint    = document.getElementById('unsaved-hint');
+        const inputs  = form ? form.querySelectorAll('input, select, textarea') : [];
+        let   changed = false;
+        inputs.forEach(el => {
+            el.addEventListener('change', () => { if (!changed) { changed = true; if (hint) hint.style.display = 'inline'; } });
+            el.addEventListener('input',  () => { if (!changed) { changed = true; if (hint) hint.style.display = 'inline'; } });
+        });
+        form && form.addEventListener('submit', () => { changed = false; if (hint) hint.style.display = 'none'; });
+
+        // Farbfelder: Text-Input ↔ color-Input synchronisieren
+        document.querySelectorAll('input[type="color"]').forEach(cp => {
+            const id     = cp.id;
+            const textEl = document.getElementById(id + '_text');
+            const hidden = document.getElementById(cp.name + '_hidden');
+            if (textEl) {
+                cp.addEventListener('input', () => {
+                    textEl.value = cp.value;
+                    if (hidden) hidden.value = cp.value;
+                });
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

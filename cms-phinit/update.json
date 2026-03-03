@@ -1,0 +1,31 @@
+{
+  "name": "CMS Phinit",
+  "slug": "cms-phinit",
+  "version": "1.0.0",
+  "requires_cms": "2.0.0",
+  "tested_up_to": "2.0.0",
+  "release_date": "2025-01-01",
+  "download_url": "",
+  "details_url": "https://phinit.de",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-01-01",
+      "changes": [
+        "Initiales Release des CMS Phinit Themes",
+        "Sticky 3-Tier-Header mit Dark-Mode-Toggle und Quicklinks-Leiste",
+        "Vollständiges Dark-Mode-System via CSS Custom Properties + localStorage",
+        "Responsive Layout (1024px / 768px / 480px Breakpoints)",
+        "Homepage: Featured-Artikel, Kategorie-Info-Cards, 3-spaltiges Post-Grid, Pagination",
+        "Single-Post: 2-Spalten-Layout mit automatisch generiertem TOC, Share-Buttons, Kommentare",
+        "Static Page: Breadcrumbs, Seiteninhalt mit Sidebar-Navigation",
+        "CSS-Scroll-Animationen via IntersectionObserver",
+        "Lesefortschrittsbalken (#scroll-progress)",
+        "Cookie-Consent-Banner (DSGVO-konform)",
+        "Schema.org Markup für Blog-Beiträge (Article)",
+        "Customizer-Integration mit 9 Einstellungs-Kategorien",
+        "Vanilla JavaScript (ES2020+, kein jQuery)"
+      ]
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 {
   "name": "365Network",
   "slug": "365network",
-  "version": "3.2.0",
+  "version": "3.4.1",
   "author": "PHINIT.DE / Andreas Hepp",
-  "description": "IT-Networking-Dashboard – Deep Navy & Gold, modulares Kachel-Layout für Experten, Firmen, Events & Speaker.",
-  "tags": ["professional", "editorial", "responsive", "cms", "network", "dark-mode"],
+  "description": "IT-Networking-Dashboard – Deep Navy & Gold, modulares Kachel-Layout für Experten, Firmen, Events, Speaker, Jobs, Feeds & Buchung.",
+  "tags": ["professional", "editorial", "responsive", "cms", "network", "dark-mode", "directory", "booking"],
   "supports": ["dark-mode", "custom-logo", "sticky-header", "custom-css", "network-animation"],
 
   "customization": {
@@ -882,6 +882,157 @@
           "min": 8,
           "max": 60,
           "description": "Partikelanzahl der Netzwerk-Animation"
+        }
+      }
+    },
+
+    "speakers": {
+      "label": "Speaker-Verzeichnis",
+      "description": "Einstellungen für das Speaker-Verzeichnis.",
+      "settings": {
+        "speakers_per_page": {
+          "label": "Speaker pro Seite",
+          "type": "number",
+          "default": 12,
+          "min": 4,
+          "max": 48,
+          "description": "Anzahl der Speaker-Karten pro Seite"
+        },
+        "speakers_default_sort": {
+          "label": "Standard-Sortierung",
+          "type": "select",
+          "options": { "latest": "Neueste zuerst", "name": "Name (A\u2013Z)", "events": "Meiste Events" },
+          "default": "latest",
+          "description": "Voreingestellte Sortierung im Verzeichnis"
+        },
+        "speakers_hero_title": {
+          "label": "Verzeichnis-Titel",
+          "type": "text",
+          "default": "Speaker & Referenten",
+          "description": "\u00dcberschrift der Speaker-Verzeichnis-Seite"
+        },
+        "speakers_hero_subtitle": {
+          "label": "Verzeichnis-Untertitel",
+          "type": "text",
+          "default": "Entdecke erfahrene Speaker und Referenten aus der IT-Branche.",
+          "description": "Beschreibungstext unter dem Titel (leer = ausgeblendet)"
+        }
+      }
+    },
+
+    "jobs": {
+      "label": "Stellenmarkt",
+      "description": "Einstellungen für den IT-Stellenmarkt.",
+      "settings": {
+        "jobs_per_page": {
+          "label": "Stellen pro Seite",
+          "type": "number",
+          "default": 15,
+          "min": 5,
+          "max": 50,
+          "description": "Anzahl der Stellenanzeigen pro Seite"
+        },
+        "jobs_default_sort": {
+          "label": "Standard-Sortierung",
+          "type": "select",
+          "options": { "latest": "Neueste zuerst", "salary": "Gehalt absteigend", "title": "Titel (A\u2013Z)" },
+          "default": "latest",
+          "description": "Voreingestellte Sortierung im Stellenmarkt"
+        },
+        "jobs_show_salary": {
+          "label": "Gehalt anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Gehaltsangaben auf Job-Cards sichtbar machen"
+        },
+        "jobs_hero_title": {
+          "label": "Stellenmarkt-Titel",
+          "type": "text",
+          "default": "IT-Stellenmarkt",
+          "description": "\u00dcberschrift der Stellenmarkt-Seite"
+        },
+        "jobs_hero_subtitle": {
+          "label": "Stellenmarkt-Untertitel",
+          "type": "text",
+          "default": "Finde deinen n\u00e4chsten Job in der IT-Branche.",
+          "description": "Beschreibungstext unter dem Titel"
+        }
+      }
+    },
+
+    "feeds": {
+      "label": "Feed-Aggregator",
+      "description": "Einstellungen für den Feed-Aggregator.",
+      "settings": {
+        "feeds_per_page": {
+          "label": "Beiträge pro Seite",
+          "type": "number",
+          "default": 18,
+          "min": 6,
+          "max": 60,
+          "description": "Anzahl der Feed-Beiträge pro Seite"
+        },
+        "feeds_default_sort": {
+          "label": "Standard-Sortierung",
+          "type": "select",
+          "options": { "latest": "Neueste zuerst", "title": "Titel (A\u2013Z)" },
+          "default": "latest",
+          "description": "Voreingestellte Sortierung im Aggregator"
+        },
+        "feeds_open_external": {
+          "label": "Links in neuem Tab \u00f6ffnen",
+          "type": "checkbox",
+          "default": true,
+          "description": "\u00d6ffnet Feed-Artikel in einem neuen Browser-Tab"
+        },
+        "feeds_hero_title": {
+          "label": "Aggregator-Titel",
+          "type": "text",
+          "default": "IT-News & Feeds",
+          "description": "\u00dcberschrift der Feed-Aggregator-Seite"
+        },
+        "feeds_hero_subtitle": {
+          "label": "Aggregator-Untertitel",
+          "type": "text",
+          "default": "Aktuelle News und Beiträge aus der IT-Welt.",
+          "description": "Beschreibungstext unter dem Titel"
+        }
+      }
+    },
+
+    "booking": {
+      "label": "Buchungsportal",
+      "description": "Einstellungen für das Buchungsportal.",
+      "settings": {
+        "booking_enabled": {
+          "label": "Buchungsportal aktivieren",
+          "type": "checkbox",
+          "default": true,
+          "description": "Schaltet das Buchungsportal-Frontend frei"
+        },
+        "booking_require_login": {
+          "label": "Anmeldung erforderlich",
+          "type": "checkbox",
+          "default": true,
+          "description": "Buchen ist nur für eingeloggte Mitglieder möglich"
+        },
+        "booking_show_history": {
+          "label": "Buchungsverlauf anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Zeigt dem Nutzer seine eigenen Buchungen in der Sidebar"
+        },
+        "booking_hero_title": {
+          "label": "Buchungsportal-Titel",
+          "type": "text",
+          "default": "Buchungsportal",
+          "description": "\u00dcberschrift der Buchungsportal-Seite"
+        },
+        "booking_hero_subtitle": {
+          "label": "Buchungsportal-Untertitel",
+          "type": "text",
+          "default": "Buche jetzt einen Termin mit unserem Team oder IT-Experten.",
+          "description": "Beschreibungstext unter dem Titel"
         }
       }
     },

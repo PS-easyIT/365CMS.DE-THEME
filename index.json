@@ -51,6 +51,11 @@
       "slug": "PTC",
       "name": "PTC GmbH – Personal & Bildung",
       "manifest": "THEMES/PTC/update.json"
+    },
+    {
+      "slug": "cms-phinit",
+      "name": "CMS Phinit",
+      "manifest": "THEMES/cms-phinit/update.json"
     }
   ]
 }
