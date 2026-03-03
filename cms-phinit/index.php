@@ -91,7 +91,7 @@ try {
     // Artikel-Liste (über den Info-Cards)
     $featuredRows  = $_showList
         ? ($db->get_results(
-            "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at, p.views,
+            "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.views,
                     c.name AS category_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
@@ -134,23 +134,26 @@ try {
     <?php if ($_showRepo && !empty($_repoTitle)): ?>
     <section class="content-section" data-anim>
         <div class="repo-card">
+            <div class="repo-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="28" height="28" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            </div>
             <div class="repo-card-body">
                 <h3><?php echo htmlspecialchars($_repoTitle, ENT_QUOTES); ?></h3>
                 <?php if (!empty($_repoDesc)): ?>
                 <p><?php echo htmlspecialchars($_repoDesc, ENT_QUOTES); ?></p>
                 <?php endif; ?>
+            </div>
+            <div class="repo-card-actions">
+                <?php if (!empty($_repoBadge)): ?>
+                <span class="repo-badge"><?php echo htmlspecialchars($_repoBadge, ENT_QUOTES); ?></span>
+                <?php endif; ?>
                 <?php if (!empty($_repoBtnText) && !empty($_repoBtnUrl)): ?>
                 <a href="<?php echo htmlspecialchars($_repoBtnUrl, ENT_QUOTES); ?>"
-                   class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
-                    <?php echo htmlspecialchars($_repoBtnText, ENT_QUOTES); ?>
+                   class="btn btn-accent btn-sm" target="_blank" rel="noopener noreferrer">
+                    <?php echo htmlspecialchars($_repoBtnText, ENT_QUOTES); ?> →
                 </a>
                 <?php endif; ?>
             </div>
-            <?php if (!empty($_repoBadge)): ?>
-            <div class="repo-card-badge">
-                <span><?php echo htmlspecialchars($_repoBadge, ENT_QUOTES); ?></span>
-            </div>
-            <?php endif; ?>
         </div>
     </section>
     <?php endif; ?>
@@ -169,18 +172,36 @@ try {
             <?php foreach ($featuredPosts as $post): ?>
             <article class="article-card">
 
-                <?php if (!empty($post['featured_image'])): ?>
                 <div class="article-thumb">
+                    <?php if (!empty($post['featured_image'])): ?>
                     <img src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
                          width="<?php echo $_listThumbW; ?>" height="<?php echo $_listThumbH; ?>" loading="lazy">
+                    <?php else: ?>
+                    <div class="article-thumb-placeholder" aria-hidden="true">
+                        <span>📄</span>
+                    </div>
+                    <?php endif; ?>
                     <?php if ($_showBadge && !empty($post['category_name'])): ?>
                     <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                     <?php endif; ?>
                 </div>
-                <?php endif; ?>
 
                 <div class="article-body">
+                    <h4>
+                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
+                        </a>
+                    </h4>
+                    <?php if ($_showExcerpt): ?>
+                    <p><?php
+                        $excerpt = $post['excerpt'] ?? '';
+                        if (empty(trim($excerpt)) && !empty($post['content'])) {
+                            $excerpt = mb_strimwidth(strip_tags($post['content']), 0, 180, '…');
+                        }
+                        echo htmlspecialchars(mb_strimwidth($excerpt, 0, 180, '…'), ENT_QUOTES);
+                    ?></p>
+                    <?php endif; ?>
                     <?php if ($_showMeta): ?>
                     <div class="article-meta">
                         <?php if ($_showMetaCat && !empty($post['category_name'])): ?>
@@ -189,18 +210,18 @@ try {
                         <?php if ($_showMetaDate): ?>
                         <span><?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
                         <?php endif; ?>
-                        <?php if ($_showMetaRT && !empty($post['read_time'])): ?>
-                        <span class="read"><?php echo (int)$post['read_time']; ?> Min. Lesezeit</span>
+                        <?php if ($_showMetaRT): ?>
+                        <?php
+                            $rt = !empty($post['read_time']) ? (int)$post['read_time'] : 0;
+                            if ($rt < 1 && !empty($post['content'])) {
+                                $rt = max(1, (int)round(str_word_count(strip_tags($post['content'])) / 200));
+                            }
+                            if ($rt > 0):
+                        ?>
+                        <span class="read"><?php echo $rt; ?> Min. Lesezeit</span>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </div>
-                    <?php endif; ?>
-                    <h4>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
-                            <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
-                        </a>
-                    </h4>
-                    <?php if ($_showExcerpt && !empty($post['excerpt'])): ?>
-                    <p><?php echo htmlspecialchars(mb_strimwidth($post['excerpt'] ?? '', 0, 160, '…'), ENT_QUOTES); ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -214,7 +235,7 @@ try {
     <?php if ($_showInfoGrid): ?>
     <section class="content-section" data-anim data-anim-delay="1">
         <div class="section-header">
-            <span class="section-label gold">📂 Themenbereiche</span>
+            <span class="section-label section-label--dark">Themenbereiche</span>
         </div>
         <div class="info-grid">
             <div class="info-card<?php echo $_c1Style === 'gold' ? ' info-card--gold' : ''; ?>">
@@ -223,7 +244,7 @@ try {
                 <p><?php echo htmlspecialchars($_c1Text, ENT_QUOTES); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($_c1LinkUrl) && !empty($_c1LinkText)): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl . $_c1LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm"><?php echo htmlspecialchars($_c1LinkText, ENT_QUOTES); ?></a>
+                <a href="<?php echo htmlspecialchars($siteUrl . $_c1LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm info-card-cta"><?php echo htmlspecialchars($_c1LinkText, ENT_QUOTES); ?></a>
                 <?php endif; ?>
             </div>
             <div class="info-card<?php echo $_c2Style === 'gold' ? ' info-card--gold' : ''; ?>">
@@ -232,7 +253,7 @@ try {
                 <p><?php echo htmlspecialchars($_c2Text, ENT_QUOTES); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($_c2LinkUrl) && !empty($_c2LinkText)): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl . $_c2LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm"><?php echo htmlspecialchars($_c2LinkText, ENT_QUOTES); ?></a>
+                <a href="<?php echo htmlspecialchars($siteUrl . $_c2LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm info-card-cta"><?php echo htmlspecialchars($_c2LinkText, ENT_QUOTES); ?></a>
                 <?php endif; ?>
             </div>
         </div>
@@ -354,24 +375,23 @@ try {
     ?>
     <?php if (!empty($_feedSections)): ?>
     <section class="content-section" data-anim data-anim-delay="3">
-        <div class="section-header">
-            <span class="section-label gold">📡 Externe Feeds</span>
-        </div>
-        <div class="feed-grid">
-            <?php foreach ($_feedSections as $_fs): ?>
-            <div class="feed-card">
-                <h4><?php echo htmlspecialchars($_fs['channel']['name'] ?? '', ENT_QUOTES); ?></h4>
-                <ul class="feed-list">
-                    <?php foreach ($_fs['items'] as $_fi): ?>
+        <div class="feed-dual-grid">
+            <?php foreach ($_feedSections as $_fsIdx => $_fs): ?>
+            <div class="feed-dual-col">
+                <div class="section-header">
+                    <span class="section-label section-label--dark"><?php echo htmlspecialchars($_fs['channel']['name'] ?? 'Feed', ENT_QUOTES); ?></span>
+                </div>
+                <ul class="feed-list feed-list--inline">
+                    <?php foreach (array_slice($_fs['items'], 0, 4) as $_fi): ?>
                     <li>
                         <a href="<?php echo htmlspecialchars($_fi['link'] ?? '#', ENT_QUOTES); ?>"
                            target="_blank" rel="noopener noreferrer">
                             <?php echo htmlspecialchars($_fi['title'] ?? '', ENT_QUOTES); ?>
                         </a>
-                        <div class="meta"><?php
+                        <span class="meta"><?php
                             $_ts = !empty($_fi['pub_date']) ? strtotime($_fi['pub_date']) : false;
                             echo htmlspecialchars($_ts ? date('j. M Y', $_ts) : '', ENT_QUOTES);
-                        ?></div>
+                        ?></span>
                     </li>
                     <?php endforeach; ?>
                     <?php if (empty($_fs['items'])): ?>

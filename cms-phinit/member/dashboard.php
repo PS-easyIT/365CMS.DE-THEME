@@ -67,6 +67,33 @@ $recentFavorites = $db->get_results(
 $hour     = (int)date('H');
 $greeting = $hour < 12 ? 'Guten Morgen' : ($hour < 18 ? 'Guten Tag' : 'Guten Abend');
 
+// Admin-Analysen laden (nur für Admins)
+$isAdmin    = $auth->isAdmin();
+$adminStats = [];
+if ($isAdmin) {
+    $adminStats['total_users'] = (int)$db->get_var(
+        "SELECT COUNT(*) FROM {$prefix}users"
+    ) ?: 0;
+    $adminStats['total_posts'] = (int)$db->get_var(
+        "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'"
+    ) ?: 0;
+    $adminStats['total_comments'] = (int)$db->get_var(
+        "SELECT COUNT(*) FROM {$prefix}comments"
+    ) ?: 0;
+    $adminStats['pending_comments'] = (int)$db->get_var(
+        "SELECT COUNT(*) FROM {$prefix}comments WHERE status = 'pending'"
+    ) ?: 0;
+    $adminStats['total_views'] = (int)$db->get_var(
+        "SELECT COALESCE(SUM(views), 0) FROM {$prefix}posts"
+    ) ?: 0;
+    $adminStats['posts_today'] = (int)$db->get_var(
+        "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published' AND DATE(created_at) = CURDATE()"
+    ) ?: 0;
+    $adminStats['users_today'] = (int)$db->get_var(
+        "SELECT COUNT(*) FROM {$prefix}users WHERE DATE(created_at) = CURDATE()"
+    ) ?: 0;
+}
+
 // Theme Header
 $themeDir = \CMS\ThemeManager::instance()->getThemePath();
 include $themeDir . 'header.php';
@@ -101,6 +128,47 @@ include $themeDir . 'header.php';
                 <div class="member-stat-label">Beiträge</div>
             </div>
         </div>
+
+        <?php if ($isAdmin): ?>
+        <!-- Admin-Analysen -->
+        <div class="member-card member-admin-analytics" data-anim data-anim-delay="1.5">
+            <div class="member-card-header">
+                <h3>📈 CMS-Analysen</h3>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/admin/" class="member-card-link">Admincenter →</a>
+            </div>
+            <div class="member-stats member-stats--admin">
+                <div class="member-stat-card member-stat-card--admin">
+                    <div class="member-stat-icon">👥</div>
+                    <div class="member-stat-value"><?php echo number_format($adminStats['total_users']); ?></div>
+                    <div class="member-stat-label">Benutzer gesamt</div>
+                    <?php if ($adminStats['users_today'] > 0): ?>
+                    <div class="member-stat-badge">+<?php echo $adminStats['users_today']; ?> heute</div>
+                    <?php endif; ?>
+                </div>
+                <div class="member-stat-card member-stat-card--admin">
+                    <div class="member-stat-icon">📄</div>
+                    <div class="member-stat-value"><?php echo number_format($adminStats['total_posts']); ?></div>
+                    <div class="member-stat-label">Veröffentlicht</div>
+                    <?php if ($adminStats['posts_today'] > 0): ?>
+                    <div class="member-stat-badge">+<?php echo $adminStats['posts_today']; ?> heute</div>
+                    <?php endif; ?>
+                </div>
+                <div class="member-stat-card member-stat-card--admin">
+                    <div class="member-stat-icon">💬</div>
+                    <div class="member-stat-value"><?php echo number_format($adminStats['total_comments']); ?></div>
+                    <div class="member-stat-label">Kommentare</div>
+                    <?php if ($adminStats['pending_comments'] > 0): ?>
+                    <div class="member-stat-badge member-stat-badge--warn"><?php echo $adminStats['pending_comments']; ?> ausstehend</div>
+                    <?php endif; ?>
+                </div>
+                <div class="member-stat-card member-stat-card--admin">
+                    <div class="member-stat-icon">👁️</div>
+                    <div class="member-stat-value"><?php echo number_format($adminStats['total_views']); ?></div>
+                    <div class="member-stat-label">Seitenaufrufe</div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- 2-Column Grid -->
         <div class="member-grid-2" data-anim data-anim-delay="2">

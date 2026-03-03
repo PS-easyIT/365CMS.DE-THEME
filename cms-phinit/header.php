@@ -1,7 +1,7 @@
 <?php
 /**
  * Header Template – CMS Phinit Theme
- * Sticky 2-Ebenen-Navigation: Logo/Util-Bar + Hauptnavigation + Quicklinks
+ * Sticky 2-Ebenen-Navigation: Member-Bar + Hauptnavigation + Quicklinks
  *
  * @package CMS_Phinit_Theme
  */
@@ -45,7 +45,7 @@ try {
     $_searchPH      = $customizer->get('header', 'search_placeholder', 'Suchen …');
     $_showDarkMode  = filter_var($customizer->get('layout', 'enable_dark_mode_toggle', true), FILTER_VALIDATE_BOOLEAN);
     $_showRss       = filter_var($customizer->get('header', 'show_rss_link', true), FILTER_VALIDATE_BOOLEAN);
-    $_showUtilLinks = filter_var($customizer->get('header', 'show_util_links', true), FILTER_VALIDATE_BOOLEAN);
+    $_showMemberBar = filter_var($customizer->get('header', 'show_member_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_showQuicklinks = filter_var($customizer->get('header', 'show_quicklinks', true), FILTER_VALIDATE_BOOLEAN);
 
     // Layout-Toggles für JS
@@ -53,16 +53,6 @@ try {
     $_enableProgressBar     = filter_var($customizer->get('layout', 'enable_progress_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_enableBackToTop       = filter_var($customizer->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
     $_enableScrollAnimations = filter_var($customizer->get('layout', 'enable_scroll_animations', true), FILTER_VALIDATE_BOOLEAN);
-
-    // Util Links (1–3)
-    $_utilLinks = [];
-    for ($i = 1; $i <= 3; $i++) {
-        $text = $customizer->get('header', 'util_link' . $i . '_text', '');
-        $url  = $customizer->get('header', 'util_link' . $i . '_url', '');
-        if (!empty($text) && !empty($url)) {
-            $_utilLinks[] = ['text' => $text, 'url' => $url];
-        }
-    }
 
     // Quicklinks (1–8)
     $_qlLinks = [];
@@ -74,16 +64,12 @@ try {
         }
     }
 
-    // Social (aus social-Kategorie)
-    $_socialLinkedIn = $customizer->get('social', 'social_linkedin', '');
-    $_socialGithub   = $customizer->get('social', 'social_github', '');
 } catch (\Throwable $e) {
     $_logoUrl = ''; $_logoPart1 = 'PHIN'; $_logoPart2 = 'IT'; $_logoSuffix = '.DE';
     $_showLogoText = false; $_logoMaxH = 28;
     $_showSearch = true; $_searchPH = 'Suchen …'; $_showDarkMode = true;
-    $_showRss = true; $_showUtilLinks = true; $_showQuicklinks = true;
-    $_utilLinks = []; $_qlLinks = [];
-    $_socialLinkedIn = ''; $_socialGithub = '';
+    $_showRss = true; $_showMemberBar = true; $_showQuicklinks = true;
+    $_qlLinks = [];
     $_enableStickyHeader = true; $_enableProgressBar = true;
     $_enableBackToTop = true; $_enableScrollAnimations = true;
 }
@@ -91,8 +77,7 @@ try {
 // Haupt-Navigation laden
 $mainMenuItems = [];
 try {
-    $menuManager = \CMS\MenuManager::instance();
-    $mainMenuItems = $menuManager->getMenuItems('primary') ?? [];
+    $mainMenuItems = \CMS\ThemeManager::instance()->getMenu('primary');
 } catch (\Throwable $e) {}
 ?>
 <!DOCTYPE html>
@@ -123,76 +108,77 @@ try {
 <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
 <header class="site-header" id="site-header">
 
-    <!-- Ebene 1: Logo + Util -->
-    <div class="hdr-bar">
-            <div class="hdr-inner hdr-util">
+    <!-- Ebene 1: Member-Bar (nur für eingeloggte User, wenn aktiviert) -->
+    <?php if ($_showMemberBar && $isLoggedIn && $currentUser): ?>
+    <div class="hdr-bar member-bar">
+        <div class="hdr-inner hdr-member">
 
-                <!-- Logo -->
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
-                    <?php if (!empty($_logoUrl)): ?>
-                        <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" loading="eager">
-                        <?php if ($_showLogoText): ?>
-                        <span class="logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <span class="logo-icon" aria-hidden="true"><?php echo htmlspecialchars(mb_substr($_logoPart1, 0, 1)); ?></span>
-                        <span><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
-                    <?php endif; ?>
+            <span class="member-bar__greeting">
+                👋 Hallo, <strong><?php
+                    $displayName = 'User';
+                    if (is_object($currentUser)) {
+                        $displayName = $currentUser->display_name ?? $currentUser->username ?? 'User';
+                    } elseif (is_array($currentUser)) {
+                        $displayName = $currentUser['display_name'] ?? $currentUser['username'] ?? 'User';
+                    }
+                    echo htmlspecialchars($displayName);
+                ?></strong>
+            </span>
+
+            <nav class="member-bar__nav" aria-label="Member-Navigation">
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member" class="member-bar__link">
+                    <span class="member-bar__icon">📊</span> Dashboard
                 </a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-bar__link">
+                    <span class="member-bar__icon">👤</span> Profil
+                </a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/messages" class="member-bar__link">
+                    <span class="member-bar__icon">✉️</span> Nachrichten
+                </a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/notifications" class="member-bar__link">
+                    <span class="member-bar__icon">🔔</span> Benachrichtigungen
+                </a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/favorites" class="member-bar__link">
+                    <span class="member-bar__icon">⭐</span> Favoriten
+                </a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-bar__link">
+                    <span class="member-bar__icon">🔒</span> Sicherheit
+                </a>
+            </nav>
 
-                <!-- Util rechts -->
-                <div class="hdr-util-right">
-
-                    <!-- Util / Social Links -->
-                    <?php if ($_showUtilLinks): ?>
-                        <?php if (!empty($_socialLinkedIn)): ?>
-                        <a href="<?php echo htmlspecialchars($_socialLinkedIn, ENT_QUOTES); ?>" class="util-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" title="LinkedIn">in</a>
-                        <?php endif; ?>
-                        <?php if (!empty($_socialGithub)): ?>
-                        <a href="<?php echo htmlspecialchars($_socialGithub, ENT_QUOTES); ?>" class="util-link" aria-label="GitHub" target="_blank" rel="noopener noreferrer" title="GitHub">gh</a>
-                        <?php endif; ?>
-                        <?php foreach ($_utilLinks as $_ul): ?>
-                        <a href="<?php echo htmlspecialchars($_ul['url'], ENT_QUOTES); ?>" class="util-link" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars($_ul['text']); ?></a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    <?php if ($_showRss): ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" class="util-link" aria-label="RSS-Feed" title="RSS-Feed">⊞</a>
-                    <?php endif; ?>
-
-                    <!-- Dark Mode Toggle -->
-                    <?php if ($_showDarkMode): ?>
-                    <button class="util-link util-dark-toggle" aria-label="Dark Mode umschalten" aria-pressed="false" title="Dark Mode">🌙</button>
-                    <?php endif; ?>
-
-                    <!-- Suche -->
-                    <?php if ($_showSearch): ?>
-                    <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/search">
-                        <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_searchPH, ENT_QUOTES); ?>" aria-label="Suchbegriff eingeben">
-                        <button type="submit" aria-label="Suche starten">🔍</button>
-                    </form>
-                    <?php endif; ?>
-
-                    <!-- Login/Account -->
-                    <?php if ($isLoggedIn && $currentUser): ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/dashboard" class="util-link" title="Mein Konto">👤</a>
-                    <?php else: ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline" style="margin-left:8px;border-color:rgba(255,255,255,.4);color:#fff;" aria-label="Einloggen">Login</a>
-                    <?php endif; ?>
-
-                    <!-- Burger (Mobile) -->
-                    <button class="burger-btn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
+            <div class="member-bar__actions">
+                <?php if ($_showRss): ?>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" class="member-bar__link" aria-label="RSS-Feed" title="RSS-Feed">
+                    <span class="member-bar__icon">⊞</span>
+                </a>
+                <?php endif; ?>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-bar__link member-bar__logout" title="Abmelden">
+                    <span class="member-bar__icon">🚪</span> Logout
+                </a>
             </div>
-        </div>
 
-        <!-- Ebene 2: Hauptnavigation -->
-        <div class="hdr-bar hdr-bar-main">
-            <div class="hdr-inner">
-                <nav class="main-nav" aria-label="Hauptnavigation">
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Ebene 2: Logo + Hauptnavigation + Tools -->
+    <div class="hdr-bar hdr-bar-main">
+        <div class="hdr-inner">
+
+            <!-- Logo (jetzt in Bar 2, immer sichtbar) -->
+            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
+                <?php if (!empty($_logoUrl)): ?>
+                    <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" loading="eager">
+                    <?php if ($_showLogoText): ?>
+                    <span class="logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <span class="logo-icon" aria-hidden="true"><?php echo htmlspecialchars(mb_substr($_logoPart1, 0, 1)); ?></span>
+                    <span class="logo-text"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></span>
+                <?php endif; ?>
+            </a>
+
+            <nav class="main-nav" aria-label="Hauptnavigation">
                     <?php if (!empty($mainMenuItems)): ?>
                         <?php foreach ($mainMenuItems as $item): ?>
                             <?php if (!empty($item['children'])): ?>
@@ -229,6 +215,33 @@ try {
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">News</a>
                     <?php endif; ?>
                 </nav>
+
+            <!-- Header-Tools (rechts, in Bar 2) -->
+            <div class="hdr-tools">
+                <?php if ($_showDarkMode): ?>
+                <button class="util-link util-dark-toggle" aria-label="Dark Mode umschalten" aria-pressed="false" title="Dark Mode">🌙</button>
+                <?php endif; ?>
+
+                <?php if ($_showSearch): ?>
+                <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/search">
+                    <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_searchPH, ENT_QUOTES); ?>" aria-label="Suchbegriff eingeben">
+                    <button type="submit" aria-label="Suche starten">🔍</button>
+                </form>
+                <?php endif; ?>
+
+                <?php if ($isLoggedIn && $currentUser): ?>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/dashboard" class="util-link" title="Mein Konto">👤</a>
+                <?php else: ?>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline" style="border-color:rgba(255,255,255,.4);color:#fff;" aria-label="Einloggen">Login</a>
+                <?php endif; ?>
+
+                <button class="burger-btn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
             </div>
         </div>
 

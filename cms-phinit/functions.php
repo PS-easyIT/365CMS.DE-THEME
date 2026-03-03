@@ -189,6 +189,8 @@ final class CMS_Phinit_Theme
             'accent_hover'       => '--accent-hover',
             'accent_blue'        => '--accent-blue',
             'accent_blue2'       => '--accent-blue2',
+            'accent_teal'        => '--accent-teal',
+            'accent_teal_light'  => '--accent-teal-light',
             'bg_header1'         => '--bg-header1',
             'bg_header2'         => '--bg-header2',
             'bg_header3'         => '--bg-header3',
@@ -199,7 +201,12 @@ final class CMS_Phinit_Theme
             'text_secondary'     => '--text-secondary',
             'text_muted'         => '--text-muted',
             'text_nav'           => '--text-nav',
-            'border_light'       => '--border-light',
+            'text_nav_member'    => '--text-nav-member',
+            'text_nav_main'      => '--text-nav-main',
+            'text_nav_quicklinks'=> '--text-nav-quicklinks',
+            'text_nav_dropdown'  => '--text-nav-dropdown',
+            'logo_suffix_color'  => '--logo-suffix-color',
+            'border_light'       => '--border-color',
             'footer_bg'          => '--footer-bg',
             'footer_bottom_bg'   => '--footer-bottom-bg',
             'footer_border'      => '--footer-border',
@@ -271,10 +278,10 @@ final class CMS_Phinit_Theme
 
         // ── Layout ──
         $layoutMap = [
-            'container_width'  => ['--container-width', 'px'],
+            'container_width'  => ['--container-max', 'px'],
             'sidebar_width'    => ['--sidebar-width', 'px'],
             'border_radius'    => ['--radius-sm', 'px'],
-            'border_radius_md' => ['--radius-md', 'px'],
+            'border_radius_md' => ['--radius', 'px'],
             'spacing_header_content' => ['--spacing-header-content', 'px'],
             'spacing_content_footer' => ['--spacing-content-footer', 'px'],
             'content_gap'            => ['--content-gap', 'px'],
@@ -291,12 +298,18 @@ final class CMS_Phinit_Theme
         if (!empty($logoAccent)) { $css .= "    --logo-accent: {$logoAccent};\n"; }
         $logoHeight = $c->get('header', 'logo_max_height', '');
         if (!empty($logoHeight)) { $css .= "    --logo-max-height: {$logoHeight}px;\n"; }
-        $utilBarH = $c->get('header', 'util_bar_height', '');
-        if (!empty($utilBarH)) { $css .= "    --util-bar-height: {$utilBarH}px;\n"; }
+        $memberBarH = $c->get('header', 'member_bar_height', '');
+        if (!empty($memberBarH)) { $css .= "    --member-bar-h: {$memberBarH}px;\n"; }
         $mainNavH = $c->get('header', 'main_nav_height', '');
-        if (!empty($mainNavH)) { $css .= "    --main-nav-height: {$mainNavH}px;\n"; }
+        if (!empty($mainNavH)) {
+            $css .= "    --main-nav-height: {$mainNavH}px;\n";
+            $css .= "    --header-h: {$mainNavH}px;\n";
+        }
         $subBarH = $c->get('header', 'sub_bar_height', '');
-        if (!empty($subBarH)) { $css .= "    --sub-bar-height: {$subBarH}px;\n"; }
+        if (!empty($subBarH)) {
+            $css .= "    --sub-bar-height: {$subBarH}px;\n";
+            $css .= "    --quicklinks-h: {$subBarH}px;\n";
+        }
 
         // ── Posts ──
         $heroH = $c->get('posts', 'post_hero_height', '');
@@ -306,7 +319,7 @@ final class CMS_Phinit_Theme
 
         // ── Element-spezifische Regeln ──
         $css .= "\nbody {\n";
-        $css .= "    font-family: var(--font-ui);\n";
+        $css .= "    font-family: var(--font-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);\n";
         $css .= "    font-size: var(--fs-base, 14.5px);\n";
         $css .= "    line-height: var(--lh-base, 1.55);\n";
         $css .= "    background: var(--bg-secondary);\n";
@@ -328,21 +341,39 @@ final class CMS_Phinit_Theme
         $css .= "    line-height: var(--lh-post, 1.8);\n";
         $css .= "}\n";
 
-        $css .= ".container { max-width: var(--container-width, 1060px); }\n";
+        $css .= ".container { max-width: var(--container-max, 1060px); }\n";
 
-        $css .= ".hdr-bar:first-child { background: var(--bg-header1); min-height: var(--util-bar-height, 36px); }\n";
+        $css .= ".member-bar { background: var(--bg-header1); min-height: var(--member-bar-h, 36px); }\n";
         $css .= ".hdr-bar-main { background: var(--bg-header2); min-height: var(--main-nav-height, 48px); }\n";
-        $css .= ".quicklinks-bar .hdr-bar { background: var(--bg-header3); min-height: var(--sub-bar-height, 30px); }\n";
+        $css .= ".quicklinks-bar { background: var(--bg-header3); min-height: var(--sub-bar-height, 30px); }\n";
+
+        $css .= ".main-nav a { color: var(--text-nav-main, var(--text-nav, rgba(255,255,255,.82))); }\n";
+        $css .= ".member-bar__link { color: var(--text-nav-member, rgba(255,255,255,.72)); }\n";
+        $css .= ".member-bar__greeting { color: var(--text-nav-member, rgba(255,255,255,.7)); }\n";
+        $css .= ".sub-nav a { color: var(--text-nav-quicklinks, var(--text-secondary)); }\n";
+        $css .= ".main-nav .dropdown a { color: var(--text-nav-dropdown, rgba(255,255,255,.82)); }\n";
 
         $css .= ".site-footer { background: var(--footer-bg); border-top: 3px solid var(--footer-border); }\n";
         $css .= ".footer-bottom { background: var(--footer-bottom-bg); }\n";
 
-        $css .= ".site-logo .logo-accent, .site-logo span:last-child { color: var(--logo-accent, var(--accent-blue)); }\n";
+        $css .= ".site-logo .logo-accent { color: var(--logo-accent, var(--accent-teal-light)); }\n";
+        $css .= ".site-logo .logo-icon { background: var(--logo-accent, var(--accent-teal)); }\n";
+        $css .= ".site-logo .logo-suffix { color: var(--logo-suffix-color, var(--accent-color)); }\n";
         $css .= ".site-logo img { max-height: var(--logo-max-height, 28px); }\n";
 
         $css .= "#scroll-progress { background: linear-gradient(90deg, var(--progress-bar-start, #2d7dd2), var(--progress-bar-end, #e8a838)); }\n";
 
         $css .= ".post-hero-img { max-height: var(--post-hero-height, 340px); }\n";
+
+        // Artikel-Thumbnail Dimensionen als CSS-Variablen
+        $thumbW = $c->get('homepage', 'article_thumb_width', '');
+        $thumbH = $c->get('homepage', 'article_thumb_height', '');
+        if (!empty($thumbW) || !empty($thumbH)) {
+            $css .= ":root {\n";
+            if (!empty($thumbW)) { $css .= "    --article-thumb-w: {$thumbW}px;\n"; }
+            if (!empty($thumbH)) { $css .= "    --article-thumb-h: {$thumbH}px;\n"; }
+            $css .= "}\n";
+        }
 
         // Custom CSS aus Advanced-Tab
         $customAdvCss = $c->get('advanced', 'custom_css', '');
@@ -371,8 +402,11 @@ final class CMS_Phinit_Theme
 
     public function registerMenuLocations(array $locations): array
     {
-        $locations['primary'] = 'Hauptnavigation';
-        $locations['footer']  = 'Footer-Navigation';
+        $locations[] = ['slug' => 'primary',       'label' => 'Hauptnavigation'];
+        $locations[] = ['slug' => 'quicklinks',    'label' => 'Quicklinks (Sub-Navigation)'];
+        $locations[] = ['slug' => 'footer-topics', 'label' => 'Footer – Themen'];
+        $locations[] = ['slug' => 'footer-pages',  'label' => 'Footer – Seiten'];
+        $locations[] = ['slug' => 'footer',        'label' => 'Footer – Rechtliches'];
         return $locations;
     }
 
@@ -380,25 +414,64 @@ final class CMS_Phinit_Theme
     public function seedDefaultMenus(): void
     {
         try {
-            $mm = \CMS\MenuManager::instance();
-            if (!empty($mm->getMenuItems('primary'))) {
-                return; // Bereits vorhanden
+            $tm = \CMS\ThemeManager::instance();
+
+            // Hauptnavigation
+            if (empty($tm->getMenu('primary'))) {
+                $tm->saveMenu('primary', [
+                    ['label' => 'Startseite',    'url' => '/'],
+                    ['label' => 'Linux / BASH',  'url' => '/linux'],
+                    ['label' => 'PowerShell',    'url' => '/powershell', 'children' => [
+                        ['label' => 'Grundlagen',   'url' => '/powershell/grundlagen'],
+                        ['label' => 'Glossar',      'url' => '/powershell/glossar'],
+                    ]],
+                    ['label' => 'Microsoft 365', 'url' => '/microsoft-365', 'children' => [
+                        ['label' => 'Microsoft 365 Admin', 'url' => '/microsoft-365/admin'],
+                        ['label' => 'Exchange Online',     'url' => '/microsoft-365/exchange'],
+                        ['label' => 'Teams & SharePoint',  'url' => '/microsoft-365/teams'],
+                    ]],
+                    ['label' => 'Datenschutz',   'url' => '/datenschutz'],
+                    ['label' => 'News',          'url' => '/news'],
+                ]);
             }
-            $mm->seedMenu('primary', [
-                ['label' => 'Startseite',    'url' => '/'],
-                ['label' => 'Linux / BASH',  'url' => '/linux'],
-                ['label' => 'PowerShell',    'url' => '/powershell', 'children' => [
-                    ['label' => 'Grundlagen',   'url' => '/powershell/grundlagen'],
-                    ['label' => 'Glossar',      'url' => '/powershell/glossar'],
-                ]],
-                ['label' => 'Microsoft 365', 'url' => '/microsoft-365', 'children' => [
-                    ['label' => 'Microsoft 365 Admin', 'url' => '/microsoft-365/admin'],
-                    ['label' => 'Exchange Online',     'url' => '/microsoft-365/exchange'],
-                    ['label' => 'Teams & SharePoint',  'url' => '/microsoft-365/teams'],
-                ]],
-                ['label' => 'Datenschutz',   'url' => '/datenschutz'],
-                ['label' => 'News',          'url' => '/news'],
-            ]);
+
+            // Quicklinks (Sub-Navigation)
+            if (empty($tm->getMenu('quicklinks'))) {
+                $tm->saveMenu('quicklinks', [
+                    ['label' => 'Entra ID',    'url' => '/kategorie/entra-id'],
+                    ['label' => 'Intune',      'url' => '/kategorie/intune'],
+                    ['label' => 'Compliance',  'url' => '/kategorie/compliance'],
+                    ['label' => 'Graph API',   'url' => '/kategorie/graph-api'],
+                    ['label' => 'PowerShell',  'url' => '/kategorie/powershell'],
+                    ['label' => 'Security',    'url' => '/kategorie/security'],
+                    ['label' => 'Exchange',    'url' => '/kategorie/exchange'],
+                ]);
+            }
+
+            // Footer – Themen
+            if (empty($tm->getMenu('footer-topics'))) {
+                $tm->saveMenu('footer-topics', [
+                    ['label' => 'Linux & BASH',          'url' => '/linux'],
+                    ['label' => 'PowerShell',            'url' => '/powershell'],
+                    ['label' => 'Microsoft 365',         'url' => '/microsoft-365'],
+                    ['label' => 'Intune & MDM',          'url' => '/intune'],
+                    ['label' => 'Datenschutz & DSGVO',   'url' => '/datenschutz'],
+                    ['label' => 'IT-News',               'url' => '/news'],
+                ]);
+            }
+
+            // Footer – Seiten
+            if (empty($tm->getMenu('footer-pages'))) {
+                $tm->saveMenu('footer-pages', [
+                    ['label' => 'Über mich',             'url' => '/ueber-uns'],
+                    ['label' => 'Kontakt',               'url' => '/kontakt'],
+                    ['label' => 'RSS-Feed',              'url' => '/feed'],
+                    ['label' => 'Impressum',             'url' => '/impressum'],
+                    ['label' => 'Datenschutzerklärung',  'url' => '/datenschutzerklaerung'],
+                    ['label' => 'Disclaimer',            'url' => '/disclaimer'],
+                ]);
+            }
+
         } catch (\Throwable $e) {}
     }
 
@@ -407,9 +480,20 @@ final class CMS_Phinit_Theme
     public function bodyClass(string $classes): string
     {
         $add = [];
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        if ($uri === '/' || $uri === '') $add[] = 'home';
-        else $add[] = 'singular';
+        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        if ($uri === '/' || $uri === '') {
+            $add[] = 'home';
+        } else {
+            $add[] = 'singular';
+        }
+        // Blog-Einzelbeitrag erkennen
+        if (preg_match('#^/blog/.+#', $uri)) {
+            $add[] = 'is-post';
+        }
+        // Member-Bereich
+        if (str_starts_with($uri, '/member')) {
+            $add[] = 'is-member';
+        }
         return trim($classes . ' ' . implode(' ', $add));
     }
 }

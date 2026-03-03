@@ -16,8 +16,13 @@ if (!defined('ABSPATH')) {
 $activePage = $activePage ?? 'dashboard';
 $siteUrl    = SITE_URL;
 
+$isAdmin = false;
+try {
+    $isAdmin = \CMS\Auth::instance()->isAdmin();
+} catch (\Throwable $e) {}
+
 $memberNav = [
-    ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member'],
+    ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member/dashboard'],
     ['slug' => 'profile',    'icon' => '👤', 'label' => 'Profil',        'url' => '/member/profile'],
     ['slug' => 'favorites',  'icon' => '⭐', 'label' => 'Favoriten',     'url' => '/member/favorites'],
     ['slug' => 'comments',   'icon' => '💬', 'label' => 'Kommentare',    'url' => '/member/comments'],
@@ -36,6 +41,13 @@ $memberNav = [
             <span><?php echo htmlspecialchars($currentUser->email ?? '', ENT_QUOTES); ?></span>
         </div>
     </div>
+    <?php if ($isAdmin): ?>
+    <div class="member-admin-cta">
+        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/admin/" class="btn btn-sm btn-accent member-admin-btn">
+            ⚙️ Zum Admincenter
+        </a>
+    </div>
+    <?php endif; ?>
     <nav class="member-nav">
         <?php foreach ($memberNav as $item): ?>
         <a href="<?php echo htmlspecialchars($siteUrl . $item['url'], ENT_QUOTES); ?>"

@@ -95,11 +95,23 @@ $config = [
                 'type'        => 'color',
                 'default'     => '#2d7dd2',
             ],
+            'accent_teal' => [
+                'label'       => 'Akzentfarbe Teal',
+                'description' => 'Teal-Ton für Navigations-Hover, Links, Badges, Karten-Akzente.',
+                'type'        => 'color',
+                'default'     => '#0d9488',
+            ],
+            'accent_teal_light' => [
+                'label'       => 'Akzentfarbe Teal Hell',
+                'description' => 'Helleres Teal für Logo-Akzent, Hervorhebungen, aktive Elemente.',
+                'type'        => 'color',
+                'default'     => '#14b8a6',
+            ],
 
             // ── Header-Hintergründe ──
             'bg_header1' => [
                 'label'       => 'Header Bar 1 Hintergrund',
-                'description' => 'Utility-Bar (Logo + Util-Links) Hintergrundfarbe.',
+                'description' => 'Member-Bar Hintergrundfarbe (oberste Header-Leiste).',
                 'type'        => 'color',
                 'default'     => '#111827',
             ],
@@ -470,54 +482,18 @@ $config = [
                 'default'     => '#4a9eff',
             ],
 
-            // ── Bar 1 (Utility) ──
-            'util_bar_height' => [
-                'label'       => 'Utility-Bar Höhe (px)',
-                'description' => 'Höhe der obersten Header-Bar (Logo + Utils).',
-                'type'        => 'number',
-                'default'     => 36,
-            ],
-            'show_util_links' => [
-                'label'       => 'Util-Links anzeigen',
-                'description' => 'Zeigt Zusatzlinks (z. B. „Über mich", „Kontakt") rechts in der Utility-Bar.',
+            // ── Bar 1 (Member-Bar) ──
+            'show_member_bar' => [
+                'label'       => 'Member-Bar anzeigen',
+                'description' => 'Zeigt eine persönliche Member-Leiste (Dashboard, Profil, Nachrichten …) für eingeloggte Benutzer.',
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
-            'util_link1_text' => [
-                'label'       => 'Util-Link 1 – Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Über mich',
-            ],
-            'util_link1_url' => [
-                'label'       => 'Util-Link 1 – URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/ueber-mich',
-            ],
-            'util_link2_text' => [
-                'label'       => 'Util-Link 2 – Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Kontakt',
-            ],
-            'util_link2_url' => [
-                'label'       => 'Util-Link 2 – URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kontakt',
-            ],
-            'util_link3_text' => [
-                'label'       => 'Util-Link 3 – Text',
-                'description' => 'Leer = nicht angezeigt.',
-                'type'        => 'text',
-                'default'     => '',
-            ],
-            'util_link3_url' => [
-                'label'       => 'Util-Link 3 – URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '',
+            'member_bar_height' => [
+                'label'       => 'Member-Bar Höhe (px)',
+                'description' => 'Höhe der obersten Header-Bar für eingeloggte Benutzer.',
+                'type'        => 'number',
+                'default'     => 36,
             ],
 
             // ── Bar 2 (Haupt-Navigation) ──
@@ -538,6 +514,12 @@ $config = [
                 'description' => '',
                 'type'        => 'text',
                 'default'     => 'Artikel suchen…',
+            ],
+            'show_rss_link' => [
+                'label'       => 'RSS-Link im Header anzeigen',
+                'description' => 'Zeigt den RSS-Feed-Link im Header.',
+                'type'        => 'checkbox',
+                'default'     => true,
             ],
 
             // ── Bar 3 (Quicklinks) ──
@@ -1723,7 +1705,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                         // Farben in thematische Gruppen aufteilen
                         $colorGroups = [
                             '🎨 Markenfarben'        => ['primary_color', 'primary_dark', 'primary_mid', 'primary_light', 'accent_color', 'accent_hover'],
-                            '💻 Tech-Akzente'        => ['accent_blue', 'accent_blue2'],
+                            '💻 Tech-Akzente'        => ['accent_blue', 'accent_blue2', 'accent_teal', 'accent_teal_light'],
                             '🖼️ Header-Hintergründe' => ['bg_header1', 'bg_header2', 'bg_header3'],
                             '📄 Seite & Content'     => ['bg_primary', 'bg_secondary', 'bg_dark'],
                             '📝 Textfarben'          => ['text_primary', 'text_secondary', 'text_muted', 'text_nav'],
@@ -1753,8 +1735,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     <?php elseif ($activeTab === 'header'):
                         $headerGroups = [
                             '🏷️ Logo & Marke'      => ['logo_text_part1', 'logo_text_part2', 'logo_text_suffix', 'logo_url', 'show_logo_text_with_image', 'logo_max_height', 'logo_accent_color'],
-                            '🔝 Utility-Bar (Bar 1)' => ['util_bar_height', 'show_util_links', 'util_link1_text', 'util_link1_url', 'util_link2_text', 'util_link2_url', 'util_link3_text', 'util_link3_url'],
-                            '🧭 Hauptnavigation (Bar 2)' => ['main_nav_height', 'show_search_bar', 'search_placeholder'],
+                            '� Member-Bar (Bar 1)' => ['show_member_bar', 'member_bar_height'],
+                            '🧭 Hauptnavigation (Bar 2)' => ['main_nav_height', 'show_search_bar', 'search_placeholder', 'show_rss_link'],
                             '⚡ Quicklinks (Bar 3)' => ['show_quicklinks', 'sub_bar_height', 'quicklink1_text', 'quicklink1_url', 'quicklink2_text', 'quicklink2_url', 'quicklink3_text', 'quicklink3_url', 'quicklink4_text', 'quicklink4_url', 'quicklink5_text', 'quicklink5_url', 'quicklink6_text', 'quicklink6_url', 'quicklink7_text', 'quicklink7_url', 'quicklink8_text', 'quicklink8_url'],
                         ];
                     ?>
