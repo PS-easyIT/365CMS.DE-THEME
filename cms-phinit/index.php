@@ -83,22 +83,43 @@ try {
     $_showTileExc = true;  $_showTileCat = true; $_showTileDate = true; $_tileLinkUrl = '/archiv';
 }
 
-// ── Posts laden ─────────────────────────────────────────────────────────────
+// ── Posts laden (direkt via Database, kein PostService nötig) ──────────────────
 try {
-    $postService = \CMS\Services\PostService::instance();
+    $db     = \CMS\Database::instance();
+    $prefix = $db->getPrefix();
 
     // Artikel-Liste (über den Info-Cards)
-    $featuredPosts = $_showList
-        ? $postService->getPosts(['limit' => $_listCount, 'status' => 'published', 'orderby' => 'date', 'order' => 'DESC'])
+    $featuredRows  = $_showList
+        ? ($db->get_results(
+            "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at, p.views,
+                    c.name AS category_name
+             FROM {$prefix}posts p
+             LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+             WHERE p.status = 'published'
+             ORDER BY p.published_at DESC
+             LIMIT " . (int)$_listCount
+          ) ?: [])
         : [];
+    $featuredPosts = array_map(fn($r) => (array)$r, $featuredRows);
 
     // Kachel-Grid mit Paginierung
     $currentPage = max(1, (int)($_GET['page'] ?? 1));
-    $totalPosts  = $postService->countPosts(['status' => 'published']);
-    $totalPages  = (int)ceil($totalPosts / $_tileCount);
-    $gridPosts   = $_showTileGrid
-        ? $postService->getPosts(['limit' => $_tileCount, 'offset' => ($currentPage - 1) * $_tileCount, 'status' => 'published'])
+    $totalPosts  = (int)($db->get_var("SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'") ?: 0);
+    $totalPages  = max(1, (int)ceil($totalPosts / $_tileCount));
+
+    $gridRows  = $_showTileGrid
+        ? ($db->get_results(
+            "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at,
+                    c.name AS category_name
+             FROM {$prefix}posts p
+             LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+             WHERE p.status = 'published'
+             ORDER BY p.published_at DESC
+             LIMIT " . (int)$_tileCount . " OFFSET " . (int)(($currentPage - 1) * $_tileCount)
+          ) ?: [])
         : [];
+    $gridPosts = array_map(fn($r) => (array)$r, $gridRows);
+
 } catch (\Throwable $e) {
     $featuredPosts = [];
     $gridPosts     = [];
@@ -148,13 +169,13 @@ try {
             <?php foreach ($featuredPosts as $post): ?>
             <article class="article-card">
 
-                <?php if (!empty($post['thumbnail'])): ?>
+                <?php if (!empty($post['featured_image'])): ?>
                 <div class="article-thumb">
-                    <img src="<?php echo htmlspecialchars($post['thumbnail'], ENT_QUOTES); ?>"
+                    <img src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
                          width="<?php echo $_listThumbW; ?>" height="<?php echo $_listThumbH; ?>" loading="lazy">
-                    <?php if ($_showBadge && !empty($post['category'])): ?>
-                    <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
+                    <?php if ($_showBadge && !empty($post['category_name'])): ?>
+                    <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
@@ -162,8 +183,8 @@ try {
                 <div class="article-body">
                     <?php if ($_showMeta): ?>
                     <div class="article-meta">
-                        <?php if ($_showMetaCat && !empty($post['category'])): ?>
-                        <span class="cat"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
+                        <?php if ($_showMetaCat && !empty($post['category_name'])): ?>
+                        <span class="cat"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                         <?php endif; ?>
                         <?php if ($_showMetaDate): ?>
                         <span><?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
@@ -174,7 +195,7 @@ try {
                     </div>
                     <?php endif; ?>
                     <h4>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
+                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
                             <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
                         </a>
                     </h4>
@@ -232,9 +253,9 @@ try {
             <?php foreach ($gridPosts as $i => $post): ?>
             <article class="post-card" data-anim data-anim-delay="<?php echo min($i + 1, 4); ?>">
 
-                <?php if (!empty($post['thumbnail'])): ?>
+                <?php if (!empty($post['featured_image'])): ?>
                 <div class="post-card-thumb">
-                    <img src="<?php echo htmlspecialchars($post['thumbnail'], ENT_QUOTES); ?>"
+                    <img src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
                          loading="lazy">
                 </div>
@@ -245,11 +266,11 @@ try {
                 <?php endif; ?>
 
                 <div class="post-card-body">
-                    <?php if ($_showTileCat && !empty($post['category'])): ?>
-                    <span class="badge badge-neutral" style="align-self:flex-start;"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
+                    <?php if ($_showTileCat && !empty($post['category_name'])): ?>
+                    <span class="badge badge-neutral" style="align-self:flex-start;"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                     <?php endif; ?>
                     <h3 class="post-card-title">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
+                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
                             <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
                         </a>
                     </h3>
@@ -258,8 +279,8 @@ try {
                     <?php endif; ?>
                     <?php if ($_showTileDate || $_showTileCat): ?>
                     <div class="post-card-meta">
-                        <?php if ($_showTileCat && !empty($post['category'])): ?>
-                        <span class="cat"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
+                        <?php if ($_showTileCat && !empty($post['category_name'])): ?>
+                        <span class="cat"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                         <?php endif; ?>
                         <?php if ($_showTileDate): ?>
                         <span><?php echo htmlspecialchars(date('j. M. Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>

@@ -59,9 +59,10 @@ final class CMS_Phinit_Theme
         $version = file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION;
         echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'style.css?v=' . $version . '">' . "\n";
 
-        // Customizer: Dynamisches CSS einbinden
+        // Phinit-spezifisches CSS aus Customizer generieren
+        // (überschreibt die generische generateCSS()-Methode, die andere Key-Namen erwartet)
         try {
-            $css = \CMS\Services\ThemeCustomizer::instance()->generateCSS();
+            $css = $this->generatePhinitCSS();
             if (!empty(trim($css))) {
                 echo '<style id="cms-phinit-customizer-css">' . "\n" . $css . "\n" . '</style>' . "\n";
             }
@@ -167,6 +168,190 @@ final class CMS_Phinit_Theme
     }
 
     /* ── Custom Styles aus Customizer ──────────────────────────── */
+
+    /**
+     * Phinit-spezifisches CSS aus Customizer generieren.
+     * Mappt die Customizer-Keys (colors.primary_color, typography.font_family_ui, etc.)
+     * auf die CSS Custom Properties in style.css.
+     */
+    private function generatePhinitCSS(): string
+    {
+        $c = \CMS\Services\ThemeCustomizer::instance();
+        $css = "/* CMS Phinit – Customizer CSS */\n:root {\n";
+
+        // ── Farben → CSS Custom Properties ──
+        $colorMap = [
+            'primary_color'      => '--primary-color',
+            'primary_dark'       => '--primary-dark',
+            'primary_mid'        => '--primary-mid',
+            'primary_light'      => '--primary-light',
+            'accent_color'       => '--accent-color',
+            'accent_hover'       => '--accent-hover',
+            'accent_blue'        => '--accent-blue',
+            'accent_blue2'       => '--accent-blue2',
+            'bg_header1'         => '--bg-header1',
+            'bg_header2'         => '--bg-header2',
+            'bg_header3'         => '--bg-header3',
+            'bg_primary'         => '--bg-primary',
+            'bg_secondary'       => '--bg-secondary',
+            'bg_dark'            => '--bg-dark',
+            'text_primary'       => '--text-primary',
+            'text_secondary'     => '--text-secondary',
+            'text_muted'         => '--text-muted',
+            'text_nav'           => '--text-nav',
+            'border_light'       => '--border-light',
+            'footer_bg'          => '--footer-bg',
+            'footer_bottom_bg'   => '--footer-bottom-bg',
+            'footer_border'      => '--footer-border',
+            'success_color'      => '--success-color',
+            'error_color'        => '--error-color',
+            'progress_bar_start' => '--progress-bar-start',
+            'progress_bar_end'   => '--progress-bar-end',
+        ];
+        foreach ($colorMap as $key => $var) {
+            $val = $c->get('colors', $key, '');
+            if (!empty($val) && $val !== '') {
+                $css .= "    {$var}: {$val};\n";
+            }
+        }
+
+        // ── Typografie ──
+        $fontMapSlug = [
+            'barlow'           => "'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'barlow-condensed' => "'Barlow Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'inter'            => "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'roboto'           => "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'open-sans'        => "'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'lato'             => "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'montserrat'       => "'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'poppins'          => "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'source-sans'      => "'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'nunito'           => "'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'roboto-condensed' => "'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'oswald'           => "'Oswald', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'rajdhani'         => "'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'exo2'             => "'Exo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'jetbrains-mono'   => "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
+            'fira-code'        => "'Fira Code', 'JetBrains Mono', monospace",
+            'source-code'      => "'Source Code Pro', 'Fira Code', monospace",
+            'cascadia'         => "'Cascadia Code', 'JetBrains Mono', monospace",
+            'system'           => "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            'system-mono'      => "'Cascadia Code', 'Consolas', 'Courier New', monospace",
+        ];
+
+        $uiFont = $c->get('typography', 'font_family_ui', 'barlow');
+        if (!empty($uiFont) && isset($fontMapSlug[$uiFont])) {
+            $css .= "    --font-ui: {$fontMapSlug[$uiFont]};\n";
+        }
+        $brandFont = $c->get('typography', 'font_family_brand', 'barlow-condensed');
+        if (!empty($brandFont) && isset($fontMapSlug[$brandFont])) {
+            $css .= "    --font-brand: {$fontMapSlug[$brandFont]};\n";
+        }
+        $codeFont = $c->get('typography', 'font_family_code', 'jetbrains-mono');
+        if (!empty($codeFont) && isset($fontMapSlug[$codeFont])) {
+            $css .= "    --font-code: {$fontMapSlug[$codeFont]};\n";
+        }
+
+        $typoNumMap = [
+            'font_size_base'      => ['--fs-base', 'px'],
+            'font_size_post'      => ['--fs-post', 'px'],
+            'line_height_base'    => ['--lh-base', ''],
+            'line_height_post'    => ['--lh-post', ''],
+        ];
+        foreach ($typoNumMap as $key => $info) {
+            $val = $c->get('typography', $key, '');
+            if ($val !== '' && $val !== null) {
+                $css .= "    {$info[0]}: {$val}{$info[1]};\n";
+            }
+        }
+        $fwHead = $c->get('typography', 'font_weight_heading', '');
+        if (!empty($fwHead)) { $css .= "    --fw-heading: {$fwHead};\n"; }
+        $fwNav = $c->get('typography', 'font_weight_nav', '');
+        if (!empty($fwNav)) { $css .= "    --fw-nav: {$fwNav};\n"; }
+
+        // ── Layout ──
+        $layoutMap = [
+            'container_width'  => ['--container-width', 'px'],
+            'sidebar_width'    => ['--sidebar-width', 'px'],
+            'border_radius'    => ['--radius-sm', 'px'],
+            'border_radius_md' => ['--radius-md', 'px'],
+            'spacing_header_content' => ['--spacing-header-content', 'px'],
+            'spacing_content_footer' => ['--spacing-content-footer', 'px'],
+            'content_gap'            => ['--content-gap', 'px'],
+        ];
+        foreach ($layoutMap as $key => $info) {
+            $val = $c->get('layout', $key, '');
+            if ($val !== '' && $val !== null) {
+                $css .= "    {$info[0]}: {$val}{$info[1]};\n";
+            }
+        }
+
+        // ── Header ──
+        $logoAccent = $c->get('header', 'logo_accent_color', '');
+        if (!empty($logoAccent)) { $css .= "    --logo-accent: {$logoAccent};\n"; }
+        $logoHeight = $c->get('header', 'logo_max_height', '');
+        if (!empty($logoHeight)) { $css .= "    --logo-max-height: {$logoHeight}px;\n"; }
+        $utilBarH = $c->get('header', 'util_bar_height', '');
+        if (!empty($utilBarH)) { $css .= "    --util-bar-height: {$utilBarH}px;\n"; }
+        $mainNavH = $c->get('header', 'main_nav_height', '');
+        if (!empty($mainNavH)) { $css .= "    --main-nav-height: {$mainNavH}px;\n"; }
+        $subBarH = $c->get('header', 'sub_bar_height', '');
+        if (!empty($subBarH)) { $css .= "    --sub-bar-height: {$subBarH}px;\n"; }
+
+        // ── Posts ──
+        $heroH = $c->get('posts', 'post_hero_height', '');
+        if (!empty($heroH)) { $css .= "    --post-hero-height: {$heroH}px;\n"; }
+
+        $css .= "}\n";
+
+        // ── Element-spezifische Regeln ──
+        $css .= "\nbody {\n";
+        $css .= "    font-family: var(--font-ui);\n";
+        $css .= "    font-size: var(--fs-base, 14.5px);\n";
+        $css .= "    line-height: var(--lh-base, 1.55);\n";
+        $css .= "    background: var(--bg-secondary);\n";
+        $css .= "    color: var(--text-primary);\n";
+        $css .= "}\n";
+
+        $css .= "h1, h2, h3, h4, h5, h6, .site-logo, .main-nav a, .sub-nav a {\n";
+        $css .= "    font-family: var(--font-brand);\n";
+        $css .= "}\n";
+        $css .= "h1, h2, h3 { font-weight: var(--fw-heading, 700); }\n";
+        $css .= ".main-nav a, .sub-nav a { font-weight: var(--fw-nav, 600); }\n";
+
+        $css .= "code, pre, .inline-code, .code-block {\n";
+        $css .= "    font-family: var(--font-code);\n";
+        $css .= "}\n";
+
+        $css .= ".post-body {\n";
+        $css .= "    font-size: var(--fs-post, 15.5px);\n";
+        $css .= "    line-height: var(--lh-post, 1.8);\n";
+        $css .= "}\n";
+
+        $css .= ".container { max-width: var(--container-width, 1060px); }\n";
+
+        $css .= ".hdr-bar:first-child { background: var(--bg-header1); min-height: var(--util-bar-height, 36px); }\n";
+        $css .= ".hdr-bar-main { background: var(--bg-header2); min-height: var(--main-nav-height, 48px); }\n";
+        $css .= ".quicklinks-bar .hdr-bar { background: var(--bg-header3); min-height: var(--sub-bar-height, 30px); }\n";
+
+        $css .= ".site-footer { background: var(--footer-bg); border-top: 3px solid var(--footer-border); }\n";
+        $css .= ".footer-bottom { background: var(--footer-bottom-bg); }\n";
+
+        $css .= ".site-logo .logo-accent, .site-logo span:last-child { color: var(--logo-accent, var(--accent-blue)); }\n";
+        $css .= ".site-logo img { max-height: var(--logo-max-height, 28px); }\n";
+
+        $css .= "#scroll-progress { background: linear-gradient(90deg, var(--progress-bar-start, #2d7dd2), var(--progress-bar-end, #e8a838)); }\n";
+
+        $css .= ".post-hero-img { max-height: var(--post-hero-height, 340px); }\n";
+
+        // Custom CSS aus Advanced-Tab
+        $customAdvCss = $c->get('advanced', 'custom_css', '');
+        if (!empty(trim((string)$customAdvCss))) {
+            $css .= "\n/* Custom CSS */\n" . strip_tags((string)$customAdvCss) . "\n";
+        }
+
+        return $css;
+    }
 
     public function outputCustomStyles(): void
     {

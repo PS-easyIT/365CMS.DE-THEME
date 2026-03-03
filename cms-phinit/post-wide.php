@@ -18,44 +18,98 @@ if (!defined('ABSPATH')) {
 }
 
 $siteUrl = SITE_URL;
+$db      = \CMS\Database::instance();
+$pfx     = $db->getPrefix();
 
-// ── Daten laden ──────────────────────────────────────────────────────────
-try {
-    $postService = \CMS\Services\PostService::instance();
-    $slug        = trim($_GET['slug'] ?? $_SERVER['REQUEST_URI'] ?? '', '/ ');
-    $post        = $postService->getPostBySlug($slug);
-    if (!$post) {
-        http_response_code(404);
-        get_theme_part('404');
-        exit;
-    }
-    $prevPost     = $postService->getPrevPost((int)($post['id'] ?? 0)) ?: null;
-    $nextPost     = $postService->getNextPost((int)($post['id'] ?? 0)) ?: null;
-    $comments     = $postService->getComments((int)($post['id'] ?? 0)) ?: [];
-    $commentCount = count($comments);
-} catch (\Throwable $e) {
-    $post = null; $prevPost = null; $nextPost = null;
-    $comments = []; $commentCount = 0;
+// ── Customizer ─────────────────────────────────────────────────────────
+$cz = null;
+try { $cz = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable) {}
+$czGet = function (string $cat, string $key, mixed $default = '') use ($cz): mixed {
+    if (!$cz) return $default;
+    try { return $cz->get($cat, $key, $default); } catch (\Throwable) { return $default; }
+};
+$czBool = function (string $cat, string $key, bool $default = true) use ($czGet): bool {
+    return filter_var($czGet($cat, $key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
+// Customizer-Werte (posts / layout)
+$showPostHero     = $czBool('posts', 'show_post_hero', true);
+$showPostMeta     = $czBool('posts', 'show_post_meta', true);
+$showReadingTime  = $czBool('posts', 'show_reading_time', true);
+$readingTimeWpm   = max(100, (int)$czGet('posts', 'reading_time_wpm', 200));
+$showToc          = $czBool('posts', 'show_toc', true);
+$tocMinHeadings   = max(1, (int)$czGet('posts', 'toc_min_headings', 3));
+$tocHeaderText    = (string)$czGet('posts', 'toc_header_text', 'Inhaltsverzeichnis');
+$showShareButtons = $czBool('posts', 'show_share_buttons', true);
+$showComments     = $czBool('posts', 'show_comments', true);
+$commentsHeader   = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
+$commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
+$showPostTags     = $czBool('posts', 'show_post_tags', true);
+
+// ── Daten laden ────────────────────────────────────────────────────────
+if (isset($post) && !empty($post)) {
+    $post = is_object($post) ? (array)$post : (array)$post;
+} else {
+    $rawPath = (string)preg_replace('#^/blog/#i', '', parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '');
+    $slug    = trim($rawPath, '/');
+    if (empty($slug)) { http_response_code(404); get_theme_part('404'); exit; }
+    try {
+        $postObj = $db->get_row(
+            "SELECT p.*, u.display_name AS author_name, c.name AS category_name
+             FROM {$pfx}posts p
+             LEFT JOIN {$pfx}users u ON u.id = p.author_id
+             LEFT JOIN {$pfx}post_categories c ON c.id = p.category_id
+             WHERE p.slug = ? AND p.status = 'published'",
+            [$slug]
+        );
+        $post = $postObj ? (array)$postObj : null;
+    } catch (\Throwable $e) { $post = null; }
 }
+if (!$post) { http_response_code(404); get_theme_part('404'); exit; }
+try { $db->execute("UPDATE {$pfx}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]); } catch (\Throwable) {}
+try {
+    $prevOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE status='published' AND published_at < ? AND id != ? ORDER BY published_at DESC LIMIT 1", [$post['published_at'] ?? '9999-12-31', (int)($post['id'] ?? 0)]);
+    $nextOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE status='published' AND published_at > ? AND id != ? ORDER BY published_at ASC LIMIT 1",  [$post['published_at'] ?? '0001-01-01', (int)($post['id'] ?? 0)]);
+    $prevPost = $prevOb ? (array)$prevOb : null;
+    $nextPost = $nextOb ? (array)$nextOb : null;
+} catch (\Throwable) { $prevPost = null; $nextPost = null; }
+try {
+    $commentRows  = $db->get_results("SELECT id, author, content, post_date FROM {$pfx}comments WHERE post_id = ? AND status = 'approved' ORDER BY post_date ASC", [(int)($post['id'] ?? 0)]) ?: [];
+    $comments     = array_map(fn($c) => (array)$c, $commentRows);
+    $commentCount = count($comments);
+} catch (\Throwable) { $comments = []; $commentCount = 0; }
 
-if (!$post) { get_theme_part('404'); exit; }
+// ── Auto-ID-Injection + TOC ────────────────────────────────────────────
+$content   = $post['content'] ?? '';
+$usedSlugs = [];
+$content   = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/i', function ($m) use (&$usedSlugs) {
+    $level = $m[1]; $attrs = $m[2]; $inner = $m[3];
+    if (preg_match('/id="[^"]+"/i', $attrs)) return $m[0];
+    $text = strip_tags($inner);
+    $slug = mb_strtolower(trim($text));
+    $slug = str_replace(['ä','ö','ü','ß'], ['ae','oe','ue','ss'], $slug);
+    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+    $slug = trim($slug, '-') ?: 'h';
+    $base = $slug;
+    $i = 2;
+    while (isset($usedSlugs[$slug])) { $slug = $base . '-' . $i++; }
+    $usedSlugs[$slug] = true;
+    return "<h{$level}{$attrs} id=\"{$slug}\">{$inner}</h{$level}>";
+}, $content) ?? $content;
 
-// ── TOC aus Überschriften ──────────────────────────────────────────────
 $tocItems = [];
-$content  = $post['content'] ?? '';
-preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/i', $content, $m, PREG_SET_ORDER);
-foreach ($m as $match) {
-    $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
+if ($showToc) {
+    preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/i', $content, $tm, PREG_SET_ORDER);
+    foreach ($tm as $match) {
+        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
+    }
+    if (count($tocItems) < $tocMinHeadings) $tocItems = [];
 }
 
 // ── CSRF & Kommentar-Handler ───────────────────────────────────────────
-try {
-    $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0));
-} catch (\Throwable $e) { $csrfToken = ''; }
-
 $commentError = $commentSuccess = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
-    if (!empty($csrfToken) && !\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
+    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
         $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
     } else {
         $name    = htmlspecialchars(trim($_POST['comment_name']  ?? ''), ENT_QUOTES);
@@ -65,68 +119,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
             $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
         } else {
             try {
-                $postService->addComment((int)($post['id'] ?? 0), [
-                    'name' => $name, 'email' => (string)$email, 'text' => $text,
-                ]);
-                header('Location: ' . htmlspecialchars($siteUrl . '/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1');
+                $db->execute(
+                    "INSERT INTO {$pfx}comments (post_id, author, author_email, author_ip, content, status) VALUES (?, ?, ?, ?, ?, 'pending')",
+                    [(int)($post['id'] ?? 0), $name, (string)$email, $_SERVER['REMOTE_ADDR'] ?? '', $text]
+                );
+                header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
                 exit;
             } catch (\Throwable $ex) { $commentError = 'Fehler beim Speichern des Kommentars.'; }
         }
     }
 }
+try { $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0)); } catch (\Throwable $e) { $csrfToken = ''; }
+// ── Reading Time ───────────────────────────────────────────────────────
+$readTime = function_exists('phinit_reading_time') ? phinit_reading_time($content, $readingTimeWpm) : 0;
 ?>
 
-<div class="container" style="padding-top:28px;padding-bottom:40px;">
+<div class="container post-container">
 <article class="article-layout--wide" itemscope itemtype="https://schema.org/BlogPosting">
 
     <!-- ── Post-Header ───────────────────────────────────────────────── -->
     <header class="post-header" data-anim>
-        <?php if (!empty($post['thumbnail'])): ?>
+        <?php if ($showPostHero && !empty($post['featured_image'])): ?>
         <img class="post-hero-img"
-             src="<?php echo htmlspecialchars($post['thumbnail'], ENT_QUOTES); ?>"
+             src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
              alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
              loading="eager" itemprop="image">
         <?php endif; ?>
 
         <div class="post-header-body">
-            <?php $cats = (array)($post['categories'] ?? (isset($post['category']) ? [$post['category']] : [])); ?>
-            <?php if (!empty($cats)): ?>
+            <?php if (!empty($post['category_name'])): ?>
             <div class="post-cats">
-                <?php foreach ($cats as $cat): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($cat), ENT_QUOTES); ?>" class="badge badge-teal">
-                    <?php echo htmlspecialchars($cat, ENT_QUOTES); ?>
+                <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($post['category_name']), ENT_QUOTES); ?>" class="badge badge-teal">
+                    <?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?>
                 </a>
-                <?php endforeach; ?>
             </div>
             <?php endif; ?>
 
             <h1 class="post-title" itemprop="headline">
                 <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
             </h1>
+            <?php if ($showPostMeta): ?>
             <div class="post-meta">
                 <span>📅 <strong itemprop="datePublished" content="<?php echo htmlspecialchars($post['published_at'] ?? '', ENT_QUOTES); ?>">
                     <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
                 </strong></span>
-                <?php if (!empty($post['author'])): ?>
-                <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author'], ENT_QUOTES); ?></strong></span>
+                <?php if (!empty($post['author_name'])): ?>
+                <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author_name'], ENT_QUOTES); ?></strong></span>
                 <?php endif; ?>
-                <?php
-                $readTime = !empty($post['read_time']) ? (int)$post['read_time']
-                          : (function_exists('phinit_reading_time') ? phinit_reading_time($content) : 0);
-                if ($readTime): ?>
+                <?php if ($showReadingTime && $readTime): ?>
                 <span>⏱ <?php echo $readTime; ?> Min. Lesezeit</span>
                 <?php endif; ?>
                 <?php if ($commentCount > 0): ?>
                 <span><a href="#comments" style="color:inherit;">💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></a></span>
                 <?php endif; ?>
             </div>
+            <?php endif; ?>
         </div>
     </header>
 
     <!-- ── Inline-TOC (aufklappbar) ──────────────────────────────────── -->
     <?php if (!empty($tocItems)): ?>
     <details class="toc-inline" data-anim data-anim-delay="1">
-        <summary class="toc-inline__toggle">📋 Inhaltsverzeichnis anzeigen</summary>
+        <summary class="toc-inline__toggle">📋 <?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></summary>
         <nav class="toc-inline__body">
             <ul role="list">
                 <?php foreach ($tocItems as $item): ?>
@@ -146,30 +200,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
         <?php echo $content; ?>
 
         <!-- Share-Buttons -->
+        <?php if ($showShareButtons): ?>
         <div class="post-share">
             <span>Teilen:</span>
             <?php
-            $postUrl   = htmlspecialchars(urlencode($siteUrl . '/' . ($post['slug'] ?? '')), ENT_QUOTES);
+            $postUrl   = htmlspecialchars(urlencode($siteUrl . '/blog/' . ($post['slug'] ?? '')), ENT_QUOTES);
             $postTitle = htmlspecialchars(urlencode($post['title'] ?? ''), ENT_QUOTES);
             ?>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $postUrl; ?>" class="share-btn fb" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f Facebook</a>
-            <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏 Twitter</a>
             <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in LinkedIn</a>
+            <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏 Twitter</a>
+            <a href="mailto:?subject=<?php echo $postTitle; ?>&body=<?php echo $postUrl; ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
             <button class="share-btn cp" aria-label="Link kopieren">📋 Link kopieren</button>
         </div>
+        <?php endif; ?>
     </div>
 
     <!-- ── Vor-/Nächster Artikel ──────────────────────────────────────── -->
     <?php if ($prevPost || $nextPost): ?>
     <nav class="post-nav" aria-label="Artikel-Navigation">
         <?php if ($prevPost): ?>
-        <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
+        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
             <span class="direction">← Vorheriger Beitrag</span>
             <span class="nav-title"><?php echo htmlspecialchars($prevPost['title'] ?? '', ENT_QUOTES); ?></span>
         </a>
         <?php else: ?><span></span><?php endif; ?>
         <?php if ($nextPost): ?>
-        <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
+        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
             <span class="direction">Nächster Beitrag →</span>
             <span class="nav-title"><?php echo htmlspecialchars($nextPost['title'] ?? '', ENT_QUOTES); ?></span>
         </a>
@@ -178,21 +234,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
     <?php endif; ?>
 
     <!-- ── Kommentare ─────────────────────────────────────────────────── -->
+    <?php if ($showComments): ?>
     <section class="comments-section" id="comments">
-        <h2 class="comments-title">💬 Hinterlasse einen Kommentar</h2>
+        <h2 class="comments-title"><?php echo htmlspecialchars($commentsHeader, ENT_QUOTES); ?></h2>
 
         <?php if (!empty($comments)): ?>
             <?php foreach ($comments as $comment): ?>
             <div class="comment-item">
                 <div class="comment-avatar" aria-hidden="true">
-                    <?php echo htmlspecialchars(strtoupper(substr($comment['name'] ?? 'A', 0, 1)), ENT_QUOTES); ?>
+                    <?php echo htmlspecialchars(strtoupper(substr($comment['author'] ?? 'A', 0, 1)), ENT_QUOTES); ?>
                 </div>
                 <div class="comment-body-wrap">
                     <div class="comment-author-line">
-                        <span class="comment-author"><?php echo htmlspecialchars($comment['name'] ?? '', ENT_QUOTES); ?></span>
-                        <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime($comment['created_at'] ?? 'now')), ENT_QUOTES); ?></span>
+                        <span class="comment-author"><?php echo htmlspecialchars($comment['author'] ?? '', ENT_QUOTES); ?></span>
+                        <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime($comment['post_date'] ?? 'now')), ENT_QUOTES); ?></span>
                     </div>
-                    <p class="comment-text"><?php echo htmlspecialchars($comment['text'] ?? '', ENT_QUOTES); ?></p>
+                    <p class="comment-text"><?php echo htmlspecialchars($comment['content'] ?? '', ENT_QUOTES); ?></p>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -207,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
         <?php endif; ?>
 
         <div class="comment-form-wrap">
-            <h4>Kommentar hinterlassen</h4>
+            <h4><?php echo htmlspecialchars($commentFormHeader, ENT_QUOTES); ?></h4>
             <form method="POST" action="#comments" novalidate>
                 <input type="hidden" name="submit_comment" value="1">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
@@ -230,6 +287,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
             </form>
         </div>
     </section>
+    <?php endif; ?>
+
+    <!-- Tags -->
+    <?php
+    if ($showPostTags) {
+        $tagRows = [];
+        try {
+            $tagRows = $db->get_results(
+                "SELECT t.name, t.slug FROM {$pfx}tags t
+                 INNER JOIN {$pfx}post_tags pt ON pt.tag_id = t.id
+                 WHERE pt.post_id = ? ORDER BY t.name ASC",
+                [(int)($post['id'] ?? 0)]
+            ) ?: [];
+        } catch (\Throwable) {}
+        if (!empty($tagRows)): ?>
+        <div class="post-tags" data-anim>
+            <span>🏷️ Tags:</span>
+            <?php foreach ($tagRows as $tag): ?>
+            <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . ($tag['slug'] ?? ''), ENT_QUOTES); ?>" class="tag-link">
+                <?php echo htmlspecialchars($tag['name'] ?? '', ENT_QUOTES); ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif;
+    }
+    ?>
 
 </article>
 </div><!-- /.container -->

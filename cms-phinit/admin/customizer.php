@@ -398,6 +398,24 @@ $config = [
                 ],
                 'default'     => 'right',
             ],
+            'spacing_header_content' => [
+                'label'       => 'Abstand Header → Content (px)',
+                'description' => 'Vertikaler Abstand zwischen Header und dem Seiteninhalt.',
+                'type'        => 'number',
+                'default'     => 25,
+            ],
+            'spacing_content_footer' => [
+                'label'       => 'Abstand Content → Footer (px)',
+                'description' => 'Vertikaler Abstand zwischen dem Seiteninhalt und dem Footer.',
+                'type'        => 'number',
+                'default'     => 25,
+            ],
+            'content_gap' => [
+                'label'       => 'Grid-Gap Content/Sidebar (px)',
+                'description' => 'Horizontaler Abstand zwischen Hauptinhalt und Sidebar.',
+                'type'        => 'number',
+                'default'     => 28,
+            ],
         ],
     ],
 
@@ -432,6 +450,12 @@ $config = [
                 'description' => 'Bild-Logo (PNG/SVG). Leer = Text-Logo.',
                 'type'        => 'text',
                 'default'     => '',
+            ],
+            'show_logo_text_with_image' => [
+                'label'       => 'Logo-Text neben Bild anzeigen',
+                'description' => 'Wenn ein Bild-Logo hochgeladen ist, den Text trotzdem rechts daneben anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => false,
             ],
             'logo_max_height' => [
                 'label'       => 'Logo-Maximalhöhe (px)',
@@ -1727,7 +1751,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
 
                     <?php elseif ($activeTab === 'header'):
                         $headerGroups = [
-                            '🏷️ Logo & Marke'      => ['logo_text_part1', 'logo_text_part2', 'logo_text_suffix', 'logo_url', 'logo_max_height', 'logo_accent_color'],
+                            '🏷️ Logo & Marke'      => ['logo_text_part1', 'logo_text_part2', 'logo_text_suffix', 'logo_url', 'show_logo_text_with_image', 'logo_max_height', 'logo_accent_color'],
                             '🔝 Utility-Bar (Bar 1)' => ['util_bar_height', 'show_util_links', 'util_link1_text', 'util_link1_url', 'util_link2_text', 'util_link2_url', 'util_link3_text', 'util_link3_url'],
                             '🧭 Hauptnavigation (Bar 2)' => ['main_nav_height', 'show_search_bar', 'search_placeholder'],
                             '⚡ Quicklinks (Bar 3)' => ['show_quicklinks', 'sub_bar_height', 'quicklink1_text', 'quicklink1_url', 'quicklink2_text', 'quicklink2_url', 'quicklink3_text', 'quicklink3_url', 'quicklink4_text', 'quicklink4_url', 'quicklink5_text', 'quicklink5_url', 'quicklink6_text', 'quicklink6_url', 'quicklink7_text', 'quicklink7_url', 'quicklink8_text', 'quicklink8_url'],

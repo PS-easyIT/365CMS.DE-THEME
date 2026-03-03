@@ -31,14 +31,61 @@ try {
 // Customizer-Einstellungen (mit Fallbacks)
 try {
     $customizer    = \CMS\Services\ThemeCustomizer::instance();
-    $_logoUrl      = $customizer->get('header', 'logo_url', '');
-    $_showSearch   = filter_var($customizer->get('header', 'show_search', true), FILTER_VALIDATE_BOOLEAN);
-    $_showDarkMode = filter_var($customizer->get('header', 'show_dark_toggle', true), FILTER_VALIDATE_BOOLEAN);
-    $_showRss      = filter_var($customizer->get('header', 'show_rss_link', true), FILTER_VALIDATE_BOOLEAN);
-    $_qlLinks      = $customizer->get('header', 'quicklinks', []);
+
+    // Logo
+    $_logoUrl       = $customizer->get('header', 'logo_url', '');
+    $_logoPart1     = $customizer->get('header', 'logo_text_part1', 'PHIN');
+    $_logoPart2     = $customizer->get('header', 'logo_text_part2', 'IT');
+    $_logoSuffix    = $customizer->get('header', 'logo_text_suffix', '.DE');
+    $_showLogoText  = filter_var($customizer->get('header', 'show_logo_text_with_image', false), FILTER_VALIDATE_BOOLEAN);
+    $_logoMaxH      = (int)$customizer->get('header', 'logo_max_height', 28);
+
+    // Toggles
+    $_showSearch    = filter_var($customizer->get('header', 'show_search_bar', true), FILTER_VALIDATE_BOOLEAN);
+    $_searchPH      = $customizer->get('header', 'search_placeholder', 'Suchen …');
+    $_showDarkMode  = filter_var($customizer->get('layout', 'enable_dark_mode_toggle', true), FILTER_VALIDATE_BOOLEAN);
+    $_showRss       = filter_var($customizer->get('header', 'show_rss_link', true), FILTER_VALIDATE_BOOLEAN);
+    $_showUtilLinks = filter_var($customizer->get('header', 'show_util_links', true), FILTER_VALIDATE_BOOLEAN);
+    $_showQuicklinks = filter_var($customizer->get('header', 'show_quicklinks', true), FILTER_VALIDATE_BOOLEAN);
+
+    // Layout-Toggles für JS
+    $_enableStickyHeader    = filter_var($customizer->get('layout', 'enable_sticky_header', true), FILTER_VALIDATE_BOOLEAN);
+    $_enableProgressBar     = filter_var($customizer->get('layout', 'enable_progress_bar', true), FILTER_VALIDATE_BOOLEAN);
+    $_enableBackToTop       = filter_var($customizer->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
+    $_enableScrollAnimations = filter_var($customizer->get('layout', 'enable_scroll_animations', true), FILTER_VALIDATE_BOOLEAN);
+
+    // Util Links (1–3)
+    $_utilLinks = [];
+    for ($i = 1; $i <= 3; $i++) {
+        $text = $customizer->get('header', 'util_link' . $i . '_text', '');
+        $url  = $customizer->get('header', 'util_link' . $i . '_url', '');
+        if (!empty($text) && !empty($url)) {
+            $_utilLinks[] = ['text' => $text, 'url' => $url];
+        }
+    }
+
+    // Quicklinks (1–8)
+    $_qlLinks = [];
+    for ($i = 1; $i <= 8; $i++) {
+        $text = $customizer->get('header', 'quicklink' . $i . '_text', '');
+        $url  = $customizer->get('header', 'quicklink' . $i . '_url', '');
+        if (!empty($text) && !empty($url)) {
+            $_qlLinks[] = ['label' => $text, 'url' => $url];
+        }
+    }
+
+    // Social (aus social-Kategorie)
+    $_socialLinkedIn = $customizer->get('social', 'social_linkedin', '');
+    $_socialGithub   = $customizer->get('social', 'social_github', '');
 } catch (\Throwable $e) {
-    $_logoUrl = ''; $_showSearch = true; $_showDarkMode = true;
-    $_showRss = true; $_qlLinks = [];
+    $_logoUrl = ''; $_logoPart1 = 'PHIN'; $_logoPart2 = 'IT'; $_logoSuffix = '.DE';
+    $_showLogoText = false; $_logoMaxH = 28;
+    $_showSearch = true; $_searchPH = 'Suchen …'; $_showDarkMode = true;
+    $_showRss = true; $_showUtilLinks = true; $_showQuicklinks = true;
+    $_utilLinks = []; $_qlLinks = [];
+    $_socialLinkedIn = ''; $_socialGithub = '';
+    $_enableStickyHeader = true; $_enableProgressBar = true;
+    $_enableBackToTop = true; $_enableScrollAnimations = true;
 }
 
 // Haupt-Navigation laden
@@ -56,37 +103,58 @@ try {
     <title><?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – IT-Blog & Tutorials</title>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
-<body<?php echo \CMS\Hooks::applyFilters('body_class', '') ? ' class="' . htmlspecialchars(\CMS\Hooks::applyFilters('body_class', ''), ENT_QUOTES) . '"' : ''; ?>>
+<body<?php
+    $bodyClasses = \CMS\Hooks::applyFilters('body_class', '');
+    echo $bodyClasses ? ' class="' . htmlspecialchars($bodyClasses, ENT_QUOTES) . '"' : '';
+    // Layout-Toggles als data-Attribute für JS
+    echo ' data-sticky-header="' . ($_enableStickyHeader ? '1' : '0') . '"';
+    echo ' data-progress-bar="' . ($_enableProgressBar ? '1' : '0') . '"';
+    echo ' data-back-to-top="' . ($_enableBackToTop ? '1' : '0') . '"';
+    echo ' data-scroll-anims="' . ($_enableScrollAnimations ? '1' : '0') . '"';
+?>>
 
+<?php if ($_enableProgressBar): ?>
 <div id="scroll-progress" aria-hidden="true"></div>
+<?php endif; ?>
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <?php \CMS\Hooks::doAction('body_start'); ?>
 
 <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
 <header class="site-header" id="site-header">
-    <div class="container" style="position:relative;">
 
-        <!-- Ebene 1: Logo + Util -->
-        <div class="hdr-bar">
+    <!-- Ebene 1: Logo + Util -->
+    <div class="hdr-bar">
             <div class="hdr-inner hdr-util">
 
                 <!-- Logo -->
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
                     <?php if (!empty($_logoUrl)): ?>
-                        <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="36" loading="eager">
+                        <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" loading="eager">
+                        <?php if ($_showLogoText): ?>
+                        <span class="logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
+                        <?php endif; ?>
                     <?php else: ?>
-                        <span class="logo-icon" aria-hidden="true">P</span>
-                        <span><?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?></span>
+                        <span class="logo-icon" aria-hidden="true"><?php echo htmlspecialchars(mb_substr($_logoPart1, 0, 1)); ?></span>
+                        <span><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
                     <?php endif; ?>
                 </a>
 
                 <!-- Util rechts -->
                 <div class="hdr-util-right">
 
-                    <!-- Social Links -->
-                    <a href="https://linkedin.com" class="util-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" title="LinkedIn">in</a>
-                    <a href="https://github.com" class="util-link" aria-label="GitHub" target="_blank" rel="noopener noreferrer" title="GitHub">gh</a>
+                    <!-- Util / Social Links -->
+                    <?php if ($_showUtilLinks): ?>
+                        <?php if (!empty($_socialLinkedIn)): ?>
+                        <a href="<?php echo htmlspecialchars($_socialLinkedIn, ENT_QUOTES); ?>" class="util-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" title="LinkedIn">in</a>
+                        <?php endif; ?>
+                        <?php if (!empty($_socialGithub)): ?>
+                        <a href="<?php echo htmlspecialchars($_socialGithub, ENT_QUOTES); ?>" class="util-link" aria-label="GitHub" target="_blank" rel="noopener noreferrer" title="GitHub">gh</a>
+                        <?php endif; ?>
+                        <?php foreach ($_utilLinks as $_ul): ?>
+                        <a href="<?php echo htmlspecialchars($_ul['url'], ENT_QUOTES); ?>" class="util-link" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars($_ul['text']); ?></a>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                     <?php if ($_showRss): ?>
                     <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" class="util-link" aria-label="RSS-Feed" title="RSS-Feed">⊞</a>
                     <?php endif; ?>
@@ -99,7 +167,7 @@ try {
                     <!-- Suche -->
                     <?php if ($_showSearch): ?>
                     <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/search">
-                        <input type="search" name="q" placeholder="Suchen …" aria-label="Suchbegriff eingeben">
+                        <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_searchPH, ENT_QUOTES); ?>" aria-label="Suchbegriff eingeben">
                         <button type="submit" aria-label="Suche starten">🔍</button>
                     </form>
                     <?php endif; ?>
@@ -192,13 +260,11 @@ try {
                 <?php endif; ?>
             <?php endif; ?>
         </nav>
-    </div>
 
     <!-- Ebene 3: Quicklinks -->
+    <?php if ($_showQuicklinks): ?>
     <div class="quicklinks-bar">
-        <div class="container">
-            <div class="hdr-bar">
-                <div class="hdr-inner hdr-sub">
+        <div class="hdr-inner hdr-sub">
                     <nav class="sub-nav" aria-label="Quicklinks">
                         <?php if (!empty($_qlLinks)): ?>
                             <?php foreach ($_qlLinks as $ql): ?>
@@ -213,10 +279,9 @@ try {
                             <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/sites/phinit">Sites / 2026</a>
                         <?php endif; ?>
                     </nav>
-                </div>
-            </div>
         </div>
     </div>
+    <?php endif; /* $_showQuicklinks */ ?>
 </header>
 <!-- ═══ HEADER ENDE ═══════════════════════════════════════════════════════ -->
 

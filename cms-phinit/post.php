@@ -3,12 +3,15 @@
  * Einzelartikel-Template – CMS Phinit Theme
  *
  * Layout:
- *  - Post-Header: Thumbnail, Titel, Datum, Kategorien
+ *  - Post-Header: Bild, Titel, Datum, Kategorien
  *  - 2-spaltig: Artikel-Body (links) + Sticky Sidebar (rechts)
- *  - Sidebar: TOC + Social Icons
+ *  - Sidebar: TOC + Social Icons + Related Posts + Kategorien
  *  - Share-Buttons unter dem Text
  *  - Zurück/Weiter Navigation
  *  - Kommentarbereich
+ *
+ * Wird direkt (via /blog/:slug) oder als blog-single.php-Include aufgerufen.
+ * Feldnamen richten sich nach dem DB-Schema (cms_posts, cms_comments).
  *
  * @package CMS_Phinit_Theme
  */
@@ -19,56 +22,255 @@ if (!defined('ABSPATH')) {
 }
 
 $siteUrl = SITE_URL;
+$db      = \CMS\Database::instance();
+$prefix  = $db->getPrefix();
 
-// Aktuellen Post laden
+// ── Customizer-Einstellungen laden ──────────────────────────────────────────
 try {
-    $postService = \CMS\Services\PostService::instance();
-    $slug        = trim($_GET['slug'] ?? $_SERVER['REQUEST_URI'] ?? '', '/ ');
-    $post        = $postService->getPostBySlug($slug);
-    if (!$post) {
+    $cz = \CMS\Services\ThemeCustomizer::instance();
+} catch (\Throwable $e) {
+    $cz = null;
+}
+
+/**
+ * Customizer-Helfer: Wert lesen mit Fallback.
+ */
+$czGet = function (string $cat, string $key, mixed $default = '') use ($cz): mixed {
+    if (!$cz) return $default;
+    try { return $cz->get($cat, $key, $default); } catch (\Throwable) { return $default; }
+};
+$czBool = function (string $cat, string $key, bool $default = true) use ($czGet): bool {
+    return filter_var($czGet($cat, $key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
+// Posts-Customizer
+$showPostHero      = $czBool('posts', 'show_post_hero', true);
+$showPostMeta      = $czBool('posts', 'show_post_meta', true);
+$showReadingTime   = $czBool('posts', 'show_reading_time', true);
+$readingTimeWpm    = max(50, (int)$czGet('posts', 'reading_time_wpm', 200));
+$showToc           = $czBool('posts', 'show_toc', true);
+$tocSticky         = $czBool('posts', 'toc_sticky', true);
+$tocMinHeadings    = max(1, (int)$czGet('posts', 'toc_min_headings', 2));
+$tocHeaderText     = (string)$czGet('posts', 'toc_header_text', '📋 Inhaltsverzeichnis');
+$showSidebarSocial = $czBool('posts', 'show_sidebar_social', true);
+$sidebarSocialHdr  = (string)$czGet('posts', 'sidebar_social_header', 'Folge uns');
+$showSidebarRelated= $czBool('posts', 'show_sidebar_related', true);
+$sidebarRelatedHdr = (string)$czGet('posts', 'sidebar_related_header', 'Ähnliche Artikel');
+$relatedCount      = max(1, min(10, (int)$czGet('posts', 'related_count', 4)));
+$showShareButtons  = $czBool('posts', 'show_share_buttons', true);
+$showShareLinkedin = $czBool('posts', 'show_share_linkedin', true);
+$showShareTwitter  = $czBool('posts', 'show_share_twitter', true);
+$showShareEmail    = $czBool('posts', 'show_share_email', true);
+$showShareCopy     = $czBool('posts', 'show_share_copy', true);
+$showComments      = $czBool('posts', 'show_comments', true);
+$commentsHeader    = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
+$commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
+$showPostTags      = $czBool('posts', 'show_post_tags', true);
+
+// Social URLs (aus social-Kategorie)
+$socialLinkedin = (string)$czGet('social', 'social_linkedin', '');
+$socialGithub   = (string)$czGet('social', 'social_github', '');
+$socialTwitter  = (string)$czGet('social', 'social_twitter', '');
+$socialMastodon = (string)$czGet('social', 'social_mastodon', '');
+$socialYoutube  = (string)$czGet('social', 'social_youtube', '');
+$socialXing     = (string)$czGet('social', 'social_xing', '');
+$socialRss      = (string)$czGet('social', 'social_rss', $siteUrl . '/feed');
+
+// Layout
+$sidebarPosition = (string)$czGet('layout', 'sidebar_position', 'right');
+
+// ── Post-Daten laden ────────────────────────────────────────────────────────
+if (isset($post) && !empty($post)) {
+    $post = is_object($post) ? (array)$post : (array)$post;
+} else {
+    $rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
+    $rawPath = (string)preg_replace('#^/blog/#i', '', $rawPath);
+    $slug    = trim($rawPath, '/');
+
+    if (empty($slug)) {
         http_response_code(404);
         get_theme_part('404');
         exit;
     }
 
-    // Vor-/Nächster Post
-    $prevPost = $postService->getPrevPost((int)($post['id'] ?? 0)) ?: null;
-    $nextPost = $postService->getNextPost((int)($post['id'] ?? 0)) ?: null;
-
-    // Kommentare
-    $comments = $postService->getComments((int)($post['id'] ?? 0)) ?: [];
-    $commentCount = count($comments);
-} catch (\Throwable $e) {
-    $post = null;
-    $prevPost = null; $nextPost = null;
-    $comments = []; $commentCount = 0;
+    try {
+        $postObj = $db->get_row(
+            "SELECT p.*, u.display_name AS author_name, c.name AS category_name
+             FROM {$prefix}posts p
+             LEFT JOIN {$prefix}users u ON u.id = p.author_id
+             LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+             WHERE p.slug = ? AND p.status = 'published'",
+            [$slug]
+        );
+        $post = $postObj ? (array)$postObj : null;
+    } catch (\Throwable $e) {
+        $post = null;
+    }
 }
 
 if (!$post) {
+    http_response_code(404);
     get_theme_part('404');
     exit;
 }
 
-// TOC aus Überschriften im Content generieren
-$tocItems = [];
-$content  = $post['content'] ?? '';
-preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/i', $content, $m, PREG_SET_ORDER);
-foreach ($m as $match) {
-    $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
-}
-
-// Sicherheitstoken für Kommentarformular
+// Ansichten-Zähler erhöhen
 try {
-    $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0));
-} catch (\Throwable $e) {
-    $csrfToken = '';
+    $db->execute("UPDATE {$prefix}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]);
+} catch (\Throwable) {}
+
+// ── Lesezeit berechnen ──────────────────────────────────────────────────────
+$content     = $post['content'] ?? '';
+$readingTime = function_exists('phinit_reading_time')
+    ? phinit_reading_time($content, $readingTimeWpm)
+    : max(1, (int)ceil(str_word_count(strip_tags($content)) / $readingTimeWpm));
+
+// ── Auto-ID Injection für h2/h3 (TOC-Voraussetzung) ────────────────────────
+$usedSlugs = [];
+$content = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/si', function ($m) use (&$usedSlugs) {
+    $tag   = $m[1];
+    $attrs = $m[2];
+    $inner = $m[3];
+
+    // Bereits vorhandene ID beibehalten
+    if (preg_match('/\bid=["\']([^"\']+)["\']/i', $attrs)) {
+        return $m[0];
+    }
+
+    // Slug aus Klartext erzeugen
+    $text = trim(strip_tags($inner));
+    $slug = mb_strtolower($text, 'UTF-8');
+    $slug = preg_replace('/[äÄ]/', 'ae', $slug);
+    $slug = preg_replace('/[öÖ]/', 'oe', $slug);
+    $slug = preg_replace('/[üÜ]/', 'ue', $slug);
+    $slug = preg_replace('/ß/', 'ss', $slug);
+    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+    $slug = trim($slug, '-');
+    if (empty($slug)) { $slug = 'heading'; }
+
+    // Duplikate vermeiden
+    $base = $slug;
+    $i    = 2;
+    while (in_array($slug, $usedSlugs, true)) {
+        $slug = $base . '-' . $i++;
+    }
+    $usedSlugs[] = $slug;
+
+    return "<h{$tag}{$attrs} id=\"{$slug}\">{$inner}</h{$tag}>";
+}, $content);
+
+// Update post content with IDs
+$post['content'] = $content;
+
+// ── TOC generieren ──────────────────────────────────────────────────────────
+$tocItems = [];
+if ($showToc) {
+    preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/si', $content, $m, PREG_SET_ORDER);
+    foreach ($m as $match) {
+        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
+    }
+    // Mindestanzahl prüfen
+    if (count($tocItems) < $tocMinHeadings) {
+        $tocItems = [];
+    }
 }
 
-// Kommentar abschicken
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
+// ── Vor-/Nächster Post ──────────────────────────────────────────────────────
+try {
+    $prevPostObj = $db->get_row(
+        "SELECT id, title, slug FROM {$prefix}posts
+         WHERE status = 'published' AND published_at < ? AND id != ?
+         ORDER BY published_at DESC LIMIT 1",
+        [$post['published_at'] ?? '9999-12-31', (int)($post['id'] ?? 0)]
+    );
+    $nextPostObj = $db->get_row(
+        "SELECT id, title, slug FROM {$prefix}posts
+         WHERE status = 'published' AND published_at > ? AND id != ?
+         ORDER BY published_at ASC LIMIT 1",
+        [$post['published_at'] ?? '0001-01-01', (int)($post['id'] ?? 0)]
+    );
+    $prevPost = $prevPostObj ? (array)$prevPostObj : null;
+    $nextPost = $nextPostObj ? (array)$nextPostObj : null;
+} catch (\Throwable) {
+    $prevPost = null;
+    $nextPost = null;
+}
+
+// ── Related Posts laden ─────────────────────────────────────────────────────
+$relatedPosts = [];
+if ($showSidebarRelated) {
+    try {
+        $catId  = (int)($post['category_id'] ?? 0);
+        $postId = (int)($post['id'] ?? 0);
+        if ($catId > 0) {
+            $relRows = $db->get_results(
+                "SELECT id, title, slug, published_at FROM {$prefix}posts
+                 WHERE status = 'published' AND category_id = ? AND id != ?
+                 ORDER BY published_at DESC LIMIT ?",
+                [$catId, $postId, $relatedCount]
+            ) ?: [];
+        } else {
+            $relRows = $db->get_results(
+                "SELECT id, title, slug, published_at FROM {$prefix}posts
+                 WHERE status = 'published' AND id != ?
+                 ORDER BY published_at DESC LIMIT ?",
+                [$postId, $relatedCount]
+            ) ?: [];
+        }
+        $relatedPosts = array_map(fn($r) => (array)$r, $relRows);
+    } catch (\Throwable) {}
+}
+
+// ── Kategorien laden (dynamisch aus DB) ─────────────────────────────────────
+$dbCategories = [];
+try {
+    $catRows = $db->get_results(
+        "SELECT c.id, c.name, c.slug, COUNT(p.id) AS cnt
+         FROM {$prefix}post_categories c
+         LEFT JOIN {$prefix}posts p ON p.category_id = c.id AND p.status = 'published'
+         GROUP BY c.id ORDER BY c.name ASC"
+    ) ?: [];
+    $dbCategories = array_map(fn($r) => (array)$r, $catRows);
+} catch (\Throwable) {}
+
+// ── Tags laden ──────────────────────────────────────────────────────────────
+$postTags = [];
+if ($showPostTags) {
+    try {
+        $tagRows = $db->get_results(
+            "SELECT t.id, t.name, t.slug
+             FROM {$prefix}post_tags t
+             INNER JOIN {$prefix}post_tag_rel ptr ON ptr.tag_id = t.id
+             WHERE ptr.post_id = ?
+             ORDER BY t.name ASC",
+            [(int)($post['id'] ?? 0)]
+        ) ?: [];
+        $postTags = array_map(fn($r) => (array)$r, $tagRows);
+    } catch (\Throwable) {}
+}
+
+// ── Kommentare laden ────────────────────────────────────────────────────────
+$comments     = [];
+$commentCount = 0;
+if ($showComments) {
+    try {
+        $commentRows = $db->get_results(
+            "SELECT id, author, author_email, content, post_date
+             FROM {$prefix}comments
+             WHERE post_id = ? AND status = 'approved'
+             ORDER BY post_date ASC",
+            [(int)($post['id'] ?? 0)]
+        ) ?: [];
+        $comments     = array_map(fn($c) => (array)$c, $commentRows);
+        $commentCount = count($comments);
+    } catch (\Throwable) {}
+}
+
+// ── Kommentar abschicken ────────────────────────────────────────────────────
+if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
     $commentError   = '';
     $commentSuccess = '';
-    if (!empty($csrfToken) && !\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
+    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
         $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
     } else {
         $name    = htmlspecialchars(trim($_POST['comment_name']  ?? ''), ENT_QUOTES);
@@ -80,13 +282,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
             $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
         } else {
             try {
-                $postService->addComment((int)($post['id'] ?? 0), [
-                    'name' => $name, 'email' => (string)$email,
-                    'website' => $website, 'text' => $text,
-                ]);
-                $commentSuccess = 'Dein Kommentar wurde eingereicht und wird nach Prüfung veröffentlicht. Danke!';
-                // Redirect nach POST
-                header('Location: ' . htmlspecialchars($siteUrl . '/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1');
+                $db->execute(
+                    "INSERT INTO {$prefix}comments
+                        (post_id, author, author_email, author_ip, content, status)
+                     VALUES (?, ?, ?, ?, ?, 'pending')",
+                    [(int)($post['id'] ?? 0), $name, (string)$email,
+                     $_SERVER['REMOTE_ADDR'] ?? '', $text]
+                );
+                header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
                 exit;
             } catch (\Throwable $ex) {
                 $commentError = 'Fehler beim Speichern des Kommentars.';
@@ -94,10 +297,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
         }
     }
 }
+
+try {
+    $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0));
+} catch (\Throwable $e) {
+    $csrfToken = '';
+}
+
+// ── Sidebar-Position CSS-Klasse ─────────────────────────────────────────────
+$layoutClass = 'content-layout';
+if ($sidebarPosition === 'left') {
+    $layoutClass .= ' sidebar-left';
+} elseif ($sidebarPosition === 'none') {
+    $layoutClass .= ' sidebar-none';
+}
 ?>
 
-<div class="container" style="padding-top:28px;padding-bottom:40px;">
-<div class="content-layout">
+<div class="container post-container">
+<div class="<?php echo $layoutClass; ?>">
 
     <!-- ── Haupt-Artikelspalte ────────────────────────────────── -->
     <div class="main-column">
@@ -107,25 +324,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
 
             <header class="post-header" data-anim>
 
-                <?php if (!empty($post['thumbnail'])): ?>
+                <?php if ($showPostHero && !empty($post['featured_image'])): ?>
                 <img class="post-hero-img"
-                     src="<?php echo htmlspecialchars($post['thumbnail'], ENT_QUOTES); ?>"
+                     src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
                      loading="eager"
                      itemprop="image">
                 <?php endif; ?>
 
                 <div class="post-header-body">
-                    <!-- Kategorien -->
-                    <?php if (!empty($post['categories'])): ?>
+                    <!-- Kategorie -->
+                    <?php if (!empty($post['category_name'])): ?>
                     <div class="post-cats">
-                        <?php foreach ((array)($post['categories'] ?? []) as $cat): ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($cat), ENT_QUOTES); ?>" class="badge badge-teal"><?php echo htmlspecialchars($cat, ENT_QUOTES); ?></a>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php elseif (!empty($post['category'])): ?>
-                    <div class="post-cats">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($post['category']), ENT_QUOTES); ?>" class="badge badge-teal"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($post['category_name']), ENT_QUOTES); ?>" class="badge badge-teal"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></a>
                     </div>
                     <?php endif; ?>
 
@@ -133,44 +344,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
                         <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
                     </h1>
 
+                    <?php if ($showPostMeta): ?>
                     <div class="post-meta">
                         <span>📅 <strong itemprop="datePublished" content="<?php echo htmlspecialchars($post['published_at'] ?? '', ENT_QUOTES); ?>">
                             <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
                         </strong></span>
-                        <?php if (!empty($post['author'])): ?>
-                        <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author'], ENT_QUOTES); ?></strong></span>
+                        <?php if (!empty($post['author_name'])): ?>
+                        <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author_name'], ENT_QUOTES); ?></strong></span>
                         <?php endif; ?>
-                        <?php if (!empty($post['read_time'])): ?>
-                        <span>⏱ <?php echo (int)$post['read_time']; ?> Min. Lesezeit</span>
+                        <?php if ($showReadingTime): ?>
+                        <span>⏱ <?php echo $readingTime; ?> Min. Lesezeit</span>
                         <?php endif; ?>
                         <?php if ($commentCount > 0): ?>
                         <span>💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></span>
                         <?php endif; ?>
-                        <?php if (!empty($post['updated_at']) && $post['updated_at'] !== $post['published_at']): ?>
+                        <?php if (!empty($post['updated_at']) && ($post['updated_at'] ?? '') !== ($post['published_at'] ?? '')): ?>
                         <span>🔄 Aktualisiert: <?php echo htmlspecialchars(date('j. F Y', strtotime($post['updated_at'])), ENT_QUOTES); ?></span>
                         <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
             </header>
 
             <!-- Artikel-Body -->
             <div class="post-body" itemprop="articleBody">
-                <?php
-                // Inhalt ausgeben – nur nach vorheriger Sanitierung erlaubt
-                echo $post['content'] ?? '';
-                ?>
+                <?php echo $content; ?>
+
+                <!-- Tags -->
+                <?php if ($showPostTags && !empty($postTags)): ?>
+                <div class="post-tags">
+                    <?php foreach ($postTags as $tag): ?>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . urlencode($tag['slug'] ?? ''), ENT_QUOTES); ?>" class="post-tag">#<?php echo htmlspecialchars($tag['name'] ?? '', ENT_QUOTES); ?></a>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
 
                 <!-- Share-Buttons -->
+                <?php if ($showShareButtons): ?>
                 <div class="post-share">
                     <span>Teilen:</span>
-                    <?php $postUrl = htmlspecialchars(urlencode($siteUrl . '/' . ($post['slug'] ?? '')), ENT_QUOTES); ?>
+                    <?php $postUrl = htmlspecialchars(urlencode($siteUrl . '/blog/' . ($post['slug'] ?? '')), ENT_QUOTES); ?>
                     <?php $postTitle = htmlspecialchars(urlencode($post['title'] ?? ''), ENT_QUOTES); ?>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $postUrl; ?>" class="share-btn fb" target="_blank" rel="noopener noreferrer" aria-label="Auf Facebook teilen">f Facebook</a>
-                    <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Auf Twitter/X teilen">𝕏 Twitter</a>
+                    <?php if ($showShareLinkedin): ?>
                     <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer" aria-label="Auf LinkedIn teilen">in LinkedIn</a>
+                    <?php endif; ?>
+                    <?php if ($showShareTwitter): ?>
+                    <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Auf Twitter/X teilen">𝕏 Twitter</a>
+                    <?php endif; ?>
+                    <?php if ($showShareEmail): ?>
                     <a href="mailto:?subject=<?php echo $postTitle; ?>&body=<?php echo $postUrl; ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
+                    <?php endif; ?>
+                    <?php if ($showShareCopy): ?>
                     <button class="share-btn cp" aria-label="Link kopieren">📋 Kopieren</button>
+                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
             </div>
 
             <?php if (!empty($post['also_available_lang'])): ?>
@@ -183,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
         <?php if ($prevPost || $nextPost): ?>
         <nav class="post-nav" aria-label="Artikel-Navigation">
             <?php if ($prevPost): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
+            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
                 <span class="direction">← Vorheriger Beitrag</span>
                 <span class="nav-title"><?php echo htmlspecialchars($prevPost['title'] ?? '', ENT_QUOTES); ?></span>
             </a>
@@ -191,7 +419,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
             <span></span>
             <?php endif; ?>
             <?php if ($nextPost): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
+            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
                 <span class="direction">Nächster Beitrag →</span>
                 <span class="nav-title"><?php echo htmlspecialchars($nextPost['title'] ?? '', ENT_QUOTES); ?></span>
             </a>
@@ -200,21 +428,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
         <?php endif; ?>
 
         <!-- Kommentare -->
+        <?php if ($showComments): ?>
         <section class="comments-section" id="comments">
-            <h2 class="comments-title">💬 Hinterlasse jetzt einen Kommentar</h2>
+            <h2 class="comments-title"><?php echo htmlspecialchars($commentsHeader, ENT_QUOTES); ?></h2>
 
             <?php if (!empty($comments)): ?>
                 <?php foreach ($comments as $comment): ?>
                 <div class="comment-item">
                     <div class="comment-avatar" aria-hidden="true">
-                        <?php echo htmlspecialchars(strtoupper(substr($comment['name'] ?? 'A', 0, 1)), ENT_QUOTES); ?>
+                        <?php echo htmlspecialchars(strtoupper(substr($comment['author'] ?? 'A', 0, 1)), ENT_QUOTES); ?>
                     </div>
                     <div class="comment-body-wrap">
                         <div class="comment-author-line">
-                            <span class="comment-author"><?php echo htmlspecialchars($comment['name'] ?? '', ENT_QUOTES); ?></span>
-                            <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime($comment['created_at'] ?? 'now')), ENT_QUOTES); ?></span>
+                            <span class="comment-author"><?php echo htmlspecialchars($comment['author'] ?? '', ENT_QUOTES); ?></span>
+                            <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime($comment['post_date'] ?? 'now')), ENT_QUOTES); ?></span>
                         </div>
-                        <p class="comment-text"><?php echo htmlspecialchars($comment['text'] ?? '', ENT_QUOTES); ?></p>
+                        <p class="comment-text"><?php echo htmlspecialchars($comment['content'] ?? '', ENT_QUOTES); ?></p>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -230,7 +459,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
             <?php endif; ?>
 
             <div class="comment-form-wrap">
-                <h4>Kommentar hinterlassen</h4>
+                <h4><?php echo htmlspecialchars($commentFormHeader, ENT_QUOTES); ?></h4>
                 <form method="POST" action="#comments" novalidate>
                     <input type="hidden" name="submit_comment" value="1">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
@@ -262,16 +491,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
                 </form>
             </div>
         </section>
+        <?php endif; /* $showComments */ ?>
 
     </div><!-- /.main-column -->
 
     <!-- ── Sticky Sidebar ────────────────────────────────────── -->
+    <?php if ($sidebarPosition !== 'none'): ?>
     <aside class="sidebar" aria-label="Seitenleiste">
 
         <!-- TOC -->
-        <?php if (!empty($tocItems)): ?>
-        <div class="toc">
-            <div class="toc-title">📋 Inhaltsverzeichnis</div>
+        <?php if ($showToc && !empty($tocItems)): ?>
+        <div class="toc<?php echo $tocSticky ? ' toc-sticky' : ''; ?>">
+            <div class="toc-title"><?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></div>
             <ul class="toc-list" role="list">
                 <?php foreach ($tocItems as $item): ?>
                 <li class="<?php echo $item['level'] === 3 ? 'toc-h3' : ''; ?>">
@@ -285,29 +516,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
         <?php endif; ?>
 
         <!-- Social Icons -->
+        <?php if ($showSidebarSocial): ?>
+        <?php
+        $hasSocial = !empty($socialLinkedin) || !empty($socialGithub) || !empty($socialTwitter)
+                  || !empty($socialMastodon) || !empty($socialYoutube) || !empty($socialXing) || !empty($socialRss);
+        ?>
+        <?php if ($hasSocial): ?>
         <div class="social-widget">
-            <div class="social-widget-title">Folge uns</div>
+            <div class="social-widget-title"><?php echo htmlspecialchars($sidebarSocialHdr, ENT_QUOTES); ?></div>
             <div class="social-icons">
-                <a href="https://linkedin.com" class="li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>
-                <a href="https://github.com"   class="gh" target="_blank" rel="noopener noreferrer" aria-label="GitHub">gh</a>
-                <a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/feed" class="rss" aria-label="RSS-Feed">⊞</a>
+                <?php if (!empty($socialLinkedin)): ?>
+                <a href="<?php echo htmlspecialchars($socialLinkedin, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>
+                <?php endif; ?>
+                <?php if (!empty($socialGithub)): ?>
+                <a href="<?php echo htmlspecialchars($socialGithub, ENT_QUOTES); ?>" class="gh" target="_blank" rel="noopener noreferrer" aria-label="GitHub">gh</a>
+                <?php endif; ?>
+                <?php if (!empty($socialTwitter)): ?>
+                <a href="<?php echo htmlspecialchars($socialTwitter, ENT_QUOTES); ?>" class="tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏</a>
+                <?php endif; ?>
+                <?php if (!empty($socialMastodon)): ?>
+                <a href="<?php echo htmlspecialchars($socialMastodon, ENT_QUOTES); ?>" class="ma" target="_blank" rel="noopener noreferrer me" aria-label="Mastodon">🦣</a>
+                <?php endif; ?>
+                <?php if (!empty($socialYoutube)): ?>
+                <a href="<?php echo htmlspecialchars($socialYoutube, ENT_QUOTES); ?>" class="yt" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>
+                <?php endif; ?>
+                <?php if (!empty($socialXing)): ?>
+                <a href="<?php echo htmlspecialchars($socialXing, ENT_QUOTES); ?>" class="xi" target="_blank" rel="noopener noreferrer" aria-label="XING">X</a>
+                <?php endif; ?>
+                <?php if (!empty($socialRss)): ?>
+                <a href="<?php echo htmlspecialchars($socialRss, ENT_QUOTES); ?>" class="rss" aria-label="RSS-Feed">⊞</a>
+                <?php endif; ?>
             </div>
         </div>
+        <?php endif; ?>
+        <?php endif; ?>
 
-        <!-- Kategorien-Widget -->
+        <!-- Ähnliche Artikel -->
+        <?php if ($showSidebarRelated && !empty($relatedPosts)): ?>
         <div class="toc" style="border-left-color:var(--accent-color);">
-            <div class="toc-title">🗂 Kategorien</div>
+            <div class="toc-title">📰 <?php echo htmlspecialchars($sidebarRelatedHdr, ENT_QUOTES); ?></div>
             <ul class="toc-list" role="list">
-                <li><a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a></li>
-                <li><a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/powershell">PowerShell</a></li>
-                <li><a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/linux">Linux & BASH</a></li>
-                <li><a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/intune">Intune & MDM</a></li>
-                <li><a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/datenschutz">Datenschutz</a></li>
-                <li><a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES); ?>/news">IT-News</a></li>
+                <?php foreach ($relatedPosts as $rel): ?>
+                <li>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($rel['slug'] ?? ''), ENT_QUOTES); ?>">
+                        <?php echo htmlspecialchars($rel['title'] ?? '', ENT_QUOTES); ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
+        <?php endif; ?>
+
+        <!-- Kategorien-Widget (dynamisch aus DB) -->
+        <?php if (!empty($dbCategories)): ?>
+        <div class="toc" style="border-left-color:var(--primary-color);">
+            <div class="toc-title">🗂 Kategorien</div>
+            <ul class="toc-list" role="list">
+                <?php foreach ($dbCategories as $cat): ?>
+                <li>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($cat['slug'] ?? $cat['name'] ?? ''), ENT_QUOTES); ?>">
+                        <?php echo htmlspecialchars($cat['name'] ?? '', ENT_QUOTES); ?>
+                        <?php if (((int)($cat['cnt'] ?? 0)) > 0): ?>
+                        <span style="color:var(--text-light);font-size:var(--fs-xs);margin-left:4px;">(<?php echo (int)$cat['cnt']; ?>)</span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
 
     </aside>
+    <?php endif; /* sidebar_position !== 'none' */ ?>
 
 </div><!-- /.content-layout -->
 </div><!-- /.container -->

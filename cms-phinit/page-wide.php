@@ -1,12 +1,12 @@
 <?php
 /**
- * Statische Seite – Vollbreite-Template (ohne Sidebar)
+ * Statische Seite – Vollbreite-Template (ohne Sidebar, volle Container-Breite)
  *
  * Template-ID: page-wide
  * Unterschiede zu page.php:
  *  - Kein 2-Spalten-Layout, kein .sidebar
- *  - Zentrierter Single-Column-Content (max. 860 px)
- *  - Geeignet für Datenschutzerklärung, Impressum, Über mich, FAQ
+ *  - Volle Container-Breite (kein max-width)
+ *  - Geeignet für Landing-Seiten, Portfolio, Showcases
  *
  * @package CMS_Phinit_Theme
  */
@@ -51,8 +51,8 @@ try {
         <?php endif; ?>
     </div>
 
-    <!-- Seiteninhalt zentriert -->
-    <div class="page-content page-content--wide" data-anim data-anim-delay="1">
+    <!-- Seiteninhalt volle Breite -->
+    <div class="page-content page-content--full" data-anim data-anim-delay="1">
         <?php echo $page['content'] ?? ''; ?>
     </div>
 

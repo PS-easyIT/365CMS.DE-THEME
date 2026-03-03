@@ -8,12 +8,16 @@
   "requires_cms": "2.0.0",
   "tags": ["blog", "it", "dark-mode", "responsive", "sidebar"],
   "templates": {
-    "home":   "index.php",
-    "page":   "page.php",
-    "post":   "post.php",
-    "404":    "404.php",
-    "error":  "error.php",
-    "search": "search.php"
+    "home":        "index.php",
+    "page":        "page.php",
+    "post":        "post.php",
+    "blog-single": "blog-single.php",
+    "blog":        "blog.php",
+    "login":       "login.php",
+    "register":    "register.php",
+    "404":         "404.php",
+    "error":       "error.php",
+    "search":      "search.php"
   },
   "post_templates": [
     {
@@ -57,9 +61,9 @@
     {
       "id":          "wide",
       "label":       "Vollbreite (ohne Sidebar)",
-      "description": "Zentrierte Einzelspalte (max. 860 px). Ideal für Datenschutzerklärung, Impressum, FAQ und Über-mich-Seiten.",
+      "description": "Volle Container-Breite ohne max-width-Beschränkung. Ideal für Landing-Seiten, Portfolio und Content-Showcases.",
       "file":        "page-wide.php",
-      "features":    ["breadcrumbs"]
+      "features":    ["breadcrumbs", "full-width"]
     },
     {
       "id":          "landing",

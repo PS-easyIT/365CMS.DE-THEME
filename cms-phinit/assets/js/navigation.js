@@ -5,16 +5,25 @@
 (function () {
     'use strict';
 
+    /* ── Helpers: Data-Attribute Toggles vom Body lesen ──────── */
+    const bodyData = () => document.body.dataset;
+    const isEnabled = (key, fallback = true) => {
+        const v = bodyData()[key];
+        return v !== undefined ? v === '1' : fallback;
+    };
+    const prefersReducedMotion = () =>
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     /* ── DOMContentLoaded ──────────────────────────────────────── */
     document.addEventListener('DOMContentLoaded', () => {
-        initStickyHeader();
+        if (isEnabled('stickyHeader'))  initStickyHeader();
         initBurgerMenu();
         initDarkMode();
-        initScrollProgress();
-        initScrollAnimations();
+        if (isEnabled('progressBar'))   initScrollProgress();
+        if (isEnabled('scrollAnims') && !prefersReducedMotion())  initScrollAnimations();
         initActiveNav();
         initTocHighlight();
-        initBackToTop();
+        if (isEnabled('backToTop'))     initBackToTop();
         initShareButtons();
         initConsentBanner();
     });
