@@ -101,7 +101,17 @@
     "back_to_top":   true,
     "consent_banner": true,
     "reading_time":  true,
-    "schema_org":    true
+    "schema_org":    true,
+    "member_area":   true
+  },
+  "member_pages": {
+    "dashboard":  "member/dashboard.php",
+    "profile":    "member/profile.php",
+    "favorites":  "member/favorites.php",
+    "comments":   "member/comments.php",
+    "newsletter": "member/newsletter.php",
+    "feeds":      "member/feeds.php",
+    "forum":      "member/forum.php"
   },
   "customization": {
     "colors": {

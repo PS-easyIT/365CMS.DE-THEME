@@ -1569,7 +1569,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
         /* ── Farb-Grid ─────────────────────────── */
         .color-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.25rem;
         }
         .color-card {
@@ -1592,8 +1592,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
         /* ── Section-Grid ──────────────────────── */
         .field-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
         }
         .field-group-card {
             background: #f8fafc;
@@ -1640,7 +1640,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             .customizer-nav a { border-left: none; border-bottom: 2px solid transparent; padding: .5rem .75rem; font-size: .78rem; }
             .customizer-nav a.active { border-bottom-color: var(--admin-primary, #3b82f6); border-left: none; }
             .customizer-nav-group { display: none; }
-            .color-cards-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .color-cards-grid { grid-template-columns: 1fr; }
+            .field-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1850,20 +1851,97 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                         </div>
                     </div>
 
-                    <?php else:
-                        // Standard-Layout für typography, layout, social, advanced
+                    <?php elseif ($activeTab === 'typography'):
+                        $typoGroups = [
+                            '🔤 Schriftarten'        => ['font_family_ui', 'font_family_brand', 'font_family_code'],
+                            '📏 Größen & Abstände'   => ['font_size_base', 'font_size_post', 'line_height_base', 'line_height_post', 'font_weight_heading', 'font_weight_nav'],
+                        ];
                     ?>
                     <div class="admin-card">
-                        <h3><?php echo htmlspecialchars($currentTab['title']); ?></h3>
-                        <?php foreach ($currentTab['sections'] as $fk => $f):
-                            $val = $customizer->get($activeTab, $fk, $f['default']);
+                        <h3>🔤 Typografie</h3>
+                        <div class="field-grid">
+                            <?php foreach ($typoGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
 
-                            // Für advanced: textarea bekommt mehr Zeilen
-                            if ($activeTab === 'advanced' && $f['type'] === 'textarea') {
-                                $f['rows'] = 8;
-                            }
-                            phinit_render_field($activeTab, $fk, $f, $val);
-                        endforeach; ?>
+                    <?php elseif ($activeTab === 'layout'):
+                        $layoutGroups = [
+                            '📐 Maße & Abstände'     => ['container_width', 'sidebar_width', 'border_radius', 'border_radius_md', 'content_gap', 'spacing_header_content', 'spacing_content_footer'],
+                            '⚙️ Funktionen & Optionen' => ['sidebar_position', 'enable_sticky_header', 'enable_progress_bar', 'enable_back_to_top', 'enable_dark_mode_toggle', 'enable_scroll_animations'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>📐 Layout</h3>
+                        <div class="field-grid">
+                            <?php foreach ($layoutGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'social'):
+                        $socialGroups = [
+                            '🔗 Profile & URLs'      => ['social_linkedin', 'social_github', 'social_twitter', 'social_mastodon', 'social_rss', 'social_youtube', 'social_xing'],
+                            '🏷️ Button-Labels'       => ['social_label_linkedin', 'social_label_github', 'social_label_rss'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>🌐 Social Media</h3>
+                        <div class="field-grid">
+                            <?php foreach ($socialGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <?php elseif ($activeTab === 'advanced'):
+                        $advancedGroups = [
+                            '🎨 Custom Code'          => ['custom_css', 'custom_head_code', 'custom_footer_code'],
+                            '📊 Tracking & Cache'     => ['google_analytics_id', 'cache_buster_css'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>🔧 Erweitert</h3>
+                        <div class="field-grid">
+                            <?php foreach ($advancedGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    if ($f['type'] === 'textarea') { $f['rows'] = 8; }
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     <?php endif; ?>
 
