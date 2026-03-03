@@ -2,12 +2,12 @@
 /**
  * Homepage Template – CMS Phinit Theme
  *
- * Layout:
- *  1. Featured Artikel (3 horizontal, großes Bild)
- *  2. Info-Cards 2-spaltig (Kategorien-Highlight)
- *  3. 3-spaltige Post-Grid
- *  4. RSS-Feed-Sektion 2-spaltig
- *  5. Pagination
+ * Layout (alle Sektionen per Customizer konfigurierbar):
+ *  1. Repo-Card (optional)
+ *  2. Aktuelle Artikel-Liste (horizontal)
+ *  3. Info-Cards 2-spaltig (Kategorie-Highlights)
+ *  4. Kachel-Grid (paginiert)
+ *  5. RSS-Feed-Sektion (cms-feed Plugin)
  *
  * @package CMS_Phinit_Theme
  */
@@ -20,19 +20,85 @@ if (!defined('ABSPATH')) {
 $themeManager = \CMS\ThemeManager::instance();
 $siteUrl      = SITE_URL;
 
-// Posts laden
+// ── Customizer-Einstellungen laden ──────────────────────────────────────────
+try {
+    $_hc = \CMS\Services\ThemeCustomizer::instance();
+
+    // Repo-Card
+    $_showRepo     = filter_var($_hc->get('homepage', 'show_repo_card', true), FILTER_VALIDATE_BOOLEAN);
+    $_repoTitle    = $_hc->get('homepage', 'repo_card_title', 'PS-easyIT Script-Repository');
+    $_repoDesc     = $_hc->get('homepage', 'repo_card_description', '');
+    $_repoBadge    = $_hc->get('homepage', 'repo_card_badge', '25+ Repos');
+    $_repoBtnText  = $_hc->get('homepage', 'repo_card_btn_text', 'Zum GitHub →');
+    $_repoBtnUrl   = $_hc->get('homepage', 'repo_card_btn_url', 'https://github.com/');
+
+    // Artikel-Liste
+    $_showList     = filter_var($_hc->get('homepage', 'show_article_list', true), FILTER_VALIDATE_BOOLEAN);
+    $_listLabel    = $_hc->get('homepage', 'article_list_label', 'Aktuell');
+    $_listCount    = max(1, (int)$_hc->get('homepage', 'article_list_count', 4));
+    $_listLinkUrl  = $_hc->get('homepage', 'article_list_link_url', '/blog');
+    $_listThumbW   = max(80, (int)$_hc->get('homepage', 'article_thumb_width', 190));
+    $_listThumbH   = max(60, (int)$_hc->get('homepage', 'article_thumb_height', 115));
+    $_showExcerpt  = filter_var($_hc->get('homepage', 'show_article_excerpt', true), FILTER_VALIDATE_BOOLEAN);
+    $_showMeta     = filter_var($_hc->get('homepage', 'show_article_meta', true), FILTER_VALIDATE_BOOLEAN);
+    $_showBadge    = filter_var($_hc->get('homepage', 'show_article_badge', true), FILTER_VALIDATE_BOOLEAN);
+    $_showMetaCat  = filter_var($_hc->get('homepage', 'show_meta_category', true), FILTER_VALIDATE_BOOLEAN);
+    $_showMetaDate = filter_var($_hc->get('homepage', 'show_meta_date', true), FILTER_VALIDATE_BOOLEAN);
+    $_showMetaRT   = filter_var($_hc->get('homepage', 'show_meta_readtime', true), FILTER_VALIDATE_BOOLEAN);
+
+    // Info-Cards
+    $_showInfoGrid = filter_var($_hc->get('homepage', 'show_info_grid', true), FILTER_VALIDATE_BOOLEAN);
+    $_c1Title      = $_hc->get('homepage', 'info_card1_title', '🖥️ Admin Anleitungen');
+    $_c1Text       = $_hc->get('homepage', 'info_card1_text', 'Schritt-für-Schritt-Tutorials für Microsoft 365 Administration.');
+    $_c1LinkText   = $_hc->get('homepage', 'info_card1_link_text', 'Alle Anleitungen ansehen →');
+    $_c1LinkUrl    = $_hc->get('homepage', 'info_card1_link_url', '/kategorie/anleitungen');
+    $_c1Style      = $_hc->get('homepage', 'info_card1_style', 'default');
+    $_c2Title      = $_hc->get('homepage', 'info_card2_title', '🔒 DSGVO & Compliance');
+    $_c2Text       = $_hc->get('homepage', 'info_card2_text', 'Konfigurationsanleitungen und Best Practices für Microsoft Purview.');
+    $_c2LinkText   = $_hc->get('homepage', 'info_card2_link_text', 'Compliance-Center →');
+    $_c2LinkUrl    = $_hc->get('homepage', 'info_card2_link_url', '/kategorie/compliance');
+    $_c2Style      = $_hc->get('homepage', 'info_card2_style', 'gold');
+
+    // Kachel-Grid
+    $_showTileGrid  = filter_var($_hc->get('homepage', 'show_tile_grid', true), FILTER_VALIDATE_BOOLEAN);
+    $_tileLabel     = $_hc->get('homepage', 'tile_grid_label', 'Weitere Beiträge');
+    $_tileCount     = max(1, (int)$_hc->get('homepage', 'tile_grid_count', 6));
+    $_tileCols      = max(2, min(4, (int)$_hc->get('homepage', 'tile_grid_columns', 3)));
+    $_showTileExc   = filter_var($_hc->get('homepage', 'show_tile_excerpt', true), FILTER_VALIDATE_BOOLEAN);
+    $_showTileCat   = filter_var($_hc->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN);
+    $_showTileDate  = filter_var($_hc->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN);
+    $_tileLinkUrl   = $_hc->get('homepage', 'tile_grid_link_url', '/archiv');
+
+} catch (\Throwable $_e) {
+    // Fallback-Defaults
+    $_showRepo    = true;  $_repoTitle = 'PS-easyIT Script-Repository'; $_repoDesc = ''; $_repoBadge = '25+ Repos'; $_repoBtnText = 'Zum GitHub →'; $_repoBtnUrl = '#';
+    $_showList    = true;  $_listLabel = 'Aktuell'; $_listCount = 4; $_listLinkUrl = '/blog';
+    $_listThumbW  = 190;   $_listThumbH = 115;
+    $_showExcerpt = true;  $_showMeta = true; $_showBadge = true;
+    $_showMetaCat = true;  $_showMetaDate = true; $_showMetaRT = true;
+    $_showInfoGrid = true;
+    $_c1Title = '🖥️ Admin Anleitungen'; $_c1Text = ''; $_c1LinkText = 'Anleitungen →'; $_c1LinkUrl = '#'; $_c1Style = 'default';
+    $_c2Title = '🔒 DSGVO & Compliance'; $_c2Text = ''; $_c2LinkText = 'Compliance →'; $_c2LinkUrl = '#'; $_c2Style = 'gold';
+    $_showTileGrid = true; $_tileLabel = 'Weitere Beiträge'; $_tileCount = 6; $_tileCols = 3;
+    $_showTileExc = true;  $_showTileCat = true; $_showTileDate = true; $_tileLinkUrl = '/archiv';
+}
+
+// ── Posts laden ─────────────────────────────────────────────────────────────
 try {
     $postService = \CMS\Services\PostService::instance();
 
-    // Featured: neueste 3 Posts
-    $featuredPosts = $postService->getPosts(['limit' => 3, 'status' => 'published', 'orderby' => 'date', 'order' => 'DESC']);
+    // Artikel-Liste (über den Info-Cards)
+    $featuredPosts = $_showList
+        ? $postService->getPosts(['limit' => $_listCount, 'status' => 'published', 'orderby' => 'date', 'order' => 'DESC'])
+        : [];
 
-    // Paginierung
+    // Kachel-Grid mit Paginierung
     $currentPage = max(1, (int)($_GET['page'] ?? 1));
-    $perPage     = 9;
     $totalPosts  = $postService->countPosts(['status' => 'published']);
-    $totalPages  = (int)ceil($totalPosts / $perPage);
-    $gridPosts   = $postService->getPosts(['limit' => $perPage, 'offset' => ($currentPage - 1) * $perPage, 'status' => 'published']);
+    $totalPages  = (int)ceil($totalPosts / $_tileCount);
+    $gridPosts   = $_showTileGrid
+        ? $postService->getPosts(['limit' => $_tileCount, 'offset' => ($currentPage - 1) * $_tileCount, 'status' => 'published'])
+        : [];
 } catch (\Throwable $e) {
     $featuredPosts = [];
     $gridPosts     = [];
@@ -43,12 +109,39 @@ try {
 
 <div class="container" style="padding-top:28px;padding-bottom:40px;">
 
-    <!-- ── Featured Artikel ─────────────────────────────────────── -->
-    <?php if (!empty($featuredPosts)): ?>
+    <!-- ── Repo-Card ─────────────────────────────────────────────── -->
+    <?php if ($_showRepo && !empty($_repoTitle)): ?>
+    <section class="content-section" data-anim>
+        <div class="repo-card">
+            <div class="repo-card-body">
+                <h3><?php echo htmlspecialchars($_repoTitle, ENT_QUOTES); ?></h3>
+                <?php if (!empty($_repoDesc)): ?>
+                <p><?php echo htmlspecialchars($_repoDesc, ENT_QUOTES); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_repoBtnText) && !empty($_repoBtnUrl)): ?>
+                <a href="<?php echo htmlspecialchars($_repoBtnUrl, ENT_QUOTES); ?>"
+                   class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
+                    <?php echo htmlspecialchars($_repoBtnText, ENT_QUOTES); ?>
+                </a>
+                <?php endif; ?>
+            </div>
+            <?php if (!empty($_repoBadge)): ?>
+            <div class="repo-card-badge">
+                <span><?php echo htmlspecialchars($_repoBadge, ENT_QUOTES); ?></span>
+            </div>
+            <?php endif; ?>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <!-- ── Artikel-Liste ─────────────────────────────────────── -->
+    <?php if ($_showList && !empty($featuredPosts)): ?>
     <section class="content-section" data-anim>
         <div class="section-header">
-            <span class="section-label">📄 Aktuelle Beiträge</span>
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog">Alle Beiträge →</a>
+            <span class="section-label">📄 <?php echo htmlspecialchars($_listLabel, ENT_QUOTES); ?></span>
+            <?php if (!empty($_listLinkUrl)): ?>
+            <a href="<?php echo htmlspecialchars($siteUrl . $_listLinkUrl, ENT_QUOTES); ?>">Alle Beiträge →</a>
+            <?php endif; ?>
         </div>
 
         <div class="article-list" style="border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);">
@@ -59,27 +152,33 @@ try {
                 <div class="article-thumb">
                     <img src="<?php echo htmlspecialchars($post['thumbnail'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-                         width="200" loading="lazy">
-                    <?php if (!empty($post['category'])): ?>
+                         width="<?php echo $_listThumbW; ?>" height="<?php echo $_listThumbH; ?>" loading="lazy">
+                    <?php if ($_showBadge && !empty($post['category'])): ?>
                     <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
 
                 <div class="article-body">
+                    <?php if ($_showMeta): ?>
                     <div class="article-meta">
-                        <span class="cat"><?php echo htmlspecialchars($post['category'] ?? 'Allgemein', ENT_QUOTES); ?></span>
+                        <?php if ($_showMetaCat && !empty($post['category'])): ?>
+                        <span class="cat"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
+                        <?php endif; ?>
+                        <?php if ($_showMetaDate): ?>
                         <span><?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
-                        <?php if (!empty($post['read_time'])): ?>
+                        <?php endif; ?>
+                        <?php if ($_showMetaRT && !empty($post['read_time'])): ?>
                         <span class="read"><?php echo (int)$post['read_time']; ?> Min. Lesezeit</span>
                         <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                     <h4>
                         <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
                             <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
                         </a>
                     </h4>
-                    <?php if (!empty($post['excerpt'])): ?>
+                    <?php if ($_showExcerpt && !empty($post['excerpt'])): ?>
                     <p><?php echo htmlspecialchars(mb_strimwidth($post['excerpt'] ?? '', 0, 160, '…'), ENT_QUOTES); ?></p>
                     <?php endif; ?>
                 </div>
@@ -90,34 +189,46 @@ try {
     </section>
     <?php endif; ?>
 
-    <!-- ── Kategorien-Highlight 2-spaltig ───────────────────────── -->
+    <!-- ── Kategorie-Cards (Info-Grid) ───────────────────────── -->
+    <?php if ($_showInfoGrid): ?>
     <section class="content-section" data-anim data-anim-delay="1">
         <div class="section-header">
             <span class="section-label gold">📂 Themenbereiche</span>
         </div>
         <div class="info-grid">
-            <div class="info-card">
-                <h3><span class="icon">🔵</span> Microsoft 365 Anleitungen</h3>
-                <p>Schritt-für-Schritt-Tutorials für Exchange, Teams, SharePoint und alle Microsoft 365 Dienste. Von den Grundlagen bis zu erweiterten Admin-Aufgaben.</p>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365" class="btn btn-outline btn-sm">Mehr erfahren →</a>
+            <div class="info-card<?php echo $_c1Style === 'gold' ? ' info-card--gold' : ''; ?>">
+                <h3><?php echo htmlspecialchars($_c1Title, ENT_QUOTES); ?></h3>
+                <?php if (!empty($_c1Text)): ?>
+                <p><?php echo htmlspecialchars($_c1Text, ENT_QUOTES); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_c1LinkUrl) && !empty($_c1LinkText)): ?>
+                <a href="<?php echo htmlspecialchars($siteUrl . $_c1LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm"><?php echo htmlspecialchars($_c1LinkText, ENT_QUOTES); ?></a>
+                <?php endif; ?>
             </div>
-            <div class="info-card">
-                <h3><span class="icon">🟠</span> Microsoft 365 Datenschutz</h3>
-                <p>DSGVO-konforme Konfiguration, Compliance-Einstellungen und Datenschutz-Best Practices für Microsoft 365 Umgebungen inklusive Checklisten und Vorlagen.</p>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz" class="btn btn-outline btn-sm">Mehr erfahren →</a>
+            <div class="info-card<?php echo $_c2Style === 'gold' ? ' info-card--gold' : ''; ?>">
+                <h3><?php echo htmlspecialchars($_c2Title, ENT_QUOTES); ?></h3>
+                <?php if (!empty($_c2Text)): ?>
+                <p><?php echo htmlspecialchars($_c2Text, ENT_QUOTES); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_c2LinkUrl) && !empty($_c2LinkText)): ?>
+                <a href="<?php echo htmlspecialchars($siteUrl . $_c2LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm"><?php echo htmlspecialchars($_c2LinkText, ENT_QUOTES); ?></a>
+                <?php endif; ?>
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
-    <!-- ── 3-spaltige Post-Grid ─────────────────────────────────── -->
-    <?php if (!empty($gridPosts)): ?>
+    <!-- ── Kachel-Grid ─────────────────────────────────────────── -->
+    <?php if ($_showTileGrid && !empty($gridPosts)): ?>
     <section class="content-section" data-anim data-anim-delay="2">
         <div class="section-header">
-            <span class="section-label">📰 Weitere Beiträge</span>
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/archiv">Archiv →</a>
+            <span class="section-label">📰 <?php echo htmlspecialchars($_tileLabel, ENT_QUOTES); ?></span>
+            <?php if (!empty($_tileLinkUrl)): ?>
+            <a href="<?php echo htmlspecialchars($siteUrl . $_tileLinkUrl, ENT_QUOTES); ?>">Archiv →</a>
+            <?php endif; ?>
         </div>
 
-        <div class="posts-grid">
+        <div class="posts-grid posts-grid--cols-<?php echo $_tileCols; ?>">
             <?php foreach ($gridPosts as $i => $post): ?>
             <article class="post-card" data-anim data-anim-delay="<?php echo min($i + 1, 4); ?>">
 
@@ -134,7 +245,7 @@ try {
                 <?php endif; ?>
 
                 <div class="post-card-body">
-                    <?php if (!empty($post['category'])): ?>
+                    <?php if ($_showTileCat && !empty($post['category'])): ?>
                     <span class="badge badge-neutral" style="align-self:flex-start;"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
                     <?php endif; ?>
                     <h3 class="post-card-title">
@@ -142,13 +253,19 @@ try {
                             <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
                         </a>
                     </h3>
-                    <?php if (!empty($post['excerpt'])): ?>
+                    <?php if ($_showTileExc && !empty($post['excerpt'])): ?>
                     <p class="post-card-excerpt"><?php echo htmlspecialchars($post['excerpt'] ?? '', ENT_QUOTES); ?></p>
                     <?php endif; ?>
+                    <?php if ($_showTileDate || $_showTileCat): ?>
                     <div class="post-card-meta">
-                        <span class="cat"><?php echo htmlspecialchars($post['category'] ?? '', ENT_QUOTES); ?></span>
+                        <?php if ($_showTileCat && !empty($post['category'])): ?>
+                        <span class="cat"><?php echo htmlspecialchars($post['category'], ENT_QUOTES); ?></span>
+                        <?php endif; ?>
+                        <?php if ($_showTileDate): ?>
                         <span><?php echo htmlspecialchars(date('j. M. Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
+                        <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
 
             </article>

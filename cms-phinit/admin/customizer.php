@@ -841,8 +841,30 @@ $config = [
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
-
-            // ── Kategorie-Cards (Info-Grid) ──
+            'show_meta_category' => [
+                'label'       => 'Meta: Kategorie anzeigen',
+                'description' => 'Kategorie-Name in der Metazeile der Artikel-Liste.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_meta_date' => [
+                'label'       => 'Meta: Datum anzeigen',
+                'description' => 'Veröffentlichungsdatum in der Metazeile.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_meta_readtime' => [
+                'label'       => 'Meta: Lesezeit anzeigen',
+                'description' => 'Geschätzte Lesezeit (z. B. „5 Min.“) in der Metazeile.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'article_list_link_url' => [
+                'label'       => 'Artikel-Liste – „Alle Beiträge“ URL',
+                'description' => 'Ziel des „Alle Beiträge →“-Links rechts im Sektions-Header.',
+                'type'        => 'text',
+                'default'     => '/blog',
+            ],
             'show_info_grid' => [
                 'label'       => 'Kategorie-Cards anzeigen',
                 'description' => '2er-Grid mit Kategorie-Übersichts-Cards.',
@@ -938,8 +960,30 @@ $config = [
                 'options'     => ['2' => '2 Spalten', '3' => '3 Spalten (Standard)', '4' => '4 Spalten'],
                 'default'     => '3',
             ],
-
-            // ── RSS-Feed-Sektionen ──
+            'show_tile_excerpt' => [
+                'label'       => 'Grid: Auszug anzeigen',
+                'description' => 'Kurze Beschreibung unter dem Titel in den Kacheln.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_tile_category' => [
+                'label'       => 'Grid: Kategorie-Badge anzeigen',
+                'description' => 'Kategorie-Badge über dem Titel in den Kacheln.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_tile_date' => [
+                'label'       => 'Grid: Datum anzeigen',
+                'description' => 'Veröffentlichungsdatum in der Kachel-Metazeile.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'tile_grid_link_url' => [
+                'label'       => 'Grid – „Archiv“ URL',
+                'description' => 'Ziel des „Archiv →“-Links im Grid-Header (leer = kein Link).',
+                'type'        => 'text',
+                'default'     => '/archiv',
+            ],
             'show_feed_section' => [
                 'label'       => 'RSS-Feed-Sektion anzeigen',
                 'description' => 'Zeigt externe RSS-Feed-Blöcke (z. B. Borns Blog, Heise).',
@@ -1285,8 +1329,6 @@ if (!isset($config[$activeTab])) {
     $activeTab = 'colors';
 }
 
-$csrfToken = Security::instance()->generateToken('phinit_customizer');
-
 // ── 3. Speichern & Zurücksetzen ──────────────────────────────────────────────
 $success = null;
 $error   = null;
@@ -1350,6 +1392,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_
         }
     }
 }
+
+// CSRF-Token NACH den POST-Handlern generieren (verhindert Token-Überschreibung vor Prüfung)
+$csrfToken = Security::instance()->generateToken('phinit_customizer');
 
 // ── Helper: Einzelfeld rendern ───────────────────────────────────────────────
 function phinit_render_field(string $tab, string $fieldKey, array $field, mixed $val): void
@@ -1708,10 +1753,10 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     <?php elseif ($activeTab === 'homepage'):
                         $homepageGroups = [
                             '📌 Repo-Card'         => ['show_repo_card', 'repo_card_title', 'repo_card_description', 'repo_card_badge', 'repo_card_btn_text', 'repo_card_btn_url'],
-                            '📰 Artikel-Liste'     => ['show_article_list', 'article_list_label', 'article_list_count', 'article_thumb_width', 'article_thumb_height', 'show_article_excerpt', 'show_article_meta', 'show_article_badge'],
+                            '📰 Artikel-Liste'     => ['show_article_list', 'article_list_label', 'article_list_count', 'article_list_link_url', 'article_thumb_width', 'article_thumb_height', 'show_article_excerpt', 'show_article_meta', 'show_article_badge', 'show_meta_category', 'show_meta_date', 'show_meta_readtime'],
                             '🗂️ Kategorie-Cards'   => ['show_info_grid', 'info_card1_title', 'info_card1_text', 'info_card1_link_text', 'info_card1_link_url', 'info_card1_style', 'info_card2_title', 'info_card2_text', 'info_card2_link_text', 'info_card2_link_url', 'info_card2_style'],
-                            '🧱 Kachel-Grid'       => ['show_tile_grid', 'tile_grid_label', 'tile_grid_count', 'tile_grid_columns'],
-                            '📡 RSS-Feeds'         => ['show_feed_section', 'feed1_title', 'feed1_url', 'feed1_count', 'feed2_title', 'feed2_url', 'feed2_count'],
+                            '🧱 Kachel-Grid'       => ['show_tile_grid', 'tile_grid_label', 'tile_grid_count', 'tile_grid_columns', 'show_tile_excerpt', 'show_tile_category', 'show_tile_date', 'tile_grid_link_url'],
+                            '📡 RSS-Feeds'         => ['show_feed_section', 'feed1_channel_id', 'feed1_count', 'feed2_channel_id', 'feed2_count'],
                         ];
                     ?>
                     <div class="admin-card">
