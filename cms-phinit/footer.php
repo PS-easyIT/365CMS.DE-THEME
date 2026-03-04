@@ -33,7 +33,7 @@ try {
     $_copyright     = str_replace(['{year}', '{site_title}'], [$year, $siteTitle], (string)$_copyrightRaw);
 
     // Toggles
-    $_showConsent    = filter_var($c->get('footer', 'show_consent_banner', true), FILTER_VALIDATE_BOOLEAN);
+    $_showConsent    = false; // Default: aus – CMS-Admin muss cookie_consent_enabled aktivieren
     $_consentText    = $c->get('footer', 'consent_text', 'Diese Website verwendet Cookies für Analyse-Zwecke.');
     $_consentPrivUrl = $c->get('footer', 'consent_privacy_url', '/cookie-policy');
     $_showBackToTop  = filter_var($c->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
@@ -70,7 +70,7 @@ try {
     $_col3Title     = 'Seiten';
     $_col4Title     = 'Rechtliches';
     $_copyright     = '© ' . $year . ' ' . $siteTitle . ' – Alle Rechte vorbehalten';
-    $_showConsent   = true;
+    $_showConsent   = false; // Default: aus
     $_consentText   = 'Diese Website verwendet Cookies für Analyse-Zwecke.';
     $_consentPrivUrl = '/cookie-policy';
     $_showBackToTop = true;
@@ -81,14 +81,22 @@ try {
     $_liLabel = 'LinkedIn'; $_ghLabel = 'GitHub'; $_rssLabel = 'RSS Feed';
     $_networkLinks = [];
 }
-// CMS-Einstellung hat Vorrang: wenn global deaktiviert, Banner unterdrücken
+// Cookie Consent: Banner nur anzeigen wenn CMS-Admin cookie_consent_enabled = '1' gesetzt hat
 try {
     $_db   = \CMS\Database::instance();
     $_stmt = $_db->prepare('SELECT option_value FROM ' . $_db->prefix() . 'settings WHERE option_name = ?');
     $_stmt->execute(['cookie_consent_enabled']);
     $_row  = $_stmt->fetch(\PDO::FETCH_ASSOC);
-    if ($_row !== false && ($_row['option_value'] ?? '1') !== '1') {
-        $_showConsent = false;
+    if ($_row !== false && ($_row['option_value'] ?? '0') === '1') {
+        // CMS aktiviert → Customizer-Toggle zusätzlich auswerten
+        try {
+            $_showConsent = filter_var(
+                \CMS\Services\ThemeCustomizer::instance()->get('footer', 'show_consent_banner', true),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (\Throwable $_e2) {
+            $_showConsent = true; // Customizer nicht erreichbar → zeigen wenn DB aktiv
+        }
     }
 } catch (\Throwable $_e) {}
 

@@ -2142,3 +2142,116 @@ select:focus-visible,
     a { color: #000; text-decoration: underline; }
     a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   NEUE KOMPONENTEN – 2026-03-04
+   Breadcrumb · Reading-Time-Badge · Code-Copy-Button · Notif-Badge
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Breadcrumb ─────────────────────────────────────────────────── */
+.breadcrumb-nav {
+    background: var(--bg-secondary, #f1f5f9);
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    padding: .45rem 0;
+    font-size: .78rem;
+    color: var(--text-muted, #94a3b8);
+}
+.breadcrumb {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+}
+.breadcrumb li { display: flex; align-items: center; }
+.breadcrumb a  { color: var(--text-secondary, #64748b); text-decoration: none; transition: color .15s; }
+.breadcrumb a:hover { color: var(--primary-light, #2563eb); text-decoration: underline; }
+.breadcrumb .sep     { padding: 0 .3rem; color: var(--text-muted, #94a3b8); user-select: none; }
+.breadcrumb .current { color: var(--text-muted, #94a3b8); }
+body.dark-mode .breadcrumb-nav {
+    background: var(--bg-dark, #0a0f1a);
+    border-color: rgba(255,255,255,.07);
+}
+body.dark-mode .breadcrumb a  { color: #94a3b8; }
+body.dark-mode .breadcrumb a:hover { color: var(--accent-teal-light, #5eead4); }
+
+/* ── Reading-Time Badge ─────────────────────────────────────────── */
+.reading-time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .2rem;
+    background: rgba(13,148,136,.12);
+    color: var(--accent-teal, #0d9488);
+    border: 1px solid rgba(13,148,136,.25);
+    border-radius: 20px;
+    padding: .15rem .6rem;
+    font-size: .75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+body.dark-mode .reading-time-badge {
+    background: rgba(13,148,136,.18);
+    border-color: rgba(13,148,136,.35);
+    color: #5eead4;
+}
+
+/* ── Code-Block Copy Button ─────────────────────────────────────── */
+pre { position: relative; }
+.code-copy-btn {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 4px;
+    color: rgba(255,255,255,.65);
+    cursor: pointer;
+    font-size: .72rem;
+    line-height: 1;
+    padding: .28rem .42rem;
+    transition: background .15s, color .15s, border-color .15s;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity .2s ease, background .15s;
+}
+pre:hover .code-copy-btn { opacity: 1; }
+.code-copy-btn:hover { background: rgba(255,255,255,.18); color: #fff; border-color: rgba(255,255,255,.35); }
+.code-copy-btn:focus-visible { opacity: 1; outline: 2px solid var(--accent-teal, #0d9488); outline-offset: 2px; }
+.code-copy-btn.copied { background: rgba(13,148,136,.35); border-color: #0d9488; color: #fff; opacity: 1; }
+
+/* ── Notification Badge ─────────────────────────────────────────── */
+.notif-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 999px;
+    font-size: .6rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-left: 3px;
+    vertical-align: middle;
+    animation: notif-pulse 2s ease-in-out infinite;
+}
+@keyframes notif-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .7; }
+}
+
+/* ── RSS SVG Icon ───────────────────────────────────────────────── */
+.rss-svg-icon {
+    vertical-align: middle;
+    display: inline-block;
+    color: var(--accent-color, #e8a838);
+    transition: color .15s;
+}
+.member-bar__link:hover .rss-svg-icon { color: #fff; }
+
+/* ── og_default_image Customizer-Feld (Hinweis für theme.json) ─── */

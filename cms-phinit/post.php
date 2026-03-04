@@ -353,7 +353,7 @@ if ($sidebarPosition === 'left') {
                         <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author_name'], ENT_QUOTES); ?></strong></span>
                         <?php endif; ?>
                         <?php if ($showReadingTime): ?>
-                        <span>⏱ <?php echo $readingTime; ?> Min. Lesezeit</span>
+                        <span class="reading-time-badge">&#x23F1; <strong><?php echo $readingTime; ?></strong>&thinsp;Min.</span>
                         <?php endif; ?>
                         <?php if ($commentCount > 0): ?>
                         <span>💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></span>

@@ -28,6 +28,21 @@ try {
     // Auth nicht verfügbar – kein Fehler ausgeben
 }
 
+// Ungelesene Benachrichtigungen zählen (für Badge in Member-Bar)
+$notifCount = 0;
+if ($isLoggedIn && $currentUser !== null) {
+    try {
+        $_userId = is_object($currentUser) ? (int)($currentUser->id ?? 0) : (int)($currentUser['id'] ?? 0);
+        if ($_userId > 0) {
+            $_ndb = \CMS\Database::instance();
+            $notifCount = (int)($_ndb->get_var(
+                "SELECT COUNT(*) FROM {$_ndb->prefix()}notifications WHERE user_id = ? AND is_read = 0",
+                [$_userId]
+            ) ?? 0);
+        }
+    } catch (\Throwable) {}
+}
+
 // Customizer-Einstellungen (mit Fallbacks)
 try {
     $customizer    = \CMS\Services\ThemeCustomizer::instance();
@@ -81,7 +96,9 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – IT-Blog & Tutorials</title>
+    <title><?php echo \CMS\Hooks::applyFilters('page_title', htmlspecialchars($siteTitle, ENT_QUOTES)); ?></title>
+    <!-- Anti-FOUC: Dark Mode vor CSS-Load setzen -->
+    <script>if(localStorage.getItem('cms-phinit-theme')==='dark')document.documentElement.classList.add('dark-mode');</script>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 <body<?php
@@ -132,8 +149,7 @@ try {
                     <span class="member-bar__icon">✉️</span> Nachrichten
                 </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/notifications" class="member-bar__link">
-                    <span class="member-bar__icon">🔔</span> Benachrichtigungen
-                </a>
+                    <span class="member-bar__icon">🔔</span> Benachrichtigungen                    <?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>                </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/favorites" class="member-bar__link">
                     <span class="member-bar__icon">⭐</span> Favoriten
                 </a>
@@ -144,8 +160,8 @@ try {
 
             <div class="member-bar__actions">
                 <?php if ($_showRss): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" class="member-bar__link" aria-label="RSS-Feed" title="RSS-Feed">
-                    <span class="member-bar__icon">⊞</span>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" class="member-bar__link" aria-label="RSS-Feed abonnieren" title="RSS Feed">
+                    <svg class="rss-svg-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
                 </a>
                 <?php endif; ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-bar__link member-bar__logout" title="Abmelden">
@@ -174,24 +190,34 @@ try {
                 <?php endif; ?>
             </a>
 
+            <?php
+            // Exakter Active-Nav-Abgleich: "/" nur auf Startseite, andere URLs prefix-basiert
+            $_navUri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+            $navIsActive = static function (string $url) use ($_navUri): bool {
+                if ($url === '' || $url === '#') { return false; }
+                if ($url === '/') { return $_navUri === '/'; }
+                return $_navUri === $url || str_starts_with($_navUri, rtrim($url, '/') . '/');
+            };
+            ?>
             <nav class="main-nav" aria-label="Hauptnavigation">
                     <?php if (!empty($mainMenuItems)): ?>
                         <?php foreach ($mainMenuItems as $item): ?>
                             <?php if (!empty($item['children'])): ?>
                             <span class="has-dropdown">
                                 <a href="<?php echo htmlspecialchars($item['url'] ?? '#', ENT_QUOTES); ?>"
-                                   <?php echo isset($item['label']) && strpos($_SERVER['REQUEST_URI'] ?? '', $item['url'] ?? '') !== false ? ' class="active" aria-current="page"' : ''; ?>>
+                                   <?php echo $navIsActive($item['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>>
                                     <?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?> ▾
                                 </a>
                                 <div class="dropdown">
                                     <?php foreach ($item['children'] as $child): ?>
-                                    <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
+                                    <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>"
+                                       <?php echo $navIsActive($child['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
                                     <?php endforeach; ?>
                                 </div>
                             </span>
                             <?php else: ?>
                             <a href="<?php echo htmlspecialchars($item['url'] ?? '#', ENT_QUOTES); ?>"
-                               <?php echo strpos($_SERVER['REQUEST_URI'] ?? '', $item['url'] ?? 'NOPE') !== false ? ' class="active" aria-current="page"' : ''; ?>>
+                               <?php echo $navIsActive($item['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>>
                                 <?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?>
                             </a>
                             <?php endif; ?>
@@ -200,12 +226,13 @@ try {
                         <!-- Fallback-Menü -->
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux">Linux / BASH</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell" class="has-dropdown">PowerShell ▾
+                        <span class="has-dropdown">
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell">PowerShell &#9662;</a>
                             <div class="dropdown">
                                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell/grundlagen">Grundlagen</a>
                                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell/glossar">Glossar</a>
                             </div>
-                        </a>
+                        </span>
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a>
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz</a>
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">News</a>

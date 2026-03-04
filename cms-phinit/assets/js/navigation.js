@@ -26,6 +26,7 @@
         if (isEnabled('backToTop'))     initBackToTop();
         initShareButtons();
         initConsentBanner();
+        initCodeCopyButtons();
     });
 
     /* ── Sticky Header ─────────────────────────────────────────── */
@@ -128,11 +129,19 @@
     function initActiveNav() {
         const path = window.location.pathname;
         document.querySelectorAll('.main-nav a, .mobile-menu a').forEach(a => {
-            const url = new URL(a.href, window.location.origin);
-            if (url.pathname !== '/' && path.startsWith(url.pathname)) {
-                a.classList.add('active');
-                a.setAttribute('aria-current', 'page');
-            }
+            try {
+                const url = new URL(a.href, window.location.origin);
+                let active = false;
+                if (url.pathname === '/') {
+                    active = path === '/'; // Startseite: nur exakter Treffer
+                } else {
+                    active = path === url.pathname || path.startsWith(url.pathname + '/');
+                }
+                if (active) {
+                    a.classList.add('active');
+                    a.setAttribute('aria-current', 'page');
+                }
+            } catch (_) {}
         });
     }
 
@@ -202,4 +211,32 @@
             banner.style.display = 'none';
         });
     }
+    /* ── Code-Block Copy Buttons ─────────────────────────────── */
+    function initCodeCopyButtons() {
+        document.querySelectorAll('pre > code').forEach(codeEl => {
+            const pre = codeEl.parentElement;
+            if (pre.querySelector('.code-copy-btn')) return;
+            const btn = document.createElement('button');
+            btn.className = 'code-copy-btn';
+            btn.setAttribute('aria-label', 'Code kopieren');
+            btn.setAttribute('title', 'Code kopieren');
+            btn.textContent = '\uD83D\uDCCB'; // 📋
+            pre.appendChild(btn);
+            btn.addEventListener('click', async () => {
+                const code = codeEl.textContent || '';
+                try {
+                    await navigator.clipboard.writeText(code);
+                    btn.textContent = '\u2713'; // ✓
+                    btn.classList.add('copied');
+                    setTimeout(() => { btn.textContent = '\uD83D\uDCCB'; btn.classList.remove('copied'); }, 2000);
+                } catch (_) {
+                    const range = document.createRange();
+                    range.selectNodeContents(codeEl);
+                    window.getSelection()?.removeAllRanges();
+                    window.getSelection()?.addRange(range);
+                }
+            });
+        });
+    }
+
 })();

@@ -90,8 +90,11 @@
     "footer": "footer.php"
   },
   "menus": {
-    "primary": "Hauptnavigation",
-    "footer":  "Footer-Navigation"
+    "primary":       "Hauptnavigation",
+    "quicklinks":    "Quicklinks (Sub-Navigation)",
+    "footer-topics": "Footer – Themen",
+    "footer-pages":  "Footer – Seiten",
+    "footer":        "Footer – Rechtliches"
   },
   "supports": {
     "dark_mode":     true,
@@ -111,7 +114,8 @@
     "comments":   "member/comments.php",
     "newsletter": "member/newsletter.php",
     "feeds":      "member/feeds.php",
-    "forum":      "member/forum.php"
+    "forum":      "member/forum.php",
+    "security":   "member/security.php"
   },
   "customization": {
     "colors": {
@@ -157,49 +161,162 @@
           "type": "color",
           "default": "#f1f5f9"
         },
-        "border_color": {
+        "accent_blue": {
+          "label": "Akzentfarbe Blau",
+          "type": "color",
+          "default": "#2d7dd2"
+        },
+        "accent_teal_light": {
+          "label": "Akzentfarbe Teal Hell (Links/Hover)",
+          "type": "color",
+          "default": "#5eead4"
+        },
+        "bg_header1": {
+          "label": "Header-Bar 1 (Member-Bar) Hintergrund",
+          "type": "color",
+          "default": "#0f2240"
+        },
+        "bg_header2": {
+          "label": "Header-Bar 2 (Hauptnavigation) Hintergrund",
+          "type": "color",
+          "default": "#1e3a5f"
+        },
+        "bg_header3": {
+          "label": "Header-Bar 3 (Quicklinks) Hintergrund",
+          "type": "color",
+          "default": "#f8fafc"
+        },
+        "text_muted": {
+          "label": "Gedämpfter Text",
+          "type": "color",
+          "default": "#94a3b8"
+        },
+        "logo_suffix_color": {
+          "label": "Logo-Suffix-Farbe (.DE)",
+          "type": "color",
+          "default": "#e8a838"
+        },
+        "border_light": {
           "label": "Trennlinienfarbe",
           "type": "color",
           "default": "#e2e8f0"
+        },
+        "footer_bg": {
+          "label": "Footer-Hintergrundfarbe",
+          "type": "color",
+          "default": "#0f172a"
+        },
+        "footer_border": {
+          "label": "Footer-Randfarbe",
+          "type": "color",
+          "default": "#1e3a5f"
+        },
+        "progress_bar_start": {
+          "label": "Fortschrittsbalken Startfarbe",
+          "type": "color",
+          "default": "#2d7dd2"
+        },
+        "progress_bar_end": {
+          "label": "Fortschrittsbalken Endfarbe",
+          "type": "color",
+          "default": "#e8a838"
         }
       }
     },
     "typography": {
       "label": "Typografie",
       "fields": {
-        "font_family": {
-          "label": "Schriftart",
+        "font_family_ui": {
+          "label": "UI-Schriftart (Body/Navigation)",
           "type": "select",
-          "default": "system",
+          "default": "barlow",
           "options": {
-            "system": "System-Font (Standard)",
-            "inter":  "Inter (Google Fonts)",
-            "roboto": "Roboto (Google Fonts)"
+            "barlow":      "Barlow",
+            "inter":       "Inter",
+            "roboto":      "Roboto",
+            "open-sans":   "Open Sans",
+            "lato":        "Lato",
+            "montserrat":  "Montserrat",
+            "poppins":     "Poppins",
+            "source-sans": "Source Sans 3",
+            "nunito":      "Nunito",
+            "system":      "System-Font"
+          }
+        },
+        "font_family_brand": {
+          "label": "Brand/Heading-Schriftart",
+          "type": "select",
+          "default": "barlow-condensed",
+          "options": {
+            "barlow-condensed": "Barlow Condensed",
+            "roboto-condensed": "Roboto Condensed",
+            "oswald":           "Oswald",
+            "rajdhani":         "Rajdhani",
+            "exo2":             "Exo 2",
+            "barlow":           "Barlow",
+            "montserrat":       "Montserrat"
+          }
+        },
+        "font_family_code": {
+          "label": "Code-Schriftart",
+          "type": "select",
+          "default": "jetbrains-mono",
+          "options": {
+            "jetbrains-mono": "JetBrains Mono",
+            "fira-code":      "Fira Code",
+            "source-code":    "Source Code Pro",
+            "system-mono":    "System Mono"
           }
         },
         "font_size_base": {
           "label": "Basis-Schriftgröße (px)",
           "type": "number",
-          "default": 16,
+          "default": 14.5,
           "min": 12,
           "max": 22
         },
-        "line_height": {
-          "label": "Zeilenhöhe",
+        "font_size_post": {
+          "label": "Post-Schriftgröße (px)",
           "type": "number",
-          "default": 1.7,
+          "default": 15.5,
+          "min": 12,
+          "max": 22
+        },
+        "line_height_base": {
+          "label": "Zeilenhöhe (Body)",
+          "type": "number",
+          "default": 1.55,
           "step": 0.05,
           "min": 1.3,
           "max": 2.2
         },
-        "heading_weight": {
-          "label": "Überschriften Schriftstärke",
+        "line_height_post": {
+          "label": "Zeilenhöhe (Artikel)",
+          "type": "number",
+          "default": 1.8,
+          "step": 0.05,
+          "min": 1.3,
+          "max": 2.2
+        },
+        "font_weight_heading": {
+          "label": "Überschriften-Gewicht",
           "type": "select",
           "default": "700",
           "options": {
             "600": "Semi-Bold (600)",
             "700": "Bold (700)",
             "800": "Extra-Bold (800)"
+          }
+        },
+        "font_weight_nav": {
+          "label": "Navigations-Gewicht",
+          "type": "select",
+          "default": "600",
+          "options": {
+            "400": "Normal (400)",
+            "500": "Medium (500)",
+            "600": "Semi-Bold (600)",
+            "700": "Bold (700)"
           }
         }
       }
@@ -212,77 +329,77 @@
           "type": "text",
           "default": ""
         },
-        "logo_alt": {
-          "label": "Logo Alt-Text",
+        "logo_text_part1": {
+          "label": "Logo-Text Teil 1 (z.B. PHIN)",
           "type": "text",
-          "default": "phinIT Logo"
+          "default": "PHIN"
         },
-        "logo_width": {
-          "label": "Logo-Breite (px)",
+        "logo_text_part2": {
+          "label": "Logo-Text Teil 2 – Akzentfarbe (z.B. IT)",
+          "type": "text",
+          "default": "IT"
+        },
+        "logo_text_suffix": {
+          "label": "Logo-Suffix (z.B. .DE)",
+          "type": "text",
+          "default": ".DE"
+        },
+        "show_logo_text_with_image": {
+          "label": "Text neben Logo-Bild anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "logo_max_height": {
+          "label": "Logo-Maximalhöhe (px)",
           "type": "number",
-          "default": 160,
-          "min": 60,
-          "max": 400
+          "default": 28,
+          "min": 16,
+          "max": 80
         },
-        "site_tagline": {
-          "label": "Tagline im Header",
-          "type": "text",
-          "default": "IT-Wissen für den Alltag"
-        },
-        "show_search": {
+        "show_search_bar": {
           "label": "Suchfeld anzeigen",
           "type": "checkbox",
           "default": true
         },
-        "show_dark_toggle": {
-          "label": "Dark-Mode-Toggle anzeigen",
-          "type": "checkbox",
-          "default": true
+        "search_placeholder": {
+          "label": "Suche Platzhaltertext",
+          "type": "text",
+          "default": "Suchen …"
         },
         "show_rss_link": {
-          "label": "RSS-Link anzeigen",
+          "label": "RSS-Link in Member-Bar anzeigen",
           "type": "checkbox",
           "default": true
         },
-        "rss_url": {
-          "label": "RSS-Feed-URL",
-          "type": "text",
-          "default": "/feed.xml"
-        },
-        "sticky_header": {
-          "label": "Sticky Header aktivieren",
+        "show_member_bar": {
+          "label": "Member-Bar anzeigen (für eingeloggte User)",
           "type": "checkbox",
           "default": true
         },
-        "show_quicklinks_bar": {
+        "show_quicklinks": {
           "label": "Quicklinks-Leiste anzeigen",
           "type": "checkbox",
           "default": true
-        },
-        "quicklinks": {
-          "label": "Quicklinks (JSON-Array)",
-          "type": "json",
-          "default": [
-            {"label": "PowerShell Glossar",       "url": "/powershell/glossar"},
-            {"label": "M365 Anleitungen",         "url": "/microsoft-365"},
-            {"label": "Linux Bash Cheatsheet",    "url": "/linux/bash-cheatsheet"},
-            {"label": "Datenschutz-Templates",    "url": "/datenschutz"}
-          ]
         }
       }
     },
     "footer": {
       "label": "Footer",
       "fields": {
-        "footer_description": {
+        "footer_brand_name": {
+          "label": "Markenname im Footer",
+          "type": "text",
+          "default": "PHINIT.DE"
+        },
+        "footer_tagline": {
           "label": "Footer-Beschreibungstext",
           "type": "textarea",
-          "default": "IT-Anleitungen, Tutorials und Best Practices für Systemadministratoren und IT-Profis."
+          "default": "IT-Profi-Blog für Microsoft 365, PowerShell, Linux und moderne IT-Administration."
         },
         "copyright_text": {
-          "label": "Copyright-Text",
+          "label": "Copyright-Text ({year} und {site_title} werden ersetzt)",
           "type": "text",
-          "default": "phinIT – Andreas Hepp. Alle Rechte vorbehalten."
+          "default": "\u00a9 {year} {site_title} – Alle Rechte vorbehalten"
         },
         "footer_col2_title": {
           "label": "2. Spalten-Titel",
@@ -292,52 +409,98 @@
         "footer_col3_title": {
           "label": "3. Spalten-Titel",
           "type": "text",
+          "default": "Seiten"
+        },
+        "footer_col4_title": {
+          "label": "4. Spalten-Titel (Rechtliches)",
+          "type": "text",
           "default": "Rechtliches"
         },
+        "show_footer_social": {
+          "label": "Social-Icons im Footer anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
         "show_consent_banner": {
-          "label": "Cookie-Consent-Banner anzeigen",
+          "label": "Cookie-Consent-Banner anzeigen (nur wenn CMS-Admin aktiviert)",
           "type": "checkbox",
           "default": true
         },
         "consent_text": {
           "label": "Consent-Banner-Text",
           "type": "textarea",
-          "default": "Diese Website verwendet technisch notwendige Cookies. Mit dem Klick auf \"Akzeptieren\" stimmst du der Nutzung zu."
+          "default": "Diese Website verwendet Cookies für Analyse-Zwecke."
         },
-        "show_back_to_top": {
-          "label": "Nach-oben-Button anzeigen",
+        "consent_privacy_url": {
+          "label": "Datenschutz-Link im Consent-Banner",
+          "type": "text",
+          "default": "/cookie-policy"
+        },
+        "show_network_bar": {
+          "label": "Partner-Netzwerk-Leiste anzeigen",
           "type": "checkbox",
-          "default": true
-        }
+          "default": false
+        },
+        "network_bar_link1_label": { "label": "Netzwerk-Link 1 – Label", "type": "text", "default": "" },
+        "network_bar_link1_url":   { "label": "Netzwerk-Link 1 – URL",   "type": "url",  "default": "" },
+        "network_bar_link2_label": { "label": "Netzwerk-Link 2 – Label", "type": "text", "default": "" },
+        "network_bar_link2_url":   { "label": "Netzwerk-Link 2 – URL",   "type": "url",  "default": "" },
+        "network_bar_link3_label": { "label": "Netzwerk-Link 3 – Label", "type": "text", "default": "" },
+        "network_bar_link3_url":   { "label": "Netzwerk-Link 3 – URL",   "type": "url",  "default": "" }
       }
     },
     "social": {
       "label": "Social Media",
       "fields": {
-        "linkedin_url": {
+        "social_linkedin": {
           "label": "LinkedIn-Profil-URL",
           "type": "url",
           "default": ""
         },
-        "github_url": {
-          "label": "GitHub-Profil-URL",
-          "type": "url",
-          "default": "https://github.com/phinit-de"
+        "social_label_linkedin": {
+          "label": "LinkedIn-Label",
+          "type": "text",
+          "default": "LinkedIn"
         },
-        "mastodon_url": {
-          "label": "Mastodon-URL",
+        "social_github": {
+          "label": "GitHub-Profil-URL",
           "type": "url",
           "default": ""
         },
-        "twitter_url": {
+        "social_label_github": {
+          "label": "GitHub-Label",
+          "type": "text",
+          "default": "GitHub"
+        },
+        "social_twitter": {
           "label": "Twitter/X-Profil-URL",
           "type": "url",
           "default": ""
         },
-        "rss_feed_url": {
+        "social_mastodon": {
+          "label": "Mastodon-URL",
+          "type": "url",
+          "default": ""
+        },
+        "social_youtube": {
+          "label": "YouTube-Kanal-URL",
+          "type": "url",
+          "default": ""
+        },
+        "social_xing": {
+          "label": "XING-Profil-URL",
+          "type": "url",
+          "default": ""
+        },
+        "social_rss": {
           "label": "RSS-Feed-URL",
           "type": "url",
-          "default": "/feed.xml"
+          "default": "/feed"
+        },
+        "social_label_rss": {
+          "label": "RSS-Label",
+          "type": "text",
+          "default": "RSS Feed"
         }
       }
     },
@@ -380,11 +543,23 @@
         }
       }
     },
-    "post": {
+    "posts": {
       "label": "Beitrags-Ansicht",
       "fields": {
-        "show_toc": {
-          "label": "Inhaltsverzeichnis anzeigen",
+        "show_post_hero": {
+          "label": "Hero-Bild anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "post_hero_height": {
+          "label": "Hero-Bild Maximalhöhe (px)",
+          "type": "number",
+          "default": 340,
+          "min": 100,
+          "max": 800
+        },
+        "show_post_meta": {
+          "label": "Post-Meta anzeigen (Datum, Kategorie)",
           "type": "checkbox",
           "default": true
         },
@@ -393,8 +568,84 @@
           "type": "checkbox",
           "default": true
         },
+        "reading_time_wpm": {
+          "label": "Wörter pro Minute (Lesezeit-Berechnung)",
+          "type": "number",
+          "default": 200,
+          "min": 50,
+          "max": 600
+        },
+        "show_toc": {
+          "label": "Inhaltsverzeichnis anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "toc_sticky": {
+          "label": "TOC am Rand fixieren (sticky)",
+          "type": "checkbox",
+          "default": true
+        },
+        "toc_min_headings": {
+          "label": "Mindest-Überschriften für TOC-Anzeige",
+          "type": "number",
+          "default": 2,
+          "min": 1,
+          "max": 10
+        },
+        "toc_header_text": {
+          "label": "TOC-Titel",
+          "type": "text",
+          "default": "📋 Inhaltsverzeichnis"
+        },
+        "show_sidebar_social": {
+          "label": "Social-Icons in Sidebar anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_social_header": {
+          "label": "Social-Sidebar-Titel",
+          "type": "text",
+          "default": "Folge uns"
+        },
+        "show_sidebar_related": {
+          "label": "Ähnliche Artikel in Sidebar anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_related_header": {
+          "label": "Ähnliche-Artikel-Sidebar-Titel",
+          "type": "text",
+          "default": "Ähnliche Artikel"
+        },
+        "related_count": {
+          "label": "Anzahl ähnlicher Artikel",
+          "type": "number",
+          "default": 4,
+          "min": 1,
+          "max": 10
+        },
         "show_share_buttons": {
           "label": "Share-Buttons anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_share_linkedin": {
+          "label": "LinkedIn-Share anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_share_twitter": {
+          "label": "Twitter/X-Share anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_share_email": {
+          "label": "E-Mail-Share anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_share_copy": {
+          "label": "URL kopieren-Button anzeigen",
           "type": "checkbox",
           "default": true
         },
@@ -405,6 +656,21 @@
         },
         "show_comments": {
           "label": "Kommentarbereich anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "comments_header": {
+          "label": "Kommentar-Bereich-Titel",
+          "type": "text",
+          "default": "💬 Kommentare"
+        },
+        "comment_form_header": {
+          "label": "Kommentar-Formular-Titel",
+          "type": "text",
+          "default": "Kommentar hinterlassen"
+        },
+        "show_post_tags": {
+          "label": "Tags anzeigen",
           "type": "checkbox",
           "default": true
         },
@@ -433,12 +699,58 @@
     "layout": {
       "label": "Layout",
       "fields": {
+        "enable_sticky_header": {
+          "label": "Sticky Header aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
+        "enable_dark_mode_toggle": {
+          "label": "Dark-Mode-Toggle anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "enable_progress_bar": {
+          "label": "Lesefortschrittsbalken anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "enable_back_to_top": {
+          "label": "Nach-oben-Button anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "enable_scroll_animations": {
+          "label": "Scroll-Einblend-Animationen aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
         "container_width": {
           "label": "Maximale Container-Breite (px)",
           "type": "number",
-          "default": 1280,
+          "default": 1060,
           "min": 900,
           "max": 1920
+        },
+        "sidebar_width": {
+          "label": "Sidebar-Breite (px)",
+          "type": "number",
+          "default": 300,
+          "min": 200,
+          "max": 420
+        },
+        "border_radius": {
+          "label": "Eckenradius sm / Inline-Elemente (px)",
+          "type": "number",
+          "default": 4,
+          "min": 0,
+          "max": 16
+        },
+        "border_radius_md": {
+          "label": "Eckenradius md / Cards (px)",
+          "type": "number",
+          "default": 8,
+          "min": 0,
+          "max": 24
         },
         "sidebar_position": {
           "label": "Sidebar-Position (Beiträge)",
@@ -449,18 +761,6 @@
             "left":  "Links",
             "none":  "Keine Sidebar"
           }
-        },
-        "border_radius": {
-          "label": "Eckenradius für Cards (px)",
-          "type": "number",
-          "default": 8,
-          "min": 0,
-          "max": 24
-        },
-        "show_scroll_progress": {
-          "label": "Lesefortschrittsbalken anzeigen",
-          "type": "checkbox",
-          "default": true
         }
       }
     },
@@ -487,11 +787,16 @@
     "advanced": {
       "label": "Erweitert",
       "fields": {
-        "head_code": {
+        "custom_header_code": {
           "label": "Zusätzlicher Code im &lt;head&gt;",
           "type": "textarea",
           "default": "",
-          "description": "HTML-Code (Analytics-Snippet, Verification-Tags, …)"
+          "description": "HTML-Code (Meta-Tags, Verification-Tags, …)"
+        },
+        "custom_footer_code": {
+          "label": "Code vor &lt;/body&gt;",
+          "type": "textarea",
+          "default": ""
         },
         "custom_css": {
           "label": "Eigenes CSS",
@@ -499,12 +804,25 @@
           "default": "",
           "description": "Zusätzliches CSS – wird nach dem Theme-Stylesheet eingefügt."
         },
-        "footer_code": {
-          "label": "Code vor &lt;/body&gt;",
-          "type": "textarea",
+        "google_analytics_id": {
+          "label": "Google Analytics ID (G-XXXXXXXX)",
+          "type": "text",
+          "default": "",
+          "description": "Wird nur geladen wenn Cookie-Consent aktiv ist (DSGVO)."
+        },
+        "og_default_image": {
+          "label": "Standard OG-Bild-URL (für Social-Sharing)",
+          "type": "url",
+          "default": "",
+          "description": "Wird verwendet wenn ein Artikel kein Featured-Image hat."
+        },
+        "cache_buster_css": {
+          "label": "CSS Cache-Buster (leer = Datei-Timestamp)",
+          "type": "text",
           "default": ""
         }
       }
     }
   }
 }
+

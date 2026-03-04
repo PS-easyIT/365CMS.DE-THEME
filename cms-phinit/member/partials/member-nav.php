@@ -29,6 +29,7 @@ $memberNav = [
     ['slug' => 'newsletter', 'icon' => '📧', 'label' => 'Newsletter',    'url' => '/member/newsletter'],
     ['slug' => 'feeds',      'icon' => '📡', 'label' => 'Feed-Abos',     'url' => '/member/feeds'],
     ['slug' => 'forum',      'icon' => '🗣️', 'label' => 'Forum',         'url' => '/member/forum'],
+    ['slug' => 'security',   'icon' => '🔒', 'label' => 'Sicherheit',    'url' => '/member/security'],
 ];
 ?>
 <aside class="member-sidebar" aria-label="Mitglieder-Navigation">

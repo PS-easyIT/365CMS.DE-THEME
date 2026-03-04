@@ -35,11 +35,15 @@ final class CMS_Phinit_Theme
         \CMS\Hooks::addAction('head', [$this, 'outputMetaTags'],         8);
         \CMS\Hooks::addAction('head', [$this, 'enqueueStyles'],         15);
         \CMS\Hooks::addAction('head', [$this, 'outputCustomStyles'],    20);
+        \CMS\Hooks::addAction('head', [$this, 'outputSchemaOrg'],       25);
         \CMS\Hooks::addAction('head', [$this, 'outputCustomHeaderCode'], 99);
 
         // Scripts ans Ende des Body
         \CMS\Hooks::addAction('body_end', [$this, 'enqueueScripts'],        10);
         \CMS\Hooks::addAction('body_end', [$this, 'outputCustomFooterCode'], 99);
+
+        // Breadcrumb (nach dem Header)
+        \CMS\Hooks::addAction('after_header', [$this, 'outputBreadcrumb'], 5);
 
         // Menüpositionen
         \CMS\Hooks::addFilter('register_menu_locations', [$this, 'registerMenuLocations']);
@@ -49,6 +53,9 @@ final class CMS_Phinit_Theme
 
         // Body-Class für aktuelle Seite anreichern
         \CMS\Hooks::addFilter('body_class', [$this, 'bodyClass']);
+
+        // Dynamischer Seitentitel
+        \CMS\Hooks::addFilter('page_title', [$this, 'filterPageTitle']);
     }
 
     /* ── Assets ─────────────────────────────────────────────────── */
@@ -83,39 +90,270 @@ final class CMS_Phinit_Theme
         echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '" defer></script>' . "\n";
     }
 
-    /* ── Meta Tags ──────────────────────────────────────────────── */
+    /* ── Meta Tags, OG, Twitter-Card, Canonical ───────────────── */
 
     public function outputMetaTags(): void
     {
-        $tm = \CMS\ThemeManager::instance();
-        echo '<meta name="description" content="' . htmlspecialchars($tm->getSiteDescription() ?? '', ENT_QUOTES) . '">' . "\n";
-        echo '<meta property="og:site_name" content="' . htmlspecialchars($tm->getSiteTitle() ?? '', ENT_QUOTES) . '">' . "\n";
-        // theme-color dynamisch aus Customizer
+        $tm        = \CMS\ThemeManager::instance();
+        $siteTitle = $tm->getSiteTitle() ?? '';
+        $sitDesc   = $tm->getSiteDescription() ?? '';
+        $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
+        $uri       = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+
+        $ogTitle   = $siteTitle;
+        $ogDesc    = $sitDesc;
+        $ogImg     = '';
+        $ogType    = 'website';
+        $canonical = $siteUrl . $uri;
+
+        // Post-spezifische OG-Daten laden
+        if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
+            try {
+                $db     = \CMS\Database::instance();
+                $prefix = $db->prefix();
+                $p = $db->get_row(
+                    "SELECT title, excerpt, featured_image FROM {$prefix}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                    [$m[1]]
+                );
+                if ($p) {
+                    $p = is_object($p) ? (array)$p : (array)$p;
+                    $ogTitle = ($p['title'] ?? '') . ' – ' . $siteTitle;
+                    $ogDesc  = mb_substr(strip_tags($p['excerpt'] ?? $sitDesc), 0, 200);
+                    $ogImg   = $p['featured_image'] ?? '';
+                    $ogType  = 'article';
+                }
+            } catch (\Throwable) {}
+        }
+
+        // Fallback OG-Image aus Customizer
+        if (empty($ogImg)) {
+            try { $ogImg = (string)\CMS\Services\ThemeCustomizer::instance()->get('advanced', 'og_default_image', ''); } catch (\Throwable) {}
+        }
+
+        // theme-color aus Customizer
         $themeColor = '#1e3a5f';
         try {
             $tc = \CMS\Services\ThemeCustomizer::instance()->get('colors', 'primary_color', '#1e3a5f');
             if (!empty($tc)) { $themeColor = $tc; }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable) {}
+
+        // Basis-Meta
+        echo '<meta name="description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
         echo '<meta name="theme-color" content="' . htmlspecialchars($themeColor, ENT_QUOTES) . '">' . "\n";
+        echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
+        echo '<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($siteTitle, ENT_QUOTES) . ' RSS" href="' . htmlspecialchars($siteUrl . '/feed', ENT_QUOTES) . '">' . "\n";
+
+        // Open Graph
+        echo '<meta property="og:type" content="' . htmlspecialchars($ogType, ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:site_name" content="' . htmlspecialchars($siteTitle, ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:url" content="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
+        if (!empty($ogImg)) {
+            echo '<meta property="og:image" content="' . htmlspecialchars($ogImg, ENT_QUOTES) . '">' . "\n";
+        }
+
+        // Twitter Card
+        echo '<meta name="twitter:card" content="' . (!empty($ogImg) ? 'summary_large_image' : 'summary') . '">' . "\n";
+        echo '<meta name="twitter:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
+        echo '<meta name="twitter:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
+        if (!empty($ogImg)) {
+            echo '<meta name="twitter:image" content="' . htmlspecialchars($ogImg, ENT_QUOTES) . '">' . "\n";
+        }
     }
 
-    /* ── Google Fonts Preconnect ────────────────────────────────── */
+    /* ── Schema.org JSON-LD ─────────────────────────────────────── */
+
+    public function outputSchemaOrg(): void
+    {
+        $tm        = \CMS\ThemeManager::instance();
+        $siteTitle = $tm->getSiteTitle() ?? '';
+        $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
+        $uri       = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+
+        // WebSite-Schema (auf jeder Seite)
+        $webSite = [
+            '@context' => 'https://schema.org',
+            '@type'    => 'WebSite',
+            'name'     => $siteTitle,
+            'url'      => $siteUrl,
+            'potentialAction' => [
+                '@type'       => 'SearchAction',
+                'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => $siteUrl . '/search?q={search_term_string}'],
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+        echo '<script type="application/ld+json">' . json_encode($webSite, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+
+        // BlogPosting-Schema nur für Artikel
+        if (!preg_match('#^/blog/([\w-]+)$#', $uri, $m)) { return; }
+        try {
+            $db     = \CMS\Database::instance();
+            $prefix = $db->prefix();
+            $p = $db->get_row(
+                "SELECT p.*, u.display_name AS author_name
+                 FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}users u ON u.id = p.author_id
+                 WHERE p.slug = ? AND p.status = 'published' LIMIT 1",
+                [$m[1]]
+            );
+            if (!$p) { return; }
+            $p  = is_object($p) ? (array)$p : (array)$p;
+            $cz = null;
+            try { $cz = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable) {}
+            $authorName   = $p['author_name'] ?? ($cz ? (string)$cz->get('posts', 'author_name', '') : '');
+            $authorAvatar = $cz ? (string)$cz->get('posts', 'author_avatar_url', '') : '';
+            $orgImg       = $cz ? (string)$cz->get('advanced', 'og_default_image', '') : '';
+            $publisher = ['@type' => 'Organization', 'name' => $siteTitle];
+            if (!empty($orgImg)) {
+                $publisher['logo'] = ['@type' => 'ImageObject', 'url' => $orgImg];
+            }
+            $bp = [
+                '@context'      => 'https://schema.org',
+                '@type'         => 'BlogPosting',
+                'headline'      => $p['title'] ?? '',
+                'description'   => mb_substr(strip_tags($p['excerpt'] ?? ''), 0, 200),
+                'url'           => $siteUrl . '/blog/' . $m[1],
+                'datePublished' => (string)($p['published_at'] ?? ''),
+                'dateModified'  => !empty($p['updated_at']) ? (string)$p['updated_at'] : (string)($p['published_at'] ?? ''),
+                'publisher'     => $publisher,
+            ];
+            if (!empty($authorName)) {
+                $bp['author'] = ['@type' => 'Person', 'name' => $authorName];
+                if (!empty($authorAvatar)) { $bp['author']['image'] = $authorAvatar; }
+            }
+            if (!empty($p['featured_image'])) { $bp['image'] = $p['featured_image']; }
+            echo '<script type="application/ld+json">' . json_encode($bp, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+        } catch (\Throwable) {}
+    }
+
+    /* ── Breadcrumb-Navigation ──────────────────────────────────── */
+
+    public function outputBreadcrumb(): void
+    {
+        $siteUrl = defined('SITE_URL') ? SITE_URL : '';
+        $uri     = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        if ($uri === '/' || $uri === '') { return; }
+
+        $crumbs = [['label' => 'Home', 'url' => $siteUrl . '/']];
+        $title  = '';
+        try {
+            $db     = \CMS\Database::instance();
+            $prefix = $db->prefix();
+            if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
+                $crumbs[] = ['label' => 'Blog', 'url' => $siteUrl . '/blog'];
+                $t = $db->get_var("SELECT title FROM {$prefix}posts WHERE slug = ? LIMIT 1", [$m[1]]);
+                $title = $t ? htmlspecialchars((string)$t, ENT_QUOTES) : htmlspecialchars($m[1], ENT_QUOTES);
+            } elseif ($uri === '/blog') {
+                $title = 'Blog';
+            } elseif (preg_match('#^/kategorie/([\w-]+)$#', $uri, $m)) {
+                $crumbs[] = ['label' => 'Blog', 'url' => $siteUrl . '/blog'];
+                $title = htmlspecialchars(ucwords(str_replace('-', ' ', $m[1])), ENT_QUOTES);
+            } elseif (str_starts_with($uri, '/member')) {
+                $crumbs[] = ['label' => 'Member', 'url' => $siteUrl . '/member'];
+                $memberLabels = [
+                    '/member/profile'    => 'Profil',
+                    '/member/favorites'  => 'Favoriten',
+                    '/member/security'   => 'Sicherheit',
+                    '/member/comments'   => 'Kommentare',
+                    '/member/newsletter' => 'Newsletter',
+                    '/member/feeds'      => 'Feed-Abos',
+                    '/member/messages'   => 'Nachrichten',
+                    '/member/forum'      => 'Forum',
+                ];
+                foreach ($memberLabels as $route => $label) {
+                    if (str_starts_with($uri, $route)) { $title = $label; break; }
+                }
+                if (!$title && $uri !== '/member') { $title = 'Dashboard'; }
+            } elseif ($uri === '/search') {
+                $q = trim($_GET['q'] ?? '');
+                $title = $q ? 'Suche: ' . htmlspecialchars($q, ENT_QUOTES) : 'Suche';
+            } else {
+                $slug = ltrim($uri, '/');
+                if (!str_contains($slug, '/')) {
+                    $t = $db->get_var("SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1", [$slug]);
+                    $title = $t ? htmlspecialchars((string)$t, ENT_QUOTES) : htmlspecialchars(ucwords(str_replace('-', ' ', $slug)), ENT_QUOTES);
+                }
+            }
+        } catch (\Throwable) {}
+
+        if (!$title) { return; }
+
+        // JSON-LD BreadcrumbList (im Body ausgeben, wird von Google trotzdem verarbeitet)
+        $ldItems = [];
+        foreach ($crumbs as $i => $c) {
+            $ldItems[] = ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $c['label'], 'item' => $c['url']];
+        }
+        $ldItems[] = ['@type' => 'ListItem', 'position' => count($ldItems) + 1, 'name' => strip_tags($title), 'item' => $siteUrl . $uri];
+        echo '<script type="application/ld+json">' . json_encode(
+            ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $ldItems],
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        ) . '</script>' . "\n";
+
+        // HTML Breadcrumb
+        echo '<nav class="breadcrumb-nav" aria-label="Breadcrumb">' . "\n";
+        echo '<div class="container"><ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">' . "\n";
+        foreach ($crumbs as $i => $c) {
+            echo '<li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
+            echo '<a href="' . htmlspecialchars($c['url'], ENT_QUOTES) . '" itemprop="item"><span itemprop="name">' . htmlspecialchars($c['label'], ENT_QUOTES) . '</span></a>';
+            echo '<meta itemprop="position" content="' . ($i + 1) . '">';
+            echo '</li><li class="sep" aria-hidden="true">›</li>';
+        }
+        echo '<li class="current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
+        echo '<span itemprop="name">' . $title . '</span>';
+        echo '<meta itemprop="position" content="' . count($ldItems) . '">';
+        echo '</li>' . "\n";
+        echo '</ol></div>' . "\n";
+        echo '</nav>' . "\n";
+    }
+
+    /* ── Hilfsmethode: Lokale Fonts aktiv? ─────────────────────── */
+
+    private function isLocalFontsEnabled(): bool
+    {
+        try {
+            $db  = \CMS\Database::instance();
+            $row = $db->get_var(
+                "SELECT option_value FROM {$db->prefix()}settings WHERE option_name = 'privacy_use_local_fonts'"
+            );
+            return ($row === '1');
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /* ── Preconnect: nur bei Remote-Fonts ───────────────────────── */
 
     public function outputPreconnect(): void
     {
+        if ($this->isLocalFontsEnabled()) {
+            return; // Kein externer Verbindungsaufbau nötig
+        }
         echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
         echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
     }
 
-    /* ── Google Fonts dynamisch laden ──────────────────────────── */
+    /* ── Fonts laden: Local-First (Font Manager) oder Google ────── */
 
     public function outputGoogleFonts(): void
     {
+        // 1. CMS Font Manager (On-Prem) hat absolute Priorität
+        if ($this->isLocalFontsEnabled()) {
+            $localCssPath = defined('ASSETS_PATH') ? ASSETS_PATH . 'css/local-fonts.css' : '';
+            $localCssUrl  = defined('SITE_URL')    ? SITE_URL . '/assets/css/local-fonts.css' : '';
+            if ($localCssPath && file_exists($localCssPath) && $localCssUrl) {
+                $v = filemtime($localCssPath);
+                echo '<link rel="stylesheet" href="' . htmlspecialchars($localCssUrl, ENT_QUOTES) . '?v=' . $v . '">' . "\n";
+            }
+            return; // Kein Google-Fonts-Request
+        }
+
+        // 2. Fallback: Google Fonts (nur wenn kein Local-Fonts-Flag gesetzt)
         try {
-            $c       = \CMS\Services\ThemeCustomizer::instance();
-            $ui      = $c->get('typography', 'font_family_ui',    'barlow');
-            $brand   = $c->get('typography', 'font_family_brand', 'barlow-condensed');
-            $code    = $c->get('typography', 'font_family_code',  'jetbrains-mono');
+            $c     = \CMS\Services\ThemeCustomizer::instance();
+            $ui    = $c->get('typography', 'font_family_ui',    'barlow');
+            $brand = $c->get('typography', 'font_family_brand', 'barlow-condensed');
+            $code  = $c->get('typography', 'font_family_code',  'jetbrains-mono');
             $fontMap = [
                 'barlow'           => 'Barlow:wght@400;500;600;700',
                 'barlow-condensed' => 'Barlow+Condensed:wght@500;600;700;800',
@@ -168,12 +406,24 @@ final class CMS_Phinit_Theme
             if (!empty(trim((string)$code))) {
                 echo "\n" . (string)$code . "\n";
             }
-            // Google Analytics (separat, sicher)
+            // Google Analytics – nur laden wenn Consent gegeben (DSGVO)
             $gaId = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'google_analytics_id', '');
             if (!empty(trim((string)$gaId)) && preg_match('/^G-[A-Z0-9]{6,}$/', trim((string)$gaId))) {
                 $gaId = htmlspecialchars(trim((string)$gaId), ENT_QUOTES);
-                echo "<script async src=\"https://www.googletagmanager.com/gtag/js?id={$gaId}\"></script>\n";
-                echo "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);} gtag('js',new Date()); gtag('config','{$gaId}',{anonymize_ip:true});</script>\n";
+                echo "<script>\n";
+                echo "(function(){\n";
+                echo "  var consent = localStorage.getItem('cms-consent');\n";
+                echo "  if (consent !== 'accepted') return;\n";
+                echo "  var s = document.createElement('script');\n";
+                echo "  s.async = true;\n";
+                echo "  s.src = 'https://www.googletagmanager.com/gtag/js?id={$gaId}';\n";
+                echo "  document.head.appendChild(s);\n";
+                echo "  window.dataLayer = window.dataLayer || [];\n";
+                echo "  function gtag(){dataLayer.push(arguments);}\n";
+                echo "  gtag('js', new Date());\n";
+                echo "  gtag('config', '{$gaId}', {anonymize_ip: true});\n";
+                echo "})();\n";
+                echo "</script>\n";
             }
         } catch (\Throwable $e) {}
     }
@@ -469,18 +719,96 @@ final class CMS_Phinit_Theme
             // Footer – Seiten
             if (empty($tm->getMenu('footer-pages'))) {
                 $tm->saveMenu('footer-pages', [
-                    ['label' => 'Über mich',             'url' => '/ueber-uns'],
-                    ['label' => 'Kontakt',               'url' => '/kontakt'],
-                    ['label' => 'RSS-Feed',              'url' => '/feed'],
-                    ['label' => 'Impressum',             'url' => '/impressum'],
-                    ['label' => 'Datenschutzerklärung',  'url' => '/datenschutzerklaerung'],
-                    ['label' => 'Disclaimer',            'url' => '/disclaimer'],
+                    ['label' => 'Über mich', 'url' => '/ueber-uns'],
+                    ['label' => 'Kontakt',   'url' => '/kontakt'],
+                    ['label' => 'RSS-Feed',  'url' => '/feed'],
+                ]);
+            }
+
+            // Footer – Rechtliches
+            if (empty($tm->getMenu('footer'))) {
+                $tm->saveMenu('footer', [
+                    ['label' => 'Impressum',            'url' => '/impressum'],
+                    ['label' => 'Datenschutzerklärung', 'url' => '/datenschutzerklaerung'],
+                    ['label' => 'Disclaimer',           'url' => '/disclaimer'],
+                    ['label' => 'Cookie-Policy',        'url' => '/cookie-policy'],
                 ]);
             }
 
         } catch (\Throwable $e) {}
     }
+    /* ── Dynamischer Seiten-/Post-Titel ────────────────────────────── */
 
+    public function filterPageTitle(string $siteTitle): string
+    {
+        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+
+        try {
+            $db     = \CMS\Database::instance();
+            $prefix = $db->prefix();
+
+            // Blog-Einzelartikel: /blog/<slug>
+            if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
+                $title = $db->get_var(
+                    "SELECT title FROM {$prefix}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                    [$m[1]]
+                );
+                if ($title) return htmlspecialchars((string)$title, ENT_QUOTES) . ' – ' . $siteTitle;
+            }
+
+            // Seite: /<slug> (ausgenommen bekannte Routen)
+            $skipRoutes = ['', '/', 'blog', 'login', 'register', 'logout', 'search', 'feed', 'member'];
+            $slug = ltrim($uri, '/');
+            if (!empty($slug) && !in_array($slug, $skipRoutes, true) && !str_contains($slug, '/')) {
+                $title = $db->get_var(
+                    "SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1",
+                    [$slug]
+                );
+                if ($title) return htmlspecialchars((string)$title, ENT_QUOTES) . ' – ' . $siteTitle;
+            }
+
+            // Kategorie-Seiten: /kategorie/<slug>
+            if (preg_match('#^/kategorie/([\.\w-]+)$#', $uri, $m)) {
+                $label = ucwords(str_replace('-', ' ', $m[1]));
+                return $label . ' – ' . $siteTitle;
+            }
+
+            // Member-Bereich
+            if (str_starts_with($uri, '/member')) {
+                $memberTitles = [
+                    '/member/dashboard'     => 'Dashboard',
+                    '/member/profile'       => 'Mein Profil',
+                    '/member/favorites'     => 'Favoriten',
+                    '/member/comments'      => 'Meine Kommentare',
+                    '/member/newsletter'    => 'Newsletter',
+                    '/member/feeds'         => 'Feed-Abos',
+                    '/member/forum'         => 'Forum',
+                    '/member/security'      => 'Sicherheit',
+                    '/member/messages'      => 'Nachrichten',
+                    '/member/notifications' => 'Benachrichtigungen',
+                ];
+                foreach ($memberTitles as $route => $label) {
+                    if (str_starts_with($uri, $route)) {
+                        return $label . ' – ' . $siteTitle;
+                    }
+                }
+                return 'Member-Bereich – ' . $siteTitle;
+            }
+
+            // Blog-Listing
+            if ($uri === '/blog') return 'Blog – ' . $siteTitle;
+
+            // Such-Ergebnisse
+            if ($uri === '/search') {
+                $q = trim($_GET['q'] ?? '');
+                if ($q) return 'Suche: ' . htmlspecialchars($q, ENT_QUOTES) . ' – ' . $siteTitle;
+                return 'Suche – ' . $siteTitle;
+            }
+
+        } catch (\Throwable $e) {}
+
+        return $siteTitle . ' – IT-Blog &amp; Tutorials';
+    }
     /* ── Body-Class ────────────────────────────────────────────── */
 
     public function bodyClass(string $classes): string
