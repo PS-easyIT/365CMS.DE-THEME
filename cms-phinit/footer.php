@@ -135,24 +135,38 @@ try {
                     <?php if ($_showSocial): ?>
                     <div class="social-icons">
                         <?php if (!empty($_liUrl)): ?>
-                        <a href="<?php echo htmlspecialchars($_liUrl, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_liLabel, ENT_QUOTES); ?>"><?php echo htmlspecialchars($_liLabel, ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($_liUrl, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_liLabel, ENT_QUOTES); ?>">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
                         <?php endif; ?>
                         <?php if (!empty($_ghUrl)): ?>
-                        <a href="<?php echo htmlspecialchars($_ghUrl, ENT_QUOTES); ?>" class="gh" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_ghLabel, ENT_QUOTES); ?>"><?php echo htmlspecialchars($_ghLabel, ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($_ghUrl, ENT_QUOTES); ?>" class="gh" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_ghLabel, ENT_QUOTES); ?>">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                        </a>
                         <?php endif; ?>
                         <?php if (!empty($_twUrl)): ?>
-                        <a href="<?php echo htmlspecialchars($_twUrl, ENT_QUOTES); ?>" class="tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏</a>
+                        <a href="<?php echo htmlspecialchars($_twUrl, ENT_QUOTES); ?>" class="tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
                         <?php endif; ?>
                         <?php if (!empty($_maUrl)): ?>
-                        <a href="<?php echo htmlspecialchars($_maUrl, ENT_QUOTES); ?>" class="ma" target="_blank" rel="noopener noreferrer me" aria-label="Mastodon">🦣</a>
+                        <a href="<?php echo htmlspecialchars($_maUrl, ENT_QUOTES); ?>" class="ma" target="_blank" rel="noopener noreferrer me" aria-label="Mastodon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.193 7.88c0-5.207-3.411-6.733-3.411-6.733C18.062.357 15.108.025 12.041 0h-.076C8.898.025 5.946.357 4.217 1.147 4.217 1.147.806 2.673.806 7.88c0 1.28-.027 2.809.017 4.224C.992 17.616 3.78 21.512 8.05 22.581c1.73.456 3.213.55 4.41.485 2.165-.12 3.38-.77 3.38-.77l-.073-1.596s-1.548.486-3.286.428c-1.724-.058-3.542-.181-3.82-2.244a4.357 4.357 0 0 1-.04-.598s1.69.413 3.832.51c1.308.06 2.532-.077 3.773-.227 2.385-.284 4.462-1.75 4.726-3.091.41-2.086.375-5.093.375-5.093zm-3.357 5.237H17.44V8.645c0-1.29-.543-1.945-1.628-1.945-1.2 0-1.802.776-1.802 2.31v3.35h-2.38v-3.35c0-1.534-.602-2.31-1.802-2.31-1.085 0-1.628.655-1.628 1.945v4.472H5.806V8.457c0-1.289.328-2.313.988-3.07.68-.758 1.569-1.146 2.673-1.146 1.278 0 2.247.491 2.886 1.474l.622 1.043.623-1.043c.639-.983 1.608-1.474 2.886-1.474 1.104 0 1.993.388 2.673 1.146.66.757.988 1.781.988 3.07v4.66z"/></svg>
+                        </a>
                         <?php endif; ?>
                         <?php if (!empty($_ytUrl)): ?>
-                        <a href="<?php echo htmlspecialchars($_ytUrl, ENT_QUOTES); ?>" class="yt" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>
+                        <a href="<?php echo htmlspecialchars($_ytUrl, ENT_QUOTES); ?>" class="yt" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
                         <?php endif; ?>
                         <?php if (!empty($_xiUrl)): ?>
-                        <a href="<?php echo htmlspecialchars($_xiUrl, ENT_QUOTES); ?>" class="xi" target="_blank" rel="noopener noreferrer" aria-label="XING">X</a>
+                        <a href="<?php echo htmlspecialchars($_xiUrl, ENT_QUOTES); ?>" class="xi" target="_blank" rel="noopener noreferrer" aria-label="XING">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.247.22.455.22h3.51c.519 0 .766-.339.948-.66l3.67-6.516-2.339-4.054c-.176-.301-.44-.83-.979-.83H3.648z"/></svg>
+                        </a>
                         <?php endif; ?>
-                        <a href="<?php echo htmlspecialchars($_rssUrl, ENT_QUOTES); ?>" class="rss" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_rssLabel, ENT_QUOTES); ?>">⊞</a>
+                        <a href="<?php echo htmlspecialchars($_rssUrl, ENT_QUOTES); ?>" class="rss" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_rssLabel, ENT_QUOTES); ?>">
+                            <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
+                        </a>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -191,18 +205,6 @@ try {
                         <?php endif; ?>
                     </ul>
                 </div>
-
-                <!-- Navigation 3 (aus Menü-Editor: footer / Rechtliches) -->
-                <?php if (!empty($footerLegalMenu)): ?>
-                <div class="footer-nav">
-                    <h4><?php echo htmlspecialchars($_col4Title, ENT_QUOTES); ?></h4>
-                    <ul>
-                        <?php foreach ($footerLegalMenu as $_fItem): ?>
-                        <li><a href="<?php echo htmlspecialchars($_fItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fItem['label'] ?? '', ENT_QUOTES); ?></a></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <?php endif; ?>
 
             </div><!-- /.footer-main -->
         </div>
