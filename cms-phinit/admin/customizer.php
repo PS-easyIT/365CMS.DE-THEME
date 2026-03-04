@@ -168,10 +168,40 @@ $config = [
                 'default'     => '#7a8898',
             ],
             'text_nav' => [
-                'label'       => 'Navigationstext-Farbe',
-                'description' => 'Textfarbe der Navigationslinks im Header.',
+                'label'       => 'Navigationstext (Fallback)',
+                'description' => 'Allgemeine Textfarbe für alle Navigationslinks – wird von den einzelnen Bereichen überschrieben.',
                 'type'        => 'color',
                 'default'     => '#c8d4e4',
+            ],
+            'text_nav_member' => [
+                'label'       => 'Member-Bar Textfarbe',
+                'description' => 'Textfarbe der Links in der obersten Member-Leiste.',
+                'type'        => 'color',
+                'default'     => 'rgba(255,255,255,.72)',
+            ],
+            'text_nav_main' => [
+                'label'       => 'Hauptnavigation Textfarbe',
+                'description' => 'Textfarbe der Links in der Hauptnavigation (Bar 2).',
+                'type'        => 'color',
+                'default'     => 'rgba(255,255,255,.82)',
+            ],
+            'text_nav_quicklinks' => [
+                'label'       => 'Quicklinks Textfarbe',
+                'description' => 'Textfarbe der Links in der Quicklinks-Subnavigation.',
+                'type'        => 'color',
+                'default'     => '#334155',
+            ],
+            'text_nav_dropdown' => [
+                'label'       => 'Dropdown Textfarbe',
+                'description' => 'Textfarbe der Links in ausgeklappten Dropdown-Menüs.',
+                'type'        => 'color',
+                'default'     => 'rgba(255,255,255,.82)',
+            ],
+            'logo_suffix_color' => [
+                'label'       => 'Logo-Suffix Farbe (.DE)',
+                'description' => 'Farbe des Suffix-Teils im Text-Logo (z. B. ".DE").',
+                'type'        => 'color',
+                'default'     => '#e8a838',
             ],
 
             // ── Rahmen ──
@@ -428,6 +458,12 @@ $config = [
                 'type'        => 'number',
                 'default'     => 28,
             ],
+            'spacing_sections' => [
+                'label'       => 'Abstand Sektionen untereinander (px)',
+                'description' => 'Vertikaler Abstand zwischen den einzelnen Homepage-Sektionen (Repo-Card, Artikelliste, Kacheln, RSS …).',
+                'type'        => 'number',
+                'default'     => 40,
+            ],
         ],
     ],
 
@@ -535,102 +571,8 @@ $config = [
                 'type'        => 'number',
                 'default'     => 30,
             ],
-            'quicklink1_text' => [
-                'label'       => '⚡ Quicklink 1 Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Entra ID',
-            ],
-            'quicklink1_url' => [
-                'label'       => 'Quicklink 1 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/entra-id',
-            ],
-            'quicklink2_text' => [
-                'label'       => '⚡ Quicklink 2 Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Intune',
-            ],
-            'quicklink2_url' => [
-                'label'       => 'Quicklink 2 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/intune',
-            ],
-            'quicklink3_text' => [
-                'label'       => '⚡ Quicklink 3 Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Compliance',
-            ],
-            'quicklink3_url' => [
-                'label'       => 'Quicklink 3 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/compliance',
-            ],
-            'quicklink4_text' => [
-                'label'       => '⚡ Quicklink 4 Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Graph API',
-            ],
-            'quicklink4_url' => [
-                'label'       => 'Quicklink 4 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/graph-api',
-            ],
-            'quicklink5_text' => [
-                'label'       => '⚡ Quicklink 5 Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'PowerShell',
-            ],
-            'quicklink5_url' => [
-                'label'       => 'Quicklink 5 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/powershell',
-            ],
-            'quicklink6_text' => [
-                'label'       => '⚡ Quicklink 6 Text',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => 'Security',
-            ],
-            'quicklink6_url' => [
-                'label'       => 'Quicklink 6 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/security',
-            ],
-            'quicklink7_text' => [
-                'label'       => '⚡ Quicklink 7 Text',
-                'description' => 'Leer = nicht angezeigt.',
-                'type'        => 'text',
-                'default'     => 'Exchange',
-            ],
-            'quicklink7_url' => [
-                'label'       => 'Quicklink 7 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '/kategorie/exchange',
-            ],
-            'quicklink8_text' => [
-                'label'       => '⚡ Quicklink 8 Text',
-                'description' => 'Leer = nicht angezeigt.',
-                'type'        => 'text',
-                'default'     => '',
-            ],
-            'quicklink8_url' => [
-                'label'       => 'Quicklink 8 URL',
-                'description' => '',
-                'type'        => 'text',
-                'default'     => '',
-            ],
+
+
         ],
     ],
 
@@ -1708,7 +1650,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                             '💻 Tech-Akzente'        => ['accent_blue', 'accent_blue2', 'accent_teal', 'accent_teal_light'],
                             '🖼️ Header-Hintergründe' => ['bg_header1', 'bg_header2', 'bg_header3'],
                             '📄 Seite & Content'     => ['bg_primary', 'bg_secondary', 'bg_dark'],
-                            '📝 Textfarben'          => ['text_primary', 'text_secondary', 'text_muted', 'text_nav'],
+                            '📝 Textfarben'          => ['text_primary', 'text_secondary', 'text_muted'],
+                            '🧭 Navigationsfarben'   => ['text_nav', 'text_nav_member', 'text_nav_main', 'text_nav_quicklinks', 'text_nav_dropdown', 'logo_suffix_color'],
                             '🔲 Rahmen'              => ['border_light'],
                             '🔻 Footer'              => ['footer_bg', 'footer_bottom_bg', 'footer_border'],
                             '✅ Status-Farben'       => ['success_color', 'error_color'],
@@ -1737,7 +1680,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                             '🏷️ Logo & Marke'      => ['logo_text_part1', 'logo_text_part2', 'logo_text_suffix', 'logo_url', 'show_logo_text_with_image', 'logo_max_height', 'logo_accent_color'],
                             '� Member-Bar (Bar 1)' => ['show_member_bar', 'member_bar_height'],
                             '🧭 Hauptnavigation (Bar 2)' => ['main_nav_height', 'show_search_bar', 'search_placeholder', 'show_rss_link'],
-                            '⚡ Quicklinks (Bar 3)' => ['show_quicklinks', 'sub_bar_height', 'quicklink1_text', 'quicklink1_url', 'quicklink2_text', 'quicklink2_url', 'quicklink3_text', 'quicklink3_url', 'quicklink4_text', 'quicklink4_url', 'quicklink5_text', 'quicklink5_url', 'quicklink6_text', 'quicklink6_url', 'quicklink7_text', 'quicklink7_url', 'quicklink8_text', 'quicklink8_url'],
+                            '⚡ Quicklinks (Bar 3)' => ['show_quicklinks', 'sub_bar_height'],
                         ];
                     ?>
                     <div class="admin-card">
@@ -1754,6 +1697,18 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                                 endforeach; ?>
                             </div>
                             <?php endforeach; ?>
+
+                            <!-- Hinweis: Menü-Einträge über Menü-Editor -->
+                            <div class="field-group-card" style="background:linear-gradient(135deg,#eff6ff,#f0f9ff);border:1px dashed #93c5fd;">
+                                <h4>📋 Menü-Einträge bearbeiten</h4>
+                                <p style="color:#1e40af;font-size:.85rem;line-height:1.5;margin:8px 0 12px;">
+                                    Die <strong>Einträge</strong> aller Navigationen (Hauptmenü, Quicklinks, Footer-Themen, Footer-Seiten)
+                                    werden über den <strong>Menü-Editor</strong> gepflegt – nicht hier im Design-Editor.<br>
+                                    Hier steuerst du nur das <strong>Aussehen</strong> (Höhen, Farben, Sichtbarkeit).
+                                </p>
+                                <a href="<?php echo defined('SITE_URL') ? htmlspecialchars(SITE_URL) : ''; ?>/admin/menus.php"
+                                   class="btn btn-sm btn-primary" style="margin-top:4px;">📝 Zum Menü-Editor →</a>
+                            </div>
                         </div>
                     </div>
 
@@ -1858,7 +1813,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
 
                     <?php elseif ($activeTab === 'layout'):
                         $layoutGroups = [
-                            '📐 Maße & Abstände'     => ['container_width', 'sidebar_width', 'border_radius', 'border_radius_md', 'content_gap', 'spacing_header_content', 'spacing_content_footer'],
+                            '📐 Maße & Abstände'     => ['container_width', 'sidebar_width', 'border_radius', 'border_radius_md', 'content_gap', 'spacing_header_content', 'spacing_content_footer', 'spacing_sections'],
                             '⚙️ Funktionen & Optionen' => ['sidebar_position', 'enable_sticky_header', 'enable_progress_bar', 'enable_back_to_top', 'enable_dark_mode_toggle', 'enable_scroll_animations'],
                         ];
                     ?>

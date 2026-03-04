@@ -54,22 +54,12 @@ try {
     $_enableBackToTop       = filter_var($customizer->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
     $_enableScrollAnimations = filter_var($customizer->get('layout', 'enable_scroll_animations', true), FILTER_VALIDATE_BOOLEAN);
 
-    // Quicklinks (1–8)
-    $_qlLinks = [];
-    for ($i = 1; $i <= 8; $i++) {
-        $text = $customizer->get('header', 'quicklink' . $i . '_text', '');
-        $url  = $customizer->get('header', 'quicklink' . $i . '_url', '');
-        if (!empty($text) && !empty($url)) {
-            $_qlLinks[] = ['label' => $text, 'url' => $url];
-        }
-    }
 
 } catch (\Throwable $e) {
     $_logoUrl = ''; $_logoPart1 = 'PHIN'; $_logoPart2 = 'IT'; $_logoSuffix = '.DE';
     $_showLogoText = false; $_logoMaxH = 28;
     $_showSearch = true; $_searchPH = 'Suchen …'; $_showDarkMode = true;
     $_showRss = true; $_showMemberBar = true; $_showQuicklinks = true;
-    $_qlLinks = [];
     $_enableStickyHeader = true; $_enableProgressBar = true;
     $_enableBackToTop = true; $_enableScrollAnimations = true;
 }
@@ -78,6 +68,12 @@ try {
 $mainMenuItems = [];
 try {
     $mainMenuItems = \CMS\ThemeManager::instance()->getMenu('primary');
+} catch (\Throwable $e) {}
+
+// Quicklinks laden (Sub-Navigation)
+$quicklinkItems = [];
+try {
+    $quicklinkItems = \CMS\ThemeManager::instance()->getMenu('quicklinks');
 } catch (\Throwable $e) {}
 ?>
 <!DOCTYPE html>
@@ -279,17 +275,18 @@ try {
     <div class="quicklinks-bar">
         <div class="hdr-inner hdr-sub">
                     <nav class="sub-nav" aria-label="Quicklinks">
-                        <?php if (!empty($_qlLinks)): ?>
-                            <?php foreach ($_qlLinks as $ql): ?>
+                        <?php if (!empty($quicklinkItems)): ?>
+                            <?php foreach ($quicklinkItems as $ql): ?>
                             <a href="<?php echo htmlspecialchars($ql['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($ql['label'] ?? '', ENT_QUOTES); ?></a>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux/bash">Linux / BASH</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/windows">Windows Shell</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/m365/admin">M365 Admin</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news/heise-adv">News | Adv/Infra</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/sites-blogs">Sites + Blogs</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/sites/phinit">Sites / 2026</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/entra-id">Entra ID</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/intune">Intune</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/compliance">Compliance</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/graph-api">Graph API</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/powershell">PowerShell</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/security">Security</a>
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/exchange">Exchange</a>
                         <?php endif; ?>
                     </nav>
         </div>

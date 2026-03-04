@@ -285,6 +285,7 @@ final class CMS_Phinit_Theme
             'spacing_header_content' => ['--spacing-header-content', 'px'],
             'spacing_content_footer' => ['--spacing-content-footer', 'px'],
             'content_gap'            => ['--content-gap', 'px'],
+            'spacing_sections'       => ['--spacing-sections', 'px'],
         ];
         foreach ($layoutMap as $key => $info) {
             $val = $c->get('layout', $key, '');
@@ -491,7 +492,7 @@ final class CMS_Phinit_Theme
             $add[] = 'is-post';
         }
         // Member-Bereich
-        if (str_starts_with($uri, '/member')) {
+        if (str_starts_with($uri, '/member') || str_starts_with($uri, '/dashboard')) {
             $add[] = 'is-member';
         }
         return trim($classes . ' ' . implode(' ', $add));

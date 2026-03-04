@@ -25,43 +25,83 @@ $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'dashboard';
 
-// Dashboard-Statistiken laden
-$favCount = (int)$db->get_var(
-    "SELECT COUNT(*) FROM {$prefix}favorites WHERE user_id = ?",
-    [(int)$currentUser->id]
-) ?: 0;
+// Hilfsfunktion: Tabelle existiert?
+$_tableExists = function (string $table) use ($db): bool {
+    try {
+        $db->getPdo()->query("SELECT 1 FROM `{$table}` LIMIT 1");
+        return true;
+    } catch (\Throwable $e) {
+        return false;
+    }
+};
 
-$commentCount = (int)$db->get_var(
-    "SELECT COUNT(*) FROM {$prefix}comments WHERE user_id = ? AND status = 'approved'",
-    [(int)$currentUser->id]
-) ?: 0;
+$_hasFavorites = $_tableExists("{$prefix}favorites");
+$_hasComments  = $_tableExists("{$prefix}comments");
+$_hasPosts     = $_tableExists("{$prefix}posts");
+$_hasUsers     = $_tableExists("{$prefix}users");
 
-$postCount = (int)$db->get_var(
-    "SELECT COUNT(*) FROM {$prefix}posts WHERE author_id = ? AND status = 'published'",
-    [(int)$currentUser->id]
-) ?: 0;
+// Dashboard-Statistiken laden (fehlende Tabellen → 0)
+$favCount = 0;
+if ($_hasFavorites) {
+    try {
+        $favCount = (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}favorites WHERE user_id = ?",
+            [(int)$currentUser->id]
+        ) ?: 0;
+    } catch (\Throwable $e) {}
+}
+
+$commentCount = 0;
+if ($_hasComments) {
+    try {
+        $commentCount = (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}comments WHERE user_id = ? AND status = 'approved'",
+            [(int)$currentUser->id]
+        ) ?: 0;
+    } catch (\Throwable $e) {}
+}
+
+$postCount = 0;
+if ($_hasPosts) {
+    try {
+        $postCount = (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}posts WHERE author_id = ? AND status = 'published'",
+            [(int)$currentUser->id]
+        ) ?: 0;
+    } catch (\Throwable $e) {}
+}
 
 // Letzte Aktivitäten (neueste Kommentare)
-$recentComments = $db->get_results(
-    "SELECT c.*, p.title AS post_title, p.slug AS post_slug
-     FROM {$prefix}comments c
-     LEFT JOIN {$prefix}posts p ON c.post_id = p.id
-     WHERE c.user_id = ?
-     ORDER BY c.created_at DESC
-     LIMIT 5",
-    [(int)$currentUser->id]
-) ?: [];
+$recentComments = [];
+if ($_hasComments && $_hasPosts) {
+    try {
+        $recentComments = $db->get_results(
+            "SELECT c.*, p.title AS post_title, p.slug AS post_slug
+             FROM {$prefix}comments c
+             LEFT JOIN {$prefix}posts p ON c.post_id = p.id
+             WHERE c.user_id = ?
+             ORDER BY c.created_at DESC
+             LIMIT 5",
+            [(int)$currentUser->id]
+        ) ?: [];
+    } catch (\Throwable $e) {}
+}
 
 // Letzte Favoriten
-$recentFavorites = $db->get_results(
-    "SELECT f.*, p.title AS post_title, p.slug AS post_slug
-     FROM {$prefix}favorites f
-     LEFT JOIN {$prefix}posts p ON f.post_id = p.id
-     WHERE f.user_id = ?
-     ORDER BY f.created_at DESC
-     LIMIT 5",
-    [(int)$currentUser->id]
-) ?: [];
+$recentFavorites = [];
+if ($_hasFavorites && $_hasPosts) {
+    try {
+        $recentFavorites = $db->get_results(
+            "SELECT f.*, p.title AS post_title, p.slug AS post_slug
+             FROM {$prefix}favorites f
+             LEFT JOIN {$prefix}posts p ON f.post_id = p.id
+             WHERE f.user_id = ?
+             ORDER BY f.created_at DESC
+             LIMIT 5",
+            [(int)$currentUser->id]
+        ) ?: [];
+    } catch (\Throwable $e) {}
+}
 
 // Begrüßung
 $hour     = (int)date('H');
@@ -71,27 +111,34 @@ $greeting = $hour < 12 ? 'Guten Morgen' : ($hour < 18 ? 'Guten Tag' : 'Guten Abe
 $isAdmin    = $auth->isAdmin();
 $adminStats = [];
 if ($isAdmin) {
-    $adminStats['total_users'] = (int)$db->get_var(
-        "SELECT COUNT(*) FROM {$prefix}users"
-    ) ?: 0;
-    $adminStats['total_posts'] = (int)$db->get_var(
-        "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'"
-    ) ?: 0;
-    $adminStats['total_comments'] = (int)$db->get_var(
-        "SELECT COUNT(*) FROM {$prefix}comments"
-    ) ?: 0;
-    $adminStats['pending_comments'] = (int)$db->get_var(
-        "SELECT COUNT(*) FROM {$prefix}comments WHERE status = 'pending'"
-    ) ?: 0;
-    $adminStats['total_views'] = (int)$db->get_var(
-        "SELECT COALESCE(SUM(views), 0) FROM {$prefix}posts"
-    ) ?: 0;
-    $adminStats['posts_today'] = (int)$db->get_var(
-        "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published' AND DATE(created_at) = CURDATE()"
-    ) ?: 0;
-    $adminStats['users_today'] = (int)$db->get_var(
-        "SELECT COUNT(*) FROM {$prefix}users WHERE DATE(created_at) = CURDATE()"
-    ) ?: 0;
+    try {
+        $adminStats['total_users'] = $_hasUsers ? (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}users"
+        ) ?: 0 : 0;
+        $adminStats['total_posts'] = $_hasPosts ? (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'"
+        ) ?: 0 : 0;
+        $adminStats['total_comments'] = $_hasComments ? (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}comments"
+        ) ?: 0 : 0;
+        $adminStats['pending_comments'] = $_hasComments ? (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}comments WHERE status = 'pending'"
+        ) ?: 0 : 0;
+        $adminStats['total_views'] = $_hasPosts ? (int)$db->get_var(
+            "SELECT COALESCE(SUM(views), 0) FROM {$prefix}posts"
+        ) ?: 0 : 0;
+        $adminStats['posts_today'] = $_hasPosts ? (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published' AND DATE(created_at) = CURDATE()"
+        ) ?: 0 : 0;
+        $adminStats['users_today'] = $_hasUsers ? (int)$db->get_var(
+            "SELECT COUNT(*) FROM {$prefix}users WHERE DATE(created_at) = CURDATE()"
+        ) ?: 0 : 0;
+    } catch (\Throwable $e) {
+        $adminStats = array_merge([
+            'total_users' => 0, 'total_posts' => 0, 'total_comments' => 0,
+            'pending_comments' => 0, 'total_views' => 0, 'posts_today' => 0, 'users_today' => 0,
+        ], $adminStats);
+    }
 }
 
 // Theme Header

@@ -75,6 +75,20 @@ try {
         $_showConsent = false;
     }
 } catch (\Throwable $_e) {}
+
+// Footer-Menüs aus Menü-Editor laden
+$footerTopicsMenu = [];
+$footerPagesMenu  = [];
+$footerLegalMenu  = [];
+try {
+    $footerTopicsMenu = \CMS\ThemeManager::instance()->getMenu('footer-topics');
+} catch (\Throwable $e) {}
+try {
+    $footerPagesMenu = \CMS\ThemeManager::instance()->getMenu('footer-pages');
+} catch (\Throwable $e) {}
+try {
+    $footerLegalMenu = \CMS\ThemeManager::instance()->getMenu('footer');
+} catch (\Throwable $e) {}
 ?>
 
 </main><!-- /#main-content -->
@@ -107,29 +121,41 @@ try {
                     <?php endif; ?>
                 </div>
 
-                <!-- Navigation 1 -->
+                <!-- Navigation 1 (aus Menü-Editor: footer-topics) -->
                 <div class="footer-nav">
                     <h4><?php echo htmlspecialchars($_col2Title, ENT_QUOTES); ?></h4>
                     <ul>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux">Linux & BASH</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell">PowerShell</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/intune">Intune & MDM</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz & DSGVO</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">IT-News</a></li>
+                        <?php if (!empty($footerTopicsMenu)): ?>
+                            <?php foreach ($footerTopicsMenu as $_fItem): ?>
+                            <li><a href="<?php echo htmlspecialchars($_fItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fItem['label'] ?? '', ENT_QUOTES); ?></a></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux">Linux &amp; BASH</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell">PowerShell</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/intune">Intune &amp; MDM</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz &amp; DSGVO</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">IT-News</a></li>
+                        <?php endif; ?>
                     </ul>
                 </div>
 
-                <!-- Navigation 2 -->
+                <!-- Navigation 2 (aus Menü-Editor: footer-pages) -->
                 <div class="footer-nav">
                     <h4><?php echo htmlspecialchars($_col3Title, ENT_QUOTES); ?></h4>
                     <ul>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/ueber-uns">Über mich</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kontakt">Kontakt</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" target="_blank" rel="noopener">RSS-Feed</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/impressum">Impressum</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutzerklaerung">Datenschutzerklärung</a></li>
-                        <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/disclaimer">Disclaimer</a></li>
+                        <?php if (!empty($footerPagesMenu)): ?>
+                            <?php foreach ($footerPagesMenu as $_fItem): ?>
+                            <li><a href="<?php echo htmlspecialchars($_fItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fItem['label'] ?? '', ENT_QUOTES); ?></a></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/ueber-uns">Über mich</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kontakt">Kontakt</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" target="_blank" rel="noopener">RSS-Feed</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/impressum">Impressum</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutzerklaerung">Datenschutzerklärung</a></li>
+                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/disclaimer">Disclaimer</a></li>
+                        <?php endif; ?>
                     </ul>
                 </div>
 
@@ -153,11 +179,17 @@ try {
         <div class="container footer-bottom-inner">
             <span><?php echo htmlspecialchars($_copyright, ENT_QUOTES); ?></span>
             <div class="footer-bottom-links">
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/impressum">Impressum</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutzerklaerung">Datenschutz</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/disclaimer">Disclaimer</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/cookie-policy">Cookie-Policy</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/privacy-statement">Privacy Statement</a>
+                <?php if (!empty($footerLegalMenu)): ?>
+                    <?php foreach ($footerLegalMenu as $_lItem): ?>
+                    <a href="<?php echo htmlspecialchars($_lItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_lItem['label'] ?? '', ENT_QUOTES); ?></a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/impressum">Impressum</a>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutzerklaerung">Datenschutz</a>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/disclaimer">Disclaimer</a>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/cookie-policy">Cookie-Policy</a>
+                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/privacy-statement">Privacy Statement</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

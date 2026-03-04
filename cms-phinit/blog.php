@@ -59,29 +59,29 @@ try {
         ?>
         <article class="post-card">
             <?php if (!empty($p['featured_image'])): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>" class="post-card__image">
+            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>" class="post-card-thumb">
                 <img src="<?php echo htmlspecialchars($p['featured_image'], ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($p['title'] ?? '', ENT_QUOTES); ?>"
                      loading="lazy">
                 <?php if (!empty($p['category_name'])): ?>
-                <span class="post-card__badge"><?php echo htmlspecialchars($p['category_name'], ENT_QUOTES); ?></span>
+                <span class="post-card-badge"><?php echo htmlspecialchars($p['category_name'], ENT_QUOTES); ?></span>
                 <?php endif; ?>
             </a>
             <?php endif; ?>
 
-            <div class="post-card__body">
-                <h2 class="post-card__title">
+            <div class="post-card-body">
+                <h2 class="post-card-title">
                     <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>">
                         <?php echo htmlspecialchars($p['title'] ?? 'Ohne Titel', ENT_QUOTES); ?>
                     </a>
                 </h2>
 
                 <?php if ($_showExcerpt && !empty($p['excerpt'])): ?>
-                <p class="post-card__excerpt"><?php echo htmlspecialchars($p['excerpt'], ENT_QUOTES); ?></p>
+                <p class="post-card-excerpt"><?php echo htmlspecialchars($p['excerpt'], ENT_QUOTES); ?></p>
                 <?php endif; ?>
 
                 <?php if ($_showMeta): ?>
-                <div class="post-card__meta">
+                <div class="post-card-meta">
                     <?php if (!empty($p['published_at'])): ?>
                     <span>📅 <?php echo htmlspecialchars(date('j. M Y', strtotime($p['published_at'])), ENT_QUOTES); ?></span>
                     <?php endif; ?>
