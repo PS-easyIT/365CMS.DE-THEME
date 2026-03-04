@@ -68,7 +68,9 @@ try {
     $_enableProgressBar     = filter_var($customizer->get('layout', 'enable_progress_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_enableBackToTop       = filter_var($customizer->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
     $_enableScrollAnimations = filter_var($customizer->get('layout', 'enable_scroll_animations', true), FILTER_VALIDATE_BOOLEAN);
-
+    $_showBreadcrumb = filter_var($customizer->get('layout', 'show_breadcrumb', true), FILTER_VALIDATE_BOOLEAN);
+    $_bcOnPosts      = filter_var($customizer->get('layout', 'breadcrumb_on_posts', true), FILTER_VALIDATE_BOOLEAN);
+    $_bcOnPages      = filter_var($customizer->get('layout', 'breadcrumb_on_pages', true), FILTER_VALIDATE_BOOLEAN);
 
 } catch (\Throwable $e) {
     $_logoUrl = ''; $_logoPart1 = 'PHIN'; $_logoPart2 = 'IT'; $_logoSuffix = '.DE';
@@ -77,6 +79,7 @@ try {
     $_showRss = true; $_showMemberBar = true; $_showQuicklinks = true;
     $_enableStickyHeader = true; $_enableProgressBar = true;
     $_enableBackToTop = true; $_enableScrollAnimations = true;
+    $_showBreadcrumb = true; $_bcOnPosts = true; $_bcOnPages = true;
 }
 
 // Haupt-Navigation laden
@@ -321,7 +324,44 @@ try {
     <?php endif; /* $_showQuicklinks */ ?>
 </header>
 <!-- ═══ HEADER ENDE ═══════════════════════════════════════════════════════ -->
+<?php
+// ── Breadcrumb direkt unter dem Header (──────────────────────────────
+$_bcUri  = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+$_bcIsHome = ($_bcUri === '/' || $bcUri === '');
+$_bcIsPost = str_starts_with($_bcUri, '/blog/');
+$_bcIsPage = !$_bcIsHome && !$_bcIsPost;
+$_showBC   = $_showBreadcrumb
+    && !$_bcIsHome
+    && (!$_bcIsPost || $_bcOnPosts)
+    && (!$_bcIsPage || $_bcOnPages);
 
+if ($_showBC):
+    $_bcSegs    = array_filter(explode('/', trim($_bcUri, '/')));
+    $_bcLinks   = [];
+    $_bcCumPath = '';
+    foreach ($_bcSegs as $_seg) {
+        $_bcCumPath .= '/' . $_seg;
+        $_bcLabel    = ucwords(str_replace(['-', '_'], ' ', rawurldecode($_seg)));
+        // Sonderfaelle
+        if ($_seg === 'blog')  { $_bcLabel = 'Blog'; }
+        $_bcLinks[] = ['label' => $_bcLabel, 'url' => $_bcCumPath];
+    }
+?>
+<nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a><span class="sep" aria-hidden="true">›</span></li>
+            <?php foreach ($_bcLinks as $_bcIdx => $_bcItem): ?>
+            <?php if ($_bcIdx < count($_bcLinks) - 1): ?>
+            <li><a href="<?php echo htmlspecialchars($siteUrl . $_bcItem['url'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($_bcItem['label'], ENT_QUOTES); ?></a><span class="sep" aria-hidden="true">›</span></li>
+            <?php else: ?>
+            <li class="current" aria-current="page"><?php echo htmlspecialchars($_bcItem['label'], ENT_QUOTES); ?></li>
+            <?php endif; ?>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+</nav>
+<?php endif; ?>
 <?php \CMS\Hooks::doAction('after_header'); ?>
 <div class="page-wrap">
 <main id="main-content">

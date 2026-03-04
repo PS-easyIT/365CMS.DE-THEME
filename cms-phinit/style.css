@@ -442,7 +442,7 @@ img { max-width: 100%; display: block; object-fit: cover; }
     background: var(--bg-primary); border-radius: var(--radius);
     border: 1px solid var(--border-color); overflow: hidden;
     box-shadow: var(--shadow-sm); transition: var(--transition);
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; min-height: 320px;
 }
 .post-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: transparent; }
 .post-card-thumb { overflow: hidden; height: 160px; background: var(--bg-tertiary); position: relative; display: block; flex-shrink: 0; }
@@ -456,7 +456,7 @@ img { max-width: 100%; display: block; object-fit: cover; }
     text-transform: uppercase; z-index: 2; line-height: 1.5;
 }
 .post-card-body {
-    padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 6px;
+    padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; min-height: 140px;
 }
 .post-card-title {
     font-size: .92rem; font-weight: 700; line-height: 1.4;
@@ -1389,7 +1389,9 @@ body.dark-mode .repo-card { border-color: var(--border-dark); }
 
 /* ── Info-Grid (Kategorie-Cards) ───────────────────────────────── */
 .info-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
 }
 .info-card {
     padding: 20px 22px;
@@ -1403,6 +1405,21 @@ body.dark-mode .repo-card { border-color: var(--border-dark); }
 }
 .info-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .info-card--gold { border-top-color: var(--accent-color); }
+.info-card--repo {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-top-color: var(--accent-color);
+    border-color: var(--primary-light);
+}
+.info-card--repo h3 { color: #fff; }
+.info-card--repo p  { color: rgba(255,255,255,.78); }
+.info-card--repo:hover { box-shadow: var(--shadow-lg); }
+.info-card-repo-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,.14); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; margin-bottom: 12px; flex-shrink: 0;
+}
+.info-card--repo .btn-accent { font-weight: 700; margin-top: auto; align-self: flex-start; }
 .info-card h3 {
     font-size: 1rem; font-weight: 700; margin: 0 0 8px;
     color: var(--text-primary);
@@ -1424,10 +1441,12 @@ body.dark-mode .article-list { border-color: var(--border-dark); }
 body.dark-mode .article-thumb { border-color: var(--border-dark); }
 body.dark-mode .info-card { background: var(--bg-dark-2); border-color: var(--border-dark); }
 body.dark-mode .info-card h3 { color: var(--text-white); }
+body.dark-mode .info-card--repo { background: linear-gradient(135deg, #1a3154 0%, #0d1e35 100%); border-color: #2a4a72; }
+body.dark-mode .info-card--repo h3 { color: #fff; }
 
 /* Responsive Homepage */
 @media (max-width: 768px) {
-    .info-grid { grid-template-columns: 1fr; }
+    .info-grid, .info-grid--cols-3 { grid-template-columns: 1fr; }
     .feed-grid, .feed-dual-grid { grid-template-columns: 1fr; }
     .article-card { flex-direction: column; }
     .article-thumb { width: 100% !important; }

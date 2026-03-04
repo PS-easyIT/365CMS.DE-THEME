@@ -59,6 +59,15 @@ try {
     $_c2LinkUrl    = $_hc->get('homepage', 'info_card2_link_url', '/kategorie/compliance');
     $_c2Style      = $_hc->get('homepage', 'info_card2_style', 'gold');
 
+    // Info-Card 3 (optional – Repo-Card)
+    $_showCard3  = filter_var($_hc->get('homepage', 'show_info_card3', false), FILTER_VALIDATE_BOOLEAN);
+    $_c3Title    = $_hc->get('homepage', 'info_card3_title', '💻 GitHub / GitLab');
+    $_c3Text     = $_hc->get('homepage', 'info_card3_text', '');
+    $_c3LinkText = $_hc->get('homepage', 'info_card3_link_text', 'Zum Repository →');
+    $_c3LinkUrl  = $_hc->get('homepage', 'info_card3_link_url', 'https://github.com/');
+    $_c3Badge    = $_hc->get('homepage', 'info_card3_badge', '');
+    $_c3Style    = $_hc->get('homepage', 'info_card3_style', 'repo');
+
     // Kachel-Grid
     $_showTileGrid  = filter_var($_hc->get('homepage', 'show_tile_grid', true), FILTER_VALIDATE_BOOLEAN);
     $_tileLabel     = $_hc->get('homepage', 'tile_grid_label', 'Weitere Beiträge');
@@ -68,6 +77,13 @@ try {
     $_showTileCat   = filter_var($_hc->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN);
     $_showTileDate  = filter_var($_hc->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN);
     $_tileLinkUrl   = $_hc->get('homepage', 'tile_grid_link_url', '/archiv');
+
+    // Sektionsabstände (einzeln steuerbar)
+    $_spRepo = max(0, (int)$_hc->get('homepage', 'spacing_repo_card',    32));
+    $_spList = max(0, (int)$_hc->get('homepage', 'spacing_article_list', 32));
+    $_spInfo = max(0, (int)$_hc->get('homepage', 'spacing_info_cards',   32));
+    $_spGrid = max(0, (int)$_hc->get('homepage', 'spacing_tile_grid',    32));
+    $_spRss  = max(0, (int)$_hc->get('homepage', 'spacing_rss_feeds',    32));
 
 } catch (\Throwable $_e) {
     // Fallback-Defaults
@@ -79,8 +95,10 @@ try {
     $_showInfoGrid = true;
     $_c1Title = '🖥️ Admin Anleitungen'; $_c1Text = ''; $_c1LinkText = 'Anleitungen →'; $_c1LinkUrl = '#'; $_c1Style = 'default';
     $_c2Title = '🔒 DSGVO & Compliance'; $_c2Text = ''; $_c2LinkText = 'Compliance →'; $_c2LinkUrl = '#'; $_c2Style = 'gold';
+    $_showCard3 = false; $_c3Title = '💻 GitHub / GitLab'; $_c3Text = ''; $_c3LinkText = 'Zum Repository →'; $_c3LinkUrl = '#'; $_c3Badge = ''; $_c3Style = 'repo';
     $_showTileGrid = true; $_tileLabel = 'Weitere Beiträge'; $_tileCount = 6; $_tileCols = 3;
     $_showTileExc = true;  $_showTileCat = true; $_showTileDate = true; $_tileLinkUrl = '/archiv';
+    $_spRepo = $_spList = $_spInfo = $_spGrid = $_spRss = 32;
 }
 
 // ── Posts laden (direkt via Database, kein PostService nötig) ──────────────────
@@ -105,7 +123,10 @@ try {
     // Kachel-Grid mit Paginierung
     $currentPage = max(1, (int)($_GET['page'] ?? 1));
     $totalPosts  = (int)($db->get_var("SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'") ?: 0);
-    $totalPages  = max(1, (int)ceil($totalPosts / $_tileCount));
+    // Grid zeigt nur Beiträge, die *nicht* bereits in der Artikelliste oben stehen
+    $_gridAvail  = max(0, $totalPosts - (int)$_listCount);
+    $totalPages  = max(1, (int)ceil($_gridAvail / (int)$_tileCount));
+    $_gridOffset = (int)$_listCount + (($currentPage - 1) * (int)$_tileCount);
 
     $gridRows  = $_showTileGrid
         ? ($db->get_results(
@@ -115,7 +136,7 @@ try {
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
              WHERE p.status = 'published'
              ORDER BY p.published_at DESC
-             LIMIT " . (int)$_tileCount . " OFFSET " . (int)(($currentPage - 1) * $_tileCount)
+             LIMIT " . (int)$_tileCount . " OFFSET " . (int)$_gridOffset
           ) ?: [])
         : [];
     $gridPosts = array_map(fn($r) => (array)$r, $gridRows);
@@ -132,7 +153,7 @@ try {
 
     <!-- ── Repo-Card ─────────────────────────────────────────────── -->
     <?php if ($_showRepo && !empty($_repoTitle)): ?>
-    <section class="content-section" data-anim>
+    <section class="content-section" style="margin-bottom:<?php echo (int)$_spRepo; ?>px" data-anim>
         <div class="repo-card">
             <div class="repo-card-icon" aria-hidden="true">
                 <svg viewBox="0 0 16 16" width="28" height="28" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -160,7 +181,7 @@ try {
 
     <!-- ── Artikel-Liste ─────────────────────────────────────── -->
     <?php if ($_showList && !empty($featuredPosts)): ?>
-    <section class="content-section" data-anim>
+    <section class="content-section" style="margin-bottom:<?php echo (int)$_spList; ?>px" data-anim>
         <div class="section-header">
             <span class="section-label">📄 <?php echo htmlspecialchars($_listLabel, ENT_QUOTES); ?></span>
             <?php if (!empty($_listLinkUrl)): ?>
@@ -233,11 +254,11 @@ try {
 
     <!-- ── Kategorie-Cards (Info-Grid) ───────────────────────── -->
     <?php if ($_showInfoGrid): ?>
-    <section class="content-section" data-anim data-anim-delay="1">
+    <section class="content-section" style="margin-bottom:<?php echo (int)$_spInfo; ?>px" data-anim data-anim-delay="1">
         <div class="section-header">
             <span class="section-label section-label--dark">Themenbereiche</span>
         </div>
-        <div class="info-grid">
+        <div class="info-grid<?php echo $_showCard3 ? ' info-grid--cols-3' : ''; ?>">
             <div class="info-card<?php echo $_c1Style === 'gold' ? ' info-card--gold' : ''; ?>">
                 <h3><?php echo htmlspecialchars($_c1Title, ENT_QUOTES); ?></h3>
                 <?php if (!empty($_c1Text)): ?>
@@ -256,13 +277,43 @@ try {
                 <a href="<?php echo htmlspecialchars($siteUrl . $_c2LinkUrl, ENT_QUOTES); ?>" class="btn btn-outline btn-sm info-card-cta"><?php echo htmlspecialchars($_c2LinkText, ENT_QUOTES); ?></a>
                 <?php endif; ?>
             </div>
+            <?php if ($_showCard3): ?>
+            <?php
+                $_c3IsRepo  = $_c3Style === 'repo';
+                $_c3IsGold  = $_c3Style === 'gold';
+                $_c3Classes = 'info-card' . ($_c3IsRepo ? ' info-card--repo' : ($_c3IsGold ? ' info-card--gold' : ''));
+                $_c3FullUrl = str_starts_with($_c3LinkUrl, 'http') ? $_c3LinkUrl : $siteUrl . $_c3LinkUrl;
+                $_c3Target  = str_starts_with($_c3LinkUrl, 'http') ? '_blank' : '_self';
+            ?>
+            <div class="<?php echo $_c3Classes; ?>">
+                <?php if ($_c3IsRepo): ?>
+                <div class="info-card-repo-icon" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                </div>
+                <?php endif; ?>
+                <h3><?php echo htmlspecialchars($_c3Title, ENT_QUOTES); ?></h3>
+                <?php if (!empty($_c3Text)): ?>
+                <p><?php echo htmlspecialchars($_c3Text, ENT_QUOTES); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($_c3Badge)): ?>
+                <span class="repo-badge" style="align-self:flex-start;margin-bottom:10px;"><?php echo htmlspecialchars($_c3Badge, ENT_QUOTES); ?></span>
+                <?php endif; ?>
+                <?php if (!empty($_c3FullUrl) && !empty($_c3LinkText)): ?>
+                <a href="<?php echo htmlspecialchars($_c3FullUrl, ENT_QUOTES); ?>"
+                   class="btn btn-sm info-card-cta <?php echo $_c3IsRepo ? 'btn-accent' : 'btn-outline'; ?>"
+                   target="<?php echo $_c3Target; ?>" rel="noopener noreferrer">
+                    <?php echo htmlspecialchars($_c3LinkText, ENT_QUOTES); ?>
+                </a>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
         </div>
     </section>
     <?php endif; ?>
 
     <!-- ── Kachel-Grid ─────────────────────────────────────────── -->
     <?php if ($_showTileGrid && !empty($gridPosts)): ?>
-    <section class="content-section" data-anim data-anim-delay="2">
+    <section class="content-section" style="margin-bottom:<?php echo (int)$_spGrid; ?>px" data-anim data-anim-delay="2">
         <div class="section-header">
             <span class="section-label">📰 <?php echo htmlspecialchars($_tileLabel, ENT_QUOTES); ?></span>
             <?php if (!empty($_tileLinkUrl)): ?>
@@ -374,7 +425,7 @@ try {
     }
     ?>
     <?php if (!empty($_feedSections)): ?>
-    <section class="content-section" data-anim data-anim-delay="3">
+    <section class="content-section" style="margin-bottom:<?php echo (int)$_spRss; ?>px" data-anim data-anim-delay="3">
         <div class="feed-dual-grid">
             <?php foreach ($_feedSections as $_fsIdx => $_fs): ?>
             <div class="feed-dual-col">

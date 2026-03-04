@@ -526,6 +526,46 @@
           "type": "checkbox",
           "default": true
         },
+        "show_info_card3": {
+          "label": "3. Themenbereich-Card anzeigen (Repo-Card)",
+          "type": "checkbox",
+          "default": false
+        },
+        "info_card3_title": {
+          "label": "3. Card: Titel",
+          "type": "text",
+          "default": "💻 GitHub / GitLab"
+        },
+        "info_card3_text": {
+          "label": "3. Card: Beschreibung",
+          "type": "textarea",
+          "default": "Skripte, Tools und Automatisierungen im öffentlichen Repository."
+        },
+        "info_card3_link_text": {
+          "label": "3. Card: Button-Text",
+          "type": "text",
+          "default": "Zum Repository →"
+        },
+        "info_card3_link_url": {
+          "label": "3. Card: Button-URL (absolut oder relativ)",
+          "type": "url",
+          "default": "https://github.com/"
+        },
+        "info_card3_badge": {
+          "label": "3. Card: Badge-Text (z. B. \"25+ Repos\")",
+          "type": "text",
+          "default": "25+ Repos"
+        },
+        "info_card3_style": {
+          "label": "3. Card: Stil",
+          "type": "select",
+          "default": "repo",
+          "options": [
+            {"value": "default", "label": "Standard (Teal-Akzent)"},
+            {"value": "gold",    "label": "Gold"},
+            {"value": "repo",    "label": "Repo-Card (dunkel)"}
+          ]
+        },
         "show_feed_section": {
           "label": "RSS-Feed-Sektion anzeigen",
           "type": "checkbox",
@@ -540,6 +580,41 @@
           "label": "Titel des Beitrags-Grids",
           "type": "text",
           "default": "Alle Artikel"
+        },
+        "spacing_repo_card": {
+          "label": "Abstand nach Repo-Card (px)",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 120
+        },
+        "spacing_article_list": {
+          "label": "Abstand nach Artikel-Liste (px)",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 120
+        },
+        "spacing_info_cards": {
+          "label": "Abstand nach Themenbereiche-Cards (px)",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 120
+        },
+        "spacing_tile_grid": {
+          "label": "Abstand nach Kachel-Grid (px)",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 120
+        },
+        "spacing_rss_feeds": {
+          "label": "Abstand nach RSS-Feed-Sektion (px)",
+          "type": "number",
+          "default": 32,
+          "min": 0,
+          "max": 120
         }
       }
     },
@@ -696,6 +771,46 @@
         }
       }
     },
+    "pages": {
+      "label": "Seiten-Ansicht",
+      "fields": {
+        "show_page_title": {
+          "label": "Seitentitel anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_page_updated_date": {
+          "label": "\"Zuletzt ge\u00e4ndert\"-Datum anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "page_layout": {
+          "label": "Seiten-Layout",
+          "type": "select",
+          "default": "full",
+          "options": [
+            {"value": "full",    "label": "Volle Breite (ohne Sidebar)"},
+            {"value": "narrow",  "label": "Schmal (860\u00a0px, zentriert)"},
+            {"value": "two-col", "label": "2-spaltig (Inhalt + Sidebar)"}
+          ]
+        },
+        "show_page_sidebar": {
+          "label": "Sidebar anzeigen (nur bei 2-spaltigem Layout)",
+          "type": "checkbox",
+          "default": true
+        },
+        "page_sidebar_show_nav": {
+          "label": "Navigations-Widget in der Seitenleiste anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_page_toc": {
+          "label": "Inhaltsverzeichnis auf Seiten erzeugen",
+          "type": "checkbox",
+          "default": false
+        }
+      }
+    },
     "layout": {
       "label": "Layout",
       "fields": {
@@ -761,6 +876,21 @@
             "left":  "Links",
             "none":  "Keine Sidebar"
           }
+        },
+        "show_breadcrumb": {
+          "label": "Breadcrumb global anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "breadcrumb_on_posts": {
+          "label": "Breadcrumb auf Beitragsseiten",
+          "type": "checkbox",
+          "default": true
+        },
+        "breadcrumb_on_pages": {
+          "label": "Breadcrumb auf statischen Seiten",
+          "type": "checkbox",
+          "default": true
         }
       }
     },
