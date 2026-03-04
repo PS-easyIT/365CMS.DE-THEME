@@ -655,15 +655,19 @@ final class CMS_Phinit_Theme
             $css .= "}\n";
         }
 
+        // ── Titel-Schriftgrößen ──
+        $articleTitleFs = (int)($c->get('typography', 'article_title_fontsize', 16) ?: 16);
+        $css .= ".article-body h4 { font-size: {$articleTitleFs}px !important; }\n";
+
+        $tileTitleFs = (int)($c->get('typography', 'tile_title_fontsize', 15) ?: 15);
+        $css .= ".post-card-title { font-size: {$tileTitleFs}px !important; }\n";
+
         // ── Excerpt-Schriftgrößen ──
-        $excerptFs = $c->get('typography', 'article_excerpt_fontsize', '');
-        if ($excerptFs !== '' && $excerptFs !== null) {
-            $css .= ".article-body p { font-size: {$excerptFs}px; }\n";
-        }
-        $tileExcFs = $c->get('typography', 'tile_excerpt_fontsize', '');
-        if ($tileExcFs !== '' && $tileExcFs !== null) {
-            $css .= ".post-card-excerpt { font-size: {$tileExcFs}px !important; }\n";
-        }
+        $excerptFs = (int)($c->get('typography', 'article_excerpt_fontsize', 13) ?: 13);
+        $css .= ".article-body p { font-size: {$excerptFs}px !important; display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important; }\n";
+
+        $tileExcFs = (int)($c->get('typography', 'tile_excerpt_fontsize', 12) ?: 12);
+        $css .= ".post-card-excerpt { font-size: {$tileExcFs}px !important; }\n";
 
         return $css;
     }

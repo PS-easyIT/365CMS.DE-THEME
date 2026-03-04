@@ -15,31 +15,45 @@ if (!defined('ABSPATH')) {
 
 $siteUrl = SITE_URL;
 
-// Pagination: ?page= (von index.php verlinkt) hat Vorrang vor ?p= und Router-Wert
+// Suche + Pagination
+$_bQuery  = trim($_GET['q'] ?? '');
 $_blogPage = max(1, (int)($_GET['page'] ?? $_GET['p'] ?? (isset($currentPage) ? (int)$currentPage : 1)));
 $_blogPer  = isset($perPage) && (int)$perPage > 0 ? (int)$perPage : 10;
 
-// Eigene DB-Abfrage – stellt korrekte Daten für aktuelle Seite sicher
+// Eigene DB-Abfrage mit optionaler Volltextsuche (Prepared Statements)
 try {
     $_bDb   = \CMS\Database::instance();
     $_bPfx  = $_bDb->getPrefix();
+    $_bPdo  = $_bDb->getPdo();
 
-    $_bTotal = (int)($_bDb->get_var("SELECT COUNT(*) FROM {$_bPfx}posts WHERE status = 'published'") ?: 0);
-    $_bPages = max(1, (int)ceil($_bTotal / $_blogPer));
-    $_blogPage = min($_blogPage, $_bPages);
+    $_bWhere = "p.status = 'published'";
+    $_bBind  = [];
+    if ($_bQuery !== '') {
+        $_bWhere .= " AND (p.title LIKE ? OR p.excerpt LIKE ?)";
+        $_bLike   = '%' . $_bQuery . '%';
+        $_bBind   = [$_bLike, $_bLike];
+    }
+
+    $_stmtCnt = $_bPdo->prepare("SELECT COUNT(*) FROM {$_bPfx}posts p WHERE {$_bWhere}");
+    $_stmtCnt->execute($_bBind);
+    $_bTotal   = (int)$_stmtCnt->fetchColumn();
+
+    $_bPages   = max(1, (int)ceil($_bTotal / $_blogPer));
+    $_blogPage = min($_blogPage, max(1, $_bPages));
     $_bOffset  = ($_blogPage - 1) * $_blogPer;
 
-    $_bRows = $_bDb->get_results(
+    $_stmtRows = $_bPdo->prepare(
         "SELECT p.id, p.title, p.slug, p.excerpt, LEFT(p.content, 500) AS content,
                 p.featured_image, p.published_at, p.views,
                 c.name AS category_name
          FROM {$_bPfx}posts p
          LEFT JOIN {$_bPfx}post_categories c ON c.id = p.category_id
-         WHERE p.status = 'published'
+         WHERE {$_bWhere}
          ORDER BY p.published_at DESC
-         LIMIT {$_blogPer} OFFSET {$_bOffset}"
-    ) ?: [];
-    $_bPosts = array_map(fn($r) => (array)$r, $_bRows);
+         LIMIT ? OFFSET ?"
+    );
+    $_stmtRows->execute(array_merge($_bBind, [$_blogPer, $_bOffset]));
+    $_bPosts = $_stmtRows->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 } catch (\Throwable $_bE) {
     $_bPosts = [];
     $_bTotal = 0;
@@ -61,7 +75,29 @@ try {
 }
 ?>
 
-<div class="container" style="padding-top:28px;padding-bottom:0;">
+<div class="container" style="padding-top:20px;padding-bottom:0;">
+
+    <!-- Archiv-Navigation: Startseite + Suchfeld -->
+    <div class="blog-archive-bar">
+        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/"
+           class="blog-archive-back">&#8592; Startseite</a>
+        <form class="blog-search-form" method="GET"
+              action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog">
+            <input type="search" name="q"
+                   placeholder="Beiträge durchsuchen&hellip;"
+                   value="<?php echo htmlspecialchars($_bQuery, ENT_QUOTES); ?>">
+            <button type="submit" aria-label="Suchen">&#128269;</button>
+        </form>
+    </div>
+
+    <?php if ($_bQuery !== ''): ?>
+    <p class="blog-search-hint">
+        Suchergebnisse für <strong>&bdquo;<?php echo htmlspecialchars($_bQuery, ENT_QUOTES); ?>&ldquo;</strong>
+        &mdash; <?php echo $_bTotal; ?> Treffer
+        &nbsp;<a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog">&#10005; Zurücksetzen</a>
+    </p>
+    <?php endif; ?>
+
     <?php if (!empty($_bPosts)): ?>
 
     <div class="article-list" style="border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);" data-anim>
@@ -77,7 +113,7 @@ try {
                 <?php if (!empty($_bP['featured_image'])): ?>
                 <img src="<?php echo htmlspecialchars($_bP['featured_image'], ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($_bP['title'] ?? '', ENT_QUOTES); ?>"
-                     width="<?php echo $_bThumbW; ?>" height="<?php echo $_bThumbH; ?>" loading="lazy">
+                     loading="lazy">
                 <?php else: ?>
                 <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
                 <?php endif; ?>

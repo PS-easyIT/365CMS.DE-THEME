@@ -367,6 +367,18 @@ $config = [
                 'default'     => '600',
             ],
             // ── Teaser-Texte (List & Grid Cards) ──
+            'article_title_fontsize' => [
+                'label'       => 'Listen-Card: Titel Schriftgröße (px)',
+                'description' => 'Schriftgröße des Artikeltitels in der Artikel-Liste.',
+                'type'        => 'number',
+                'default'     => 16,
+            ],
+            'tile_title_fontsize' => [
+                'label'       => 'Grid-Card: Titel Schriftgröße (px)',
+                'description' => 'Schriftgröße des Artikeltitels in den Kachel-Cards.',
+                'type'        => 'number',
+                'default'     => 15,
+            ],
             'article_excerpt_fontsize' => [
                 'label'       => 'Listen-Card: Teaser-Text Schriftgröße (px)',
                 'description' => 'Schriftgröße des Auszug-Textes in der Artikel-Liste (Startseite & Archiv).',
@@ -875,6 +887,225 @@ $config = [
                 'type'        => 'text',
                 'default'     => '/blog',
             ],
+            // ── Sidebar neben Artikel-Liste ──
+            'show_list_sidebar' => [
+                'label'       => 'Sidebar neben „Aktuell“ anzeigen',
+                'description' => 'Zeigt eine konfigurierbare Sidebar rechts neben der Artikel-Liste an.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'list_sidebar_width' => [
+                'label'       => 'Sidebar Breite (px)',
+                'description' => 'Breite der Sidebar neben der Artikel-Liste.',
+                'type'        => 'number',
+                'default'     => 260,
+            ],
+            'list_sidebar_title' => [
+                'label'       => 'Sidebar Titel',
+                'description' => 'Optional: Überschrift der Sidebar.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'list_sidebar_content' => [
+                'label'       => 'Sidebar Inhalt (HTML erlaubt)',
+                'description' => 'Freier HTML-Inhalt für die Sidebar, z. B. Links, Hinweise, Bilder.',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+
+            // ── Sidebar Widgets ────────────────────────────────────────────
+            'sidebar_show_projects' => [
+                'label'       => 'Widget: Projekt-Hinweise anzeigen',
+                'description' => 'Zeigt Links zu eigenen Projekten (z. B. 365CMS.DE und 365NETWORK.DE).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_project1_name' => [
+                'label'       => 'Projekt 1 – Name',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '365CMS.DE',
+            ],
+            'sidebar_project1_desc' => [
+                'label'       => 'Projekt 1 – Kurzbeschreibung',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Das eigene CMS – modular & flexibel',
+            ],
+            'sidebar_project1_url' => [
+                'label'       => 'Projekt 1 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://365cms.de',
+            ],
+            'sidebar_project2_name' => [
+                'label'       => 'Projekt 2 – Name',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '365NETWORK.DE',
+            ],
+            'sidebar_project2_desc' => [
+                'label'       => 'Projekt 2 – Kurzbeschreibung',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Business-Netzwerk-Plattform',
+            ],
+            'sidebar_project2_url' => [
+                'label'       => 'Projekt 2 – URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://365network.de',
+            ],
+            'sidebar_show_status' => [
+                'label'       => 'Widget: Dienst-Status anzeigen',
+                'description' => 'Platzhalter – wird spaeter via Plugin (cms-status) befuellt.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_status_label' => [
+                'label'       => 'Dienst-Status Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Dienst-Status',
+            ],
+            'sidebar_show_downloads' => [
+                'label'       => 'Widget: Download-Bereich anzeigen',
+                'description' => 'Zeigt eine Liste konfigurierbarer Download-Links.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'sidebar_downloads_label' => [
+                'label'       => 'Downloads – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Downloads & Checklisten',
+            ],
+            'sidebar_downloads_items' => [
+                'label'       => 'Download-Links (ein Eintrag pro Zeile)',
+                'description' => 'Format pro Zeile: Bezeichnung|https://url.de/datei.pdf',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'sidebar_show_social' => [
+                'label'       => 'Widget: Social-Media-Links anzeigen',
+                'description' => 'URLs werden aus dem Social-Tab uebernommen.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_social_label' => [
+                'label'       => 'Social Media – Label',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Folge uns',
+            ],
+            // ── Widget: Site-Identity (Logo oben) ────────────────────────
+            'sidebar_show_identity' => [
+                'label'       => 'Widget: Site-Identity (Logo) oben anzeigen',
+                'description' => 'Zeigt ein Logo + Tagline ganz oben in der Sidebar.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'sidebar_identity_logo_url' => [
+                'label'       => 'Identity – Logo-URL',
+                'description' => 'Pfad oder URL zum Logo-Bild, z. B. /assets/images/logo.png',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'sidebar_identity_tagline' => [
+                'label'       => 'Identity – Tagline',
+                'description' => 'Kurzer Satz unter dem Logo.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'sidebar_identity_link_url' => [
+                'label'       => 'Identity – Link (Klick auf Logo)',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '/',
+            ],
+            // ── Widget: Projekt-Logos ─────────────────────────────────────
+            'sidebar_project1_logo_url' => [
+                'label'       => 'Projekt 1 – Logo-URL',
+                'description' => 'URL oder Pfad zum Logo-Bild des ersten Projekts.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'sidebar_project2_logo_url' => [
+                'label'       => 'Projekt 2 – Logo-URL',
+                'description' => 'URL oder Pfad zum Logo-Bild des zweiten Projekts.',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            // ── Widget: Status-Dienste ────────────────────────────────────
+            'sidebar_status_services' => [
+                'label'       => 'Dienst-Status – Dienste (ein Eintrag pro Zeile)',
+                'description' => 'Format: Dienstname|Status-URL|Kürzel (max. 4 Zeichen)',
+                'type'        => 'textarea',
+                'default'     => "Microsoft 365|https://status.office365.com|M365\nAzure|https://status.azure.com|AZ\nStarface|https://www.starface.com/support/|SF\nAnyDesk|https://status.anydesk.com|AD\nGitHub|https://githubstatus.com|GH\nCloudflare|https://www.cloudflarestatus.com|CF",
+            ],
+            // ── Widget: Ankündigung / Hinweis ──────────────────────────────
+            'sidebar_show_notice' => [
+                'label'       => 'Widget: Anküdigung/Hinweis anzeigen',
+                'description' => 'Konfigurierbarer Banner, z. B. für Wartungsfenster oder Neuigkeiten.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'sidebar_notice_title' => [
+                'label'       => 'Hinweis – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '💡 Aktueller Hinweis',
+            ],
+            'sidebar_notice_text' => [
+                'label'       => 'Hinweis – Text',
+                'description' => '',
+                'type'        => 'textarea',
+                'default'     => '',
+            ],
+            'sidebar_notice_url' => [
+                'label'       => 'Hinweis – Link URL (optional)',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => '',
+            ],
+            'sidebar_notice_url_text' => [
+                'label'       => 'Hinweis – Link Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Mehr erfahren →',
+            ],
+            // ── Widget: Empfohlene Artikel (Featured Posts) ─────────────────
+            'sidebar_show_featured_posts' => [
+                'label'       => 'Widget: Empfohlene Artikel anzeigen',
+                'description' => 'Zeigt bis zu 3 ausgewählte Beiträge in der Sidebar. Wird anstelle der anderen Widgets angezeigt, wenn aktiviert.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'sidebar_featured_posts_label' => [
+                'label'       => 'Empfohlene Artikel – Label',
+                'description' => 'Überschrift des Featured-Posts-Widgets.',
+                'type'        => 'text',
+                'default'     => '📌 Empfohlene Artikel',
+            ],
+            'sidebar_featured_post_1' => [
+                'label'       => 'Empfohlener Beitrag 1',
+                'description' => 'Wähle den ersten anzuzeigenden Beitrag.',
+                'type'        => 'post_picker',
+                'default'     => '',
+            ],
+            'sidebar_featured_post_2' => [
+                'label'       => 'Empfohlener Beitrag 2',
+                'description' => 'Wähle den zweiten anzuzeigenden Beitrag.',
+                'type'        => 'post_picker',
+                'default'     => '',
+            ],
+            'sidebar_featured_post_3' => [
+                'label'       => 'Empfohlener Beitrag 3',
+                'description' => 'Wähle den dritten anzuzeigenden Beitrag.',
+                'type'        => 'post_picker',
+                'default'     => '',
+            ],
+
             'show_info_grid' => [
                 'label'       => 'Kategorie-Cards anzeigen',
                 'description' => '2er-Grid mit Kategorie-Übersichts-Cards.',
@@ -1598,6 +1829,28 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                    <?php echo isset($field['max']) ? 'max="' . $field['max'] . '"' : ''; ?>
                    style="max-width:140px;margin-top:4px;">
 
+        <?php elseif ($field['type'] === 'post_picker'): ?>
+            <?php
+            $pickerPosts = [];
+            try {
+                $_ppDb     = \CMS\Database::instance();
+                $_ppPrefix = $_ppDb->getPrefix();
+                $_ppRows   = $_ppDb->get_results(
+                    "SELECT id, title FROM {$_ppPrefix}posts WHERE status = 'published' ORDER BY published_at DESC LIMIT 300"
+                );
+                $pickerPosts = array_map(fn($r) => (array)$r, $_ppRows ?: []);
+            } catch (\Throwable $_ppe) {}
+            ?>
+            <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>" class="form-control" style="margin-top:4px;">
+                <option value="">— Kein Beitrag ausgewählt —</option>
+                <?php foreach ($pickerPosts as $_ppPost): ?>
+                <option value="<?php echo (int)$_ppPost['id']; ?>"
+                    <?php echo (string)$val === (string)$_ppPost['id'] ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($_ppPost['title']); ?>
+                </option>
+                <?php endforeach; ?>
+            </select>
+
         <?php else: ?>
             <input type="text"
                    id="<?php echo $inputId; ?>"
@@ -1900,8 +2153,9 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     <?php elseif ($activeTab === 'homepage'):
                         $homepageGroups = [
                             '📌 Repo-Card'         => ['show_repo_card', 'repo_card_title', 'repo_card_description', 'repo_card_badge', 'repo_card_btn_text', 'repo_card_btn_url'],
-                            '📰 Artikel-Liste'     => ['show_article_list', 'article_list_label', 'article_list_count', 'article_list_link_url', 'article_thumb_width', 'article_thumb_height', 'show_article_excerpt', 'show_article_meta', 'show_article_badge', 'show_meta_category', 'show_meta_date', 'show_meta_readtime'],
-                            '🗂️ Kategorie-Cards'   => ['show_info_grid', 'info_card1_title', 'info_card1_text', 'info_card1_link_text', 'info_card1_link_url', 'info_card1_style', 'info_card2_title', 'info_card2_text', 'info_card2_link_text', 'info_card2_link_url', 'info_card2_style', 'show_info_card3', 'info_card3_title', 'info_card3_text', 'info_card3_link_text', 'info_card3_link_url', 'info_card3_badge', 'info_card3_style'],
+                            '📰 Artikel-Liste'     => ['show_article_list', 'article_list_label', 'article_list_count', 'article_list_link_url', 'article_thumb_width', 'article_thumb_height', 'show_article_excerpt', 'show_article_meta', 'show_article_badge', 'show_meta_category', 'show_meta_date', 'show_meta_readtime', 'show_list_sidebar', 'list_sidebar_width', 'list_sidebar_title', 'list_sidebar_content'],
+                            '🔧 Sidebar-Widgets'   => ['sidebar_show_identity', 'sidebar_identity_logo_url', 'sidebar_identity_tagline', 'sidebar_identity_link_url', 'sidebar_show_projects', 'sidebar_project1_name', 'sidebar_project1_logo_url', 'sidebar_project1_desc', 'sidebar_project1_url', 'sidebar_project2_name', 'sidebar_project2_logo_url', 'sidebar_project2_desc', 'sidebar_project2_url', 'sidebar_show_status', 'sidebar_status_label', 'sidebar_status_services', 'sidebar_show_downloads', 'sidebar_downloads_label', 'sidebar_downloads_items', 'sidebar_show_social', 'sidebar_social_label', 'sidebar_show_notice', 'sidebar_notice_title', 'sidebar_notice_text', 'sidebar_notice_url', 'sidebar_notice_url_text', 'sidebar_show_featured_posts', 'sidebar_featured_posts_label', 'sidebar_featured_post_1', 'sidebar_featured_post_2', 'sidebar_featured_post_3'],
+                            '�🗂️ Kategorie-Cards'   => ['show_info_grid', 'info_card1_title', 'info_card1_text', 'info_card1_link_text', 'info_card1_link_url', 'info_card1_style', 'info_card2_title', 'info_card2_text', 'info_card2_link_text', 'info_card2_link_url', 'info_card2_style', 'show_info_card3', 'info_card3_title', 'info_card3_text', 'info_card3_link_text', 'info_card3_link_url', 'info_card3_badge', 'info_card3_style'],
                             '🧱 Kachel-Grid'       => ['show_tile_grid', 'tile_grid_label', 'tile_grid_count', 'tile_grid_columns', 'show_tile_excerpt', 'show_tile_category', 'show_tile_date', 'tile_grid_link_url'],
                             '📡 RSS-Feeds'         => ['show_feed_section', 'feed1_channel_id', 'feed1_count', 'feed2_channel_id', 'feed2_count'],
                             '📏 Sektionen-Abstände' => ['spacing_repo_card', 'spacing_article_list', 'spacing_info_cards', 'spacing_tile_grid', 'spacing_rss_feeds'],
@@ -2001,7 +2255,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                         $typoGroups = [
                             '🔤 Schriftarten'        => ['font_family_ui', 'font_family_brand', 'font_family_code'],
                             '📏 Größen & Abstände'   => ['font_size_base', 'font_size_post', 'line_height_base', 'line_height_post', 'font_weight_heading', 'font_weight_nav'],
-                            '📝 Teaser-Texte (Cards)' => ['article_excerpt_fontsize', 'article_excerpt_length', 'tile_excerpt_fontsize', 'tile_excerpt_length'],
+                            '📝 Teaser-Texte (Cards)' => ['article_title_fontsize', 'tile_title_fontsize', 'article_excerpt_fontsize', 'article_excerpt_length', 'tile_excerpt_fontsize', 'tile_excerpt_length'],
                         ];
                     ?>
                     <div class="admin-card">
