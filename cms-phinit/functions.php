@@ -56,7 +56,12 @@ final class CMS_Phinit_Theme
     public function enqueueStyles(): void
     {
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
-        $version = file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION;
+        // Cache-Buster aus Customizer oder Datei-Timestamp
+        $cbVersion = '';
+        try {
+            $cbVersion = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'cache_buster_css', '');
+        } catch (\Throwable $e) {}
+        $version = !empty(trim((string)$cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
         echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'style.css?v=' . $version . '">' . "\n";
 
         // Phinit-spezifisches CSS aus Customizer generieren
@@ -85,7 +90,13 @@ final class CMS_Phinit_Theme
         $tm = \CMS\ThemeManager::instance();
         echo '<meta name="description" content="' . htmlspecialchars($tm->getSiteDescription() ?? '', ENT_QUOTES) . '">' . "\n";
         echo '<meta property="og:site_name" content="' . htmlspecialchars($tm->getSiteTitle() ?? '', ENT_QUOTES) . '">' . "\n";
-        echo '<meta name="theme-color" content="#1e3a5f">' . "\n";
+        // theme-color dynamisch aus Customizer
+        $themeColor = '#1e3a5f';
+        try {
+            $tc = \CMS\Services\ThemeCustomizer::instance()->get('colors', 'primary_color', '#1e3a5f');
+            if (!empty($tc)) { $themeColor = $tc; }
+        } catch (\Throwable $e) {}
+        echo '<meta name="theme-color" content="' . htmlspecialchars($themeColor, ENT_QUOTES) . '">' . "\n";
     }
 
     /* ── Google Fonts Preconnect ────────────────────────────────── */
@@ -374,12 +385,6 @@ final class CMS_Phinit_Theme
             if (!empty($thumbW)) { $css .= "    --article-thumb-w: {$thumbW}px;\n"; }
             if (!empty($thumbH)) { $css .= "    --article-thumb-h: {$thumbH}px;\n"; }
             $css .= "}\n";
-        }
-
-        // Custom CSS aus Advanced-Tab
-        $customAdvCss = $c->get('advanced', 'custom_css', '');
-        if (!empty(trim((string)$customAdvCss))) {
-            $css .= "\n/* Custom CSS */\n" . strip_tags((string)$customAdvCss) . "\n";
         }
 
         return $css;

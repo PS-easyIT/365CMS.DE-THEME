@@ -625,6 +625,26 @@ $config = [
                 'default'     => true,
             ],
 
+            // ── Cookie-Consent-Banner ──
+            'show_consent_banner' => [
+                'label'       => 'Cookie-Consent-Banner anzeigen',
+                'description' => 'Zeigt den DSGVO-Einwilligungsbanner am unteren Seitenrand.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'consent_text' => [
+                'label'       => 'Consent-Banner-Text',
+                'description' => 'Text des Cookie-/Datenschutz-Banners. Platzhalter: {privacy_url} für den Link zur Datenschutzseite.',
+                'type'        => 'textarea',
+                'default'     => 'Diese Website verwendet Cookies für Analyse-Zwecke.',
+            ],
+            'consent_privacy_url' => [
+                'label'       => 'Datenschutz-Link-URL im Banner',
+                'description' => 'URL zur „Mehr erfahren"-Seite im Consent-Banner.',
+                'type'        => 'text',
+                'default'     => '/cookie-policy',
+            ],
+
             // ── Partner/Network Bar ──
             'show_network_bar' => [
                 'label'       => 'Partner/Network-Bar anzeigen',
@@ -1768,6 +1788,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     <?php elseif ($activeTab === 'footer'):
                         $footerGroups = [
                             '🏷️ Brand & Text'    => ['footer_brand_name', 'footer_tagline', 'footer_col2_title', 'footer_col3_title', 'footer_col4_title', 'copyright_text', 'show_footer_social'],
+                            '🍪 Cookie-Consent-Banner' => ['show_consent_banner', 'consent_text', 'consent_privacy_url'],
                             '🔗 Network/Partner-Bar' => ['show_network_bar', 'network_bar_link1_label', 'network_bar_link1_url', 'network_bar_link2_label', 'network_bar_link2_url', 'network_bar_link3_label', 'network_bar_link3_url', 'network_bar_link4_label', 'network_bar_link4_url', 'network_bar_link5_label', 'network_bar_link5_url'],
                         ];
                     ?>
