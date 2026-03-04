@@ -350,11 +350,23 @@ try {
             <?php endforeach; ?>
         </div>
 
-        <?php if ($_showListSidebar): ?>
+        <?php if ($_showListSidebar):
+            $_sbFeaturedActive = $_sbShowFeaturedPosts && !empty($sbFeaturedPosts);
+            // Projekt-Widget über 2 Featured-Artikeln – immer wenn Featured + Projekte aktiv
+            $_sbFeatProjMode   = $_sbFeaturedActive && $_sbShowProjects;
+            // Social zusätzlich aktiv? → Karten kompakt (feste Höhe via CSS)
+            $_sbFeatSocialMode = $_sbFeaturedActive && $_sbShowSocial;
+            // Anzahl Featured-Posts: 2 wenn Projekt-Widget oben sitzt, sonst 3
+            $_sbFeatSlice      = $_sbFeatProjMode ? array_slice($sbFeaturedPosts, 0, 2) : $sbFeaturedPosts;
+            $_sbAsideClass     = 'homepage-list-sidebar'
+                               . ($_sbFeaturedActive  ? ' homepage-list-sidebar--feat'        : '')
+                               . ($_sbFeatProjMode    ? ' homepage-list-sidebar--feat-proj'    : '')
+                               . ($_sbFeatSocialMode  ? ' homepage-list-sidebar--feat-social'  : '');
+        ?>
         </div><!-- /.homepage-list-main -->
-        <aside class="homepage-list-sidebar">
+        <aside class="<?php echo $_sbAsideClass; ?>">
 
-            <?php /* Widget: Site Identity */ if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
+            <?php /* Widget: Site Identity */ if (!$_sbFeaturedActive && $_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
             <div class="sb-widget sb-widget--identity">
                 <?php $_idLink = !empty($_sbIdentityLinkUrl) ? $_sbIdentityLinkUrl : '/'; ?>
                 <a href="<?php echo htmlspecialchars($_idLink, ENT_QUOTES); ?>" class="sb-identity">
@@ -369,10 +381,45 @@ try {
             </div>
             <?php endif; ?>
 
+            <?php /* Widget: Projekt – oben vor Featured (nur im feat-proj-Modus) */ if ($_sbFeatProjMode): ?>
+            <div class="sb-widget sb-widget--projects sb-widget--projects-top">
+                <div class="sb-widget-title">🚀 Unsere Projekte</div>
+                <div class="sb-project-cards-grid">
+                <?php foreach ([
+                    [$_sbProj1Name, $_sbProj1Desc, $_sbProj1Url, $_sbProj1LogoUrl],
+                    [$_sbProj2Name, $_sbProj2Desc, $_sbProj2Url, $_sbProj2LogoUrl],
+                ] as [$pName, $pDesc, $pUrl, $pLogo]):
+                    if (empty($pName) || empty($pUrl)) { continue; }
+                    $_pInitials = mb_strtoupper(mb_substr(preg_replace('/[^a-z0-9]/iu', '', strip_tags($pName)), 0, 2));
+                    $_pBgStyle  = !empty($pLogo)
+                        ? 'background-image:url(' . htmlspecialchars($pLogo, ENT_QUOTES) . ');'
+                        : '';
+                ?>
+                <a href="<?php echo htmlspecialchars($pUrl, ENT_QUOTES); ?>"
+                   class="sb-project-card"
+                   style="<?php echo $_pBgStyle; ?>"
+                   target="_blank" rel="noopener noreferrer">
+                    <?php if (empty($pLogo)): ?>
+                    <div class="sb-project-placeholder-bg"
+                         data-initials="<?php echo htmlspecialchars($_pInitials ?: '?', ENT_QUOTES); ?>"
+                         aria-hidden="true"></div>
+                    <?php endif; ?>
+                    <div class="sb-project-body">
+                        <strong class="sb-project-name"><?php echo htmlspecialchars($pName, ENT_QUOTES); ?></strong>
+                        <?php if (!empty($pDesc)): ?>
+                        <span class="sb-project-desc"><?php echo htmlspecialchars($pDesc, ENT_QUOTES); ?></span>
+                        <?php endif; ?>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <?php /* Widget: Featured-Posts (Empfohlene Artikel) */ if ($_sbShowFeaturedPosts && !empty($sbFeaturedPosts)): ?>
             <div class="sb-widget sb-widget--featured">
                 <div class="sb-widget-title"><?php echo htmlspecialchars($_sbFeaturedPostsLabel, ENT_QUOTES); ?></div>
-                <?php foreach ($sbFeaturedPosts as $_fp):
+                <?php foreach ($_sbFeatSlice as $_fp):
                     $_fpHref  = htmlspecialchars($siteUrl . '/blog/' . ($_fp['slug'] ?? ''), ENT_QUOTES);
                     $_fpTitle = htmlspecialchars($_fp['title'] ?? '', ENT_QUOTES);
                     $_fpDate  = !empty($_fp['published_at']) ? date('j. M Y', strtotime($_fp['published_at'])) : '';
@@ -389,11 +436,15 @@ try {
                     </div>
                     <?php endif; ?>
                     <div class="sb-featured-body">
-                        <span class="sb-featured-title"><?php echo $_fpTitle; ?></span>
-                        <span class="sb-featured-meta">
-                            <?php if (!empty($_fpCat)): ?><?php echo $_fpCat; ?><?php if (!empty($_fpDate)): ?> · <?php endif; ?><?php endif; ?>
-                            <?php if (!empty($_fpDate)): ?><?php echo $_fpDate; ?><?php endif; ?>
-                        </span>
+                        <?php if (!empty($_fpCat)): ?>
+                        <span class="sb-featured-cat"><?php echo $_fpCat; ?></span>
+                        <?php endif; ?>
+                        <div class="sb-featured-body-inner">
+                            <span class="sb-featured-title"><?php echo $_fpTitle; ?></span>
+                            <?php if (!empty($_fpDate)): ?>
+                            <span class="sb-featured-meta"><?php echo $_fpDate; ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </a>
                 <?php endforeach; ?>
@@ -402,36 +453,38 @@ try {
             <?php /* Featured aktiv aber keine Posts gewählt → nichts anzeigen */ ?>
             <?php endif; ?>
 
-            <?php /* Widget: Projekt-Hinweise */ if (!$_sbShowFeaturedPosts && $_sbShowProjects): ?>
+            <?php /* Widget: Projekt-Hinweise – Standard-Position (nur wenn Featured nicht aktiv) */ if (!$_sbShowFeaturedPosts && $_sbShowProjects): ?>
             <div class="sb-widget sb-widget--projects">
                 <div class="sb-widget-title">🚀 Unsere Projekte</div>
+                <div class="sb-project-cards-grid">
                 <?php foreach ([
                     [$_sbProj1Name, $_sbProj1Desc, $_sbProj1Url, $_sbProj1LogoUrl],
                     [$_sbProj2Name, $_sbProj2Desc, $_sbProj2Url, $_sbProj2LogoUrl],
                 ] as [$pName, $pDesc, $pUrl, $pLogo]):
                     if (empty($pName) || empty($pUrl)) { continue; }
                     $_pInitials = mb_strtoupper(mb_substr(preg_replace('/[^a-z0-9]/iu', '', strip_tags($pName)), 0, 2));
+                    $_pBgStyle  = !empty($pLogo)
+                        ? 'background-image:url(' . htmlspecialchars($pLogo, ENT_QUOTES) . ');'
+                        : '';
                 ?>
                 <a href="<?php echo htmlspecialchars($pUrl, ENT_QUOTES); ?>"
-                   class="sb-project-card" target="_blank" rel="noopener noreferrer">
-                    <?php if (!empty($pLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($pLogo, ENT_QUOTES); ?>"
-                         alt="<?php echo htmlspecialchars($pName, ENT_QUOTES); ?>"
-                         class="sb-project-logo" loading="lazy" width="36" height="36">
-                    <?php else: ?>
-                    <div class="sb-project-logo sb-project-logo-placeholder" aria-hidden="true">
-                        <?php echo htmlspecialchars($_pInitials ?: '?', ENT_QUOTES); ?>
-                    </div>
+                   class="sb-project-card"
+                   style="<?php echo $_pBgStyle; ?>"
+                   target="_blank" rel="noopener noreferrer">
+                    <?php if (empty($pLogo)): ?>
+                    <div class="sb-project-placeholder-bg"
+                         data-initials="<?php echo htmlspecialchars($_pInitials ?: '?', ENT_QUOTES); ?>"
+                         aria-hidden="true"></div>
                     <?php endif; ?>
-                    <div class="sb-project-info">
+                    <div class="sb-project-body">
                         <strong class="sb-project-name"><?php echo htmlspecialchars($pName, ENT_QUOTES); ?></strong>
                         <?php if (!empty($pDesc)): ?>
                         <span class="sb-project-desc"><?php echo htmlspecialchars($pDesc, ENT_QUOTES); ?></span>
                         <?php endif; ?>
                     </div>
-                    <span class="sb-project-arrow" aria-hidden="true">›</span>
                 </a>
                 <?php endforeach; ?>
+                </div>
             </div>
             <?php endif; ?>
 
@@ -521,7 +574,7 @@ try {
             </div>
             <?php endif; ?>
 
-            <?php /* Widget: Ankündigung / Hinweis */ if ($_sbShowNotice && !empty($_sbNoticeTitle)): ?>
+            <?php /* Widget: Ankündigung / Hinweis */ if (!$_sbFeaturedActive && $_sbShowNotice && !empty($_sbNoticeTitle)): ?>
             <div class="sb-widget sb-widget--notice">
                 <div class="sb-notice-body">
                     <div class="sb-widget-title" style="margin-bottom:.5rem;"><?php echo htmlspecialchars($_sbNoticeTitle, ENT_QUOTES); ?></div>
