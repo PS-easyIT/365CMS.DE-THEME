@@ -231,9 +231,27 @@ final class CMS_Phinit_Theme
 
     public function outputBreadcrumb(): void
     {
+        // Customizer-Einstellungen prüfen
+        try {
+            $c = \CMS\Services\ThemeCustomizer::instance();
+            $show = filter_var($c->get('layout', 'show_breadcrumb', true), FILTER_VALIDATE_BOOLEAN);
+            if (!$show) { return; }
+            $onPosts = filter_var($c->get('layout', 'breadcrumb_on_posts', true), FILTER_VALIDATE_BOOLEAN);
+            $onPages = filter_var($c->get('layout', 'breadcrumb_on_pages', true), FILTER_VALIDATE_BOOLEAN);
+        } catch (\Throwable) {
+            $onPosts = true;
+            $onPages = true;
+        }
+
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
         $uri     = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
         if ($uri === '/' || $uri === '') { return; }
+
+        // Kontext bestimmen und ggf. abbrechen
+        $isPost = preg_match('#^/blog/[\w-]+$#', $uri);
+        $isPage = !$isPost && $uri !== '/blog' && !str_starts_with($uri, '/kategorie/') && !str_starts_with($uri, '/member') && $uri !== '/search';
+        if ($isPost && !$onPosts) { return; }
+        if ($isPage && !$onPages) { return; }
 
         $crumbs = [['label' => 'Home', 'url' => $siteUrl . '/']];
         $title  = '';
@@ -635,6 +653,16 @@ final class CMS_Phinit_Theme
             if (!empty($thumbW)) { $css .= "    --article-thumb-w: {$thumbW}px;\n"; }
             if (!empty($thumbH)) { $css .= "    --article-thumb-h: {$thumbH}px;\n"; }
             $css .= "}\n";
+        }
+
+        // ── Excerpt-Schriftgrößen ──
+        $excerptFs = $c->get('typography', 'article_excerpt_fontsize', '');
+        if ($excerptFs !== '' && $excerptFs !== null) {
+            $css .= ".article-body p { font-size: {$excerptFs}px; }\n";
+        }
+        $tileExcFs = $c->get('typography', 'tile_excerpt_fontsize', '');
+        if ($tileExcFs !== '' && $tileExcFs !== null) {
+            $css .= ".post-card-excerpt { font-size: {$tileExcFs}px !important; }\n";
         }
 
         return $css;

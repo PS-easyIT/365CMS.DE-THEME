@@ -426,11 +426,19 @@ img { max-width: 100%; display: block; object-fit: cover; }
     -webkit-box-orient: vertical; overflow: hidden;
 }
 .article-meta {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 8px;
     font-size: var(--fs-xs); color: var(--text-light);
 }
-.article-meta .cat  { color: var(--accent-teal); font-weight: 600; }
-.article-meta .read { margin-left: auto; }
+.article-meta .cat  { color: var(--accent-teal); font-weight: 600; margin-right: 4px; }
+.article-meta .read { opacity: .8; }
+.article-meta .read::before { content: '·'; margin-right: 5px; opacity: .5; }
+.article-meta__more {
+    margin-left: auto; white-space: nowrap;
+    color: var(--accent-teal); font-weight: 600;
+    text-decoration: none; transition: color .15s;
+    font-size: var(--fs-xs);
+}
+.article-meta__more:hover { color: var(--accent-teal-light); text-decoration: underline; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    9. GRID POST CARDS (vertikal, 3-spaltig)
@@ -442,7 +450,7 @@ img { max-width: 100%; display: block; object-fit: cover; }
     background: var(--bg-primary); border-radius: var(--radius);
     border: 1px solid var(--border-color); overflow: hidden;
     box-shadow: var(--shadow-sm); transition: var(--transition);
-    display: flex; flex-direction: column; min-height: 320px;
+    display: flex; flex-direction: column; min-height: 395px;
 }
 .post-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: transparent; }
 .post-card-thumb { overflow: hidden; height: 160px; background: var(--bg-tertiary); position: relative; display: block; flex-shrink: 0; }
@@ -499,7 +507,7 @@ img { max-width: 100%; display: block; object-fit: cover; }
    11. SECTION HEADERS
 ═══════════════════════════════════════════════════════════════════════════ */
 .section-label {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; flex: 1; gap: 8px;
     font-size: var(--fs-xs); font-weight: 800; text-transform: uppercase;
     letter-spacing: 1px; color: var(--primary-color);
     background: var(--bg-primary); border-left: 3px solid var(--accent-teal);
@@ -513,7 +521,11 @@ img { max-width: 100%; display: block; object-fit: cover; }
     padding: 6px 16px;
 }
 .section-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    display: flex; align-items: stretch; justify-content: space-between; margin-bottom: 14px;
+}
+.section-header > a {
+    display: flex; align-items: center;
+    padding: 0 0 0 14px; white-space: nowrap;
 }
 .section-header a { font-size: var(--fs-xs); color: var(--accent-teal); font-weight: 600; transition: var(--transition-fast); }
 .section-header a:hover { color: var(--accent-teal-light); }
@@ -704,7 +716,7 @@ body.dark-mode .feed-dual-col { background: var(--bg-dark-2); border-color: var(
 /* ═══════════════════════════════════════════════════════════════════════════
    17. POST NAVIGATION (Zurück/Weiter)
 ═══════════════════════════════════════════════════════════════════════════ */
-.post-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+.post-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; margin-bottom: 28px; }
 .post-nav a {
     display: flex; flex-direction: column; gap: 4px;
     background: var(--bg-primary); border: 1px solid var(--border-color);
@@ -2174,6 +2186,9 @@ select:focus-visible,
     padding: .45rem 0;
     font-size: .78rem;
     color: var(--text-muted, #94a3b8);
+    /* Direkt unter dem Fixed-Header – spacing-header-content aufheben */
+    margin-top: calc(-1 * var(--spacing-header-content, 25px));
+    margin-bottom: var(--spacing-header-content, 25px);
 }
 .breadcrumb {
     list-style: none;
@@ -2215,6 +2230,31 @@ body.dark-mode .reading-time-badge {
     background: rgba(13,148,136,.18);
     border-color: rgba(13,148,136,.35);
     color: #5eead4;
+}
+
+/* ── Seiten: Aktualisierungs-Pill (Ende des Contents) ───────────── */
+.page-updated-pill-wrap {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color, #e2e8f0);
+}
+.page-updated-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    background: var(--bg-secondary, #f1f5f9);
+    color: var(--text-muted, #64748b);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 20px;
+    padding: .25rem .75rem;
+    font-size: .78rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+body.dark-mode .page-updated-pill {
+    background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.1);
+    color: #94a3b8;
 }
 
 /* ── Code-Block Copy Button ─────────────────────────────────────── */

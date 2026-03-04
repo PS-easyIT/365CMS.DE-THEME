@@ -323,45 +323,6 @@ try {
     </div>
     <?php endif; /* $_showQuicklinks */ ?>
 </header>
-<!-- ═══ HEADER ENDE ═══════════════════════════════════════════════════════ -->
-<?php
-// ── Breadcrumb direkt unter dem Header (──────────────────────────────
-$_bcUri  = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
-$_bcIsHome = ($_bcUri === '/' || $bcUri === '');
-$_bcIsPost = str_starts_with($_bcUri, '/blog/');
-$_bcIsPage = !$_bcIsHome && !$_bcIsPost;
-$_showBC   = $_showBreadcrumb
-    && !$_bcIsHome
-    && (!$_bcIsPost || $_bcOnPosts)
-    && (!$_bcIsPage || $_bcOnPages);
-
-if ($_showBC):
-    $_bcSegs    = array_filter(explode('/', trim($_bcUri, '/')));
-    $_bcLinks   = [];
-    $_bcCumPath = '';
-    foreach ($_bcSegs as $_seg) {
-        $_bcCumPath .= '/' . $_seg;
-        $_bcLabel    = ucwords(str_replace(['-', '_'], ' ', rawurldecode($_seg)));
-        // Sonderfaelle
-        if ($_seg === 'blog')  { $_bcLabel = 'Blog'; }
-        $_bcLinks[] = ['label' => $_bcLabel, 'url' => $_bcCumPath];
-    }
-?>
-<nav class="breadcrumb-nav" aria-label="Breadcrumb">
-    <div class="container">
-        <ol class="breadcrumb">
-            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a><span class="sep" aria-hidden="true">›</span></li>
-            <?php foreach ($_bcLinks as $_bcIdx => $_bcItem): ?>
-            <?php if ($_bcIdx < count($_bcLinks) - 1): ?>
-            <li><a href="<?php echo htmlspecialchars($siteUrl . $_bcItem['url'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($_bcItem['label'], ENT_QUOTES); ?></a><span class="sep" aria-hidden="true">›</span></li>
-            <?php else: ?>
-            <li class="current" aria-current="page"><?php echo htmlspecialchars($_bcItem['label'], ENT_QUOTES); ?></li>
-            <?php endif; ?>
-            <?php endforeach; ?>
-        </ol>
-    </div>
-</nav>
-<?php endif; ?>
 <?php \CMS\Hooks::doAction('after_header'); ?>
 <div class="page-wrap">
 <main id="main-content">

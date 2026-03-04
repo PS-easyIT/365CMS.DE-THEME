@@ -71,7 +71,15 @@ if ($_pg_layout === 'two-col' && $_pg_sidebarNav) {
 ?>
 
 <?php $_pg_padTop = 'padding-top:28px'; ?>
-<div class="container" style="<?php echo $_pg_padTop; ?>;padding-bottom:40px;">
+<?php
+// Aktualisierungs-Pill (wird in beiden Layouts ans Ende des Contents gehängt)
+$_pg_updatedPill = '';
+if ($_pg_showDate && !empty($page['updated_at'])) {
+    $_pg_dateFormatted = htmlspecialchars(date('j. F Y', strtotime($page['updated_at'])), ENT_QUOTES);
+    $_pg_updatedPill = '<div class="page-updated-pill-wrap"><span class="page-updated-pill">🕒 Zuletzt aktualisiert: ' . $_pg_dateFormatted . '</span></div>';
+}
+?>
+<div class="container" style="<?php echo $_pg_padTop; ?>;padding-bottom:13px;">
 
 <?php if ($pageNotFound): ?>
     <div style="text-align:center;padding:4rem 2rem;">
@@ -86,11 +94,6 @@ if ($_pg_layout === 'two-col' && $_pg_sidebarNav) {
     <?php if ($_pg_showTitle): ?>
     <div class="page-header-block" data-anim>
         <h1><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></h1>
-        <?php if ($_pg_showDate && !empty($page['updated_at'])): ?>
-        <p style="font-size:var(--fs-xs);color:var(--text-light);margin-top:6px;">
-            Zuletzt aktualisiert: <?php echo htmlspecialchars(date('j. F Y', strtotime($page['updated_at'])), ENT_QUOTES); ?>
-        </p>
-        <?php endif; ?>
     </div>
     <?php endif; ?>
 
@@ -112,6 +115,7 @@ if ($_pg_layout === 'two-col' && $_pg_sidebarNav) {
             </nav>
             <?php endif; ?>
             <div class="page-content"><?php echo $page['content'] ?? ''; ?></div>
+            <?php echo $_pg_updatedPill; ?>
         </div>
 
         <aside class="post-sidebar">
@@ -148,6 +152,7 @@ if ($_pg_layout === 'two-col' && $_pg_sidebarNav) {
     <div class="page-content" data-anim data-anim-delay="1" style="<?php echo $pageContentStyle; ?>">
         <?php echo $page['content'] ?? ''; ?>
     </div>
+    <?php echo $_pg_updatedPill; ?>
     <?php endif; ?>
 
 <?php endif; ?>

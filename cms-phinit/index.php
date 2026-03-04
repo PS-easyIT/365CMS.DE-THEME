@@ -45,6 +45,8 @@ try {
     $_showMetaCat  = filter_var($_hc->get('homepage', 'show_meta_category', true), FILTER_VALIDATE_BOOLEAN);
     $_showMetaDate = filter_var($_hc->get('homepage', 'show_meta_date', true), FILTER_VALIDATE_BOOLEAN);
     $_showMetaRT   = filter_var($_hc->get('homepage', 'show_meta_readtime', true), FILTER_VALIDATE_BOOLEAN);
+    $_listExcLen   = max(60, (int)$_hc->get('typography', 'article_excerpt_length', 180));
+    $_tileExcLen   = max(40, (int)$_hc->get('typography', 'tile_excerpt_length', 160));
 
     // Info-Cards
     $_showInfoGrid = filter_var($_hc->get('homepage', 'show_info_grid', true), FILTER_VALIDATE_BOOLEAN);
@@ -73,17 +75,17 @@ try {
     $_tileLabel     = $_hc->get('homepage', 'tile_grid_label', 'Weitere Beiträge');
     $_tileCount     = max(1, (int)$_hc->get('homepage', 'tile_grid_count', 6));
     $_tileCols      = max(2, min(4, (int)$_hc->get('homepage', 'tile_grid_columns', 3)));
-    $_showTileExc   = filter_var($_hc->get('homepage', 'show_tile_excerpt', true), FILTER_VALIDATE_BOOLEAN);
-    $_showTileCat   = filter_var($_hc->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN);
-    $_showTileDate  = filter_var($_hc->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN);
-    $_tileLinkUrl   = $_hc->get('homepage', 'tile_grid_link_url', '/archiv');
+    $_showTileExc  = filter_var($_hc->get('homepage', 'show_tile_excerpt', true), FILTER_VALIDATE_BOOLEAN);
+    $_showTileCat  = filter_var($_hc->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN);
+    $_showTileDate = filter_var($_hc->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN);
+    $_tileLinkUrl  = $_hc->get('homepage', 'tile_grid_link_url', '/archiv');
 
     // Sektionsabstände (einzeln steuerbar)
     $_spRepo = max(0, (int)$_hc->get('homepage', 'spacing_repo_card',    32));
     $_spList = max(0, (int)$_hc->get('homepage', 'spacing_article_list', 32));
     $_spInfo = max(0, (int)$_hc->get('homepage', 'spacing_info_cards',   32));
     $_spGrid = max(0, (int)$_hc->get('homepage', 'spacing_tile_grid',    32));
-    $_spRss  = max(0, (int)$_hc->get('homepage', 'spacing_rss_feeds',    32));
+    $_spRss  = max(0, (int)$_hc->get('homepage', 'spacing_rss_feeds',    0));
 
 } catch (\Throwable $_e) {
     // Fallback-Defaults
@@ -98,7 +100,8 @@ try {
     $_showCard3 = false; $_c3Title = '💻 GitHub / GitLab'; $_c3Text = ''; $_c3LinkText = 'Zum Repository →'; $_c3LinkUrl = '#'; $_c3Badge = ''; $_c3Style = 'repo';
     $_showTileGrid = true; $_tileLabel = 'Weitere Beiträge'; $_tileCount = 6; $_tileCols = 3;
     $_showTileExc = true;  $_showTileCat = true; $_showTileDate = true; $_tileLinkUrl = '/archiv';
-    $_spRepo = $_spList = $_spInfo = $_spGrid = $_spRss = 32;
+    $_listExcLen = 180; $_tileExcLen = 160;
+    $_spRepo = $_spList = $_spInfo = $_spGrid = 32; $_spRss = 0;
 }
 
 // ── Posts laden (direkt via Database, kein PostService nötig) ──────────────────
@@ -130,7 +133,7 @@ try {
 
     $gridRows  = $_showTileGrid
         ? ($db->get_results(
-            "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at,
+            "SELECT p.id, p.title, p.slug, p.excerpt, LEFT(p.content, 500) AS content, p.featured_image, p.published_at,
                     c.name AS category_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
@@ -149,7 +152,7 @@ try {
 }
 ?>
 
-<div class="container" style="padding-top:28px;padding-bottom:40px;">
+<div class="container" style="padding-top:28px;padding-bottom:0;">
 
     <!-- ── Repo-Card ─────────────────────────────────────────────── -->
     <?php if ($_showRepo && !empty($_repoTitle)): ?>
@@ -218,12 +221,18 @@ try {
                     <p><?php
                         $excerpt = $post['excerpt'] ?? '';
                         if (empty(trim($excerpt)) && !empty($post['content'])) {
-                            $excerpt = mb_strimwidth(strip_tags($post['content']), 0, 180, '…');
+                            $excerpt = mb_strimwidth(strip_tags($post['content']), 0, $_listExcLen, '…');
                         }
-                        echo htmlspecialchars(mb_strimwidth($excerpt, 0, 180, '…'), ENT_QUOTES);
+                        echo htmlspecialchars(mb_strimwidth($excerpt, 0, $_listExcLen, '…'), ENT_QUOTES);
                     ?></p>
                     <?php endif; ?>
                     <?php if ($_showMeta): ?>
+                    <?php
+                        $rt = !empty($post['read_time']) ? (int)$post['read_time'] : 0;
+                        if ($rt < 1 && !empty($post['content'])) {
+                            $rt = max(1, (int)round(str_word_count(strip_tags($post['content'])) / 200));
+                        }
+                    ?>
                     <div class="article-meta">
                         <?php if ($_showMetaCat && !empty($post['category_name'])): ?>
                         <span class="cat"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
@@ -231,17 +240,13 @@ try {
                         <?php if ($_showMetaDate): ?>
                         <span><?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
                         <?php endif; ?>
-                        <?php if ($_showMetaRT): ?>
-                        <?php
-                            $rt = !empty($post['read_time']) ? (int)$post['read_time'] : 0;
-                            if ($rt < 1 && !empty($post['content'])) {
-                                $rt = max(1, (int)round(str_word_count(strip_tags($post['content'])) / 200));
-                            }
-                            if ($rt > 0):
-                        ?>
-                        <span class="read"><?php echo $rt; ?> Min. Lesezeit</span>
+                        <?php if ($_showMetaRT && $rt > 0): ?>
+                        <span class="read"><?php echo $rt; ?> Min.</span>
                         <?php endif; ?>
-                        <?php endif; ?>
+                        <a class="article-meta__more"
+                           href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
+                            &hellip; Weiter lesen &rarr;
+                        </a>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -346,8 +351,13 @@ try {
                             <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
                         </a>
                     </h3>
-                    <?php if ($_showTileExc && !empty($post['excerpt'])): ?>
-                    <p class="post-card-excerpt"><?php echo htmlspecialchars($post['excerpt'] ?? '', ENT_QUOTES); ?></p>
+                    <?php
+                    $_tileExc = $post['excerpt'] ?? '';
+                    if (empty(trim($_tileExc)) && !empty($post['content'])) {
+                        $_tileExc = mb_strimwidth(strip_tags($post['content']), 0, $_tileExcLen, '…');
+                    }
+                    if ($_showTileExc && !empty(trim($_tileExc))): ?>
+                    <p class="post-card-excerpt"><?php echo htmlspecialchars(mb_strimwidth($_tileExc, 0, $_tileExcLen, '…'), ENT_QUOTES); ?></p>
                     <?php endif; ?>
                     <?php if ($_showTileDate || $_showTileCat): ?>
                     <div class="post-card-meta">
@@ -369,19 +379,19 @@ try {
         <?php if ($totalPages > 1): ?>
         <nav class="pagination" aria-label="Seitennavigation">
             <?php if ($currentPage > 1): ?>
-            <a href="?page=<?php echo $currentPage - 1; ?>" class="page-link" aria-label="Vorherige Seite">← Zurück</a>
+            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $currentPage - 1; ?>" class="page-link" aria-label="Vorherige Seite">← Zurück</a>
             <?php endif; ?>
 
             <?php for ($p = 1; $p <= $totalPages; $p++): ?>
                 <?php if ($p === 1 || $p === $totalPages || abs($p - $currentPage) <= 2): ?>
-                <a href="?page=<?php echo $p; ?>" class="page-link <?php echo $p === $currentPage ? 'active' : ''; ?>" <?php echo $p === $currentPage ? 'aria-current="page"' : ''; ?>><?php echo $p; ?></a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $p; ?>" class="page-link <?php echo $p === $currentPage ? 'active' : ''; ?>" <?php echo $p === $currentPage ? 'aria-current="page"' : ''; ?>><?php echo $p; ?></a>
                 <?php elseif (abs($p - $currentPage) === 3): ?>
                 <span class="page-link dots" aria-hidden="true">…</span>
                 <?php endif; ?>
             <?php endfor; ?>
 
             <?php if ($currentPage < $totalPages): ?>
-            <a href="?page=<?php echo $currentPage + 1; ?>" class="page-link" aria-label="Nächste Seite">Weiter →</a>
+            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $currentPage + 1; ?>" class="page-link" aria-label="Nächste Seite">Weiter →</a>
             <?php endif; ?>
         </nav>
         <?php endif; ?>

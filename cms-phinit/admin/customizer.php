@@ -366,11 +366,33 @@ $config = [
                 ],
                 'default'     => '600',
             ],
+            // ── Teaser-Texte (List & Grid Cards) ──
+            'article_excerpt_fontsize' => [
+                'label'       => 'Listen-Card: Teaser-Text Schriftgröße (px)',
+                'description' => 'Schriftgröße des Auszug-Textes in der Artikel-Liste (Startseite & Archiv).',
+                'type'        => 'number',
+                'default'     => 13,
+            ],
+            'article_excerpt_length' => [
+                'label'       => 'Listen-Card: Teaser-Text Länge (Zeichen)',
+                'description' => 'Maximale Zeichenanzahl des Teaser-Textes in Artikel-Listcards.',
+                'type'        => 'number',
+                'default'     => 180,
+            ],
+            'tile_excerpt_fontsize' => [
+                'label'       => 'Grid-Card: Teaser-Text Schriftgröße (px)',
+                'description' => 'Schriftgröße des Auszug-Textes in den Kachel-Cards.',
+                'type'        => 'number',
+                'default'     => 12,
+            ],
+            'tile_excerpt_length' => [
+                'label'       => 'Grid-Card: Teaser-Text Länge (Zeichen)',
+                'description' => 'Maximale Zeichenanzahl des Teaser-Textes in Grid-Kachel-Cards.',
+                'type'        => 'number',
+                'default'     => 160,
+            ],
         ],
     ],
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // LAYOUT
     // ═══════════════════════════════════════════════════════════════════════
     'layout' => [
         'title' => '📐 Layout',
@@ -463,6 +485,26 @@ $config = [
                 'description' => 'Vertikaler Abstand zwischen den einzelnen Homepage-Sektionen (Repo-Card, Artikelliste, Kacheln, RSS …).',
                 'type'        => 'number',
                 'default'     => 40,
+            ],
+
+            // ── Breadcrumb ──
+            'show_breadcrumb' => [
+                'label'       => 'Breadcrumb anzeigen',
+                'description' => 'Zeigt den Breadcrumb-Navigationspfad direkt unterhalb des Headers.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'breadcrumb_on_posts' => [
+                'label'       => 'Breadcrumb auf Beitrags-Seiten',
+                'description' => 'Breadcrumb auf einzelnen Blog-Posts anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'breadcrumb_on_pages' => [
+                'label'       => 'Breadcrumb auf Seiten (Pages)',
+                'description' => 'Breadcrumb auf statischen Seiten anzeigen.',
+                'type'        => 'checkbox',
+                'default'     => true,
             ],
         ],
     ],
@@ -902,6 +944,51 @@ $config = [
                 'default'     => 'gold',
             ],
 
+            // ── Info-Card 3 (Repo / optional) ──
+            'show_info_card3' => [
+                'label'       => '3. Kategorie-Card anzeigen',
+                'description' => 'Zeigt eine dritte Card neben den beiden bestehenden (z. B. GitHub/GitLab Repo-Card).',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'info_card3_title' => [
+                'label'       => 'Info-Card 3 – Titel',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Open Source',
+            ],
+            'info_card3_text' => [
+                'label'       => 'Info-Card 3 – Beschreibung',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Meine Projekte auf GitHub.',
+            ],
+            'info_card3_link_text' => [
+                'label'       => 'Info-Card 3 – Button-Text',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'Zum Repository →',
+            ],
+            'info_card3_link_url' => [
+                'label'       => 'Info-Card 3 – Link URL',
+                'description' => '',
+                'type'        => 'text',
+                'default'     => 'https://github.com/',
+            ],
+            'info_card3_badge' => [
+                'label'       => 'Info-Card 3 – Badge-Text',
+                'description' => 'Kleines Badge oben links (z. B. "GitHub").',
+                'type'        => 'text',
+                'default'     => 'GitHub',
+            ],
+            'info_card3_style' => [
+                'label'       => 'Info-Card 3 – Stil',
+                'description' => '',
+                'type'        => 'select',
+                'options'     => ['default' => 'Standard (Blau)', 'gold' => 'Gold-Akzent', 'repo' => 'Repo (Dark)'],
+                'default'     => 'repo',
+            ],
+
             // ── 3er-Grid (Deep-Dive) ──
             'show_tile_grid' => [
                 'label'       => 'Deep-Dive Archiv-Grid anzeigen',
@@ -983,6 +1070,38 @@ $config = [
                 'description' => '',
                 'type'        => 'number',
                 'default'     => 5,
+            ],
+
+            // ── Sektionen-Abstände (individuell) ──
+            'spacing_repo_card' => [
+                'label'       => 'Abstand nach Repo-Card (px)',
+                'description' => 'Margin-Bottom der Repo-Card Sektion.',
+                'type'        => 'number',
+                'default'     => 32,
+            ],
+            'spacing_article_list' => [
+                'label'       => 'Abstand nach Artikel-Liste (px)',
+                'description' => 'Margin-Bottom der Artikel-Listen-Sektion.',
+                'type'        => 'number',
+                'default'     => 32,
+            ],
+            'spacing_info_cards' => [
+                'label'       => 'Abstand nach Kategorie-Cards (px)',
+                'description' => 'Margin-Bottom der Kategorie-Cards Sektion.',
+                'type'        => 'number',
+                'default'     => 32,
+            ],
+            'spacing_tile_grid' => [
+                'label'       => 'Abstand nach Kachel-Grid (px)',
+                'description' => 'Margin-Bottom des Deep-Dive-Grids.',
+                'type'        => 'number',
+                'default'     => 32,
+            ],
+            'spacing_rss_feeds' => [
+                'label'       => 'Abstand nach RSS-Feeds (px)',
+                'description' => 'Margin-Bottom der RSS-Feed Sektion.',
+                'type'        => 'number',
+                'default'     => 0,
             ],
         ],
     ],
@@ -1156,6 +1275,52 @@ $config = [
                 'description' => 'Zeigt die Tags-Badges am Ende des Artikelinhalts.',
                 'type'        => 'checkbox',
                 'default'     => true,
+            ],
+        ],
+    ],
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SEITEN (PAGES)
+    // ═══════════════════════════════════════════════════════════════════════
+    'pages' => [
+        'title' => '📄 Seiten',
+        'sections' => [
+            'show_page_title' => [
+                'label'       => 'Seiten-Titel anzeigen',
+                'description' => 'Zeigt den Seitentitel (h1) oben auf der Seite.',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_page_updated_date' => [
+                'label'       => 'Aktualisierungsdatum anzeigen',
+                'description' => 'Zeigt das Datum der letzten Änderung auf statischen Seiten.',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'page_layout' => [
+                'label'       => 'Seiten-Layout',
+                'description' => 'Standard-Layout für alle statischen Seiten.',
+                'type'        => 'select',
+                'options'     => ['full' => 'Volle Breite', 'narrow' => 'Schmal (860 px, zentriert)', 'two-col' => 'Zweispaltig (Inhalt + Sidebar)'],
+                'default'     => 'full',
+            ],
+            'show_page_sidebar' => [
+                'label'       => 'Sidebar auf Seiten anzeigen',
+                'description' => 'Gilt nur für Layout „Zweispaltig".',
+                'type'        => 'checkbox',
+                'default'     => false,
+            ],
+            'page_sidebar_show_nav' => [
+                'label'       => 'Sidebar: Navigations-Widget',
+                'description' => 'Zeigt eine Seitennavigation in der Sidebar (Primary-Menü).',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'show_page_toc' => [
+                'label'       => 'Inhaltsverzeichnis auf Seiten',
+                'description' => 'Automatisch generiertes TOC aus H2/H3-Überschriften auf statischen Seiten.',
+                'type'        => 'checkbox',
+                'default'     => false,
             ],
         ],
     ],
@@ -1640,7 +1805,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     $navGroups = [
                         null      => ['colors', 'typography', 'layout'],
                         'Design'  => ['header', 'footer'],
-                        'Inhalte' => ['homepage', 'posts'],
+                        'Inhalte' => ['homepage', 'posts', 'pages'],
                         'Extra'   => ['social', 'advanced'],
                     ];
                     foreach ($navGroups as $groupLabel => $tabs):
@@ -1736,9 +1901,10 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                         $homepageGroups = [
                             '📌 Repo-Card'         => ['show_repo_card', 'repo_card_title', 'repo_card_description', 'repo_card_badge', 'repo_card_btn_text', 'repo_card_btn_url'],
                             '📰 Artikel-Liste'     => ['show_article_list', 'article_list_label', 'article_list_count', 'article_list_link_url', 'article_thumb_width', 'article_thumb_height', 'show_article_excerpt', 'show_article_meta', 'show_article_badge', 'show_meta_category', 'show_meta_date', 'show_meta_readtime'],
-                            '🗂️ Kategorie-Cards'   => ['show_info_grid', 'info_card1_title', 'info_card1_text', 'info_card1_link_text', 'info_card1_link_url', 'info_card1_style', 'info_card2_title', 'info_card2_text', 'info_card2_link_text', 'info_card2_link_url', 'info_card2_style'],
+                            '🗂️ Kategorie-Cards'   => ['show_info_grid', 'info_card1_title', 'info_card1_text', 'info_card1_link_text', 'info_card1_link_url', 'info_card1_style', 'info_card2_title', 'info_card2_text', 'info_card2_link_text', 'info_card2_link_url', 'info_card2_style', 'show_info_card3', 'info_card3_title', 'info_card3_text', 'info_card3_link_text', 'info_card3_link_url', 'info_card3_badge', 'info_card3_style'],
                             '🧱 Kachel-Grid'       => ['show_tile_grid', 'tile_grid_label', 'tile_grid_count', 'tile_grid_columns', 'show_tile_excerpt', 'show_tile_category', 'show_tile_date', 'tile_grid_link_url'],
                             '📡 RSS-Feeds'         => ['show_feed_section', 'feed1_channel_id', 'feed1_count', 'feed2_channel_id', 'feed2_count'],
+                            '📏 Sektionen-Abstände' => ['spacing_repo_card', 'spacing_article_list', 'spacing_info_cards', 'spacing_tile_grid', 'spacing_rss_feeds'],
                         ];
                     ?>
                     <div class="admin-card">
@@ -1785,6 +1951,28 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                         </div>
                     </div>
 
+                    <?php elseif ($activeTab === 'pages'):
+                        $pageGroups = [
+                            '📄 Seiteneinstellungen' => ['show_page_title', 'show_page_updated_date', 'page_layout', 'show_page_sidebar', 'page_sidebar_show_nav', 'show_page_toc'],
+                        ];
+                    ?>
+                    <div class="admin-card">
+                        <h3>📄 Seiten</h3>
+                        <div class="field-grid">
+                            <?php foreach ($pageGroups as $grpTitle => $grpKeys): ?>
+                            <div class="field-group-card">
+                                <h4><?php echo $grpTitle; ?></h4>
+                                <?php foreach ($grpKeys as $fk):
+                                    if (!isset($currentTab['sections'][$fk])) { continue; }
+                                    $f   = $currentTab['sections'][$fk];
+                                    $val = $customizer->get($activeTab, $fk, $f['default']);
+                                    phinit_render_field($activeTab, $fk, $f, $val);
+                                endforeach; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
                     <?php elseif ($activeTab === 'footer'):
                         $footerGroups = [
                             '🏷️ Brand & Text'    => ['footer_brand_name', 'footer_tagline', 'footer_col2_title', 'footer_col3_title', 'footer_col4_title', 'copyright_text', 'show_footer_social'],
@@ -1813,6 +2001,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                         $typoGroups = [
                             '🔤 Schriftarten'        => ['font_family_ui', 'font_family_brand', 'font_family_code'],
                             '📏 Größen & Abstände'   => ['font_size_base', 'font_size_post', 'line_height_base', 'line_height_post', 'font_weight_heading', 'font_weight_nav'],
+                            '📝 Teaser-Texte (Cards)' => ['article_excerpt_fontsize', 'article_excerpt_length', 'tile_excerpt_fontsize', 'tile_excerpt_length'],
                         ];
                     ?>
                     <div class="admin-card">
@@ -1835,6 +2024,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     <?php elseif ($activeTab === 'layout'):
                         $layoutGroups = [
                             '📐 Maße & Abstände'     => ['container_width', 'sidebar_width', 'border_radius', 'border_radius_md', 'content_gap', 'spacing_header_content', 'spacing_content_footer', 'spacing_sections'],
+                            '🔤 Breadcrumb'           => ['show_breadcrumb', 'breadcrumb_on_posts', 'breadcrumb_on_pages'],
                             '⚙️ Funktionen & Optionen' => ['sidebar_position', 'enable_sticky_header', 'enable_progress_bar', 'enable_back_to_top', 'enable_dark_mode_toggle', 'enable_scroll_animations'],
                         ];
                     ?>
