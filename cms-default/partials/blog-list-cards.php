@@ -31,7 +31,7 @@ if (empty($listPosts)) {
             !empty($item->excerpt) ? $item->excerpt : meridian_excerpt($item->content ?? '', 120)
         );
         $iDate    = !empty($item->published_at ?? $item->created_at ?? '')
-                    ? meridian_format_date($item->published_at ?? $item->created_at, true)
+                    ? time_ago($item->published_at ?? $item->created_at)
                     : '';
         $iRead    = !empty($item->read_time) ? $item->read_time . ' Min.' : '5 Min.';
         $iImage   = $item->featured_image ?? '';

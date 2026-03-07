@@ -104,7 +104,7 @@ try {
                                 $pExcerpt = mb_substr($pExcerpt, 0, 157) . '…';
                             }
                             $pExcerpt = htmlspecialchars(strip_tags($pExcerpt), ENT_QUOTES, 'UTF-8');
-                            $pDate    = isset($pArr['published_at']) ? date('d.m.Y', strtotime($pArr['published_at'])) : '';
+                            $pDate    = isset($pArr['published_at']) ? time_ago($pArr['published_at']) : '';
                             $pCat     = htmlspecialchars($pArr['category_name'] ?? '', ENT_QUOTES, 'UTF-8');
                             $pImage   = $pArr['featured_image'] ?? '';
                             $pUrl     = htmlspecialchars($siteUrl . '/blog/' . $pSlug, ENT_QUOTES, 'UTF-8');

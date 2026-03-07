@@ -26,8 +26,8 @@ $pTitle   = htmlspecialchars($post->title ?? '', ENT_QUOTES, 'UTF-8');
 $pSlug    = $post->slug ?? '';
 $pContent = $post->content ?? '';
 $pExcerpt = htmlspecialchars($post->excerpt ?? '', ENT_QUOTES, 'UTF-8');
-$pDate    = isset($post->published_at) ? date('d.m.Y', strtotime($post->published_at)) : '';
-$pDateLong = isset($post->published_at) ? date('d. F Y', strtotime($post->published_at)) : '';
+$pDate    = isset($post->published_at) ? time_ago($post->published_at) : '';
+$pDateLong = $pDate;
 $pAuthor  = htmlspecialchars($post->author_name ?? 'Redaktion', ENT_QUOTES, 'UTF-8');
 $pAuthIni = mb_strtoupper(mb_substr($pAuthor, 0, 2));
 $pCat     = htmlspecialchars($post->category_name ?? '', ENT_QUOTES, 'UTF-8');
@@ -160,7 +160,7 @@ try {
                     $rCat   = htmlspecialchars($rArr['category_name'] ?? '', ENT_QUOTES, 'UTF-8');
                     $rUrl   = htmlspecialchars($siteUrl . '/blog/' . $rSlug, ENT_QUOTES, 'UTF-8');
                     $rImage = $rArr['featured_image'] ?? '';
-                    $rDate  = isset($rArr['published_at']) ? date('d.m.Y', strtotime($rArr['published_at'])) : '';
+                    $rDate  = isset($rArr['published_at']) ? time_ago($rArr['published_at']) : '';
                 ?>
                 <a href="<?php echo $rUrl; ?>" class="blog-related__card">
                     <?php if ($rImage) : ?>

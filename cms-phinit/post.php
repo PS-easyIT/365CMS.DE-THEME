@@ -254,13 +254,7 @@ $comments     = [];
 $commentCount = 0;
 if ($showComments) {
     try {
-        $commentRows = $db->get_results(
-            "SELECT id, author, author_email, content, post_date
-             FROM {$prefix}comments
-             WHERE post_id = ? AND status = 'approved'
-             ORDER BY post_date ASC",
-            [(int)($post['id'] ?? 0)]
-        ) ?: [];
+        $commentRows  = \CMS\Services\CommentService::getInstance()->getApprovedForPost((int)($post['id'] ?? 0));
         $comments     = array_map(fn($c) => (array)$c, $commentRows);
         $commentCount = count($comments);
     } catch (\Throwable) {}
@@ -273,29 +267,45 @@ if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subm
     if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
         $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
     } else {
-        $name    = htmlspecialchars(trim($_POST['comment_name']  ?? ''), ENT_QUOTES);
-        $email   = filter_var(trim($_POST['comment_email'] ?? ''), FILTER_VALIDATE_EMAIL);
-        $website = filter_var(trim($_POST['comment_website'] ?? ''), FILTER_VALIDATE_URL) ?: '';
-        $text    = htmlspecialchars(trim($_POST['comment_text'] ?? ''), ENT_QUOTES);
+        $name     = trim((string)($_POST['comment_name']  ?? ''));
+        $emailRaw = trim((string)($_POST['comment_email'] ?? ''));
+        $email    = filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
+        $text     = trim((string)($_POST['comment_text'] ?? ''));
+        $honeypot = trim((string)($_POST['comment_hp'] ?? ''));
 
-        if (empty($name) || !$email || empty($text)) {
+        if ($honeypot !== '') {
+            header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
+            exit;
+        }
+
+        if ($name === '' || !$email || $text === '') {
             $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
         } else {
             try {
-                $db->execute(
-                    "INSERT INTO {$prefix}comments
-                        (post_id, author, author_email, author_ip, content, status)
-                     VALUES (?, ?, ?, ?, ?, 'pending')",
-                    [(int)($post['id'] ?? 0), $name, (string)$email,
-                     $_SERVER['REMOTE_ADDR'] ?? '', $text]
+                $newId = \CMS\Services\CommentService::getInstance()->createPendingComment(
+                    (int)($post['id'] ?? 0),
+                    $name,
+                    (string)$email,
+                    $text,
+                    (string)($_SERVER['REMOTE_ADDR'] ?? ''),
+                    \CMS\Auth::isLoggedIn() ? (int)(\CMS\Auth::getCurrentUser()->id ?? 0) : null
                 );
-                header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
-                exit;
+
+                if ($newId === false) {
+                    $commentError = 'Bitte alle Pflichtfelder korrekt ausfüllen.';
+                } else {
+                    header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
+                    exit;
+                }
             } catch (\Throwable $ex) {
                 $commentError = 'Fehler beim Speichern des Kommentars.';
             }
         }
     }
+}
+
+if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
+    $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
 try {
@@ -458,6 +468,12 @@ if ($sidebarPosition === 'left') {
             </div>
             <?php endif; ?>
 
+            <?php if (!empty($commentSuccess)): ?>
+            <div style="background:#dcfce7;border:1px solid #4ade80;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:var(--fs-sm);color:#166534;">
+                <?php echo htmlspecialchars($commentSuccess, ENT_QUOTES); ?>
+            </div>
+            <?php endif; ?>
+
             <div class="comment-form-wrap">
                 <h4><?php echo htmlspecialchars($commentFormHeader, ENT_QUOTES); ?></h4>
                 <form method="POST" action="#comments" novalidate>
@@ -483,8 +499,8 @@ if ($sidebarPosition === 'left') {
                     </div>
 
                     <div class="form-group" style="margin-bottom:14px;">
-                        <label for="comment_website">Website</label>
-                        <input type="url" id="comment_website" name="comment_website" class="form-control" placeholder="https://beispiel.de">
+                        <label for="comment_hp" style="position:absolute;left:-9999px;opacity:0;">Dieses Feld leer lassen</label>
+                        <input type="text" id="comment_hp" name="comment_hp" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
                     </div>
 
                     <button type="submit" class="btn btn-primary">Kommentar abschicken</button>

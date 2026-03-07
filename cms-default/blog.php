@@ -187,7 +187,7 @@ try {
                     <div class="rcat"><?php echo htmlspecialchars($rArr['category_name']); ?></div>
                     <?php endif; ?>
                     <a href="<?php echo SITE_URL; ?>/blog/<?php echo htmlspecialchars($rArr['slug']); ?>"><?php echo htmlspecialchars($rArr['title']); ?></a>
-                    <time><?php echo meridian_format_date($rArr['published_at'] ?? $rArr['created_at'] ?? '', true); ?></time>
+                    <time><?php echo time_ago($rArr['published_at'] ?? $rArr['created_at'] ?? ''); ?></time>
                 </div>
             </div>
             <?php endforeach; ?>
