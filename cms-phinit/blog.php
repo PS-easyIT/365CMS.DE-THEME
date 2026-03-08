@@ -135,7 +135,9 @@ try {
                 <?php
                     $_bRT = 0;
                     if (!empty($_bP['content'])) {
-                        $_bRT = max(1, (int)round(str_word_count(strip_tags($_bP['content'] ?? '')) / 200));
+                        $_bRT = function_exists('phinit_reading_time')
+                            ? phinit_reading_time($_bP['content'])
+                            : max(1, (int)round(str_word_count(strip_tags($_bP['content'] ?? '')) / 220));
                     }
                 ?>
                 <div class="article-meta">

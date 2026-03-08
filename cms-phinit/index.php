@@ -288,66 +288,18 @@ try {
         <div class="homepage-list-main">
         <?php endif; ?>
         <div class="article-list" style="border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);">
-            <?php foreach ($featuredPosts as $post): ?>
-            <article class="article-card">
-
-                <div class="article-thumb">
-                    <?php if (!empty($post['featured_image'])): ?>
-                    <img src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
-                         alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-                         loading="lazy">
-                    <?php else: ?>
-                    <div class="article-thumb-placeholder" aria-hidden="true">
-                        <span>📄</span>
-                    </div>
-                    <?php endif; ?>
-                    <?php if (!empty($post['category_name'])): ?>
-                    <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
-                    <?php endif; ?>
-                </div>
-
-                <div class="article-body">
-                    <h4>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
-                            <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
-                        </a>
-                    </h4>
-                    <?php if ($_showExcerpt): ?>
-                    <p><?php
-                        $excerpt = $post['excerpt'] ?? '';
-                        if (empty(trim($excerpt)) && !empty($post['content'])) {
-                            $excerpt = mb_strimwidth(strip_tags($post['content']), 0, $_listExcLen, '…');
-                        }
-                        echo htmlspecialchars(mb_strimwidth($excerpt, 0, $_listExcLen, '…'), ENT_QUOTES);
-                    ?></p>
-                    <?php endif; ?>
-                    <?php if ($_showMeta): ?>
-                    <?php
-                        $rt = !empty($post['read_time']) ? (int)$post['read_time'] : 0;
-                        if ($rt < 1 && !empty($post['content'])) {
-                            $rt = max(1, (int)round(str_word_count(strip_tags($post['content'])) / 200));
-                        }
-                    ?>
-                    <div class="article-meta">
-                        <?php if ($_showMetaCat && !empty($post['category_name'])): ?>
-                        <span class="cat"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
-                        <?php endif; ?>
-                        <?php if ($_showMetaDate): ?>
-                        <span><?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
-                        <?php endif; ?>
-                        <?php if ($_showMetaRT && $rt > 0): ?>
-                        <span class="read"><?php echo $rt; ?> Min.</span>
-                        <?php endif; ?>
-                        <a class="article-meta__more"
-                           href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
-                            &hellip; Weiter lesen &rarr;
-                        </a>
-                    </div>
-                    <?php endif; ?>
-                </div>
-
-            </article>
-            <?php endforeach; ?>
+            <?php foreach ($featuredPosts as $post):
+                get_theme_part('partials/post-card', [
+                    'card'         => (array)$post,
+                    'siteUrl'      => $siteUrl,
+                    'show_excerpt' => $_showExcerpt,
+                    'show_meta'    => $_showMeta,
+                    'exc_len'      => $_listExcLen,
+                    'show_cat'     => $_showMetaCat,
+                    'show_date'    => $_showMetaDate,
+                    'show_rt'      => $_showMetaRT,
+                ]);
+            endforeach; ?>
         </div>
 
         <?php if ($_showListSidebar):

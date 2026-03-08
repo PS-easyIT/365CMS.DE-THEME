@@ -47,7 +47,7 @@ $czBool = function (string $cat, string $key, bool $default = true) use ($czGet)
 $showPostHero      = $czBool('posts', 'show_post_hero', true);
 $showPostMeta      = $czBool('posts', 'show_post_meta', true);
 $showReadingTime   = $czBool('posts', 'show_reading_time', true);
-$readingTimeWpm    = max(50, (int)$czGet('posts', 'reading_time_wpm', 200));
+$readingTimeWpm    = max(50, (int)$czGet('posts', 'reading_time_wpm', 220));
 $showToc           = $czBool('posts', 'show_toc', true);
 $tocSticky         = $czBool('posts', 'toc_sticky', true);
 $tocMinHeadings    = max(1, (int)$czGet('posts', 'toc_min_headings', 2));
