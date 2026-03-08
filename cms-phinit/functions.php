@@ -572,6 +572,9 @@ final class CMS_Phinit_Theme
                 $css .= "    {$info[0]}: {$val}{$info[1]};\n";
             }
         }
+        // sidebar_position: String-Wert ohne Einheit
+        $sidebarPos = $c->get('layout', 'sidebar_position', '');
+        if (!empty($sidebarPos)) { $css .= "    --sidebar-position: {$sidebarPos};\n"; }
 
         // ── Header ──
         $logoAccent = $c->get('header', 'logo_accent_color', '');
@@ -901,8 +904,14 @@ if (!function_exists('phinit_reading_time')) {
     /**
      * Lesezeit in Minuten schätzen
      */
-    function phinit_reading_time(string $content, int $wpm = 200): int
+    function phinit_reading_time(string $content, int $wpm = 0): int
     {
+        if ($wpm <= 0) {
+            try {
+                $wpm = (int)\CMS\Services\ThemeCustomizer::instance()->get('posts', 'reading_time_wpm', 220);
+            } catch (\Throwable) {}
+            if ($wpm <= 0) { $wpm = 220; }
+        }
         $wordCount = str_word_count(strip_tags($content));
         return max(1, (int)round($wordCount / $wpm));
     }

@@ -246,7 +246,7 @@ try {
     $totalPages      = 1;
 }
 ?>
-
+<?php \CMS\Hooks::doAction('home_content'); ?>
 <div class="container" style="padding-top:28px;padding-bottom:0;">
 
     <!-- ── Repo-Card ─────────────────────────────────────────────── -->

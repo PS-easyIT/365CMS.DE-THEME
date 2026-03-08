@@ -1,14 +1,26 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.0.0",
-  "requires_cms": "2.0.0",
-  "tested_up_to": "2.0.0",
-  "release_date": "2025-01-01",
+  "version": "1.1.0",
+  "requires_cms": "2.5.0",
+  "tested_up_to": "2.5.4",
+  "release_date": "2025-07-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
     {
+      "version": "1.1.0",
+      "date": "2025-07-14",
+      "changes": [
+        "functions.php: sidebar_position als --sidebar-position CSS-Variable in generatePhinitCSS()",
+        "functions.php: phinit_reading_time() liest WPM-Wert jetzt aus Customizer (posts.reading_time_wpm)",
+        "customizer.php: og_default_image-Feld im Tab 'Erweitert' (SEO & Social) ergänzt",
+        "footer.php: Hooks before_footer und footer eingefügt (Plugin-Integration)",
+        "index.php: home_content Hook vor dem Content-Container (Plugin-Inhalte auf Homepage)",
+        "header.php: after_header Hook bereits vorhanden ✅",
+        "theme.json: Version 1.1.0, requires_cms auf 2.5.0 angehoben"
+      ]
+    },
       "version": "1.0.0",
       "date": "2025-01-01",
       "changes": [

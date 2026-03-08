@@ -119,6 +119,7 @@ try {
 </div><!-- /.page-wrap -->
 
 <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════ -->
+<?php \CMS\Hooks::doAction('before_footer'); ?>
 <footer class="site-footer" role="contentinfo">
 
     <!-- Haupt-Footer: 3-spaltig (Brand + 2 Nav-Spalten) -->
@@ -243,6 +244,7 @@ try {
 
 </footer>
 <!-- ═══ FOOTER ENDE ═══════════════════════════════════════════════════════ -->
+<?php \CMS\Hooks::doAction('footer'); ?>
 
 <!-- Back to Top -->
 <?php if ($_showBackToTop): ?>
