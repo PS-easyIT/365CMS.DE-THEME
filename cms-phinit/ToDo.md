@@ -15,9 +15,11 @@
 ## Phase 0: Vorbereitung
 - [x] TNTSearch Deprecation Fix in `CMS/core/Services/SearchService.php`
 - [x] ToDo.md erstellen
+- [x] `cms_favorites` Tabelle in SchemaManager ergänzt (v15→v16)
+- [x] `cms_security_log` Tabelle in SchemaManager ergänzt (v16→v17)
 
 ## Phase 1: admin/customizer.php – Komplett-Redesign
-- [ ] 1.1 Eigenes `<!DOCTYPE html>` entfernen – Fragment für Admin-Embed
+- [-] 1.1 Eigenes `<!DOCTYPE html>` entfernen – Fragment für Admin-Embed
 - [ ] 1.2 Tabler-CSS-Klassen verwenden statt eigene Inline-Styles
 - [ ] 1.3 Neue Tabs: `seo` + `performance`
 - [ ] 1.4 Export/Import-Funktion (JSON) über ThemeCustomizer-API
