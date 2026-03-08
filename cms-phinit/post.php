@@ -512,98 +512,28 @@ if ($sidebarPosition === 'left') {
     </div><!-- /.main-column -->
 
     <!-- ── Sticky Sidebar ────────────────────────────────────── -->
-    <?php if ($sidebarPosition !== 'none'): ?>
-    <aside class="sidebar" aria-label="Seitenleiste">
-
-        <!-- TOC -->
-        <?php if ($showToc && !empty($tocItems)): ?>
-        <div class="toc<?php echo $tocSticky ? ' toc-sticky' : ''; ?>">
-            <div class="toc-title"><?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></div>
-            <ul class="toc-list" role="list">
-                <?php foreach ($tocItems as $item): ?>
-                <li class="<?php echo $item['level'] === 3 ? 'toc-h3' : ''; ?>">
-                    <a href="#<?php echo htmlspecialchars($item['id'], ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($item['text'], ENT_QUOTES); ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-        <?php endif; ?>
-
-        <!-- Social Icons -->
-        <?php if ($showSidebarSocial): ?>
-        <?php
-        $hasSocial = !empty($socialLinkedin) || !empty($socialGithub) || !empty($socialTwitter)
-                  || !empty($socialMastodon) || !empty($socialYoutube) || !empty($socialXing) || !empty($socialRss);
-        ?>
-        <?php if ($hasSocial): ?>
-        <div class="social-widget">
-            <div class="social-widget-title"><?php echo htmlspecialchars($sidebarSocialHdr, ENT_QUOTES); ?></div>
-            <div class="social-icons">
-                <?php if (!empty($socialLinkedin)): ?>
-                <a href="<?php echo htmlspecialchars($socialLinkedin, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>
-                <?php endif; ?>
-                <?php if (!empty($socialGithub)): ?>
-                <a href="<?php echo htmlspecialchars($socialGithub, ENT_QUOTES); ?>" class="gh" target="_blank" rel="noopener noreferrer" aria-label="GitHub">gh</a>
-                <?php endif; ?>
-                <?php if (!empty($socialTwitter)): ?>
-                <a href="<?php echo htmlspecialchars($socialTwitter, ENT_QUOTES); ?>" class="tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏</a>
-                <?php endif; ?>
-                <?php if (!empty($socialMastodon)): ?>
-                <a href="<?php echo htmlspecialchars($socialMastodon, ENT_QUOTES); ?>" class="ma" target="_blank" rel="noopener noreferrer me" aria-label="Mastodon">🦣</a>
-                <?php endif; ?>
-                <?php if (!empty($socialYoutube)): ?>
-                <a href="<?php echo htmlspecialchars($socialYoutube, ENT_QUOTES); ?>" class="yt" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>
-                <?php endif; ?>
-                <?php if (!empty($socialXing)): ?>
-                <a href="<?php echo htmlspecialchars($socialXing, ENT_QUOTES); ?>" class="xi" target="_blank" rel="noopener noreferrer" aria-label="XING">X</a>
-                <?php endif; ?>
-                <?php if (!empty($socialRss)): ?>
-                <a href="<?php echo htmlspecialchars($socialRss, ENT_QUOTES); ?>" class="rss" aria-label="RSS-Feed">⊞</a>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-        <?php endif; ?>
-
-        <!-- Ähnliche Artikel -->
-        <?php if ($showSidebarRelated && !empty($relatedPosts)): ?>
-        <div class="toc" style="border-left-color:var(--accent-color);">
-            <div class="toc-title">📰 <?php echo htmlspecialchars($sidebarRelatedHdr, ENT_QUOTES); ?></div>
-            <ul class="toc-list" role="list">
-                <?php foreach ($relatedPosts as $rel): ?>
-                <li>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($rel['slug'] ?? ''), ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($rel['title'] ?? '', ENT_QUOTES); ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-        <?php endif; ?>
-
-        <!-- Kategorien-Widget (dynamisch aus DB) -->
-        <?php if (!empty($dbCategories)): ?>
-        <div class="toc" style="border-left-color:var(--primary-color);">
-            <div class="toc-title">🗂 Kategorien</div>
-            <ul class="toc-list" role="list">
-                <?php foreach ($dbCategories as $cat): ?>
-                <li>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($cat['slug'] ?? $cat['name'] ?? ''), ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($cat['name'] ?? '', ENT_QUOTES); ?>
-                        <?php if (((int)($cat['cnt'] ?? 0)) > 0): ?>
-                        <span style="color:var(--text-light);font-size:var(--fs-xs);margin-left:4px;">(<?php echo (int)$cat['cnt']; ?>)</span>
-                        <?php endif; ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-        <?php endif; ?>
-
-    </aside>
-    <?php endif; /* sidebar_position !== 'none' */ ?>
+    <?php if ($sidebarPosition !== 'none'):
+        get_theme_part('partials/sidebar', [
+            'show_toc'       => $showToc,
+            'toc_items'      => $tocItems,
+            'toc_sticky'     => $tocSticky,
+            'toc_header'     => $tocHeaderText,
+            'show_social'    => $showSidebarSocial,
+            'social_header'  => $sidebarSocialHdr,
+            'social_linkedin'=> $socialLinkedin,
+            'social_github'  => $socialGithub,
+            'social_twitter' => $socialTwitter,
+            'social_mastodon'=> $socialMastodon,
+            'social_youtube' => $socialYoutube,
+            'social_xing'    => $socialXing,
+            'social_rss'     => $socialRss,
+            'show_related'   => $showSidebarRelated,
+            'related_header' => $sidebarRelatedHdr,
+            'related_posts'  => $relatedPosts,
+            'categories'     => $dbCategories,
+            'site_url'       => $siteUrl,
+        ]);
+    endif; /* sidebar_position !== 'none' */ ?>
 
 </div><!-- /.content-layout -->
 </div><!-- /.container -->

@@ -102,64 +102,14 @@ try {
 
     <div class="article-list" style="border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);" data-anim>
         <?php foreach ($_bPosts as $_bP):
-            $_bExc = $_bP['excerpt'] ?? '';
-            if (empty(trim($_bExc)) && !empty($_bP['content'])) {
-                $_bExc = mb_strimwidth(strip_tags($_bP['content']), 0, $_bExcLen, '…');
-            }
-        ?>
-        <article class="article-card">
-
-            <div class="article-thumb">
-                <?php if (!empty($_bP['featured_image'])): ?>
-                <img src="<?php echo htmlspecialchars($_bP['featured_image'], ENT_QUOTES); ?>"
-                     alt="<?php echo htmlspecialchars($_bP['title'] ?? '', ENT_QUOTES); ?>"
-                     loading="lazy">
-                <?php else: ?>
-                <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
-                <?php endif; ?>
-                <?php if (!empty($_bP['category_name'])): ?>
-                <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($_bP['category_name'], ENT_QUOTES); ?></span>
-                <?php endif; ?>
-            </div>
-
-            <div class="article-body">
-                <h4>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($_bP['slug'] ?? ''), ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($_bP['title'] ?? '', ENT_QUOTES); ?>
-                    </a>
-                </h4>
-                <?php if ($_bShowExcerpt && !empty(trim($_bExc))): ?>
-                <p><?php echo htmlspecialchars(mb_strimwidth($_bExc, 0, $_bExcLen, '…'), ENT_QUOTES); ?></p>
-                <?php endif; ?>
-                <?php if ($_bShowMeta): ?>
-                <?php
-                    $_bRT = 0;
-                    if (!empty($_bP['content'])) {
-                        $_bRT = function_exists('phinit_reading_time')
-                            ? phinit_reading_time($_bP['content'])
-                            : max(1, (int)round(str_word_count(strip_tags($_bP['content'] ?? '')) / 220));
-                    }
-                ?>
-                <div class="article-meta">
-                    <?php if (!empty($_bP['category_name'])): ?>
-                    <span class="cat"><?php echo htmlspecialchars($_bP['category_name'], ENT_QUOTES); ?></span>
-                    <?php endif; ?>
-                    <?php if (!empty($_bP['published_at'])): ?>
-                    <span><?php echo htmlspecialchars(date('j. F Y', strtotime($_bP['published_at'])), ENT_QUOTES); ?></span>
-                    <?php endif; ?>
-                    <?php if ($_bRT > 0): ?>
-                    <span class="read"><?php echo $_bRT; ?> Min.</span>
-                    <?php endif; ?>
-                    <a class="article-meta__more"
-                       href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($_bP['slug'] ?? ''), ENT_QUOTES); ?>">
-                        &hellip; Weiter lesen &rarr;
-                    </a>
-                </div>
-                <?php endif; ?>
-            </div>
-
-        </article>
-        <?php endforeach; ?>
+            get_theme_part('partials/post-card', [
+                'card'         => $_bP,
+                'siteUrl'      => $siteUrl,
+                'show_excerpt' => $_bShowExcerpt,
+                'show_meta'    => $_bShowMeta,
+                'exc_len'      => $_bExcLen,
+            ]);
+        endforeach; ?>
     </div>
 
     <!-- Pagination -->
