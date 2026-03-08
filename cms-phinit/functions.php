@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('CMS_PHINIT_THEME_VERSION', '1.0.0');
+define('CMS_PHINIT_THEME_VERSION', '1.2.0');
 define('CMS_PHINIT_THEME_DIR',     THEME_PATH . 'cms-phinit/');
 define('CMS_PHINIT_THEME_URL',     rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
@@ -71,9 +71,16 @@ final class CMS_Phinit_Theme
         $version = !empty(trim((string)$cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
         echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'style.css?v=' . $version . '">' . "\n";
 
-        // PhotoSwipe CSS (CMS-Asset)
+        // PhotoSwipe CSS (CMS-Asset, nur wenn per Customizer aktiv)
+        $pswpEnabled = true;
+        try {
+            $pswpEnabled = filter_var(
+                \CMS\Services\ThemeCustomizer::instance()->get('performance', 'enable_photoswipe', true),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (\Throwable $_e) {}
         $pswpCss = defined('ASSETS_PATH') ? ASSETS_PATH . 'photoswipe/photoswipe.css' : '';
-        if (!empty($pswpCss) && file_exists($pswpCss)) {
+        if ($pswpEnabled && !empty($pswpCss) && file_exists($pswpCss)) {
             echo '<link rel="stylesheet" href="' . htmlspecialchars(SITE_URL . '/assets/photoswipe/photoswipe.css?' . filemtime($pswpCss), ENT_QUOTES) . '">' . "\n";
         }
 
@@ -95,9 +102,16 @@ final class CMS_Phinit_Theme
         $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
         echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '" defer></script>' . "\n";
 
-        // PhotoSwipe Lightbox (CMS-Asset, type=module auto-defers)
+        // PhotoSwipe Lightbox (CMS-Asset, nur wenn per Customizer aktiv)
+        $pswpEnabled = true;
+        try {
+            $pswpEnabled = filter_var(
+                \CMS\Services\ThemeCustomizer::instance()->get('performance', 'enable_photoswipe', true),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (\Throwable $_e) {}
         $pswpJs = defined('ASSETS_PATH') ? ASSETS_PATH . 'js/photoswipe-init.js' : '';
-        if (!empty($pswpJs) && file_exists($pswpJs)) {
+        if ($pswpEnabled && !empty($pswpJs) && file_exists($pswpJs)) {
             echo '<script type="module" src="' . htmlspecialchars(SITE_URL . '/assets/js/photoswipe-init.js?' . filemtime($pswpJs), ENT_QUOTES) . '"></script>' . "\n";
         }
     }

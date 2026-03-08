@@ -263,7 +263,7 @@ $readTime = function_exists('phinit_reading_time')
             <?php endif; ?>
 
             <!-- Artikel-Body -->
-            <div class="post-body" itemprop="articleBody" data-anim data-anim-delay="2">
+            <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
                 <?php echo $content; ?>
 
                 <!-- Share-Buttons -->

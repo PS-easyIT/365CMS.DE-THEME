@@ -361,6 +361,35 @@ $config = [
             'og_default_image'     => ['label' => 'Standard OG-Bild URL (Fallback für Social-Sharing)', 'type' => 'text', 'default' => ''],
         ],
     ],
+
+    // ── SEO ─────────────────────────────────────────────────────────────────
+    'seo' => [
+        'title' => '🔍 SEO',
+        'sections' => [
+            'meta_robots'       => ['label' => 'Meta Robots (Standard)',        'type' => 'select',   'default' => 'index,follow', 'options' => ['index,follow' => 'index, follow', 'noindex,follow' => 'noindex, follow', 'noindex,nofollow' => 'noindex, nofollow']],
+            'canonical_self'    => ['label' => 'Canonical-Tag auf eigene URL',  'type' => 'checkbox', 'default' => true],
+            'og_site_name'      => ['label' => 'OG Site Name',                  'type' => 'text',     'default' => ''],
+            'og_type_default'   => ['label' => 'OG Type (Standard)',            'type' => 'select',   'default' => 'website', 'options' => ['website' => 'website', 'blog' => 'blog', 'article' => 'article']],
+            'twitter_card_type' => ['label' => 'Twitter Card Type',             'type' => 'select',   'default' => 'summary_large_image', 'options' => ['summary_large_image' => 'summary_large_image', 'summary' => 'summary']],
+            'structured_data'   => ['label' => 'Schema.org Markup aktiv',       'type' => 'checkbox', 'default' => true],
+            'breadcrumb_schema' => ['label' => 'Breadcrumb Schema aktiv',       'type' => 'checkbox', 'default' => true],
+            'noindex_search'    => ['label' => 'Suchseite noindex',             'type' => 'checkbox', 'default' => true],
+            'noindex_404'       => ['label' => '404-Seite noindex',             'type' => 'checkbox', 'default' => true],
+        ],
+    ],
+
+    // ── PERFORMANCE ──────────────────────────────────────────────────────────
+    'performance' => [
+        'title' => '⚡ Performance',
+        'sections' => [
+            'enable_photoswipe' => ['label' => 'PhotoSwipe Lightbox aktiv',              'type' => 'checkbox', 'default' => true],
+            'lazyload_images'   => ['label' => 'Bilder Lazy-Load (loading=lazy)',         'type' => 'checkbox', 'default' => true],
+            'preconnect_fonts'  => ['label' => 'Preconnect Google Fonts',                'type' => 'checkbox', 'default' => true],
+            'preconnect_extra'  => ['label' => 'Zusätzliche Preconnect-URLs (eine pro Zeile)', 'type' => 'textarea', 'default' => ''],
+            'defer_scripts'     => ['label' => 'Theme-Scripts defer',                    'type' => 'checkbox', 'default' => true],
+            'dns_prefetch'      => ['label' => 'DNS-Prefetch aktiv',                     'type' => 'checkbox', 'default' => true],
+        ],
+    ],
 ];
 
 // ── 2. Customizer-Instanz ────────────────────────────────────────────────────

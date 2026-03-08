@@ -1,13 +1,24 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.5.4",
-  "release_date": "2025-07-14",
+  "release_date": "2025-07-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2025-07-16",
+      "changes": [
+        "admin/customizer.php: Neuer Tab 'SEO' (meta_robots, canonical_self, og_site_name, og_type_default, twitter_card_type, structured_data, breadcrumb_schema, noindex_search, noindex_404)",
+        "admin/customizer.php: Neuer Tab 'Performance' (enable_photoswipe, lazyload_images, preconnect_fonts, preconnect_extra, defer_scripts, dns_prefetch)",
+        "functions.php: PhotoSwipe CSS/JS-Einbindung jetzt über Customizer-Toggle performance.enable_photoswipe steuerbar",
+        "post-tech.php: data-photoswipe Attribut auf .post-body ergänzt (PhotoSwipe-Lightbox-Aktivierung)",
+        "post-wide.php: data-photoswipe Attribut auf .post-body ergänzt (PhotoSwipe-Lightbox-Aktivierung)"
+      ]
+    },
     {
       "version": "1.1.0",
       "date": "2025-07-14",
