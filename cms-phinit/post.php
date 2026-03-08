@@ -377,7 +377,7 @@ if ($sidebarPosition === 'left') {
             </header>
 
             <!-- Artikel-Body -->
-            <div class="post-body" itemprop="articleBody">
+            <div class="post-body" itemprop="articleBody" data-photoswipe>
                 <?php echo $content; ?>
 
                 <!-- Tags -->

@@ -71,6 +71,12 @@ final class CMS_Phinit_Theme
         $version = !empty(trim((string)$cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
         echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'style.css?v=' . $version . '">' . "\n";
 
+        // PhotoSwipe CSS (CMS-Asset)
+        $pswpCss = defined('ASSETS_PATH') ? ASSETS_PATH . 'photoswipe/photoswipe.css' : '';
+        if (!empty($pswpCss) && file_exists($pswpCss)) {
+            echo '<link rel="stylesheet" href="' . htmlspecialchars(SITE_URL . '/assets/photoswipe/photoswipe.css?' . filemtime($pswpCss), ENT_QUOTES) . '">' . "\n";
+        }
+
         // Phinit-spezifisches CSS aus Customizer generieren
         // (überschreibt die generische generateCSS()-Methode, die andere Key-Namen erwartet)
         try {
@@ -88,6 +94,12 @@ final class CMS_Phinit_Theme
         $jsFile  = CMS_PHINIT_THEME_DIR . 'assets/js/navigation.js';
         $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
         echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '" defer></script>' . "\n";
+
+        // PhotoSwipe Lightbox (CMS-Asset, type=module auto-defers)
+        $pswpJs = defined('ASSETS_PATH') ? ASSETS_PATH . 'js/photoswipe-init.js' : '';
+        if (!empty($pswpJs) && file_exists($pswpJs)) {
+            echo '<script type="module" src="' . htmlspecialchars(SITE_URL . '/assets/js/photoswipe-init.js?' . filemtime($pswpJs), ENT_QUOTES) . '"></script>' . "\n";
+        }
     }
 
     /* ── Meta Tags, OG, Twitter-Card, Canonical ───────────────── */
