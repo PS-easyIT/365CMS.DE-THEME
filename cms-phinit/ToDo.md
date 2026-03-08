@@ -79,3 +79,12 @@
 - [x] 6.3 Customizer-Tab `performance`: `enable_photoswipe` Toggle ergänzt; `functions.php` liest den Wert via `ThemeCustomizer::instance()->get()` und bedingt PhotoSwipe CSS/JS
 - [x] 6.4 Version bump → `1.2.0` + update.json aktualisiert (Changelog-Eintrag v1.2.0)
 
+---
+
+## Bugfixes (2026-03-08)
+- [x] B1 `member/profile.php`: `CMS\Database::get_results()` gibt `stdClass` zurück (FETCH_OBJ) – `$metaRows`-Schleife mit `array_map(fn($r) => (array)$r, ...)` gefixt
+- [x] B2 `member/favorites.php`: `{prefix}categories` existiert nicht → korrekte Tabelle `{prefix}post_categories`; `$favorites`-Query auf `array_map`-Cast umgestellt
+- [x] B3 `member/comments.php`: `ORDER BY c.created_at` → `c.post_date` (korrekte Spalte laut SchemaManager); Template-Feld `$c['created_at']` → `$c['post_date']`; `$comments`-Cast auf Array
+- [x] B4 `member/feeds.php`: `WHERE status = 'active'` → `WHERE is_active = 1`; `ORDER BY title` → `ORDER BY name`; `$channels` + `$subRows` auf Array gecastet; Template `$ch['title']` → `$ch['name']`
+- [x] B5 `admin/customizer.php`: Tabs `seo` + `performance` fehlten in `$navGroups` und `$tabGroups` → ergänzt unter „⚙️ Sonstiges"
+

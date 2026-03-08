@@ -613,6 +613,8 @@ $tabGroups = [
     'pages'      => ['📄 Seiteneinstellungen' => ['show_page_title','show_page_updated_date','page_layout','show_page_sidebar','page_sidebar_show_nav','show_page_toc']],
     'social'     => ['🔗 Profile & URLs' => ['social_linkedin','social_github','social_twitter','social_mastodon','social_rss','social_youtube','social_xing'], '🏷️ Button-Labels' => ['social_label_linkedin','social_label_github','social_label_rss']],
     'advanced'   => ['🎨 Custom Code' => ['custom_css','custom_head_code','custom_footer_code'], '📊 Tracking & Cache' => ['google_analytics_id','cache_buster_css'], '🖼️ SEO & Social' => ['og_default_image']],
+    'seo'         => ['🔍 SEO-Einstellungen' => ['meta_robots','canonical_self','og_site_name','og_type_default','twitter_card_type','structured_data','breadcrumb_schema','noindex_search','noindex_404']],
+    'performance' => ['⚡ Performance-Einstellungen' => ['enable_photoswipe','lazyload_images','preconnect_fonts','preconnect_extra','defer_scripts','dns_prefetch']],
 ];
 
 // Nav-Gruppen für die Sidebar
@@ -620,7 +622,7 @@ $navGroups = [
     null        => ['colors', 'typography', 'layout'],
     '🖥️ Design' => ['header', 'footer'],
     '📝 Inhalte' => ['homepage', 'posts', 'pages'],
-    '⚙️ Sonstiges' => ['social', 'advanced'],
+    '⚙️ Sonstiges' => ['social', 'advanced', 'seo', 'performance'],
 ];
 ?>
 

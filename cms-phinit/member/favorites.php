@@ -51,17 +51,20 @@ $total = (int)$db->get_var(
 
 $pages = (int)ceil($total / $perPage);
 
-$favorites = $db->get_results(
-    "SELECT f.*, p.title AS post_title, p.slug AS post_slug, p.excerpt, p.featured_image,
-            p.created_at AS post_date, c.name AS category_name
-     FROM {$prefix}favorites f
-     LEFT JOIN {$prefix}posts p ON f.post_id = p.id
-     LEFT JOIN {$prefix}categories c ON p.category_id = c.id
-     WHERE f.user_id = ?
-     ORDER BY f.created_at DESC
-     LIMIT {$perPage} OFFSET {$offset}",
-    [(int)$currentUser->id]
-) ?: [];
+$favorites = array_map(
+    fn($r) => (array)$r,
+    $db->get_results(
+        "SELECT f.*, p.title AS post_title, p.slug AS post_slug, p.excerpt, p.featured_image,
+                p.created_at AS post_date, c.name AS category_name
+         FROM {$prefix}favorites f
+         LEFT JOIN {$prefix}posts p ON f.post_id = p.id
+         LEFT JOIN {$prefix}post_categories c ON p.category_id = c.id
+         WHERE f.user_id = ?
+         ORDER BY f.created_at DESC
+         LIMIT {$perPage} OFFSET {$offset}",
+        [(int)$currentUser->id]
+    ) ?: []
+);
 
 $themeDir = \CMS\ThemeManager::instance()->getThemePath();
 include $themeDir . 'header.php';

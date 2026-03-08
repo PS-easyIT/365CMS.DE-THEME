@@ -77,14 +77,20 @@ $csrfToken = $csrfToken ?? \CMS\Security::instance()->generateToken('member_feed
 $channels   = [];
 $subscribed = [];
 if ($hasFeedPlugin) {
-    $channels = $db->get_results(
-        "SELECT * FROM {$prefix}feed_channels WHERE status = 'active' ORDER BY title ASC"
-    ) ?: [];
+    $channels = array_map(
+        fn($r) => (array)$r,
+        $db->get_results(
+            "SELECT * FROM {$prefix}feed_channels WHERE is_active = 1 ORDER BY name ASC"
+        ) ?: []
+    );
 
-    $subRows = $db->get_results(
-        "SELECT channel_id, notify_email FROM {$prefix}feed_subscriptions WHERE user_id = ?",
-        [(int)$currentUser->id]
-    ) ?: [];
+    $subRows = array_map(
+        fn($r) => (array)$r,
+        $db->get_results(
+            "SELECT channel_id, notify_email FROM {$prefix}feed_subscriptions WHERE user_id = ?",
+            [(int)$currentUser->id]
+        ) ?: []
+    );
     foreach ($subRows as $sr) {
         $subscribed[(int)$sr['channel_id']] = (bool)$sr['notify_email'];
     }
@@ -133,7 +139,7 @@ include $themeDir . 'header.php';
             ?>
             <div class="member-card member-newsletter-card<?php echo $isSub ? ' member-newsletter-card--active' : ''; ?>">
                 <div class="member-card-header">
-                    <h3><?php echo $isSub ? '📡' : '📰'; ?> <?php echo htmlspecialchars($ch['title'] ?? '', ENT_QUOTES); ?></h3>
+                    <h3><?php echo $isSub ? '📡' : '📰'; ?> <?php echo htmlspecialchars($ch['name'] ?? '', ENT_QUOTES); ?></h3>
                 </div>
                 <?php if (!empty($ch['description'])): ?>
                 <p class="member-newsletter-desc"><?php echo htmlspecialchars($ch['description']); ?></p>

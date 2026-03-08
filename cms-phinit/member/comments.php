@@ -45,15 +45,18 @@ $total = (int)$db->get_var(
 
 $pages = (int)ceil($total / $perPage);
 
-$comments = $db->get_results(
-    "SELECT c.*, p.title AS post_title, p.slug AS post_slug
-     FROM {$prefix}comments c
-     LEFT JOIN {$prefix}posts p ON c.post_id = p.id
-     WHERE c.user_id = ? {$filterSQL}
-     ORDER BY c.created_at DESC
-     LIMIT {$perPage} OFFSET {$offset}",
-    [(int)$currentUser->id]
-) ?: [];
+$comments = array_map(
+    fn($r) => (array)$r,
+    $db->get_results(
+        "SELECT c.*, p.title AS post_title, p.slug AS post_slug
+         FROM {$prefix}comments c
+         LEFT JOIN {$prefix}posts p ON c.post_id = p.id
+         WHERE c.user_id = ? {$filterSQL}
+         ORDER BY c.post_date DESC
+         LIMIT {$perPage} OFFSET {$offset}",
+        [(int)$currentUser->id]
+    ) ?: []
+);
 
 // Zähler pro Status
 $countAll      = (int)$db->get_var("SELECT COUNT(*) FROM {$prefix}comments WHERE user_id = ?", [(int)$currentUser->id]) ?: 0;
@@ -93,7 +96,7 @@ include $themeDir . 'header.php';
                         <span class="member-comment-status member-comment-status--<?php echo htmlspecialchars($c['status'] ?? 'pending'); ?>">
                             <?php echo ($c['status'] ?? 'pending') === 'approved' ? '✅ Veröffentlicht' : '⏳ Ausstehend'; ?>
                         </span>
-                        <span class="member-comment-date"><?php echo date('d.m.Y H:i', strtotime($c['created_at'])); ?></span>
+                        <span class="member-comment-date"><?php echo date('d.m.Y H:i', strtotime($c['post_date'] ?? 'now')); ?></span>
                     </div>
                 </div>
                 <div class="member-comment-body">

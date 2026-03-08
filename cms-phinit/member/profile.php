@@ -81,10 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Meta-Daten laden
 $userMeta = [];
-$metaRows = $db->get_results(
-    "SELECT meta_key, meta_value FROM {$prefix}user_meta WHERE user_id = ?",
-    [(int)$currentUser->id]
-) ?: [];
+$metaRows = array_map(
+    fn($r) => (array)$r,
+    $db->get_results(
+        "SELECT meta_key, meta_value FROM {$prefix}user_meta WHERE user_id = ?",
+        [(int)$currentUser->id]
+    ) ?: []
+);
 foreach ($metaRows as $row) {
     $userMeta[$row['meta_key']] = $row['meta_value'];
 }
