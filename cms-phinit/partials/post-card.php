@@ -37,6 +37,7 @@ $exc_len      = max(60, (int)($exc_len ?? 180));
 $show_cat     = isset($show_cat)     ? (bool)$show_cat     : true;
 $show_date    = isset($show_date)    ? (bool)$show_date    : true;
 $show_rt      = isset($show_rt)      ? (bool)$show_rt      : true;
+$displayDate  = $card['published_at'] ?? ($card['created_at'] ?? null);
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
@@ -89,8 +90,8 @@ if ($show_rt && $show_meta) {
             <?php if ($show_cat && !empty($card['category_name'])): ?>
             <span class="cat"><?php echo htmlspecialchars($card['category_name'], ENT_QUOTES); ?></span>
             <?php endif; ?>
-            <?php if ($show_date && !empty($card['published_at'])): ?>
-            <span><?php echo htmlspecialchars(date('j. F Y', strtotime($card['published_at'])), ENT_QUOTES); ?></span>
+            <?php if ($show_date && !empty($displayDate)): ?>
+            <span><?php echo htmlspecialchars(date('j. F Y', strtotime((string)$displayDate)), ENT_QUOTES); ?></span>
             <?php endif; ?>
             <?php if ($show_rt && $_pc_rt > 0): ?>
             <span class="read"><?php echo $_pc_rt; ?> Min.</span>

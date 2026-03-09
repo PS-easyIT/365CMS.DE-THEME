@@ -180,12 +180,12 @@ try {
     // Artikel-Liste (über den Info-Cards)
     $featuredRows  = $_showList
         ? ($db->get_results(
-            "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.views,
+                        "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
                     c.name AS category_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
              WHERE p.status = 'published'
-             ORDER BY p.published_at DESC
+                         ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
              LIMIT " . (int)$_listCount
           ) ?: [])
         : [];
@@ -201,12 +201,12 @@ try {
 
     $gridRows  = $_showTileGrid
         ? ($db->get_results(
-            "SELECT p.id, p.title, p.slug, p.excerpt, LEFT(p.content, 500) AS content, p.featured_image, p.published_at,
+                        "SELECT p.id, p.title, p.slug, p.excerpt, LEFT(p.content, 500) AS content, p.featured_image, p.published_at, p.created_at,
                     c.name AS category_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
              WHERE p.status = 'published'
-             ORDER BY p.published_at DESC
+                         ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
              LIMIT " . (int)$_tileCount . " OFFSET " . (int)$_gridOffset
           ) ?: [])
         : [];
@@ -219,7 +219,7 @@ try {
         if (!empty($_fpIds)) {
             $_fpIn   = implode(',', array_map('intval', $_fpIds));
             $_fpRows = $db->get_results(
-                "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at,
+                "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at, p.created_at,
                         c.name AS category_name
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
@@ -374,7 +374,8 @@ try {
                 <?php foreach ($_sbFeatSlice as $_fp):
                     $_fpHref  = htmlspecialchars($siteUrl . '/blog/' . ($_fp['slug'] ?? ''), ENT_QUOTES);
                     $_fpTitle = htmlspecialchars($_fp['title'] ?? '', ENT_QUOTES);
-                    $_fpDate  = !empty($_fp['published_at']) ? date('j. M Y', strtotime($_fp['published_at'])) : '';
+                    $_fpDateRaw = $_fp['published_at'] ?? ($_fp['created_at'] ?? '');
+                    $_fpDate  = !empty($_fpDateRaw) ? date('j. M Y', strtotime((string)$_fpDateRaw)) : '';
                     $_fpCat   = htmlspecialchars($_fp['category_name'] ?? '', ENT_QUOTES);
                     $_fpThumb = !empty($_fp['featured_image']) ? htmlspecialchars($_fp['featured_image'], ENT_QUOTES) : '';
                 ?>
@@ -662,7 +663,8 @@ try {
                         <span class="cat"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                         <?php endif; ?>
                         <?php if ($_showTileDate): ?>
-                        <span><?php echo htmlspecialchars(date('j. M. Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?></span>
+                        <?php $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? ''); ?>
+                        <span><?php echo htmlspecialchars(!empty($postDateRaw) ? date('j. M. Y', strtotime((string)$postDateRaw)) : '', ENT_QUOTES); ?></span>
                         <?php endif; ?>
                         </div>
                         <a class="post-card-meta__more"
