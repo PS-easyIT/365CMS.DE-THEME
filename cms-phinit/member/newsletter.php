@@ -67,14 +67,14 @@ $csrfToken = $csrfToken ?? \CMS\Security::instance()->generateToken('member_news
 $lists = [];
 $subscribed = [];
 if ($hasNewsletterPlugin) {
-    $lists = $db->get_results(
+    $lists = array_map(fn($r) => (array)$r, $db->get_results(
         "SELECT * FROM {$prefix}newsletter_lists WHERE status = 'active' ORDER BY name ASC"
-    ) ?: [];
+    ) ?: []);
 
-    $subRows = $db->get_results(
+    $subRows = array_map(fn($r) => (array)$r, $db->get_results(
         "SELECT list_id FROM {$prefix}newsletter_subscribers WHERE user_id = ? AND status = 'active'",
         [(int)$currentUser->id]
-    ) ?: [];
+    ) ?: []);
     foreach ($subRows as $sr) {
         $subscribed[] = (int)$sr['list_id'];
     }

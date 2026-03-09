@@ -285,8 +285,10 @@ $config = [
     'posts' => [
         'title' => '📝 Beiträge',
         'sections' => [
-            'post_hero_height'       => ['label' => 'Post-Hero Höhe (px)',           'type' => 'number',   'default' => '340'],
-            'show_post_hero'         => ['label' => 'Post-Hero-Bild anzeigen',       'type' => 'checkbox', 'default' => true],
+            'post_hero_height'       => ['label' => 'Beitragsbild Höhe (px)',         'type' => 'number',   'default' => '215'],
+            'post_hero_width'        => ['label' => 'Beitragsbild Breite (px)',        'type' => 'number',   'default' => '162'],
+            'show_post_hero'         => ['label' => 'Beitragsbild links vom Titel',    'type' => 'checkbox', 'default' => true],
+            'post_title_fontsize'    => ['label' => 'Beitrags-Titel Schriftgröße (px)', 'type' => 'number',   'default' => '28'],
             'show_post_meta'         => ['label' => 'Artikel-Meta anzeigen',         'type' => 'checkbox', 'default' => true],
             'show_reading_time'      => ['label' => 'Lesezeit anzeigen',             'type' => 'checkbox', 'default' => true],
             'reading_time_wpm'       => ['label' => 'Wörter pro Minute',             'type' => 'number',   'default' => '220'],
@@ -320,6 +322,8 @@ $config = [
         'title' => '📄 Seiten',
         'sections' => [
             'show_page_title'        => ['label' => 'Seiten-Titel anzeigen',         'type' => 'checkbox', 'default' => true],
+            'page_title_fontsize'    => ['label' => 'Seiten-Titel Schriftgröße (px)',    'type' => 'number',   'default' => '28'],
+            'show_page_hero'         => ['label' => 'Seiten-Bild links vom Titel',    'type' => 'checkbox', 'default' => true],
             'show_page_updated_date' => ['label' => 'Aktualisierungsdatum',          'type' => 'checkbox', 'default' => false],
             'page_layout'            => ['label' => 'Seiten-Layout',                 'type' => 'select',   'default' => 'full', 'options' => ['full' => 'Volle Breite', 'narrow' => 'Schmal (860 px)', 'two-col' => 'Zweispaltig']],
             'show_page_sidebar'      => ['label' => 'Sidebar auf Seiten',            'type' => 'checkbox', 'default' => false],
@@ -609,8 +613,8 @@ $tabGroups = [
     'header'     => ['🏷️ Logo & Marke' => ['logo_text_part1','logo_text_part2','logo_text_suffix','logo_url','show_logo_text_with_image','logo_max_height','logo_accent_color'], '👤 Member-Bar' => ['show_member_bar','member_bar_height'], '🧭 Hauptnav' => ['main_nav_height','show_search_bar','search_placeholder','show_rss_link'], '⚡ Quicklinks' => ['show_quicklinks','sub_bar_height']],
     'footer'     => ['🏷️ Brand & Text' => ['footer_brand_name','footer_tagline','footer_col2_title','footer_col3_title','footer_col4_title','copyright_text','show_footer_social'], '🍪 Cookie-Consent' => ['show_consent_banner','consent_text','consent_privacy_url'], '🔗 Network-Bar' => ['show_network_bar','network_bar_link1_label','network_bar_link1_url','network_bar_link2_label','network_bar_link2_url','network_bar_link3_label','network_bar_link3_url','network_bar_link4_label','network_bar_link4_url','network_bar_link5_label','network_bar_link5_url']],
     'homepage'   => ['📌 Repo-Card' => ['show_repo_card','repo_card_title','repo_card_description','repo_card_badge','repo_card_btn_text','repo_card_btn_url'], '📰 Artikel-Liste' => ['show_article_list','article_list_label','article_list_count','article_list_link_url','article_thumb_width','article_thumb_height','show_article_excerpt','show_article_meta','show_article_badge','show_meta_category','show_meta_date','show_meta_readtime'], '📋 Sidebar neben Liste' => ['show_list_sidebar','list_sidebar_width','list_sidebar_title','list_sidebar_content'], '🔧 Sidebar-Widgets' => ['sidebar_show_identity','sidebar_identity_logo_url','sidebar_identity_tagline','sidebar_identity_link_url','sidebar_show_projects','sidebar_project1_name','sidebar_project1_logo_url','sidebar_project1_desc','sidebar_project1_url','sidebar_project2_name','sidebar_project2_logo_url','sidebar_project2_desc','sidebar_project2_url','sidebar_show_status','sidebar_status_label','sidebar_status_services','sidebar_show_downloads','sidebar_downloads_label','sidebar_downloads_items','sidebar_show_social','sidebar_social_label','sidebar_show_notice','sidebar_notice_title','sidebar_notice_text','sidebar_notice_url','sidebar_notice_url_text','sidebar_show_featured_posts','sidebar_featured_posts_label','sidebar_featured_post_1','sidebar_featured_post_2','sidebar_featured_post_3'], '🗂️ Kategorie-Cards' => ['show_info_grid','info_card1_title','info_card1_text','info_card1_link_text','info_card1_link_url','info_card1_style','info_card2_title','info_card2_text','info_card2_link_text','info_card2_link_url','info_card2_style','show_info_card3','info_card3_title','info_card3_text','info_card3_link_text','info_card3_link_url','info_card3_badge','info_card3_style'], '🧱 Kachel-Grid' => ['show_tile_grid','tile_grid_label','tile_grid_count','tile_grid_columns','show_tile_excerpt','show_tile_category','show_tile_date','tile_grid_link_url'], '📡 RSS-Feeds' => ['show_feed_section','feed1_channel_id','feed1_count','feed2_channel_id','feed2_count'], '📏 Sektionen-Abstände' => ['spacing_repo_card','spacing_article_list','spacing_info_cards','spacing_tile_grid','spacing_rss_feeds']],
-    'posts'      => ['🖼️ Hero & Meta' => ['post_hero_height','show_post_hero','show_post_meta','show_reading_time','reading_time_wpm'], '📖 Inhaltsverzeichnis' => ['show_toc','toc_sticky','toc_min_headings','toc_header_text'], '📌 Sidebar-Widgets' => ['show_sidebar_social','sidebar_social_header','show_sidebar_related','sidebar_related_header','related_count'], '🔗 Share-Buttons' => ['show_share_buttons','show_share_linkedin','show_share_twitter','show_share_email','show_share_copy'], '💻 Tech-Card' => ['show_tech_card','tech_card_header'], '💬 Kommentare & Tags' => ['show_comments','comments_header','comment_form_header','show_post_tags']],
-    'pages'      => ['📄 Seiteneinstellungen' => ['show_page_title','show_page_updated_date','page_layout','show_page_sidebar','page_sidebar_show_nav','show_page_toc']],
+    'posts'      => ['🖼️ Hero & Meta' => ['post_hero_height','post_hero_width','show_post_hero','post_title_fontsize','show_post_meta','show_reading_time','reading_time_wpm'], '📖 Inhaltsverzeichnis' => ['show_toc','toc_sticky','toc_min_headings','toc_header_text'], '📌 Sidebar-Widgets' => ['show_sidebar_social','sidebar_social_header','show_sidebar_related','sidebar_related_header','related_count'], '🔗 Share-Buttons' => ['show_share_buttons','show_share_linkedin','show_share_twitter','show_share_email','show_share_copy'], '💻 Tech-Card' => ['show_tech_card','tech_card_header'], '💬 Kommentare & Tags' => ['show_comments','comments_header','comment_form_header','show_post_tags']],
+    'pages'      => ['📄 Seiteneinstellungen' => ['show_page_title','page_title_fontsize','show_page_hero','show_page_updated_date','page_layout','show_page_sidebar','page_sidebar_show_nav','show_page_toc']],
     'social'     => ['🔗 Profile & URLs' => ['social_linkedin','social_github','social_twitter','social_mastodon','social_rss','social_youtube','social_xing'], '🏷️ Button-Labels' => ['social_label_linkedin','social_label_github','social_label_rss']],
     'advanced'   => ['🎨 Custom Code' => ['custom_css','custom_head_code','custom_footer_code'], '📊 Tracking & Cache' => ['google_analytics_id','cache_buster_css'], '🖼️ SEO & Social' => ['og_default_image']],
     'seo'         => ['🔍 SEO-Einstellungen' => ['meta_robots','canonical_self','og_site_name','og_type_default','twitter_card_type','structured_data','breadcrumb_schema','noindex_search','noindex_404']],
@@ -634,16 +638,15 @@ $navGroups = [
                 <h2 class="page-title">🎨 Theme Customizer – CMS Phinit</h2>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="<?php echo htmlspecialchars(SITE_URL); ?>/" target="_blank" rel="noopener"
-                   class="btn btn-outline-secondary me-2">
+                <button type="button" id="preview-toggle-btn" class="btn btn-outline-secondary me-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/>
-                        <path d="M11 13l9 -9"/><path d="M15 4h5v5"/>
+                        <path d="M3 7a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z"/>
+                        <path d="M7 20l10 0"/><path d="M9 16l0 4"/><path d="M15 16l0 4"/>
                     </svg>
                     Live-Vorschau
-                </a>
+                </button>
             </div>
         </div>
     </div>
@@ -757,6 +760,27 @@ $navGroups = [
                     }
                     ?>
 
+                    <?php if ($activeTab === 'colors'): ?>
+                    <div class="card mb-3" id="color-presets-card" style="background:#1e293b;border-color:#334155;">
+                        <div class="card-body py-2 px-3">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span style="font-size:.8rem;font-weight:600;color:#94a3b8;">🎨 Schnell-Presets:</span>
+                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="phinit"
+                                        style="background:#1e3a5f;color:#e8a838;border-color:#2a4f7c;">Phinit (Standard)</button>
+                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="bluesteel"
+                                        style="background:#1a2744;color:#60a5fa;border-color:#233b6e;">Blue Steel</button>
+                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="greentech"
+                                        style="background:#064e3b;color:#10b981;border-color:#047857;">Green Tech</button>
+                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="slate"
+                                        style="background:#1e293b;color:#f59e0b;border-color:#334155;">Slate Dark</button>
+                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="ruby"
+                                        style="background:#7f1d1d;color:#f87171;border-color:#991b1b;">Ruby Red</button>
+                                <small class="ms-auto" style="color:#64748b;">↑ Klick füllt Felder – danach Speichern nicht vergessen!</small>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <div class="row row-cards">
                     <?php foreach ($currentGroups as $groupTitle => $fieldKeys): ?>
                         <div class="col-12 col-xl-6">
@@ -797,6 +821,51 @@ $navGroups = [
             </div><!-- /.row -->
         </form>
 
+    </div>
+</div>
+
+<!-- ── Live-Vorschau Drawer ──────────────────────────────────────────────── -->
+<div id="px-drawer" aria-hidden="true"
+     style="display:none;position:fixed;top:0;right:0;bottom:0;z-index:9050;
+            width:min(900px,96vw);flex-direction:column;
+            background:#111827;box-shadow:-6px 0 32px rgba(0,0,0,.6);">
+    <div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .875rem;
+                background:#0d1528;border-bottom:1px solid #1e3a5f;flex-shrink:0;">
+        <button id="px-close-btn" type="button"
+                style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
+                       padding:.2rem .6rem;cursor:pointer;font-size:.85rem;"
+                title="Schließen (Esc)">✕</button>
+        <div style="display:flex;gap:.375rem;margin:0 auto;">
+            <button type="button" class="px-dev-btn active" data-width="1280"
+                    style="background:#1e293b;border:1px solid #334155;color:#e2e8f0;border-radius:4px;
+                           padding:.25rem .65rem;cursor:pointer;font-size:.8rem;">🖥️ Desktop</button>
+            <button type="button" class="px-dev-btn" data-width="768"
+                    style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
+                           padding:.25rem .65rem;cursor:pointer;font-size:.8rem;">📱 Tablet</button>
+            <button type="button" class="px-dev-btn" data-width="375"
+                    style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
+                           padding:.25rem .65rem;cursor:pointer;font-size:.8rem;">📲 Mobil</button>
+        </div>
+        <button id="px-refresh-btn" type="button"
+                style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
+                       padding:.2rem .6rem;cursor:pointer;font-size:.85rem;"
+                title="Neu laden">⟳</button>
+        <a href="<?php echo htmlspecialchars(SITE_URL); ?>/" target="_blank" rel="noopener noreferrer"
+           style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
+                  padding:.2rem .6rem;text-decoration:none;font-size:.85rem;"
+           title="In neuem Tab öffnen">↗</a>
+    </div>
+    <div style="flex:1;overflow:auto;display:flex;justify-content:center;
+                align-items:flex-start;background:#475569;padding:4px;">
+        <iframe id="px-iframe" src=""
+                style="background:#fff;border:none;border-radius:2px;
+                       height:calc(100vh - 60px);width:1280px;max-width:100%;
+                       transition:width .25s ease;"
+                title="Theme Live-Vorschau"></iframe>
+    </div>
+    <div id="px-label"
+         style="padding:.25rem .875rem;background:#0d1528;font-size:.7rem;color:#475569;text-align:center;">
+        Desktop (1280 px)
     </div>
 </div>
 
@@ -857,5 +926,117 @@ $navGroups = [
         if (hid) { hid.value = v; }
         markChanged();
     };
+
+    // ── 1.5 Live-Vorschau Drawer ─────────────────────────────────────────────
+    const pxDrawer = document.getElementById('px-drawer');
+    const pxIframe = document.getElementById('px-iframe');
+    const pxLabel  = document.getElementById('px-label');
+    const pxDevBtns = document.querySelectorAll('.px-dev-btn');
+    const SITE_ORIGIN = <?php echo json_encode(rtrim(SITE_URL, '/') . '/'); ?>;
+
+    function pxOpen() {
+        if (!pxDrawer) return;
+        pxDrawer.style.display = 'flex';
+        pxDrawer.removeAttribute('aria-hidden');
+        if (pxIframe && !pxIframe.src) { pxIframe.src = SITE_ORIGIN; }
+    }
+    function pxClose() {
+        if (!pxDrawer) return;
+        pxDrawer.style.display = 'none';
+        pxDrawer.setAttribute('aria-hidden', 'true');
+    }
+    function pxRefresh() {
+        if (!pxIframe) return;
+        const s = pxIframe.src; pxIframe.src = ''; pxIframe.src = s;
+    }
+    function pxSetDevice(w) {
+        if (!pxIframe) return;
+        pxIframe.style.width = w + 'px';
+        const L = {1280:'Desktop (1280 px)', 768:'Tablet (768 px)', 375:'Mobil (375 px)'};
+        if (pxLabel) pxLabel.textContent = L[w] || (w + ' px');
+        pxDevBtns.forEach(b => {
+            const active = +b.dataset.width === w;
+            b.style.background = active ? '#1e293b' : 'none';
+            b.style.color = active ? '#e2e8f0' : '#94a3b8';
+        });
+    }
+
+    document.getElementById('preview-toggle-btn')?.addEventListener('click', pxOpen);
+    document.getElementById('px-close-btn')?.addEventListener('click', pxClose);
+    document.getElementById('px-refresh-btn')?.addEventListener('click', pxRefresh);
+    pxDevBtns.forEach(b => b.addEventListener('click', () => pxSetDevice(+b.dataset.width)));
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && pxDrawer && pxDrawer.style.display !== 'none') pxClose();
+    });
+
+    // ── 1.7 Farb-Palette Presets ─────────────────────────────────────────────
+    const COLOR_PRESETS = {
+        phinit:    {primary_color:'#1e3a5f',primary_dark:'#0f2340',primary_mid:'#1a3255',primary_light:'#2a4f7c',accent_color:'#e8a838',accent_hover:'#d4922a',accent_blue:'#4a9eff',accent_blue2:'#2d7dd2',accent_teal:'#0d9488',accent_teal_light:'#14b8a6',bg_header1:'#111827',bg_header2:'#162030',bg_header3:'#0e1a28',bg_primary:'#ffffff',bg_secondary:'#f1f5f9',bg_dark:'#0a0f1a',text_primary:'#1e293b',text_secondary:'#4a5568',text_muted:'#7a8898',text_nav:'#e2e8f0',text_nav_member:'#e2e8f0',text_nav_main:'#e2e8f0',text_nav_quicklinks:'#b0bec5',text_nav_dropdown:'#1e293b',logo_suffix_color:'#e8a838',border_light:'#dde3ea',footer_bg:'#0d1828',footer_bottom_bg:'#080d15',footer_border:'#2d7dd2',success_color:'#16a34a',error_color:'#dc2626',progress_bar_start:'#2d7dd2',progress_bar_end:'#e8a838'},
+        bluesteel: {primary_color:'#1a2744',primary_dark:'#0d1a33',primary_mid:'#162140',primary_light:'#233b6e',accent_color:'#3b82f6',accent_hover:'#2563eb',accent_blue:'#60a5fa',accent_blue2:'#3b82f6',accent_teal:'#0ea5e9',accent_teal_light:'#38bdf8',bg_header1:'#0d1a33',bg_header2:'#111f3d',bg_header3:'#091528',bg_primary:'#f8fafc',bg_secondary:'#eff6ff',bg_dark:'#060d1a',text_primary:'#0f172a',text_secondary:'#334155',text_muted:'#64748b',text_nav:'#e2e8f0',text_nav_member:'#e2e8f0',text_nav_main:'#e2e8f0',text_nav_quicklinks:'#94a3b8',text_nav_dropdown:'#0f172a',logo_suffix_color:'#60a5fa',border_light:'#e2e8f0',footer_bg:'#0b1630',footer_bottom_bg:'#060e1e',footer_border:'#3b82f6',success_color:'#22c55e',error_color:'#ef4444',progress_bar_start:'#3b82f6',progress_bar_end:'#60a5fa'},
+        greentech: {primary_color:'#064e3b',primary_dark:'#022c22',primary_mid:'#065f46',primary_light:'#047857',accent_color:'#10b981',accent_hover:'#059669',accent_blue:'#34d399',accent_blue2:'#10b981',accent_teal:'#0d9488',accent_teal_light:'#2dd4bf',bg_header1:'#022c22',bg_header2:'#0a3728',bg_header3:'#001a14',bg_primary:'#f0fdf4',bg_secondary:'#ecfdf5',bg_dark:'#01110b',text_primary:'#064e3b',text_secondary:'#065f46',text_muted:'#6b7280',text_nav:'#d1fae5',text_nav_member:'#d1fae5',text_nav_main:'#d1fae5',text_nav_quicklinks:'#6ee7b7',text_nav_dropdown:'#064e3b',logo_suffix_color:'#10b981',border_light:'#d1fae5',footer_bg:'#031c15',footer_bottom_bg:'#010e0a',footer_border:'#10b981',success_color:'#10b981',error_color:'#ef4444',progress_bar_start:'#10b981',progress_bar_end:'#2dd4bf'},
+        slate:     {primary_color:'#1e293b',primary_dark:'#0f172a',primary_mid:'#1c2944',primary_light:'#334155',accent_color:'#f59e0b',accent_hover:'#d97706',accent_blue:'#818cf8',accent_blue2:'#6366f1',accent_teal:'#06b6d4',accent_teal_light:'#22d3ee',bg_header1:'#0f172a',bg_header2:'#1e293b',bg_header3:'#0b1120',bg_primary:'#ffffff',bg_secondary:'#f8fafc',bg_dark:'#060c16',text_primary:'#0f172a',text_secondary:'#334155',text_muted:'#64748b',text_nav:'#f1f5f9',text_nav_member:'#f1f5f9',text_nav_main:'#f1f5f9',text_nav_quicklinks:'#94a3b8',text_nav_dropdown:'#1e293b',logo_suffix_color:'#f59e0b',border_light:'#e2e8f0',footer_bg:'#0c1527',footer_bottom_bg:'#060b15',footer_border:'#6366f1',success_color:'#22c55e',error_color:'#ef4444',progress_bar_start:'#6366f1',progress_bar_end:'#f59e0b'},
+        ruby:      {primary_color:'#7f1d1d',primary_dark:'#450a0a',primary_mid:'#6b1b1b',primary_light:'#991b1b',accent_color:'#ef4444',accent_hover:'#dc2626',accent_blue:'#f87171',accent_blue2:'#ef4444',accent_teal:'#f59e0b',accent_teal_light:'#fbbf24',bg_header1:'#1c0a0a',bg_header2:'#280d0d',bg_header3:'#140707',bg_primary:'#fffbfb',bg_secondary:'#fef2f2',bg_dark:'#0a0404',text_primary:'#1c0707',text_secondary:'#450a0a',text_muted:'#6b7280',text_nav:'#fee2e2',text_nav_member:'#fee2e2',text_nav_main:'#fee2e2',text_nav_quicklinks:'#fca5a5',text_nav_dropdown:'#450a0a',logo_suffix_color:'#f59e0b',border_light:'#fecaca',footer_bg:'#1a0707',footer_bottom_bg:'#0d0404',footer_border:'#ef4444',success_color:'#16a34a',error_color:'#dc2626',progress_bar_start:'#ef4444',progress_bar_end:'#f59e0b'}
+    };
+
+    document.querySelectorAll('.color-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const preset = COLOR_PRESETS[btn.dataset.preset];
+            if (!preset) return;
+            Object.entries(preset).forEach(([key, val]) => {
+                const cp  = document.getElementById('f_colors_' + key);
+                const txt = document.getElementById('f_colors_' + key + '_txt');
+                const hid = document.getElementById('colors_' + key);
+                if (cp)  cp.value  = val;
+                if (txt) txt.value = val;
+                if (hid) hid.value = val;
+            });
+            markChanged();
+        });
+    });
+
+    // ── 1.6 Font-Preview Widget ───────────────────────────────────────────────
+    (function initFontPreviews() {
+        const loaded = new Set();
+        const GF = {
+            'barlow':'Barlow','inter':'Inter','roboto':'Roboto','open-sans':'Open+Sans',
+            'lato':'Lato','montserrat':'Montserrat','poppins':'Poppins',
+            'source-sans':'Source+Sans+3','nunito':'Nunito',
+            'barlow-condensed':'Barlow+Condensed','roboto-condensed':'Roboto+Condensed',
+            'oswald':'Oswald','rajdhani':'Rajdhani','exo2':'Exo+2',
+            'jetbrains-mono':'JetBrains+Mono','fira-code':'Fira+Code','source-code':'Source+Code+Pro'
+        };
+        const CN = {
+            'barlow':'Barlow','inter':'Inter','roboto':'Roboto','open-sans':'"Open Sans"',
+            'lato':'Lato','montserrat':'Montserrat','poppins':'Poppins',
+            'source-sans':'"Source Sans 3"','nunito':'Nunito','system':'system-ui,sans-serif',
+            'barlow-condensed':'"Barlow Condensed"','roboto-condensed':'"Roboto Condensed"',
+            'oswald':'Oswald','rajdhani':'Rajdhani','exo2':'"Exo 2"',
+            'jetbrains-mono':'"JetBrains Mono",monospace','fira-code':'"Fira Code",monospace',
+            'source-code':'"Source Code Pro",monospace','cascadia':'"Cascadia Code",monospace',
+            'system-mono':'monospace'
+        };
+        function loadFont(slug) {
+            if (!GF[slug] || loaded.has(slug)) return;
+            loaded.add(slug);
+            const l = document.createElement('link');
+            l.rel  = 'stylesheet';
+            l.href = 'https://fonts.googleapis.com/css2?family=' + GF[slug] + ':wght@400;700&display=swap';
+            document.head.appendChild(l);
+        }
+        ['f_typography_font_family_ui','f_typography_font_family_brand','f_typography_font_family_code'].forEach(fid => {
+            const sel = document.getElementById(fid);
+            if (!sel) return;
+            const prev = document.createElement('div');
+            prev.style.cssText = 'margin-top:.4rem;padding:.4rem .7rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;font-size:1rem;color:#1e293b;';
+            prev.textContent   = 'AaBbCc 0123 – PowerShell & M365 Administration';
+            sel.after(prev);
+            (function update(v) { loadFont(v); prev.style.fontFamily = CN[v] || 'inherit'; })(sel.value);
+            sel.addEventListener('change', e => {
+                loadFont(e.target.value);
+                prev.style.fontFamily = CN[e.target.value] || 'inherit';
+            });
+        });
+    })();
+
 })();
 </script>

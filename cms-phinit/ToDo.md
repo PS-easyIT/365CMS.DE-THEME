@@ -1,7 +1,7 @@
 # cms-phinit Theme – Umbau-Plan (365CMS v2.5.4 Migration)
 
 > Erstellt: 2026-03-08  
-> Zuletzt aktualisiert: 2025-07-16  
+> Zuletzt aktualisiert: 2026-03-08  
 > Ziel: Theme-Modernisierung, Customizer-Redesign, Hook-Standardisierung
 
 ---
@@ -25,9 +25,9 @@
 - [x] 1.2 Tabler-CSS-Klassen verwenden statt eigene Inline-Styles
 - [ ] 1.3 Neue Tabs: `seo` + `performance`
 - [x] 1.4 Export/Import-Funktion (JSON) über ThemeCustomizer-API
-- [ ] 1.5 Live-Preview-Iframe mit Device-Umschalter (Desktop/Tablet/Mobile)
-- [ ] 1.6 Font-Preview-Widget für Typografie-Tab
-- [ ] 1.7 Farb-Palette-Preset-Auswahl (Quick-Theme-Presets)
+- [x] 1.5 Live-Preview-Iframe mit Device-Umschalter (Desktop/Tablet/Mobile) → Drawer-Panel (fixed right, per JS, Esc zum Schließen)
+- [x] 1.6 Font-Preview-Widget für Typografie-Tab → Vorschau-Div nach jedem Font-Select (Google Fonts on-demand laden)
+- [x] 1.7 Farb-Palette-Preset-Auswahl → 5 Presets (Phinit, Blue Steel, Green Tech, Slate Dark, Ruby Red) als Buttons im Farben-Tab
 - [x] 1.9 Keyboard-Shortcut (Strg+S) für Speichern
 - [x] 1.10 Unsaved-Changes-Warnung bei Navigation
 
@@ -69,9 +69,9 @@
 
 ### Phase 1 (zurückgestellt)
 - [x] 1.3 Neue Tabs: `seo` + `performance` im Customizer
-- [ ] 1.5 Live-Preview-Iframe mit Device-Umschalter
-- [ ] 1.6 Font-Preview-Widget für Typografie-Tab
-- [ ] 1.7 Farb-Palette-Preset-Auswahl
+- [x] 1.5 Live-Preview-Iframe mit Device-Umschalter
+- [x] 1.6 Font-Preview-Widget für Typografie-Tab
+- [x] 1.7 Farb-Palette-Preset-Auswahl
 
 ### Zukünftige Verbesserungen
 - [~] 6.1 `partials/post-card.php` in `search.php` integrieren – Mixed-Type Suchergebnisse (post/page/company/event/speakers) erfordern eigenes List-Layout; post-card Partial passt strukturell nicht (kein Bild, anderes Markup), daher N/A
@@ -87,4 +87,29 @@
 - [x] B3 `member/comments.php`: `ORDER BY c.created_at` → `c.post_date` (korrekte Spalte laut SchemaManager); Template-Feld `$c['created_at']` → `$c['post_date']`; `$comments`-Cast auf Array
 - [x] B4 `member/feeds.php`: `WHERE status = 'active'` → `WHERE is_active = 1`; `ORDER BY title` → `ORDER BY name`; `$channels` + `$subRows` auf Array gecastet; Template `$ch['title']` → `$ch['name']`
 - [x] B5 `admin/customizer.php`: Tabs `seo` + `performance` fehlten in `$navGroups` und `$tabGroups` → ergänzt unter „⚙️ Sonstiges"
+
+## Neue Features (2026-03-08)
+- [x] F1 `admin/customizer.php`: Live-Vorschau-Drawer (fixed-right, Iframe, Device-Switcher Desktop/Tablet/Mobil, Esc-Taste, Refresh-Button)
+- [x] F2 `admin/customizer.php`: Farb-Palette Schnell-Presets im Farben-Tab (5 Presets: Phinit Standard, Blue Steel, Green Tech, Slate Dark, Ruby Red)
+- [x] F3 `admin/customizer.php`: Font-Preview-Widget im Typografie-Tab (Google Fonts on-demand, Live-Text unter jedem Font-Select)
+- [x] F4 Version bump → `1.3.0` (theme.json, update.json, functions.php)
+
+## Bugfixes (2026-03-08) – Runde 2
+- [x] B6 `member/dashboard.php`: `$recentComments` + `$recentFavorites` ohne `array_map`-Cast; `ORDER BY c.created_at` → `c.post_date`; Template `$c['created_at']` → `$c['post_date']`
+- [x] B7 `member/newsletter.php`: `$lists` + `$subRows` ohne Cast; `$sr['list_id']` → Fatal Error → beides `array_map(fn($r)=>(array)$r, ...)`
+- [x] B8 `member/forum.php`: `$threads` + `$myThreads` ohne Cast → beides `array_map`
+- [x] B9 `member/security.php`: Template nutzte bereits `is_object($session) ? (array)$session : ...` → kein Fix nötig ✓
+
+---
+
+## Neue Features (2026-03-09)
+- [x] F5 `functions.php – SEO-Customizer-Anbindung vollständig`: `<meta name="robots">` aus `seo.meta_robots` + `noindex_search`/`noindex_404`; `canonical_self` Toggle; `og_site_name`; `twitter_card_type`; `og_type_default`; `structured_data` Toggle in `outputSchemaOrg()`; `breadcrumb_schema` Toggle in `outputBreadcrumb()`
+- [x] F6 `functions.php – DNS-Prefetch`: `outputPreconnect()` erweitert um `dns_prefetch` Toggle + `<link rel="dns-prefetch">` für Google Fonts + eigene URLs
+- [x] F7 `style.css – Dark Mode Member- & Auth-Bereich`: `.auth-card`, `.auth-wrapper`, `.member-sidebar`, `.member-nav-link`, `.search-result-item`, `.member-content-card` ergänzt
+- [x] F8 `style.css – Version im Header auf 1.4.0`
+
+## Versionsbump (2026-03-09)
+- [x] V1 `theme.json` Version → 1.4.0
+- [x] V2 `functions.php` `CMS_PHINIT_THEME_VERSION` → 1.4.0
+- [x] V3 `update.json` Version + release_date + Changelog-Eintrag v1.4.0
 

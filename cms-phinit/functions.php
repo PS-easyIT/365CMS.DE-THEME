@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('CMS_PHINIT_THEME_VERSION', '1.2.0');
+define('CMS_PHINIT_THEME_VERSION', '1.4.0');
 define('CMS_PHINIT_THEME_DIR',     THEME_PATH . 'cms-phinit/');
 define('CMS_PHINIT_THEME_URL',     rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
@@ -132,6 +132,28 @@ final class CMS_Phinit_Theme
         $ogType    = 'website';
         $canonical = $siteUrl . $uri;
 
+        // SEO-Customizer-Einstellungen laden
+        $cz = null;
+        try { $cz = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable) {}
+
+        $metaRobots    = $cz ? (string)$cz->get('seo', 'meta_robots',       'index,follow')        : 'index,follow';
+        $canonicalSelf = $cz ? filter_var($cz->get('seo', 'canonical_self',  true), FILTER_VALIDATE_BOOLEAN) : true;
+        $ogSiteName    = $cz ? (string)$cz->get('seo', 'og_site_name',       '')                   : '';
+        $ogTypeDefault = $cz ? (string)$cz->get('seo', 'og_type_default',    'website')            : 'website';
+        $twitterCard   = $cz ? (string)$cz->get('seo', 'twitter_card_type',  'summary_large_image') : 'summary_large_image';
+        $noindexSearch = $cz ? filter_var($cz->get('seo', 'noindex_search',  true), FILTER_VALIDATE_BOOLEAN) : true;
+        $noindex404    = $cz ? filter_var($cz->get('seo', 'noindex_404',     true), FILTER_VALIDATE_BOOLEAN) : true;
+
+        $ogType = $ogTypeDefault;
+
+        // Robots: Überschreibungen für Sonderseiten
+        $httpCode = http_response_code();
+        if ($noindex404 && $httpCode === 404) {
+            $metaRobots = 'noindex,follow';
+        } elseif ($noindexSearch && $uri === '/search') {
+            $metaRobots = 'noindex,follow';
+        }
+
         // Post-spezifische OG-Daten laden
         if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
             try {
@@ -144,7 +166,8 @@ final class CMS_Phinit_Theme
                 if ($p) {
                     $p = is_object($p) ? (array)$p : (array)$p;
                     $ogTitle = ($p['title'] ?? '') . ' – ' . $siteTitle;
-                    $ogDesc  = mb_substr(strip_tags($p['excerpt'] ?? $sitDesc), 0, 200);
+                    $ogDesc  = mb_substr(function_exists('phinit_excerpt_plain_text') ? phinit_excerpt_plain_text($p['excerpt'] ?? '') : strip_tags($p['excerpt'] ?? ''), 0, 200);
+                    if (empty($ogDesc)) { $ogDesc = mb_substr($sitDesc, 0, 200); }
                     $ogImg   = $p['featured_image'] ?? '';
                     $ogType  = 'article';
                 }
@@ -152,26 +175,33 @@ final class CMS_Phinit_Theme
         }
 
         // Fallback OG-Image aus Customizer
-        if (empty($ogImg)) {
-            try { $ogImg = (string)\CMS\Services\ThemeCustomizer::instance()->get('advanced', 'og_default_image', ''); } catch (\Throwable) {}
+        if (empty($ogImg) && $cz) {
+            try { $ogImg = (string)$cz->get('advanced', 'og_default_image', ''); } catch (\Throwable) {}
         }
 
         // theme-color aus Customizer
         $themeColor = '#1e3a5f';
         try {
-            $tc = \CMS\Services\ThemeCustomizer::instance()->get('colors', 'primary_color', '#1e3a5f');
-            if (!empty($tc)) { $themeColor = $tc; }
+            if ($cz) {
+                $tc = $cz->get('colors', 'primary_color', '#1e3a5f');
+                if (!empty($tc)) { $themeColor = $tc; }
+            }
         } catch (\Throwable) {}
+
+        $ogSiteFinal = !empty($ogSiteName) ? $ogSiteName : $siteTitle;
 
         // Basis-Meta
         echo '<meta name="description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
+        echo '<meta name="robots" content="' . htmlspecialchars($metaRobots, ENT_QUOTES) . '">' . "\n";
         echo '<meta name="theme-color" content="' . htmlspecialchars($themeColor, ENT_QUOTES) . '">' . "\n";
-        echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
+        if ($canonicalSelf) {
+            echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
+        }
         echo '<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($siteTitle, ENT_QUOTES) . ' RSS" href="' . htmlspecialchars($siteUrl . '/feed', ENT_QUOTES) . '">' . "\n";
 
         // Open Graph
         echo '<meta property="og:type" content="' . htmlspecialchars($ogType, ENT_QUOTES) . '">' . "\n";
-        echo '<meta property="og:site_name" content="' . htmlspecialchars($siteTitle, ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:site_name" content="' . htmlspecialchars($ogSiteFinal, ENT_QUOTES) . '">' . "\n";
         echo '<meta property="og:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
         echo '<meta property="og:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
         echo '<meta property="og:url" content="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
@@ -180,7 +210,8 @@ final class CMS_Phinit_Theme
         }
 
         // Twitter Card
-        echo '<meta name="twitter:card" content="' . (!empty($ogImg) ? 'summary_large_image' : 'summary') . '">' . "\n";
+        $twitterCardFinal = (!empty($ogImg) && $twitterCard === 'summary_large_image') ? 'summary_large_image' : $twitterCard;
+        echo '<meta name="twitter:card" content="' . htmlspecialchars($twitterCardFinal, ENT_QUOTES) . '">' . "\n";
         echo '<meta name="twitter:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
         echo '<meta name="twitter:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
         if (!empty($ogImg)) {
@@ -192,6 +223,13 @@ final class CMS_Phinit_Theme
 
     public function outputSchemaOrg(): void
     {
+        // structured_data Toggle
+        try {
+            if (!filter_var(\CMS\Services\ThemeCustomizer::instance()->get('seo', 'structured_data', true), FILTER_VALIDATE_BOOLEAN)) {
+                return;
+            }
+        } catch (\Throwable) {}
+
         $tm        = \CMS\ThemeManager::instance();
         $siteTitle = $tm->getSiteTitle() ?? '';
         $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
@@ -329,10 +367,14 @@ final class CMS_Phinit_Theme
             $ldItems[] = ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $c['label'], 'item' => $c['url']];
         }
         $ldItems[] = ['@type' => 'ListItem', 'position' => count($ldItems) + 1, 'name' => strip_tags($title), 'item' => $siteUrl . $uri];
-        echo '<script type="application/ld+json">' . json_encode(
-            ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $ldItems],
-            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-        ) . '</script>' . "\n";
+        $bcSchema = true;
+        try { $bcSchema = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('seo', 'breadcrumb_schema', true), FILTER_VALIDATE_BOOLEAN); } catch (\Throwable) {}
+        if ($bcSchema) {
+            echo '<script type="application/ld+json">' . json_encode(
+                ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $ldItems],
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            ) . '</script>' . "\n";
+        }
 
         // HTML Breadcrumb
         echo '<nav class="breadcrumb-nav" aria-label="Breadcrumb">' . "\n";
@@ -370,11 +412,38 @@ final class CMS_Phinit_Theme
 
     public function outputPreconnect(): void
     {
-        if ($this->isLocalFontsEnabled()) {
-            return; // Kein externer Verbindungsaufbau nötig
+        $localFonts = $this->isLocalFontsEnabled();
+
+        // DNS-Prefetch (kann auch ohne Remote-Fonts aktiv sein)
+        $dnsPrefetch = true;
+        try { $dnsPrefetch = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('performance', 'dns_prefetch', true), FILTER_VALIDATE_BOOLEAN); } catch (\Throwable) {}
+
+        if (!$localFonts) {
+            // Preconnect für Google Fonts
+            $preconnectFonts = true;
+            try { $preconnectFonts = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('performance', 'preconnect_fonts', true), FILTER_VALIDATE_BOOLEAN); } catch (\Throwable) {}
+            if ($preconnectFonts) {
+                echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+                echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+                if ($dnsPrefetch) {
+                    echo '<link rel="dns-prefetch" href="https://fonts.googleapis.com">' . "\n";
+                    echo '<link rel="dns-prefetch" href="https://fonts.gstatic.com">' . "\n";
+                }
+            }
         }
-        echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
-        echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+
+        // Zusätzliche Preconnect + DNS-Prefetch URLs aus Customizer
+        if ($dnsPrefetch) {
+            try {
+                $extra = (string)\CMS\Services\ThemeCustomizer::instance()->get('performance', 'preconnect_extra', '');
+                foreach (array_filter(array_map('trim', explode("\n", $extra))) as $extraUrl) {
+                    $safeUrl = filter_var($extraUrl, FILTER_VALIDATE_URL) ? htmlspecialchars($extraUrl, ENT_QUOTES) : '';
+                    if (!empty($safeUrl)) {
+                        echo '<link rel="dns-prefetch" href="' . $safeUrl . '">' . "\n";
+                    }
+                }
+            } catch (\Throwable) {}
+        }
     }
 
     /* ── Fonts laden: Local-First (Font Manager) oder Google ────── */
@@ -622,7 +691,9 @@ final class CMS_Phinit_Theme
 
         // ── Posts ──
         $heroH = $c->get('posts', 'post_hero_height', '');
-        if (!empty($heroH)) { $css .= "    --post-hero-height: {$heroH}px;\n"; }
+        $heroW = $c->get('posts', 'post_hero_width', '');
+        if (!empty($heroH)) { $css .= "    --post-hero-h: {$heroH}px;\n"; }
+        if (!empty($heroW)) { $css .= "    --post-hero-w: {$heroW}px;\n"; }
 
         $css .= "}\n";
 
@@ -672,16 +743,24 @@ final class CMS_Phinit_Theme
 
         $css .= "#scroll-progress { background: linear-gradient(90deg, var(--progress-bar-start, #2d7dd2), var(--progress-bar-end, #e8a838)); }\n";
 
-        $css .= ".post-hero-img { max-height: var(--post-hero-height, 340px); }\n";
+        // Beitragsbild-Dimensionen aus Customizer
+        if (!empty($heroW)) {
+            $w = max(60, (int)$heroW);
+            $css .= ".post-hero-img { flex: 0 0 {$w}px !important; width: {$w}px !important; }\n";
+        }
+        if (!empty($heroH)) {
+            $h = max(80, (int)$heroH);
+            $css .= ".post-hero-img { min-height: {$h}px; max-height: {$h}px; }\n";
+        }
 
-        // Artikel-Thumbnail Dimensionen als CSS-Variablen
+        // Artikel-Thumbnail Dimensionen
         $thumbW = $c->get('homepage', 'article_thumb_width', '');
         $thumbH = $c->get('homepage', 'article_thumb_height', '');
         if (!empty($thumbW) || !empty($thumbH)) {
-            $css .= ":root {\n";
-            if (!empty($thumbW)) { $css .= "    --article-thumb-w: {$thumbW}px;\n"; }
-            if (!empty($thumbH)) { $css .= "    --article-thumb-h: {$thumbH}px;\n"; }
-            $css .= "}\n";
+            $w = !empty($thumbW) ? max(60, (int)$thumbW) : 162;
+            $h = !empty($thumbH) ? max(60, (int)$thumbH) : 215;
+            $css .= ".article-thumb, .article-thumb-placeholder { flex: 0 0 {$w}px !important; width: {$w}px !important; height: {$h}px !important; }\n";
+            $css .= ".article-thumb img { width: {$w}px !important; height: {$h}px !important; }\n";
         }
 
         // ── Titel-Schriftgrößen ──
@@ -690,6 +769,12 @@ final class CMS_Phinit_Theme
 
         $tileTitleFs = (int)($c->get('typography', 'tile_title_fontsize', 15) ?: 15);
         $css .= ".post-card-title { font-size: {$tileTitleFs}px !important; }\n";
+
+        $postTitleFs = (int)($c->get('posts', 'post_title_fontsize', 28) ?: 28);
+        $css .= ".post-title { font-size: {$postTitleFs}px !important; }\n";
+
+        $pageTitleFs = (int)($c->get('pages', 'page_title_fontsize', 28) ?: 28);
+        $css .= ".page-header-block h1 { font-size: {$pageTitleFs}px !important; }\n";
 
         // ── Excerpt-Schriftgrößen ──
         $excerptFs = (int)($c->get('typography', 'article_excerpt_fontsize', 13) ?: 13);
@@ -940,5 +1025,52 @@ if (!function_exists('phinit_reading_time')) {
         }
         $wordCount = str_word_count(strip_tags($content));
         return max(1, (int)round($wordCount / $wpm));
+    }
+}
+
+if (!function_exists('phinit_excerpt_plain_text')) {
+    /**
+     * Wandelt HTML oder Editor.js-JSON in reinen Klartext für Textauszüge um.
+     * Nutzt EditorJsRenderer falls verfügbar, fällt auf Block-Extraktion zurück.
+     */
+    function phinit_excerpt_plain_text(string $content): string
+    {
+        $content = trim($content);
+        if ($content === '') {
+            return '';
+        }
+        $decoded = json_decode($content, true);
+        if (is_array($decoded) && isset($decoded['blocks']) && is_array($decoded['blocks'])) {
+            $html = '';
+            if (class_exists('\\CMS\\Services\\EditorJsRenderer')) {
+                try {
+                    $html = \CMS\Services\EditorJsRenderer::getInstance()->render($decoded);
+                } catch (\Throwable) {}
+            }
+            if ($html !== '') {
+                $content = $html;
+            } else {
+                // Fallback: Text-Felder aus Blöcken extrahieren
+                $parts = [];
+                foreach ($decoded['blocks'] as $block) {
+                    if (!is_array($block)) { continue; }
+                    $data = $block['data'] ?? null;
+                    if (!is_array($data)) { continue; }
+                    foreach (['text', 'caption', 'message', 'title'] as $key) {
+                        if (!empty($data[$key]) && is_string($data[$key])) {
+                            $parts[] = $data[$key];
+                        }
+                    }
+                    if (!empty($data['items']) && is_array($data['items'])) {
+                        foreach ($data['items'] as $item) {
+                            if (is_string($item) && trim($item) !== '') { $parts[] = $item; }
+                        }
+                    }
+                }
+                $content = implode(' ', $parts);
+            }
+        }
+        $text = trim(html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        return preg_replace('/\s+/u', ' ', $text) ?? '';
     }
 }

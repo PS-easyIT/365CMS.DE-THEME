@@ -16,13 +16,14 @@ $siteUrl = SITE_URL;
 try {
     $_pc = \CMS\Services\ThemeCustomizer::instance();
     $_pg_showTitle   = filter_var($_pc->get('pages', 'show_page_title',        true),  FILTER_VALIDATE_BOOLEAN);
+    $_pg_showHero    = filter_var($_pc->get('pages', 'show_page_hero',         true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_showDate    = filter_var($_pc->get('pages', 'show_page_updated_date', true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_layout      = (string)$_pc->get('pages', 'page_layout', 'full');     // full | narrow | two-col
     $_pg_showSidebar = filter_var($_pc->get('pages', 'show_page_sidebar',      true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_sidebarNav  = filter_var($_pc->get('pages', 'page_sidebar_show_nav',  true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_showToc     = filter_var($_pc->get('pages', 'show_page_toc',          false), FILTER_VALIDATE_BOOLEAN);
 } catch (\Throwable $_e) {
-    $_pg_showTitle = true; $_pg_showDate = true; $_pg_layout = 'full';
+    $_pg_showTitle = true; $_pg_showHero = true; $_pg_showDate = true; $_pg_layout = 'full';
     $_pg_showSidebar = true; $_pg_sidebarNav = true; $_pg_showToc = false;
 }
 
@@ -92,8 +93,16 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
     <!-- Seiten-Titel -->
     <?php if ($_pg_showTitle): ?>
-    <div class="page-header-block" data-anim>
-        <h1><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></h1>
+    <div class="page-header-block<?php echo (!empty($page['featured_image']) && $_pg_showHero) ? ' page-header-block--with-image' : ''; ?>" data-anim>
+        <?php if (!empty($page['featured_image']) && $_pg_showHero): ?>
+        <img class="page-hero-img"
+             src="<?php echo htmlspecialchars($page['featured_image'], ENT_QUOTES); ?>"
+             alt="<?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?>"
+             loading="eager">
+        <?php endif; ?>
+        <div class="page-header-body">
+            <h1><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></h1>
+        </div>
     </div>
     <?php endif; ?>
 

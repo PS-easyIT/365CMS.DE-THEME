@@ -1,13 +1,41 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.5.4",
-  "release_date": "2025-07-16",
+  "release_date": "2026-03-09",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.4.0",
+      "date": "2026-03-09",
+      "changes": [
+        "functions.php: meta_robots-Tag aus Customizer SEO.meta_robots wird jetzt korrekt ausgegeben",
+        "functions.php: canonical_self-Toggle honoriert (Canonical-Link nur wenn aktiviert)",
+        "functions.php: og_site_name, og_type_default, twitter_card_type aus Customizer gelesen",
+        "functions.php: noindex_search / noindex_404 Toggles greifen in outputMetaTags()",
+        "functions.php: outputSchemaOrg() prueft jetzt structured_data-Toggle (SEO-Tab)",
+        "functions.php: outputBreadcrumb() JSON-LD nur wenn breadcrumb_schema-Toggle aktiv",
+        "functions.php: outputPreconnect() implementiert dns_prefetch-Toggle (Performance-Tab)",
+        "style.css: Dark Mode fuer .auth-card, .auth-wrapper, .auth-input, .auth-alert--*",
+        "style.css: Dark Mode fuer .member-sidebar, .member-nav-link, .member-content-card",
+        "style.css: Dark Mode fuer .search-result-item, .page-content, .post-body"
+      ]
+    },
+    {
+      "version": "1.3.0",
+      "date": "2026-03-08",
+      "changes": [
+        "admin/customizer.php: Live-Vorschau Drawer (fixed-right Iframe-Panel, Device-Switcher Desktop/Tablet/Mobil, Esc-Taste, Refresh)",
+        "admin/customizer.php: Farb-Palette Schnell-Presets im Farben-Tab (Phinit Standard, Blue Steel, Green Tech, Slate Dark, Ruby Red)",
+        "admin/customizer.php: Font-Preview-Widget im Typografie-Tab (Google Fonts on-demand, Live-Vorschau-Text unter jedem Font-Select)",
+        "member/dashboard.php: stdClass-Fix (array_map); ORDER BY c.created_at -> c.post_date; Template-Feld angepasst",
+        "member/newsletter.php: stdClass-Fix fuer $lists und $subRows (array_map); $sr['list_id'] Fatal Error behoben",
+        "member/forum.php: stdClass-Fix fuer $threads und $myThreads (array_map)"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2025-07-16",

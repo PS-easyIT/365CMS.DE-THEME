@@ -80,10 +80,11 @@ if ($_hasComments && $_hasPosts) {
              FROM {$prefix}comments c
              LEFT JOIN {$prefix}posts p ON c.post_id = p.id
              WHERE c.user_id = ?
-             ORDER BY c.created_at DESC
+             ORDER BY c.post_date DESC
              LIMIT 5",
             [(int)$currentUser->id]
         ) ?: [];
+        $recentComments = array_map(fn($r) => (array)$r, $recentComments);
     } catch (\Throwable $e) {}
 }
 
@@ -100,6 +101,7 @@ if ($_hasFavorites && $_hasPosts) {
              LIMIT 5",
             [(int)$currentUser->id]
         ) ?: [];
+        $recentFavorites = array_map(fn($r) => (array)$r, $recentFavorites);
     } catch (\Throwable $e) {}
 }
 
@@ -231,7 +233,7 @@ include $themeDir . 'header.php';
                     <?php foreach ($recentComments as $c): ?>
                     <li>
                         <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($c['post_slug'] ?? ''), ENT_QUOTES); ?>"><?php echo htmlspecialchars($c['post_title'] ?? 'Beitrag', ENT_QUOTES); ?></a>
-                        <span class="member-activity-date"><?php echo date('d.m.Y', strtotime($c['created_at'])); ?></span>
+                        <span class="member-activity-date"><?php echo date('d.m.Y', strtotime($c['post_date'] ?? '')); ?></span>
                     </li>
                     <?php endforeach; ?>
                 </ul>

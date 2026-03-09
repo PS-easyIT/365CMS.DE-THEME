@@ -38,10 +38,14 @@ $show_cat     = isset($show_cat)     ? (bool)$show_cat     : true;
 $show_date    = isset($show_date)    ? (bool)$show_date    : true;
 $show_rt      = isset($show_rt)      ? (bool)$show_rt      : true;
 
-// Excerpt aufbereiten
-$_pc_excerpt = $card['excerpt'] ?? '';
+// Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
+$_pc_excerpt = function_exists('phinit_excerpt_plain_text')
+    ? phinit_excerpt_plain_text($card['excerpt'] ?? '')
+    : strip_tags($card['excerpt'] ?? '');
 if (empty(trim($_pc_excerpt)) && !empty($card['content'])) {
-    $_pc_excerpt = mb_strimwidth(strip_tags($card['content']), 0, $exc_len, '…');
+    $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
+        ? phinit_excerpt_plain_text($card['content'])
+        : strip_tags($card['content']);
 }
 $_pc_excerpt = mb_strimwidth($_pc_excerpt, 0, $exc_len, '…');
 

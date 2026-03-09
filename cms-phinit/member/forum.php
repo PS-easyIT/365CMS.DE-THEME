@@ -36,7 +36,7 @@ $myReplies   = 0;
 
 if ($hasForumPlugin) {
     // Neueste Threads
-    $threads = $db->get_results(
+    $threads = array_map(fn($r) => (array)$r, $db->get_results(
         "SELECT t.*, u.username AS author_name,
                 (SELECT COUNT(*) FROM {$prefix}forum_replies r WHERE r.thread_id = t.id) AS reply_count
          FROM {$prefix}forum_threads t
@@ -44,10 +44,10 @@ if ($hasForumPlugin) {
          WHERE t.status = 'open'
          ORDER BY t.updated_at DESC
          LIMIT 20"
-    ) ?: [];
+    ) ?: []);
 
     // Eigene Threads
-    $myThreads = $db->get_results(
+    $myThreads = array_map(fn($r) => (array)$r, $db->get_results(
         "SELECT t.*,
                 (SELECT COUNT(*) FROM {$prefix}forum_replies r WHERE r.thread_id = t.id) AS reply_count
          FROM {$prefix}forum_threads t
@@ -55,7 +55,7 @@ if ($hasForumPlugin) {
          ORDER BY t.updated_at DESC
          LIMIT 20",
         [(int)$currentUser->id]
-    ) ?: [];
+    ) ?: []);
 
     // Eigene Antworten
     $myReplies = (int)$db->get_var(
