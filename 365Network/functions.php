@@ -287,7 +287,10 @@ HTML;
         if ($useLocal && $useLocal->option_value === '1') {
             // Use local CSS if available
             if (file_exists(ASSETS_PATH . 'css/local-fonts.css')) {
-                echo '<link rel="stylesheet" href="' . SITE_URL . '/assets/css/local-fonts.css">' . "\n";
+                $localFontsUrl = function_exists('cms_asset_url')
+                    ? cms_asset_url('css/local-fonts.css')
+                    : SITE_URL . '/assets/css/local-fonts.css';
+                echo '<link rel="stylesheet" href="' . htmlspecialchars($localFontsUrl, ENT_QUOTES, 'UTF-8') . '">' . "\n";
                 // Preconnect not needed for local, but maybe keep for other external?
                 // For now, we return, to avoid Google request
                 return;

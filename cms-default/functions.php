@@ -87,7 +87,9 @@ class MeridianCMSDefaultTheme
         // 1. CMS-weit: Local Fonts (DSGVO) haben Vorrang
         if ($this->isLocalFontsEnabled()) {
             $localCssPath = defined('ASSETS_PATH') ? ASSETS_PATH . 'css/local-fonts.css' : '';
-            $localCssUrl  = defined('SITE_URL')    ? SITE_URL    . '/assets/css/local-fonts.css' : '';
+            $localCssUrl  = function_exists('cms_asset_url')
+                ? cms_asset_url('css/local-fonts.css')
+                : (defined('SITE_URL') ? SITE_URL . '/assets/css/local-fonts.css' : '');
             if ($localCssPath && file_exists($localCssPath) && $localCssUrl) {
                 echo '<link rel="stylesheet" href="' . htmlspecialchars($localCssUrl, ENT_QUOTES, 'UTF-8') . '">' . "\n";
             }

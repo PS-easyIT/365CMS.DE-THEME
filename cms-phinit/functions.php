@@ -71,6 +71,10 @@ final class CMS_Phinit_Theme
         $version = !empty(trim((string)$cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
         echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'style.css?v=' . $version . '">' . "\n";
 
+        $photoSwipeCssUrl = function_exists('cms_asset_url')
+            ? cms_asset_url('photoswipe/photoswipe.css')
+            : (defined('SITE_URL') ? SITE_URL . '/assets/photoswipe/photoswipe.css' : '');
+
         // PhotoSwipe CSS (CMS-Asset, nur wenn per Customizer aktiv)
         $pswpEnabled = true;
         try {
@@ -80,8 +84,8 @@ final class CMS_Phinit_Theme
             );
         } catch (\Throwable $_e) {}
         $pswpCss = defined('ASSETS_PATH') ? ASSETS_PATH . 'photoswipe/photoswipe.css' : '';
-        if ($pswpEnabled && !empty($pswpCss) && file_exists($pswpCss)) {
-            echo '<link rel="stylesheet" href="' . htmlspecialchars(SITE_URL . '/assets/photoswipe/photoswipe.css?' . filemtime($pswpCss), ENT_QUOTES) . '">' . "\n";
+        if ($pswpEnabled && !empty($pswpCss) && file_exists($pswpCss) && $photoSwipeCssUrl !== '') {
+            echo '<link rel="stylesheet" href="' . htmlspecialchars($photoSwipeCssUrl, ENT_QUOTES) . '">' . "\n";
         }
 
         // Phinit-spezifisches CSS aus Customizer generieren
@@ -102,6 +106,10 @@ final class CMS_Phinit_Theme
         $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
         echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '" defer></script>' . "\n";
 
+        $photoSwipeInitUrl = function_exists('cms_asset_url')
+            ? cms_asset_url('js/photoswipe-init.js')
+            : (defined('SITE_URL') ? SITE_URL . '/assets/js/photoswipe-init.js' : '');
+
         // PhotoSwipe Lightbox (CMS-Asset, nur wenn per Customizer aktiv)
         $pswpEnabled = true;
         try {
@@ -111,8 +119,8 @@ final class CMS_Phinit_Theme
             );
         } catch (\Throwable $_e) {}
         $pswpJs = defined('ASSETS_PATH') ? ASSETS_PATH . 'js/photoswipe-init.js' : '';
-        if ($pswpEnabled && !empty($pswpJs) && file_exists($pswpJs)) {
-            echo '<script type="module" src="' . htmlspecialchars(SITE_URL . '/assets/js/photoswipe-init.js?' . filemtime($pswpJs), ENT_QUOTES) . '"></script>' . "\n";
+        if ($pswpEnabled && !empty($pswpJs) && file_exists($pswpJs) && $photoSwipeInitUrl !== '') {
+            echo '<script type="module" src="' . htmlspecialchars($photoSwipeInitUrl, ENT_QUOTES) . '"></script>' . "\n";
         }
     }
 
@@ -453,10 +461,11 @@ final class CMS_Phinit_Theme
         // 1. CMS Font Manager (On-Prem) hat absolute Priorität
         if ($this->isLocalFontsEnabled()) {
             $localCssPath = defined('ASSETS_PATH') ? ASSETS_PATH . 'css/local-fonts.css' : '';
-            $localCssUrl  = defined('SITE_URL')    ? SITE_URL . '/assets/css/local-fonts.css' : '';
+            $localCssUrl  = function_exists('cms_asset_url')
+                ? cms_asset_url('css/local-fonts.css')
+                : (defined('SITE_URL') ? SITE_URL . '/assets/css/local-fonts.css' : '');
             if ($localCssPath && file_exists($localCssPath) && $localCssUrl) {
-                $v = filemtime($localCssPath);
-                echo '<link rel="stylesheet" href="' . htmlspecialchars($localCssUrl, ENT_QUOTES) . '?v=' . $v . '">' . "\n";
+                echo '<link rel="stylesheet" href="' . htmlspecialchars($localCssUrl, ENT_QUOTES) . '">' . "\n";
             }
             return; // Kein Google-Fonts-Request
         }

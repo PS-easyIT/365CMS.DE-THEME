@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use CMS\Services\MediaService;
 use CMS\Services\ThemeCustomizer;
 use CMS\Security;
 
@@ -601,23 +602,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
         // Logo-Datei-Upload verarbeiten
-        if (!empty($_FILES['logo_upload_file']['tmp_name'])) {
-            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
-            $fileExt = strtolower(pathinfo($_FILES['logo_upload_file']['name'], PATHINFO_EXTENSION));
+        if (!empty($_FILES['logo_upload_file']['tmp_name']) && is_array($_FILES['logo_upload_file'])) {
+            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'ico'];
+            $fileExt = strtolower(pathinfo((string) ($_FILES['logo_upload_file']['name'] ?? ''), PATHINFO_EXTENSION));
             if (in_array($fileExt, $allowedExts, true)) {
-                $uploadDir = UPLOAD_PATH . 'theme-logos';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                $newFileName = 'logo-' . time() . '.' . $fileExt;
-                $destPath    = $uploadDir . '/' . $newFileName;
-                if (move_uploaded_file($_FILES['logo_upload_file']['tmp_name'], $destPath)) {
-                    $customizer->set('header', 'logo_url', UPLOAD_URL . '/theme-logos/' . $newFileName);
+                $storedLogo = MediaService::getInstance()->uploadFile($_FILES['logo_upload_file'], 'theme-logos');
+                if ($storedLogo instanceof \CMS\WP_Error) {
+                    $error = 'Logo-Upload fehlgeschlagen: ' . $storedLogo->get_error_message();
                 } else {
-                    $error = 'Logo-Upload fehlgeschlagen. Bitte prüfen Sie die Schreibrechte auf uploads/theme-logos/';
+                    $customizer->set('header', 'logo_url', rtrim((string) UPLOAD_URL, '/') . '/theme-logos/' . ltrim((string) $storedLogo, '/'));
                 }
             } else {
-                $error = 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, SVG, WebP';
+                $error = 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, WebP, BMP, ICO';
             }
         }
 
@@ -653,6 +649,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 }
+
+$coreMainCssUrl = function_exists('cms_asset_url')
+    ? cms_asset_url('css/main.css')
+    : SITE_URL . '/assets/css/main.css';
+$coreAdminCssUrl = function_exists('cms_asset_url')
+    ? cms_asset_url('css/admin.css')
+    : SITE_URL . '/assets/css/admin.css?v=' . date('Ymd');
+$coreAdminJsUrl = function_exists('cms_asset_url')
+    ? cms_asset_url('js/admin.js')
+    : SITE_URL . '/assets/js/admin.js';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -660,8 +666,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Theme Customizer – <?php echo defined('SITE_NAME') ? htmlspecialchars(SITE_NAME) : 'CMS'; ?></title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/main.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css?v=<?php echo date('Ymd'); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($coreMainCssUrl, ENT_QUOTES); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($coreAdminCssUrl, ENT_QUOTES); ?>">
     <?php renderAdminSidebarStyles(); ?>
     <style>
         .customizer-layout { display: flex; gap: 2rem; align-items: flex-start; }
@@ -831,7 +837,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         </div>
     </div>
 
-    <script src="<?php echo SITE_URL; ?>/assets/js/admin.js"></script>
+    <script src="<?php echo htmlspecialchars($coreAdminJsUrl, ENT_QUOTES); ?>"></script>
     <script>
     // ── Farb-Picker ↔ Text-Input synchronisieren + Live-Vorschau ────────────
     (function() {

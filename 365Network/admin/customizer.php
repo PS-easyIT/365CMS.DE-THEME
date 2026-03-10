@@ -1256,6 +1256,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // Token EINMAL generieren – mehrfaches generateToken() für dieselbe Action
 // überschreibt den Session-Eintrag und macht zuvor gesendete Tokens ungültig.
 $csrfToken = Security::instance()->generateToken('theme_customizer');
+
+$coreMainCssUrl = function_exists('cms_asset_url')
+    ? cms_asset_url('css/main.css')
+    : SITE_URL . '/assets/css/main.css';
+$coreAdminCssUrl = function_exists('cms_asset_url')
+    ? cms_asset_url('css/admin.css')
+    : SITE_URL . '/assets/css/admin.css?v=20260222b';
+$coreAdminJsUrl = function_exists('cms_asset_url')
+    ? cms_asset_url('js/admin.js')
+    : SITE_URL . '/assets/js/admin.js';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -1263,8 +1273,8 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Theme Customizer – <?php echo defined('SITE_NAME') ? htmlspecialchars(SITE_NAME) : '365Network'; ?></title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/main.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css?v=20260222b">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($coreMainCssUrl, ENT_QUOTES); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($coreAdminCssUrl, ENT_QUOTES); ?>">
     <?php renderAdminSidebarStyles(); ?>
     <style>
         .customizer-layout { display: flex; gap: 2rem; align-items: flex-start; }
@@ -1716,7 +1726,7 @@ $csrfToken = Security::instance()->generateToken('theme_customizer');
         </div>
     </div>
 
-    <script src="<?php echo SITE_URL; ?>/assets/js/admin.js"></script>
+    <script src="<?php echo htmlspecialchars($coreAdminJsUrl, ENT_QUOTES); ?>"></script>
     <script>
     // ── Farb-Picker ↔ Text-Input + Live-Vorschau ─────────────────────────────
     (function () {
