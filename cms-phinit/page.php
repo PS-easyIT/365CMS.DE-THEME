@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 $siteUrl = SITE_URL;
+$pageContent = (string)($page['content'] ?? '');
 
 // ── Customizer-Einstellungen (Seiten-Ansicht) ──────────────────────────────
 try {
@@ -42,6 +43,9 @@ if (!isset($page) || empty($page)) {
 if (is_object($page)) {
     $page = (array)$page;
 }
+
+$pageContent = (string)($page['content'] ?? $pageContent);
+$isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
 
 // Nicht gefunden → Fehlermeldung im Content-Bereich anzeigen (Header wurde bereits gesendet)
 $pageNotFound = empty($page);
@@ -78,7 +82,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     $_pg_updatedPill = '<div class="page-updated-pill-wrap"><span class="page-updated-pill">🕒 Zuletzt aktualisiert: ' . $_pg_dateFormatted . '</span></div>';
 }
 ?>
-<div class="container page-shell page-shell--compact">
+<div class="container page-shell<?php echo $isHubSitePage ? ' page-shell--hub' : ' page-shell--compact'; ?>">
 
 <?php if ($pageNotFound): ?>
     <div class="page-empty-state">
@@ -86,6 +90,10 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
         <h1 class="page-empty-state__title">Seite nicht gefunden</h1>
         <p class="page-empty-state__text">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="btn btn-primary">← Zurück zur Startseite</a>
+    </div>
+<?php elseif ($isHubSitePage): ?>
+    <div class="page-content page-content--hub" data-anim>
+        <?php echo $pageContent; ?>
     </div>
 <?php else: ?>
 
@@ -121,7 +129,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
                 </ol>
             </nav>
             <?php endif; ?>
-            <div class="page-content"><?php echo $page['content'] ?? ''; ?></div>
+            <div class="page-content"><?php echo $pageContent; ?></div>
             <?php echo $_pg_updatedPill; ?>
         </div>
 
@@ -157,7 +165,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     </nav>
     <?php endif; ?>
     <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
-        <?php echo $page['content'] ?? ''; ?>
+        <?php echo $pageContent; ?>
     </div>
     <?php echo $_pg_updatedPill; ?>
     <?php endif; ?>
