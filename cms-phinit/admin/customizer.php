@@ -527,18 +527,16 @@ function phinit_render_field(string $tab, string $fk, array $f, mixed $val): voi
 
         <?php elseif ($f['type'] === 'color'): ?>
             <label class="form-label"><?php echo htmlspecialchars($f['label']); ?></label>
-            <div class="input-group" style="max-width:260px;">
+                 <div class="input-group phinit-customizer__color-group">
                 <input type="color"
                        id="<?php echo $id; ?>"
                        value="<?php echo htmlspecialchars($val ?: '#000000'); ?>"
-                       class="form-control form-control-color"
-                       style="max-width:52px;padding:2px;"
+                      class="form-control form-control-color phinit-customizer__color-input"
                        oninput="syncColor('<?php echo $id; ?>','<?php echo $id; ?>_txt','<?php echo $name; ?>')">
                 <input type="text"
                        id="<?php echo $id; ?>_txt"
                        value="<?php echo htmlspecialchars($val); ?>"
-                       class="form-control font-monospace"
-                       style="max-width:130px;"
+                      class="form-control font-monospace phinit-customizer__color-text"
                        oninput="syncColorTxt('<?php echo $id; ?>','<?php echo $id; ?>_txt','<?php echo $name; ?>')">
                 <input type="hidden" name="<?php echo $name; ?>"
                        id="<?php echo $name; ?>"
@@ -565,7 +563,7 @@ function phinit_render_field(string $tab, string $fk, array $f, mixed $val): voi
             <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars($f['label']); ?></label>
             <input type="number" id="<?php echo $id; ?>" name="<?php echo $name; ?>"
                    value="<?php echo htmlspecialchars($val); ?>"
-                   class="form-control" style="max-width:140px;"
+                     class="form-control phinit-customizer__number-input"
                    step="<?php echo $f['step'] ?? 'any'; ?>"
                    <?php echo isset($f['min']) ? 'min="' . (int)$f['min'] . '"' : ''; ?>
                    <?php echo isset($f['max']) ? 'max="' . (int)$f['max'] . '"' : ''; ?>>
@@ -630,6 +628,37 @@ $navGroups = [
 ];
 ?>
 
+<style>
+    .phinit-customizer__color-group { max-width: 260px; }
+    .phinit-customizer__color-input { max-width: 52px; padding: 2px; }
+    .phinit-customizer__color-text { max-width: 130px; }
+    .phinit-customizer__number-input { max-width: 140px; }
+    .phinit-customizer__sticky-card { top: 1rem; }
+    .phinit-customizer__nav-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; background: #f8fafc; border: none; }
+    .phinit-customizer__nav-link { font-size: .875rem; }
+    .phinit-customizer__export-title { font-size: .85rem; }
+    .phinit-customizer__unsaved-hint { display: none; font-size: .85rem; }
+    .phinit-customizer__shortcut-hint { font-size: .8rem; }
+    .phinit-customizer__preset-card { background: #1e293b; border-color: #334155; }
+    .phinit-customizer__preset-label { font-size: .8rem; font-weight: 600; color: #94a3b8; }
+    .phinit-customizer__preset-btn--phinit { background: #1e3a5f; color: #e8a838; border-color: #2a4f7c; }
+    .phinit-customizer__preset-btn--bluesteel { background: #1a2744; color: #60a5fa; border-color: #233b6e; }
+    .phinit-customizer__preset-btn--greentech { background: #064e3b; color: #10b981; border-color: #047857; }
+    .phinit-customizer__preset-btn--slate { background: #1e293b; color: #f59e0b; border-color: #334155; }
+    .phinit-customizer__preset-btn--ruby { background: #7f1d1d; color: #f87171; border-color: #991b1b; }
+    .phinit-customizer__preset-note { color: #64748b; }
+    .phinit-customizer__menu-icon { font-size: 1.5rem; }
+    .phinit-customizer__drawer { display: none; position: fixed; top: 0; right: 0; bottom: 0; z-index: 9050; width: min(900px, 96vw); flex-direction: column; background: #111827; box-shadow: -6px 0 32px rgba(0,0,0,.6); }
+    .phinit-customizer__drawer-toolbar { display: flex; align-items: center; gap: .5rem; padding: .5rem .875rem; background: #0d1528; border-bottom: 1px solid #1e3a5f; flex-shrink: 0; }
+    .phinit-customizer__toolbar-btn, .phinit-customizer__toolbar-link { background: none; border: 1px solid #334155; color: #94a3b8; border-radius: 4px; padding: .2rem .6rem; cursor: pointer; font-size: .85rem; text-decoration: none; }
+    .phinit-customizer__device-switcher { display: flex; gap: .375rem; margin: 0 auto; }
+    .phinit-customizer__device-btn { background: none; border: 1px solid #334155; color: #94a3b8; border-radius: 4px; padding: .25rem .65rem; cursor: pointer; font-size: .8rem; }
+    .phinit-customizer__device-btn.active { background: #1e293b; color: #e2e8f0; }
+    .phinit-customizer__drawer-body { flex: 1; overflow: auto; display: flex; justify-content: center; align-items: flex-start; background: #475569; padding: 4px; }
+    .phinit-customizer__iframe { background: #fff; border: none; border-radius: 2px; height: calc(100vh - 60px); width: 1280px; max-width: 100%; transition: width .25s ease; }
+    .phinit-customizer__drawer-label { padding: .25rem .875rem; background: #0d1528; font-size: .7rem; color: #475569; text-align: center; }
+</style>
+
 <div class="page-header d-print-none">
     <div class="container-xl">
         <div class="row g-2 align-items-center">
@@ -672,12 +701,11 @@ $navGroups = [
 
                 <!-- ── Linke Spalte: Tab-Navigation ── -->
                 <div class="col-12 col-md-3 col-lg-2">
-                    <div class="card sticky-top" style="top:1rem;">
+                    <div class="card sticky-top phinit-customizer__sticky-card">
                         <div class="list-group list-group-flush">
                             <?php foreach ($navGroups as $grpLabel => $tabs):
                                 if ($grpLabel !== null): ?>
-                                <div class="list-group-item py-1 px-3"
-                                     style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;background:#f8fafc;border:none;">
+                                <div class="list-group-item py-1 px-3 phinit-customizer__nav-label">
                                     <?php echo htmlspecialchars($grpLabel); ?>
                                 </div>
                                 <?php endif;
@@ -685,8 +713,7 @@ $navGroups = [
                                     if (!isset($config[$tk])) { continue; }
                             ?>
                                 <a href="<?php echo htmlspecialchars(SITE_URL . '/admin/theme-editor?tab=' . $tk); ?>"
-                                   class="list-group-item list-group-item-action py-2 px-3<?php echo $activeTab === $tk ? ' active' : ''; ?>"
-                                   style="font-size:.875rem;">
+                                   class="list-group-item list-group-item-action py-2 px-3 phinit-customizer__nav-link<?php echo $activeTab === $tk ? ' active' : ''; ?>">
                                     <?php echo htmlspecialchars($config[$tk]['title']); ?>
                                 </a>
                             <?php endforeach; endforeach; ?>
@@ -696,7 +723,7 @@ $navGroups = [
                     <!-- Export / Import -->
                     <div class="card mt-3">
                         <div class="card-header py-2">
-                            <h4 class="card-title" style="font-size:.85rem;">Export / Import</h4>
+                            <h4 class="card-title phinit-customizer__export-title">Export / Import</h4>
                         </div>
                         <div class="card-body p-3">
                             <form method="POST"
@@ -741,10 +768,10 @@ $navGroups = [
                                     onclick="return confirm('Alle Felder dieses Tabs auf Standardwerte zurücksetzen?');">
                                 ↩️ Tab zurücksetzen
                             </button>
-                            <span id="unsaved-hint" class="ms-auto text-warning" style="display:none;font-size:.85rem;">
+                            <span id="unsaved-hint" class="ms-auto text-warning phinit-customizer__unsaved-hint">
                                 ⚠️ Ungespeicherte Änderungen
                             </span>
-                            <span class="text-muted ms-auto" style="font-size:.8rem;">Strg+S zum Speichern</span>
+                            <span class="text-muted ms-auto phinit-customizer__shortcut-hint">Strg+S zum Speichern</span>
                         </div>
                     </div>
 
@@ -761,21 +788,16 @@ $navGroups = [
                     ?>
 
                     <?php if ($activeTab === 'colors'): ?>
-                    <div class="card mb-3" id="color-presets-card" style="background:#1e293b;border-color:#334155;">
+                        <div class="card mb-3 phinit-customizer__preset-card" id="color-presets-card">
                         <div class="card-body py-2 px-3">
                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span style="font-size:.8rem;font-weight:600;color:#94a3b8;">🎨 Schnell-Presets:</span>
-                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="phinit"
-                                        style="background:#1e3a5f;color:#e8a838;border-color:#2a4f7c;">Phinit (Standard)</button>
-                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="bluesteel"
-                                        style="background:#1a2744;color:#60a5fa;border-color:#233b6e;">Blue Steel</button>
-                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="greentech"
-                                        style="background:#064e3b;color:#10b981;border-color:#047857;">Green Tech</button>
-                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="slate"
-                                        style="background:#1e293b;color:#f59e0b;border-color:#334155;">Slate Dark</button>
-                                <button type="button" class="btn btn-sm color-preset-btn" data-preset="ruby"
-                                        style="background:#7f1d1d;color:#f87171;border-color:#991b1b;">Ruby Red</button>
-                                <small class="ms-auto" style="color:#64748b;">↑ Klick füllt Felder – danach Speichern nicht vergessen!</small>
+                            <span class="phinit-customizer__preset-label">🎨 Schnell-Presets:</span>
+                            <button type="button" class="btn btn-sm color-preset-btn phinit-customizer__preset-btn--phinit" data-preset="phinit">Phinit (Standard)</button>
+                            <button type="button" class="btn btn-sm color-preset-btn phinit-customizer__preset-btn--bluesteel" data-preset="bluesteel">Blue Steel</button>
+                            <button type="button" class="btn btn-sm color-preset-btn phinit-customizer__preset-btn--greentech" data-preset="greentech">Green Tech</button>
+                            <button type="button" class="btn btn-sm color-preset-btn phinit-customizer__preset-btn--slate" data-preset="slate">Slate Dark</button>
+                            <button type="button" class="btn btn-sm color-preset-btn phinit-customizer__preset-btn--ruby" data-preset="ruby">Ruby Red</button>
+                            <small class="ms-auto phinit-customizer__preset-note">↑ Klick füllt Felder – danach Speichern nicht vergessen!</small>
                             </div>
                         </div>
                     </div>
@@ -805,7 +827,7 @@ $navGroups = [
                     <?php if ($activeTab === 'header'): ?>
                     <div class="card mt-3 border-primary">
                         <div class="card-body d-flex align-items-center gap-3">
-                            <div class="text-primary" style="font-size:1.5rem;">📋</div>
+                            <div class="text-primary phinit-customizer__menu-icon">📋</div>
                             <div>
                                 <strong>Menü-Einträge</strong> (Hauptmenü, Quicklinks, Footer-Menüs) werden im
                                 <a href="<?php echo htmlspecialchars(SITE_URL . '/admin/menu-editor'); ?>">Menü-Editor</a>
@@ -826,45 +848,29 @@ $navGroups = [
 
 <!-- ── Live-Vorschau Drawer ──────────────────────────────────────────────── -->
 <div id="px-drawer" aria-hidden="true"
-     style="display:none;position:fixed;top:0;right:0;bottom:0;z-index:9050;
-            width:min(900px,96vw);flex-direction:column;
-            background:#111827;box-shadow:-6px 0 32px rgba(0,0,0,.6);">
-    <div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .875rem;
-                background:#0d1528;border-bottom:1px solid #1e3a5f;flex-shrink:0;">
+     class="phinit-customizer__drawer">
+    <div class="phinit-customizer__drawer-toolbar">
         <button id="px-close-btn" type="button"
-                style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
-                       padding:.2rem .6rem;cursor:pointer;font-size:.85rem;"
+          class="phinit-customizer__toolbar-btn"
                 title="Schließen (Esc)">✕</button>
-        <div style="display:flex;gap:.375rem;margin:0 auto;">
-            <button type="button" class="px-dev-btn active" data-width="1280"
-                    style="background:#1e293b;border:1px solid #334155;color:#e2e8f0;border-radius:4px;
-                           padding:.25rem .65rem;cursor:pointer;font-size:.8rem;">🖥️ Desktop</button>
-            <button type="button" class="px-dev-btn" data-width="768"
-                    style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
-                           padding:.25rem .65rem;cursor:pointer;font-size:.8rem;">📱 Tablet</button>
-            <button type="button" class="px-dev-btn" data-width="375"
-                    style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
-                           padding:.25rem .65rem;cursor:pointer;font-size:.8rem;">📲 Mobil</button>
+     <div class="phinit-customizer__device-switcher">
+         <button type="button" class="px-dev-btn phinit-customizer__device-btn active" data-width="1280">🖥️ Desktop</button>
+         <button type="button" class="px-dev-btn phinit-customizer__device-btn" data-width="768">📱 Tablet</button>
+         <button type="button" class="px-dev-btn phinit-customizer__device-btn" data-width="375">📲 Mobil</button>
         </div>
         <button id="px-refresh-btn" type="button"
-                style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
-                       padding:.2rem .6rem;cursor:pointer;font-size:.85rem;"
+          class="phinit-customizer__toolbar-btn"
                 title="Neu laden">⟳</button>
         <a href="<?php echo htmlspecialchars(SITE_URL); ?>/" target="_blank" rel="noopener noreferrer"
-           style="background:none;border:1px solid #334155;color:#94a3b8;border-radius:4px;
-                  padding:.2rem .6rem;text-decoration:none;font-size:.85rem;"
+        class="phinit-customizer__toolbar-link"
            title="In neuem Tab öffnen">↗</a>
     </div>
-    <div style="flex:1;overflow:auto;display:flex;justify-content:center;
-                align-items:flex-start;background:#475569;padding:4px;">
+    <div class="phinit-customizer__drawer-body">
         <iframe id="px-iframe" src=""
-                style="background:#fff;border:none;border-radius:2px;
-                       height:calc(100vh - 60px);width:1280px;max-width:100%;
-                       transition:width .25s ease;"
+          class="phinit-customizer__iframe"
                 title="Theme Live-Vorschau"></iframe>
     </div>
-    <div id="px-label"
-         style="padding:.25rem .875rem;background:#0d1528;font-size:.7rem;color:#475569;text-align:center;">
+    <div id="px-label" class="phinit-customizer__drawer-label">
         Desktop (1280 px)
     </div>
 </div>

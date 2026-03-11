@@ -33,9 +33,8 @@ if (!defined('ABSPATH')) {
 $siteUrl = SITE_URL;
 
 try {
-    $pageService = \CMS\Services\PageService::instance();
-    $slug        = trim($_GET['slug'] ?? $_SERVER['REQUEST_URI'] ?? '', '/ ');
-    $page        = $pageService->getPageBySlug($slug);
+    $slug = trim((string)($_GET['slug'] ?? (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '')), '/ ');
+    $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
     if (!$page) {
         http_response_code(404);
         get_theme_part('404');

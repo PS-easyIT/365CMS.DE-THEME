@@ -16,7 +16,7 @@ $errorTitle = $error_title ?? 'Ein Fehler ist aufgetreten';
 $errorMsg   = $error_message ?? 'Bitte versuche es später erneut oder kontaktiere den Administrator.';
 ?>
 
-<div class="container" style="padding-top:48px;padding-bottom:48px;">
+<div class="container error-shell">
 
     <div class="error-hero" data-anim>
         <div class="error-code"><?php echo $errorCode; ?></div>

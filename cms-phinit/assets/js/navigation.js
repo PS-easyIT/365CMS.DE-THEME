@@ -22,6 +22,7 @@
         if (isEnabled('progressBar'))   initScrollProgress();
         if (isEnabled('scrollAnims') && !prefersReducedMotion())  initScrollAnimations();
         initActiveNav();
+        initFlashMessages();
         initTocHighlight();
         if (isEnabled('backToTop'))     initBackToTop();
         initShareButtons();
@@ -39,24 +40,33 @@
 
     /* ── Burger Menü (Mobile) ──────────────────────────────────── */
     function initBurgerMenu() {
-        const btn    = document.querySelector('.burger-btn');
-        const menu   = document.querySelector('.mobile-menu');
+        const btn    = document.getElementById('burger-toggle') || document.querySelector('.burger-btn');
+        const menu   = document.getElementById('mobile-menu') || document.querySelector('.mobile-menu');
         const header = document.querySelector('.site-header');
         if (!btn || !menu) return;
+
+        const closeMenu = () => {
+            menu.classList.remove('open');
+            btn.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-label', 'Menü öffnen');
+            menu.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('mobile-menu-open');
+        };
 
         btn.addEventListener('click', () => {
             const open = menu.classList.toggle('open');
             btn.classList.toggle('open', open);
             btn.setAttribute('aria-expanded', String(open));
             btn.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+            menu.setAttribute('aria-hidden', String(!open));
+            document.body.classList.toggle('mobile-menu-open', open);
         });
 
         // Escape schließt Menü
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && menu.classList.contains('open')) {
-                menu.classList.remove('open');
-                btn.classList.remove('open');
-                btn.setAttribute('aria-expanded', 'false');
+                closeMenu();
                 btn.focus();
             }
         });
@@ -64,30 +74,40 @@
         // Klick außerhalb schließt Menü
         document.addEventListener('click', (e) => {
             if (header && !header.contains(e.target)) {
-                menu.classList.remove('open');
-                btn.classList.remove('open');
-                btn.setAttribute('aria-expanded', 'false');
+                closeMenu();
             }
+        });
+
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeMenu);
         });
     }
 
     /* ── Dark Mode ─────────────────────────────────────────────── */
     function initDarkMode() {
-        const STORAGE_KEY = 'cms-phinit-theme';
+        const STORAGE_KEY = 'cms365-theme';
+        const LEGACY_STORAGE_KEY = 'cms-phinit-theme';
         const body        = document.body;
 
         // System-Präferenz auslesen
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const stored      = localStorage.getItem(STORAGE_KEY);
+        const legacy      = localStorage.getItem(LEGACY_STORAGE_KEY);
+        const stored      = localStorage.getItem(STORAGE_KEY) ?? legacy;
         const dark        = stored ? stored === 'dark' : prefersDark;
 
+        if (legacy !== null && localStorage.getItem(STORAGE_KEY) === null) {
+            localStorage.setItem(STORAGE_KEY, legacy);
+        }
+
         if (dark) body.classList.add('dark-mode');
+        document.documentElement.classList.toggle('dark-mode', dark);
 
         // Toggle-Buttons (kann mehrere geben)
         document.querySelectorAll('.util-dark-toggle, [data-dark-toggle]').forEach(btn => {
             updateDarkToggle(btn, dark);
             btn.addEventListener('click', () => {
                 const isDark = body.classList.toggle('dark-mode');
+                document.documentElement.classList.toggle('dark-mode', isDark);
                 localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light');
                 document.querySelectorAll('.util-dark-toggle, [data-dark-toggle]')
                     .forEach(b => updateDarkToggle(b, isDark));
@@ -171,9 +191,23 @@
         const btn = document.getElementById('back-to-top');
         if (!btn) return;
         window.addEventListener('scroll', () => {
-            btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+            btn.classList.toggle('visible', window.scrollY > 400);
         }, { passive: true });
         btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    /* ── Flash Messages ───────────────────────────────────────── */
+    function initFlashMessages() {
+        document.querySelectorAll('[data-auto-dismiss]').forEach((element) => {
+            const delay = Number.parseInt(element.getAttribute('data-auto-dismiss') || '0', 10);
+            if (!Number.isFinite(delay) || delay <= 0) {
+                return;
+            }
+
+            window.setTimeout(() => {
+                element.classList.add('is-hidden');
+            }, delay);
+        });
     }
 
     /* ── Share Buttons ────────────────────────────────────────── */

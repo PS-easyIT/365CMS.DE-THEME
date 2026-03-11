@@ -129,10 +129,10 @@ include $themeDir . 'header.php';
 
         <?php else: ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">📭</p>
+            <p class="member-empty-state__icon">📭</p>
             <p><strong>Noch keine Favoriten</strong></p>
             <p>Speichere Beiträge als Favoriten, um sie hier wiederzufinden.</p>
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog" class="btn btn-primary" style="margin-top:1rem;">📖 Beiträge entdecken</a>
+            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog" class="btn btn-primary member-empty-state__action">📖 Beiträge entdecken</a>
         </div>
         <?php endif; ?>
 

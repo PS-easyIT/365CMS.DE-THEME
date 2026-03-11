@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -96,17 +96,17 @@
     "footer-pages":  "Footer – Seiten",
     "footer":        "Footer – Rechtliches"
   },
-  "supports": {
-    "dark_mode":     true,
-    "sticky_header": true,
-    "toc_sidebar":   true,
-    "scroll_progress": true,
-    "back_to_top":   true,
-    "consent_banner": true,
-    "reading_time":  true,
-    "schema_org":    true,
-    "member_area":   true
-  },
+  "supports": [
+    "dark-mode",
+    "sticky-header",
+    "toc-sidebar",
+    "scroll-progress",
+    "back-to-top",
+    "consent-banner",
+    "reading-time",
+    "schema-org",
+    "member-area"
+  ],
   "member_pages": {
     "dashboard":  "member/dashboard.php",
     "profile":    "member/profile.php",
@@ -120,7 +120,7 @@
   "customization": {
     "colors": {
       "label": "Farben",
-      "fields": {
+      "settings": {
         "primary_color": {
           "label": "Primärfarbe (Header-Hintergrund)",
           "type": "color",
@@ -225,7 +225,7 @@
     },
     "typography": {
       "label": "Typografie",
-      "fields": {
+      "settings": {
         "font_family_ui": {
           "label": "UI-Schriftart (Body/Navigation)",
           "type": "select",
@@ -323,7 +323,7 @@
     },
     "header": {
       "label": "Header",
-      "fields": {
+      "settings": {
         "logo_url": {
           "label": "Logo-URL (leer = Text-Logo)",
           "type": "text",
@@ -385,7 +385,7 @@
     },
     "footer": {
       "label": "Footer",
-      "fields": {
+      "settings": {
         "footer_brand_name": {
           "label": "Markenname im Footer",
           "type": "text",
@@ -451,7 +451,7 @@
     },
     "social": {
       "label": "Social Media",
-      "fields": {
+      "settings": {
         "social_linkedin": {
           "label": "LinkedIn-Profil-URL",
           "type": "url",
@@ -506,7 +506,7 @@
     },
     "homepage": {
       "label": "Startseite",
-      "fields": {
+      "settings": {
         "featured_posts_count": {
           "label": "Anzahl Featured-Beiträge",
           "type": "number",
@@ -620,7 +620,7 @@
     },
     "posts": {
       "label": "Beitrags-Ansicht",
-      "fields": {
+      "settings": {
         "show_post_hero": {
           "label": "Hero-Bild anzeigen",
           "type": "checkbox",
@@ -773,7 +773,7 @@
     },
     "pages": {
       "label": "Seiten-Ansicht",
-      "fields": {
+      "settings": {
         "show_page_title": {
           "label": "Seitentitel anzeigen",
           "type": "checkbox",
@@ -813,7 +813,7 @@
     },
     "layout": {
       "label": "Layout",
-      "fields": {
+      "settings": {
         "enable_sticky_header": {
           "label": "Sticky Header aktivieren",
           "type": "checkbox",
@@ -896,7 +896,7 @@
     },
     "performance": {
       "label": "Performance",
-      "fields": {
+      "settings": {
         "lazy_load_images": {
           "label": "Bilder lazy-laden",
           "type": "checkbox",
@@ -916,7 +916,7 @@
     },
     "advanced": {
       "label": "Erweitert",
-      "fields": {
+      "settings": {
         "custom_header_code": {
           "label": "Zusätzlicher Code im &lt;head&gt;",
           "type": "textarea",

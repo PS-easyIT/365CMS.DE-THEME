@@ -248,16 +248,16 @@ try {
 
 <!-- Back to Top -->
 <?php if ($_showBackToTop): ?>
-<button id="back-to-top" style="display:none;position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--primary-color);color:#fff;border:none;cursor:pointer;font-size:1.1rem;z-index:900;box-shadow:0 4px 14px rgba(0,0,0,.25);align-items:center;justify-content:center;transition:all .25s;" aria-label="Zum Seitenanfang">↑</button>
+<button id="back-to-top" class="back-to-top-btn" aria-label="Zum Seitenanfang">↑</button>
 <?php endif; ?>
 
 <!-- Einwilligungsbanner (DSGVO) -->
 <?php if ($_showConsent): ?>
 <div id="consent-banner" role="alert" aria-live="polite">
-    <p><?php echo htmlspecialchars($_consentText, ENT_QUOTES); ?> <a href="<?php echo htmlspecialchars($siteUrl . $_consentPrivUrl, ENT_QUOTES); ?>" style="color:var(--accent-teal-light);text-decoration:underline;">Mehr erfahren</a></p>
+    <p><?php echo htmlspecialchars($_consentText, ENT_QUOTES); ?> <a href="<?php echo htmlspecialchars($siteUrl . $_consentPrivUrl, ENT_QUOTES); ?>" class="consent-link">Mehr erfahren</a></p>
     <div class="consent-btns">
         <button class="btn btn-sm btn-accent" id="consent-accept">Einwilligen</button>
-        <button class="btn btn-sm btn-ghost" id="consent-decline" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);">Ablehnen</button>
+        <button class="btn btn-sm btn-ghost btn-consent-decline" id="consent-decline">Ablehnen</button>
     </div>
 </div>
 <?php endif; ?>

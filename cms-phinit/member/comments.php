@@ -123,7 +123,7 @@ include $themeDir . 'header.php';
 
         <?php else: ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">📭</p>
+            <p class="member-empty-state__icon">📭</p>
             <p><strong>Noch keine Kommentare</strong></p>
             <p>Teile deine Gedanken unter Beiträgen, um sie hier gesammelt einzusehen.</p>
         </div>

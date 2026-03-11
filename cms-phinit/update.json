@@ -1,13 +1,24 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.5.4",
-  "release_date": "2026-03-09",
+  "release_date": "2026-03-11",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.4.1",
+      "date": "2026-03-11",
+      "changes": [
+        "functions.php: doppelte Hook-Ausgabe für Breadcrumbs, Footer-Code und Theme-Skripte per Guard entschärft",
+        "header.php + navigation.js: Dark-Mode auf den zentralen localStorage-Key cms365-theme umgestellt und Legacy-Key migriert",
+        "header.php + footer.php + style.css: Inline-Stile aus zentralen Header-/Footer-Bausteinen in Theme-CSS verschoben",
+        "theme.json: Customizer-Schema von fields auf settings aktualisiert und supports an die neue Umgebung angepasst",
+        "update.json: Manifest repariert und wieder als gültiges JSON bereitgestellt"
+      ]
+    },
     {
       "version": "1.4.0",
       "date": "2026-03-09",
@@ -60,6 +71,7 @@
         "theme.json: Version 1.1.0, requires_cms auf 2.5.0 angehoben"
       ]
     },
+    {
       "version": "1.0.0",
       "date": "2025-01-01",
       "changes": [

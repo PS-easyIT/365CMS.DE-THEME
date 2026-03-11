@@ -33,7 +33,7 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 ?>
 
 <div class="auth-wrapper">
-    <div class="auth-card" style="max-width:480px;">
+    <div class="auth-card auth-card--narrow">
 
         <!-- Logo -->
         <div class="auth-header">
@@ -91,10 +91,10 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
                            placeholder="••••••••••••">
                 </div>
             </div>
-            <small class="auth-helper" style="margin-top:-8px;">Mind. 12 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen</small>
+            <small class="auth-helper auth-helper--tight">Mind. 12 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen</small>
 
             <div class="auth-form-group">
-                <label for="regName" class="auth-label">Anzeigename <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+                <label for="regName" class="auth-label">Anzeigename <span class="field-optional">(optional)</span></label>
                 <input type="text" id="regName" name="display_name" class="auth-input"
                        autocomplete="name" maxlength="100"
                        placeholder="Dein Name">

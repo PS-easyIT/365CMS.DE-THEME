@@ -27,13 +27,13 @@ $location = isset($location) ? (string)$location : '';
 $filter   = isset($filter)   ? (string)$filter   : '';
 ?>
 
-<div class="container" style="padding-top:28px;padding-bottom:40px;">
+<div class="container page-shell page-shell--search">
 
     <!-- Search Header -->
     <div class="blog-page-header" data-anim>
         <h1>🔍 Suche</h1>
         <?php if (!empty($query)): ?>
-        <p style="color:var(--text-muted);margin-top:6px;">
+        <p class="search-results-summary">
             <?php echo count($results); ?> Ergebnis<?php echo count($results) !== 1 ? 'se' : ''; ?>
             für „<strong><?php echo htmlspecialchars($query, ENT_QUOTES); ?></strong>"
         </p>
@@ -50,8 +50,8 @@ $filter   = isset($filter)   ? (string)$filter   : '';
                        autofocus>
                 <button type="submit" class="btn btn-primary">🔍 Suchen</button>
             </div>
-            <div class="search-filters" style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
-                <select name="type" class="auth-input" style="max-width:180px;" aria-label="Typ filtern">
+            <div class="search-filters">
+                <select name="type" class="auth-input search-filter-select" aria-label="Typ filtern">
                     <option value="">Alle Typen</option>
                     <option value="post" <?php echo $type === 'post' ? 'selected' : ''; ?>>Beiträge</option>
                     <option value="page" <?php echo $type === 'page' ? 'selected' : ''; ?>>Seiten</option>
@@ -104,18 +104,18 @@ $filter   = isset($filter)   ? (string)$filter   : '';
     </div>
 
     <?php elseif (!empty($query)): ?>
-    <div style="text-align:center;padding:4rem 2rem;" data-anim data-anim-delay="2">
-        <p style="font-size:3rem;margin:0 0 1rem;">🔍</p>
-        <h2 style="color:var(--text-primary);">Keine Ergebnisse</h2>
-        <p style="color:var(--text-muted);max-width:400px;margin:.5rem auto 0;">
+    <div class="search-empty-state" data-anim data-anim-delay="2">
+        <p class="search-empty-state__icon">🔍</p>
+        <h2 class="search-empty-state__title">Keine Ergebnisse</h2>
+        <p class="search-empty-state__text">
             Für „<strong><?php echo htmlspecialchars($query, ENT_QUOTES); ?></strong>" wurden leider keine passenden Inhalte gefunden. Versuche einen anderen Suchbegriff.
         </p>
     </div>
     <?php else: ?>
-    <div style="text-align:center;padding:4rem 2rem;" data-anim data-anim-delay="2">
-        <p style="font-size:3rem;margin:0 0 1rem;">🔎</p>
-        <h2 style="color:var(--text-primary);">Suche starten</h2>
-        <p style="color:var(--text-muted);max-width:400px;margin:.5rem auto 0;">Gib einen Suchbegriff ein, um Artikel, Seiten und mehr zu finden.</p>
+    <div class="search-empty-state" data-anim data-anim-delay="2">
+        <p class="search-empty-state__icon">🔎</p>
+        <h2 class="search-empty-state__title">Suche starten</h2>
+        <p class="search-empty-state__text">Gib einen Suchbegriff ein, um Artikel, Seiten und mehr zu finden.</p>
     </div>
     <?php endif; ?>
 

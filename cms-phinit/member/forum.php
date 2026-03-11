@@ -80,7 +80,7 @@ include $themeDir . 'header.php';
 
         <?php if (!$hasForumPlugin): ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">🗣️</p>
+            <p class="member-empty-state__icon">🗣️</p>
             <p><strong>Forum nicht verfügbar</strong></p>
             <p>Das Forum-Plugin ist derzeit nicht aktiviert.</p>
         </div>
@@ -132,7 +132,7 @@ include $themeDir . 'header.php';
         </div>
         <?php else: ?>
         <div class="member-empty-state">
-            <p style="font-size:2rem;">📭</p>
+            <p class="member-empty-state__icon member-empty-state__icon--compact">📭</p>
             <p><strong><?php echo $tab === 'mine' ? 'Noch keine eigenen Threads' : 'Noch keine Diskussionen'; ?></strong></p>
         </div>
         <?php endif; ?>

@@ -29,7 +29,7 @@ try {
 } catch (\Throwable $e) {}
 ?>
 
-<div class="container" style="padding-top:48px;padding-bottom:48px;">
+<div class="container error-shell">
 
     <!-- 404 Hero -->
     <div class="error-hero" data-anim>
@@ -47,8 +47,8 @@ try {
 
     <!-- Aktuelle Beiträge als Vorschlag -->
     <?php if (!empty($recentPosts)): ?>
-    <section style="margin-top:3rem;" data-anim data-anim-delay="1">
-        <h2 style="text-align:center;font-size:1.1rem;color:var(--text-secondary);margin-bottom:1.5rem;">Vielleicht interessieren dich diese Beiträge:</h2>
+    <section class="error-suggestions" data-anim data-anim-delay="1">
+        <h2 class="error-suggestions__title">Vielleicht interessieren dich diese Beiträge:</h2>
         <div class="posts-grid posts-grid--cols-3">
             <?php foreach ($recentPosts as $p): ?>
             <article class="post-card">

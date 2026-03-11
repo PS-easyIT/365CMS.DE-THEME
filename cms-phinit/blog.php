@@ -75,7 +75,7 @@ try {
 }
 ?>
 
-<div class="container" style="padding-top:20px;padding-bottom:0;">
+<div class="container blog-shell">
 
     <!-- Archiv-Navigation: Startseite + Suchfeld -->
     <div class="blog-archive-bar">
@@ -100,7 +100,7 @@ try {
 
     <?php if (!empty($_bPosts)): ?>
 
-    <div class="article-list" style="border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);" data-anim>
+    <div class="article-list article-list--framed" data-anim>
         <?php foreach ($_bPosts as $_bP):
             get_theme_part('partials/post-card', [
                 'card'         => $_bP,
@@ -114,7 +114,7 @@ try {
 
     <!-- Pagination -->
     <?php if ($_bPages > 1): ?>
-    <nav class="pagination" aria-label="Archiv-Seitennavigation" style="margin-top:24px;">
+    <nav class="pagination pagination--spaced" aria-label="Archiv-Seitennavigation">
         <?php if ($_blogPage > 1): ?>
         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $_blogPage - 1; ?>"
            class="page-link" aria-label="Vorherige Seite">← Zurück</a>
@@ -140,11 +140,11 @@ try {
     <?php endif; ?>
 
     <?php else: ?>
-    <div class="empty-state" style="text-align:center;padding:4rem 2rem;" data-anim>
-        <p style="font-size:3rem;margin:0 0 1rem;">📭</p>
+    <div class="empty-state" data-anim>
+        <p class="empty-state__icon">📭</p>
         <p><strong>Keine Beiträge vorhanden</strong></p>
-        <p style="color:var(--text-muted);max-width:400px;margin:.5rem auto 1.5rem;">Bald gibt es hier spannende Artikel.</p>
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="btn btn-primary" style="margin-top:1rem;">← Zur Startseite</a>
+        <p class="empty-state__text">Bald gibt es hier spannende Artikel.</p>
+        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="btn btn-primary empty-state__action">← Zur Startseite</a>
     </div>
     <?php endif; ?>
 

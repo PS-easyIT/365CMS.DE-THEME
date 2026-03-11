@@ -412,7 +412,7 @@ if ($sidebarPosition === 'left') {
             </div>
 
             <?php if (!empty($post['also_available_lang'])): ?>
-            <p style="font-size:.85rem;color:var(--text-muted);padding:8px 0;">This post is also available in 🇬🇧 <a href="<?php echo htmlspecialchars($post['also_available_lang']['url'] ?? '#', ENT_QUOTES); ?>" style="color:var(--accent-teal);">English</a></p>
+            <p class="post-alt-language">This post is also available in 🇬🇧 <a href="<?php echo htmlspecialchars($post['also_available_lang']['url'] ?? '#', ENT_QUOTES); ?>" class="post-alt-language__link">English</a></p>
             <?php endif; ?>
 
         </article>
@@ -458,18 +458,18 @@ if ($sidebarPosition === 'left') {
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p style="color:var(--text-muted);font-size:var(--fs-sm);padding:12px 0;">Noch keine Kommentare. Sei der Erste!</p>
+                <p class="comment-empty-state">Noch keine Kommentare. Sei der Erste!</p>
             <?php endif; ?>
 
             <!-- Kommentarformular -->
             <?php if (isset($commentError)): ?>
-            <div style="background:#fee2e2;border:1px solid #f87171;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:var(--fs-sm);color:#991b1b;">
+            <div class="alert-box alert-box--error">
                 ❌ <?php echo htmlspecialchars($commentError, ENT_QUOTES); ?>
             </div>
             <?php endif; ?>
 
             <?php if (!empty($commentSuccess)): ?>
-            <div style="background:#dcfce7;border:1px solid #4ade80;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:var(--fs-sm);color:#166534;">
+            <div class="alert-box alert-box--success">
                 <?php echo htmlspecialchars($commentSuccess, ENT_QUOTES); ?>
             </div>
             <?php endif; ?>
@@ -481,26 +481,26 @@ if ($sidebarPosition === 'left') {
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                     <input type="hidden" name="post_id" value="<?php echo (int)($post['id'] ?? 0); ?>">
 
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label for="comment_text">Kommentar <span style="color:#ef4444;">*</span></label>
+                    <div class="form-group form-group--spaced">
+                        <label for="comment_text">Kommentar <span class="field-required">*</span></label>
                         <textarea id="comment_text" name="comment_text" class="form-control" required placeholder="Dein Kommentar …" rows="4"></textarea>
-                        <small style="font-size:var(--fs-xs);color:var(--text-light);">E-Mail Adresse wird nicht veröffentlicht.</small>
+                        <small class="form-helper-text">E-Mail Adresse wird nicht veröffentlicht.</small>
                     </div>
 
-                    <div class="form-row" style="margin-bottom:12px;">
+                    <div class="form-row form-row--spaced">
                         <div class="form-group">
-                            <label for="comment_name">Name <span style="color:#ef4444;">*</span></label>
+                            <label for="comment_name">Name <span class="field-required">*</span></label>
                             <input type="text" id="comment_name" name="comment_name" class="form-control" required placeholder="Dein Name">
                         </div>
                         <div class="form-group">
-                            <label for="comment_email">E-Mail <span style="color:#ef4444;">*</span></label>
+                            <label for="comment_email">E-Mail <span class="field-required">*</span></label>
                             <input type="email" id="comment_email" name="comment_email" class="form-control" required placeholder="dein@email.de">
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label for="comment_hp" style="position:absolute;left:-9999px;opacity:0;">Dieses Feld leer lassen</label>
-                        <input type="text" id="comment_hp" name="comment_hp" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
+                    <div class="form-group form-group--honeypot">
+                        <label for="comment_hp" class="visually-hidden-field">Dieses Feld leer lassen</label>
+                        <input type="text" id="comment_hp" name="comment_hp" value="" tabindex="-1" autocomplete="off" class="visually-hidden-field" aria-hidden="true">
                     </div>
 
                     <button type="submit" class="btn btn-primary">Kommentar abschicken</button>

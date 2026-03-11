@@ -31,9 +31,8 @@ try {
 // Falls nicht vorhanden (direkter Zugriff), Slug aus URL extrahieren
 if (!isset($page) || empty($page)) {
     try {
-        $pageService = \CMS\Services\PageService::instance();
-        $slug        = trim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '', '/ ');
-        $page        = $pageService->getPageBySlug($slug);
+        $slug = trim((string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ''), '/ ');
+        $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
     } catch (\Throwable $e) {
         $page = null;
     }
@@ -71,7 +70,6 @@ if ($_pg_layout === 'two-col' && $_pg_sidebarNav) {
 }
 ?>
 
-<?php $_pg_padTop = 'padding-top:28px'; ?>
 <?php
 // Aktualisierungs-Pill (wird in beiden Layouts ans Ende des Contents gehängt)
 $_pg_updatedPill = '';
@@ -80,13 +78,13 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     $_pg_updatedPill = '<div class="page-updated-pill-wrap"><span class="page-updated-pill">🕒 Zuletzt aktualisiert: ' . $_pg_dateFormatted . '</span></div>';
 }
 ?>
-<div class="container" style="<?php echo $_pg_padTop; ?>;padding-bottom:13px;">
+<div class="container page-shell page-shell--compact">
 
 <?php if ($pageNotFound): ?>
-    <div style="text-align:center;padding:4rem 2rem;">
-        <p style="font-size:3rem;margin:0 0 1rem;">🔍</p>
-        <h1 style="color:var(--text-primary);margin-bottom:.5rem;">Seite nicht gefunden</h1>
-        <p style="color:var(--text-muted);max-width:480px;margin:0 auto 1.5rem;">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
+    <div class="page-empty-state">
+        <p class="page-empty-state__icon">🔍</p>
+        <h1 class="page-empty-state__title">Seite nicht gefunden</h1>
+        <p class="page-empty-state__text">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="btn btn-primary">← Zurück zur Startseite</a>
     </div>
 <?php else: ?>
@@ -108,16 +106,16 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
     <?php if ($_pg_layout === 'two-col' && $_pg_showSidebar): ?>
     <!-- 2-spaltig: Inhalt + Sidebar -->
-    <div class="post-layout"<?php echo ($_pg_layout === 'two-col') ? ' style="display:grid;grid-template-columns:1fr var(--sidebar-width,300px);gap:2rem;align-items:start;"' : ''; ?>>
+    <div class="post-layout page-layout-grid">
 
         <div data-anim data-anim-delay="1">
             <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
-            <nav class="toc-box" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;">
-                <strong style="font-size:.88rem;color:var(--text-secondary);">&#x1F4CB; Inhaltsverzeichnis</strong>
-                <ol style="margin:10px 0 0 18px;padding:0;font-size:.85rem;line-height:1.8;">
+            <nav class="toc-box page-toc">
+                <strong class="page-toc__title">&#x1F4CB; Inhaltsverzeichnis</strong>
+                <ol class="page-toc__list">
                     <?php foreach ($_pg_toc as $_ti): ?>
-                    <li<?php echo $_ti['level'] === 3 ? ' style="margin-left:16px;"' : ''; ?>>
-                        <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" style="color:var(--text-secondary);text-decoration:none;"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
+                    <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
+                        <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
                     </li>
                     <?php endforeach; ?>
                 </ol>
@@ -129,12 +127,12 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
         <aside class="post-sidebar">
             <?php if ($_pg_sidebarNav && !empty($_pgNavItems)): ?>
-            <div class="sidebar-widget" style="background:var(--bg-primary);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;">
-                <h4 style="font-size:.9rem;font-weight:700;margin:0 0 12px;color:var(--text-primary);">Navigation</h4>
+            <div class="sidebar-widget page-sidebar-nav">
+                <h4 class="page-sidebar-nav__title">Navigation</h4>
                 <nav>
                     <?php foreach ($_pgNavItems as $_ni): ?>
                     <a href="<?php echo htmlspecialchars($_ni['url'] ?? '#', ENT_QUOTES); ?>"
-                       style="display:block;padding:5px 0;font-size:.85rem;color:var(--text-secondary);text-decoration:none;border-bottom:1px solid var(--border-color);"><?php echo htmlspecialchars($_ni['label'] ?? '', ENT_QUOTES); ?></a>
+                       class="page-sidebar-nav__link"><?php echo htmlspecialchars($_ni['label'] ?? '', ENT_QUOTES); ?></a>
                     <?php endforeach; ?>
                 </nav>
             </div>
@@ -145,20 +143,20 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
     <?php else: ?>
     <!-- Volle Breite oder schmal -->
-    <?php $pageContentStyle = ($_pg_layout === 'narrow') ? 'max-width:860px;margin-left:auto;margin-right:auto;' : ''; ?>
+    <?php $pageContentClass = $_pg_layout === 'narrow' ? ' page-content--narrow' : ''; ?>
     <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
-    <nav class="toc-box" style="<?php echo $pageContentStyle; ?>background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;" data-anim>
-        <strong style="font-size:.88rem;color:var(--text-secondary);">&#x1F4CB; Inhaltsverzeichnis</strong>
-        <ol style="margin:10px 0 0 18px;padding:0;font-size:.85rem;line-height:1.8;">
+    <nav class="toc-box page-toc<?php echo $pageContentClass; ?>" data-anim>
+        <strong class="page-toc__title">&#x1F4CB; Inhaltsverzeichnis</strong>
+        <ol class="page-toc__list">
             <?php foreach ($_pg_toc as $_ti): ?>
-            <li<?php echo $_ti['level'] === 3 ? ' style="margin-left:16px;"' : ''; ?>>
-                <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" style="color:var(--text-secondary);text-decoration:none;"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
+            <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
+                <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
             </li>
             <?php endforeach; ?>
         </ol>
     </nav>
     <?php endif; ?>
-    <div class="page-content" data-anim data-anim-delay="1" style="<?php echo $pageContentStyle; ?>">
+    <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
         <?php echo $page['content'] ?? ''; ?>
     </div>
     <?php echo $_pg_updatedPill; ?>

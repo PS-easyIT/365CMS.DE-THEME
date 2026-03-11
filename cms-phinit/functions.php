@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('CMS_PHINIT_THEME_VERSION', '1.4.0');
+define('CMS_PHINIT_THEME_VERSION', '1.4.1');
 define('CMS_PHINIT_THEME_DIR',     THEME_PATH . 'cms-phinit/');
 define('CMS_PHINIT_THEME_URL',     rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
@@ -21,6 +21,9 @@ define('CMS_PHINIT_THEME_URL',     rtrim(\CMS\ThemeManager::instance()->getTheme
 final class CMS_Phinit_Theme
 {
     private static ?self $instance = null;
+    private bool $scriptsOutput = false;
+    private bool $footerCodeOutput = false;
+    private bool $breadcrumbOutput = false;
 
     public static function instance(): self
     {
@@ -102,6 +105,12 @@ final class CMS_Phinit_Theme
 
     public function enqueueScripts(): void
     {
+        if ($this->scriptsOutput) {
+            return;
+        }
+
+        $this->scriptsOutput = true;
+
         $jsFile  = CMS_PHINIT_THEME_DIR . 'assets/js/navigation.js';
         $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
         echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '" defer></script>' . "\n";
@@ -303,6 +312,10 @@ final class CMS_Phinit_Theme
 
     public function outputBreadcrumb(): void
     {
+        if ($this->breadcrumbOutput) {
+            return;
+        }
+
         // Customizer-Einstellungen prüfen
         try {
             $c = \CMS\Services\ThemeCustomizer::instance();
@@ -368,6 +381,8 @@ final class CMS_Phinit_Theme
         } catch (\Throwable) {}
 
         if (!$title) { return; }
+
+    $this->breadcrumbOutput = true;
 
         // JSON-LD BreadcrumbList (im Body ausgeben, wird von Google trotzdem verarbeitet)
         $ldItems = [];
@@ -523,6 +538,12 @@ final class CMS_Phinit_Theme
 
     public function outputCustomFooterCode(): void
     {
+        if ($this->footerCodeOutput) {
+            return;
+        }
+
+        $this->footerCodeOutput = true;
+
         try {
             $code = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'custom_footer_code', '');
             if (!empty(trim((string)$code))) {

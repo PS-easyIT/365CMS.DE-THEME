@@ -1,7 +1,7 @@
 /*
 Theme Name: CMS Phinit
 Description: IT-Profi Theme inspiriert von phinit.de – Deep Navy, Gold-Akzente, professionelles Editorial-Layout für technische Blogs & Wissensseiten.
-Version: 1.4.0
+Version: 1.4.1
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phinit.de
 Tags: it, tech, editorial, blog, dark-mode, responsive, professional
@@ -75,7 +75,8 @@ Tags: it, tech, editorial, blog, dark-mode, responsive, professional
 }
 
 /* — Dark Mode — */
-body.dark-mode {
+body.dark-mode,
+html.dark-mode body {
     --bg-primary:    #1a2332;
     --bg-secondary:  #111827;
     --bg-tertiary:   #1e2d3d;
@@ -127,6 +128,158 @@ body {
     color: var(--text-primary);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+}
+
+body.mobile-menu-open { overflow: hidden; }
+
+.page-shell {
+    padding-top: 28px;
+    padding-bottom: 40px;
+}
+
+.page-shell--compact {
+    padding-bottom: 13px;
+}
+
+.page-shell--wide {
+    padding-bottom: 52px;
+}
+
+.page-shell--search {
+    padding-bottom: 40px;
+}
+
+.page-empty-state,
+.search-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.page-empty-state__icon,
+.search-empty-state__icon {
+    font-size: 3rem;
+    margin: 0 0 1rem;
+}
+
+.page-empty-state__title,
+.search-empty-state__title {
+    color: var(--text-primary);
+    margin-bottom: .5rem;
+}
+
+.page-empty-state__text,
+.search-empty-state__text {
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 1.5rem;
+}
+
+.search-empty-state__text {
+    max-width: 400px;
+    margin-top: .5rem;
+    margin-bottom: 0;
+}
+
+.page-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr var(--sidebar-width, 300px);
+    gap: 2rem;
+    align-items: start;
+}
+
+.page-toc {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+}
+
+.page-toc__title {
+    font-size: .88rem;
+    color: var(--text-secondary);
+}
+
+.page-toc__list {
+    margin: 10px 0 0 18px;
+    padding: 0;
+    font-size: .85rem;
+    line-height: 1.8;
+}
+
+.page-toc__item--nested {
+    margin-left: 16px;
+}
+
+.page-toc__link {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.page-content--narrow {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-sidebar-nav {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+}
+
+.page-sidebar-nav__title {
+    font-size: .9rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--text-primary);
+}
+
+.page-sidebar-nav__link {
+    display: block;
+    padding: 5px 0;
+    font-size: .85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.page-sidebar-nav__link:last-child {
+    border-bottom: 0;
+}
+
+.search-results-summary {
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+.search-filters {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search-filter-select {
+    max-width: 180px;
+}
+
+.error-shell {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.error-suggestions {
+    margin-top: 3rem;
+}
+
+.error-suggestions__title {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
 }
 
 /* Dark side margins – Vignette-Effekt links/rechts */
@@ -239,6 +392,16 @@ img { max-width: 100%; display: block; object-fit: cover; }
     background: transparent; border: none; cursor: pointer; text-decoration: none;
 }
 .hdr-tools .util-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+.hdr-tools .util-login-link {
+    width: auto;
+    height: auto;
+    color: #fff;
+    border-color: rgba(255,255,255,.4);
+}
+.hdr-tools .util-login-link:hover {
+    border-color: rgba(255,255,255,.7);
+    background: rgba(255,255,255,.1);
+}
 
 .site-logo {
     display: flex; align-items: center; gap: 10px;
@@ -353,6 +516,14 @@ img { max-width: 100%; display: block; object-fit: cover; }
     border-bottom: 1px solid rgba(255,255,255,.05);
 }
 .mobile-menu a:hover { background: rgba(255,255,255,.06); color: #fff; }
+.mobile-menu__child {
+    padding-left: 36px !important;
+    font-size: .82rem;
+    opacity: .8;
+}
+.mobile-menu__login {
+    color: var(--accent-teal-light) !important;
+}
 .mobile-menu .mob-search { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,.05); }
 .mobile-menu .mob-search input {
     width: 100%; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.15);
@@ -398,6 +569,7 @@ img { max-width: 100%; display: block; object-fit: cover; }
 .badge-danger  { background: #dc2626; color: #fff; }
 .badge-neutral { background: #e2e8f0; color: #475569; }
 .badge-dark    { background: #1e293b; color: #94a3b8; }
+.badge--align-start { align-self: flex-start; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    8. FEATURED / HORIZONTAL ARTICLE CARD
@@ -487,6 +659,16 @@ img { max-width: 100%; display: block; object-fit: cover; }
 }
 .post-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: transparent; }
 .post-card-thumb { overflow: hidden; height: 160px; background: var(--bg-tertiary); position: relative; display: block; flex-shrink: 0; }
+.post-card-thumb--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+.post-card-thumb__icon {
+    font-size: 2rem;
+    opacity: .4;
+}
 .post-card-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform 0.4s ease; }
 .post-card:hover .post-card-thumb img { transform: scale(1.06); }
 .post-card-badge {
@@ -571,6 +753,53 @@ img { max-width: 100%; display: block; object-fit: cover; }
 .section-header a:hover { color: var(--accent-teal-light); }
 .content-section { margin-bottom: var(--spacing-sections, 40px); }
 
+.home-shell {
+    padding-top: 28px;
+    padding-bottom: 0;
+}
+
+.home-section--repo { margin-bottom: var(--home-sp-repo, 32px); }
+.home-section--list { margin-bottom: var(--home-sp-list, 32px); }
+.home-section--info { margin-bottom: var(--home-sp-info, 32px); }
+.home-section--grid { margin-bottom: var(--home-sp-grid, 32px); }
+.home-section--rss { margin-bottom: var(--home-sp-rss, 0); }
+
+.blog-shell {
+    padding-top: 20px;
+    padding-bottom: 0;
+}
+
+.article-list--framed {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.pagination--spaced {
+    margin-top: 24px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state__icon {
+    font-size: 3rem;
+    margin: 0 0 1rem;
+}
+
+.empty-state__text {
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: .5rem auto 1.5rem;
+}
+
+.empty-state__action {
+    margin-top: 1rem;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    11c. HOMEPAGE ARTIKEL-LISTE + SIDEBAR
 ═══════════════════════════════════════════════════════════════════════════ */
@@ -611,6 +840,9 @@ img { max-width: 100%; display: block; object-fit: cover; }
     font-size: 10px; font-weight: 700; letter-spacing: .9px;
     text-transform: uppercase; color: var(--text-muted);
     margin-bottom: 0px;
+}
+.sb-widget-title--spaced {
+    margin-bottom: .5rem;
 }
 /* Projekte- und Social-Widget: Titel volle Breite mit leicht dunklerem Hintergrund */
 .sb-widget--projects > .sb-widget-title,
@@ -714,6 +946,9 @@ img { max-width: 100%; display: block; object-fit: cover; }
     padding: 5px 0; gap: 7px;
     border-bottom: 1px solid var(--border-color);
 }
+.sb-status-row--empty {
+    padding: .5rem 0;
+}
 .sb-status-list li:last-child .sb-status-row { border-bottom: none; padding-bottom: 0; }
 .sb-status-service {
     display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0;
@@ -728,6 +963,10 @@ img { max-width: 100%; display: block; object-fit: cover; }
     font-size: 10px; font-weight: 700; color: var(--text-secondary); font-family: monospace;
 }
 .sb-status-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-status-empty-text {
+    font-size: .82rem;
+    color: var(--text-secondary, #64748b);
+}
 .sb-status-dot {
     flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%;
 }
@@ -1061,6 +1300,9 @@ body.dark-mode .feed-dual-col { background: var(--bg-dark-2); border-color: var(
 .feed-list--inline .meta {
     flex-shrink: 0; margin-top: 0; white-space: nowrap;
 }
+.feed-list__empty {
+    color: var(--text-muted);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    13. MAIN LAYOUT (Content + Sidebar)
@@ -1151,6 +1393,7 @@ body.dark-mode .feed-dual-col { background: var(--bg-dark-2); border-color: var(
     margin-top: 0;
 }
 .post-meta strong { color: var(--text-primary); }
+.post-meta__link { color: inherit; }
 
 .post-body {
     background: var(--bg-primary); border: 1px solid var(--border-color);
@@ -1257,6 +1500,9 @@ body.dark-mode .feed-dual-col { background: var(--bg-dark-2); border-color: var(
 .comment-form-wrap h4 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group--spaced { margin-bottom: 12px; }
+.form-group--honeypot { margin-bottom: 14px; }
+.form-row--spaced { margin-bottom: 12px; }
 .form-group label { font-size: var(--fs-xs); font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .4px; }
 .form-control {
     padding: 9px 12px; border: 1px solid var(--border-color);
@@ -1266,6 +1512,114 @@ body.dark-mode .feed-dual-col { background: var(--bg-dark-2); border-color: var(
 }
 .form-control:focus { border-color: var(--accent-teal); box-shadow: 0 0 0 3px rgba(13,148,136,.1); }
 textarea.form-control { resize: vertical; min-height: 110px; margin-top: 4px; }
+
+.field-required {
+    color: #ef4444;
+}
+
+.field-optional {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.form-helper-text {
+    font-size: var(--fs-xs);
+    color: var(--text-light);
+}
+
+.visually-hidden-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+
+.comment-empty-state {
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    padding: 12px 0;
+}
+
+.alert-box {
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: var(--fs-sm);
+    border: 1px solid transparent;
+}
+
+.alert-box--error {
+    background: #fee2e2;
+    border-color: #f87171;
+    color: #991b1b;
+}
+
+.alert-box--success {
+    background: #dcfce7;
+    border-color: #4ade80;
+    color: #166534;
+}
+
+.post-alt-language {
+    font-size: .85rem;
+    color: var(--text-muted);
+    padding: 8px 0;
+}
+
+.post-alt-language__link {
+    color: var(--accent-teal);
+}
+
+.toc-list--plain {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc--accent {
+    border-left-color: var(--accent-color);
+}
+
+.toc--primary {
+    border-left-color: var(--primary-color);
+}
+
+.toc-muted-count {
+    color: var(--text-muted);
+    font-size: .85em;
+}
+
+.toc-count {
+    color: var(--text-light);
+    font-size: var(--fs-xs);
+    margin-left: 4px;
+}
+
+.auth-card--narrow {
+    max-width: 480px;
+}
+
+.auth-helper--tight {
+    margin-top: -8px;
+}
+
+.member-empty-state__icon {
+    font-size: 2.5rem;
+}
+
+.member-empty-state__icon--compact {
+    font-size: 2rem;
+}
+
+.member-empty-state__action {
+    margin-top: 1rem;
+}
+
+.member-inline-form {
+    display: inline;
+}
+
+.member-card--spaced {
+    margin-top: 1.5rem;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    19. PAGINATION
@@ -1341,6 +1695,43 @@ textarea.form-control { resize: vertical; min-height: 110px; margin-top: 4px; }
 }
 #consent-banner p { flex: 1; min-width: 220px; margin: 0; }
 #consent-banner .consent-btns { display: flex; gap: 8px; }
+#consent-banner .consent-link {
+    color: var(--accent-teal-light);
+    text-decoration: underline;
+}
+.btn-consent-decline {
+    border-color: rgba(255,255,255,.3);
+    color: rgba(255,255,255,.7);
+}
+
+.back-to-top-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.1rem;
+    z-index: 900;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.back-to-top-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    22. CSS ANIMATIONS
@@ -1851,6 +2242,10 @@ body.dark-mode .page-content--wide  { color: var(--text-white); }
     font-size: .78rem; font-weight: 800; letter-spacing: .04em;
     padding: .4rem .9rem; border-radius: 20px;
     white-space: nowrap;
+}
+.repo-badge--inline {
+    align-self: flex-start;
+    margin-bottom: 10px;
 }
 .repo-card .btn-accent {
     border-color: var(--accent-color);

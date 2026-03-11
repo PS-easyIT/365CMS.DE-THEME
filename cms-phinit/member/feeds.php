@@ -119,13 +119,13 @@ include $themeDir . 'header.php';
 
         <?php if (!$hasFeedPlugin): ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">📡</p>
+            <p class="member-empty-state__icon">📡</p>
             <p><strong>Feed-System nicht verfügbar</strong></p>
             <p>Das Feed-Plugin ist derzeit nicht aktiviert.</p>
         </div>
         <?php elseif (empty($channels)): ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">📭</p>
+            <p class="member-empty-state__icon">📭</p>
             <p><strong>Keine Feed-Kanäle vorhanden</strong></p>
             <p>Es sind derzeit keine Kanäle verfügbar.</p>
         </div>
@@ -153,7 +153,7 @@ include $themeDir . 'header.php';
                 <?php endif; ?>
                 <div class="member-newsletter-action">
                     <?php if ($isSub): ?>
-                    <form method="POST" style="display:inline;">
+                    <form method="POST" class="member-inline-form">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                         <input type="hidden" name="channel_id" value="<?php echo $chId; ?>">
                         <input type="hidden" name="feed_action" value="toggle_notify">
@@ -161,14 +161,14 @@ include $themeDir . 'header.php';
                             <?php echo $notify ? '🔔 Mail aktiv' : '🔕 Mail aus'; ?>
                         </button>
                     </form>
-                    <form method="POST" style="display:inline;">
+                    <form method="POST" class="member-inline-form">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                         <input type="hidden" name="channel_id" value="<?php echo $chId; ?>">
                         <input type="hidden" name="feed_action" value="unsubscribe">
                         <button type="submit" class="btn btn-sm btn-secondary">Deabonnieren</button>
                     </form>
                     <?php else: ?>
-                    <form method="POST" style="display:inline;">
+                    <form method="POST" class="member-inline-form">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                         <input type="hidden" name="channel_id" value="<?php echo $chId; ?>">
                         <input type="hidden" name="feed_action" value="subscribe">

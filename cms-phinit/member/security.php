@@ -123,13 +123,13 @@ try {
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
 
                 <div class="form-group">
-                    <label for="current_password" class="form-label">Aktuelles Passwort <span style="color:#ef4444;">*</span></label>
+                    <label for="current_password" class="form-label">Aktuelles Passwort <span class="field-required">*</span></label>
                     <input type="password" id="current_password" name="current_password"
                            class="form-control" autocomplete="current-password" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="new_password" class="form-label">Neues Passwort <span style="color:#ef4444;">*</span></label>
+                    <label for="new_password" class="form-label">Neues Passwort <span class="field-required">*</span></label>
                     <input type="password" id="new_password" name="new_password"
                            class="form-control" autocomplete="new-password"
                            minlength="12" required>
@@ -137,7 +137,7 @@ try {
                 </div>
 
                 <div class="form-group">
-                    <label for="new_password_repeat" class="form-label">Neues Passwort wiederholen <span style="color:#ef4444;">*</span></label>
+                    <label for="new_password_repeat" class="form-label">Neues Passwort wiederholen <span class="field-required">*</span></label>
                     <input type="password" id="new_password_repeat" name="new_password_repeat"
                            class="form-control" autocomplete="new-password"
                            minlength="12" required>
@@ -151,7 +151,7 @@ try {
 
         <?php if (!empty($sessions)): ?>
         <!-- Aktive Sitzungen -->
-        <div class="member-card" style="margin-top:1.5rem;">
+        <div class="member-card member-card--spaced">
             <h3>📱 Aktive Sitzungen</h3>
             <div class="users-table-container">
                 <table class="users-table">

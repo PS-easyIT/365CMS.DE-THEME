@@ -170,7 +170,7 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
                 <span>⏱ <?php echo $readTime; ?> Min. Lesezeit</span>
                 <?php endif; ?>
                 <?php if ($commentCount > 0): ?>
-                <span><a href="#comments" style="color:inherit;">💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></a></span>
+                <span><a href="#comments" class="post-meta__link">💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></a></span>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
@@ -254,11 +254,11 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
             </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <p style="color:var(--text-muted);font-size:var(--fs-sm);padding:12px 0;">Noch keine Kommentare. Sei der Erste!</p>
+            <p class="comment-empty-state">Noch keine Kommentare. Sei der Erste!</p>
         <?php endif; ?>
 
         <?php if ($commentError): ?>
-        <div style="background:#fee2e2;border:1px solid #f87171;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:var(--fs-sm);color:#991b1b;">
+        <div class="alert-box alert-box--error">
             ❌ <?php echo htmlspecialchars($commentError, ENT_QUOTES); ?>
         </div>
         <?php endif; ?>
@@ -269,17 +269,17 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
                 <input type="hidden" name="submit_comment" value="1">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                 <input type="hidden" name="post_id"    value="<?php echo (int)($post['id'] ?? 0); ?>">
-                <div class="form-group" style="margin-bottom:12px;">
-                    <label for="comment_text">Kommentar <span style="color:#ef4444;">*</span></label>
+                <div class="form-group form-group--spaced">
+                    <label for="comment_text">Kommentar <span class="field-required">*</span></label>
                     <textarea id="comment_text" name="comment_text" class="form-control" required placeholder="Dein Kommentar …" rows="4"></textarea>
                 </div>
-                <div class="form-row" style="margin-bottom:12px;">
+                <div class="form-row form-row--spaced">
                     <div class="form-group">
-                        <label for="comment_name">Name <span style="color:#ef4444;">*</span></label>
+                        <label for="comment_name">Name <span class="field-required">*</span></label>
                         <input type="text" id="comment_name" name="comment_name" class="form-control" required placeholder="Dein Name">
                     </div>
                     <div class="form-group">
-                        <label for="comment_email">E-Mail <span style="color:#ef4444;">*</span></label>
+                        <label for="comment_email">E-Mail <span class="field-required">*</span></label>
                         <input type="email" id="comment_email" name="comment_email" class="form-control" required placeholder="dein@email.de">
                     </div>
                 </div>

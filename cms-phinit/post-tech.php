@@ -320,11 +320,11 @@ $readTime = function_exists('phinit_reading_time')
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p style="color:var(--text-muted);font-size:var(--fs-sm);padding:12px 0;">Noch keine Kommentare. Sei der Erste!</p>
+                    <p class="comment-empty-state">Noch keine Kommentare. Sei der Erste!</p>
                 <?php endif; ?>
 
                 <?php if ($commentError): ?>
-                <div style="background:#fee2e2;border:1px solid #f87171;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:var(--fs-sm);color:#991b1b;">
+                <div class="alert-box alert-box--error">
                     ❌ <?php echo htmlspecialchars($commentError, ENT_QUOTES); ?>
                 </div>
                 <?php endif; ?>
@@ -335,17 +335,17 @@ $readTime = function_exists('phinit_reading_time')
                         <input type="hidden" name="submit_comment" value="1">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                         <input type="hidden" name="post_id"    value="<?php echo (int)($post['id'] ?? 0); ?>">
-                        <div class="form-group" style="margin-bottom:12px;">
-                            <label for="comment_text">Kommentar <span style="color:#ef4444;">*</span></label>
+                        <div class="form-group form-group--spaced">
+                            <label for="comment_text">Kommentar <span class="field-required">*</span></label>
                             <textarea id="comment_text" name="comment_text" class="form-control" required placeholder="Dein Kommentar …" rows="4"></textarea>
                         </div>
-                        <div class="form-row" style="margin-bottom:12px;">
+                        <div class="form-row form-row--spaced">
                             <div class="form-group">
-                                <label for="comment_name">Name <span style="color:#ef4444;">*</span></label>
+                                <label for="comment_name">Name <span class="field-required">*</span></label>
                                 <input type="text" id="comment_name" name="comment_name" class="form-control" required placeholder="Dein Name">
                             </div>
                             <div class="form-group">
-                                <label for="comment_email">E-Mail <span style="color:#ef4444;">*</span></label>
+                                <label for="comment_email">E-Mail <span class="field-required">*</span></label>
                                 <input type="email" id="comment_email" name="comment_email" class="form-control" required placeholder="dein@email.de">
                             </div>
                         </div>
@@ -381,7 +381,7 @@ $readTime = function_exists('phinit_reading_time')
         <?php if ($techOs || $techVersion): ?>
         <div class="toc tech-sidebar-info">
             <div class="toc-title">🖥️ Umgebung</div>
-            <ul class="toc-list" style="list-style:none;padding-left:0;">
+            <ul class="toc-list toc-list--plain">
                 <?php if ($techOs): ?><li><strong>OS:</strong> <?php echo htmlspecialchars($techOs, ENT_QUOTES); ?></li><?php endif; ?>
                 <?php if ($techVersion): ?><li><strong>Version:</strong> <code class="inline-code"><?php echo htmlspecialchars($techVersion, ENT_QUOTES); ?></code></li><?php endif; ?>
                 <?php if ($techTested): ?><li><strong>Getestet:</strong> <?php echo htmlspecialchars(date('M Y', strtotime($techTested)), ENT_QUOTES); ?></li><?php endif; ?>
@@ -402,14 +402,14 @@ $readTime = function_exists('phinit_reading_time')
         } catch (\Throwable) {}
         ?>
         <?php if (!empty($catRows)): ?>
-        <div class="toc" style="border-left-color:var(--accent-color);">
+        <div class="toc toc--accent">
             <div class="toc-title">🗂 Kategorien</div>
             <ul class="toc-list" role="list">
                 <?php foreach ($catRows as $cat): ?>
                 <li>
                     <a href="<?php echo htmlspecialchars(SITE_URL . '/kategorie/' . ($cat['slug'] ?? ''), ENT_QUOTES); ?>">
                         <?php echo htmlspecialchars($cat['name'] ?? '', ENT_QUOTES); ?>
-                        <span style="color:var(--text-muted);font-size:.85em;">(<?php echo (int)($cat['cnt'] ?? 0); ?>)</span>
+                        <span class="toc-muted-count">(<?php echo (int)($cat['cnt'] ?? 0); ?>)</span>
                     </a>
                 </li>
                 <?php endforeach; ?>

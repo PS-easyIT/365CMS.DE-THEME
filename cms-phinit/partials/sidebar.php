@@ -113,7 +113,7 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
 
     <!-- Ähnliche Artikel -->
     <?php if ($show_related && !empty($related_posts)): ?>
-    <div class="toc" style="border-left-color:var(--accent-color);">
+    <div class="toc toc--accent">
         <div class="toc-title">📰 <?php echo htmlspecialchars($related_header, ENT_QUOTES); ?></div>
         <ul class="toc-list" role="list">
             <?php foreach ($related_posts as $_sb_rel): ?>
@@ -129,7 +129,7 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
 
     <!-- Kategorien-Widget -->
     <?php if (!empty($categories)): ?>
-    <div class="toc" style="border-left-color:var(--primary-color);">
+    <div class="toc toc--primary">
         <div class="toc-title">🗂 Kategorien</div>
         <ul class="toc-list" role="list">
             <?php foreach ($categories as $_sb_cat): ?>
@@ -137,7 +137,7 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
                 <a href="<?php echo htmlspecialchars($site_url . '/kategorie/' . urlencode($_sb_cat['slug'] ?? $_sb_cat['name'] ?? ''), ENT_QUOTES); ?>">
                     <?php echo htmlspecialchars($_sb_cat['name'] ?? '', ENT_QUOTES); ?>
                     <?php if (((int)($_sb_cat['cnt'] ?? 0)) > 0): ?>
-                    <span style="color:var(--text-light);font-size:var(--fs-xs);margin-left:4px;">(<?php echo (int)$_sb_cat['cnt']; ?>)</span>
+                    <span class="toc-count">(<?php echo (int)$_sb_cat['cnt']; ?>)</span>
                     <?php endif; ?>
                 </a>
             </li>

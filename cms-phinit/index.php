@@ -246,12 +246,28 @@ try {
     $totalPages      = 1;
 }
 ?>
+<style>
+    .home-shell {
+        --home-sp-repo: <?php echo (int)$_spRepo; ?>px;
+        --home-sp-list: <?php echo (int)$_spList; ?>px;
+        --home-sp-info: <?php echo (int)$_spInfo; ?>px;
+        --home-sp-grid: <?php echo (int)$_spGrid; ?>px;
+        --home-sp-rss: <?php echo (int)$_spRss; ?>px;
+        --hp-sidebar-w: <?php echo (int)$_listSidebarWidth; ?>px;
+    }
+    <?php if (!empty($_sbProj1LogoUrl)): ?>
+    .sb-project-card--project1 { background-image: url('<?php echo htmlspecialchars($_sbProj1LogoUrl, ENT_QUOTES); ?>'); }
+    <?php endif; ?>
+    <?php if (!empty($_sbProj2LogoUrl)): ?>
+    .sb-project-card--project2 { background-image: url('<?php echo htmlspecialchars($_sbProj2LogoUrl, ENT_QUOTES); ?>'); }
+    <?php endif; ?>
+</style>
 <?php \CMS\Hooks::doAction('home_content'); ?>
-<div class="container" style="padding-top:28px;padding-bottom:0;">
+<div class="container home-shell">
 
     <!-- ── Repo-Card ─────────────────────────────────────────────── -->
     <?php if ($_showRepo && !empty($_repoTitle)): ?>
-    <section class="content-section" style="margin-bottom:<?php echo (int)$_spRepo; ?>px" data-anim>
+    <section class="content-section home-section home-section--repo" data-anim>
         <div class="repo-card">
             <div class="repo-card-icon" aria-hidden="true">
                 <svg viewBox="0 0 16 16" width="28" height="28" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -279,15 +295,15 @@ try {
 
     <!-- ── Artikel-Liste ─────────────────────────────────────── -->
     <?php if ($_showList && !empty($featuredPosts)): ?>
-    <section class="content-section" style="margin-bottom:<?php echo (int)$_spList; ?>px" data-anim>
+    <section class="content-section home-section home-section--list" data-anim>
         <div class="section-header">
             <span class="section-label">📄 <?php echo htmlspecialchars($_listLabel, ENT_QUOTES); ?></span>
         </div>
         <?php if ($_showListSidebar): ?>
-        <div class="homepage-list-with-sidebar" style="--hp-sidebar-w:<?php echo (int)$_listSidebarWidth; ?>px">
+        <div class="homepage-list-with-sidebar">
         <div class="homepage-list-main">
         <?php endif; ?>
-        <div class="article-list" style="border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);">
+        <div class="article-list article-list--framed">
             <?php foreach ($featuredPosts as $post):
                 get_theme_part('partials/post-card', [
                     'card'         => (array)$post,
@@ -343,13 +359,12 @@ try {
                 ] as [$pName, $pDesc, $pUrl, $pLogo]):
                     if (empty($pName) || empty($pUrl)) { continue; }
                     $_pInitials = mb_strtoupper(mb_substr(preg_replace('/[^a-z0-9]/iu', '', strip_tags($pName)), 0, 2));
-                    $_pBgStyle  = !empty($pLogo)
-                        ? 'background-image:url(' . htmlspecialchars($pLogo, ENT_QUOTES) . ');'
+                    $_pCardClass = !empty($pLogo)
+                        ? ($pLogo === $_sbProj1LogoUrl ? ' sb-project-card--project1' : ($pLogo === $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
                         : '';
                 ?>
                 <a href="<?php echo htmlspecialchars($pUrl, ENT_QUOTES); ?>"
-                   class="sb-project-card"
-                   style="<?php echo $_pBgStyle; ?>"
+                   class="sb-project-card<?php echo $_pCardClass; ?>"
                    target="_blank" rel="noopener noreferrer">
                     <?php if (empty($pLogo)): ?>
                     <div class="sb-project-placeholder-bg"
@@ -416,13 +431,12 @@ try {
                 ] as [$pName, $pDesc, $pUrl, $pLogo]):
                     if (empty($pName) || empty($pUrl)) { continue; }
                     $_pInitials = mb_strtoupper(mb_substr(preg_replace('/[^a-z0-9]/iu', '', strip_tags($pName)), 0, 2));
-                    $_pBgStyle  = !empty($pLogo)
-                        ? 'background-image:url(' . htmlspecialchars($pLogo, ENT_QUOTES) . ');'
+                    $_pCardClass = !empty($pLogo)
+                        ? ($pLogo === $_sbProj1LogoUrl ? ' sb-project-card--project1' : ($pLogo === $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
                         : '';
                 ?>
                 <a href="<?php echo htmlspecialchars($pUrl, ENT_QUOTES); ?>"
-                   class="sb-project-card"
-                   style="<?php echo $_pBgStyle; ?>"
+                   class="sb-project-card<?php echo $_pCardClass; ?>"
                    target="_blank" rel="noopener noreferrer">
                     <?php if (empty($pLogo)): ?>
                     <div class="sb-project-placeholder-bg"
@@ -468,9 +482,9 @@ try {
                 <?php endforeach; ?>
                 </ul>
                 <?php else: ?>
-                <div class="sb-status-row" style="padding:.5rem 0;">
+                <div class="sb-status-row sb-status-row--empty">
                     <span class="sb-status-dot sb-status-dot--ok"></span>
-                    <span style="font-size:.82rem;color:var(--text-secondary,#64748b);">Keine bekannten Störungen</span>
+                    <span class="sb-status-empty-text">Keine bekannten Störungen</span>
                 </div>
                 <?php endif; ?>
             </div>
@@ -530,7 +544,7 @@ try {
             <?php /* Widget: Ankündigung / Hinweis */ if (!$_sbFeaturedActive && $_sbShowNotice && !empty($_sbNoticeTitle)): ?>
             <div class="sb-widget sb-widget--notice">
                 <div class="sb-notice-body">
-                    <div class="sb-widget-title" style="margin-bottom:.5rem;"><?php echo htmlspecialchars($_sbNoticeTitle, ENT_QUOTES); ?></div>
+                    <div class="sb-widget-title sb-widget-title--spaced"><?php echo htmlspecialchars($_sbNoticeTitle, ENT_QUOTES); ?></div>
                     <?php if (!empty($_sbNoticeText)): ?>
                     <p class="sb-notice-text"><?php echo htmlspecialchars($_sbNoticeText, ENT_QUOTES); ?></p>
                     <?php endif; ?>
@@ -560,7 +574,7 @@ try {
 
     <!-- ── Kategorie-Cards (Info-Grid) ───────────────────────── -->
     <?php if ($_showInfoGrid): ?>
-    <section class="content-section" style="margin-bottom:<?php echo (int)$_spInfo; ?>px" data-anim data-anim-delay="1">
+    <section class="content-section home-section home-section--info" data-anim data-anim-delay="1">
         <div class="section-header">
             <span class="section-label section-label--dark">Themenbereiche</span>
         </div>
@@ -602,7 +616,7 @@ try {
                 <p><?php echo htmlspecialchars($_c3Text, ENT_QUOTES); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($_c3Badge)): ?>
-                <span class="repo-badge" style="align-self:flex-start;margin-bottom:10px;"><?php echo htmlspecialchars($_c3Badge, ENT_QUOTES); ?></span>
+                <span class="repo-badge repo-badge--inline"><?php echo htmlspecialchars($_c3Badge, ENT_QUOTES); ?></span>
                 <?php endif; ?>
                 <?php if (!empty($_c3FullUrl) && !empty($_c3LinkText)): ?>
                 <a href="<?php echo htmlspecialchars($_c3FullUrl, ENT_QUOTES); ?>"
@@ -619,7 +633,7 @@ try {
 
     <!-- ── Kachel-Grid ─────────────────────────────────────────── -->
     <?php if ($_showTileGrid && !empty($gridPosts)): ?>
-    <section class="content-section" style="margin-bottom:<?php echo (int)$_spGrid; ?>px" data-anim data-anim-delay="2">
+    <section class="content-section home-section home-section--grid" data-anim data-anim-delay="2">
         <div class="section-header">
             <span class="section-label">📰 <?php echo htmlspecialchars($_tileLabel, ENT_QUOTES); ?></span>
         </div>
@@ -635,14 +649,14 @@ try {
                          loading="lazy">
                 </div>
                 <?php else: ?>
-                <div class="post-card-thumb" style="display:flex;align-items:center;justify-content:center;background:var(--bg-tertiary);min-height:120px;">
-                    <span style="font-size:2rem;opacity:.4;">📄</span>
+                <div class="post-card-thumb post-card-thumb--placeholder">
+                    <span class="post-card-thumb__icon">📄</span>
                 </div>
                 <?php endif; ?>
 
                 <div class="post-card-body">
                     <?php if ($_showTileCat && !empty($post['category_name'])): ?>
-                    <span class="badge badge-neutral" style="align-self:flex-start;"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
+                    <span class="badge badge-neutral badge--align-start"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
                     <?php endif; ?>
                     <h3 class="post-card-title">
                         <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
@@ -738,7 +752,7 @@ try {
     }
     ?>
     <?php if (!empty($_feedSections)): ?>
-    <section class="content-section" style="margin-bottom:<?php echo (int)$_spRss; ?>px" data-anim data-anim-delay="3">
+    <section class="content-section home-section home-section--rss" data-anim data-anim-delay="3">
         <div class="feed-dual-grid">
             <?php foreach ($_feedSections as $_fsIdx => $_fs): ?>
             <div class="feed-dual-col">
@@ -759,7 +773,7 @@ try {
                     </li>
                     <?php endforeach; ?>
                     <?php if (empty($_fs['items'])): ?>
-                    <li style="color:var(--text-muted)">Keine Einträge verfügbar.</li>
+                    <li class="feed-list__empty">Keine Einträge verfügbar.</li>
                     <?php endif; ?>
                 </ul>
             </div>

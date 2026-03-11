@@ -100,8 +100,30 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo \CMS\Hooks::applyFilters('page_title', htmlspecialchars($siteTitle, ENT_QUOTES)); ?></title>
-    <!-- Anti-FOUC: Dark Mode vor CSS-Load setzen -->
-    <script>if(localStorage.getItem('cms-phinit-theme')==='dark')document.documentElement.classList.add('dark-mode');</script>
+    <script>
+    (function () {
+        try {
+            var storedTheme = localStorage.getItem('cms365-theme');
+            if (storedTheme === null) {
+                storedTheme = localStorage.getItem('cms-phinit-theme');
+                if (storedTheme !== null) {
+                    localStorage.setItem('cms365-theme', storedTheme);
+                }
+            }
+
+            if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                document.addEventListener('DOMContentLoaded', function () {
+                    if (document.body) {
+                        document.body.classList.add('dark-mode');
+                    }
+                }, { once: true });
+            }
+        } catch (error) {
+            console.warn('Dark-Mode konnte vorab nicht initialisiert werden.', error);
+        }
+    })();
+    </script>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 <body<?php
@@ -258,10 +280,10 @@ try {
                 <?php if ($isLoggedIn && $currentUser): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/dashboard" class="util-link" title="Mein Konto">👤</a>
                 <?php else: ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline" style="border-color:rgba(255,255,255,.4);color:#fff;" aria-label="Einloggen">Login</a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline util-login-link" aria-label="Einloggen">Login</a>
                 <?php endif; ?>
 
-                <button class="burger-btn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+                <button class="burger-btn" id="burger-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -283,7 +305,7 @@ try {
                 <a href="<?php echo htmlspecialchars($item['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?></a>
                     <?php if (!empty($item['children'])): ?>
                         <?php foreach ($item['children'] as $child): ?>
-                        <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>" style="padding-left:36px;font-size:.82rem;opacity:.8;"><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>" class="mobile-menu__child"><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -295,7 +317,7 @@ try {
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz</a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">News</a>
                 <?php if (!$isLoggedIn): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" style="color:var(--accent-teal-light);">🔑 Login</a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 Login</a>
                 <?php endif; ?>
             <?php endif; ?>
         </nav>

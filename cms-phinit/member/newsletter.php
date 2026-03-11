@@ -103,13 +103,13 @@ include $themeDir . 'header.php';
 
         <?php if (!$hasNewsletterPlugin): ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">📧</p>
+            <p class="member-empty-state__icon">📧</p>
             <p><strong>Newsletter nicht verfügbar</strong></p>
             <p>Das Newsletter-Plugin ist derzeit nicht aktiviert.</p>
         </div>
         <?php elseif (empty($lists)): ?>
         <div class="member-empty-state" data-anim>
-            <p style="font-size:2.5rem;">📭</p>
+            <p class="member-empty-state__icon">📭</p>
             <p><strong>Keine Newsletter-Listen vorhanden</strong></p>
             <p>Es sind derzeit keine Newsletter-Listen verfügbar.</p>
         </div>
