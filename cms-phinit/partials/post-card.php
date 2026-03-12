@@ -66,20 +66,20 @@ if ($show_rt && $show_meta) {
     <div class="article-thumb">
         <?php if (!empty($card['featured_image'])): ?>
         <img src="<?php echo htmlspecialchars($card['featured_image'], ENT_QUOTES); ?>"
-             alt="<?php echo htmlspecialchars($card['title'] ?? '', ENT_QUOTES); ?>"
+             alt="<?php echo phinit_escape_text($card['title'] ?? ''); ?>"
              loading="lazy">
         <?php else: ?>
         <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
         <?php endif; ?>
         <?php if (!empty($card['category_name'])): ?>
-        <span class="thumb-badge badge-teal"><?php echo htmlspecialchars($card['category_name'], ENT_QUOTES); ?></span>
+        <span class="thumb-badge badge-teal"><?php echo phinit_escape_text($card['category_name'] ?? ''); ?></span>
         <?php endif; ?>
     </div>
 
     <div class="article-body">
         <h4>
             <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($card['slug'] ?? ''), ENT_QUOTES); ?>">
-                <?php echo htmlspecialchars($card['title'] ?? '', ENT_QUOTES); ?>
+                <?php echo phinit_escape_text($card['title'] ?? ''); ?>
             </a>
         </h4>
         <?php if ($show_excerpt && !empty(trim($_pc_excerpt))): ?>
@@ -88,7 +88,7 @@ if ($show_rt && $show_meta) {
         <?php if ($show_meta): ?>
         <div class="article-meta">
             <?php if ($show_cat && !empty($card['category_name'])): ?>
-            <span class="cat"><?php echo htmlspecialchars($card['category_name'], ENT_QUOTES); ?></span>
+            <span class="cat"><?php echo phinit_escape_text($card['category_name'] ?? ''); ?></span>
             <?php endif; ?>
             <?php if ($show_date && !empty($displayDate)): ?>
             <span><?php echo htmlspecialchars(date('j. F Y', strtotime((string)$displayDate)), ENT_QUOTES); ?></span>

@@ -140,23 +140,30 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
     <!-- ── Post-Header ───────────────────────────────────────────────── -->
     <header class="post-header" data-anim>
         <?php if ($showPostHero && !empty($post['featured_image'])): ?>
-        <img class="post-hero-img"
-             src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
-             alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-             loading="eager" itemprop="image">
+        <div class="post-hero-media">
+            <img class="post-hero-img"
+                 src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
+                 alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
+                 loading="eager" itemprop="image">
+            <?php if (!empty($post['category_name'])): ?>
+            <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="post-hero-badge badge badge-teal">
+                <?php echo phinit_escape_text($post['category_name'] ?? ''); ?>
+            </a>
+            <?php endif; ?>
+        </div>
         <?php endif; ?>
 
         <div class="post-header-body">
-            <?php if (!empty($post['category_name'])): ?>
+            <?php if ((!$showPostHero || empty($post['featured_image'])) && !empty($post['category_name'])): ?>
             <div class="post-cats">
-                <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($post['category_name']), ENT_QUOTES); ?>" class="badge badge-teal">
-                    <?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?>
+                <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="badge badge-teal">
+                    <?php echo phinit_escape_text($post['category_name'] ?? ''); ?>
                 </a>
             </div>
             <?php endif; ?>
 
             <h1 class="post-title" itemprop="headline">
-                <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
+                <?php echo phinit_escape_text($post['title'] ?? ''); ?>
             </h1>
             <?php if ($showPostMeta): ?>
             <div class="post-meta">
@@ -164,7 +171,7 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
                     <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
                 </strong></span>
                 <?php if (!empty($post['author_name'])): ?>
-                <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author_name'], ENT_QUOTES); ?></strong></span>
+                <span>👤 <strong itemprop="author"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></strong></span>
                 <?php endif; ?>
                 <?php if ($showReadingTime && $readTime): ?>
                 <span>⏱ <?php echo $readTime; ?> Min. Lesezeit</span>
@@ -179,14 +186,23 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
 
     <!-- ── Inline-TOC (aufklappbar) ──────────────────────────────────── -->
     <?php if (!empty($tocItems)): ?>
-    <details class="toc-inline" data-anim data-anim-delay="1">
-        <summary class="toc-inline__toggle">📋 <?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></summary>
-        <nav class="toc-inline__body">
+    <details class="toc-inline" data-inline-toc data-anim data-anim-delay="1">
+        <summary class="toc-inline__toggle">
+            <span class="toc-inline__toggle-main">
+                <span class="toc-inline__toggle-icon" aria-hidden="true">📋</span>
+                <span class="toc-inline__toggle-text"><?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></span>
+            </span>
+            <span class="toc-inline__toggle-meta">
+                <span class="toc-inline__count"><?php echo (int) count($tocItems); ?> Punkte</span>
+                <span class="toc-inline__chevron" aria-hidden="true">▾</span>
+            </span>
+        </summary>
+        <nav class="toc-inline__body" aria-label="Inhaltsverzeichnis des Artikels">
             <ul role="list">
                 <?php foreach ($tocItems as $item): ?>
                 <li class="<?php echo $item['level'] === 3 ? 'toc-h3' : ''; ?>">
                     <a href="#<?php echo htmlspecialchars($item['id'], ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($item['text'], ENT_QUOTES); ?>
+                        <?php echo phinit_escape_text($item['text'] ?? ''); ?>
                     </a>
                 </li>
                 <?php endforeach; ?>
@@ -221,13 +237,13 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
         <?php if ($prevPost): ?>
         <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
             <span class="direction">← Vorheriger Beitrag</span>
-            <span class="nav-title"><?php echo htmlspecialchars($prevPost['title'] ?? '', ENT_QUOTES); ?></span>
+            <span class="nav-title"><?php echo phinit_escape_text($prevPost['title'] ?? ''); ?></span>
         </a>
         <?php else: ?><span></span><?php endif; ?>
         <?php if ($nextPost): ?>
         <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
             <span class="direction">Nächster Beitrag →</span>
-            <span class="nav-title"><?php echo htmlspecialchars($nextPost['title'] ?? '', ENT_QUOTES); ?></span>
+            <span class="nav-title"><?php echo phinit_escape_text($nextPost['title'] ?? ''); ?></span>
         </a>
         <?php endif; ?>
     </nav>
@@ -306,7 +322,7 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
             <span>🏷️ Tags:</span>
             <?php foreach ($tagRows as $tag): ?>
             <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . ($tag['slug'] ?? ''), ENT_QUOTES); ?>" class="tag-link">
-                <?php echo htmlspecialchars($tag['name'] ?? '', ENT_QUOTES); ?>
+                <?php echo phinit_escape_text($tag['name'] ?? ''); ?>
             </a>
             <?php endforeach; ?>
         </div>

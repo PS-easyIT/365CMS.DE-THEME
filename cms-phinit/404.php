@@ -58,14 +58,14 @@ try {
                          alt="<?php echo htmlspecialchars($p['title'] ?? '', ENT_QUOTES); ?>"
                          loading="lazy">
                     <?php if (!empty($p['category_name'])): ?>
-                    <span class="post-card__badge"><?php echo htmlspecialchars($p['category_name'], ENT_QUOTES); ?></span>
+                    <span class="post-card__badge"><?php echo phinit_escape_text($p['category_name'] ?? ''); ?></span>
                     <?php endif; ?>
                 </a>
                 <?php endif; ?>
                 <div class="post-card__body">
                     <h3 class="post-card__title">
                         <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>">
-                            <?php echo htmlspecialchars($p['title'] ?? '', ENT_QUOTES); ?>
+                            <?php echo phinit_escape_text($p['title'] ?? ''); ?>
                         </a>
                     </h3>
                     <?php if (!empty($p['published_at'])): ?>

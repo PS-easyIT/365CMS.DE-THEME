@@ -111,7 +111,7 @@ $usedSlugs = [];
 $content = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/si', function ($m) use (&$usedSlugs) {
     $tag = $m[1]; $attrs = $m[2]; $inner = $m[3];
     if (preg_match('/\bid=["\']([^"\']+)["\']/i', $attrs)) return $m[0];
-    $text = trim(strip_tags($inner));
+    $text = phinit_display_text(strip_tags($inner));
     $slug = mb_strtolower($text, 'UTF-8');
     $slug = preg_replace('/[äÄ]/', 'ae', $slug);
     $slug = preg_replace('/[öÖ]/', 'oe', $slug);
@@ -129,7 +129,7 @@ $post['content'] = $content;
 if ($showToc) {
     preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/si', $content, $m, PREG_SET_ORDER);
     foreach ($m as $match) {
-        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
+        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => phinit_display_text(strip_tags($match[3]))];
     }
     if (count($tocItems) < $tocMinHeadings) { $tocItems = []; }
 }
@@ -174,23 +174,30 @@ $readTime = function_exists('phinit_reading_time')
             <!-- Post-Header -->
             <header class="post-header" data-anim>
                 <?php if ($showPostHero && !empty($post['featured_image'])): ?>
-                <img class="post-hero-img"
-                     src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
-                     alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-                     loading="eager" itemprop="image">
+                <div class="post-hero-media">
+                    <img class="post-hero-img"
+                         src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
+                         alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
+                         loading="eager" itemprop="image">
+                    <?php if (!empty($post['category_name'])): ?>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="post-hero-badge badge badge-teal">
+                        <?php echo phinit_escape_text($post['category_name'] ?? ''); ?>
+                    </a>
+                    <?php endif; ?>
+                </div>
                 <?php endif; ?>
 
                 <div class="post-header-body">
-                    <?php if (!empty($post['category_name'])): ?>
+                    <?php if ((!$showPostHero || empty($post['featured_image'])) && !empty($post['category_name'])): ?>
                     <div class="post-cats">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($post['category_name']), ENT_QUOTES); ?>" class="badge badge-teal">
-                            <?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?>
+                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="badge badge-teal">
+                            <?php echo phinit_escape_text($post['category_name'] ?? ''); ?>
                         </a>
                     </div>
                     <?php endif; ?>
 
                     <h1 class="post-title" itemprop="headline">
-                        <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
+                        <?php echo phinit_escape_text($post['title'] ?? ''); ?>
                     </h1>
                     <?php if ($showPostMeta): ?>
                     <div class="post-meta">
@@ -198,7 +205,7 @@ $readTime = function_exists('phinit_reading_time')
                             <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
                         </strong></span>
                         <?php if (!empty($post['author_name'])): ?>
-                        <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author_name'], ENT_QUOTES); ?></strong></span>
+                        <span>👤 <strong itemprop="author"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></strong></span>
                         <?php endif; ?>
                         <?php if ($showReadingTime && $readTime): ?>
                         <span>⏱ <?php echo $readTime; ?> Min. Lesezeit</span>
@@ -288,13 +295,13 @@ $readTime = function_exists('phinit_reading_time')
                 <?php if ($prevPost): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
                     <span class="direction">← Vorheriger Beitrag</span>
-                    <span class="nav-title"><?php echo htmlspecialchars($prevPost['title'] ?? '', ENT_QUOTES); ?></span>
+                    <span class="nav-title"><?php echo phinit_escape_text($prevPost['title'] ?? ''); ?></span>
                 </a>
                 <?php else: ?><span></span><?php endif; ?>
                 <?php if ($nextPost): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
                     <span class="direction">Nächster Beitrag →</span>
-                    <span class="nav-title"><?php echo htmlspecialchars($nextPost['title'] ?? '', ENT_QUOTES); ?></span>
+                    <span class="nav-title"><?php echo phinit_escape_text($nextPost['title'] ?? ''); ?></span>
                 </a>
                 <?php endif; ?>
             </nav>
@@ -369,7 +376,7 @@ $readTime = function_exists('phinit_reading_time')
                 <?php foreach ($tocItems as $item): ?>
                 <li class="<?php echo $item['level'] === 3 ? 'toc-h3' : ''; ?>">
                     <a href="#<?php echo htmlspecialchars($item['id'], ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($item['text'], ENT_QUOTES); ?>
+                        <?php echo phinit_escape_text($item['text'] ?? ''); ?>
                     </a>
                 </li>
                 <?php endforeach; ?>

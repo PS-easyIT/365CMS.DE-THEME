@@ -24,6 +24,7 @@
         initActiveNav();
         initFlashMessages();
         initTocHighlight();
+        initInlineToc();
         if (isEnabled('backToTop'))     initBackToTop();
         initShareButtons();
         initConsentBanner();
@@ -184,6 +185,36 @@
             { rootMargin: '-20% 0px -70% 0px' }
         );
         headings.forEach(h => { if (h.id) observer.observe(h); });
+    }
+
+    function initInlineToc() {
+        const inlineTocs = document.querySelectorAll('[data-inline-toc]');
+        if (!inlineTocs.length) return;
+
+        inlineTocs.forEach((toc) => {
+            const summary = toc.querySelector('summary');
+            if (!summary) return;
+
+            toc.open = false;
+
+            const syncState = () => {
+                summary.setAttribute('aria-expanded', toc.open ? 'true' : 'false');
+                toc.classList.toggle('is-open', toc.open);
+            };
+
+            syncState();
+            toc.addEventListener('toggle', syncState);
+
+            toc.querySelectorAll('a[href^="#"]').forEach((link) => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 1024) {
+                        window.setTimeout(() => {
+                            toc.open = false;
+                        }, 120);
+                    }
+                });
+            });
+        });
     }
 
     /* ── Back to Top ───────────────────────────────────────────── */

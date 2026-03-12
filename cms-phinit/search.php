@@ -70,7 +70,10 @@ $filter   = isset($filter)   ? (string)$filter   : '';
             $rType      = $r['_type']       ?? 'post';
             $rTypeLabel = $r['_type_label'] ?? 'Beitrag';
             $rTitle     = $r['title']       ?? $r['name'] ?? 'Ohne Titel';
-            $rExcerpt   = $r['excerpt']     ?? $r['meta_description'] ?? $r['description'] ?? '';
+            $rExcerptSource = (string)($r['excerpt'] ?? $r['meta_description'] ?? $r['description'] ?? $r['content'] ?? '');
+            $rExcerpt = function_exists('phinit_excerpt_plain_text')
+                ? phinit_excerpt_plain_text($rExcerptSource)
+                : strip_tags($rExcerptSource);
             $rSlug      = $r['slug']        ?? '';
 
             // URL-Logik je nach Typ
@@ -93,7 +96,7 @@ $filter   = isset($filter)   ? (string)$filter   : '';
                     </a>
                 </h3>
                 <?php if (!empty($rExcerpt)): ?>
-                <p class="search-result-excerpt"><?php echo htmlspecialchars(mb_strimwidth(strip_tags($rExcerpt), 0, 200, '…'), ENT_QUOTES); ?></p>
+                <p class="search-result-excerpt"><?php echo htmlspecialchars(mb_strimwidth($rExcerpt, 0, 200, '…'), ENT_QUOTES); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($r['published_at'])): ?>
                 <span class="search-result-date">📅 <?php echo htmlspecialchars(date('j. M Y', strtotime($r['published_at'])), ENT_QUOTES); ?></span>

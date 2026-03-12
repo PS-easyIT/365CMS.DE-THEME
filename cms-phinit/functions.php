@@ -11,13 +11,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('CMS_PHINIT_THEME_VERSION', '1.4.1');
-define('CMS_PHINIT_THEME_DIR',     THEME_PATH . 'cms-phinit/');
-define('CMS_PHINIT_THEME_URL',     rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
+defined('CMS_PHINIT_THEME_VERSION') || define('CMS_PHINIT_THEME_VERSION', '1.4.1');
+defined('CMS_PHINIT_THEME_DIR') || define('CMS_PHINIT_THEME_DIR', THEME_PATH . 'cms-phinit/');
+defined('CMS_PHINIT_THEME_URL') || define('CMS_PHINIT_THEME_URL', rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
 /**
  * Theme-Hauptklasse (Singleton)
  */
+if (!class_exists('CMS_Phinit_Theme', false)) {
 final class CMS_Phinit_Theme
 {
     private static ?self $instance = null;
@@ -50,6 +51,7 @@ final class CMS_Phinit_Theme
 
         // Menüpositionen
         \CMS\Hooks::addFilter('register_menu_locations', [$this, 'registerMenuLocations']);
+        \CMS\Hooks::addFilter('local_font_slugs', [$this, 'registerRequiredLocalFonts']);
 
         // Standardmenüs beim ersten Start anlegen
         \CMS\Hooks::addAction('cms_init', [$this, 'seedDefaultMenus'], 20);
@@ -346,12 +348,12 @@ final class CMS_Phinit_Theme
             if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
                 $crumbs[] = ['label' => 'Blog', 'url' => $siteUrl . '/blog'];
                 $t = $db->get_var("SELECT title FROM {$prefix}posts WHERE slug = ? LIMIT 1", [$m[1]]);
-                $title = $t ? htmlspecialchars((string)$t, ENT_QUOTES) : htmlspecialchars($m[1], ENT_QUOTES);
+                $title = $t ? phinit_display_text((string)$t) : phinit_display_text($m[1]);
             } elseif ($uri === '/blog') {
                 $title = 'Blog';
             } elseif (preg_match('#^/kategorie/([\w-]+)$#', $uri, $m)) {
                 $crumbs[] = ['label' => 'Blog', 'url' => $siteUrl . '/blog'];
-                $title = htmlspecialchars(ucwords(str_replace('-', ' ', $m[1])), ENT_QUOTES);
+                $title = phinit_display_text(ucwords(str_replace('-', ' ', $m[1])));
             } elseif (str_starts_with($uri, '/member')) {
                 $crumbs[] = ['label' => 'Member', 'url' => $siteUrl . '/member'];
                 $memberLabels = [
@@ -370,12 +372,12 @@ final class CMS_Phinit_Theme
                 if (!$title && $uri !== '/member') { $title = 'Dashboard'; }
             } elseif ($uri === '/search') {
                 $q = trim($_GET['q'] ?? '');
-                $title = $q ? 'Suche: ' . htmlspecialchars($q, ENT_QUOTES) : 'Suche';
+                $title = $q ? 'Suche: ' . phinit_display_text($q) : 'Suche';
             } else {
                 $slug = ltrim($uri, '/');
                 if (!str_contains($slug, '/')) {
                     $t = $db->get_var("SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1", [$slug]);
-                    $title = $t ? htmlspecialchars((string)$t, ENT_QUOTES) : htmlspecialchars(ucwords(str_replace('-', ' ', $slug)), ENT_QUOTES);
+                    $title = $t ? phinit_display_text((string)$t) : phinit_display_text(ucwords(str_replace('-', ' ', $slug)));
                 }
             }
         } catch (\Throwable) {}
@@ -409,7 +411,7 @@ final class CMS_Phinit_Theme
             echo '</li><li class="sep" aria-hidden="true">›</li>';
         }
         echo '<li class="current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
-        echo '<span itemprop="name">' . $title . '</span>';
+        echo '<span itemprop="name">' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</span>';
         echo '<meta itemprop="position" content="' . count($ldItems) . '">';
         echo '</li>' . "\n";
         echo '</ol></div>' . "\n";
@@ -425,10 +427,37 @@ final class CMS_Phinit_Theme
             $row = $db->get_var(
                 "SELECT option_value FROM {$db->prefix()}settings WHERE option_name = 'privacy_use_local_fonts'"
             );
-            return ($row === '1');
+            $value = strtolower(trim((string)$row));
+
+            return in_array($value, ['1', 'true', 'yes', 'on'], true);
         } catch (\Throwable $e) {
             return false;
         }
+    }
+
+    public function registerRequiredLocalFonts(array $slugs): array
+    {
+        try {
+            $customizer = \CMS\Services\ThemeCustomizer::instance();
+            $requestedSlugs = [
+                (string)$customizer->get('typography', 'font_family_ui', 'barlow'),
+                (string)$customizer->get('typography', 'font_family_brand', 'barlow-condensed'),
+                (string)$customizer->get('typography', 'font_family_code', 'jetbrains-mono'),
+            ];
+
+            foreach ($requestedSlugs as $slug) {
+                $slug = trim($slug);
+                if ($slug === '' || in_array($slug, ['system', 'system-mono'], true)) {
+                    continue;
+                }
+
+                $slugs[] = $slug;
+            }
+        } catch (\Throwable $e) {
+            return array_values(array_unique($slugs));
+        }
+
+        return array_values(array_unique($slugs));
     }
 
     /* ── Preconnect: nur bei Remote-Fonts ───────────────────────── */
@@ -918,6 +947,7 @@ final class CMS_Phinit_Theme
     public function filterPageTitle(string $siteTitle): string
     {
         $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $siteTitle = phinit_display_text($siteTitle);
 
         try {
             $db     = \CMS\Database::instance();
@@ -929,7 +959,7 @@ final class CMS_Phinit_Theme
                     "SELECT title FROM {$prefix}posts WHERE slug = ? AND status = 'published' LIMIT 1",
                     [$m[1]]
                 );
-                if ($title) return htmlspecialchars((string)$title, ENT_QUOTES) . ' – ' . $siteTitle;
+                if ($title) return phinit_display_text((string)$title) . ' – ' . $siteTitle;
             }
 
             // Seite: /<slug> (ausgenommen bekannte Routen)
@@ -940,7 +970,7 @@ final class CMS_Phinit_Theme
                     "SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1",
                     [$slug]
                 );
-                if ($title) return htmlspecialchars((string)$title, ENT_QUOTES) . ' – ' . $siteTitle;
+                if ($title) return phinit_display_text((string)$title) . ' – ' . $siteTitle;
             }
 
             // Kategorie-Seiten: /kategorie/<slug>
@@ -977,13 +1007,13 @@ final class CMS_Phinit_Theme
             // Such-Ergebnisse
             if ($uri === '/search') {
                 $q = trim($_GET['q'] ?? '');
-                if ($q) return 'Suche: ' . htmlspecialchars($q, ENT_QUOTES) . ' – ' . $siteTitle;
+                if ($q) return 'Suche: ' . phinit_display_text($q) . ' – ' . $siteTitle;
                 return 'Suche – ' . $siteTitle;
             }
 
         } catch (\Throwable $e) {}
 
-        return $siteTitle . ' – IT-Blog &amp; Tutorials';
+        return $siteTitle . ' – IT-Blog & Tutorials';
     }
     /* ── Body-Class ────────────────────────────────────────────── */
 
@@ -1007,9 +1037,13 @@ final class CMS_Phinit_Theme
         return trim($classes . ' ' . implode(' ', $add));
     }
 }
+}
 
-// Theme initialisieren
-CMS_Phinit_Theme::instance();
+// Theme initialisieren (nur einmal pro Request)
+if (!defined('CMS_PHINIT_THEME_BOOTSTRAPPED')) {
+    define('CMS_PHINIT_THEME_BOOTSTRAPPED', true);
+    CMS_Phinit_Theme::instance();
+}
 
 /* ── Template-Helper ─────────────────────────────────────────── */
 
@@ -1041,6 +1075,20 @@ if (!function_exists('theme_is_logged_in')) {
     }
 }
 
+if (!function_exists('phinit_display_text')) {
+    function phinit_display_text(?string $text): string
+    {
+        return trim(html_entity_decode((string)$text, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    }
+}
+
+if (!function_exists('phinit_escape_text')) {
+    function phinit_escape_text(?string $text): string
+    {
+        return htmlspecialchars(phinit_display_text($text), ENT_QUOTES, 'UTF-8');
+    }
+}
+
 if (!function_exists('phinit_reading_time')) {
     /**
      * Lesezeit in Minuten schätzen
@@ -1069,6 +1117,45 @@ if (!function_exists('phinit_excerpt_plain_text')) {
         if ($content === '') {
             return '';
         }
+
+        $extractFromMalformedEditorJs = static function (string $raw): string {
+            $parts = [];
+
+            if (preg_match_all('/"text"\s*:\s*"((?:\\.|[^"\\])*)"/u', $raw, $matches)) {
+                foreach ($matches[1] as $value) {
+                    $decoded = json_decode('"' . $value . '"');
+                    if (is_string($decoded) && trim($decoded) !== '') {
+                        $parts[] = $decoded;
+                    }
+                }
+            }
+
+            if (preg_match_all('/"caption"\s*:\s*"((?:\\.|[^"\\])*)"/u', $raw, $matches)) {
+                foreach ($matches[1] as $value) {
+                    $decoded = json_decode('"' . $value . '"');
+                    if (is_string($decoded) && trim($decoded) !== '') {
+                        $parts[] = $decoded;
+                    }
+                }
+            }
+
+            if (preg_match_all('/"items"\s*:\s*\[(.*?)\]/us', $raw, $itemGroups)) {
+                foreach ($itemGroups[1] as $group) {
+                    if (preg_match_all('/"((?:\\.|[^"\\])*)"/u', $group, $itemMatches)) {
+                        foreach ($itemMatches[1] as $value) {
+                            $decoded = json_decode('"' . $value . '"');
+                            if (is_string($decoded) && trim($decoded) !== '') {
+                                $parts[] = $decoded;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $text = trim(html_entity_decode(strip_tags(implode(' ', $parts)), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            return preg_replace('/\s+/u', ' ', $text) ?? '';
+        };
+
         $decoded = json_decode($content, true);
         if (is_array($decoded) && isset($decoded['blocks']) && is_array($decoded['blocks'])) {
             $html = '';
@@ -1098,6 +1185,11 @@ if (!function_exists('phinit_excerpt_plain_text')) {
                     }
                 }
                 $content = implode(' ', $parts);
+            }
+        } elseif (str_contains($content, '"blocks"') && (str_starts_with($content, '{') || str_starts_with($content, '['))) {
+            $recovered = $extractFromMalformedEditorJs($content);
+            if ($recovered !== '') {
+                $content = $recovered;
             }
         }
         $text = trim(html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8'));

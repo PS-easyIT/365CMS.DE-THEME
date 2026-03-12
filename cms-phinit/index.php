@@ -201,7 +201,7 @@ try {
 
     $gridRows  = $_showTileGrid
         ? ($db->get_results(
-                        "SELECT p.id, p.title, p.slug, p.excerpt, LEFT(p.content, 500) AS content, p.featured_image, p.published_at, p.created_at,
+                        "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
                     c.name AS category_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
@@ -644,29 +644,36 @@ try {
 
                 <?php if (!empty($post['featured_image'])): ?>
                 <div class="post-card-thumb">
+                    <?php if ($_showTileCat && !empty($post['category_name'])): ?>
+                    <span class="post-card-badge"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
+                    <?php endif; ?>
                     <img src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
                          loading="lazy">
                 </div>
                 <?php else: ?>
                 <div class="post-card-thumb post-card-thumb--placeholder">
+                    <?php if ($_showTileCat && !empty($post['category_name'])): ?>
+                    <span class="post-card-badge"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
+                    <?php endif; ?>
                     <span class="post-card-thumb__icon">📄</span>
                 </div>
                 <?php endif; ?>
 
                 <div class="post-card-body">
-                    <?php if ($_showTileCat && !empty($post['category_name'])): ?>
-                    <span class="badge badge-neutral badge--align-start"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
-                    <?php endif; ?>
                     <h3 class="post-card-title">
                         <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
-                            <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
+                            <?php echo phinit_escape_text($post['title'] ?? ''); ?>
                         </a>
                     </h3>
                     <?php
-                    $_tileExc = $post['excerpt'] ?? '';
+                    $_tileExc = function_exists('phinit_excerpt_plain_text')
+                        ? phinit_excerpt_plain_text((string)($post['excerpt'] ?? ''))
+                        : strip_tags((string)($post['excerpt'] ?? ''));
                     if (empty(trim($_tileExc)) && !empty($post['content'])) {
-                        $_tileExc = mb_strimwidth(strip_tags($post['content']), 0, $_tileExcLen, '…');
+                        $_tileExc = function_exists('phinit_excerpt_plain_text')
+                            ? phinit_excerpt_plain_text((string)$post['content'])
+                            : strip_tags((string)$post['content']);
                     }
                     if ($_showTileExc && !empty(trim($_tileExc))): ?>
                     <p class="post-card-excerpt"><?php echo htmlspecialchars(mb_strimwidth($_tileExc, 0, $_tileExcLen, '…'), ENT_QUOTES); ?></p>
@@ -674,7 +681,7 @@ try {
                     <div class="post-card-meta">
                         <div class="post-card-meta__left">
                         <?php if ($_showTileCat && !empty($post['category_name'])): ?>
-                        <span class="cat"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></span>
+                        <span class="cat"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
                         <?php endif; ?>
                         <?php if ($_showTileDate): ?>
                         <?php $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? ''); ?>

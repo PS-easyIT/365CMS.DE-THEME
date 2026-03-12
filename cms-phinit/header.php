@@ -99,7 +99,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo \CMS\Hooks::applyFilters('page_title', htmlspecialchars($siteTitle, ENT_QUOTES)); ?></title>
+    <title><?php echo htmlspecialchars(\CMS\Hooks::applyFilters('page_title', $siteTitle), ENT_QUOTES, 'UTF-8'); ?></title>
     <script>
     (function () {
         try {

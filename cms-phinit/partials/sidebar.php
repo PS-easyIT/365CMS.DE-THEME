@@ -21,7 +21,7 @@
  * @var bool     $show_related      Related-Posts anzeigen
  * @var string   $related_header    Related-Titeltext
  * @var array    $related_posts     Related-Posts [title, slug]
- * @var array    $categories        Kategorie-Liste [name, slug, cnt]
+ * @var array    $post_tags         Artikel-Tags [name, slug]
  * @var string   $site_url          Basis-URL
  *
  * @package CMS_Phinit_Theme
@@ -48,7 +48,7 @@ $social_rss     = $social_rss     ?? '';
 $show_related   = $show_related   ?? true;
 $related_header = $related_header ?? 'Ähnliche Artikel';
 $related_posts  = $related_posts  ?? [];
-$categories     = $categories     ?? [];
+$post_tags      = $post_tags      ?? [];
 $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
 ?>
 <aside class="sidebar" aria-label="Seitenleiste">
@@ -57,15 +57,17 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
     <?php if ($show_toc && !empty($toc_items)): ?>
     <div class="toc<?php echo $toc_sticky ? ' toc-sticky' : ''; ?>">
         <div class="toc-title"><?php echo htmlspecialchars($toc_header, ENT_QUOTES); ?></div>
-        <ul class="toc-list" role="list">
-            <?php foreach ($toc_items as $_sb_item): ?>
-            <li class="<?php echo (int)($_sb_item['level'] ?? 2) === 3 ? 'toc-h3' : ''; ?>">
-                <a href="#<?php echo htmlspecialchars($_sb_item['id'] ?? '', ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars($_sb_item['text'] ?? '', ENT_QUOTES); ?>
-                </a>
-            </li>
-            <?php endforeach; ?>
-        </ul>
+        <div class="toc-panel">
+            <ul class="toc-list" role="list">
+                <?php foreach ($toc_items as $_sb_item): ?>
+                <li class="<?php echo (int)($_sb_item['level'] ?? 2) === 3 ? 'toc-h3' : ''; ?>">
+                    <a href="#<?php echo htmlspecialchars($_sb_item['id'] ?? '', ENT_QUOTES); ?>">
+                        <?php echo htmlspecialchars($_sb_item['text'] ?? '', ENT_QUOTES); ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     </div>
     <?php endif; ?>
 
@@ -127,18 +129,15 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
     </div>
     <?php endif; ?>
 
-    <!-- Kategorien-Widget -->
-    <?php if (!empty($categories)): ?>
+    <!-- Tags-Widget -->
+    <?php if (!empty($post_tags)): ?>
     <div class="toc toc--primary">
-        <div class="toc-title">🗂 Kategorien</div>
+        <div class="toc-title">🏷 Tags</div>
         <ul class="toc-list" role="list">
-            <?php foreach ($categories as $_sb_cat): ?>
+            <?php foreach ($post_tags as $_sb_tag): ?>
             <li>
-                <a href="<?php echo htmlspecialchars($site_url . '/kategorie/' . urlencode($_sb_cat['slug'] ?? $_sb_cat['name'] ?? ''), ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars($_sb_cat['name'] ?? '', ENT_QUOTES); ?>
-                    <?php if (((int)($_sb_cat['cnt'] ?? 0)) > 0): ?>
-                    <span class="toc-count">(<?php echo (int)$_sb_cat['cnt']; ?>)</span>
-                    <?php endif; ?>
+                <a href="<?php echo htmlspecialchars($site_url . '/tag/' . urlencode(phinit_display_text($_sb_tag['slug'] ?? $_sb_tag['name'] ?? '')), ENT_QUOTES); ?>">
+                    <?php echo phinit_escape_text($_sb_tag['name'] ?? ''); ?>
                 </a>
             </li>
             <?php endforeach; ?>

@@ -138,7 +138,7 @@ $content = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/si', function ($
     }
 
     // Slug aus Klartext erzeugen
-    $text = trim(strip_tags($inner));
+    $text = phinit_display_text(strip_tags($inner));
     $slug = mb_strtolower($text, 'UTF-8');
     $slug = preg_replace('/[äÄ]/', 'ae', $slug);
     $slug = preg_replace('/[öÖ]/', 'oe', $slug);
@@ -167,7 +167,7 @@ $tocItems = [];
 if ($showToc) {
     preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/si', $content, $m, PREG_SET_ORDER);
     foreach ($m as $match) {
-        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
+        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => phinit_display_text(strip_tags($match[3]))];
     }
     // Mindestanzahl prüfen
     if (count($tocItems) < $tocMinHeadings) {
@@ -220,18 +220,6 @@ if ($showSidebarRelated) {
         $relatedPosts = array_map(fn($r) => (array)$r, $relRows);
     } catch (\Throwable) {}
 }
-
-// ── Kategorien laden (dynamisch aus DB) ─────────────────────────────────────
-$dbCategories = [];
-try {
-    $catRows = $db->get_results(
-        "SELECT c.id, c.name, c.slug, COUNT(p.id) AS cnt
-         FROM {$prefix}post_categories c
-         LEFT JOIN {$prefix}posts p ON p.category_id = c.id AND p.status = 'published'
-         GROUP BY c.id ORDER BY c.name ASC"
-    ) ?: [];
-    $dbCategories = array_map(fn($r) => (array)$r, $catRows);
-} catch (\Throwable) {}
 
 // ── Tags laden ──────────────────────────────────────────────────────────────
 $postTags = [];
@@ -335,23 +323,28 @@ if ($sidebarPosition === 'left') {
             <header class="post-header" data-anim>
 
                 <?php if ($showPostHero && !empty($post['featured_image'])): ?>
-                <img class="post-hero-img"
-                     src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
-                     alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-                     loading="eager"
-                     itemprop="image">
+                <div class="post-hero-media">
+                    <img class="post-hero-img"
+                         src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
+                         alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
+                         loading="eager"
+                         itemprop="image">
+                    <?php if (!empty($post['category_name'])): ?>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="post-hero-badge badge badge-teal"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></a>
+                    <?php endif; ?>
+                </div>
                 <?php endif; ?>
 
                 <div class="post-header-body">
-                    <!-- Kategorie -->
-                    <?php if (!empty($post['category_name'])): ?>
+                    <!-- Kategorie ohne Hero-Bild -->
+                    <?php if ((!$showPostHero || empty($post['featured_image'])) && !empty($post['category_name'])): ?>
                     <div class="post-cats">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode($post['category_name']), ENT_QUOTES); ?>" class="badge badge-teal"><?php echo htmlspecialchars($post['category_name'], ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="badge badge-teal"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></a>
                     </div>
                     <?php endif; ?>
 
                     <h1 class="post-title" itemprop="headline">
-                        <?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>
+                        <?php echo phinit_escape_text($post['title'] ?? ''); ?>
                     </h1>
 
                     <?php if ($showPostMeta): ?>
@@ -360,7 +353,7 @@ if ($sidebarPosition === 'left') {
                             <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
                         </strong></span>
                         <?php if (!empty($post['author_name'])): ?>
-                        <span>👤 <strong itemprop="author"><?php echo htmlspecialchars($post['author_name'], ENT_QUOTES); ?></strong></span>
+                        <span>👤 <strong itemprop="author"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></strong></span>
                         <?php endif; ?>
                         <?php if ($showReadingTime): ?>
                         <span class="reading-time-badge">&#x23F1; <strong><?php echo $readingTime; ?></strong>&thinsp;Min.</span>
@@ -384,7 +377,7 @@ if ($sidebarPosition === 'left') {
                 <?php if ($showPostTags && !empty($postTags)): ?>
                 <div class="post-tags">
                     <?php foreach ($postTags as $tag): ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . urlencode($tag['slug'] ?? ''), ENT_QUOTES); ?>" class="post-tag">#<?php echo htmlspecialchars($tag['name'] ?? '', ENT_QUOTES); ?></a>
+                    <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . urlencode(phinit_display_text($tag['slug'] ?? '')), ENT_QUOTES); ?>" class="post-tag">#<?php echo phinit_escape_text($tag['name'] ?? ''); ?></a>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
@@ -423,7 +416,7 @@ if ($sidebarPosition === 'left') {
             <?php if ($prevPost): ?>
             <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
                 <span class="direction">← Vorheriger Beitrag</span>
-                <span class="nav-title"><?php echo htmlspecialchars($prevPost['title'] ?? '', ENT_QUOTES); ?></span>
+                <span class="nav-title"><?php echo phinit_escape_text($prevPost['title'] ?? ''); ?></span>
             </a>
             <?php else: ?>
             <span></span>
@@ -431,7 +424,7 @@ if ($sidebarPosition === 'left') {
             <?php if ($nextPost): ?>
             <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
                 <span class="direction">Nächster Beitrag →</span>
-                <span class="nav-title"><?php echo htmlspecialchars($nextPost['title'] ?? '', ENT_QUOTES); ?></span>
+                <span class="nav-title"><?php echo phinit_escape_text($nextPost['title'] ?? ''); ?></span>
             </a>
             <?php endif; ?>
         </nav>
@@ -530,7 +523,7 @@ if ($sidebarPosition === 'left') {
             'show_related'   => $showSidebarRelated,
             'related_header' => $sidebarRelatedHdr,
             'related_posts'  => $relatedPosts,
-            'categories'     => $dbCategories,
+            'post_tags'      => $postTags,
             'site_url'       => $siteUrl,
         ]);
     endif; /* sidebar_position !== 'none' */ ?>

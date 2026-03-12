@@ -118,16 +118,31 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
         <div data-anim data-anim-delay="1">
             <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
-            <nav class="toc-box page-toc">
-                <strong class="page-toc__title">&#x1F4CB; Inhaltsverzeichnis</strong>
-                <ol class="page-toc__list">
-                    <?php foreach ($_pg_toc as $_ti): ?>
-                    <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
-                        <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
-                    </li>
-                    <?php endforeach; ?>
-                </ol>
-            </nav>
+            <details class="toc-box page-toc page-toc--inline" data-inline-toc>
+                <summary class="page-toc__summary">
+                    <span class="page-toc__summary-main">
+                        <span class="page-toc__summary-icon" aria-hidden="true">&#x1F4CB;</span>
+                        <span class="page-toc__summary-copy">
+                            <span class="page-toc__eyebrow">Schnellnavigation</span>
+                            <span class="page-toc__summary-text">Inhaltsverzeichnis</span>
+                        </span>
+                    </span>
+                    <span class="page-toc__summary-meta">
+                        <span class="page-toc__count"><?php echo (int) count($_pg_toc); ?> Punkte</span>
+                        <span class="page-toc__hint" aria-hidden="true"></span>
+                        <span class="page-toc__chevron" aria-hidden="true">▾</span>
+                    </span>
+                </summary>
+                <nav class="page-toc__body" aria-label="Inhaltsverzeichnis der Seite">
+                    <ol class="page-toc__list">
+                        <?php foreach ($_pg_toc as $_ti): ?>
+                        <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
+                            <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
+                        </li>
+                        <?php endforeach; ?>
+                    </ol>
+                </nav>
+            </details>
             <?php endif; ?>
             <div class="page-content"><?php echo $pageContent; ?></div>
             <?php echo $_pg_updatedPill; ?>
@@ -153,16 +168,31 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <!-- Volle Breite oder schmal -->
     <?php $pageContentClass = $_pg_layout === 'narrow' ? ' page-content--narrow' : ''; ?>
     <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
-    <nav class="toc-box page-toc<?php echo $pageContentClass; ?>" data-anim>
-        <strong class="page-toc__title">&#x1F4CB; Inhaltsverzeichnis</strong>
-        <ol class="page-toc__list">
-            <?php foreach ($_pg_toc as $_ti): ?>
-            <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
-                <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
-            </li>
-            <?php endforeach; ?>
-        </ol>
-    </nav>
+    <details class="toc-box page-toc page-toc--inline<?php echo $pageContentClass; ?>" data-inline-toc data-anim>
+        <summary class="page-toc__summary">
+            <span class="page-toc__summary-main">
+                <span class="page-toc__summary-icon" aria-hidden="true">&#x1F4CB;</span>
+                <span class="page-toc__summary-copy">
+                    <span class="page-toc__eyebrow">Schnellnavigation</span>
+                    <span class="page-toc__summary-text">Inhaltsverzeichnis</span>
+                </span>
+            </span>
+            <span class="page-toc__summary-meta">
+                <span class="page-toc__count"><?php echo (int) count($_pg_toc); ?> Punkte</span>
+                <span class="page-toc__hint" aria-hidden="true"></span>
+                <span class="page-toc__chevron" aria-hidden="true">▾</span>
+            </span>
+        </summary>
+        <nav class="page-toc__body" aria-label="Inhaltsverzeichnis der Seite">
+            <ol class="page-toc__list">
+                <?php foreach ($_pg_toc as $_ti): ?>
+                <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
+                    <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
+                </li>
+                <?php endforeach; ?>
+            </ol>
+        </nav>
+    </details>
     <?php endif; ?>
     <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
         <?php echo $pageContent; ?>

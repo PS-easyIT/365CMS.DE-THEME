@@ -43,7 +43,7 @@ try {
     $_bOffset  = ($_blogPage - 1) * $_blogPer;
 
     $_stmtRows = $_bPdo->prepare(
-        "SELECT p.id, p.title, p.slug, p.excerpt, LEFT(p.content, 500) AS content,
+        "SELECT p.id, p.title, p.slug, p.excerpt, p.content,
                 p.featured_image, p.published_at, p.views,
                 c.name AS category_name
          FROM {$_bPfx}posts p
