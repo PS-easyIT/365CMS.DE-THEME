@@ -1646,11 +1646,20 @@ body.dark-mode .feed-dual-col { background: var(--bg-dark-2); border-color: var(
     white-space: pre-wrap;
 }
 .post-body .editorjs-list { margin: 1em 0 1.2em; }
-.post-body .editorjs-list__items { margin: 0; padding-left: 1.4em; }
-.post-body .editorjs-list__items li { padding-left: .2em; }
+.post-body .editorjs-list__items {
+    margin: 0 0 0 1.4rem;
+    padding-left: 1rem;
+    padding-inline-start: 1rem;
+    list-style-position: outside;
+}
+.post-body .editorjs-list__items li { padding-left: .35em; }
 .post-body .editorjs-list__items:not(ol) { list-style: disc outside; }
 .post-body ol.editorjs-list__items { list-style: decimal outside; }
-.post-body .editorjs-list__item > .editorjs-list__items { margin-top: .55em; margin-bottom: 0; }
+.post-body .editorjs-list__item > .editorjs-list__items {
+    margin-top: .55em;
+    margin-bottom: 0;
+    margin-left: 1.2rem;
+}
 .post-body .editorjs-list__item > ul.editorjs-list__items { list-style-type: circle; }
 .post-body .editorjs-list__item > ul.editorjs-list__items ul.editorjs-list__items { list-style-type: square; }
 .post-body .editorjs-checklist ul { list-style: none; padding-left: 0; margin: 1em 0 1.2em; }
