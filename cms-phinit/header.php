@@ -28,6 +28,59 @@ try {
     // Auth nicht verfügbar – kein Fehler ausgeben
 }
 
+$_requestPath = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+$_requestQuery = trim((string) ($_SERVER['QUERY_STRING'] ?? ''));
+$_currentLocale = 'de';
+$_requestContext = ['base_uri' => $_requestPath, 'locale' => 'de', 'is_localized' => false];
+$_contentLocalization = null;
+
+try {
+    $_contentLocalization = \CMS\Services\ContentLocalizationService::getInstance();
+    $_requestContext = $_contentLocalization->resolveRequestContext($_requestPath);
+    $_currentLocale = (string) ($_requestContext['locale'] ?? 'de');
+} catch (\Throwable $e) {
+}
+
+$_localizedPath = static function (string $path, ?string $locale = null) use ($_contentLocalization, $_currentLocale): string {
+    if ($_contentLocalization === null) {
+        return $path;
+    }
+
+    return $_contentLocalization->buildLocalizedPath($path, $locale ?? $_currentLocale);
+};
+
+$_localizedHref = static function (string $url, ?string $locale = null) use ($_contentLocalization, $_currentLocale, $siteUrl): string {
+    $locale = $locale ?? $_currentLocale;
+    $trimmedUrl = trim($url);
+    if ($trimmedUrl === '' || $trimmedUrl === '#') {
+        return $trimmedUrl;
+    }
+
+    if ($_contentLocalization === null) {
+        return $trimmedUrl;
+    }
+
+    $siteUrlBase = rtrim((string) $siteUrl, '/');
+    if (preg_match('#^https?://#i', $trimmedUrl) === 1) {
+        if (!str_starts_with($trimmedUrl, $siteUrlBase)) {
+            return $trimmedUrl;
+        }
+
+        $path = (string) (parse_url($trimmedUrl, PHP_URL_PATH) ?? '/');
+        $query = (string) (parse_url($trimmedUrl, PHP_URL_QUERY) ?? '');
+
+        return $siteUrlBase . $_contentLocalization->buildLocalizedPath($path, $locale) . ($query !== '' ? '?' . $query : '');
+    }
+
+    if (!str_starts_with($trimmedUrl, '/')) {
+        return $trimmedUrl;
+    }
+
+    return $siteUrlBase . $_contentLocalization->buildLocalizedPath($trimmedUrl, $locale);
+};
+
+$_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_currentLocale);
+
 // Ungelesene Benachrichtigungen zählen (für Badge in Member-Bar)
 $notifCount = 0;
 if ($isLoggedIn && $currentUser !== null) {
@@ -104,9 +157,6 @@ try {
 $_languageSwitchUrl = '';
 $_languageSwitchDisplay = '';
 if ($_showLanguageSwitch) {
-    $_languageSlug = '/' . trim($_languageSlug, " \t\n\r\0\x0B/");
-    $_languageSlug = $_languageSlug === '/' ? '' : rtrim($_languageSlug, '/');
-
     $flagToEmoji = static function (string $countryCode): string {
         $countryCode = strtoupper(preg_replace('/[^A-Z]/i', '', $countryCode) ?? '');
         if (strlen($countryCode) !== 2) {
@@ -121,25 +171,25 @@ if ($_showLanguageSwitch) {
         return $emoji !== '' ? $emoji : '🌐';
     };
 
-    $_requestPath = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
-    $_requestQuery = trim((string) ($_SERVER['QUERY_STRING'] ?? ''));
-    if ($_languageSlug !== '') {
-        if ($_requestPath === $_languageSlug || str_starts_with($_requestPath, $_languageSlug . '/')) {
-            $_languageTargetPath = $_requestPath;
-        } else {
-            $_languageTargetPath = $_languageSlug . ($_requestPath === '/' ? '/' : $_requestPath);
-        }
+    $_switchTargetLocale = $_contentLocalization !== null
+        ? $_contentLocalization->getAlternateLocale($_currentLocale)
+        : ($_currentLocale === 'de' ? 'en' : 'de');
+    $_switchBasePath = (string) ($_requestContext['base_uri'] ?? $_requestPath);
+    $_languageSwitchUrl = rtrim($siteUrl, '/') . $_localizedPath($_switchBasePath, $_switchTargetLocale) . ($_requestQuery !== '' ? '?' . $_requestQuery : '');
 
-        $_languageSwitchUrl = rtrim($siteUrl, '/') . $_languageTargetPath . ($_requestQuery !== '' ? '?' . $_requestQuery : '');
+    if ($_switchTargetLocale === 'de') {
+        $_languageFlag = 'de';
+        $_languageAriaLabel = 'Zur deutschen Version wechseln';
+        $_languageSwitchDisplay = $_languageMode === 'flag' ? $flagToEmoji('de') : 'DE';
+    } else {
+        $_languageSwitchDisplay = $_languageMode === 'flag'
+            ? $flagToEmoji($_languageFlag)
+            : ($_languageLabel !== '' ? $_languageLabel : strtoupper(trim($_switchTargetLocale)));
     }
-
-    $_languageSwitchDisplay = $_languageMode === 'flag'
-        ? $flagToEmoji($_languageFlag)
-        : ($_languageLabel !== '' ? $_languageLabel : strtoupper(trim($_languageFlag)));
 }
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?php echo htmlspecialchars($_currentLocale, ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -247,7 +297,7 @@ if ($_showLanguageSwitch) {
         <div class="hdr-inner">
 
             <!-- Logo (jetzt in Bar 2, immer sichtbar) -->
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
+            <a href="<?php echo htmlspecialchars($_localizedCurrentHomeUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
                 <?php if (!empty($_logoUrl)): ?>
                     <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" loading="eager">
                     <?php if ($_showLogoText): ?>
@@ -261,11 +311,26 @@ if ($_showLanguageSwitch) {
 
             <?php
             // Exakter Active-Nav-Abgleich: "/" nur auf Startseite, andere URLs prefix-basiert
-            $_navUri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
-            $navIsActive = static function (string $url) use ($_navUri): bool {
+            $_navUri = $_requestPath;
+            $navIsActive = static function (string $url) use ($_navUri, $_contentLocalization, $_currentLocale, $siteUrl): bool {
                 if ($url === '' || $url === '#') { return false; }
-                if ($url === '/') { return $_navUri === '/'; }
-                return $_navUri === $url || str_starts_with($_navUri, rtrim($url, '/') . '/');
+
+                $candidate = trim($url);
+                if (preg_match('#^https?://#i', $candidate) === 1) {
+                    $siteBase = rtrim((string) $siteUrl, '/');
+                    if (!str_starts_with($candidate, $siteBase)) {
+                        return false;
+                    }
+
+                    $candidate = (string) (parse_url($candidate, PHP_URL_PATH) ?? '/');
+                }
+
+                if ($_contentLocalization !== null && str_starts_with($candidate, '/')) {
+                    $candidate = $_contentLocalization->buildLocalizedPath($candidate, $_currentLocale);
+                }
+
+                if ($candidate === '/') { return $_navUri === '/'; }
+                return $_navUri === $candidate || str_starts_with($_navUri, rtrim($candidate, '/') . '/');
             };
             $navItemHasActiveBranch = static function (array $item) use ($navIsActive): bool {
                 if ($navIsActive((string) ($item['url'] ?? ''))) {
@@ -286,6 +351,7 @@ if ($_showLanguageSwitch) {
                         <?php foreach ($mainMenuItems as $index => $item): ?>
                             <?php
                             $itemUrl = (string) ($item['url'] ?? '#');
+                            $itemHref = $_localizedHref($itemUrl);
                             $itemLabel = (string) ($item['label'] ?? '');
                             $itemChildren = is_array($item['children'] ?? null) ? $item['children'] : [];
                             $itemIsCurrent = $navIsActive($itemUrl);
@@ -294,7 +360,7 @@ if ($_showLanguageSwitch) {
                             <?php if (!empty($item['children'])): ?>
                             <div class="has-dropdown<?php echo $itemIsActiveBranch ? ' is-active-branch' : ''; ?>" data-nav-dropdown>
                                 <div class="main-nav__item-head">
-                                <a href="<?php echo htmlspecialchars($itemUrl, ENT_QUOTES); ?>"
+                                          <a href="<?php echo htmlspecialchars($itemHref, ENT_QUOTES); ?>"
                                    class="main-nav__link<?php echo $itemIsActiveBranch ? ' active' : ''; ?>"
                                    <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?>>
                                     <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
@@ -310,13 +376,13 @@ if ($_showLanguageSwitch) {
                                 </div>
                                 <div class="dropdown" id="main-nav-dropdown-<?php echo (int) $index; ?>">
                                     <?php foreach ($itemChildren as $child): ?>
-                                    <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>"
+                                                <a href="<?php echo htmlspecialchars($_localizedHref((string) ($child['url'] ?? '#')), ENT_QUOTES); ?>"
                                        <?php echo $navIsActive($child['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
                             <?php else: ?>
-                            <a href="<?php echo htmlspecialchars($itemUrl, ENT_QUOTES); ?>"
+                                     <a href="<?php echo htmlspecialchars($itemHref, ENT_QUOTES); ?>"
                                class="main-nav__link<?php echo $itemIsCurrent ? ' active' : ''; ?>"
                                <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?>>
                                 <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
@@ -325,11 +391,11 @@ if ($_showLanguageSwitch) {
                         <?php endforeach; ?>
                     <?php else: ?>
                         <!-- Fallback-Menü -->
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="main-nav__link">Startseite</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux" class="main-nav__link">Linux / BASH</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Startseite</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Linux / BASH</a>
                         <div class="has-dropdown" data-nav-dropdown>
                             <div class="main-nav__item-head">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell" class="main-nav__link">PowerShell</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">PowerShell</a>
                             <button type="button"
                                     class="main-nav__toggle"
                                     aria-expanded="false"
@@ -340,13 +406,13 @@ if ($_showLanguageSwitch) {
                             </button>
                             </div>
                             <div class="dropdown" id="main-nav-dropdown-fallback-powershell">
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell/grundlagen">Grundlagen</a>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell/glossar">Glossar</a>
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/grundlagen', $_currentLocale), ENT_QUOTES); ?>">Grundlagen</a>
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/glossar', $_currentLocale), ENT_QUOTES); ?>">Glossar</a>
                             </div>
                         </div>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365" class="main-nav__link">Microsoft 365</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz" class="main-nav__link">Datenschutz</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news" class="main-nav__link">News</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Microsoft 365</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Datenschutz</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">News</a>
                     <?php endif; ?>
                 </nav>
 
@@ -366,7 +432,7 @@ if ($_showLanguageSwitch) {
                 <?php endif; ?>
 
                 <?php if ($_showSearch): ?>
-                <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/search">
+                <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars(rtrim($siteUrl, '/') . $_localizedPath('/search', $_currentLocale), ENT_QUOTES); ?>">
                     <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_searchPH, ENT_QUOTES); ?>" aria-label="Suchbegriff eingeben">
                     <button type="submit" aria-label="Suche starten">🔍</button>
                 </form>
@@ -391,26 +457,26 @@ if ($_showLanguageSwitch) {
         <!-- Mobiles Menü -->
         <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile Navigation" aria-hidden="true">
             <div class="mob-search">
-                <form role="search" method="GET" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/search">
+                <form role="search" method="GET" action="<?php echo htmlspecialchars(rtrim($siteUrl, '/') . $_localizedPath('/search', $_currentLocale), ENT_QUOTES); ?>">
                     <input type="search" name="q" placeholder="Suchen …" aria-label="Mobilsuche">
                 </form>
             </div>
             <?php if (!empty($mainMenuItems)): ?>
                 <?php foreach ($mainMenuItems as $item): ?>
-                <a href="<?php echo htmlspecialchars($item['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?></a>
+                <a href="<?php echo htmlspecialchars($_localizedHref((string) ($item['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?></a>
                     <?php if (!empty($item['children'])): ?>
                         <?php foreach ($item['children'] as $child): ?>
-                        <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>" class="mobile-menu__child"><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref((string) ($child['url'] ?? '#')), ENT_QUOTES); ?>" class="mobile-menu__child"><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 <?php endforeach; ?>
             <?php else: ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux">Linux / BASH</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell">PowerShell</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz</a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">News</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>">Startseite</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>">Linux / BASH</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>">PowerShell</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>">Microsoft 365</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>">Datenschutz</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>">News</a>
                 <?php if (!$isLoggedIn): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 Login</a>
                 <?php endif; ?>
@@ -430,16 +496,16 @@ if ($_showLanguageSwitch) {
                     <nav class="sub-nav" aria-label="Quicklinks">
                         <?php if (!empty($quicklinkItems)): ?>
                             <?php foreach ($quicklinkItems as $ql): ?>
-                            <a href="<?php echo htmlspecialchars($ql['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($ql['label'] ?? '', ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref((string) ($ql['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($ql['label'] ?? '', ENT_QUOTES); ?></a>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/entra-id">Entra ID</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/intune">Intune</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/compliance">Compliance</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/graph-api">Graph API</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/powershell">PowerShell</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/security">Security</a>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kategorie/exchange">Exchange</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/entra-id', $_currentLocale), ENT_QUOTES); ?>">Entra ID</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/intune', $_currentLocale), ENT_QUOTES); ?>">Intune</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/compliance', $_currentLocale), ENT_QUOTES); ?>">Compliance</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/graph-api', $_currentLocale), ENT_QUOTES); ?>">Graph API</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/powershell', $_currentLocale), ENT_QUOTES); ?>">PowerShell</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/security', $_currentLocale), ENT_QUOTES); ?>">Security</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/exchange', $_currentLocale), ENT_QUOTES); ?>">Exchange</a>
                         <?php endif; ?>
                     </nav>
         </div>

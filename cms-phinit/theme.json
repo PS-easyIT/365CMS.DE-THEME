@@ -191,6 +191,16 @@
           "type": "color",
           "default": "#94a3b8"
         },
+        "text_nav_dropdown": {
+          "label": "Dropdown Text",
+          "type": "color",
+          "default": "#e2e8f0"
+        },
+        "page_edge_tint_color": {
+          "label": "Seitenrand-Tönung",
+          "type": "color",
+          "default": "#0f172a"
+        },
         "logo_suffix_color": {
           "label": "Logo-Suffix-Farbe (.DE)",
           "type": "color",
@@ -666,6 +676,13 @@
           "default": 32,
           "min": 0,
           "max": 120
+        },
+        "home_header_content_spacing": {
+          "label": "Abstand Header → erste Startseiten-Sektion / Repo-Card (px)",
+          "type": "number",
+          "default": 15,
+          "min": 0,
+          "max": 30
         }
       }
     },
@@ -897,6 +914,14 @@
           "min": 900,
           "max": 1920
         },
+        "page_edge_tint_opacity": {
+          "label": "Seitenrand-Tönung Deckkraft",
+          "type": "number",
+          "default": 0.12,
+          "step": 0.01,
+          "min": 0,
+          "max": 0.3
+        },
         "sidebar_width": {
           "label": "Sidebar-Breite (px)",
           "type": "number",
@@ -948,20 +973,35 @@
     "performance": {
       "label": "Performance",
       "settings": {
-        "lazy_load_images": {
-          "label": "Bilder lazy-laden",
+        "enable_photoswipe": {
+          "label": "PhotoSwipe Lightbox aktiv",
           "type": "checkbox",
           "default": true
         },
-        "enable_animations": {
-          "label": "Scroll-Animationen aktivieren",
+        "lazyload_images": {
+          "label": "Bilder Lazy-Load (loading=lazy)",
           "type": "checkbox",
           "default": true
         },
-        "preconnect_google_fonts": {
-          "label": "Google Fonts preconnect",
+        "preconnect_fonts": {
+          "label": "Preconnect Google Fonts",
           "type": "checkbox",
-          "default": false
+          "default": true
+        },
+        "preconnect_extra": {
+          "label": "Zusätzliche Preconnect-URLs (eine pro Zeile)",
+          "type": "textarea",
+          "default": ""
+        },
+        "defer_scripts": {
+          "label": "Theme-Scripts defer",
+          "type": "checkbox",
+          "default": true
+        },
+        "dns_prefetch": {
+          "label": "DNS-Prefetch aktiv",
+          "type": "checkbox",
+          "default": true
         }
       }
     },

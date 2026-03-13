@@ -37,6 +37,7 @@ extract(phinit_get_homepage_posts_payload($homepageViewModel), EXTR_SKIP);
         --home-sp-rss: <?php echo (int)$_spRss; ?>px;
         --hp-sidebar-w: <?php echo (int)$_listSidebarWidth; ?>px;
         --hp-tile-thumb-h: <?php echo (int)$_tileImageH; ?>px;
+        --home-sp-top: <?php echo (int)$_homeHeaderSpacing; ?>px;
     }
     <?php if (!empty($_sbProj1LogoUrl)): ?>
     .sb-project-card--project1 { background-image: url('<?php echo htmlspecialchars($_sbProj1LogoUrl, ENT_QUOTES); ?>'); }
@@ -173,7 +174,7 @@ extract(phinit_get_homepage_posts_payload($homepageViewModel), EXTR_SKIP);
 
                 <div class="post-card-body">
                     <h3 class="post-card-title">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
+                        <a href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . ($post['slug'] ?? ''))), ENT_QUOTES); ?>">
                             <?php echo phinit_escape_text($post['title'] ?? ''); ?>
                         </a>
                     </h3>
@@ -200,7 +201,7 @@ extract(phinit_get_homepage_posts_payload($homepageViewModel), EXTR_SKIP);
                         <?php endif; ?>
                         </div>
                         <a class="post-card-meta__more"
-                           href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES); ?>">
+                                    href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . ($post['slug'] ?? ''))), ENT_QUOTES); ?>">
                             &hellip; Weiter &rarr;
                         </a>
                     </div>

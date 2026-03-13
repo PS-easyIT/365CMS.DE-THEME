@@ -7,6 +7,28 @@ if (!defined('ABSPATH')) {
 
 trait CMS_Phinit_Theme_Assets_Trait
 {
+    private function getCustomizerSettingWithFallback(string $category, string $key, mixed $default = null, array $legacyKeys = []): mixed
+    {
+        try {
+            $customizer = \CMS\Services\ThemeCustomizer::instance();
+            $value = $customizer->get($category, $key, null);
+
+            if ($value !== null && $value !== '') {
+                return $value;
+            }
+
+            foreach ($legacyKeys as $legacyKey) {
+                $legacyValue = $customizer->get($category, (string) $legacyKey, null);
+                if ($legacyValue !== null && $legacyValue !== '') {
+                    return $legacyValue;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return $default;
+    }
+
     private function getRequestPath(): string
     {
         $requestUri = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
@@ -126,7 +148,6 @@ trait CMS_Phinit_Theme_Assets_Trait
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
         $templateCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/templates.css';
         $memberAuthCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/member-auth.css';
-        $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
         $pageExtrasCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-extras.css';
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
@@ -149,11 +170,6 @@ trait CMS_Phinit_Theme_Assets_Trait
         if ($loadMemberAuthCss && file_exists($memberAuthCssFile)) {
             $memberAuthVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($memberAuthCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/member-auth.css', $memberAuthVersion));
-        }
-
-        if ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
-            $hubSitesVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($hubSitesCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/hub-sites.css', $hubSitesVersion));
         }
 
         if ($loadPageExtrasCss && file_exists($pageExtrasCssFile)) {
@@ -195,7 +211,13 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $jsFile = CMS_PHINIT_THEME_DIR . 'assets/js/navigation.js';
         $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
-        echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '" defer></script>' . "\n";
+        $deferScripts = filter_var(
+            $this->getCustomizerSettingWithFallback('performance', 'defer_scripts', true),
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $deferAttr = $deferScripts ? ' defer' : '';
+
+        echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '"' . $deferAttr . '></script>' . "\n";
     }
 
     private function isLocalFontsEnabled(): bool
@@ -370,18 +392,16 @@ trait CMS_Phinit_Theme_Assets_Trait
     {
         $localFonts = $this->isLocalFontsEnabled() || $this->canServeRequestedFontsLocally();
 
-        $dnsPrefetch = true;
-        try {
-            $dnsPrefetch = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('performance', 'dns_prefetch', true), FILTER_VALIDATE_BOOLEAN);
-        } catch (\Throwable) {
-        }
+        $dnsPrefetch = filter_var(
+            $this->getCustomizerSettingWithFallback('performance', 'dns_prefetch', true),
+            FILTER_VALIDATE_BOOLEAN
+        );
 
         if (!$localFonts) {
-            $preconnectFonts = true;
-            try {
-                $preconnectFonts = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('performance', 'preconnect_fonts', true), FILTER_VALIDATE_BOOLEAN);
-            } catch (\Throwable) {
-            }
+            $preconnectFonts = filter_var(
+                $this->getCustomizerSettingWithFallback('performance', 'preconnect_fonts', true, ['preconnect_google_fonts']),
+                FILTER_VALIDATE_BOOLEAN
+            );
             if ($preconnectFonts) {
                 echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
                 echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
@@ -394,7 +414,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         if ($dnsPrefetch) {
             try {
-                $extra = (string) \CMS\Services\ThemeCustomizer::instance()->get('performance', 'preconnect_extra', '');
+                $extra = (string) $this->getCustomizerSettingWithFallback('performance', 'preconnect_extra', '');
                 foreach (array_filter(array_map('trim', explode("\n", $extra))) as $extraUrl) {
                     $safeUrl = filter_var($extraUrl, FILTER_VALIDATE_URL) ? htmlspecialchars($extraUrl, ENT_QUOTES) : '';
                     if (!empty($safeUrl)) {
@@ -536,6 +556,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             'text_nav_main' => '--text-nav-main',
             'text_nav_quicklinks' => '--text-nav-quicklinks',
             'text_nav_dropdown' => '--text-nav-dropdown',
+            'page_edge_tint_color' => '--page-edge-overlay-color',
             'logo_suffix_color' => '--logo-suffix-color',
             'border_light' => '--border-color',
             'footer_bg' => '--footer-bg',
@@ -626,6 +647,14 @@ trait CMS_Phinit_Theme_Assets_Trait
                 $css .= "    {$info[0]}: {$val}{$info[1]};\n";
             }
         }
+        $pageEdgeOpacity = $c->get('layout', 'page_edge_tint_opacity', '');
+        if ($pageEdgeOpacity !== '' && $pageEdgeOpacity !== null) {
+            $css .= "    --page-edge-overlay-opacity: {$pageEdgeOpacity};\n";
+        }
+        $homeHeaderSpacing = $c->get('homepage', 'home_header_content_spacing', '');
+        if ($homeHeaderSpacing !== '' && $homeHeaderSpacing !== null) {
+            $css .= "    --home-spacing-header-content: {$homeHeaderSpacing}px;\n";
+        }
         $sidebarPos = $c->get('layout', 'sidebar_position', '');
         if (!empty($sidebarPos)) {
             $css .= "    --sidebar-position: {$sidebarPos};\n";
@@ -691,7 +720,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $css .= ".member-bar__link { color: var(--text-nav-member, rgba(255,255,255,.72)); }\n";
         $css .= ".member-bar__greeting { color: var(--text-nav-member, rgba(255,255,255,.7)); }\n";
         $css .= ".sub-nav a { color: var(--text-nav-quicklinks, var(--text-secondary)); }\n";
-        $css .= ".main-nav .dropdown a { color: var(--text-nav-dropdown, rgba(255,255,255,.82)); }\n";
+        $css .= ".main-nav .dropdown a { color: var(--text-nav-dropdown, rgba(226,232,240,.92)); }\n";
         $css .= ".site-footer { background: var(--footer-bg); border-top: 3px solid var(--footer-border); }\n";
         $css .= ".footer-bottom { background: var(--footer-bottom-bg); }\n";
         $css .= ".site-logo .logo-accent { color: var(--logo-accent, var(--accent-teal-light)); }\n";

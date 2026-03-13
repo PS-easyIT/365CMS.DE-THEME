@@ -38,6 +38,7 @@ $show_cat     = isset($show_cat)     ? (bool)$show_cat     : true;
 $show_date    = isset($show_date)    ? (bool)$show_date    : true;
 $show_rt      = isset($show_rt)      ? (bool)$show_rt      : true;
 $displayDate  = $card['published_at'] ?? ($card['created_at'] ?? null);
+$permalink    = (string) ($card['permalink'] ?? ($siteUrl . '/blog/' . ($card['slug'] ?? '')));
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
@@ -78,7 +79,7 @@ if ($show_rt && $show_meta) {
 
     <div class="article-body">
         <h4>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($card['slug'] ?? ''), ENT_QUOTES); ?>">
+            <a href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>">
                 <?php echo phinit_escape_text($card['title'] ?? ''); ?>
             </a>
         </h4>
@@ -97,7 +98,7 @@ if ($show_rt && $show_meta) {
             <span class="read"><?php echo $_pc_rt; ?> Min.</span>
             <?php endif; ?>
             <a class="article-meta__more"
-               href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($card['slug'] ?? ''), ENT_QUOTES); ?>">
+               href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>">
                 &hellip; Weiter lesen &rarr;
             </a>
         </div>

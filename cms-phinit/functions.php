@@ -19,6 +19,7 @@ require_once CMS_PHINIT_THEME_DIR . 'includes/theme-template-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-content-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-assets-trait.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-head-trait.php';
+require_once CMS_PHINIT_THEME_DIR . 'includes/theme-navigation-trait.php';
 
 /**
  * Theme-Hauptklasse (Singleton)
@@ -28,6 +29,7 @@ final class CMS_Phinit_Theme
 {
     use CMS_Phinit_Theme_Assets_Trait;
     use CMS_Phinit_Theme_Head_Trait;
+    use CMS_Phinit_Theme_Navigation_Trait;
 
     private static ?self $instance = null;
     private const LOCAL_FONT_SLUG_ALIASES = [
@@ -74,90 +76,6 @@ final class CMS_Phinit_Theme
 
         // Dynamischer Seitentitel
         \CMS\Hooks::addFilter('page_title', [$this, 'filterPageTitle']);
-    }
-
-    /* ── Menü-Positionen ────────────────────────────────────────── */
-
-    public function registerMenuLocations(array $locations): array
-    {
-        $locations[] = ['slug' => 'primary',       'label' => 'Hauptnavigation'];
-        $locations[] = ['slug' => 'quicklinks',    'label' => 'Quicklinks (Sub-Navigation)'];
-        $locations[] = ['slug' => 'footer-topics', 'label' => 'Footer – Themen'];
-        $locations[] = ['slug' => 'footer-pages',  'label' => 'Footer – Seiten'];
-        $locations[] = ['slug' => 'footer',        'label' => 'Footer – Rechtliches'];
-        return $locations;
-    }
-
-    /** Standard-Navigation beim Erststart anlegen */
-    public function seedDefaultMenus(): void
-    {
-        try {
-            $tm = \CMS\ThemeManager::instance();
-
-            // Hauptnavigation
-            if (empty($tm->getMenu('primary'))) {
-                $tm->saveMenu('primary', [
-                    ['label' => 'Startseite',    'url' => '/'],
-                    ['label' => 'Linux / BASH',  'url' => '/linux'],
-                    ['label' => 'PowerShell',    'url' => '/powershell', 'children' => [
-                        ['label' => 'Grundlagen',   'url' => '/powershell/grundlagen'],
-                        ['label' => 'Glossar',      'url' => '/powershell/glossar'],
-                    ]],
-                    ['label' => 'Microsoft 365', 'url' => '/microsoft-365', 'children' => [
-                        ['label' => 'Microsoft 365 Admin', 'url' => '/microsoft-365/admin'],
-                        ['label' => 'Exchange Online',     'url' => '/microsoft-365/exchange'],
-                        ['label' => 'Teams & SharePoint',  'url' => '/microsoft-365/teams'],
-                    ]],
-                    ['label' => 'Datenschutz',   'url' => '/datenschutz'],
-                    ['label' => 'News',          'url' => '/news'],
-                ]);
-            }
-
-            // Quicklinks (Sub-Navigation)
-            if (empty($tm->getMenu('quicklinks'))) {
-                $tm->saveMenu('quicklinks', [
-                    ['label' => 'Entra ID',    'url' => '/kategorie/entra-id'],
-                    ['label' => 'Intune',      'url' => '/kategorie/intune'],
-                    ['label' => 'Compliance',  'url' => '/kategorie/compliance'],
-                    ['label' => 'Graph API',   'url' => '/kategorie/graph-api'],
-                    ['label' => 'PowerShell',  'url' => '/kategorie/powershell'],
-                    ['label' => 'Security',    'url' => '/kategorie/security'],
-                    ['label' => 'Exchange',    'url' => '/kategorie/exchange'],
-                ]);
-            }
-
-            // Footer – Themen
-            if (empty($tm->getMenu('footer-topics'))) {
-                $tm->saveMenu('footer-topics', [
-                    ['label' => 'Linux & BASH',          'url' => '/linux'],
-                    ['label' => 'PowerShell',            'url' => '/powershell'],
-                    ['label' => 'Microsoft 365',         'url' => '/microsoft-365'],
-                    ['label' => 'Intune & MDM',          'url' => '/intune'],
-                    ['label' => 'Datenschutz & DSGVO',   'url' => '/datenschutz'],
-                    ['label' => 'IT-News',               'url' => '/news'],
-                ]);
-            }
-
-            // Footer – Seiten
-            if (empty($tm->getMenu('footer-pages'))) {
-                $tm->saveMenu('footer-pages', [
-                    ['label' => 'Über mich', 'url' => '/ueber-uns'],
-                    ['label' => 'Kontakt',   'url' => '/kontakt'],
-                    ['label' => 'RSS-Feed',  'url' => '/feed'],
-                ]);
-            }
-
-            // Footer – Rechtliches
-            if (empty($tm->getMenu('footer'))) {
-                $tm->saveMenu('footer', [
-                    ['label' => 'Impressum',            'url' => '/impressum'],
-                    ['label' => 'Datenschutzerklärung', 'url' => '/datenschutzerklaerung'],
-                    ['label' => 'Disclaimer',           'url' => '/disclaimer'],
-                    ['label' => 'Cookie-Policy',        'url' => '/cookie-policy'],
-                ]);
-            }
-
-        } catch (\Throwable $e) {}
     }
 }
 }

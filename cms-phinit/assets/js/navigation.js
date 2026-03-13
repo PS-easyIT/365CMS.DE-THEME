@@ -117,13 +117,6 @@
                 dropdown.classList.toggle('is-open', willOpen);
                 toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
             });
-
-            dropdown.addEventListener('mouseleave', () => {
-                if (!dropdown.matches(':focus-within')) {
-                    dropdown.classList.remove('is-open');
-                    toggle.setAttribute('aria-expanded', 'false');
-                }
-            });
         });
 
         document.addEventListener('click', (event) => {

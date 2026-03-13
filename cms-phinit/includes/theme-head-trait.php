@@ -390,8 +390,15 @@ trait CMS_Phinit_Theme_Head_Trait
     public function bodyClass(string $classes): string
     {
         $add = [];
-        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
-        if ($uri === '/' || $uri === '') {
+        $uri = (string) strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $baseUri = $uri;
+
+        try {
+            $baseUri = (string) (\CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($uri)['base_uri'] ?? $uri);
+        } catch (\Throwable) {
+        }
+
+        if ($baseUri === '/' || $baseUri === '') {
             $add[] = 'home';
         } else {
             $add[] = 'singular';

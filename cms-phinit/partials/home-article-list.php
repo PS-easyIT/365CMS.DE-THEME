@@ -105,7 +105,7 @@ if (empty($_showList) || $featuredPosts === []) {
         <div class="sb-widget sb-widget--featured">
             <div class="sb-widget-title"><?php echo htmlspecialchars((string) $_sbFeaturedPostsLabel, ENT_QUOTES); ?></div>
             <?php foreach ($_sbFeatSlice as $_fp):
-                $_fpHref = htmlspecialchars($siteUrl . '/blog/' . ($_fp['slug'] ?? ''), ENT_QUOTES);
+                $_fpHref = htmlspecialchars((string) ($_fp['permalink'] ?? ($siteUrl . '/blog/' . ($_fp['slug'] ?? ''))), ENT_QUOTES);
                 $_fpTitle = htmlspecialchars((string) ($_fp['title'] ?? ''), ENT_QUOTES);
                 $_fpDateRaw = $_fp['published_at'] ?? ($_fp['created_at'] ?? '');
                 $_fpDate = !empty($_fpDateRaw) ? date('j. M Y', strtotime((string) $_fpDateRaw)) : '';

@@ -112,6 +112,7 @@ function phinit_get_homepage_view_model(): array
         '_spInfo' => 32,
         '_spGrid' => 32,
         '_spRss' => 0,
+        '_homeHeaderSpacing' => 15,
     ];
 
     try {
@@ -219,9 +220,77 @@ function phinit_get_homepage_view_model(): array
             '_spInfo' => max(0, (int) $customizer->get('homepage', 'spacing_info_cards', 32)),
             '_spGrid' => max(0, (int) $customizer->get('homepage', 'spacing_tile_grid', 32)),
             '_spRss' => max(0, (int) $customizer->get('homepage', 'spacing_rss_feeds', 0)),
+            '_homeHeaderSpacing' => max(0, min(30, (int) $customizer->get('homepage', 'home_header_content_spacing', 15))),
         ]);
     } catch (\Throwable $_e) {
         return $defaults;
+    }
+}
+
+/**
+ * Ermittelt die aktuelle Content-Locale aus der Request-URI.
+ */
+function phinit_get_request_content_locale(): string
+{
+    try {
+        $requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?? '/');
+        $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($requestPath);
+
+        return (string) ($context['locale'] ?? 'de');
+    } catch (\Throwable $_e) {
+        return 'de';
+    }
+}
+
+/**
+ * Baut die SQL-Bedingung für sprachspezifisch verfügbare Beiträge.
+ */
+function phinit_build_homepage_post_locale_condition(string $locale, ?\CMS\Services\ContentLocalizationService $localization = null): string
+{
+    $localization ??= \CMS\Services\ContentLocalizationService::getInstance();
+    $locale = $localization->normalizeLocale($locale);
+
+    if ($locale === '' || $locale === 'de') {
+        return '';
+    }
+
+    if (!in_array($locale, $localization->getContentLocales(), true)) {
+        return '';
+    }
+
+    return " AND (CHAR_LENGTH(TRIM(COALESCE(p.content_{$locale}, ''))) > 0"
+        . " OR CHAR_LENGTH(TRIM(COALESCE(p.excerpt_{$locale}, ''))) > 0"
+        . " OR CHAR_LENGTH(TRIM(COALESCE(p.title_{$locale}, ''))) > 0)";
+}
+
+/**
+ * Lokalisiert Home-Posts und ergänzt den kanonischen Permalink der aktuellen Content-Locale.
+ *
+ * @param list<array<string, mixed>> $posts
+ * @return list<array<string, mixed>>
+ */
+function phinit_prepare_homepage_posts(array $posts, string $locale): array
+{
+    $prepared = [];
+
+    try {
+        $localization = \CMS\Services\ContentLocalizationService::getInstance();
+        $permalinkService = \CMS\Services\PermalinkService::getInstance();
+
+        foreach ($posts as $post) {
+            $localizedPost = $localization->localizePost($post, $locale);
+            $localizedPost['permalink'] = $permalinkService->buildPostUrl($localizedPost, $locale);
+            $prepared[] = $localizedPost;
+        }
+
+        return $prepared;
+    } catch (\Throwable $_e) {
+        foreach ($posts as $post) {
+            $post['permalink'] = rtrim((string) SITE_URL, '/') . '/blog/' . (string) ($post['slug'] ?? '');
+            $prepared[] = $post;
+        }
+
+        return $prepared;
     }
 }
 
@@ -244,6 +313,9 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
     try {
         $db = \CMS\Database::instance();
         $prefix = $db->getPrefix();
+        $contentLocale = phinit_get_request_content_locale();
+        $localization = \CMS\Services\ContentLocalizationService::getInstance();
+        $localeCondition = phinit_build_homepage_post_locale_condition($contentLocale, $localization);
 
         $_showList = !empty($viewModel['_showList']);
         $_showTileGrid = !empty($viewModel['_showTileGrid']);
@@ -254,18 +326,20 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         $featuredRows = $_showList
             ? ($db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
-                        c.name AS category_name
+                    p.title_en, p.excerpt_en, p.content_en,
+                    c.name AS category_name
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                  WHERE p.status = 'published'
+                 {$localeCondition}
                  ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
                  LIMIT " . (int) $_listCount
             ) ?: [])
             : [];
-        $featuredPosts = array_map(static fn($r) => (array) $r, $featuredRows);
+            $featuredPosts = phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $featuredRows), $contentLocale);
 
         $currentPage = max(1, (int) ($_GET['page'] ?? 1));
-        $totalPosts = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'") ?: 0);
+            $totalPosts = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts p WHERE p.status = 'published'{$localeCondition}") ?: 0);
         $_gridAvail = max(0, $totalPosts - $_listCount);
         $totalPages = max(1, (int) ceil($_gridAvail / $_tileCount));
         $_gridOffset = $_listCount + (($currentPage - 1) * $_tileCount);
@@ -273,15 +347,17 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         $gridRows = $_showTileGrid
             ? ($db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
+                    p.title_en, p.excerpt_en, p.content_en,
                         c.name AS category_name
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                  WHERE p.status = 'published'
+                 {$localeCondition}
                  ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
                  LIMIT " . (int) $_tileCount . " OFFSET " . (int) $_gridOffset
             ) ?: [])
             : [];
-        $gridPosts = array_map(static fn($r) => (array) $r, $gridRows);
+            $gridPosts = phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $gridRows), $contentLocale);
 
         $sbFeaturedPosts = [];
         if ($_sbShowFeaturedPosts) {
@@ -294,15 +370,16 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             if ($_fpIds !== []) {
                 $_fpIn = implode(',', array_map('intval', $_fpIds));
                 $_fpRows = $db->get_results(
-                    "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at, p.created_at,
+                    "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
+                            p.title_en, p.excerpt_en, p.content_en,
                             c.name AS category_name
                      FROM {$prefix}posts p
                      LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                     WHERE p.id IN ({$_fpIn}) AND p.status = 'published'"
+                     WHERE p.id IN ({$_fpIn}) AND p.status = 'published'{$localeCondition}"
                 ) ?: [];
 
                 $_fpMap = [];
-                foreach (array_map(static fn($r) => (array) $r, $_fpRows) as $_fpPost) {
+                foreach (phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $_fpRows), $contentLocale) as $_fpPost) {
                     $_fpMap[(int) $_fpPost['id']] = $_fpPost;
                 }
 
@@ -320,6 +397,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             'sbFeaturedPosts' => $sbFeaturedPosts,
             'currentPage' => $currentPage,
             'totalPages' => $totalPages,
+            'contentLocale' => $contentLocale,
         ];
     } catch (\Throwable $_e) {
         return $defaults;
