@@ -1,8 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    UI Chrome & kleine Cross-Route-Komponenten
-   Breadcrumb · Reading-Time-Badge · Page-Updated-Pill · Code-Copy-Button
-   Notification-Badge · RSS-Icon
+    Scroll-Progress · Breadcrumb · Reading-Time-Badge · Page-Updated-Pill
+    Code-Copy-Button · Notification-Badge · Social-Icons · RSS-Icon
 ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Scroll Progress ───────────────────────────────────────────────────── */
+#scroll-progress {
+     position: fixed;
+     top: 0;
+     left: 0;
+     height: 3px;
+     width: 0%;
+     background: linear-gradient(90deg, var(--accent-teal, #0d9488), var(--accent-color, #e8a838));
+     z-index: calc(var(--z-header, 1000) + 100);
+     transition: width 0.1s linear;
+}
 
 /* ── Breadcrumb ───────────────────────────────────────────────────────── */
 .breadcrumb-nav {
@@ -185,6 +197,49 @@ pre:hover .code-copy-btn {
     50% {
         opacity: .7;
     }
+}
+
+/* ── Social Icons ─────────────────────────────────────────────────────── */
+.social-icons {
+    display: flex;
+    gap: 8px;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--bg-secondary, #f1f5f9);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: var(--radius-sm, 4px);
+    color: var(--text-muted, #64748b);
+    font-size: .9rem;
+    font-weight: 700;
+    transition: var(--transition-fast, all 0.15s ease);
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    background: var(--primary-color, #1e3a5f);
+    color: #fff;
+    border-color: var(--primary-color, #1e3a5f);
+}
+
+.social-icons a.li:hover {
+    background: #0077b5;
+    border-color: #0077b5;
+}
+
+.social-icons a.gh:hover {
+    background: #181717;
+    border-color: #181717;
+}
+
+.social-icons a.rss:hover {
+    background: #f26522;
+    border-color: #f26522;
 }
 
 /* ── RSS SVG Icon ─────────────────────────────────────────────────────── */

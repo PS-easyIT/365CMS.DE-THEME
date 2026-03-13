@@ -218,15 +218,7 @@ body.home .page-wrap {
 /* ═══════════════════════════════════════════════════════════════════════════
    4. READING PROGRESS BAR
 ═══════════════════════════════════════════════════════════════════════════ */
-#scroll-progress {
-    position: fixed;
-    top: 0; left: 0;
-    height: 3px;
-    width: 0%;
-    background: linear-gradient(90deg, var(--accent-teal), var(--accent-color));
-    z-index: calc(var(--z-header) + 100);
-    transition: width 0.1s linear;
-}
+/* Lesefortschrittsbalken wurde in `assets/css/ui-chrome.css` ausgelagert. */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    5. STICKY HEADER (2 Ebenen)
@@ -278,7 +270,9 @@ body.home .page-wrap {
 
 /* Section-Header-, Post-Card-, Grid- und Blog-Empty-State-Basics wurden in
    `assets/css/content-cards.css` ausgelagert. */
-.content-section { margin-bottom: var(--spacing-sections, 40px); }
+
+/* Content-Section-Abstände sowie generische Blog-/Home-Pagination wurden in
+    `assets/css/content-cards.css` ausgelagert. */
 
 /* Blog-Archiv-Leiste (Backlink + Suche) wurde in
    `assets/css/homepage-blog.css` ausgelagert. */
@@ -286,39 +280,10 @@ body.home .page-wrap {
 /* Post-Sidebar-, Sticky-Layout- und TOC-Styles wurden in
    `assets/css/post-sidebar.css` ausgelagert. */
 
-.social-icons { display: flex; gap: 8px; }
-.social-icons a {
-    display: flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; background: var(--bg-secondary);
-    border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-    color: var(--text-muted); font-size: .9rem; font-weight: 700;
-    transition: var(--transition-fast); text-decoration: none;
-}
-.social-icons a:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
-.social-icons a.li:hover  { background: #0077b5; border-color: #0077b5; }
-.social-icons a.gh:hover  { background: #181717; border-color: #181717; }
-.social-icons a.rss:hover { background: #f26522; border-color: #f26522; }
+/* Social-Icon-Listen wurden in `assets/css/ui-chrome.css` ausgelagert. */
 
 /* Single-Post-, Share-, Navigation- und Kommentar-Styles wurden in
    `assets/css/post-detail.css` ausgelagert. */
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   19. PAGINATION
-═══════════════════════════════════════════════════════════════════════════ */
-.pagination {
-    display: flex; align-items: center; justify-content: center;
-    gap: 4px; margin: 28px 0 0; flex-wrap: wrap;
-}
-.page-link {
-    display: flex; align-items: center; justify-content: center;
-    min-width: 34px; height: 34px; padding: 0 10px;
-    border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-    font-size: var(--fs-sm); color: var(--text-muted);
-    background: var(--bg-primary); transition: var(--transition-fast); font-weight: 500;
-}
-.page-link:hover   { border-color: var(--accent-teal); color: var(--accent-teal); background: #f0fafa; }
-.page-link.active  { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
-.page-link.dots    { border: none; background: transparent; cursor: default; color: var(--text-light); }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    20. FOOTER
@@ -424,7 +389,7 @@ body.home .page-wrap {
     }
     .post-hero-img { animation: none !important; }
     [data-anim] { opacity: 1 !important; transform: none !important; }
-    .scroll-progress { display: none !important; }
+    #scroll-progress { display: none !important; }
     .back-to-top { transition: none !important; }
 }
 
@@ -483,7 +448,7 @@ select:focus-visible,
 
 /* — Print styles — */
 @media print {
-    .site-header, .site-footer, .sidebar, .scroll-progress,
+    .site-header, .site-footer, .sidebar, #scroll-progress,
     .back-to-top, .post-share, .post-nav, .comments-section,
     .consent-banner, .cookie-banner { display: none !important; }
     .page-wrap { padding: 0 !important; margin: 0 !important; }
