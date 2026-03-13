@@ -269,6 +269,9 @@ if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
+$commentError = $commentError ?? '';
+$commentSuccess = $commentSuccess ?? '';
+
 try {
     $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0));
 } catch (\Throwable $e) {
@@ -293,54 +296,15 @@ if ($sidebarPosition === 'left') {
         <!-- Post-Header -->
         <article itemscope itemtype="https://schema.org/BlogPosting">
 
-            <header class="post-header" data-anim>
-
-                <?php if ($showPostHero && !empty($post['featured_image'])): ?>
-                <div class="post-hero-media">
-                    <img class="post-hero-img"
-                         src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
-                         alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-                         loading="eager"
-                         itemprop="image">
-                    <?php if (!empty($post['category_name'])): ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="post-hero-badge badge badge-teal"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></a>
-                    <?php endif; ?>
-                </div>
-                <?php endif; ?>
-
-                <div class="post-header-body">
-                    <!-- Kategorie ohne Hero-Bild -->
-                    <?php if ((!$showPostHero || empty($post['featured_image'])) && !empty($post['category_name'])): ?>
-                    <div class="post-cats">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="badge badge-teal"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></a>
-                    </div>
-                    <?php endif; ?>
-
-                    <h1 class="post-title" itemprop="headline">
-                        <?php echo phinit_escape_text($post['title'] ?? ''); ?>
-                    </h1>
-
-                    <?php if ($showPostMeta): ?>
-                    <div class="post-meta">
-                        <span>📅 <strong itemprop="datePublished" content="<?php echo htmlspecialchars($post['published_at'] ?? '', ENT_QUOTES); ?>">
-                            <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
-                        </strong></span>
-                        <?php if (!empty($post['author_name'])): ?>
-                        <span>👤 <strong itemprop="author"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></strong></span>
-                        <?php endif; ?>
-                        <?php if ($showReadingTime): ?>
-                        <span class="reading-time-badge">&#x23F1; <strong><?php echo $readingTime; ?></strong>&thinsp;Min.</span>
-                        <?php endif; ?>
-                        <?php if ($commentCount > 0): ?>
-                        <span>💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></span>
-                        <?php endif; ?>
-                        <?php if (!empty($post['updated_at']) && ($post['updated_at'] ?? '') !== ($post['published_at'] ?? '')): ?>
-                        <span>🔄 Aktualisiert: <?php echo htmlspecialchars(date('j. F Y', strtotime($post['updated_at'])), ENT_QUOTES); ?></span>
-                        <?php endif; ?>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </header>
+            <?php get_theme_part('partials/post-header', [
+                'showPostHero' => $showPostHero,
+                'post' => $post,
+                'siteUrl' => $siteUrl,
+                'showPostMeta' => $showPostMeta,
+                'showReadingTime' => $showReadingTime,
+                'readingTime' => $readingTime,
+                'commentCount' => $commentCount,
+            ]); ?>
 
             <!-- Artikel-Body -->
             <div class="post-body" itemprop="articleBody" data-photoswipe>
@@ -384,96 +348,23 @@ if ($sidebarPosition === 'left') {
         </article>
 
         <!-- Vor-/Nächster Artikel -->
-        <?php if ($prevPost || $nextPost): ?>
-        <nav class="post-nav" aria-label="Artikel-Navigation">
-            <?php if ($prevPost): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
-                <span class="direction">← Vorheriger Beitrag</span>
-                <span class="nav-title"><?php echo phinit_escape_text($prevPost['title'] ?? ''); ?></span>
-            </a>
-            <?php else: ?>
-            <span></span>
-            <?php endif; ?>
-            <?php if ($nextPost): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
-                <span class="direction">Nächster Beitrag →</span>
-                <span class="nav-title"><?php echo phinit_escape_text($nextPost['title'] ?? ''); ?></span>
-            </a>
-            <?php endif; ?>
-        </nav>
-        <?php endif; ?>
+        <?php get_theme_part('partials/post-navigation', [
+            'prevPost' => $prevPost,
+            'nextPost' => $nextPost,
+            'siteUrl' => $siteUrl,
+        ]); ?>
 
         <!-- Kommentare -->
-        <?php if ($showComments): ?>
-        <section class="comments-section" id="comments">
-            <h2 class="comments-title"><?php echo htmlspecialchars($commentsHeader, ENT_QUOTES); ?></h2>
-
-            <?php if (!empty($comments)): ?>
-                <?php foreach ($comments as $comment): ?>
-                <div class="comment-item">
-                    <div class="comment-avatar" aria-hidden="true">
-                        <?php echo htmlspecialchars(strtoupper(substr($comment['author'] ?? 'A', 0, 1)), ENT_QUOTES); ?>
-                    </div>
-                    <div class="comment-body-wrap">
-                        <div class="comment-author-line">
-                            <span class="comment-author"><?php echo htmlspecialchars($comment['author'] ?? '', ENT_QUOTES); ?></span>
-                            <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime($comment['post_date'] ?? 'now')), ENT_QUOTES); ?></span>
-                        </div>
-                        <p class="comment-text"><?php echo htmlspecialchars($comment['content'] ?? '', ENT_QUOTES); ?></p>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="comment-empty-state">Noch keine Kommentare. Sei der Erste!</p>
-            <?php endif; ?>
-
-            <!-- Kommentarformular -->
-            <?php if (isset($commentError)): ?>
-            <div class="alert-box alert-box--error">
-                ❌ <?php echo htmlspecialchars($commentError, ENT_QUOTES); ?>
-            </div>
-            <?php endif; ?>
-
-            <?php if (!empty($commentSuccess)): ?>
-            <div class="alert-box alert-box--success">
-                <?php echo htmlspecialchars($commentSuccess, ENT_QUOTES); ?>
-            </div>
-            <?php endif; ?>
-
-            <div class="comment-form-wrap">
-                <h4><?php echo htmlspecialchars($commentFormHeader, ENT_QUOTES); ?></h4>
-                <form method="POST" action="#comments" novalidate>
-                    <input type="hidden" name="submit_comment" value="1">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
-                    <input type="hidden" name="post_id" value="<?php echo (int)($post['id'] ?? 0); ?>">
-
-                    <div class="form-group form-group--spaced">
-                        <label for="comment_text">Kommentar <span class="field-required">*</span></label>
-                        <textarea id="comment_text" name="comment_text" class="form-control" required placeholder="Dein Kommentar …" rows="4"></textarea>
-                        <small class="form-helper-text">E-Mail Adresse wird nicht veröffentlicht.</small>
-                    </div>
-
-                    <div class="form-row form-row--spaced">
-                        <div class="form-group">
-                            <label for="comment_name">Name <span class="field-required">*</span></label>
-                            <input type="text" id="comment_name" name="comment_name" class="form-control" required placeholder="Dein Name">
-                        </div>
-                        <div class="form-group">
-                            <label for="comment_email">E-Mail <span class="field-required">*</span></label>
-                            <input type="email" id="comment_email" name="comment_email" class="form-control" required placeholder="dein@email.de">
-                        </div>
-                    </div>
-
-                    <div class="form-group form-group--honeypot">
-                        <label for="comment_hp" class="visually-hidden-field">Dieses Feld leer lassen</label>
-                        <input type="text" id="comment_hp" name="comment_hp" value="" tabindex="-1" autocomplete="off" class="visually-hidden-field" aria-hidden="true">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Kommentar abschicken</button>
-                </form>
-            </div>
-        </section>
-        <?php endif; /* $showComments */ ?>
+        <?php get_theme_part('partials/post-comments', [
+            'showComments' => $showComments,
+            'commentsHeader' => $commentsHeader,
+            'comments' => $comments,
+            'commentError' => $commentError,
+            'commentSuccess' => $commentSuccess,
+            'commentFormHeader' => $commentFormHeader,
+            'csrfToken' => $csrfToken,
+            'post' => $post,
+        ]); ?>
 
     </div><!-- /.main-column -->
 

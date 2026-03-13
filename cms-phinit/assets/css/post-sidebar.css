@@ -1,0 +1,207 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Post Sidebar / TOC / Sticky Widgets
+═══════════════════════════════════════════════════════════════════════════ */
+.content-layout {
+    display: grid;
+    grid-template-columns: 1fr var(--sidebar-width);
+    gap: var(--content-gap, 28px);
+    align-items: start;
+}
+
+.content-layout.sidebar-left {
+    grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+.content-layout.sidebar-left .sidebar {
+    order: -1;
+}
+
+.content-layout.sidebar-none {
+    grid-template-columns: 1fr;
+}
+
+.main-column {
+    min-width: 0;
+}
+
+.sidebar {
+    position: sticky;
+    top: calc(var(--header-h) + var(--quicklinks-h) + var(--member-bar-h, 0px) + 18px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.post-container {
+    padding-top: var(--spacing-header-content, 25px);
+    padding-bottom: var(--spacing-content-footer, 25px);
+}
+
+.toc {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--accent-teal);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+.toc--collapsible {
+    padding: 0;
+    overflow: hidden;
+}
+
+.toc-title {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toc-title--toggle {
+    margin-bottom: 0;
+    justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+}
+
+.toc-title--toggle::-webkit-details-marker {
+    display: none;
+}
+
+.toc-title--toggle::marker {
+    content: '';
+}
+
+.toc-title__main {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+}
+
+.toc-title__count {
+    display: inline-flex;
+    align-items: center;
+    padding: .22rem .5rem;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-size: .7rem;
+    font-weight: 700;
+}
+
+.toc-title__chevron {
+    color: var(--text-muted);
+    transition: transform .2s ease;
+}
+
+.toc--collapsible[open] .toc-title__chevron {
+    transform: rotate(180deg);
+}
+
+.toc-panel {
+    padding: 0 16px 14px;
+    border-top: 1px solid var(--border-color);
+}
+
+.toc--collapsible:not([open]) .toc-panel {
+    display: none;
+}
+
+.toc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toc-list li a {
+    display: block;
+    padding: 4px 6px;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    border-radius: 3px;
+    transition: var(--transition-fast);
+}
+
+.toc-list li a:hover,
+.toc-list li a.active {
+    color: var(--accent-teal);
+    background: rgba(13,148,136,.07);
+}
+
+.toc-list .toc-h3 {
+    padding-left: 16px;
+}
+
+.social-widget {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+.social-widget-title {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.toc-list--plain {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc--accent {
+    border-left-color: var(--accent-color);
+}
+
+.toc--primary {
+    border-left-color: var(--primary-color);
+}
+
+.toc-muted-count {
+    color: var(--text-muted);
+    font-size: .85em;
+}
+
+.toc-count {
+    color: var(--text-light);
+    font-size: var(--fs-xs);
+    margin-left: 4px;
+}
+
+body.dark-mode .toc,
+html.dark-mode body .toc {
+    background: var(--bg-dark-3);
+    border-color: var(--border-dark);
+}
+
+@media (max-width: 768px) {
+    .content-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+        order: -1;
+    }
+}
+
+@container (max-width: 700px) {
+    .content-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .sidebar {
+        display: none;
+    }
+}

@@ -135,19 +135,44 @@ trait CMS_Phinit_Theme_Assets_Trait
         return $this->isPostRequest($path) || ($path !== '/' && !str_contains(trim($path, '/'), '/'));
     }
 
+    private function isPageDetailRequest(string $path, bool $isHubSite): bool
+    {
+        if ($isHubSite || $this->isAuthOrMemberRequest($path) || $this->isPageExtrasRequest($path) || $this->isBlogListingRequest($path)) {
+            return false;
+        }
+
+        if ($this->isPostRequest($path)) {
+            return false;
+        }
+
+        $slug = trim($path, '/');
+
+        return $slug !== '' && !str_contains($slug, '/');
+    }
+
     public function enqueueStyles(): void
     {
         $requestPath = $this->getRequestPath();
         $isHubSiteRequest = $this->isHubSiteRequest($requestPath);
         $loadHomepageBlogCss = $this->isBlogListingRequest($requestPath);
         $loadMemberAuthCss = $this->isAuthOrMemberRequest($requestPath);
+        $loadPostDetailCss = $this->isPostRequest($requestPath);
+        $loadPostSidebarCss = $this->isPostRequest($requestPath);
+        $loadPageDetailCss = $this->isPageDetailRequest($requestPath, $isHubSiteRequest);
         $loadPageExtrasCss = $this->isPageExtrasRequest($requestPath);
         $loadRichContentCss = $this->isRichContentRequest($requestPath, $isHubSiteRequest);
         $loadTemplateCss = $this->isTemplateStylesRequest($requestPath, $isHubSiteRequest);
+        $loadContentCardsCss = $loadHomepageBlogCss || $loadPageExtrasCss;
 
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
+        $headerNavigationCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/header-navigation.css';
+        $uiChromeCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/ui-chrome.css';
         $templateCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/templates.css';
+        $contentCardsCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/content-cards.css';
         $memberAuthCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/member-auth.css';
+        $postDetailCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/post-detail.css';
+        $pageDetailCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-detail.css';
+        $postSidebarCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/post-sidebar.css';
         $pageExtrasCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-extras.css';
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
@@ -162,14 +187,44 @@ trait CMS_Phinit_Theme_Assets_Trait
         $version = !empty(trim((string) $cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
         $this->emitStylesheet($this->themeAssetUrl('style.css', $version));
 
+        if (file_exists($headerNavigationCssFile)) {
+            $headerNavigationVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($headerNavigationCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/header-navigation.css', $headerNavigationVersion));
+        }
+
+        if (file_exists($uiChromeCssFile)) {
+            $uiChromeVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($uiChromeCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion));
+        }
+
         if ($loadTemplateCss && file_exists($templateCssFile)) {
             $templateVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($templateCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/templates.css', $templateVersion));
         }
 
+        if ($loadContentCardsCss && file_exists($contentCardsCssFile)) {
+            $contentCardsVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($contentCardsCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion));
+        }
+
         if ($loadMemberAuthCss && file_exists($memberAuthCssFile)) {
             $memberAuthVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($memberAuthCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/member-auth.css', $memberAuthVersion));
+        }
+
+        if ($loadPostDetailCss && file_exists($postDetailCssFile)) {
+            $postDetailVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($postDetailCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/post-detail.css', $postDetailVersion));
+        }
+
+        if ($loadPostSidebarCss && file_exists($postSidebarCssFile)) {
+            $postSidebarVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($postSidebarCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/post-sidebar.css', $postSidebarVersion));
+        }
+
+        if ($loadPageDetailCss && file_exists($pageDetailCssFile)) {
+            $pageDetailVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageDetailCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/page-detail.css', $pageDetailVersion));
         }
 
         if ($loadPageExtrasCss && file_exists($pageExtrasCssFile)) {
@@ -745,6 +800,8 @@ trait CMS_Phinit_Theme_Assets_Trait
             $h = !empty($thumbH) ? max(60, (int) $thumbH) : 215;
             $css .= ".article-thumb, .article-thumb-placeholder { flex: 0 0 {$w}px !important; width: {$w}px !important; height: {$h}px !important; }\n";
             $css .= ".article-thumb img { width: {$w}px !important; height: {$h}px !important; }\n";
+            $css .= "@media (max-width: 768px) { .article-thumb, .article-thumb-placeholder { flex: none !important; width: 100% !important; height: 161px !important; max-height: 161px !important; min-height: 0 !important; aspect-ratio: auto !important; } .article-thumb img { width: 100% !important; height: 100% !important; max-height: 161px !important; } }\n";
+            $css .= "@media (max-width: 480px) { .article-thumb, .article-thumb-placeholder { height: 161px !important; max-height: 161px !important; aspect-ratio: auto !important; } }\n";
         }
 
         $articleTitleFs = (int) ($c->get('typography', 'article_title_fontsize', 16) ?: 16);
@@ -761,6 +818,8 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $excerptFs = (int) ($c->get('typography', 'article_excerpt_fontsize', 13) ?: 13);
         $css .= ".article-body p { font-size: {$excerptFs}px !important; display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important; }\n";
+        $css .= "@media (max-width: 768px) { .article-body p { display: -webkit-box !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 3 !important; line-clamp: 3 !important; overflow: hidden !important; font-size: var(--fs-sm) !important; line-height: 1.6 !important; } }\n";
+        $css .= "@media (max-width: 480px) { .article-body p { font-size: .82rem !important; line-height: 1.55 !important; } }\n";
 
         $tileExcFs = (int) ($c->get('typography', 'tile_excerpt_fontsize', 12) ?: 12);
         $css .= ".post-card-excerpt { font-size: {$tileExcFs}px !important; }\n";

@@ -403,3 +403,56 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         return $defaults;
     }
 }
+
+/**
+ * Lädt die konfigurierten Homepage-Feed-Sektionen für cms-feed.
+ *
+ * @return list<array{channel: array<string, mixed>, items: array<int, mixed>}>
+ */
+function phinit_get_homepage_feed_sections(): array
+{
+    try {
+        $customizer = ThemeCustomizer::instance();
+        $showFeeds = filter_var($customizer->get('homepage', 'show_feed_section', true), FILTER_VALIDATE_BOOLEAN);
+        $feed1Id = (int) $customizer->get('homepage', 'feed1_channel_id', 0);
+        $feed2Id = (int) $customizer->get('homepage', 'feed2_channel_id', 0);
+        $feed1Count = max(1, (int) $customizer->get('homepage', 'feed1_count', 5));
+        $feed2Count = max(1, (int) $customizer->get('homepage', 'feed2_count', 5));
+    } catch (
+        \Throwable $_e
+    ) {
+        return [];
+    }
+
+    if (!$showFeeds
+        || !\CMS\PluginManager::instance()->isPluginActive('cms-feed')
+        || !class_exists('CMS_Feed_Database')
+    ) {
+        return [];
+    }
+
+    try {
+        $feedDb = \CMS_Feed_Database::instance();
+        $feedSections = [];
+
+        foreach ([[$feed1Id, $feed1Count], [$feed2Id, $feed2Count]] as [$feedId, $feedCount]) {
+            if ($feedId <= 0) {
+                continue;
+            }
+
+            $channel = $feedDb->get_channel($feedId);
+            if (!$channel || empty($channel['is_active'])) {
+                continue;
+            }
+
+            $feedSections[] = [
+                'channel' => (array) $channel,
+                'items' => (array) $feedDb->get_items(['channel_id' => $feedId], 0, $feedCount),
+            ];
+        }
+
+        return $feedSections;
+    } catch (\Throwable $_e) {
+        return [];
+    }
+}

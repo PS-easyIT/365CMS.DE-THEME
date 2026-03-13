@@ -68,8 +68,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                    value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                    class="form-control phinit-customizer__number-input"
                    step="<?php echo htmlspecialchars((string) ($field['step'] ?? 'any'), ENT_QUOTES); ?>"
-                   <?php echo isset($field['min']) ? 'min="' . (int) $field['min'] . '"' : ''; ?>
-                   <?php echo isset($field['max']) ? 'max="' . (int) $field['max'] . '"' : ''; ?>>
+                   <?php echo isset($field['min']) ? 'min="' . htmlspecialchars((string) $field['min'], ENT_QUOTES) . '"' : ''; ?>
+                   <?php echo isset($field['max']) ? 'max="' . htmlspecialchars((string) $field['max'], ENT_QUOTES) . '"' : ''; ?>>
 
         <?php elseif (($field['type'] ?? 'text') === 'post_picker'): ?>
             <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
