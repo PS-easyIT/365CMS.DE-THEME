@@ -86,7 +86,35 @@ trait CMS_Phinit_Theme_Assets_Trait
 
     private function isPostRequest(string $path): bool
     {
-        return preg_match('#^/blog/[^/]+$#', $path) === 1;
+        $postSlug = null;
+
+        try {
+            if (class_exists('CMS\\Services\\PermalinkService')) {
+                $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($path);
+            }
+        } catch (\Throwable $e) {
+            $postSlug = null;
+        }
+
+        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/(?P<slug>[^/]+)$#', $path, $matches) === 1) {
+            $postSlug = rawurldecode((string) ($matches['slug'] ?? ''));
+        }
+
+        if ($postSlug === null || trim($postSlug) === '') {
+            return false;
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+            $row = $db->get_row(
+                "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                [$postSlug]
+            );
+
+            return $row !== null;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     private function isHubSiteRequest(string $path): bool
