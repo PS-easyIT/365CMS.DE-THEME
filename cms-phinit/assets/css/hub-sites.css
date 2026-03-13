@@ -1,5 +1,18 @@
 /* CMS Phinit – Hub-Sites */
 
+.page-content--hub {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    color: inherit;
+}
+
+.page-content--hub > * + * {
+    margin-top: 0;
+}
+
 .cms-hub-site {
     --cms-hub-hero-start: #1f2937;
     --cms-hub-hero-end: #0f172a;

@@ -116,64 +116,6 @@ body {
 
 body.mobile-menu-open { overflow: hidden; }
 
-.search-empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-}
-
-.search-empty-state__icon {
-    font-size: 3rem;
-    margin: 0 0 1rem;
-}
-
-.search-empty-state__title {
-    color: var(--text-primary);
-    margin-bottom: .5rem;
-}
-
-.search-empty-state__text {
-    color: var(--text-muted);
-    max-width: 400px;
-    margin: 0 auto 1.5rem;
-}
-
-.search-empty-state__text {
-    margin-top: .5rem;
-    margin-bottom: 0;
-}
-
-.search-results-summary {
-    color: var(--text-muted);
-    margin-top: 6px;
-}
-
-.search-filters {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.search-filter-select {
-    max-width: 180px;
-}
-
-.error-shell {
-    padding-top: 48px;
-    padding-bottom: 48px;
-}
-
-.error-suggestions {
-    margin-top: 3rem;
-}
-
-.error-suggestions__title {
-    text-align: center;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-}
-
 /* Dark side margins – Vignette-Effekt links/rechts */
 body::before {
     content: '';
@@ -315,19 +257,6 @@ body.home .page-wrap {
 ═══════════════════════════════════════════════════════════════════════════ */
 /* Page-Detail-, TOC-, Seiten-Header- und Seiteninhalt-Styles wurden in
    `assets/css/page-detail.css` ausgelagert. */
-
-.page-content--hub {
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    color: inherit;
-}
-
-.page-content--hub > * + * {
-    margin-top: 0;
-}
 
 /* Hub-Site-Styles wurden in `assets/css/hub-sites.css` ausgelagert. */
 
