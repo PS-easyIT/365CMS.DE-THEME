@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 $siteUrl = SITE_URL;
-$pageContent = (string)($page['content'] ?? '');
+$pageContent = '';
 
 // ── Customizer-Einstellungen (Seiten-Ansicht) ──────────────────────────────
 try {
@@ -28,9 +28,11 @@ try {
     $_pg_showSidebar = true; $_pg_sidebarNav = true; $_pg_showToc = false;
 }
 
+$pageProvidedByRouter = isset($page) && !empty($page);
+
 // $page wird vom Router via ThemeManager::render('page', ['page' => $page]) bereitgestellt
 // Falls nicht vorhanden (direkter Zugriff), Slug aus URL extrahieren
-if (!isset($page) || empty($page)) {
+if (!$pageProvidedByRouter) {
     try {
         $slug = trim((string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ''), '/ ');
         $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
@@ -44,7 +46,13 @@ if (is_object($page)) {
     $page = (array)$page;
 }
 
-$pageContent = (string)($page['content'] ?? $pageContent);
+$pageId = (int)($page['id'] ?? 0);
+$pageContent = (string)($page['content'] ?? '');
+if (!$pageProvidedByRouter) {
+    $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
+}
+$pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3]);
+$pageContent = $pageHeadingData['html'];
 $isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
 
 // Nicht gefunden → Fehlermeldung im Content-Bereich anzeigen (Header wurde bereits gesendet)
@@ -53,18 +61,7 @@ $pageNotFound = empty($page);
 // TOC für Seiten generieren (wenn aktiviert)
 $_pg_toc = [];
 if (!$pageNotFound && $_pg_showToc) {
-    $usedPgSlugs = [];
-    preg_match_all('/<h([23])[^>]*>(.*?)<\/h\1>/si', $page['content'] ?? '', $_hm, PREG_SET_ORDER);
-    foreach ($_hm as $_hx) {
-        $text = trim(strip_tags($_hx[2]));
-        $id   = mb_strtolower($text, 'UTF-8');
-        $id   = preg_replace('/[äÄ]/', 'ae', preg_replace('/[öÖ]/', 'oe', preg_replace('/[üÜ]/', 'ue', preg_replace('/ß/', 'ss', $id))));
-        $id   = trim(preg_replace('/[^a-z0-9]+/', '-', $id), '-') ?: 'heading';
-        $base = $id; $i = 2;
-        while (in_array($id, $usedPgSlugs, true)) { $id = $base . '-' . $i++; }
-        $usedPgSlugs[] = $id;
-        $_pg_toc[] = ['level' => (int)$_hx[1], 'id' => $id, 'text' => $text];
-    }
+    $_pg_toc = $pageHeadingData['toc'];
 }
 
 // Navigationsmenü für Sidebar laden (wenn Layout = two-col)

@@ -82,7 +82,9 @@ $sidebarPosition = (string)$czGet('layout', 'sidebar_position', 'right');
 // ── Post-Daten laden ────────────────────────────────────────────────────────
 if (isset($post) && !empty($post)) {
     $post = is_object($post) ? (array)$post : (array)$post;
+    $postProvidedByRouter = true;
 } else {
+    $postProvidedByRouter = false;
     $rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
     $rawPath = (string)preg_replace('#^/blog/#i', '', $rawPath);
     $slug    = trim($rawPath, '/');
@@ -114,10 +116,16 @@ if (!$post) {
     exit;
 }
 
-// Ansichten-Zähler erhöhen
-try {
-    $db->execute("UPDATE {$prefix}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]);
-} catch (\Throwable) {}
+if (!$postProvidedByRouter && !empty($post['content'])) {
+    $post['content'] = phinit_prepare_renderable_content((string)$post['content'], 'post', (int)($post['id'] ?? 0));
+}
+
+// Ansichten-Zähler nur bei direktem Fallback erhöhen (Router erledigt das bereits)
+if (!$postProvidedByRouter) {
+    try {
+        $db->execute("UPDATE {$prefix}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]);
+    } catch (\Throwable) {}
+}
 
 // ── Lesezeit berechnen ──────────────────────────────────────────────────────
 $content     = $post['content'] ?? '';
@@ -126,49 +134,14 @@ $readingTime = function_exists('phinit_reading_time')
     : max(1, (int)ceil(str_word_count(strip_tags($content)) / $readingTimeWpm));
 
 // ── Auto-ID Injection für h2/h3 (TOC-Voraussetzung) ────────────────────────
-$usedSlugs = [];
-$content = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/si', function ($m) use (&$usedSlugs) {
-    $tag   = $m[1];
-    $attrs = $m[2];
-    $inner = $m[3];
-
-    // Bereits vorhandene ID beibehalten
-    if (preg_match('/\bid=["\']([^"\']+)["\']/i', $attrs)) {
-        return $m[0];
-    }
-
-    // Slug aus Klartext erzeugen
-    $text = phinit_display_text(strip_tags($inner));
-    $slug = mb_strtolower($text, 'UTF-8');
-    $slug = preg_replace('/[äÄ]/', 'ae', $slug);
-    $slug = preg_replace('/[öÖ]/', 'oe', $slug);
-    $slug = preg_replace('/[üÜ]/', 'ue', $slug);
-    $slug = preg_replace('/ß/', 'ss', $slug);
-    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
-    $slug = trim($slug, '-');
-    if (empty($slug)) { $slug = 'heading'; }
-
-    // Duplikate vermeiden
-    $base = $slug;
-    $i    = 2;
-    while (in_array($slug, $usedSlugs, true)) {
-        $slug = $base . '-' . $i++;
-    }
-    $usedSlugs[] = $slug;
-
-    return "<h{$tag}{$attrs} id=\"{$slug}\">{$inner}</h{$tag}>";
-}, $content);
-
-// Update post content with IDs
+$headingData = phinit_with_heading_ids($content, [2, 3]);
+$content = $headingData['html'];
 $post['content'] = $content;
 
 // ── TOC generieren ──────────────────────────────────────────────────────────
 $tocItems = [];
 if ($showToc) {
-    preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/si', $content, $m, PREG_SET_ORDER);
-    foreach ($m as $match) {
-        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => phinit_display_text(strip_tags($match[3]))];
-    }
+    $tocItems = $headingData['toc'];
     // Mindestanzahl prüfen
     if (count($tocItems) < $tocMinHeadings) {
         $tocItems = [];
@@ -262,7 +235,7 @@ if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subm
         $honeypot = trim((string)($_POST['comment_hp'] ?? ''));
 
         if ($honeypot !== '') {
-            header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
+            header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string)($post['slug'] ?? '')) . '?commented=1#comments');
             exit;
         }
 
@@ -282,7 +255,7 @@ if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subm
                 if ($newId === false) {
                     $commentError = 'Bitte alle Pflichtfelder korrekt ausfüllen.';
                 } else {
-                    header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
+                    header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string)($post['slug'] ?? '')) . '?commented=1#comments');
                     exit;
                 }
             } catch (\Throwable $ex) {

@@ -18,19 +18,32 @@ if (!defined('ABSPATH')) {
 
 $siteUrl = SITE_URL;
 
-try {
-    $slug = trim((string)($_GET['slug'] ?? (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '')), '/ ');
-    $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
-    if (!$page) {
+$pageProvidedByRouter = isset($page) && !empty($page);
+
+if ($pageProvidedByRouter) {
+    $page = is_object($page) ? (array)$page : (array)$page;
+} else {
+    try {
+        $slug = trim((string)($_GET['slug'] ?? (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '')), '/ ');
+        $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
+        if (!$page) {
+            http_response_code(404);
+            get_theme_part('404');
+            exit;
+        }
+    } catch (\Throwable $e) {
         http_response_code(404);
         get_theme_part('404');
         exit;
     }
-} catch (\Throwable $e) {
-    http_response_code(404);
-    get_theme_part('404');
-    exit;
 }
+
+$pageContent = (string)($page['content'] ?? '');
+if (!$pageProvidedByRouter) {
+    $pageContent = phinit_prepare_renderable_content($pageContent, 'page', (int)($page['id'] ?? 0));
+}
+$pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3]);
+$pageContent = $pageHeadingData['html'];
 ?>
 
 <div class="container page-shell page-shell--wide">
@@ -52,7 +65,7 @@ try {
 
     <!-- Seiteninhalt volle Breite -->
     <div class="page-content page-content--full" data-anim data-anim-delay="1">
-        <?php echo $page['content'] ?? ''; ?>
+        <?php echo $pageContent; ?>
     </div>
 
 </div><!-- /.container -->

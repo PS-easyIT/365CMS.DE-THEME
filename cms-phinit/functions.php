@@ -15,6 +15,9 @@ defined('CMS_PHINIT_THEME_VERSION') || define('CMS_PHINIT_THEME_VERSION', '1.4.1
 defined('CMS_PHINIT_THEME_DIR') || define('CMS_PHINIT_THEME_DIR', THEME_PATH . 'cms-phinit/');
 defined('CMS_PHINIT_THEME_URL') || define('CMS_PHINIT_THEME_URL', rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
+require_once CMS_PHINIT_THEME_DIR . 'includes/theme-template-helpers.php';
+require_once CMS_PHINIT_THEME_DIR . 'includes/theme-content-helpers.php';
+
 /**
  * Theme-Hauptklasse (Singleton)
  */
@@ -68,6 +71,7 @@ final class CMS_Phinit_Theme
     public function enqueueStyles(): void
     {
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
+        $templateCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/templates.css';
         // Cache-Buster aus Customizer oder Datei-Timestamp
         $cbVersion = '';
         try {
@@ -75,6 +79,10 @@ final class CMS_Phinit_Theme
         } catch (\Throwable $e) {}
         $version = !empty(trim((string)$cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
         echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'style.css?v=' . $version . '">' . "\n";
+        if (file_exists($templateCssFile)) {
+            $templateVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($templateCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/templates.css?v=' . $templateVersion . '">' . "\n";
+        }
 
         $photoSwipeCssUrl = function_exists('cms_asset_url')
             ? cms_asset_url('photoswipe/photoswipe.css')
@@ -1045,154 +1053,3 @@ if (!defined('CMS_PHINIT_THEME_BOOTSTRAPPED')) {
     CMS_Phinit_Theme::instance();
 }
 
-/* ── Template-Helper ─────────────────────────────────────────── */
-
-if (!function_exists('get_theme_part')) {
-    /**
-     * Theme-Partial laden (header.php, footer.php, …)
-     */
-    function get_theme_part(string $part, array $vars = []): void
-    {
-        $file = CMS_PHINIT_THEME_DIR . $part . '.php';
-        if (!file_exists($file)) {
-            return;
-        }
-        if (!empty($vars)) {
-            extract($vars, EXTR_SKIP);
-        }
-        include $file;
-    }
-}
-
-if (!function_exists('theme_is_logged_in')) {
-    function theme_is_logged_in(): bool
-    {
-        try {
-            return \CMS\Auth::instance()->isLoggedIn();
-        } catch (\Throwable $e) {
-            return false;
-        }
-    }
-}
-
-if (!function_exists('phinit_display_text')) {
-    function phinit_display_text(?string $text): string
-    {
-        return trim(html_entity_decode((string)$text, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-    }
-}
-
-if (!function_exists('phinit_escape_text')) {
-    function phinit_escape_text(?string $text): string
-    {
-        return htmlspecialchars(phinit_display_text($text), ENT_QUOTES, 'UTF-8');
-    }
-}
-
-if (!function_exists('phinit_reading_time')) {
-    /**
-     * Lesezeit in Minuten schätzen
-     */
-    function phinit_reading_time(string $content, int $wpm = 0): int
-    {
-        if ($wpm <= 0) {
-            try {
-                $wpm = (int)\CMS\Services\ThemeCustomizer::instance()->get('posts', 'reading_time_wpm', 220);
-            } catch (\Throwable) {}
-            if ($wpm <= 0) { $wpm = 220; }
-        }
-        $wordCount = str_word_count(strip_tags($content));
-        return max(1, (int)round($wordCount / $wpm));
-    }
-}
-
-if (!function_exists('phinit_excerpt_plain_text')) {
-    /**
-     * Wandelt HTML oder Editor.js-JSON in reinen Klartext für Textauszüge um.
-     * Nutzt EditorJsRenderer falls verfügbar, fällt auf Block-Extraktion zurück.
-     */
-    function phinit_excerpt_plain_text(string $content): string
-    {
-        $content = trim($content);
-        if ($content === '') {
-            return '';
-        }
-
-        $extractFromMalformedEditorJs = static function (string $raw): string {
-            $parts = [];
-
-            if (preg_match_all('/"text"\s*:\s*"((?:\\.|[^"\\])*)"/u', $raw, $matches)) {
-                foreach ($matches[1] as $value) {
-                    $decoded = json_decode('"' . $value . '"');
-                    if (is_string($decoded) && trim($decoded) !== '') {
-                        $parts[] = $decoded;
-                    }
-                }
-            }
-
-            if (preg_match_all('/"caption"\s*:\s*"((?:\\.|[^"\\])*)"/u', $raw, $matches)) {
-                foreach ($matches[1] as $value) {
-                    $decoded = json_decode('"' . $value . '"');
-                    if (is_string($decoded) && trim($decoded) !== '') {
-                        $parts[] = $decoded;
-                    }
-                }
-            }
-
-            if (preg_match_all('/"items"\s*:\s*\[(.*?)\]/us', $raw, $itemGroups)) {
-                foreach ($itemGroups[1] as $group) {
-                    if (preg_match_all('/"((?:\\.|[^"\\])*)"/u', $group, $itemMatches)) {
-                        foreach ($itemMatches[1] as $value) {
-                            $decoded = json_decode('"' . $value . '"');
-                            if (is_string($decoded) && trim($decoded) !== '') {
-                                $parts[] = $decoded;
-                            }
-                        }
-                    }
-                }
-            }
-
-            $text = trim(html_entity_decode(strip_tags(implode(' ', $parts)), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-            return preg_replace('/\s+/u', ' ', $text) ?? '';
-        };
-
-        $decoded = json_decode($content, true);
-        if (is_array($decoded) && isset($decoded['blocks']) && is_array($decoded['blocks'])) {
-            $html = '';
-            if (class_exists('\\CMS\\Services\\EditorJsRenderer')) {
-                try {
-                    $html = \CMS\Services\EditorJsRenderer::getInstance()->render($decoded);
-                } catch (\Throwable) {}
-            }
-            if ($html !== '') {
-                $content = $html;
-            } else {
-                // Fallback: Text-Felder aus Blöcken extrahieren
-                $parts = [];
-                foreach ($decoded['blocks'] as $block) {
-                    if (!is_array($block)) { continue; }
-                    $data = $block['data'] ?? null;
-                    if (!is_array($data)) { continue; }
-                    foreach (['text', 'caption', 'message', 'title'] as $key) {
-                        if (!empty($data[$key]) && is_string($data[$key])) {
-                            $parts[] = $data[$key];
-                        }
-                    }
-                    if (!empty($data['items']) && is_array($data['items'])) {
-                        foreach ($data['items'] as $item) {
-                            if (is_string($item) && trim($item) !== '') { $parts[] = $item; }
-                        }
-                    }
-                }
-                $content = implode(' ', $parts);
-            }
-        } elseif (str_contains($content, '"blocks"') && (str_starts_with($content, '{') || str_starts_with($content, '['))) {
-            $recovered = $extractFromMalformedEditorJs($content);
-            if ($recovered !== '') {
-                $content = $recovered;
-            }
-        }
-        $text = trim(html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-        return preg_replace('/\s+/u', ' ', $text) ?? '';
-    }
-}

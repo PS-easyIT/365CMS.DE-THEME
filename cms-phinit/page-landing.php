@@ -32,19 +32,32 @@ if (!defined('ABSPATH')) {
 
 $siteUrl = SITE_URL;
 
-try {
-    $slug = trim((string)($_GET['slug'] ?? (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '')), '/ ');
-    $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
-    if (!$page) {
+$pageProvidedByRouter = isset($page) && !empty($page);
+
+if ($pageProvidedByRouter) {
+    $page = is_object($page) ? (array)$page : (array)$page;
+} else {
+    try {
+        $slug = trim((string)($_GET['slug'] ?? (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '')), '/ ');
+        $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
+        if (!$page) {
+            http_response_code(404);
+            get_theme_part('404');
+            exit;
+        }
+    } catch (\Throwable $e) {
         http_response_code(404);
         get_theme_part('404');
         exit;
     }
-} catch (\Throwable $e) {
-    http_response_code(404);
-    get_theme_part('404');
-    exit;
 }
+
+$landingContent = (string)($page['content'] ?? '');
+if (!$pageProvidedByRouter) {
+    $landingContent = phinit_prepare_renderable_content($landingContent, 'page', (int)($page['id'] ?? 0));
+}
+$landingHeadingData = phinit_with_heading_ids($landingContent, [2, 3]);
+$landingContent = $landingHeadingData['html'];
 
 // Meta-Daten auslesen
 $meta       = is_array($page['meta'] ?? null) ? $page['meta'] : [];
@@ -142,11 +155,11 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
 <!-- ═══════════════════════════════════════════════════════════════════════
      FREIER SEITENINHALT (optional)
 ═══════════════════════════════════════════════════════════════════════════ -->
-<?php if (!empty(trim(strip_tags($page['content'] ?? '')))): ?>
+<?php if (phinit_has_visible_content($landingContent)): ?>
 <section class="landing-content">
     <div class="container">
         <div class="page-content page-content--wide" data-anim>
-            <?php echo $page['content'] ?? ''; ?>
+            <?php echo $landingContent; ?>
         </div>
     </div>
 </section>
