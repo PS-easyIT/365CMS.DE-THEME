@@ -1,0 +1,327 @@
+<?php
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+use CMS\Services\ThemeCustomizer;
+
+/**
+ * Liefert das View-Model für die Startseite inklusive robuster Fallback-Defaults.
+ *
+ * @return array<string, mixed>
+ */
+function phinit_get_homepage_view_model(): array
+{
+    $defaults = [
+        '_showRepo' => true,
+        '_repoTitle' => 'PS-easyIT Script-Repository',
+        '_repoDesc' => '',
+        '_repoBadge' => '25+ Repos',
+        '_repoBtnText' => 'Zum GitHub →',
+        '_repoBtnUrl' => '#',
+        '_showList' => true,
+        '_listLabel' => 'Aktuell',
+        '_listCount' => 4,
+        '_listLinkUrl' => '/blog',
+        '_listThumbW' => 190,
+        '_listThumbH' => 115,
+        '_showExcerpt' => true,
+        '_showMeta' => true,
+        '_showBadge' => true,
+        '_showMetaCat' => true,
+        '_showMetaDate' => true,
+        '_showMetaRT' => true,
+        '_listExcLen' => 180,
+        '_tileExcLen' => 160,
+        '_showListSidebar' => false,
+        '_listSidebarWidth' => 260,
+        '_listSidebarTitle' => '',
+        '_listSidebarContent' => '',
+        '_sbShowProjects' => true,
+        '_sbProj1Name' => '365CMS.DE',
+        '_sbProj1Desc' => 'Das eigene CMS – modular & flexibel',
+        '_sbProj1Url' => 'https://365cms.de',
+        '_sbProj2Name' => '365NETWORK.DE',
+        '_sbProj2Desc' => 'Business-Netzwerk-Plattform',
+        '_sbProj2Url' => 'https://365network.de',
+        '_sbShowStatus' => true,
+        '_sbStatusLabel' => 'Dienst-Status',
+        '_sbShowDownloads' => false,
+        '_sbDownloadsLabel' => 'Downloads & Checklisten',
+        '_sbDownloadsItems' => '',
+        '_sbShowSocial' => true,
+        '_sbSocialLabel' => 'Folge uns',
+        '_sbSocialLinkedin' => '',
+        '_sbSocialGithub' => '',
+        '_sbSocialTwitter' => '',
+        '_sbSocialMastodon' => '',
+        '_sbSocialRss' => '',
+        '_sbSocialYoutube' => '',
+        '_sbSocialXing' => '',
+        '_sbLabelLinkedin' => 'LinkedIn',
+        '_sbLabelGithub' => 'GitHub',
+        '_sbLabelRss' => 'RSS Feed',
+        '_sbShowIdentity' => true,
+        '_sbIdentityLogoUrl' => '',
+        '_sbIdentityTagline' => '',
+        '_sbIdentityLinkUrl' => '/',
+        '_sbProj1LogoUrl' => '',
+        '_sbProj2LogoUrl' => '',
+        '_sbStatusServices' => "Microsoft 365|https://status.office365.com|M365\nAzure|https://status.azure.com|AZ\nStarface|https://www.starface.com/support/|SF\nAnyDesk|https://status.anydesk.com|AD\nGitHub|https://githubstatus.com|GH\nCloudflare|https://www.cloudflarestatus.com|CF",
+        '_sbShowNotice' => false,
+        '_sbNoticeTitle' => '💡 Aktueller Hinweis',
+        '_sbNoticeText' => '',
+        '_sbNoticeUrl' => '',
+        '_sbNoticeUrlText' => 'Mehr erfahren →',
+        '_sbShowFeaturedPosts' => false,
+        '_sbFeaturedPostsLabel' => '📌 Empfohlene Artikel',
+        '_sbFeaturedPostId1' => 0,
+        '_sbFeaturedPostId2' => 0,
+        '_sbFeaturedPostId3' => 0,
+        '_showInfoGrid' => true,
+        '_c1Title' => '🖥️ Admin Anleitungen',
+        '_c1Text' => '',
+        '_c1LinkText' => 'Anleitungen →',
+        '_c1LinkUrl' => '#',
+        '_c1Style' => 'default',
+        '_c2Title' => '🔒 DSGVO & Compliance',
+        '_c2Text' => '',
+        '_c2LinkText' => 'Compliance →',
+        '_c2LinkUrl' => '#',
+        '_c2Style' => 'gold',
+        '_showCard3' => false,
+        '_c3Title' => '💻 GitHub / GitLab',
+        '_c3Text' => '',
+        '_c3LinkText' => 'Zum Repository →',
+        '_c3LinkUrl' => '#',
+        '_c3Badge' => '',
+        '_c3Style' => 'repo',
+        '_showTileGrid' => true,
+        '_tileLabel' => 'Weitere Beiträge',
+        '_tileCount' => 6,
+        '_tileCols' => 3,
+        '_showTileExc' => true,
+        '_showTileCat' => true,
+        '_showTileDate' => true,
+        '_tileImageH' => 161,
+        '_tileLinkUrl' => '/archiv',
+        '_spRepo' => 32,
+        '_spList' => 32,
+        '_spInfo' => 32,
+        '_spGrid' => 32,
+        '_spRss' => 0,
+    ];
+
+    try {
+        $customizer = ThemeCustomizer::instance();
+
+        return array_merge($defaults, [
+            '_showRepo' => filter_var($customizer->get('homepage', 'show_repo_card', true), FILTER_VALIDATE_BOOLEAN),
+            '_repoTitle' => $customizer->get('homepage', 'repo_card_title', 'PS-easyIT Script-Repository'),
+            '_repoDesc' => $customizer->get('homepage', 'repo_card_description', ''),
+            '_repoBadge' => $customizer->get('homepage', 'repo_card_badge', '25+ Repos'),
+            '_repoBtnText' => $customizer->get('homepage', 'repo_card_btn_text', 'Zum GitHub →'),
+            '_repoBtnUrl' => $customizer->get('homepage', 'repo_card_btn_url', 'https://github.com/'),
+            '_showList' => filter_var($customizer->get('homepage', 'show_article_list', true), FILTER_VALIDATE_BOOLEAN),
+            '_listLabel' => $customizer->get('homepage', 'article_list_label', 'Aktuell'),
+            '_listCount' => max(1, (int) $customizer->get('homepage', 'article_list_count', 4)),
+            '_listLinkUrl' => $customizer->get('homepage', 'article_list_link_url', '/blog'),
+            '_listThumbW' => max(80, (int) $customizer->get('homepage', 'article_thumb_width', 190)),
+            '_listThumbH' => max(60, (int) $customizer->get('homepage', 'article_thumb_height', 115)),
+            '_showExcerpt' => filter_var($customizer->get('homepage', 'show_article_excerpt', true), FILTER_VALIDATE_BOOLEAN),
+            '_showMeta' => filter_var($customizer->get('homepage', 'show_article_meta', true), FILTER_VALIDATE_BOOLEAN),
+            '_showBadge' => filter_var($customizer->get('homepage', 'show_article_badge', true), FILTER_VALIDATE_BOOLEAN),
+            '_showMetaCat' => filter_var($customizer->get('homepage', 'show_meta_category', true), FILTER_VALIDATE_BOOLEAN),
+            '_showMetaDate' => filter_var($customizer->get('homepage', 'show_meta_date', true), FILTER_VALIDATE_BOOLEAN),
+            '_showMetaRT' => filter_var($customizer->get('homepage', 'show_meta_readtime', true), FILTER_VALIDATE_BOOLEAN),
+            '_listExcLen' => max(60, (int) $customizer->get('typography', 'article_excerpt_length', 180)),
+            '_tileExcLen' => max(40, (int) $customizer->get('typography', 'tile_excerpt_length', 160)),
+            '_showListSidebar' => filter_var($customizer->get('homepage', 'show_list_sidebar', false), FILTER_VALIDATE_BOOLEAN),
+            '_listSidebarWidth' => max(160, (int) $customizer->get('homepage', 'list_sidebar_width', 260)),
+            '_listSidebarTitle' => $customizer->get('homepage', 'list_sidebar_title', ''),
+            '_listSidebarContent' => $customizer->get('homepage', 'list_sidebar_content', ''),
+            '_sbShowProjects' => filter_var($customizer->get('homepage', 'sidebar_show_projects', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbProj1Name' => $customizer->get('homepage', 'sidebar_project1_name', '365CMS.DE'),
+            '_sbProj1Desc' => $customizer->get('homepage', 'sidebar_project1_desc', 'Das eigene CMS – modular & flexibel'),
+            '_sbProj1Url' => $customizer->get('homepage', 'sidebar_project1_url', 'https://365cms.de'),
+            '_sbProj2Name' => $customizer->get('homepage', 'sidebar_project2_name', '365NETWORK.DE'),
+            '_sbProj2Desc' => $customizer->get('homepage', 'sidebar_project2_desc', 'Business-Netzwerk-Plattform'),
+            '_sbProj2Url' => $customizer->get('homepage', 'sidebar_project2_url', 'https://365network.de'),
+            '_sbShowStatus' => filter_var($customizer->get('homepage', 'sidebar_show_status', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbStatusLabel' => $customizer->get('homepage', 'sidebar_status_label', 'Dienst-Status'),
+            '_sbShowDownloads' => filter_var($customizer->get('homepage', 'sidebar_show_downloads', false), FILTER_VALIDATE_BOOLEAN),
+            '_sbDownloadsLabel' => $customizer->get('homepage', 'sidebar_downloads_label', 'Downloads & Checklisten'),
+            '_sbDownloadsItems' => $customizer->get('homepage', 'sidebar_downloads_items', ''),
+            '_sbShowSocial' => filter_var($customizer->get('homepage', 'sidebar_show_social', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbSocialLabel' => $customizer->get('homepage', 'sidebar_social_label', 'Folge uns'),
+            '_sbSocialLinkedin' => $customizer->get('social', 'social_linkedin', ''),
+            '_sbSocialGithub' => $customizer->get('social', 'social_github', ''),
+            '_sbSocialTwitter' => $customizer->get('social', 'social_twitter', ''),
+            '_sbSocialMastodon' => $customizer->get('social', 'social_mastodon', ''),
+            '_sbSocialRss' => $customizer->get('social', 'social_rss', ''),
+            '_sbSocialYoutube' => $customizer->get('social', 'social_youtube', ''),
+            '_sbSocialXing' => $customizer->get('social', 'social_xing', ''),
+            '_sbLabelLinkedin' => $customizer->get('social', 'social_label_linkedin', 'LinkedIn'),
+            '_sbLabelGithub' => $customizer->get('social', 'social_label_github', 'GitHub'),
+            '_sbLabelRss' => $customizer->get('social', 'social_label_rss', 'RSS Feed'),
+            '_sbShowIdentity' => filter_var($customizer->get('homepage', 'sidebar_show_identity', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbIdentityLogoUrl' => $customizer->get('homepage', 'sidebar_identity_logo_url', ''),
+            '_sbIdentityTagline' => $customizer->get('homepage', 'sidebar_identity_tagline', ''),
+            '_sbIdentityLinkUrl' => $customizer->get('homepage', 'sidebar_identity_link_url', '/'),
+            '_sbProj1LogoUrl' => $customizer->get('homepage', 'sidebar_project1_logo_url', ''),
+            '_sbProj2LogoUrl' => $customizer->get('homepage', 'sidebar_project2_logo_url', ''),
+            '_sbStatusServices' => $customizer->get(
+                'homepage',
+                'sidebar_status_services',
+                $defaults['_sbStatusServices']
+            ),
+            '_sbShowNotice' => filter_var($customizer->get('homepage', 'sidebar_show_notice', false), FILTER_VALIDATE_BOOLEAN),
+            '_sbNoticeTitle' => $customizer->get('homepage', 'sidebar_notice_title', '💡 Aktueller Hinweis'),
+            '_sbNoticeText' => $customizer->get('homepage', 'sidebar_notice_text', ''),
+            '_sbNoticeUrl' => $customizer->get('homepage', 'sidebar_notice_url', ''),
+            '_sbNoticeUrlText' => $customizer->get('homepage', 'sidebar_notice_url_text', 'Mehr erfahren →'),
+            '_sbShowFeaturedPosts' => filter_var($customizer->get('homepage', 'sidebar_show_featured_posts', false), FILTER_VALIDATE_BOOLEAN),
+            '_sbFeaturedPostsLabel' => $customizer->get('homepage', 'sidebar_featured_posts_label', '📌 Empfohlene Artikel'),
+            '_sbFeaturedPostId1' => (int) $customizer->get('homepage', 'sidebar_featured_post_1', 0),
+            '_sbFeaturedPostId2' => (int) $customizer->get('homepage', 'sidebar_featured_post_2', 0),
+            '_sbFeaturedPostId3' => (int) $customizer->get('homepage', 'sidebar_featured_post_3', 0),
+            '_showInfoGrid' => filter_var($customizer->get('homepage', 'show_info_grid', true), FILTER_VALIDATE_BOOLEAN),
+            '_c1Title' => $customizer->get('homepage', 'info_card1_title', '🖥️ Admin Anleitungen'),
+            '_c1Text' => $customizer->get('homepage', 'info_card1_text', 'Schritt-für-Schritt-Tutorials für Microsoft 365 Administration.'),
+            '_c1LinkText' => $customizer->get('homepage', 'info_card1_link_text', 'Alle Anleitungen ansehen →'),
+            '_c1LinkUrl' => $customizer->get('homepage', 'info_card1_link_url', '/kategorie/anleitungen'),
+            '_c1Style' => $customizer->get('homepage', 'info_card1_style', 'default'),
+            '_c2Title' => $customizer->get('homepage', 'info_card2_title', '🔒 DSGVO & Compliance'),
+            '_c2Text' => $customizer->get('homepage', 'info_card2_text', 'Konfigurationsanleitungen und Best Practices für Microsoft Purview.'),
+            '_c2LinkText' => $customizer->get('homepage', 'info_card2_link_text', 'Compliance-Center →'),
+            '_c2LinkUrl' => $customizer->get('homepage', 'info_card2_link_url', '/kategorie/compliance'),
+            '_c2Style' => $customizer->get('homepage', 'info_card2_style', 'gold'),
+            '_showCard3' => filter_var($customizer->get('homepage', 'show_info_card3', false), FILTER_VALIDATE_BOOLEAN),
+            '_c3Title' => $customizer->get('homepage', 'info_card3_title', '💻 GitHub / GitLab'),
+            '_c3Text' => $customizer->get('homepage', 'info_card3_text', ''),
+            '_c3LinkText' => $customizer->get('homepage', 'info_card3_link_text', 'Zum Repository →'),
+            '_c3LinkUrl' => $customizer->get('homepage', 'info_card3_link_url', 'https://github.com/'),
+            '_c3Badge' => $customizer->get('homepage', 'info_card3_badge', ''),
+            '_c3Style' => $customizer->get('homepage', 'info_card3_style', 'repo'),
+            '_showTileGrid' => filter_var($customizer->get('homepage', 'show_tile_grid', true), FILTER_VALIDATE_BOOLEAN),
+            '_tileLabel' => $customizer->get('homepage', 'tile_grid_label', 'Weitere Beiträge'),
+            '_tileCount' => max(1, (int) $customizer->get('homepage', 'tile_grid_count', 6)),
+            '_tileCols' => max(2, min(4, (int) $customizer->get('homepage', 'tile_grid_columns', 3))),
+            '_showTileExc' => filter_var($customizer->get('homepage', 'show_tile_excerpt', true), FILTER_VALIDATE_BOOLEAN),
+            '_showTileCat' => filter_var($customizer->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN),
+            '_showTileDate' => filter_var($customizer->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN),
+            '_tileImageH' => max(161, min(300, (int) $customizer->get('homepage', 'tile_grid_image_height', 161))),
+            '_tileLinkUrl' => $customizer->get('homepage', 'tile_grid_link_url', '/archiv'),
+            '_spRepo' => max(0, (int) $customizer->get('homepage', 'spacing_repo_card', 32)),
+            '_spList' => max(0, (int) $customizer->get('homepage', 'spacing_article_list', 32)),
+            '_spInfo' => max(0, (int) $customizer->get('homepage', 'spacing_info_cards', 32)),
+            '_spGrid' => max(0, (int) $customizer->get('homepage', 'spacing_tile_grid', 32)),
+            '_spRss' => max(0, (int) $customizer->get('homepage', 'spacing_rss_feeds', 0)),
+        ]);
+    } catch (\Throwable $_e) {
+        return $defaults;
+    }
+}
+
+/**
+ * Lädt die Startseiten-Posts inklusive Grid-Paginierung und Sidebar-Featured-Posts.
+ *
+ * @param array<string, mixed> $viewModel
+ * @return array<string, mixed>
+ */
+function phinit_get_homepage_posts_payload(array $viewModel): array
+{
+    $defaults = [
+        'featuredPosts' => [],
+        'gridPosts' => [],
+        'sbFeaturedPosts' => [],
+        'currentPage' => 1,
+        'totalPages' => 1,
+    ];
+
+    try {
+        $db = \CMS\Database::instance();
+        $prefix = $db->getPrefix();
+
+        $_showList = !empty($viewModel['_showList']);
+        $_showTileGrid = !empty($viewModel['_showTileGrid']);
+        $_listCount = max(1, (int) ($viewModel['_listCount'] ?? 4));
+        $_tileCount = max(1, (int) ($viewModel['_tileCount'] ?? 6));
+        $_sbShowFeaturedPosts = !empty($viewModel['_sbShowFeaturedPosts']);
+
+        $featuredRows = $_showList
+            ? ($db->get_results(
+                "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
+                        c.name AS category_name
+                 FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+                 WHERE p.status = 'published'
+                 ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
+                 LIMIT " . (int) $_listCount
+            ) ?: [])
+            : [];
+        $featuredPosts = array_map(static fn($r) => (array) $r, $featuredRows);
+
+        $currentPage = max(1, (int) ($_GET['page'] ?? 1));
+        $totalPosts = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'") ?: 0);
+        $_gridAvail = max(0, $totalPosts - $_listCount);
+        $totalPages = max(1, (int) ceil($_gridAvail / $_tileCount));
+        $_gridOffset = $_listCount + (($currentPage - 1) * $_tileCount);
+
+        $gridRows = $_showTileGrid
+            ? ($db->get_results(
+                "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
+                        c.name AS category_name
+                 FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+                 WHERE p.status = 'published'
+                 ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
+                 LIMIT " . (int) $_tileCount . " OFFSET " . (int) $_gridOffset
+            ) ?: [])
+            : [];
+        $gridPosts = array_map(static fn($r) => (array) $r, $gridRows);
+
+        $sbFeaturedPosts = [];
+        if ($_sbShowFeaturedPosts) {
+            $_fpIds = array_values(array_filter([
+                (int) ($viewModel['_sbFeaturedPostId1'] ?? 0),
+                (int) ($viewModel['_sbFeaturedPostId2'] ?? 0),
+                (int) ($viewModel['_sbFeaturedPostId3'] ?? 0),
+            ]));
+
+            if ($_fpIds !== []) {
+                $_fpIn = implode(',', array_map('intval', $_fpIds));
+                $_fpRows = $db->get_results(
+                    "SELECT p.id, p.title, p.slug, p.excerpt, p.featured_image, p.published_at, p.created_at,
+                            c.name AS category_name
+                     FROM {$prefix}posts p
+                     LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+                     WHERE p.id IN ({$_fpIn}) AND p.status = 'published'"
+                ) ?: [];
+
+                $_fpMap = [];
+                foreach (array_map(static fn($r) => (array) $r, $_fpRows) as $_fpPost) {
+                    $_fpMap[(int) $_fpPost['id']] = $_fpPost;
+                }
+
+                foreach ($_fpIds as $_fpId) {
+                    if (isset($_fpMap[$_fpId])) {
+                        $sbFeaturedPosts[] = $_fpMap[$_fpId];
+                    }
+                }
+            }
+        }
+
+        return [
+            'featuredPosts' => $featuredPosts,
+            'gridPosts' => $gridPosts,
+            'sbFeaturedPosts' => $sbFeaturedPosts,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+        ];
+    } catch (\Throwable $_e) {
+        return $defaults;
+    }
+}

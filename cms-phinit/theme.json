@@ -380,6 +380,50 @@
           "label": "Quicklinks-Leiste anzeigen",
           "type": "checkbox",
           "default": true
+        },
+        "show_language_switcher": {
+          "label": "Sprachschalter anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "language_switcher_mode": {
+          "label": "Sprachschalter Darstellung",
+          "type": "select",
+          "default": "text",
+          "options": {
+            "text": "Text",
+            "flag": "Landesflagge"
+          }
+        },
+        "language_switcher_label": {
+          "label": "Sprachschalter Text",
+          "type": "text",
+          "default": "EN"
+        },
+        "language_switcher_slug": {
+          "label": "Sprach-Slug / Präfix",
+          "type": "text",
+          "default": "/en"
+        },
+        "language_switcher_flag": {
+          "label": "Landesflagge",
+          "type": "select",
+          "default": "gb",
+          "options": {
+            "gb": "🇬🇧 Vereinigtes Königreich",
+            "us": "🇺🇸 USA",
+            "fr": "🇫🇷 Frankreich",
+            "es": "🇪🇸 Spanien",
+            "it": "🇮🇹 Italien",
+            "nl": "🇳🇱 Niederlande",
+            "pl": "🇵🇱 Polen",
+            "tr": "🇹🇷 Türkei"
+          }
+        },
+        "language_switcher_aria_label": {
+          "label": "Sprachschalter ARIA-Label",
+          "type": "text",
+          "default": "Zur englischen Version wechseln"
         }
       }
     },
@@ -520,6 +564,13 @@
           "default": 9,
           "min": 3,
           "max": 24
+        },
+        "tile_grid_image_height": {
+          "label": "Kartenbildhöhe im Grid (px)",
+          "type": "number",
+          "default": 161,
+          "min": 161,
+          "max": 300
         },
         "show_info_cards": {
           "label": "Kategorie-Info-Cards anzeigen",

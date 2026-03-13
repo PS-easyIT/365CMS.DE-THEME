@@ -9,7 +9,15 @@ trait CMS_Phinit_Theme_Assets_Trait
 {
     private function getRequestPath(): string
     {
-        return (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+        $requestUri = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+
+        try {
+            $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($requestUri);
+            $baseUri = (string) ($context['base_uri'] ?? $requestUri);
+            return $baseUri !== '' ? $baseUri : '/';
+        } catch (\Throwable $e) {
+            return $requestUri;
+        }
     }
 
     private function emitStylesheet(string $href, bool $async = false): void

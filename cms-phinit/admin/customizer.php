@@ -30,14 +30,20 @@ if (!Auth::instance()->isAdmin()) {
 
 // ── 1. Konfigurations-Schema ─────────────────────────────────────────────────
 $schema = require CMS_PHINIT_THEME_DIR . 'admin/customizer-schema.php';
-$baseConfig = $schema['config'] ?? [];
+$legacyConfig = $schema['config'] ?? [];
 
+require_once CMS_PHINIT_THEME_DIR . 'admin/customizer-config-builder.php';
 require_once CMS_PHINIT_THEME_DIR . 'admin/customizer-request-handler.php';
 require_once CMS_PHINIT_THEME_DIR . 'admin/customizer-field-renderer.php';
 
 // ── 2. Customizer-Instanz ────────────────────────────────────────────────────
 $customizer = ThemeCustomizer::instance();
 $customizer->setTheme('cms-phinit');
+
+$baseConfig = phinit_merge_customizer_config(
+    phinit_build_customizer_base_config($customizer),
+    is_array($legacyConfig) ? $legacyConfig : []
+);
 
 // cms-feed Kanal-Optionen dynamisch laden
 $_feedOpts = ['0' => '— Kein Feed —'];

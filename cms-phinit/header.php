@@ -62,6 +62,12 @@ try {
     $_showRss       = filter_var($customizer->get('header', 'show_rss_link', true), FILTER_VALIDATE_BOOLEAN);
     $_showMemberBar = filter_var($customizer->get('header', 'show_member_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_showQuicklinks = filter_var($customizer->get('header', 'show_quicklinks', true), FILTER_VALIDATE_BOOLEAN);
+    $_showLanguageSwitch = filter_var($customizer->get('header', 'show_language_switcher', false), FILTER_VALIDATE_BOOLEAN);
+    $_languageMode = (string) $customizer->get('header', 'language_switcher_mode', 'text');
+    $_languageLabel = trim((string) $customizer->get('header', 'language_switcher_label', 'EN'));
+    $_languageSlug = trim((string) $customizer->get('header', 'language_switcher_slug', '/en'));
+    $_languageFlag = strtolower(trim((string) $customizer->get('header', 'language_switcher_flag', 'gb')));
+    $_languageAriaLabel = trim((string) $customizer->get('header', 'language_switcher_aria_label', 'Zur englischen Version wechseln'));
 
     // Layout-Toggles für JS
     $_enableStickyHeader    = filter_var($customizer->get('layout', 'enable_sticky_header', true), FILTER_VALIDATE_BOOLEAN);
@@ -77,6 +83,7 @@ try {
     $_showLogoText = false; $_logoMaxH = 28;
     $_showSearch = true; $_searchPH = 'Suchen …'; $_showDarkMode = true;
     $_showRss = true; $_showMemberBar = true; $_showQuicklinks = true;
+    $_showLanguageSwitch = false; $_languageMode = 'text'; $_languageLabel = 'EN'; $_languageSlug = '/en'; $_languageFlag = 'gb'; $_languageAriaLabel = 'Zur englischen Version wechseln';
     $_enableStickyHeader = true; $_enableProgressBar = true;
     $_enableBackToTop = true; $_enableScrollAnimations = true;
     $_showBreadcrumb = true; $_bcOnPosts = true; $_bcOnPages = true;
@@ -93,6 +100,43 @@ $quicklinkItems = [];
 try {
     $quicklinkItems = \CMS\ThemeManager::instance()->getMenu('quicklinks');
 } catch (\Throwable $e) {}
+
+$_languageSwitchUrl = '';
+$_languageSwitchDisplay = '';
+if ($_showLanguageSwitch) {
+    $_languageSlug = '/' . trim($_languageSlug, " \t\n\r\0\x0B/");
+    $_languageSlug = $_languageSlug === '/' ? '' : rtrim($_languageSlug, '/');
+
+    $flagToEmoji = static function (string $countryCode): string {
+        $countryCode = strtoupper(preg_replace('/[^A-Z]/i', '', $countryCode) ?? '');
+        if (strlen($countryCode) !== 2) {
+            return '🌐';
+        }
+
+        $emoji = '';
+        foreach (str_split($countryCode) as $letter) {
+            $emoji .= mb_chr(127397 + ord($letter), 'UTF-8');
+        }
+
+        return $emoji !== '' ? $emoji : '🌐';
+    };
+
+    $_requestPath = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+    $_requestQuery = trim((string) ($_SERVER['QUERY_STRING'] ?? ''));
+    if ($_languageSlug !== '') {
+        if ($_requestPath === $_languageSlug || str_starts_with($_requestPath, $_languageSlug . '/')) {
+            $_languageTargetPath = $_requestPath;
+        } else {
+            $_languageTargetPath = $_languageSlug . ($_requestPath === '/' ? '/' : $_requestPath);
+        }
+
+        $_languageSwitchUrl = rtrim($siteUrl, '/') . $_languageTargetPath . ($_requestQuery !== '' ? '?' . $_requestQuery : '');
+    }
+
+    $_languageSwitchDisplay = $_languageMode === 'flag'
+        ? $flagToEmoji($_languageFlag)
+        : ($_languageLabel !== '' ? $_languageLabel : strtoupper(trim($_languageFlag)));
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -223,44 +267,86 @@ try {
                 if ($url === '/') { return $_navUri === '/'; }
                 return $_navUri === $url || str_starts_with($_navUri, rtrim($url, '/') . '/');
             };
+            $navItemHasActiveBranch = static function (array $item) use ($navIsActive): bool {
+                if ($navIsActive((string) ($item['url'] ?? ''))) {
+                    return true;
+                }
+
+                foreach (($item['children'] ?? []) as $child) {
+                    if (is_array($child) && $navIsActive((string) ($child['url'] ?? ''))) {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
             ?>
             <nav class="main-nav" aria-label="Hauptnavigation">
                     <?php if (!empty($mainMenuItems)): ?>
-                        <?php foreach ($mainMenuItems as $item): ?>
+                        <?php foreach ($mainMenuItems as $index => $item): ?>
+                            <?php
+                            $itemUrl = (string) ($item['url'] ?? '#');
+                            $itemLabel = (string) ($item['label'] ?? '');
+                            $itemChildren = is_array($item['children'] ?? null) ? $item['children'] : [];
+                            $itemIsCurrent = $navIsActive($itemUrl);
+                            $itemIsActiveBranch = $navItemHasActiveBranch($item);
+                            ?>
                             <?php if (!empty($item['children'])): ?>
-                            <span class="has-dropdown">
-                                <a href="<?php echo htmlspecialchars($item['url'] ?? '#', ENT_QUOTES); ?>"
-                                   <?php echo $navIsActive($item['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>>
-                                    <?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?> ▾
+                            <div class="has-dropdown<?php echo $itemIsActiveBranch ? ' is-active-branch' : ''; ?>" data-nav-dropdown>
+                                <div class="main-nav__item-head">
+                                <a href="<?php echo htmlspecialchars($itemUrl, ENT_QUOTES); ?>"
+                                   class="main-nav__link<?php echo $itemIsActiveBranch ? ' active' : ''; ?>"
+                                   <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?>>
+                                    <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
                                 </a>
-                                <div class="dropdown">
-                                    <?php foreach ($item['children'] as $child): ?>
+                                <button type="button"
+                                        class="main-nav__toggle<?php echo $itemIsActiveBranch ? ' active' : ''; ?>"
+                                        aria-expanded="false"
+                                        aria-haspopup="true"
+                                        aria-controls="main-nav-dropdown-<?php echo (int) $index; ?>"
+                                        aria-label="Untermenü für <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?> öffnen">
+                                    <span aria-hidden="true">▾</span>
+                                </button>
+                                </div>
+                                <div class="dropdown" id="main-nav-dropdown-<?php echo (int) $index; ?>">
+                                    <?php foreach ($itemChildren as $child): ?>
                                     <a href="<?php echo htmlspecialchars($child['url'] ?? '#', ENT_QUOTES); ?>"
                                        <?php echo $navIsActive($child['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
                                     <?php endforeach; ?>
                                 </div>
-                            </span>
+                            </div>
                             <?php else: ?>
-                            <a href="<?php echo htmlspecialchars($item['url'] ?? '#', ENT_QUOTES); ?>"
-                               <?php echo $navIsActive($item['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>>
-                                <?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?>
+                            <a href="<?php echo htmlspecialchars($itemUrl, ENT_QUOTES); ?>"
+                               class="main-nav__link<?php echo $itemIsCurrent ? ' active' : ''; ?>"
+                               <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?>>
+                                <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
                             </a>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <!-- Fallback-Menü -->
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux">Linux / BASH</a>
-                        <span class="has-dropdown">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell">PowerShell &#9662;</a>
-                            <div class="dropdown">
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="main-nav__link">Startseite</a>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux" class="main-nav__link">Linux / BASH</a>
+                        <div class="has-dropdown" data-nav-dropdown>
+                            <div class="main-nav__item-head">
+                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell" class="main-nav__link">PowerShell</a>
+                            <button type="button"
+                                    class="main-nav__toggle"
+                                    aria-expanded="false"
+                                    aria-haspopup="true"
+                                    aria-controls="main-nav-dropdown-fallback-powershell"
+                                    aria-label="Untermenü für PowerShell öffnen">
+                                <span aria-hidden="true">▾</span>
+                            </button>
+                            </div>
+                            <div class="dropdown" id="main-nav-dropdown-fallback-powershell">
                                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell/grundlagen">Grundlagen</a>
                                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell/glossar">Glossar</a>
                             </div>
-                        </span>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">News</a>
+                        </div>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365" class="main-nav__link">Microsoft 365</a>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz" class="main-nav__link">Datenschutz</a>
+                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news" class="main-nav__link">News</a>
                     <?php endif; ?>
                 </nav>
 
@@ -268,6 +354,15 @@ try {
             <div class="hdr-tools">
                 <?php if ($_showDarkMode): ?>
                 <button class="util-link util-dark-toggle" aria-label="Dark Mode umschalten" aria-pressed="false" title="Dark Mode">🌙</button>
+                <?php endif; ?>
+
+                <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
+                <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>"
+                   class="util-link util-language-switch util-language-switch--<?php echo $_languageMode === 'flag' ? 'flag' : 'text'; ?>"
+                   aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>"
+                   title="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
+                    <span class="util-language-switch__value" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
+                </a>
                 <?php endif; ?>
 
                 <?php if ($_showSearch): ?>
@@ -319,6 +414,12 @@ try {
                 <?php if (!$isLoggedIn): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 Login</a>
                 <?php endif; ?>
+            <?php endif; ?>
+            <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
+            <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>" class="mobile-menu__lang-link" aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
+                <span class="mobile-menu__lang-icon" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
+                <span>Sprache wechseln</span>
+            </a>
             <?php endif; ?>
         </nav>
 
