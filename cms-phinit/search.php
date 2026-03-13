@@ -25,6 +25,13 @@ $query    = isset($query)    ? (string)$query    : '';
 $type     = isset($type)     ? (string)$type     : '';
 $location = isset($location) ? (string)$location : '';
 $filter   = isset($filter)   ? (string)$filter   : '';
+
+try {
+    $_searchCustomizer = \CMS\Services\ThemeCustomizer::instance();
+    $_searchExcerptLen = max(10, (int) $_searchCustomizer->get('typography', 'article_excerpt_length', 180));
+} catch (\Throwable $_searchE) {
+    $_searchExcerptLen = 180;
+}
 ?>
 
 <div class="container page-shell page-shell--search">
@@ -96,7 +103,7 @@ $filter   = isset($filter)   ? (string)$filter   : '';
                     </a>
                 </h3>
                 <?php if (!empty($rExcerpt)): ?>
-                <p class="search-result-excerpt"><?php echo htmlspecialchars(mb_strimwidth($rExcerpt, 0, 200, '…'), ENT_QUOTES); ?></p>
+                <p class="search-result-excerpt"><?php echo htmlspecialchars(mb_strimwidth($rExcerpt, 0, $_searchExcerptLen, '…'), ENT_QUOTES); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($r['published_at'])): ?>
                 <span class="search-result-date">📅 <?php echo htmlspecialchars(date('j. M Y', strtotime($r['published_at'])), ENT_QUOTES); ?></span>

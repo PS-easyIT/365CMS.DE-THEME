@@ -46,10 +46,11 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
         $ok = true;
         foreach ($config[$resetTab]['sections'] as $fieldKey => $fieldConfig) {
             $defaultValue = $fieldConfig['default'] ?? '';
+            $storageTab = (string) ($fieldConfig['storageTab'] ?? $resetTab);
             if (is_bool($defaultValue)) {
                 $defaultValue = $defaultValue ? '1' : '0';
             }
-            if (!$customizer->set($resetTab, (string) $fieldKey, (string) $defaultValue)) {
+            if (!$customizer->set($storageTab, (string) $fieldKey, (string) $defaultValue)) {
                 $ok = false;
             }
         }
@@ -73,6 +74,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
         foreach ($config[$saveTab]['sections'] as $fieldKey => $fieldConfig) {
             $fieldName = $saveTab . '_' . $fieldKey;
             $fieldType = (string) ($fieldConfig['type'] ?? 'text');
+            $storageTab = (string) ($fieldConfig['storageTab'] ?? $saveTab);
 
             if ($fieldType === 'checkbox') {
                 $value = isset($_POST[$fieldName]) ? '1' : '0';
@@ -82,7 +84,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
                 $value = (string) ($_POST[$fieldName] ?? '');
             }
 
-            if (!$customizer->set($saveTab, (string) $fieldKey, $value)) {
+            if (!$customizer->set($storageTab, (string) $fieldKey, $value)) {
                 $ok = false;
             }
         }

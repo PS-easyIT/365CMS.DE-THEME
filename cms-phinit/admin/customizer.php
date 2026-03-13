@@ -30,7 +30,7 @@ if (!Auth::instance()->isAdmin()) {
 
 // ── 1. Konfigurations-Schema ─────────────────────────────────────────────────
 $schema = require CMS_PHINIT_THEME_DIR . 'admin/customizer-schema.php';
-$config = $schema['config'] ?? [];
+$baseConfig = $schema['config'] ?? [];
 
 require_once CMS_PHINIT_THEME_DIR . 'admin/customizer-request-handler.php';
 require_once CMS_PHINIT_THEME_DIR . 'admin/customizer-field-renderer.php';
@@ -53,8 +53,41 @@ if (class_exists('CMS_Feed_Database')) {
         }
     } catch (\Throwable $_e) {}
 }
-$config['homepage']['sections']['feed1_channel_id']['options'] = $_feedOpts;
-$config['homepage']['sections']['feed2_channel_id']['options'] = $_feedOpts;
+$baseConfig['homepage']['sections']['feed1_channel_id']['options'] = $_feedOpts;
+$baseConfig['homepage']['sections']['feed2_channel_id']['options'] = $_feedOpts;
+
+$config = $baseConfig;
+$tabGroups = $schema['tabGroups'] ?? [];
+
+foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
+    $viewSections = [];
+
+    foreach (($viewConfig['fields'] ?? []) as $fieldRef) {
+        if (!is_array($fieldRef)) {
+            continue;
+        }
+
+        $sourceTab = (string) ($fieldRef['tab'] ?? '');
+        $fieldKey = (string) ($fieldRef['key'] ?? '');
+        if ($sourceTab === '' || $fieldKey === '' || !isset($baseConfig[$sourceTab]['sections'][$fieldKey])) {
+            continue;
+        }
+
+        $fieldConfig = $baseConfig[$sourceTab]['sections'][$fieldKey];
+        $fieldConfig['storageTab'] = $sourceTab;
+        $viewSections[$fieldKey] = $fieldConfig;
+    }
+
+    if ($viewSections === []) {
+        continue;
+    }
+
+    $config[$viewKey] = [
+        'title' => (string) ($viewConfig['title'] ?? $viewKey),
+        'sections' => $viewSections,
+    ];
+    $tabGroups[$viewKey] = $viewConfig['groups'] ?? [];
+}
 
 // Aktiver Tab
 $activeTab = $_GET['tab'] ?? 'colors';
@@ -70,9 +103,6 @@ $activeTab = $postResult['activeTab'];
 
 // CSRF-Token nach POST-Handling generieren (verhindert Token-Überschreibung)
 $csrfToken = Security::instance()->generateToken('phinit_customizer');
-
-// ── 5. Tab-Gruppen ───────────────────────────────────────────────────────────
-$tabGroups = $schema['tabGroups'] ?? [];
 
 // Nav-Gruppen für die Sidebar
 $navGroups = $schema['navGroups'] ?? [];

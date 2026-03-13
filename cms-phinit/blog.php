@@ -67,7 +67,7 @@ try {
     $_bShowMeta    = filter_var($_bc->get('homepage', 'show_article_meta', true), FILTER_VALIDATE_BOOLEAN);
     $_bThumbW      = max(80, (int)$_bc->get('homepage', 'article_thumb_width', 190));
     $_bThumbH      = max(60, (int)$_bc->get('homepage', 'article_thumb_height', 115));
-    $_bExcLen      = max(60, (int)$_bc->get('typography', 'article_excerpt_length', 180));
+    $_bExcLen      = max(10, (int)$_bc->get('typography', 'article_excerpt_length', 180));
 } catch (\Throwable $_bE) {
     $_bShowExcerpt = true;  $_bShowMeta = true;
     $_bThumbW      = 190;   $_bThumbH   = 115;

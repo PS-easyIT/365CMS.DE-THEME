@@ -4,10 +4,56 @@ declare(strict_types=1);
 if (!defined('ABSPATH')) {
     exit;
 }
+
+$localFontCssMap = [];
+$preferLocalFonts = false;
+
+try {
+    $db = \CMS\Database::instance();
+    $row = $db->get_row(
+        "SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = 'privacy_use_local_fonts' LIMIT 1"
+    );
+    $preferLocalFonts = in_array(strtolower(trim((string)($row->option_value ?? ''))), ['1', 'true', 'yes', 'on'], true);
+
+    $aliasToThemeSlug = [
+        'source-sans-3' => 'source-sans',
+        'source-code-pro' => 'source-code',
+        'exo-2' => 'exo2',
+    ];
+
+    $fonts = $db->get_results(
+        "SELECT slug, css_path FROM {$db->getPrefix()}custom_fonts WHERE css_path IS NOT NULL AND css_path != ''"
+    ) ?: [];
+
+    foreach ($fonts as $font) {
+        $slug = strtolower(trim((string)($font->slug ?? '')));
+        $cssPath = trim((string)($font->css_path ?? ''));
+        if ($slug === '' || $cssPath === '') {
+            continue;
+        }
+
+        $cssFile = ABSPATH . ltrim($cssPath, '/');
+        if (!is_file($cssFile)) {
+            continue;
+        }
+
+        $url = rtrim(SITE_URL, '/') . '/' . ltrim($cssPath, '/');
+        $localFontCssMap[$slug] = $url;
+
+        if (isset($aliasToThemeSlug[$slug])) {
+            $localFontCssMap[$aliasToThemeSlug[$slug]] = $url;
+        }
+    }
+} catch (\Throwable $e) {
+    $localFontCssMap = [];
+}
 ?>
 <script>
 (function () {
     'use strict';
+
+    const PREFER_LOCAL_FONTS = <?php echo json_encode($preferLocalFonts); ?>;
+    const LOCAL_FONT_CSS = <?php echo json_encode($localFontCssMap, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
 
     // Unsaved-Changes-Warnung + Strg+S
     const form    = document.getElementById('customizer-form');
@@ -152,10 +198,22 @@ if (!defined('ABSPATH')) {
             'system-mono':'monospace'
         };
         function loadFont(slug) {
-            if (!GF[slug] || loaded.has(slug)) return;
+            if (loaded.has(slug)) return;
             loaded.add(slug);
+
             const l = document.createElement('link');
             l.rel  = 'stylesheet';
+
+            if (PREFER_LOCAL_FONTS && LOCAL_FONT_CSS[slug]) {
+                l.href = LOCAL_FONT_CSS[slug];
+                document.head.appendChild(l);
+                return;
+            }
+
+            if (!GF[slug]) {
+                return;
+            }
+
             l.href = 'https://fonts.googleapis.com/css2?family=' + GF[slug] + ':wght@400;700&display=swap';
             document.head.appendChild(l);
         }

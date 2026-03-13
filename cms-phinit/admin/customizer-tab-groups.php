@@ -24,7 +24,8 @@ if (!defined('ABSPATH')) {
                         continue;
                     }
                     $f = $tabSections[$fk];
-                    $val = $customizer->get($activeTab, $fk, $f['default'] ?? '');
+                    $valueTab = (string) ($f['storageTab'] ?? $activeTab);
+                    $val = $customizer->get($valueTab, $fk, $f['default'] ?? '');
                     phinit_render_field($activeTab, $fk, $f, $val);
                 endforeach; ?>
             </div>
