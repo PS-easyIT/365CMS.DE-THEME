@@ -19,6 +19,10 @@ use CMS\Auth;
 use CMS\Security;
 use CMS\Services\ThemeCustomizer;
 
+if (!defined('CMS_PHINIT_THEME_DIR')) {
+    define('CMS_PHINIT_THEME_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+}
+
 if (!Auth::instance()->isAdmin()) {
     header('Location: ' . SITE_URL);
     exit;
@@ -78,78 +82,7 @@ $navGroups = $schema['navGroups'] ?? [];
 
 <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-page-header.php'; ?>
 
-<div class="page-body">
-    <div class="container-xl">
-
-        <?php if ($alertMsg !== null): ?>
-        <div class="alert alert-<?php echo htmlspecialchars($alertType); ?> alert-dismissible" role="alert">
-            <?php echo $alertMsg; ?>
-            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-        </div>
-        <?php endif; ?>
-
-        <form method="POST" id="customizer-form"
-              action="<?php echo htmlspecialchars(SITE_URL . '/admin/theme-editor?tab=' . $activeTab); ?>">
-            <input type="hidden" name="action" value="save_theme_options">
-            <input type="hidden" name="active_section" id="active_section_input" value="<?php echo htmlspecialchars($activeTab); ?>">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
-
-            <div class="row g-3">
-
-                <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-sidebar.php'; ?>
-
-                <!-- ── Rechte Spalte: Tab-Inhalt ── -->
-                <div class="col-12 col-md-9 col-lg-10">
-
-                    <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-action-bar.php'; ?>
-
-                    <!-- Tab-Inhalte -->
-                    <?php
-                    $currentGroups = $tabGroups[$activeTab] ?? [];
-                    $tabSections   = $config[$activeTab]['sections'] ?? [];
-                    // Für advanced: größere Textareas
-                    if ($activeTab === 'advanced') {
-                        foreach (['custom_css', 'custom_head_code', 'custom_footer_code'] as $_fk) {
-                            if (isset($tabSections[$_fk])) { $tabSections[$_fk]['rows'] = 8; }
-                        }
-                    }
-                    ?>
-
-                    <?php if ($activeTab === 'colors'): ?>
-                        <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-color-presets.php'; ?>
-                    <?php endif; ?>
-
-                    <div class="row row-cards">
-                    <?php foreach ($currentGroups as $groupTitle => $fieldKeys): ?>
-                        <div class="col-12 col-xl-6">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h4 class="card-title"><?php echo htmlspecialchars($groupTitle); ?></h4>
-                                </div>
-                                <div class="card-body">
-                                    <?php foreach ($fieldKeys as $fk):
-                                        if (!isset($tabSections[$fk])) { continue; }
-                                        $f   = $tabSections[$fk];
-                                        $val = $customizer->get($activeTab, $fk, $f['default'] ?? '');
-                                        phinit_render_field($activeTab, $fk, $f, $val);
-                                    endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                    </div>
-
-                    <!-- Hinweis: Menü-Einträge über Menü-Editor (nur bei header-Tab) -->
-                    <?php if ($activeTab === 'header'): ?>
-                        <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-header-menu-note.php'; ?>
-                    <?php endif; ?>
-
-                </div><!-- /.col (rechts) -->
-            </div><!-- /.row -->
-        </form>
-
-    </div>
-</div>
+<?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-page-body.php'; ?>
 
 <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-preview-drawer.php'; ?>
 

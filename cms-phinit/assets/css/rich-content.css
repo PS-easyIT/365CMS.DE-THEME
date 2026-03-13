@@ -1,0 +1,436 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Editor.js / Rich-Content Fallbacks
+   Seiten und Beiträge bleiben lesbar, auch ohne mitgelieferte Editor-Styles.
+═══════════════════════════════════════════════════════════════════════ */
+
+.page-content > *:first-child,
+.post-body > *:first-child {
+    margin-top: 0;
+}
+
+.page-content > *:last-child,
+.post-body > *:last-child {
+    margin-bottom: 0;
+}
+
+.page-content h2,
+.page-content h3,
+.page-content h4,
+.page-content h5,
+.page-content h6 {
+    color: var(--text-primary);
+    font-weight: 700;
+    line-height: 1.3;
+    scroll-margin-top: calc(var(--header-h) + var(--quicklinks-h) + var(--member-bar-h, 0px) + 18px);
+}
+
+.page-content h2 {
+    font-size: var(--fs-h2);
+    margin: 2em 0 .7em;
+    padding-bottom: .35em;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.page-content h3 {
+    font-size: var(--fs-h3);
+    margin: 1.7em 0 .65em;
+}
+
+.page-content h4,
+.page-content h5,
+.page-content h6 {
+    margin: 1.45em 0 .55em;
+}
+
+.page-content p,
+.page-content ul,
+.page-content ol,
+.page-content blockquote,
+.page-content pre,
+.page-content table,
+.page-content figure,
+.page-content details,
+.page-content .editorjs-block,
+.post-body figure,
+.post-body details,
+.post-body .editorjs-warning,
+.post-body .editorjs-link,
+.post-body .editorjs-attaches,
+.post-body .editorjs-accordion,
+.post-body .editorjs-columns,
+.post-body .editorjs-gallery,
+.post-body .editorjs-carousel,
+.post-body .editorjs-embed,
+.post-body .editorjs-drawing,
+.post-body .editorjs-delimiter,
+.post-body .editorjs-spacer,
+.page-content .editorjs-warning,
+.page-content .editorjs-link,
+.page-content .editorjs-attaches,
+.page-content .editorjs-accordion,
+.page-content .editorjs-columns,
+.page-content .editorjs-gallery,
+.page-content .editorjs-carousel,
+.page-content .editorjs-embed,
+.page-content .editorjs-drawing,
+.page-content .editorjs-delimiter,
+.page-content .editorjs-spacer {
+    margin: 1.25rem 0;
+}
+
+.page-content ul,
+.page-content ol {
+    margin-left: 1.4rem;
+    padding-left: 1rem;
+}
+
+.page-content li,
+.post-body li {
+    margin-bottom: .45rem;
+}
+
+.page-content ul li > ul,
+.page-content ul li > ol,
+.page-content ol li > ul,
+.page-content ol li > ol,
+.post-body ul li > ul,
+.post-body ul li > ol,
+.post-body ol li > ul,
+.post-body ol li > ol {
+    margin-top: .5rem;
+}
+
+.page-content blockquote,
+.page-content .editorjs-quote blockquote,
+.post-body .editorjs-warning,
+.page-content .editorjs-warning {
+    border-radius: var(--radius);
+}
+
+.page-content blockquote,
+.page-content .editorjs-quote blockquote {
+    border-left: 4px solid var(--accent-teal);
+    background: color-mix(in srgb, var(--accent-teal) 8%, white);
+    padding: 12px 20px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.page-content code,
+.page-content pre,
+.post-body code,
+.post-body pre {
+    font-family: var(--font-code, 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace);
+}
+
+.page-content code {
+    font-size: .88em;
+    background: var(--bg-secondary);
+    color: #c7254e;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.page-content pre,
+.post-body pre {
+    overflow-x: auto;
+}
+
+.page-content pre {
+    background: var(--bg-dark-2);
+    color: #e2e8f0;
+    padding: 18px 22px;
+    border-radius: var(--radius);
+    line-height: 1.65;
+}
+
+.page-content pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+.page-content table,
+.page-content .editorjs-table table,
+.post-body .editorjs-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.page-content th,
+.page-content td,
+.page-content .editorjs-table th,
+.page-content .editorjs-table td,
+.post-body .editorjs-table th,
+.post-body .editorjs-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: top;
+}
+
+.page-content th,
+.page-content .editorjs-table th,
+.post-body .editorjs-table th {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.page-content img,
+.page-content .editorjs-image img,
+.page-content .editorjs-gallery img,
+.page-content .editorjs-carousel img,
+.page-content .editorjs-drawing img,
+.post-body .editorjs-image img,
+.post-body .editorjs-gallery img,
+.post-body .editorjs-carousel img,
+.post-body .editorjs-drawing img {
+    border-radius: var(--radius-sm);
+    max-width: 100%;
+    height: auto;
+}
+
+.page-content figure figcaption,
+.page-content .editorjs-image figcaption,
+.page-content .editorjs-embed figcaption,
+.post-body .editorjs-image figcaption,
+.post-body .editorjs-embed figcaption {
+    margin-top: .65rem;
+    font-size: .85rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.page-content .editorjs-list__items,
+.post-body .editorjs-list__items {
+    margin: 0 0 0 1.4rem;
+    padding-left: 1rem;
+    padding-inline-start: 1rem;
+    list-style-position: outside;
+}
+
+.page-content .editorjs-list__items li,
+.post-body .editorjs-list__items li {
+    padding-left: .35em;
+}
+
+.page-content .editorjs-list__items:not(ol),
+.post-body .editorjs-list__items:not(ol) {
+    list-style: disc outside;
+}
+
+.page-content ol.editorjs-list__items,
+.post-body ol.editorjs-list__items {
+    list-style: decimal outside;
+}
+
+.page-content .editorjs-list__item > .editorjs-list__items,
+.post-body .editorjs-list__item > .editorjs-list__items {
+    margin-left: 1.2rem;
+    margin-bottom: 0;
+}
+
+.page-content .editorjs-checklist ul,
+.post-body .editorjs-checklist ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1em 0 1.2em;
+}
+
+.page-content .editorjs-checklist label,
+.post-body .editorjs-checklist label {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    line-height: 1.7;
+}
+
+.page-content .editorjs-checklist input[type="checkbox"],
+.post-body .editorjs-checklist input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    margin-top: .25rem;
+    accent-color: var(--accent-teal);
+}
+
+.page-content .editorjs-warning,
+.post-body .editorjs-warning {
+    padding: 16px 18px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, var(--border-color));
+    border-left: 4px solid var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 9%, white);
+}
+
+.page-content .editorjs-warning .warning-title,
+.post-body .editorjs-warning .warning-title {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: .35rem;
+}
+
+.page-content .editorjs-link a,
+.post-body .editorjs-link a,
+.page-content .editorjs-attaches a,
+.post-body .editorjs-attaches a {
+    display: block;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+    padding: 14px 16px;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.page-content .editorjs-link__content strong,
+.post-body .editorjs-link__content strong {
+    display: block;
+    margin-bottom: .35rem;
+}
+
+.page-content .editorjs-link__content p,
+.post-body .editorjs-link__content p,
+.page-content .editorjs-link__content small,
+.post-body .editorjs-link__content small {
+    color: var(--text-muted);
+}
+
+.page-content .editorjs-link__image,
+.post-body .editorjs-link__image {
+    margin-bottom: .75rem;
+}
+
+.page-content .editorjs-embed__frame,
+.post-body .editorjs-embed__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--bg-dark-2);
+}
+
+.page-content .editorjs-embed iframe,
+.post-body .editorjs-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.page-content .editorjs-columns,
+.post-body .editorjs-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.page-content .editorjs-columns__col,
+.post-body .editorjs-columns__col {
+    min-width: 0;
+}
+
+.page-content .editorjs-accordion details,
+.post-body .editorjs-accordion details {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+    overflow: hidden;
+}
+
+.page-content .editorjs-accordion summary,
+.post-body .editorjs-accordion summary {
+    cursor: pointer;
+    padding: 14px 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    list-style: none;
+}
+
+.page-content .editorjs-accordion summary::-webkit-details-marker,
+.post-body .editorjs-accordion summary::-webkit-details-marker {
+    display: none;
+}
+
+.page-content .editorjs-accordion__content,
+.post-body .editorjs-accordion__content {
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.page-content .editorjs-gallery,
+.post-body .editorjs-gallery,
+.page-content .editorjs-carousel,
+.post-body .editorjs-carousel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.page-content .editorjs-delimiter hr,
+.post-body .editorjs-delimiter hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.page-content .editorjs-spacer,
+.post-body .editorjs-spacer {
+    width: 100%;
+}
+
+body.dark-mode .page-content code {
+    background: rgba(255,255,255,.08);
+    color: #f9a8d4;
+}
+
+body.dark-mode .page-content blockquote,
+body.dark-mode .page-content .editorjs-quote blockquote {
+    background: rgba(13,148,136,.14);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .page-content .editorjs-warning,
+body.dark-mode .post-body .editorjs-warning,
+body.dark-mode .page-content .editorjs-link a,
+body.dark-mode .post-body .editorjs-link a,
+body.dark-mode .page-content .editorjs-attaches a,
+body.dark-mode .post-body .editorjs-attaches a,
+body.dark-mode .page-content .editorjs-accordion details,
+body.dark-mode .post-body .editorjs-accordion details {
+    background: var(--bg-dark-3);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .page-content .editorjs-link__content p,
+body.dark-mode .post-body .editorjs-link__content p,
+body.dark-mode .page-content .editorjs-link__content small,
+body.dark-mode .post-body .editorjs-link__content small,
+body.dark-mode .page-content figcaption,
+body.dark-mode .post-body figcaption {
+    color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+    .page-content,
+    .post-body {
+        padding: 22px 20px;
+    }
+
+    .page-content .editorjs-columns,
+    .post-body .editorjs-columns,
+    .page-content .editorjs-gallery,
+    .post-body .editorjs-gallery,
+    .page-content .editorjs-carousel,
+    .post-body .editorjs-carousel {
+        grid-template-columns: 1fr;
+    }
+
+    .page-content table,
+    .post-body table,
+    .page-content .editorjs-table,
+    .post-body .editorjs-table {
+        display: block;
+        overflow-x: auto;
+    }
+}

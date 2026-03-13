@@ -72,6 +72,12 @@ final class CMS_Phinit_Theme
     {
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
         $templateCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/templates.css';
+        $memberAuthCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/member-auth.css';
+        $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
+        $pageExtrasCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-extras.css';
+        $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
+        $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
+        $footerConsentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/footer-consent.css';
         // Cache-Buster aus Customizer oder Datei-Timestamp
         $cbVersion = '';
         try {
@@ -82,6 +88,30 @@ final class CMS_Phinit_Theme
         if (file_exists($templateCssFile)) {
             $templateVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($templateCssFile);
             echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/templates.css?v=' . $templateVersion . '">' . "\n";
+        }
+        if (file_exists($memberAuthCssFile)) {
+            $memberAuthVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($memberAuthCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/member-auth.css?v=' . $memberAuthVersion . '">' . "\n";
+        }
+        if (file_exists($hubSitesCssFile)) {
+            $hubSitesVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($hubSitesCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/hub-sites.css?v=' . $hubSitesVersion . '">' . "\n";
+        }
+        if (file_exists($pageExtrasCssFile)) {
+            $pageExtrasVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($pageExtrasCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/page-extras.css?v=' . $pageExtrasVersion . '">' . "\n";
+        }
+        if (file_exists($richContentCssFile)) {
+            $richContentVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($richContentCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/rich-content.css?v=' . $richContentVersion . '">' . "\n";
+        }
+        if (file_exists($homepageBlogCssFile)) {
+            $homepageBlogVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($homepageBlogCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/homepage-blog.css?v=' . $homepageBlogVersion . '">' . "\n";
+        }
+        if (file_exists($footerConsentCssFile)) {
+            $footerConsentVersion = !empty(trim((string)$cbVersion)) ? $cbVersion : filemtime($footerConsentCssFile);
+            echo '<link rel="stylesheet" href="' . CMS_PHINIT_THEME_URL . 'assets/css/footer-consent.css?v=' . $footerConsentVersion . '">' . "\n";
         }
 
         $photoSwipeCssUrl = function_exists('cms_asset_url')

@@ -1,0 +1,151 @@
+/* CMS Phinit – Search, Error & Empty States */
+
+/* ══════════════════════════════════════════════════════════════════
+   Search Results  (search.php)
+   ══════════════════════════════════════════════════════════════════ */
+.search-form-section {
+    padding: 32px 0 24px;
+}
+.search-inline-form {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    max-width: 720px;
+}
+.search-input-wrap {
+    flex: 1 1 280px; position: relative;
+}
+.search-input-wrap input {
+    width: 100%; padding: 10px 14px 10px 38px;
+    border: 2px solid var(--border-color); border-radius: var(--radius-sm, 6px);
+    font-size: .92rem; background: var(--bg-primary); color: var(--text-primary);
+    transition: border-color .2s;
+}
+.search-input-wrap input:focus {
+    outline: none; border-color: var(--accent-blue, var(--primary-color));
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+.search-input-wrap::before {
+    content: "🔍"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: .85rem; pointer-events: none;
+}
+.search-type-select {
+    flex: 0 0 160px; padding: 10px 12px;
+    border: 2px solid var(--border-color); border-radius: var(--radius-sm, 6px);
+    font-size: .88rem; background: var(--bg-primary); color: var(--text-primary);
+}
+.search-btn {
+    padding: 10px 22px; border: none; border-radius: var(--radius-sm, 6px);
+    background: var(--accent-blue, var(--primary-color)); color: #fff;
+    font-weight: 700; cursor: pointer; transition: background .2s;
+}
+.search-btn:hover { background: var(--accent-blue2, var(--primary-dark)); }
+.search-results { margin-top: 20px; }
+.search-result-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 18px 20px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color); border-radius: var(--radius);
+    margin-bottom: 10px;
+    transition: box-shadow .2s, border-color .2s;
+}
+.search-result-item:hover { border-color: var(--accent-blue, var(--primary-color)); box-shadow: var(--shadow-md); }
+.search-result-type {
+    flex-shrink: 0;
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    padding: 4px 10px; border-radius: 4px;
+    background: var(--bg-tertiary); color: var(--text-muted);
+    white-space: nowrap;
+}
+.search-result-type--post   { background: #dbeafe; color: #1e40af; }
+.search-result-type--page   { background: #f3e8ff; color: #6b21a8; }
+.search-result-type--event  { background: #fef3c7; color: #92400e; }
+.search-result-body { flex: 1; min-width: 0; }
+.search-result-title {
+    font-size: 1.02rem; font-weight: 700; margin: 0 0 4px;
+    color: var(--text-primary);
+}
+.search-result-title a { color: inherit; text-decoration: none; }
+.search-result-title a:hover { color: var(--accent-blue, var(--primary-color)); }
+.search-result-excerpt {
+    font-size: .85rem; color: var(--text-secondary); margin: 0 0 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+}
+.search-result-date { font-size: .78rem; color: var(--text-muted); }
+.search-count {
+    font-size: .88rem; color: var(--text-muted); margin-bottom: 16px;
+}
+body.dark-mode .search-result-item { background: var(--bg-dark-2); border-color: var(--border-dark); }
+body.dark-mode .search-input-wrap input,
+body.dark-mode .search-type-select { background: var(--bg-dark-2); border-color: var(--border-dark); color: var(--text-white); }
+@media (max-width: 600px) {
+    .search-inline-form { flex-direction: column; }
+    .search-type-select { flex: 1; }
+    .search-result-item { flex-direction: column; gap: 8px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Error Pages  (404.php, error.php)
+   ══════════════════════════════════════════════════════════════════ */
+.error-hero {
+    text-align: center; padding: 80px 20px 60px;
+}
+.error-code {
+    font-family: var(--font-brand); font-size: 5rem; font-weight: 900;
+    line-height: 1; margin: 0 0 8px;
+    background: linear-gradient(135deg, var(--accent-blue, var(--primary-color)), var(--accent-color));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.error-title {
+    font-family: var(--font-brand); font-size: 1.5rem; font-weight: 700;
+    color: var(--text-primary); margin: 0 0 12px;
+}
+.error-desc {
+    font-size: .95rem; color: var(--text-muted); max-width: 480px;
+    margin: 0 auto 28px; line-height: 1.6;
+}
+.error-actions {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+}
+.error-actions a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 22px; border-radius: var(--radius-sm, 6px);
+    font-size: .9rem; font-weight: 600; text-decoration: none;
+    transition: var(--transition-fast);
+}
+.error-actions .btn-primary {
+    background: var(--accent-blue, var(--primary-color)); color: #fff;
+}
+.error-actions .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+.error-actions .btn-ghost {
+    border: 2px solid var(--border-color); color: var(--text-secondary);
+    background: transparent;
+}
+.error-actions .btn-ghost:hover { border-color: var(--accent-blue, var(--primary-color)); color: var(--accent-blue, var(--primary-color)); }
+
+.error-suggestions {
+    max-width: 700px; margin: 0 auto; padding: 0 20px 60px;
+}
+.error-suggestions h3 {
+    font-size: 1.05rem; font-weight: 700; margin: 0 0 16px;
+    color: var(--text-primary); text-align: center;
+}
+.error-suggestions .posts-grid { margin: 0; }
+
+@media (max-width: 480px) {
+    .error-code { font-size: 3.5rem; }
+    .error-actions { flex-direction: column; align-items: center; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Empty State (shared)
+   ══════════════════════════════════════════════════════════════════ */
+.empty-state {
+    text-align: center; padding: 60px 20px;
+    color: var(--text-muted);
+}
+.empty-state__icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-state__title {
+    font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 6px;
+}
+.empty-state__text { font-size: .88rem; margin: 0; }
