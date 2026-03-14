@@ -25,6 +25,7 @@ $themeDir    = \CMS\ThemeManager::instance()->getThemePath();
 
 $success = '';
 $error   = '';
+$feedLoadError = '';
 
 $weekdayOptions = [
     1 => 'Montag',
@@ -60,24 +61,67 @@ $channels = [];
 $channelsByCategory = [];
 $channelIndex = [];
 
-if ($hasFeedPlugin && $feedDb !== null) {
-    $categories = $feedDb->get_categories();
-    $channels   = array_values(array_filter(
-        $feedDb->get_channels(),
-        static fn (array $channel): bool => (int) ($channel['is_active'] ?? 0) === 1
-    ));
+$normalizeCategoryId = static function (array $channel): int {
+    $categoryId = (int) ($channel['category_id'] ?? 0);
+    return $categoryId > 0 ? $categoryId : 0;
+};
 
-    foreach ($channels as $channel) {
-        $channelId = (int) ($channel['id'] ?? 0);
-        if ($channelId <= 0) {
+$buildFallbackCategories = static function (array $availableChannels): array {
+    $fallbackCategories = [];
+
+    foreach ($availableChannels as $channel) {
+        $categoryId = (int) ($channel['category_id'] ?? 0);
+        $categoryId = $categoryId > 0 ? $categoryId : 0;
+
+        if (isset($fallbackCategories[$categoryId])) {
             continue;
         }
 
-        $channelIndex[$channelId] = $channel;
-        $channelsByCategory[(int) ($channel['category_id'] ?? 0)][] = $channel;
+        $fallbackCategories[$categoryId] = [
+            'id' => $categoryId,
+            'name' => (string) ($channel['category_name'] ?? ($categoryId === 0 ? 'Allgemein' : 'Bereich')),
+            'icon' => '📡',
+            'description' => '',
+        ];
     }
 
-    $subscription = $feedDb->get_member_subscription((int) ($currentUser->id ?? 0));
+    return array_values($fallbackCategories);
+};
+
+if ($hasFeedPlugin && $feedDb !== null) {
+    try {
+        $categories = $feedDb->get_categories();
+        $channels   = array_values(array_filter(
+            $feedDb->get_channels(),
+            static fn (array $channel): bool => (int) ($channel['is_active'] ?? 0) === 1
+        ));
+
+        foreach ($channels as $channel) {
+            $channelId = (int) ($channel['id'] ?? 0);
+            if ($channelId <= 0) {
+                continue;
+            }
+
+            $channelIndex[$channelId] = $channel;
+            $channelsByCategory[$normalizeCategoryId($channel)][] = $channel;
+        }
+
+        if ($channels !== [] && $categories === []) {
+            $categories = $buildFallbackCategories($channels);
+        }
+
+        $subscription = $feedDb->get_member_subscription((int) ($currentUser->id ?? 0));
+    } catch (\Throwable $throwable) {
+        $feedLoadError = 'Die Feed-Konfiguration konnte gerade nicht vollständig geladen werden.';
+        $error = $error !== '' ? $error : $feedLoadError;
+        $categories = [];
+        $channels = [];
+        $channelsByCategory = [];
+        $channelIndex = [];
+        $subscription = null;
+
+        error_log('cms-phinit member feeds: ' . $throwable->getMessage());
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasFeedPlugin && $feedDb !== null) {
@@ -106,21 +150,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasFeedPlugin && $feedDb !== null)
         } elseif ($isActive && $selectedChannelIds === []) {
             $error = 'Wähle mindestens einen Feed aus, wenn das Abo aktiv sein soll.';
         } else {
-            $feedDb->save_member_subscription([
-                'user_id' => (int) ($currentUser->id ?? 0),
-                'email' => (string) $email,
-                'channel_ids' => $selectedChannelIds,
-                'frequency' => $frequency,
-                'daily_mode' => $dailyMode,
-                'weekly_day' => $weeklyDay,
-                'weekly_time' => $weeklyTime,
-                'is_active' => $isActive ? 1 : 0,
-            ]);
+            try {
+                $feedDb->save_member_subscription([
+                    'user_id' => (int) ($currentUser->id ?? 0),
+                    'email' => (string) $email,
+                    'channel_ids' => $selectedChannelIds,
+                    'frequency' => $frequency,
+                    'daily_mode' => $dailyMode,
+                    'weekly_day' => $weeklyDay,
+                    'weekly_time' => $weeklyTime,
+                    'is_active' => $isActive ? 1 : 0,
+                ]);
 
-            $subscription = $feedDb->get_member_subscription((int) ($currentUser->id ?? 0));
-            $success = $isActive
-                ? 'Dein Feed-Abo wurde gespeichert. Die nächsten Mails kommen pünktlich – ganz ohne manuelles Refresh-Yoga.'
-                : 'Dein Feed-Abo wurde pausiert. Auswahl und Zeitplan bleiben gespeichert.';
+                $subscription = $feedDb->get_member_subscription((int) ($currentUser->id ?? 0));
+                $success = $isActive
+                    ? 'Dein Feed-Abo wurde gespeichert. Die nächsten Mails kommen pünktlich – ganz ohne manuelles Refresh-Yoga.'
+                    : 'Dein Feed-Abo wurde pausiert. Auswahl und Zeitplan bleiben gespeichert.';
+            } catch (\Throwable $throwable) {
+                $error = 'Dein Feed-Abo konnte gerade nicht gespeichert werden.';
+                error_log('cms-phinit member feeds save: ' . $throwable->getMessage());
+            }
         }
     }
 }
@@ -138,9 +187,37 @@ $subscription = $subscription ?? [
     'last_sent_at' => null,
 ];
 
-$selectedChannelIds = ($hasFeedPlugin && $feedDb !== null)
-    ? $feedDb->get_member_subscription_channel_ids($subscription)
-    : [];
+$renderCategories = [];
+
+foreach ($categories as $category) {
+    $categoryId = (int) ($category['id'] ?? 0);
+    $renderCategories[$categoryId] = $category;
+}
+
+foreach ($buildFallbackCategories($channels) as $fallbackCategory) {
+    $categoryId = (int) ($fallbackCategory['id'] ?? 0);
+    if (!isset($renderCategories[$categoryId])) {
+        $renderCategories[$categoryId] = $fallbackCategory;
+    }
+}
+
+$renderCategories = array_values(array_filter(
+    $renderCategories,
+    static fn (array $category): bool => !empty($channelsByCategory[(int) ($category['id'] ?? 0)])
+));
+
+$selectedChannelIds = [];
+if ($hasFeedPlugin && $feedDb !== null) {
+    try {
+        $selectedChannelIds = $feedDb->get_member_subscription_channel_ids($subscription);
+    } catch (\Throwable $throwable) {
+        $selectedChannelIds = [];
+        if ($error === '') {
+            $error = 'Die gespeicherte Feed-Auswahl konnte nicht vollständig gelesen werden.';
+        }
+        error_log('cms-phinit member feeds channel ids: ' . $throwable->getMessage());
+    }
+}
 $selectedChannels = [];
 
 foreach ($selectedChannelIds as $selectedChannelId) {
@@ -151,10 +228,16 @@ foreach ($selectedChannelIds as $selectedChannelId) {
 
 $selectedCount = count($selectedChannels);
 $availableCount = count($channels);
-$categoryCount = count(array_filter($categories, static fn (array $category): bool => !empty($channelsByCategory[(int) ($category['id'] ?? 0)])));
-$scheduleLabel = ($hasFeedPlugin && $mailer !== null)
-    ? $mailer->get_member_schedule_label($subscription)
-    : 'Noch kein Zeitplan definiert';
+$categoryCount = count(array_filter($renderCategories, static fn (array $category): bool => !empty($channelsByCategory[(int) ($category['id'] ?? 0)])));
+$scheduleLabel = 'Noch kein Zeitplan definiert';
+if ($hasFeedPlugin && $mailer !== null) {
+    try {
+        $scheduleLabel = $mailer->get_member_schedule_label($subscription);
+    } catch (\Throwable $throwable) {
+        $scheduleLabel = 'Zeitplan aktuell nicht lesbar';
+        error_log('cms-phinit member feeds schedule: ' . $throwable->getMessage());
+    }
+}
 $lastSentLabel = !empty($subscription['last_sent_at'])
     ? date('d.m.Y H:i', strtotime((string) $subscription['last_sent_at'])) . ' Uhr'
     : 'Noch kein Versand erfolgt';
@@ -167,7 +250,7 @@ include $themeDir . 'header.php';
     <?php include __DIR__ . '/partials/member-nav.php'; ?>
 
     <div class="member-main" id="main-content">
-        <section class="member-page-title" data-anim>
+        <section class="member-page-title">
             <h1>📡 Feed-Abos</h1>
             <p>Wähle deine Lieblings-Feeds, lege einen Mail-Zeitplan fest und lass dir Updates täglich oder wöchentlich bequem ins Postfach schicken.</p>
         </section>
@@ -180,20 +263,26 @@ include $themeDir . 'header.php';
         <?php endif; ?>
 
         <?php if (!$hasFeedPlugin): ?>
-        <div class="member-empty-state" data-anim>
+        <div class="member-empty-state">
             <p class="member-empty-state__icon">📡</p>
             <p><strong>Feed-System derzeit nicht verfügbar</strong></p>
             <p>Das Plugin <code>cms-feed</code> ist aktuell nicht aktiv oder noch nicht vollständig geladen.</p>
         </div>
+        <?php elseif ($feedLoadError !== ''): ?>
+        <div class="member-empty-state">
+            <p class="member-empty-state__icon">⚠️</p>
+            <p><strong>Feed-Bereich aktuell nicht vollständig verfügbar</strong></p>
+            <p><?php echo htmlspecialchars($feedLoadError, ENT_QUOTES); ?> Bitte prüfe das Plugin oder lade die Seite erneut.</p>
+        </div>
         <?php elseif ($channels === []): ?>
-        <div class="member-empty-state" data-anim>
+        <div class="member-empty-state">
             <p class="member-empty-state__icon">📭</p>
             <p><strong>Noch keine Feeds vorhanden</strong></p>
             <p>Sobald im Feed-Plugin aktive Quellen angelegt wurden, kannst du hier dein persönliches Mail-Abo konfigurieren.</p>
         </div>
         <?php else: ?>
 
-        <section class="member-dashboard-hero member-dashboard-hero--notifications" data-anim data-anim-delay="1">
+        <section class="member-dashboard-hero member-dashboard-hero--notifications">
             <div>
                 <span class="member-dashboard-hero__eyebrow">📬 Persönlicher Feed-Digest</span>
                 <h1>Deine Feeds. Dein Takt. Dein Postfach.</h1>
@@ -226,11 +315,13 @@ include $themeDir . 'header.php';
             </div>
         </section>
 
-        <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/feeds#member-feed-subscription">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+        <div class="member-grid-2 member-grid-2--notifications">
+            <form class="member-card member-card--notification-settings" id="member-feed-subscription" method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/feeds#member-feed-subscription">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                <?php foreach ($selectedChannelIds as $selectedChannelId): ?>
+                <input type="hidden" name="channel_ids[]" value="<?php echo (int) $selectedChannelId; ?>">
+                <?php endforeach; ?>
 
-            <div class="member-grid-2 member-grid-2--notifications" data-anim data-anim-delay="2">
-            <section class="member-card member-card--notification-settings" id="member-feed-subscription">
                 <div class="member-card-header">
                     <h3>⚙️ Feed-Abo konfigurieren</h3>
                     <span class="member-badge-soft"><?php echo $selectedCount; ?> Feed<?php echo $selectedCount === 1 ? '' : 's'; ?> aktiv gewählt</span>
@@ -293,7 +384,7 @@ include $themeDir . 'header.php';
                 <div class="member-actions member-actions--compact">
                     <button type="submit" class="btn btn-primary">💾 Feed-Abo speichern</button>
                 </div>
-            </section>
+            </form>
 
             <section class="member-card member-card--notification-feed">
                 <div class="member-card-header">
@@ -352,15 +443,25 @@ include $themeDir . 'header.php';
                 <?php endif; ?>
                 <?php endif; ?>
             </section>
-            </div>
+        </div>
 
-        <section class="member-card" id="member-feed-selection" data-anim data-anim-delay="3">
+        <form class="member-card member-card--spaced" id="member-feed-selection" method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/feeds#member-feed-selection">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+            <input type="hidden" name="subscription_email" value="<?php echo htmlspecialchars((string) ($subscription['email'] ?? ($currentUser->email ?? '')), ENT_QUOTES); ?>">
+            <input type="hidden" name="subscription_frequency" value="<?php echo htmlspecialchars((string) ($subscription['frequency'] ?? 'daily'), ENT_QUOTES); ?>">
+            <input type="hidden" name="daily_mode" value="<?php echo htmlspecialchars((string) ($subscription['daily_mode'] ?? '09'), ENT_QUOTES); ?>">
+            <input type="hidden" name="weekly_day" value="<?php echo (int) ($subscription['weekly_day'] ?? 1); ?>">
+            <input type="hidden" name="weekly_time" value="<?php echo htmlspecialchars((string) ($subscription['weekly_time'] ?? '09'), ENT_QUOTES); ?>">
+            <?php if ($isActiveSubscription): ?>
+            <input type="hidden" name="subscription_is_active" value="1">
+            <?php endif; ?>
+
             <div class="member-card-header">
                 <h3>📰 Verfügbare Feeds auswählen</h3>
                 <span class="member-badge-soft"><?php echo $availableCount; ?> aktive Feeds</span>
             </div>
 
-                <?php foreach ($categories as $category): ?>
+                <?php foreach ($renderCategories as $category): ?>
                 <?php $categoryChannels = $channelsByCategory[(int) ($category['id'] ?? 0)] ?? []; ?>
                 <?php if ($categoryChannels === []): ?>
                     <?php continue; ?>
@@ -399,7 +500,6 @@ include $themeDir . 'header.php';
                 <div class="member-actions member-actions--compact">
                     <button type="submit" class="btn btn-primary">📡 Feed-Auswahl speichern</button>
                 </div>
-        </section>
 
         </form>
 
