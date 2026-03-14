@@ -2,8 +2,6 @@
 /**
  * Member Sicherheit – CMS Phinit Theme
  *
- * Passwort ändern, aktive Sessions anzeigen.
- *
  * @package CMS_Phinit_Theme
  */
 declare(strict_types=1);
@@ -12,101 +10,26 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$auth = \CMS\Auth::instance();
-if (!$auth->isLoggedIn()) {
-    header('Location: ' . SITE_URL . '/login');
-    exit;
-}
+require_once ABSPATH . 'member/includes/bootstrap.php';
 
-$currentUser = $auth->getCurrentUser();
-$db          = \CMS\Database::instance();
-$prefix      = $db->getPrefix();
-$siteUrl     = SITE_URL;
-$activePage  = 'security';
-$themeDir    = \CMS\ThemeManager::instance()->getThemePath();
+$controller->handleSecurityRequest();
 
-$success = '';
-$error   = '';
-
-// CSRF
-$csrfToken = \CMS\Security::instance()->generateToken('member_security');
-
-// POST-Verarbeitung: Passwort ändern
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action_security'])) {
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'member_security')) {
-        $error = 'Sicherheitscheck fehlgeschlagen.';
-    } else {
-        $currentPw = $_POST['current_password'] ?? '';
-        $newPw     = $_POST['new_password'] ?? '';
-        $newPwRep  = $_POST['new_password_repeat'] ?? '';
-
-        if (empty($currentPw) || empty($newPw) || empty($newPwRep)) {
-            $error = 'Bitte alle Felder ausfüllen.';
-        } elseif ($newPw !== $newPwRep) {
-            $error = 'Die neuen Passwörter stimmen nicht überein.';
-        } elseif (strlen($newPw) < 12) {
-            $error = 'Das neue Passwort muss mindestens 12 Zeichen lang sein.';
-        } else {
-            // Passwortrichtlinie prüfen (nutzt CMS::Auth wenn verfügbar)
-            $policyError = '';
-            if (method_exists($auth, 'validatePasswordPolicy')) {
-                $policyError = $auth->validatePasswordPolicy($newPw);
-            }
-            if (!empty($policyError)) {
-                $error = $policyError;
-            } else {
-                try {
-                    // Aktuelles Passwort verifizieren
-                    $row = $db->get_var(
-                        "SELECT password FROM {$prefix}users WHERE id = ?",
-                        [(int)$currentUser->id]
-                    );
-                    if (!$row || !password_verify($currentPw, (string)$row)) {
-                        $error = 'Das aktuelle Passwort ist falsch.';
-                    } else {
-                        $hash = password_hash($newPw, PASSWORD_BCRYPT, ['cost' => 12]);
-                        $db->execute(
-                            "UPDATE {$prefix}users SET password = ?, updated_at = NOW() WHERE id = ?",
-                            [$hash, (int)$currentUser->id]
-                        );
-                        $success = 'Passwort wurde erfolgreich geändert.';
-                    }
-                } catch (\Throwable $e) {
-                    $error = 'Fehler beim Speichern. Bitte erneut versuchen.';
-                }
-            }
-        }
-    }
-    // Neues CSRF-Token nach POST
-    $csrfToken = \CMS\Security::instance()->generateToken('member_security');
-}
-
-// Aktive Sessions laden (optional, wenn Tabelle vorhanden)
-$sessions = [];
-try {
-    $hasSessions = (bool)$db->getPdo()->query("SELECT 1 FROM `{$prefix}user_sessions` LIMIT 1")->fetch();
-    if ($hasSessions) {
-        $sessions = array_map(
-            static fn($session) => (array) $session,
-            $db->get_results(
-            "SELECT id, ip_address, user_agent, created_at, last_activity
-             FROM {$prefix}user_sessions
-             WHERE user_id = ?
-             ORDER BY last_activity DESC
-             LIMIT 10",
-            [(int)$currentUser->id]
-        ) ?: []
-        );
-    }
-} catch (\Throwable $e) {}
-
+$currentUser = $controller->getCurrentUser();
+$siteUrl = SITE_URL;
+$activePage = 'security';
+$themeDir = \CMS\ThemeManager::instance()->getThemePath();
+$securityData = $controller->getSecurityPageData();
+$security = is_array($securityData['security'] ?? null) ? $securityData['security'] : [];
+$sessions = is_array($securityData['sessions'] ?? null) ? $securityData['sessions'] : [];
+$credentials = is_array($securityData['credentials'] ?? null) ? $securityData['credentials'] : [];
+$passkeyPayload = is_array($securityData['passkey_payload'] ?? null) ? $securityData['passkey_payload'] : ['available' => false, 'options_json' => '{}'];
+$totpSetup = is_array($securityData['totp_setup'] ?? null) ? $securityData['totp_setup'] : null;
+$totpQrUrl = trim((string) ($totpSetup['qr_data_uri'] ?? $totpSetup['qr_url'] ?? ''));
+$totpSecret = trim((string) ($totpSetup['secret'] ?? ''));
+$totpOtpUri = trim((string) ($totpSetup['otp_uri'] ?? ''));
 $sessionCount = count($sessions);
-$lastActivity = $sessionCount > 0 ? (string) ($sessions[0]['last_activity'] ?? '') : '';
-$securityTips = [
-    'Mindestens 12 Zeichen mit Groß-/Kleinbuchstaben, Zahl und Sonderzeichen nutzen.',
-    'Passwort nicht an anderer Stelle wiederverwenden.',
-    'Nach sensiblen Änderungen aktive Sitzungen prüfen und alte Geräte ausloggen.',
-];
+$lastActivity = $sessionCount > 0 ? (string) (($sessions[0]->last_activity ?? $sessions[0]['last_activity'] ?? '')) : '';
+$flash = $controller->consumeFlash();
 
 include $themeDir . 'header.php';
 ?>
@@ -119,7 +42,7 @@ include $themeDir . 'header.php';
             <div class="member-security-hero__content">
                 <span class="member-security-hero__eyebrow">🔒 Sicherheitscenter</span>
                 <h1>Sicherheit & Sitzungen</h1>
-                <p>Verwalte dein Passwort, prüfe zuletzt aktive Geräte und halte dein Konto mit wenigen Schritten sauber abgesichert.</p>
+                <p>Verwalte Passwort, Zwei-Faktor-Authentifizierung, Backup-Codes, Passkeys und alle aktiven Sitzungen an einem Ort.</p>
             </div>
             <div class="member-security-hero__stats">
                 <div class="member-security-stat">
@@ -127,18 +50,21 @@ include $themeDir . 'header.php';
                     <strong><?php echo $sessionCount; ?></strong>
                 </div>
                 <div class="member-security-stat">
-                    <span class="member-security-stat__label">Zuletzt aktiv</span>
-                    <strong><?php echo htmlspecialchars($lastActivity !== '' ? date('d.m.Y H:i', strtotime($lastActivity)) : 'Gerade eben', ENT_QUOTES); ?></strong>
+                    <span class="member-security-stat__label">Security Score</span>
+                    <strong><?php echo (int) ($security['score'] ?? 0); ?>/100</strong>
+                </div>
+                <div class="member-security-stat">
+                    <span class="member-security-stat__label">MFA Status</span>
+                    <strong><?php echo !empty($securityData['totp_enabled']) ? 'Aktiv' : 'Inaktiv'; ?></strong>
+                </div>
+                <div class="member-security-stat">
+                    <span class="member-security-stat__label">Backup-Codes</span>
+                    <strong><?php echo (int) ($securityData['backup_count'] ?? 0); ?></strong>
                 </div>
             </div>
         </section>
 
-        <?php if ($success): ?>
-        <div class="member-alert member-alert-success" data-anim data-anim-delay="1"><?php echo htmlspecialchars($success, ENT_QUOTES); ?></div>
-        <?php endif; ?>
-        <?php if ($error): ?>
-        <div class="member-alert member-alert-error" data-anim data-anim-delay="1"><?php echo htmlspecialchars($error, ENT_QUOTES); ?></div>
-        <?php endif; ?>
+        <?php echo phinit_render_member_flash($flash); ?>
 
         <div class="member-grid-2 member-grid-2--security" data-anim data-anim-delay="1.5">
             <div class="member-card member-card--security-form">
@@ -147,8 +73,8 @@ include $themeDir . 'header.php';
                 </div>
 
                 <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-security-form">
-                    <input type="hidden" name="action_security" value="change_password">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                    <input type="hidden" name="action" value="password_change">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_password'), ENT_QUOTES); ?>">
 
                     <div class="member-form-group">
                         <label for="current_password" class="member-label">Aktuelles Passwort <span class="req">*</span></label>
@@ -162,8 +88,8 @@ include $themeDir . 'header.php';
                     </div>
 
                     <div class="member-form-group">
-                        <label for="new_password_repeat" class="member-label">Neues Passwort wiederholen <span class="req">*</span></label>
-                        <input type="password" id="new_password_repeat" name="new_password_repeat" class="member-input" autocomplete="new-password" minlength="12" required>
+                        <label for="confirm_password" class="member-label">Neues Passwort wiederholen <span class="req">*</span></label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="member-input" autocomplete="new-password" minlength="12" required>
                     </div>
 
                     <div class="member-actions member-actions--compact">
@@ -178,15 +104,131 @@ include $themeDir . 'header.php';
                 </div>
 
                 <ul class="member-security-checklist">
-                    <?php foreach ($securityTips as $tip): ?>
-                    <li><?php echo htmlspecialchars($tip, ENT_QUOTES); ?></li>
+                    <?php foreach ((array) ($security['recommendations'] ?? []) as $recommendation): ?>
+                    <li><?php echo htmlspecialchars((string) ($recommendation['text'] ?? ''), ENT_QUOTES); ?></li>
                     <?php endforeach; ?>
                 </ul>
 
                 <div class="member-security-note">
                     <strong>Hinweis:</strong>
-                    <p>Wenn dir ein Gerät unbekannt vorkommt, ändere sofort dein Passwort und überprüfe offene Browser-Sitzungen.</p>
+                    <p><?php echo htmlspecialchars((string) ($security['score_message'] ?? 'Wenn dir ein Gerät unbekannt vorkommt, ändere sofort dein Passwort und überprüfe offene Browser-Sitzungen.'), ENT_QUOTES); ?></p>
+                    <?php if ($lastActivity !== ''): ?>
+                    <p class="member-security-note__meta">Letzte registrierte Aktivität: <?php echo htmlspecialchars(date('d.m.Y H:i', strtotime($lastActivity)), ENT_QUOTES); ?></p>
+                    <?php endif; ?>
                 </div>
+            </div>
+        </div>
+
+        <div class="member-grid-2 member-grid-2--security" data-anim data-anim-delay="1.8">
+            <div class="member-card member-card--security-form">
+                <div class="member-card-header">
+                    <h3>📲 Zwei-Faktor-Authentifizierung</h3>
+                    <span class="member-security-pill<?php echo !empty($securityData['totp_enabled']) ? ' is-active' : ''; ?>"><?php echo !empty($securityData['totp_enabled']) ? 'Aktiv' : 'Nicht aktiv'; ?></span>
+                </div>
+
+                <?php if ($totpSetup !== null): ?>
+                <div class="member-totp-setup">
+                    <div class="member-totp-setup__qr">
+                        <?php if ($totpQrUrl !== ''): ?>
+                        <img src="<?php echo htmlspecialchars($totpQrUrl, ENT_QUOTES); ?>" alt="TOTP QR-Code" loading="lazy">
+                        <?php else: ?>
+                        <div class="member-totp-placeholder">QR-Code nicht verfügbar</div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="member-totp-setup__content">
+                        <p>Scanne den QR-Code mit deiner Authenticator-App und bestätige danach den 6-stelligen Code.</p>
+                        <?php if ($totpSecret !== ''): ?>
+                        <p><strong>Manueller Schlüssel:</strong> <code><?php echo htmlspecialchars($totpSecret, ENT_QUOTES); ?></code></p>
+                        <?php endif; ?>
+                        <?php if ($totpOtpUri !== ''): ?>
+                        <p class="member-form-hint"><?php echo htmlspecialchars($totpOtpUri, ENT_QUOTES); ?></p>
+                        <?php endif; ?>
+                        <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-security-form member-security-form--inline">
+                            <input type="hidden" name="action" value="totp_confirm">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_mfa'), ENT_QUOTES); ?>">
+                            <div class="member-form-group">
+                                <label for="totp_code" class="member-label">Authenticator-Code</label>
+                                <input type="text" id="totp_code" name="totp_code" class="member-input" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required>
+                            </div>
+                            <div class="member-actions member-actions--compact">
+                                <button type="submit" class="btn btn-primary">MFA aktivieren</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <?php else: ?>
+                <p class="member-security-copy">Schütze dein Konto zusätzlich mit einem Authenticator und sicheren Backup-Codes.</p>
+                <div class="member-actions member-actions--row">
+                    <?php if (empty($securityData['totp_enabled'])): ?>
+                    <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security">
+                        <input type="hidden" name="action" value="totp_start">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_mfa'), ENT_QUOTES); ?>">
+                        <button type="submit" class="btn btn-primary">TOTP einrichten</button>
+                    </form>
+                    <?php else: ?>
+                    <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security">
+                        <input type="hidden" name="action" value="backup_generate">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_mfa'), ENT_QUOTES); ?>">
+                        <button type="submit" class="btn btn-secondary">Backup-Codes erneuern</button>
+                    </form>
+                    <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security">
+                        <input type="hidden" name="action" value="totp_disable">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_mfa'), ENT_QUOTES); ?>">
+                        <button type="submit" class="btn btn-outline">MFA deaktivieren</button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="member-card member-card--security-side">
+                <div class="member-card-header">
+                    <h3>🔑 Passkeys</h3>
+                    <span class="member-security-pill<?php echo !empty($passkeyPayload['available']) ? ' is-active' : ''; ?>"><?php echo !empty($passkeyPayload['available']) ? 'Verfügbar' : 'Nicht verfügbar'; ?></span>
+                </div>
+                <p class="member-security-copy">Registriere einen Hardware-Key oder Plattform-Passkey für schnellere und sicherere Anmeldungen.</p>
+
+                <?php if (!empty($passkeyPayload['available'])): ?>
+                <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" data-passkey-form data-passkey-options='<?php echo htmlspecialchars((string) ($passkeyPayload['options_json'] ?? '{}'), ENT_QUOTES); ?>' class="member-security-form">
+                    <input type="hidden" name="action" value="passkey_register">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_passkey'), ENT_QUOTES); ?>">
+                    <input type="hidden" name="client_data_json" value="">
+                    <input type="hidden" name="attestation_object" value="">
+                    <div class="member-form-group">
+                        <label for="credential_name" class="member-label">Bezeichnung</label>
+                        <input type="text" id="credential_name" name="credential_name" class="member-input" value="Mein Gerät">
+                    </div>
+                    <div class="member-actions member-actions--compact">
+                        <button type="button" class="btn btn-primary" data-passkey-register>Passkey registrieren</button>
+                    </div>
+                </form>
+                <?php endif; ?>
+
+                <?php if (!empty($credentials)): ?>
+                <div class="member-passkey-list">
+                    <?php foreach ($credentials as $credential): ?>
+                    <?php
+                    $credentialName = is_array($credential) ? (string) ($credential['name'] ?? 'Passkey') : (string) ($credential->name ?? 'Passkey');
+                    $credentialCreatedAt = is_array($credential) ? (string) ($credential['created_at'] ?? '') : (string) ($credential->created_at ?? '');
+                    $credentialRecordId = is_array($credential) ? (int) ($credential['id'] ?? 0) : (int) ($credential->id ?? 0);
+                    ?>
+                    <article class="member-passkey-item">
+                        <div>
+                            <strong><?php echo htmlspecialchars($credentialName, ENT_QUOTES); ?></strong>
+                            <span><?php echo htmlspecialchars($credentialCreatedAt, ENT_QUOTES); ?></span>
+                        </div>
+                        <form method="post" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security">
+                            <input type="hidden" name="action" value="passkey_delete">
+                            <input type="hidden" name="credential_id" value="<?php echo $credentialRecordId; ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('security_passkey'), ENT_QUOTES); ?>">
+                            <button type="submit" class="member-fav-remove-btn">Entfernen</button>
+                        </form>
+                    </article>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div class="member-empty"><p>📭 Noch keine Passkeys registriert.</p></div>
+                <?php endif; ?>
             </div>
         </div>
 

@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use CMS\Services\ThemeCustomizer;
+
 $auth = \CMS\Auth::instance();
 if (!$auth->isLoggedIn()) {
     header('Location: ' . SITE_URL . '/login');
@@ -24,7 +26,45 @@ $db          = \CMS\Database::instance();
 $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'dashboard';
+$themeCustomizer = ThemeCustomizer::instance();
+
+$getMemberToggle = static function (string $key, bool $default = true) use ($themeCustomizer): bool {
+    return filter_var($themeCustomizer->get('memberdashboard', $key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
+$getMemberText = static function (string $key, string $default = '') use ($themeCustomizer): string {
+    return trim((string) $themeCustomizer->get('memberdashboard', $key, $default));
+};
+
+$sanitizeColor = static function (string $value, string $fallback): string {
+    return preg_match('/^#[0-9a-f]{6}$/i', $value) ? $value : $fallback;
+};
+
+$sortByConfiguredOrder = static function (array $items, string $order): array {
+    $sequence = array_values(array_filter(array_map(static fn (string $slug): string => trim($slug), explode(',', strtolower($order)))));
+    if ($sequence === []) {
+        return $items;
+    }
+
+    $positions = array_flip($sequence);
+    uasort($items, static function (array $left, array $right) use ($positions): int {
+        $leftSlug = (string) ($left['slug'] ?? '');
+        $rightSlug = (string) ($right['slug'] ?? '');
+        $leftPos = $positions[$leftSlug] ?? 999;
+        $rightPos = $positions[$rightSlug] ?? 999;
+
+        if ($leftPos === $rightPos) {
+            return $leftSlug <=> $rightSlug;
+        }
+
+        return $leftPos <=> $rightPos;
+    });
+
+    return $items;
+};
+
 $pageFavorites = phinit_get_page_favorites_for_user((int) $currentUser->id);
+$memberService = \CMS\Services\MemberService::getInstance();
 
 // Hilfsfunktion: Tabelle existiert?
 $_tableExists = function (string $table) use ($db): bool {
@@ -72,6 +112,13 @@ if ($_hasPosts) {
         ) ?: 0;
     } catch (\Throwable $e) {}
 }
+
+$notificationItems = [];
+try {
+    $notificationItems = $memberService->getRecentNotifications((int) $currentUser->id, 4);
+} catch (\Throwable $e) {}
+
+$notificationCount = count($notificationItems);
 
 // Letzte Aktivitäten (neueste Kommentare)
 $recentComments = [];
@@ -135,8 +182,75 @@ $profileUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/profile';
 $securityUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/security';
 $commentsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/comments';
 $analyticsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/analytics';
+$notificationsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/notifications';
 
 $isAdmin    = $auth->isAdmin();
+
+$showWelcome = $getMemberToggle('show_welcome', true);
+$welcomeEyebrow = $getMemberText('welcome_eyebrow', '🏠 Member Home');
+$welcomeTitleTemplate = $getMemberText('welcome_title', '{greeting}, {name}! 👋');
+$welcomeText = $getMemberText('welcome_text', 'Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.');
+$heroPanelTitle = $getMemberText('hero_panel_title', 'Kontostatus');
+$showHeroFavorites = $getMemberToggle('show_hero_favorites', true);
+$showHeroProfile = $getMemberToggle('show_hero_profile', true);
+$showHeroSecurity = $getMemberToggle('show_hero_security', true);
+$showHeroNotifications = $getMemberToggle('show_hero_notifications', true);
+$showHeroComments = $getMemberToggle('show_hero_comments', true);
+$showHeroAnalytics = $getMemberToggle('show_hero_analytics', true);
+$showCardFavorites = $getMemberToggle('show_card_favorites', true);
+$showCardComments = $getMemberToggle('show_card_comments', true);
+$showCardNotifications = $getMemberToggle('show_card_notifications', true);
+$showCardPosts = $getMemberToggle('show_card_posts', true);
+$showCardSecurity = $getMemberToggle('show_card_security', true);
+$showRecentComments = $getMemberToggle('show_recent_comments', true);
+$showRecentFavorites = $getMemberToggle('show_recent_favorites', true);
+$showRecentNotifications = $getMemberToggle('show_recent_notifications', true);
+$showQuicklinks = $getMemberToggle('show_quicklinks', true);
+$showQuicklinkProfile = $getMemberToggle('show_quicklink_profile', true);
+$showQuicklinkNotifications = $getMemberToggle('show_quicklink_notifications', true);
+$showQuicklinkNewsletter = $getMemberToggle('show_quicklink_newsletter', true);
+$showQuicklinkFeeds = $getMemberToggle('show_quicklink_feeds', true);
+$showQuicklinkForum = $getMemberToggle('show_quicklink_forum', true);
+
+$recentCommentsTitle = $getMemberText('recent_comments_title', 'Letzte Kommentare');
+$recentCommentsIcon = $getMemberText('recent_comments_icon', '💬');
+$recentFavoritesTitle = $getMemberText('recent_favorites_title', 'Letzte Favoriten');
+$recentFavoritesIcon = $getMemberText('recent_favorites_icon', '⭐');
+$recentNotificationsTitle = $getMemberText('recent_notifications_title', 'Letzte Benachrichtigungen');
+$recentNotificationsIcon = $getMemberText('recent_notifications_icon', '🔔');
+$quicklinksTitle = $getMemberText('quicklinks_title', 'Schnellzugriff');
+$quicklinksIcon = $getMemberText('quicklinks_icon', '🚀');
+
+$heroColorStart = $sanitizeColor($getMemberText('hero_color_start', '#0f2240'), '#0f2240');
+$heroColorEnd = $sanitizeColor($getMemberText('hero_color_end', '#2563eb'), '#2563eb');
+$cardIconColor = $sanitizeColor($getMemberText('card_icon_color', '#0d9488'), '#0d9488');
+$cardHoverColor = $sanitizeColor($getMemberText('card_hover_color', '#0d9488'), '#0d9488');
+$quicklinkIconColor = $sanitizeColor($getMemberText('quicklink_icon_color', '#1e3a5f'), '#1e3a5f');
+
+$memberName = trim((string) (explode(' ', (string) ($currentUser->username ?? 'Mitglied'))[0] ?? 'Mitglied'));
+$welcomeTitle = strtr($welcomeTitleTemplate, [
+    '{greeting}' => $greeting,
+    '{name}' => $memberName,
+]);
+
+$dashboardStyle = implode(' ', [
+    '--member-dashboard-hero-start: ' . $heroColorStart . ';',
+    '--member-dashboard-hero-end: ' . $heroColorEnd . ';',
+    '--member-dashboard-card-icon: ' . $cardIconColor . ';',
+    '--member-dashboard-card-hover: ' . $cardHoverColor . ';',
+    '--member-dashboard-quicklink-icon: ' . $quicklinkIconColor . ';',
+]);
+
+$overviewCards = [
+    'favorites' => ['slug' => 'favorites', 'enabled' => $showCardFavorites, 'icon' => $getMemberText('card_favorites_icon', '⭐'), 'title' => $getMemberText('card_favorites_title', 'Gespeicherte Favoriten'), 'value' => (string) $favCount, 'url' => $favoriteUrl, 'class' => 'member-overview-card--favorite'],
+    'comments' => ['slug' => 'comments', 'enabled' => $showCardComments, 'icon' => $getMemberText('card_comments_icon', '💬'), 'title' => $getMemberText('card_comments_title', 'Eigene Kommentare'), 'value' => (string) $commentCount, 'url' => $commentsUrl, 'class' => 'member-overview-card--comment'],
+    'notifications' => ['slug' => 'notifications', 'enabled' => $showCardNotifications, 'icon' => $getMemberText('card_notifications_icon', '🔔'), 'title' => $getMemberText('card_notifications_title', 'Letzte Benachrichtigungen'), 'value' => (string) $notificationCount, 'url' => $notificationsUrl, 'class' => 'member-overview-card--notification'],
+    'posts' => ['slug' => 'posts', 'enabled' => $showCardPosts, 'icon' => $getMemberText('card_posts_icon', '📝'), 'title' => $getMemberText('card_posts_title', 'Veröffentlichte Beiträge'), 'value' => (string) $postCount, 'url' => '', 'class' => 'member-overview-card--post'],
+    'security' => ['slug' => 'security', 'enabled' => $showCardSecurity, 'icon' => $getMemberText('card_security_icon', '🔒'), 'title' => $getMemberText('card_security_title', 'Sicherheitsbereich öffnen'), 'value' => $isAdmin ? 'Admin' : 'Aktiv', 'url' => $securityUrl, 'class' => 'member-overview-card--security'],
+];
+
+$overviewCards = array_filter($overviewCards, static fn (array $card): bool => (bool) ($card['enabled'] ?? false));
+$overviewCards = $sortByConfiguredOrder($overviewCards, $getMemberText('overview_card_order', 'favorites,comments,notifications,posts,security'));
 
 // Theme Header
 $themeDir = \CMS\ThemeManager::instance()->getThemePath();
@@ -146,27 +260,39 @@ include $themeDir . 'header.php';
 <div class="container member-container">
     <?php include __DIR__ . '/partials/member-nav.php'; ?>
 
-    <div class="member-main">
+    <div class="member-main member-main--dashboard" style="<?php echo htmlspecialchars($dashboardStyle, ENT_QUOTES); ?>">
 
+        <?php if ($showWelcome): ?>
         <section class="member-dashboard-hero" data-anim>
             <div class="member-dashboard-hero__content">
-                <span class="member-dashboard-hero__eyebrow">🏠 Member Home</span>
-                <h1><?php echo $greeting; ?>, <?php echo htmlspecialchars(explode(' ', $currentUser->username)[0]); ?>! 👋</h1>
-                <p>Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.</p>
+                <span class="member-dashboard-hero__eyebrow"><?php echo htmlspecialchars($welcomeEyebrow !== '' ? $welcomeEyebrow : '🏠 Member Home', ENT_QUOTES); ?></span>
+                <h1><?php echo htmlspecialchars($welcomeTitle !== '' ? $welcomeTitle : ($greeting . ', ' . $memberName . '! 👋'), ENT_QUOTES); ?></h1>
+                <p><?php echo htmlspecialchars($welcomeText !== '' ? $welcomeText : 'Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.', ENT_QUOTES); ?></p>
 
                 <div class="member-dashboard-hero__actions">
+                    <?php if ($showHeroFavorites): ?>
                     <a href="<?php echo $favoriteUrl; ?>" class="member-hero-action">⭐ Favoriten</a>
+                    <?php endif; ?>
+                    <?php if ($showHeroProfile): ?>
                     <a href="<?php echo $profileUrl; ?>" class="member-hero-action">👤 Profil</a>
+                    <?php endif; ?>
+                    <?php if ($showHeroSecurity): ?>
                     <a href="<?php echo $securityUrl; ?>" class="member-hero-action">🔒 Sicherheit</a>
+                    <?php endif; ?>
+                    <?php if ($showHeroNotifications): ?>
+                    <a href="<?php echo $notificationsUrl; ?>" class="member-hero-action">🔔 Benachrichtigungen</a>
+                    <?php endif; ?>
+                    <?php if ($showHeroComments): ?>
                     <a href="<?php echo $commentsUrl; ?>" class="member-hero-action">💬 Kommentare</a>
-                    <?php if ($isAdmin): ?>
+                    <?php endif; ?>
+                    <?php if ($isAdmin && $showHeroAnalytics): ?>
                     <a href="<?php echo $analyticsUrl; ?>" class="member-hero-action">📈 Analytics</a>
                     <?php endif; ?>
                 </div>
             </div>
 
             <aside class="member-dashboard-hero__panel">
-                <h3>Kontostatus</h3>
+                <h3><?php echo htmlspecialchars($heroPanelTitle !== '' ? $heroPanelTitle : 'Kontostatus', ENT_QUOTES); ?></h3>
                 <dl class="member-dashboard-hero__facts">
                     <div>
                         <dt>Mitglied seit</dt>
@@ -183,37 +309,37 @@ include $themeDir . 'header.php';
                 </dl>
             </aside>
         </section>
+        <?php endif; ?>
 
+        <?php if ($overviewCards !== []): ?>
         <div class="member-dashboard-overview" data-anim data-anim-delay="1">
-            <a href="<?php echo $favoriteUrl; ?>" class="member-overview-card member-overview-card--favorite">
-                <span class="member-overview-card__icon">⭐</span>
-                <strong><?php echo $favCount; ?></strong>
-                <span>Gespeicherte Favoriten</span>
+            <?php foreach ($overviewCards as $card): ?>
+            <?php if ($card['url'] !== ''): ?>
+            <a href="<?php echo htmlspecialchars((string) $card['url'], ENT_QUOTES); ?>" class="member-overview-card <?php echo htmlspecialchars((string) $card['class'], ENT_QUOTES); ?>">
+            <?php else: ?>
+            <div class="member-overview-card <?php echo htmlspecialchars((string) $card['class'], ENT_QUOTES); ?>">
+            <?php endif; ?>
+                <span class="member-overview-card__icon"><?php echo htmlspecialchars((string) ($card['icon'] ?? ''), ENT_QUOTES); ?></span>
+                <strong><?php echo htmlspecialchars((string) ($card['value'] ?? ''), ENT_QUOTES); ?></strong>
+                <span><?php echo htmlspecialchars((string) ($card['title'] ?? ''), ENT_QUOTES); ?></span>
+            <?php if ($card['url'] !== ''): ?>
             </a>
-            <a href="<?php echo $commentsUrl; ?>" class="member-overview-card member-overview-card--comment">
-                <span class="member-overview-card__icon">💬</span>
-                <strong><?php echo $commentCount; ?></strong>
-                <span>Eigene Kommentare</span>
-            </a>
-            <div class="member-overview-card member-overview-card--post">
-                <span class="member-overview-card__icon">📝</span>
-                <strong><?php echo $postCount; ?></strong>
-                <span>Veröffentlichte Beiträge</span>
+            <?php else: ?>
             </div>
-            <a href="<?php echo $securityUrl; ?>" class="member-overview-card member-overview-card--security">
-                <span class="member-overview-card__icon">🔒</span>
-                <strong><?php echo $isAdmin ? 'Admin' : 'Aktiv'; ?></strong>
-                <span>Sicherheitsbereich öffnen</span>
-            </a>
+            <?php endif; ?>
+            <?php endforeach; ?>
         </div>
+        <?php endif; ?>
 
         <!-- 2-Column Grid -->
+        <?php if ($showRecentComments || $showRecentFavorites || $showRecentNotifications): ?>
         <div class="member-grid-2 member-grid-2--dashboard" data-anim data-anim-delay="2">
 
             <!-- Letzte Kommentare -->
+            <?php if ($showRecentComments): ?>
             <div class="member-card">
                 <div class="member-card-header">
-                    <h3>💬 Letzte Kommentare</h3>
+                    <h3><?php echo htmlspecialchars(trim(($recentCommentsIcon !== '' ? $recentCommentsIcon . ' ' : '') . ($recentCommentsTitle !== '' ? $recentCommentsTitle : 'Letzte Kommentare')), ENT_QUOTES); ?></h3>
                     <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/comments" class="member-card-link">Alle →</a>
                 </div>
                 <?php if (!empty($recentComments)): ?>
@@ -231,11 +357,13 @@ include $themeDir . 'header.php';
                 </div>
                 <?php endif; ?>
             </div>
+            <?php endif; ?>
 
             <!-- Letzte Favoriten -->
+            <?php if ($showRecentFavorites): ?>
             <div class="member-card">
                 <div class="member-card-header">
-                    <h3>⭐ Letzte Favoriten</h3>
+                    <h3><?php echo htmlspecialchars(trim(($recentFavoritesIcon !== '' ? $recentFavoritesIcon . ' ' : '') . ($recentFavoritesTitle !== '' ? $recentFavoritesTitle : 'Letzte Favoriten')), ENT_QUOTES); ?></h3>
                     <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/favorites" class="member-card-link">Alle →</a>
                 </div>
                 <?php if (!empty($recentFavorites)): ?>
@@ -253,27 +381,72 @@ include $themeDir . 'header.php';
                 </div>
                 <?php endif; ?>
             </div>
+            <?php endif; ?>
+
+            <?php if ($showRecentNotifications): ?>
+            <div class="member-card">
+                <div class="member-card-header">
+                    <h3><?php echo htmlspecialchars(trim(($recentNotificationsIcon !== '' ? $recentNotificationsIcon . ' ' : '') . ($recentNotificationsTitle !== '' ? $recentNotificationsTitle : 'Letzte Benachrichtigungen')), ENT_QUOTES); ?></h3>
+                    <a href="<?php echo $notificationsUrl; ?>" class="member-card-link">Alle →</a>
+                </div>
+                <?php if (!empty($notificationItems)): ?>
+                <ul class="member-activity-list member-activity-list--stacked">
+                    <?php foreach ($notificationItems as $notification): ?>
+                    <li>
+                        <div>
+                            <strong><?php echo htmlspecialchars((string) ($notification->title ?? $notification->message ?? 'Benachrichtigung'), ENT_QUOTES); ?></strong>
+                            <?php if (!empty($notification->message) && !empty($notification->title)): ?>
+                            <span class="member-activity-copy"><?php echo htmlspecialchars((string) $notification->message, ENT_QUOTES); ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <span class="member-activity-date"><?php echo htmlspecialchars((string) ($notification->created_at ?? ''), ENT_QUOTES); ?></span>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php else: ?>
+                <div class="member-empty">
+                    <p>📭 Keine neuen Benachrichtigungen.</p>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
 
         </div><!-- /.member-grid-2 -->
+        <?php endif; ?>
 
         <!-- Schnellzugriff -->
+        <?php if ($showQuicklinks): ?>
         <div class="member-quicklinks member-quicklinks--dashboard" data-anim data-anim-delay="3">
-            <h3>🚀 Schnellzugriff</h3>
+            <h3><?php echo htmlspecialchars(trim(($quicklinksIcon !== '' ? $quicklinksIcon . ' ' : '') . ($quicklinksTitle !== '' ? $quicklinksTitle : 'Schnellzugriff')), ENT_QUOTES); ?></h3>
             <div class="member-quicklinks-grid">
+                <?php if ($showQuicklinkProfile): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-quicklink-card">
                     <span>👤</span> Profil bearbeiten
                 </a>
+                <?php endif; ?>
+                <?php if ($showQuicklinkNotifications): ?>
+                <a href="<?php echo $notificationsUrl; ?>" class="member-quicklink-card">
+                    <span>🔔</span> Benachrichtigungen
+                </a>
+                <?php endif; ?>
+                <?php if ($showQuicklinkNewsletter): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/newsletter" class="member-quicklink-card">
                     <span>📧</span> Newsletter
                 </a>
+                <?php endif; ?>
+                <?php if ($showQuicklinkFeeds): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/feeds" class="member-quicklink-card">
                     <span>📡</span> Feed-Abos
                 </a>
+                <?php endif; ?>
+                <?php if ($showQuicklinkForum): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/forum" class="member-quicklink-card">
                     <span>🗣️</span> Forum
                 </a>
+                <?php endif; ?>
             </div>
         </div>
+        <?php endif; ?>
 
     </div><!-- /.member-main -->
 </div><!-- /.member-container -->

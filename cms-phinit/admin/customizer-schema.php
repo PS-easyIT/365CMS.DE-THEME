@@ -343,6 +343,7 @@ return [
         'advanced'   => ['🎨 Custom Code' => ['custom_css','custom_head_code','custom_footer_code'], '📊 Tracking & Cache' => ['google_analytics_id','cache_buster_css'], '🖼️ SEO & Social' => ['og_default_image']],
         'seo'        => ['🔍 SEO-Einstellungen' => ['meta_robots','canonical_self','og_site_name','og_type_default','twitter_card_type','structured_data','breadcrumb_schema','noindex_search','noindex_404']],
         'performance'=> ['⚡ Performance-Einstellungen' => ['enable_photoswipe','lazyload_images','preconnect_fonts','preconnect_extra','defer_scripts','dns_prefetch']],
+        'memberdashboard' => ['👋 Begrüßung' => ['show_welcome','welcome_eyebrow','welcome_title','welcome_text','hero_panel_title'], '🧭 Sidebar-Menü' => ['show_sidebar_dashboard','show_sidebar_profile','show_sidebar_notifications','show_sidebar_favorites','show_sidebar_comments','show_sidebar_newsletter','show_sidebar_feeds','show_sidebar_forum','show_sidebar_security','show_sidebar_analytics','show_sidebar_admin_link','sidebar_admin_label','sidebar_admin_icon'], '🎛️ Hero-Aktionen' => ['show_hero_favorites','show_hero_profile','show_hero_security','show_hero_notifications','show_hero_comments','show_hero_analytics'], '🧩 Info-Cards' => ['show_card_favorites','show_card_comments','show_card_notifications','show_card_posts','show_card_security','overview_card_order','card_favorites_title','card_favorites_icon','card_comments_title','card_comments_icon','card_notifications_title','card_notifications_icon','card_posts_title','card_posts_icon','card_security_title','card_security_icon'], '📚 Dashboard-Blöcke' => ['show_recent_comments','show_recent_favorites','show_recent_notifications','recent_comments_title','recent_comments_icon','recent_favorites_title','recent_favorites_icon','recent_notifications_title','recent_notifications_icon','show_quicklinks','quicklinks_title','quicklinks_icon'], '🎨 Farben' => ['sidebar_active_color','hero_color_start','hero_color_end','card_icon_color','card_hover_color','quicklink_icon_color'], '⚡ Schnellzugriff' => ['show_quicklink_profile','show_quicklink_notifications','show_quicklink_newsletter','show_quicklink_feeds','show_quicklink_forum']],
     ],
     'tabViews' => [
         'homepage-sidebar' => [
@@ -417,7 +418,7 @@ return [
     'navGroups' => [
         null        => ['colors', 'typography', 'layout'],
         '🖥️ Design' => ['header', 'footer'],
-        '📝 Inhalte' => ['homepage', 'homepage-sidebar', 'posts', 'posts-sidebar', 'pages'],
+        '📝 Inhalte' => ['homepage', 'homepage-sidebar', 'posts', 'posts-sidebar', 'pages', 'memberdashboard'],
         '⚙️ Sonstiges' => ['social', 'advanced', 'seo', 'performance'],
     ],
 ];

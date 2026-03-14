@@ -298,6 +298,97 @@ if (!function_exists('phinit_store_page_favorites_for_user')) {
     }
 }
 
+if (!function_exists('phinit_handle_favorite_toggle_request')) {
+    function phinit_handle_favorite_toggle_request(): void
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            return;
+        }
+
+        if ((string) ($_POST['phinit_toggle_favorite'] ?? '') !== '1') {
+            return;
+        }
+
+        $contentType = (string) ($_POST['favorite_content_type'] ?? 'post');
+        if (!in_array($contentType, ['post', 'page'], true)) {
+            return;
+        }
+
+        $contentId = (int) ($_POST['favorite_content_id'] ?? 0);
+        if ($contentId <= 0) {
+            return;
+        }
+
+        try {
+            $auth = \CMS\Auth::instance();
+            if (!$auth->isLoggedIn()) {
+                return;
+            }
+
+            $currentUser = $auth->getCurrentUser();
+            $userId = (int) ($currentUser->id ?? 0);
+            if ($userId <= 0) {
+                return;
+            }
+
+            $tokenAction = 'phinit_favorite_' . $contentType . '_' . $contentId;
+            if (!\CMS\Security::instance()->verifyPersistentToken((string) ($_POST['favorite_csrf_token'] ?? ''), $tokenAction)) {
+                return;
+            }
+
+            $db = \CMS\Database::instance();
+
+            if ($contentType === 'post') {
+                $exists = (int) ($db->get_var(
+                    "SELECT COUNT(*) FROM {$db->getPrefix()}favorites WHERE user_id = ? AND post_id = ?",
+                    [$userId, $contentId]
+                ) ?: 0) > 0;
+
+                if ($exists) {
+                    $db->execute(
+                        "DELETE FROM {$db->getPrefix()}favorites WHERE user_id = ? AND post_id = ?",
+                        [$userId, $contentId]
+                    );
+                } else {
+                    $db->execute(
+                        "INSERT IGNORE INTO {$db->getPrefix()}favorites (user_id, post_id) VALUES (?, ?)",
+                        [$userId, $contentId]
+                    );
+                }
+            } else {
+                $requestPath = phinit_current_request_path();
+                $pageFavorites = phinit_get_page_favorites_for_user($userId);
+                $pageFavorites = array_values(array_filter(
+                    $pageFavorites,
+                    static fn(array $favorite): bool => (int) ($favorite['content_id'] ?? 0) !== $contentId
+                ));
+
+                $exists = count($pageFavorites) !== count(phinit_get_page_favorites_for_user($userId));
+                if (!$exists) {
+                    $pageFavorites[] = [
+                        'content_type' => 'page',
+                        'content_id' => $contentId,
+                        'title' => trim((string) ($_POST['favorite_title'] ?? 'Seite')),
+                        'url' => $requestPath !== '' ? $requestPath : '/',
+                        'excerpt' => trim((string) ($_POST['favorite_excerpt'] ?? '')),
+                        'featured_image' => trim((string) ($_POST['favorite_featured_image'] ?? '')),
+                        'badge' => trim((string) ($_POST['favorite_badge'] ?? 'Seite')),
+                        'created_at' => date('c'),
+                    ];
+                }
+
+                phinit_store_page_favorites_for_user($userId, $pageFavorites);
+            }
+
+            $redirectUri = phinit_current_request_uri();
+            header('Location: ' . rtrim((string) SITE_URL, '/') . $redirectUri);
+            exit;
+        } catch (\Throwable) {
+            return;
+        }
+    }
+}
+
 if (!function_exists('phinit_get_favorite_control')) {
     /**
      * @param array<string,mixed> $payload
@@ -323,7 +414,13 @@ if (!function_exists('phinit_get_favorite_control')) {
             'isFavorited' => false,
             'loginUrl' => $loginUrl,
             'csrfToken' => '',
-            'formGuardToken' => '',
+            'payload' => [
+                'title' => $title,
+                'url' => $url,
+                'excerpt' => $excerpt,
+                'featured_image' => $featuredImage,
+                'badge' => $badge,
+            ],
             'label' => 'Favorit',
             'title' => 'Zu Favoriten hinzufügen',
             'action' => 'add',
@@ -348,63 +445,6 @@ if (!function_exists('phinit_get_favorite_control')) {
 
             $db = \CMS\Database::instance();
 
-            if (
-                ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
-                && (string) ($_POST['phinit_toggle_favorite'] ?? '') === '1'
-                && (string) ($_POST['favorite_content_type'] ?? '') === $contentType
-                && (int) ($_POST['favorite_content_id'] ?? 0) === $contentId
-            ) {
-                $tokenAction = 'phinit_favorite_' . $contentType . '_' . $contentId;
-                if (\CMS\Security::instance()->verifyPersistentToken((string) ($_POST['favorite_csrf_token'] ?? ''), $tokenAction)) {
-                    if ($contentType === 'post') {
-                        $exists = (int) ($db->get_var(
-                            "SELECT COUNT(*) FROM {$db->getPrefix()}favorites WHERE user_id = ? AND post_id = ?",
-                            [$userId, $contentId]
-                        ) ?: 0) > 0;
-
-                        if ($exists) {
-                            $db->execute(
-                                "DELETE FROM {$db->getPrefix()}favorites WHERE user_id = ? AND post_id = ?",
-                                [$userId, $contentId]
-                            );
-                        } else {
-                            $db->execute(
-                                "INSERT IGNORE INTO {$db->getPrefix()}favorites (user_id, post_id) VALUES (?, ?)",
-                                [$userId, $contentId]
-                            );
-                        }
-                    } else {
-                        $pageFavorites = phinit_get_page_favorites_for_user($userId);
-                        $pageFavorites = array_values(array_filter(
-                            $pageFavorites,
-                            static fn(array $favorite): bool => (int) ($favorite['content_id'] ?? 0) !== $contentId
-                        ));
-
-                        $exists = count($pageFavorites) !== count(phinit_get_page_favorites_for_user($userId));
-                        if (!$exists) {
-                            $pageFavorites[] = [
-                                'content_type' => 'page',
-                                'content_id' => $contentId,
-                                'title' => $title,
-                                'url' => $url,
-                                'excerpt' => $excerpt,
-                                'featured_image' => $featuredImage,
-                                'badge' => $badge,
-                                'created_at' => date('c'),
-                            ];
-                        }
-
-                        phinit_store_page_favorites_for_user($userId, $pageFavorites);
-                    }
-
-                    header('Location: ' . rtrim((string) SITE_URL, '/') . $requestUri);
-                    exit;
-                }
-
-                $state['csrfToken'] = \CMS\Security::instance()->generateToken($tokenAction);
-                $state['csrfError'] = true;
-            }
-
             if ($contentType === 'post') {
                 $state['isFavorited'] = (int) ($db->get_var(
                     "SELECT COUNT(*) FROM {$db->getPrefix()}favorites WHERE user_id = ? AND post_id = ?",
@@ -420,7 +460,6 @@ if (!function_exists('phinit_get_favorite_control')) {
             }
 
             $state['csrfToken'] = \CMS\Security::instance()->generateToken('phinit_favorite_' . $contentType . '_' . $contentId);
-            $state['formGuardToken'] = \CMS\Security::instance()->generateToken('form_guard');
         } catch (\Throwable) {
             return $state;
         }
@@ -457,10 +496,13 @@ if (!function_exists('phinit_render_favorite_button')) {
         $contentType = htmlspecialchars((string) ($favoriteControl['contentType'] ?? 'post'), ENT_QUOTES, 'UTF-8');
         $contentId = (int) ($favoriteControl['contentId'] ?? 0);
         $csrfToken = htmlspecialchars((string) ($favoriteControl['csrfToken'] ?? ''), ENT_QUOTES, 'UTF-8');
-        $formGuardToken = htmlspecialchars((string) ($favoriteControl['formGuardToken'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $favoriteTitle = htmlspecialchars((string) ($favoriteControl['payload']['title'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $favoriteExcerpt = htmlspecialchars((string) ($favoriteControl['payload']['excerpt'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $favoriteImage = htmlspecialchars((string) ($favoriteControl['payload']['featured_image'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $favoriteBadge = htmlspecialchars((string) ($favoriteControl['payload']['badge'] ?? ''), ENT_QUOTES, 'UTF-8');
         $pressed = $isActive ? 'true' : 'false';
 
-        return '<form method="post" class="content-favorite-form"><input type="hidden" name="csrf_token" value="' . $formGuardToken . '"><input type="hidden" name="phinit_toggle_favorite" value="1"><input type="hidden" name="favorite_content_type" value="' . $contentType . '"><input type="hidden" name="favorite_content_id" value="' . $contentId . '"><input type="hidden" name="favorite_csrf_token" value="' . $csrfToken . '"><button type="submit" class="' . $class . '" aria-pressed="' . $pressed . '" aria-label="' . $title . '" title="' . $title . '"><span class="content-favorite__icon" aria-hidden="true">' . $icon . '</span><span class="content-favorite__label">' . $label . '</span></button></form>';
+        return '<form method="post" class="content-favorite-form"><input type="hidden" name="phinit_toggle_favorite" value="1"><input type="hidden" name="favorite_content_type" value="' . $contentType . '"><input type="hidden" name="favorite_content_id" value="' . $contentId . '"><input type="hidden" name="favorite_csrf_token" value="' . $csrfToken . '"><input type="hidden" name="favorite_title" value="' . $favoriteTitle . '"><input type="hidden" name="favorite_excerpt" value="' . $favoriteExcerpt . '"><input type="hidden" name="favorite_featured_image" value="' . $favoriteImage . '"><input type="hidden" name="favorite_badge" value="' . $favoriteBadge . '"><button type="submit" class="' . $class . '" aria-pressed="' . $pressed . '" aria-label="' . $title . '" title="' . $title . '"><span class="content-favorite__icon" aria-hidden="true">' . $icon . '</span><span class="content-favorite__label">' . $label . '</span></button></form>';
     }
 }
 

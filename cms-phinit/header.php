@@ -276,9 +276,6 @@ if ($_showLanguageSwitch) {
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-bar__link">
                     <span class="member-bar__icon">👤</span> Profil
                 </a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/messages" class="member-bar__link">
-                    <span class="member-bar__icon">✉️</span> Nachrichten
-                </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/notifications" class="member-bar__link">
                     <span class="member-bar__icon">🔔</span> Benachrichtigungen                    <?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>                </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/favorites" class="member-bar__link">

@@ -48,6 +48,8 @@ final class CMS_Phinit_Theme
 
     private function __construct()
     {
+        \CMS\Hooks::addAction('before_render', [$this, 'handleFavoriteToggleRequest'], 1);
+
         // Assets
         \CMS\Hooks::addAction('head', [$this, 'outputPreconnect'],       1);
         \CMS\Hooks::addAction('head', [$this, 'outputGoogleFonts'],      5);
@@ -76,6 +78,11 @@ final class CMS_Phinit_Theme
 
         // Dynamischer Seitentitel
         \CMS\Hooks::addFilter('page_title', [$this, 'filterPageTitle']);
+    }
+
+    public function handleFavoriteToggleRequest(): void
+    {
+        phinit_handle_favorite_toggle_request();
     }
 }
 }

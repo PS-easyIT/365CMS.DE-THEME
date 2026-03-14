@@ -1005,6 +1005,326 @@
         }
       }
     },
+    "memberdashboard": {
+      "label": "Memberdashboard",
+      "settings": {
+        "show_welcome": {
+          "label": "Begrüßungsbereich anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "welcome_eyebrow": {
+          "label": "Begrüßungs-Kicker",
+          "type": "text",
+          "default": "🏠 Member Home"
+        },
+        "welcome_title": {
+          "label": "Begrüßungs-Titel",
+          "type": "text",
+          "default": "{greeting}, {name}! 👋"
+        },
+        "welcome_text": {
+          "label": "Begrüßungs-Text",
+          "type": "textarea",
+          "default": "Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben."
+        },
+        "hero_panel_title": {
+          "label": "Titel Info-Panel rechts",
+          "type": "text",
+          "default": "Kontostatus"
+        },
+        "sidebar_active_color": {
+          "label": "Sidebar-Aktivfarbe",
+          "type": "color",
+          "default": "#1e3a5f"
+        },
+        "hero_color_start": {
+          "label": "Hero-Farbe Start",
+          "type": "color",
+          "default": "#0f2240"
+        },
+        "hero_color_end": {
+          "label": "Hero-Farbe Ende",
+          "type": "color",
+          "default": "#2563eb"
+        },
+        "card_icon_color": {
+          "label": "Info-Card Icon-Farbe",
+          "type": "color",
+          "default": "#0d9488"
+        },
+        "card_hover_color": {
+          "label": "Info-Card Hover-Farbe",
+          "type": "color",
+          "default": "#0d9488"
+        },
+        "quicklink_icon_color": {
+          "label": "Schnellzugriff Icon-Farbe",
+          "type": "color",
+          "default": "#1e3a5f"
+        },
+        "show_sidebar_dashboard": {
+          "label": "Sidebar: Dashboard anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_profile": {
+          "label": "Sidebar: Profil anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_notifications": {
+          "label": "Sidebar: Benachrichtigungen anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_favorites": {
+          "label": "Sidebar: Favoriten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_comments": {
+          "label": "Sidebar: Kommentare anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_newsletter": {
+          "label": "Sidebar: Newsletter anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_feeds": {
+          "label": "Sidebar: Feed-Abos anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_forum": {
+          "label": "Sidebar: Forum anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_security": {
+          "label": "Sidebar: Sicherheit anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_analytics": {
+          "label": "Sidebar: Analytics für Admins anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_sidebar_admin_link": {
+          "label": "Sidebar: Admin-Link separat anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_admin_label": {
+          "label": "Sidebar: Admin-Link Text",
+          "type": "text",
+          "default": "Zum Admincenter"
+        },
+        "sidebar_admin_icon": {
+          "label": "Sidebar: Admin-Link Icon",
+          "type": "text",
+          "default": "⚙️"
+        },
+        "show_hero_favorites": {
+          "label": "Hero-Aktion: Favoriten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_hero_profile": {
+          "label": "Hero-Aktion: Profil anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_hero_security": {
+          "label": "Hero-Aktion: Sicherheit anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_hero_notifications": {
+          "label": "Hero-Aktion: Benachrichtigungen anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_hero_comments": {
+          "label": "Hero-Aktion: Kommentare anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_hero_analytics": {
+          "label": "Hero-Aktion: Analytics für Admins anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_card_favorites": {
+          "label": "Info-Card: Favoriten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_card_comments": {
+          "label": "Info-Card: Kommentare anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_card_notifications": {
+          "label": "Info-Card: Benachrichtigungen anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_card_posts": {
+          "label": "Info-Card: Beiträge anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_card_security": {
+          "label": "Info-Card: Sicherheit anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "overview_card_order": {
+          "label": "Reihenfolge der Info-Cards (CSV)",
+          "type": "text",
+          "default": "favorites,comments,notifications,posts,security"
+        },
+        "card_favorites_title": {
+          "label": "Info-Card Favoriten: Titel",
+          "type": "text",
+          "default": "Gespeicherte Favoriten"
+        },
+        "card_favorites_icon": {
+          "label": "Info-Card Favoriten: Icon",
+          "type": "text",
+          "default": "⭐"
+        },
+        "card_comments_title": {
+          "label": "Info-Card Kommentare: Titel",
+          "type": "text",
+          "default": "Eigene Kommentare"
+        },
+        "card_comments_icon": {
+          "label": "Info-Card Kommentare: Icon",
+          "type": "text",
+          "default": "💬"
+        },
+        "card_notifications_title": {
+          "label": "Info-Card Benachrichtigungen: Titel",
+          "type": "text",
+          "default": "Letzte Benachrichtigungen"
+        },
+        "card_notifications_icon": {
+          "label": "Info-Card Benachrichtigungen: Icon",
+          "type": "text",
+          "default": "🔔"
+        },
+        "card_posts_title": {
+          "label": "Info-Card Beiträge: Titel",
+          "type": "text",
+          "default": "Veröffentlichte Beiträge"
+        },
+        "card_posts_icon": {
+          "label": "Info-Card Beiträge: Icon",
+          "type": "text",
+          "default": "📝"
+        },
+        "card_security_title": {
+          "label": "Info-Card Sicherheit: Titel",
+          "type": "text",
+          "default": "Sicherheitsbereich öffnen"
+        },
+        "card_security_icon": {
+          "label": "Info-Card Sicherheit: Icon",
+          "type": "text",
+          "default": "🔒"
+        },
+        "show_recent_comments": {
+          "label": "Dashboard-Block: Letzte Kommentare anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_recent_favorites": {
+          "label": "Dashboard-Block: Letzte Favoriten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_recent_notifications": {
+          "label": "Dashboard-Block: Letzte Benachrichtigungen anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_quicklinks": {
+          "label": "Schnellzugriff anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "recent_comments_title": {
+          "label": "Block Letzte Kommentare: Titel",
+          "type": "text",
+          "default": "Letzte Kommentare"
+        },
+        "recent_comments_icon": {
+          "label": "Block Letzte Kommentare: Icon",
+          "type": "text",
+          "default": "💬"
+        },
+        "recent_favorites_title": {
+          "label": "Block Letzte Favoriten: Titel",
+          "type": "text",
+          "default": "Letzte Favoriten"
+        },
+        "recent_favorites_icon": {
+          "label": "Block Letzte Favoriten: Icon",
+          "type": "text",
+          "default": "⭐"
+        },
+        "recent_notifications_title": {
+          "label": "Block Letzte Benachrichtigungen: Titel",
+          "type": "text",
+          "default": "Letzte Benachrichtigungen"
+        },
+        "recent_notifications_icon": {
+          "label": "Block Letzte Benachrichtigungen: Icon",
+          "type": "text",
+          "default": "🔔"
+        },
+        "quicklinks_title": {
+          "label": "Schnellzugriff: Titel",
+          "type": "text",
+          "default": "Schnellzugriff"
+        },
+        "quicklinks_icon": {
+          "label": "Schnellzugriff: Icon",
+          "type": "text",
+          "default": "🚀"
+        },
+        "show_quicklink_profile": {
+          "label": "Schnellzugriff: Profil bearbeiten",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_quicklink_notifications": {
+          "label": "Schnellzugriff: Benachrichtigungen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_quicklink_newsletter": {
+          "label": "Schnellzugriff: Newsletter",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_quicklink_feeds": {
+          "label": "Schnellzugriff: Feed-Abos",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_quicklink_forum": {
+          "label": "Schnellzugriff: Forum",
+          "type": "checkbox",
+          "default": true
+        }
+      }
+    },
     "advanced": {
       "label": "Erweitert",
       "settings": {

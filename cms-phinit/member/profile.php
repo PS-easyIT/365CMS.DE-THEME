@@ -10,89 +10,20 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$auth = \CMS\Auth::instance();
-if (!$auth->isLoggedIn()) {
-    header('Location: ' . SITE_URL . '/login');
-    exit;
-}
+require_once ABSPATH . 'member/includes/bootstrap.php';
 
-$currentUser = $auth->getCurrentUser();
-$db          = \CMS\Database::instance();
-$prefix      = $db->getPrefix();
-$siteUrl     = SITE_URL;
-$activePage  = 'profile';
+$controller->handleProfileRequest();
 
-$success = '';
-$error   = '';
-
-// CSRF
-$csrfToken = \CMS\Security::instance()->generateToken('member_profile');
-
-// POST-Verarbeitung
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'member_profile')) {
-        $error = 'Sicherheitscheck fehlgeschlagen.';
-    } else {
-        $username  = sanitize_text_field($_POST['username'] ?? '');
-        $email     = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
-        $firstName = sanitize_text_field($_POST['first_name'] ?? '');
-        $lastName  = sanitize_text_field($_POST['last_name'] ?? '');
-        $bio       = strip_tags($_POST['bio'] ?? '', '<p><a><strong><em><br>');
-        $website   = filter_var($_POST['website'] ?? '', FILTER_VALIDATE_URL) ?: '';
-
-        if (empty($username)) {
-            $error = 'Benutzername darf nicht leer sein.';
-        } elseif (!$email) {
-            $error = 'Ungültige E-Mail-Adresse.';
-        } else {
-            try {
-                $db->execute(
-                    "UPDATE {$prefix}users SET username = ?, email = ? WHERE id = ?",
-                    [$username, $email, (int)$currentUser->id]
-                );
-                // User-Meta aktualisieren
-                foreach (['first_name' => $firstName, 'last_name' => $lastName, 'bio' => $bio, 'website' => $website] as $metaKey => $metaValue) {
-                    $exists = $db->get_var(
-                        "SELECT COUNT(*) FROM {$prefix}user_meta WHERE user_id = ? AND meta_key = ?",
-                        [(int)$currentUser->id, $metaKey]
-                    );
-                    if ($exists) {
-                        $db->execute(
-                            "UPDATE {$prefix}user_meta SET meta_value = ? WHERE user_id = ? AND meta_key = ?",
-                            [$metaValue, (int)$currentUser->id, $metaKey]
-                        );
-                    } else {
-                        $db->execute(
-                            "INSERT INTO {$prefix}user_meta (user_id, meta_key, meta_value) VALUES (?, ?, ?)",
-                            [(int)$currentUser->id, $metaKey, $metaValue]
-                        );
-                    }
-                }
-                $success = 'Profil erfolgreich aktualisiert!';
-                // Daten neu laden
-                $currentUser = $auth->getCurrentUser();
-                $csrfToken   = \CMS\Security::instance()->generateToken('member_profile');
-            } catch (\Throwable $e) {
-                $error = 'Fehler beim Speichern: ' . $e->getMessage();
-            }
-        }
-    }
-}
-
-// Meta-Daten laden
-$userMeta = [];
-$metaRows = array_map(
-    fn($r) => (array)$r,
-    $db->get_results(
-        "SELECT meta_key, meta_value FROM {$prefix}user_meta WHERE user_id = ?",
-        [(int)$currentUser->id]
-    ) ?: []
-);
-foreach ($metaRows as $row) {
-    $userMeta[$row['meta_key']] = $row['meta_value'];
-}
-
+$currentUser = $controller->getCurrentUser();
+$siteUrl = SITE_URL;
+$activePage = 'profile';
 $themeDir = \CMS\ThemeManager::instance()->getThemePath();
+$memberService = \CMS\Services\MemberService::getInstance();
+$userMeta = $memberService->getUserMeta($controller->getUserId());
+$profileCompletion = $controller->getProfileCompletion();
+$memberDisplayName = trim((string) ($currentUser->display_name ?? ''));
+$flash = $controller->consumeFlash();
+
 include $themeDir . 'header.php';
 ?>
 
@@ -103,18 +34,14 @@ include $themeDir . 'header.php';
 
         <div class="member-page-title" data-anim>
             <h1>👤 Mein Profil</h1>
-            <p>Verwalte deine persönlichen Informationen und Einstellungen.</p>
+            <p>Pflege Kontodaten, Profilbild, Anzeigename und zusätzliche Angaben für deinen Member-Bereich.</p>
         </div>
 
-        <?php if ($success): ?>
-        <div class="member-alert member-alert-success"><?php echo htmlspecialchars($success); ?></div>
-        <?php endif; ?>
-        <?php if ($error): ?>
-        <div class="member-alert member-alert-error"><?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
+        <?php echo phinit_render_member_flash($flash); ?>
 
         <form method="POST">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+            <input type="hidden" name="action" value="profile_save">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($controller->csrfToken('profile_save'), ENT_QUOTES); ?>">
 
             <div class="member-grid-2" data-anim data-anim-delay="1">
 
@@ -122,9 +49,9 @@ include $themeDir . 'header.php';
                 <div class="member-card">
                     <div class="member-card-header"><h3>🏷️ Persönliche Daten</h3></div>
                     <div class="member-form-group">
-                        <label class="member-label" for="username">Benutzername <span class="req">*</span></label>
-                        <input type="text" id="username" name="username" class="member-input"
-                               value="<?php echo htmlspecialchars($currentUser->username ?? '', ENT_QUOTES); ?>" required>
+                        <label class="member-label" for="display_name">Anzeigename</label>
+                        <input type="text" id="display_name" name="display_name" class="member-input"
+                               value="<?php echo htmlspecialchars($memberDisplayName, ENT_QUOTES); ?>" placeholder="Wie dein Name öffentlich erscheinen soll">
                     </div>
                     <div class="member-form-group">
                         <label class="member-label" for="email">E-Mail <span class="req">*</span></label>
@@ -143,16 +70,85 @@ include $themeDir . 'header.php';
                                    value="<?php echo htmlspecialchars($userMeta['last_name'] ?? '', ENT_QUOTES); ?>">
                         </div>
                     </div>
+                    <div class="member-form-row">
+                        <div class="member-form-group">
+                            <label class="member-label" for="birth_date">Geburtsdatum</label>
+                            <input type="date" id="birth_date" name="birth_date" class="member-input"
+                                   value="<?php echo htmlspecialchars($userMeta['birth_date'] ?? '', ENT_QUOTES); ?>">
+                        </div>
+                        <div class="member-form-group">
+                            <label class="member-label" for="phone">Telefon</label>
+                            <input type="text" id="phone" name="phone" class="member-input"
+                                   value="<?php echo htmlspecialchars($userMeta['phone'] ?? '', ENT_QUOTES); ?>">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Erweitert -->
                 <div class="member-card">
-                    <div class="member-card-header"><h3>🌐 Erweitert</h3></div>
+                    <div class="member-card-header"><h3>🖼️ Profilbild & Preview</h3></div>
+                    <div class="member-profile-summary">
+                        <div class="member-avatar member-avatar--xl">
+                            <?php if (!empty($userMeta['avatar'])): ?>
+                            <img src="<?php echo htmlspecialchars((string) $userMeta['avatar'], ENT_QUOTES); ?>"
+                                 alt="<?php echo htmlspecialchars($controller->getDisplayName(), ENT_QUOTES); ?>"
+                                 class="member-avatar__image"
+                                 loading="lazy"
+                                 width="88"
+                                 height="88">
+                            <?php else: ?>
+                            <?php echo htmlspecialchars($controller->getInitials(), ENT_QUOTES); ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="member-profile-summary__content">
+                            <strong><?php echo htmlspecialchars($controller->getDisplayName(), ENT_QUOTES); ?></strong>
+                            <span><?php echo htmlspecialchars((string) ($currentUser->username ?? ''), ENT_QUOTES); ?></span>
+                            <span><?php echo htmlspecialchars((string) ($currentUser->email ?? ''), ENT_QUOTES); ?></span>
+                        </div>
+                    </div>
+                    <div class="member-form-group">
+                        <label class="member-label" for="avatar">Profilbild (URL)</label>
+                        <input type="url" id="avatar" name="avatar" class="member-input" placeholder="https://..."
+                               value="<?php echo htmlspecialchars($userMeta['avatar'] ?? '', ENT_QUOTES); ?>">
+                    </div>
+                    <div class="member-form-group">
+                        <label class="member-label" for="social">Social / Profil-Link</label>
+                        <input type="url" id="social" name="social" class="member-input" placeholder="https://linkedin.com/in/..."
+                               value="<?php echo htmlspecialchars($userMeta['social'] ?? '', ENT_QUOTES); ?>">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="member-grid-2" data-anim data-anim-delay="1.5">
+                <div class="member-card">
+                    <div class="member-card-header"><h3>🌐 Beruf & Kontakt</h3></div>
+                    <div class="member-form-row">
+                        <div class="member-form-group">
+                            <label class="member-label" for="company">Unternehmen</label>
+                            <input type="text" id="company" name="company" class="member-input"
+                                   value="<?php echo htmlspecialchars($userMeta['company'] ?? '', ENT_QUOTES); ?>">
+                        </div>
+                        <div class="member-form-group">
+                            <label class="member-label" for="position">Position</label>
+                            <input type="text" id="position" name="position" class="member-input"
+                                   value="<?php echo htmlspecialchars($userMeta['position'] ?? '', ENT_QUOTES); ?>">
+                        </div>
+                    </div>
                     <div class="member-form-group">
                         <label class="member-label" for="website">Website</label>
                         <input type="url" id="website" name="website" class="member-input" placeholder="https://"
                                value="<?php echo htmlspecialchars($userMeta['website'] ?? '', ENT_QUOTES); ?>">
                     </div>
+                    <div class="member-form-group">
+                        <label class="member-label" for="location">Ort</label>
+                        <input type="text" id="location" name="location" class="member-input"
+                               value="<?php echo htmlspecialchars($userMeta['location'] ?? '', ENT_QUOTES); ?>">
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-card-header"><h3>📝 Über dich</h3></div>
                     <div class="member-form-group">
                         <label class="member-label" for="bio">Über mich</label>
                         <textarea id="bio" name="bio" class="member-input member-textarea"
@@ -161,9 +157,9 @@ include $themeDir . 'header.php';
                     <div class="member-form-info">
                         <p>📅 Mitglied seit: <strong><?php echo date('d.m.Y', strtotime($currentUser->created_at ?? 'now')); ?></strong></p>
                         <p>🔑 Rolle: <strong><?php echo htmlspecialchars(ucfirst($currentUser->role ?? 'member')); ?></strong></p>
+                        <p>📊 Profil vollständig: <strong><?php echo (int) ($profileCompletion['percentage'] ?? 0); ?>%</strong></p>
                     </div>
                 </div>
-
             </div>
 
             <div class="member-actions" data-anim data-anim-delay="2">

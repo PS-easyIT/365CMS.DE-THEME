@@ -13,8 +13,23 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use CMS\Services\ThemeCustomizer;
+
 $activePage = $activePage ?? 'dashboard';
 $siteUrl    = SITE_URL;
+$themeCustomizer = ThemeCustomizer::instance();
+
+$getMemberToggle = static function (string $key, bool $default = true) use ($themeCustomizer): bool {
+    return filter_var($themeCustomizer->get('memberdashboard', $key, $default), FILTER_VALIDATE_BOOLEAN);
+};
+
+$getMemberText = static function (string $key, string $default = '') use ($themeCustomizer): string {
+    return trim((string) $themeCustomizer->get('memberdashboard', $key, $default));
+};
+
+$sanitizeColor = static function (string $value, string $fallback): string {
+    return preg_match('/^#[0-9a-f]{6}$/i', $value) ? $value : $fallback;
+};
 
 $memberMeta = [];
 $memberDisplayName = trim((string) ($currentUser->display_name ?? $currentUser->username ?? 'Benutzer'));
@@ -37,24 +52,32 @@ try {
     $isAdmin = \CMS\Auth::instance()->isAdmin();
 } catch (\Throwable $e) {}
 
+$sidebarActiveColor = $sanitizeColor($getMemberText('sidebar_active_color', '#1e3a5f'), '#1e3a5f');
+$sidebarStyle = '--member-sidebar-active-color: ' . $sidebarActiveColor . ';';
+
 $memberNav = [
-    ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member/dashboard'],
-    ['slug' => 'profile',    'icon' => '👤', 'label' => 'Profil',        'url' => '/member/profile'],
-    ['slug' => 'notifications', 'icon' => '🔔', 'label' => 'Benachrichtigungen', 'url' => '/member/notifications'],
-    ['slug' => 'messages',   'icon' => '✉️', 'label' => 'Nachrichten',   'url' => '/member/messages'],
-    ['slug' => 'favorites',  'icon' => '⭐', 'label' => 'Favoriten',     'url' => '/member/favorites'],
-    ['slug' => 'comments',   'icon' => '💬', 'label' => 'Kommentare',    'url' => '/member/comments'],
-    ['slug' => 'newsletter', 'icon' => '📧', 'label' => 'Newsletter',    'url' => '/member/newsletter'],
-    ['slug' => 'feeds',      'icon' => '📡', 'label' => 'Feed-Abos',     'url' => '/member/feeds'],
-    ['slug' => 'forum',      'icon' => '🗣️', 'label' => 'Forum',         'url' => '/member/forum'],
-    ['slug' => 'security',   'icon' => '🔒', 'label' => 'Sicherheit',    'url' => '/member/security'],
+    ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member/dashboard', 'visible' => $getMemberToggle('show_sidebar_dashboard', true)],
+    ['slug' => 'profile',    'icon' => '👤', 'label' => 'Profil',        'url' => '/member/profile', 'visible' => $getMemberToggle('show_sidebar_profile', true)],
+    ['slug' => 'notifications', 'icon' => '🔔', 'label' => 'Benachrichtigungen', 'url' => '/member/notifications', 'visible' => $getMemberToggle('show_sidebar_notifications', true)],
+    ['slug' => 'favorites',  'icon' => '⭐', 'label' => 'Favoriten',     'url' => '/member/favorites', 'visible' => $getMemberToggle('show_sidebar_favorites', true)],
+    ['slug' => 'comments',   'icon' => '💬', 'label' => 'Kommentare',    'url' => '/member/comments', 'visible' => $getMemberToggle('show_sidebar_comments', true)],
+    ['slug' => 'newsletter', 'icon' => '📧', 'label' => 'Newsletter',    'url' => '/member/newsletter', 'visible' => $getMemberToggle('show_sidebar_newsletter', true)],
+    ['slug' => 'feeds',      'icon' => '📡', 'label' => 'Feed-Abos',     'url' => '/member/feeds', 'visible' => $getMemberToggle('show_sidebar_feeds', true)],
+    ['slug' => 'forum',      'icon' => '🗣️', 'label' => 'Forum',         'url' => '/member/forum', 'visible' => $getMemberToggle('show_sidebar_forum', true)],
+    ['slug' => 'security',   'icon' => '🔒', 'label' => 'Sicherheit',    'url' => '/member/security', 'visible' => $getMemberToggle('show_sidebar_security', true)],
 ];
 
-if ($isAdmin) {
-    $memberNav[] = ['slug' => 'analytics', 'icon' => '📈', 'label' => 'Analytics', 'url' => '/member/analytics'];
+if ($isAdmin && $getMemberToggle('show_sidebar_analytics', true)) {
+    $memberNav[] = ['slug' => 'analytics', 'icon' => '📈', 'label' => 'Analytics', 'url' => '/member/analytics', 'visible' => true];
 }
+
+$memberNav = array_values(array_filter($memberNav, static fn (array $item): bool => (bool) ($item['visible'] ?? true)));
+
+$showSidebarAdminLink = $isAdmin && $getMemberToggle('show_sidebar_admin_link', true);
+$sidebarAdminLabel = $getMemberText('sidebar_admin_label', 'Zum Admincenter');
+$sidebarAdminIcon = $getMemberText('sidebar_admin_icon', '⚙️');
 ?>
-<aside class="member-sidebar" aria-label="Mitglieder-Navigation">
+<aside class="member-sidebar" aria-label="Mitglieder-Navigation" style="<?php echo htmlspecialchars($sidebarStyle, ENT_QUOTES); ?>">
     <div class="member-sidebar-user">
         <div class="member-avatar">
             <?php if ($memberAvatarUrl !== ''): ?>
@@ -73,13 +96,6 @@ if ($isAdmin) {
             <span><?php echo htmlspecialchars($currentUser->email ?? '', ENT_QUOTES); ?></span>
         </div>
     </div>
-    <?php if ($isAdmin): ?>
-    <div class="member-admin-cta">
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/admin/" class="btn btn-sm btn-accent member-admin-btn">
-            ⚙️ Zum Admincenter
-        </a>
-    </div>
-    <?php endif; ?>
     <nav class="member-nav">
         <?php foreach ($memberNav as $item): ?>
         <a href="<?php echo htmlspecialchars($siteUrl . $item['url'], ENT_QUOTES); ?>"
@@ -90,9 +106,18 @@ if ($isAdmin) {
         </a>
         <?php endforeach; ?>
     </nav>
-    <div class="member-nav-footer">
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-nav-link member-nav-logout">
-            <span class="member-nav-icon">🚪</span> Abmelden
-        </a>
+    <div class="member-sidebar-bottom">
+        <?php if ($showSidebarAdminLink): ?>
+        <div class="member-admin-cta">
+            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/admin/" class="member-nav-link member-admin-link">
+                <span class="member-nav-icon"><?php echo htmlspecialchars($sidebarAdminIcon !== '' ? $sidebarAdminIcon : '⚙️', ENT_QUOTES); ?></span> <?php echo htmlspecialchars($sidebarAdminLabel !== '' ? $sidebarAdminLabel : 'Zum Admincenter', ENT_QUOTES); ?>
+            </a>
+        </div>
+        <?php endif; ?>
+        <div class="member-nav-footer">
+            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-nav-link member-nav-logout">
+                <span class="member-nav-icon">🚪</span> Abmelden
+            </a>
+        </div>
     </div>
 </aside>

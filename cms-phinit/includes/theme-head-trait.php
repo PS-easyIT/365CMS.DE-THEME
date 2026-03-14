@@ -249,7 +249,6 @@ trait CMS_Phinit_Theme_Head_Trait
                     '/member/comments' => 'Kommentare',
                     '/member/newsletter' => 'Newsletter',
                     '/member/feeds' => 'Feed-Abos',
-                    '/member/messages' => 'Nachrichten',
                     '/member/forum' => 'Forum',
                 ];
                 foreach ($memberLabels as $route => $label) {
@@ -359,7 +358,6 @@ trait CMS_Phinit_Theme_Head_Trait
                     '/member/feeds' => 'Feed-Abos',
                     '/member/forum' => 'Forum',
                     '/member/security' => 'Sicherheit',
-                    '/member/messages' => 'Nachrichten',
                     '/member/notifications' => 'Benachrichtigungen',
                 ];
                 foreach ($memberTitles as $route => $label) {

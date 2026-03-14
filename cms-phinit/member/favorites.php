@@ -154,16 +154,16 @@ include $themeDir . 'header.php';
                 </div>
 
                 <?php if (!empty($section['items'])): ?>
-                <div class="member-fav-grid member-fav-grid--section">
+                <div class="member-fav-list member-fav-list--section">
                     <?php foreach ($section['items'] as $fav): ?>
-                    <article class="member-fav-card">
+                    <article class="member-fav-card member-fav-card--list">
                         <?php if (!empty($fav['featured_image'])): ?>
-                        <div class="member-fav-img">
+                        <div class="member-fav-img member-fav-img--list">
                             <img src="<?php echo htmlspecialchars((string) $fav['featured_image'], ENT_QUOTES); ?>"
                                  alt="<?php echo htmlspecialchars((string) ($fav['title'] ?? ''), ENT_QUOTES); ?>" <?php echo phinit_image_loading_attributes(); ?>>
                         </div>
                         <?php endif; ?>
-                        <div class="member-fav-body">
+                        <div class="member-fav-body member-fav-body--list">
                             <div class="member-fav-badges">
                                 <span class="member-fav-badge"><?php echo htmlspecialchars((string) ($fav['type_label'] ?? 'Favorit'), ENT_QUOTES); ?></span>
                                 <?php if (!empty($fav['badge'])): ?>
@@ -182,6 +182,7 @@ include $themeDir . 'header.php';
                             <?php endif; ?>
                             <div class="member-fav-meta">
                                 <span><?php echo htmlspecialchars(date('d.m.Y', strtotime((string) ($fav['created_at'] ?? 'now'))), ENT_QUOTES); ?></span>
+                                <a href="<?php echo htmlspecialchars((string) ($fav['url'] ?? '#'), ENT_QUOTES); ?>" class="member-fav-open-link">Öffnen →</a>
                                 <form method="post" class="member-fav-remove" onsubmit="return confirm('Favorit wirklich entfernen?');">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
                                     <input type="hidden" name="favorite_id" value="<?php echo (int) ($fav['id'] ?? 0); ?>">
