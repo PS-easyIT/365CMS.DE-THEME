@@ -9,6 +9,31 @@ $featuredPosts = isset($featuredPosts) && is_array($featuredPosts) ? $featuredPo
 $sbFeaturedPosts = isset($sbFeaturedPosts) && is_array($sbFeaturedPosts) ? $sbFeaturedPosts : [];
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
 
+$_renderSidebarWidgetTitle = static function (string $title, string $defaultIcon = ''): string {
+    $rawTitle = trim($title);
+    $resolvedIcon = trim($defaultIcon);
+    $resolvedText = $rawTitle;
+
+    if ($rawTitle !== '' && preg_match('/^([^\p{L}\p{N}]+)\s*(.+)$/u', $rawTitle, $matches) === 1) {
+        $candidateIcon = trim((string) ($matches[1] ?? ''));
+        $candidateText = trim((string) ($matches[2] ?? ''));
+
+        if ($candidateText !== '') {
+            $resolvedIcon = $candidateIcon !== '' ? $candidateIcon : $resolvedIcon;
+            $resolvedText = $candidateText;
+        }
+    }
+
+    $iconHtml = $resolvedIcon !== ''
+        ? '<span class="sb-widget-title__icon" aria-hidden="true">' . htmlspecialchars($resolvedIcon, ENT_QUOTES) . '</span>'
+        : '';
+
+    return '<div class="sb-widget-title">'
+        . $iconHtml
+        . '<span class="sb-widget-title__text">' . htmlspecialchars($resolvedText, ENT_QUOTES) . '</span>'
+        . '</div>';
+};
+
 if (empty($_showList) || $featuredPosts === []) {
     return;
 }
@@ -92,7 +117,7 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if ($_sbFeatProjMode): ?>
         <div class="sb-widget sb-widget--projects sb-widget--projects-top">
-            <div class="sb-widget-title">🚀 Unsere Projekte</div>
+            <?php echo $_renderSidebarWidgetTitle('Unsere Projekte', '🚀'); ?>
             <div class="sb-project-cards-grid">
             <?php foreach ($_projectCards as [$pName, $pDesc, $pUrl, $pLogo]):
                 if (empty($pName) || empty($pUrl)) {
@@ -124,10 +149,10 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php endif; ?>
 
         <?php if ($_sbShowFeaturedPosts && !empty($sbFeaturedPosts)): ?>
-        <div class="sb-widget sb-widget--featured sb-widget--featured-badge-style-<?php echo htmlspecialchars($_sbFeaturedBadgeStyle, ENT_QUOTES); ?><?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?><?php echo $_sbFeaturedHasCustomImages ? ' sb-widget--featured-custom-media sb-widget--featured-media-' . htmlspecialchars($_sbResolvedFeaturedImageLayout, ENT_QUOTES) : ''; ?><?php echo (($_sbFeatProjMode || $_sbFeatSocialMode) && $_sbFeaturedHasCustomImages) ? ' sb-widget--featured-compact-media' : ''; ?>"
+        <div class="sb-widget sb-widget--featured sb-widget--featured-badge-style-<?php echo htmlspecialchars($_sbFeaturedBadgeStyle, ENT_QUOTES); ?><?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?>"
                                  style="--sb-featured-title-size: <?php echo htmlspecialchars(number_format($_sbFeaturedTitleSize, 1, '.', ''), ENT_QUOTES); ?>px; --sb-featured-badge-size: <?php echo htmlspecialchars(number_format($_sbFeaturedBadgeSize, 1, '.', ''), ENT_QUOTES); ?>px;"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-rotator data-rotate-interval="<?php echo (int) $_sbFeaturedRotateInterval; ?>"<?php endif; ?>>
-            <div class="sb-widget-title"><?php echo htmlspecialchars((string) $_sbFeaturedPostsLabel, ENT_QUOTES); ?></div>
+            <?php echo $_renderSidebarWidgetTitle((string) $_sbFeaturedPostsLabel, '📌'); ?>
             <?php if ($_sbEnableFeaturedRotation): ?>
             <div class="sb-featured-rotator" aria-live="polite">
             <?php endif; ?>
@@ -141,22 +166,19 @@ if (empty($_showList) || $featuredPosts === []) {
                 $_fpDateIso = !empty($_fpDateRaw) ? date('c', strtotime((string) $_fpDateRaw)) : '';
                 $_fpCat = htmlspecialchars((string) ($_fp['category_name'] ?? ''), ENT_QUOTES);
                 $_fpCustomThumb = !empty($_fp['custom_sidebar_image']) ? htmlspecialchars((string) $_fp['custom_sidebar_image'], ENT_QUOTES) : '';
-                $_fpThumb = $_fpCustomThumb !== ''
+                $_fpHasCustomThumb = $_fpCustomThumb !== '' || (string) ($_fp['sidebar_image_source'] ?? '') === 'custom';
+                $_fpThumb = $_fpHasCustomThumb
                     ? $_fpCustomThumb
                     : (!empty($_fp['featured_image']) ? htmlspecialchars((string) $_fp['featured_image'], ENT_QUOTES) : '');
-                $_fpThumbWidth = $_sbFeaturedHasCustomImages
-                    ? ($_sbResolvedFeaturedImageLayout === 'below' ? 240 : (($_sbFeatProjMode || $_sbFeatSocialMode) ? 72 : 84))
-                    : 64;
-                $_fpThumbHeight = $_sbFeaturedHasCustomImages
-                    ? ($_sbResolvedFeaturedImageLayout === 'below' ? (($_sbFeatProjMode || $_sbFeatSocialMode) ? 88 : 108) : (($_sbFeatProjMode || $_sbFeatSocialMode) ? 54 : 62))
-                    : 48;
+                $_fpThumbWidth = 64;
+                $_fpThumbHeight = 48;
             ?>
             <a href="<?php echo $_fpHref; ?>"
                class="sb-featured-post<?php echo $_sbEnableFeaturedRotation ? ' sb-featured-post--slide' : ''; ?><?php echo $_fpIsActive ? ' is-active' : ''; ?>"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-slide data-slide-index="<?php echo $_fpIndex; ?>" aria-hidden="<?php echo $_fpIsActive ? 'false' : 'true'; ?>" tabindex="<?php echo $_fpIsActive ? '0' : '-1'; ?>"<?php endif; ?>>
                 <?php if ($_fpThumb !== ''): ?>
                 <img src="<?php echo $_fpThumb; ?>" alt="<?php echo $_fpTitle; ?>"
-                     class="sb-featured-thumb<?php echo $_fpCustomThumb !== '' ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes(); ?> width="<?php echo (int) $_fpThumbWidth; ?>" height="<?php echo (int) $_fpThumbHeight; ?>">
+                     class="sb-featured-thumb<?php echo $_fpHasCustomThumb ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes(); ?> width="<?php echo (int) $_fpThumbWidth; ?>" height="<?php echo (int) $_fpThumbHeight; ?>">
                 <?php else: ?>
                 <div class="sb-featured-thumb sb-featured-thumb--placeholder" aria-hidden="true">
                     <?php echo mb_substr(strip_tags((string) ($_fp['title'] ?? '?')), 0, 1); ?>
@@ -204,7 +226,7 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if (!$_sbShowFeaturedPosts && $_sbShowProjects): ?>
         <div class="sb-widget sb-widget--projects">
-            <div class="sb-widget-title">🚀 Unsere Projekte</div>
+            <?php echo $_renderSidebarWidgetTitle('Unsere Projekte', '🚀'); ?>
             <div class="sb-project-cards-grid">
             <?php foreach ($_projectCards as [$pName, $pDesc, $pUrl, $pLogo]):
                 if (empty($pName) || empty($pUrl)) {
@@ -237,7 +259,7 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if (!$_sbShowFeaturedPosts && $_sbShowStatus): ?>
         <div class="sb-widget sb-widget--status">
-            <div class="sb-widget-title">🟢 <?php echo htmlspecialchars((string) $_sbStatusLabel, ENT_QUOTES); ?></div>
+            <?php echo $_renderSidebarWidgetTitle((string) $_sbStatusLabel, '🟢'); ?>
             <?php $_sbSvcLines = array_filter(array_map('trim', explode("\n", (string) $_sbStatusServices))); ?>
             <?php if (!empty($_sbSvcLines)): ?>
             <ul class="sb-status-list">
@@ -272,7 +294,7 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if (!$_sbShowFeaturedPosts && $_sbShowDownloads && !empty(trim((string) $_sbDownloadsItems))): ?>
         <div class="sb-widget sb-widget--downloads">
-            <div class="sb-widget-title">📥 <?php echo htmlspecialchars((string) $_sbDownloadsLabel, ENT_QUOTES); ?></div>
+            <?php echo $_renderSidebarWidgetTitle((string) $_sbDownloadsLabel, '📥'); ?>
             <ul class="sb-download-list">
             <?php foreach (array_filter(array_map('trim', explode("\n", (string) $_sbDownloadsItems))) as $_dl):
                 $_dlParts = explode('|', $_dl, 2);
@@ -311,7 +333,7 @@ if (empty($_showList) || $featuredPosts === []) {
         ], static fn($s) => !empty(trim((string) $s['url'])));
         if ($_sbShowSocial && !empty($_sbSocialList)): ?>
         <div class="sb-widget sb-widget--social">
-            <div class="sb-widget-title">👥 <?php echo htmlspecialchars((string) $_sbSocialLabel, ENT_QUOTES); ?></div>
+            <?php echo $_renderSidebarWidgetTitle((string) $_sbSocialLabel, '👥'); ?>
             <div class="sb-social-links">
                 <?php foreach ($_sbSocialList as $_sbKey => $_sbS): ?>
                 <a href="<?php echo htmlspecialchars((string) $_sbS['url'], ENT_QUOTES); ?>"
@@ -328,7 +350,7 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php if (!$_sbFeaturedActive && $_sbShowNotice && !empty($_sbNoticeTitle)): ?>
         <div class="sb-widget sb-widget--notice">
             <div class="sb-notice-body">
-                <div class="sb-widget-title sb-widget-title--spaced"><?php echo htmlspecialchars((string) $_sbNoticeTitle, ENT_QUOTES); ?></div>
+                <?php echo str_replace('class="sb-widget-title"', 'class="sb-widget-title sb-widget-title--spaced"', $_renderSidebarWidgetTitle((string) $_sbNoticeTitle)); ?>
                 <?php if (!empty($_sbNoticeText)): ?>
                 <p class="sb-notice-text"><?php echo htmlspecialchars((string) $_sbNoticeText, ENT_QUOTES); ?></p>
                 <?php endif; ?>

@@ -482,16 +482,15 @@ if (!function_exists('phinit_render_favorite_button')) {
             return '';
         }
 
+        if (!($favoriteControl['isLoggedIn'] ?? false)) {
+            return '';
+        }
+
         $isActive = (bool) ($favoriteControl['isFavorited'] ?? false);
         $class = 'content-favorite' . ($isActive ? ' content-favorite--active' : '');
         $icon = $isActive ? '★' : '☆';
         $label = htmlspecialchars((string) ($favoriteControl['label'] ?? 'Favorit'), ENT_QUOTES, 'UTF-8');
         $title = htmlspecialchars((string) ($favoriteControl['title'] ?? 'Favorit'), ENT_QUOTES, 'UTF-8');
-
-        if (!($favoriteControl['isLoggedIn'] ?? false)) {
-            $href = htmlspecialchars((string) ($favoriteControl['loginUrl'] ?? (SITE_URL . '/login')), ENT_QUOTES, 'UTF-8');
-            return '<a href="' . $href . '" class="' . $class . ' content-favorite--link" aria-label="' . $title . '" title="' . $title . '"><span class="content-favorite__icon" aria-hidden="true">' . $icon . '</span><span class="content-favorite__label">' . $label . '</span></a>';
-        }
 
         $contentType = htmlspecialchars((string) ($favoriteControl['contentType'] ?? 'post'), ENT_QUOTES, 'UTF-8');
         $contentId = (int) ($favoriteControl['contentId'] ?? 0);

@@ -282,8 +282,8 @@
 
 .page-header-block .content-favorite-form {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 0;
+    right: 0;
     z-index: 3;
     margin: 0;
 }
@@ -291,33 +291,35 @@
 .page-header-block .content-favorite {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    min-height: 38px;
-    padding: 8px 12px;
-    border: 1px solid rgba(148, 163, 184, .3);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, .92);
+    gap: 5px;
+    min-height: 26px;
+    padding: 5px 9px;
+    border: 1px solid rgba(148, 163, 184, .18);
+    border-top: 0;
+    border-right: 0;
+    border-radius: 0 0 0 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .98) 0%, rgba(248, 250, 252, .96) 100%);
     color: var(--text-primary);
     font-size: .78rem;
     font-weight: 700;
     text-decoration: none;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .05);
     transition: var(--transition-fast);
-    backdrop-filter: blur(8px);
 }
 
 .page-header-block .content-favorite:hover,
 .page-header-block .content-favorite:focus-visible {
-    border-color: rgba(13, 148, 136, .45);
+    border-color: rgba(13, 148, 136, .28);
     color: var(--accent-teal);
     text-decoration: none;
     outline: none;
-    transform: translateY(-1px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(241, 245, 249, .98) 100%);
 }
 
 .page-header-block .content-favorite--active {
-    background: rgba(20, 184, 166, .12);
-    border-color: rgba(13, 148, 136, .4);
+    background: linear-gradient(180deg, rgba(240, 253, 250, .98) 0%, rgba(236, 253, 245, .96) 100%);
+    border-color: rgba(13, 148, 136, .22);
     color: #0f766e;
 }
 
@@ -374,14 +376,14 @@
     }
 
     .page-header-block .content-favorite-form {
-        top: 10px;
-        right: 10px;
+        top: 0;
+        right: 0;
     }
 
     .page-header-block .content-favorite {
-        min-height: 34px;
-        padding: 7px 10px;
-        font-size: .74rem;
+        min-height: 24px;
+        padding: 4px 8px;
+        font-size: .78rem;
     }
 
     .page-toc__summary,

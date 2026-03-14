@@ -432,6 +432,10 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                     $_customImage = trim((string) ($_slot['custom_image'] ?? ''));
                     if ($_customImage !== '') {
                         $_fpPost['custom_sidebar_image'] = $_customImage;
+                        $_fpPost['featured_image'] = '';
+                        $_fpPost['sidebar_image_source'] = 'custom';
+                    } else {
+                        $_fpPost['sidebar_image_source'] = 'featured';
                     }
 
                     $sbFeaturedPosts[] = $_fpPost;
