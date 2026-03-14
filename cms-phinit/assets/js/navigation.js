@@ -30,6 +30,7 @@
         initShareButtons();
         initConsentBanner();
         initCodeCopyButtons();
+        initFeaturedSidebarTitleBadges();
         initFeaturedSidebarRotators();
         initPasskeys();
         initBackupCodeCopy();
@@ -443,6 +444,10 @@
 
     /* ── Consent Banner ───────────────────────────────────────── */
     function initConsentBanner() {
+        if (window.CMS_COOKIECONSENT_CONFIG || document.getElementById('cc-main')) {
+            return;
+        }
+
         const banner  = document.getElementById('consent-banner');
         const btnOk   = document.getElementById('consent-accept');
         const btnDecl = document.getElementById('consent-decline');
@@ -491,6 +496,49 @@
     }
 
     /* ── Homepage Sidebar Featured Rotator ──────────────────── */
+    function initFeaturedSidebarTitleBadges() {
+        const badges = Array.from(document.querySelectorAll('.sb-featured-title-badge'));
+        if (!badges.length) return;
+
+        let resizeTimerId = 0;
+
+        const getLineCount = (element) => {
+            const styles = window.getComputedStyle(element);
+            let lineHeight = Number.parseFloat(styles.lineHeight);
+
+            if (!Number.isFinite(lineHeight) || lineHeight <= 0) {
+                const fontSize = Number.parseFloat(styles.fontSize) || 12;
+                lineHeight = fontSize * 1.25;
+            }
+
+            const height = element.getBoundingClientRect().height;
+            return Math.max(1, Math.round(height / lineHeight));
+        };
+
+        const syncBadges = () => {
+            badges.forEach((badge) => {
+                const text = badge.querySelector('.sb-featured-title-badge__text');
+                if (!(text instanceof HTMLElement)) {
+                    return;
+                }
+
+                const isMultiline = getLineCount(text) > 1;
+                badge.classList.toggle('is-multiline', isMultiline);
+            });
+        };
+
+        const scheduleSync = () => {
+            window.requestAnimationFrame(syncBadges);
+        };
+
+        scheduleSync();
+        window.addEventListener('load', scheduleSync, { once: true });
+        window.addEventListener('resize', () => {
+            window.clearTimeout(resizeTimerId);
+            resizeTimerId = window.setTimeout(scheduleSync, 120);
+        }, { passive: true });
+    }
+
     function initFeaturedSidebarRotators() {
         const rotators = document.querySelectorAll('[data-featured-rotator]');
         if (!rotators.length) return;

@@ -84,6 +84,11 @@ try {
 }
 // Cookie Consent: Banner nur anzeigen wenn CMS-Admin cookie_consent_enabled = '1' gesetzt hat
 try {
+    if (class_exists('\\CMS\\Services\\CookieConsentService')
+        && \CMS\Services\CookieConsentService::getInstance()->isManagedExternally()
+    ) {
+        $_showConsent = false;
+    } else {
     $_db   = \CMS\Database::instance();
     $_stmt = $_db->prepare('SELECT option_value FROM ' . $_db->prefix() . 'settings WHERE option_name = ?');
     $_stmt->execute(['cookie_consent_enabled']);
@@ -98,6 +103,7 @@ try {
         } catch (\Throwable $_e2) {
             $_showConsent = true; // Customizer nicht erreichbar → zeigen wenn DB aktiv
         }
+    }
     }
 } catch (\Throwable $_e) {}
 

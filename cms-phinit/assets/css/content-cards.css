@@ -391,6 +391,45 @@ body.dark-mode .post-card:hover {
     background: #1e2d3d;
 }
 
+body.dark-mode .section-label {
+    background: var(--bg-dark-2);
+    color: var(--text-primary);
+    border-left-color: var(--accent-teal-light);
+}
+
+body.dark-mode .section-label.gold {
+    border-left-color: var(--accent-color);
+}
+
+body.dark-mode .home-section--grid .post-card-top-meta,
+body.dark-mode .home-section--grid .post-card-top-meta__read,
+body.dark-mode .post-card-meta,
+body.dark-mode .page-link,
+body.dark-mode .empty-state__text {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .post-card-meta__more,
+body.dark-mode .section-header a {
+    color: var(--accent-teal-light);
+}
+
+body.dark-mode .post-card-meta__more:hover,
+body.dark-mode .section-header a:hover {
+    color: #7dd3c7;
+}
+
+body.dark-mode .page-link {
+    background: var(--bg-dark-2);
+    border-color: var(--border-dark);
+    color: var(--text-primary);
+}
+
+body.dark-mode .page-link.dots {
+    background: transparent;
+    color: var(--text-muted);
+}
+
 @media (max-width: 1024px) {
     .posts-grid {
         grid-template-columns: repeat(2, 1fr);

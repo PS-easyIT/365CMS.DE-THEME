@@ -80,9 +80,13 @@ html.dark-mode body {
     --bg-primary:    #1a2332;
     --bg-secondary:  #111827;
     --bg-tertiary:   #1e2d3d;
-    --text-primary:  #e2e8f0;
-    --text-secondary:#cbd5e1;
-    --text-muted:    #94a3b8;
+    --text-primary:  #f1f5f9;
+    --text-secondary:#e2e8f0;
+    --text-muted:    #cbd5e1;
+    --text-light:    #94a3b8;
+    --text-nav:      rgba(241,245,249,.94);
+    --text-nav-member: rgba(226,232,240,.9);
+    --text-nav-quicklinks: #dbe5f1;
     --border-color:  #2a3a4d;
 }
 
@@ -316,8 +320,12 @@ body.home .page-wrap {
         --bg-secondary:  #111827;
         --bg-tertiary:   #1e2d3d;
         --text-primary:  #f1f5f9;
-        --text-secondary:#cbd5e1;
-        --text-muted:    #94a3b8;
+        --text-secondary:#e2e8f0;
+        --text-muted:    #cbd5e1;
+        --text-light:    #94a3b8;
+        --text-nav:      rgba(241,245,249,.94);
+        --text-nav-member: rgba(226,232,240,.9);
+        --text-nav-quicklinks: #dbe5f1;
         --border-color:  #334155;
     }
 }

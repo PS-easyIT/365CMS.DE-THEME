@@ -172,6 +172,11 @@ trait CMS_Phinit_Theme_Assets_Trait
         return $slug !== '' && !str_contains($slug, '/');
     }
 
+    private function isCookieConsentPageRequest(string $path): bool
+    {
+        return $path === '/cookie-einstellungen';
+    }
+
     public function enqueueStyles(): void
     {
         $requestPath = $this->getRequestPath();
@@ -181,6 +186,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $loadPostDetailCss = $this->isPostRequest($requestPath);
         $loadPostSidebarCss = $this->isPostRequest($requestPath);
         $loadPageDetailCss = $this->isPageDetailRequest($requestPath, $isHubSiteRequest);
+        $loadCookieConsentCss = $this->isCookieConsentPageRequest($requestPath);
         $loadPageExtrasCss = $this->isPageExtrasRequest($requestPath);
         $loadRichContentCss = $this->isRichContentRequest($requestPath, $isHubSiteRequest);
         $loadTemplateCss = $this->isTemplateStylesRequest($requestPath, $isHubSiteRequest);
@@ -196,6 +202,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $pageDetailCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-detail.css';
         $postSidebarCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/post-sidebar.css';
         $pageExtrasCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-extras.css';
+        $pageCookieConsentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-cookie-consent.css';
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
         $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
@@ -248,6 +255,11 @@ trait CMS_Phinit_Theme_Assets_Trait
         if ($loadPageDetailCss && file_exists($pageDetailCssFile)) {
             $pageDetailVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageDetailCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-detail.css', $pageDetailVersion));
+        }
+
+        if ($loadCookieConsentCss && file_exists($pageCookieConsentCssFile)) {
+            $pageCookieConsentVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageCookieConsentCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/page-cookie-consent.css', $pageCookieConsentVersion));
         }
 
         if ($loadPageExtrasCss && file_exists($pageExtrasCssFile)) {

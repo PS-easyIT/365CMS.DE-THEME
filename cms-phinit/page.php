@@ -48,6 +48,7 @@ if (is_object($page)) {
 
 $pageId = (int)($page['id'] ?? 0);
 $pageContent = (string)($page['content'] ?? '');
+$isCookieConsentPage = (($page['content_type'] ?? '') === 'cookie_consent') || (($page['slug'] ?? '') === 'cookie-einstellungen');
 if (!$pageProvidedByRouter) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
 }
@@ -101,6 +102,8 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <div class="page-content page-content--hub" data-anim>
         <?php echo $pageContent; ?>
     </div>
+<?php elseif ($isCookieConsentPage): ?>
+    <?php include __DIR__ . '/partials/page-cookie-consent.php'; ?>
 <?php else: ?>
 
     <!-- Seiten-Titel -->

@@ -335,7 +335,32 @@ body.dark-mode .quicklinks-bar {
 }
 
 body.dark-mode .quicklinks-bar a {
-    color: #94a3b8;
+    color: var(--text-nav-quicklinks, #dbe5f1);
+}
+
+body.dark-mode .member-bar__greeting {
+    color: rgba(226,232,240,.82);
+}
+
+body.dark-mode .member-bar__greeting strong {
+    color: rgba(248,250,252,.98);
+}
+
+body.dark-mode .member-bar__link,
+body.dark-mode .hdr-tools .util-link,
+body.dark-mode .main-nav a,
+body.dark-mode .main-nav__toggle,
+body.dark-mode .mobile-menu a {
+    color: var(--text-nav, rgba(241,245,249,.94));
+}
+
+body.dark-mode .sub-nav a {
+    color: var(--text-nav-quicklinks, #dbe5f1);
+}
+
+body.dark-mode .sub-nav a:hover {
+    background: rgba(255,255,255,.08);
+    color: #ffffff;
 }
 
 .hdr-sub { height: var(--quicklinks-h); align-items: center; }

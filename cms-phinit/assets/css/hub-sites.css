@@ -701,6 +701,38 @@ body.dark-mode .cms-hub-site__card-meta {
     color: var(--text-secondary);
 }
 
+body.dark-mode .cms-hub-site__quicklink,
+body.dark-mode .cms-hub-site__card-footer,
+body.dark-mode .cms-hub-site__section-note {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .cms-hub-site__quicklink {
+    background: color-mix(in srgb, var(--bg-dark-3) 92%, white 8%);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .cms-hub-site__quicklink:hover {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--cms-hub-accent) 16%, var(--bg-dark-3) 84%);
+}
+
+body.dark-mode .cms-hub-site__quicklink-icon,
+body.dark-mode .cms-hub-site__section-icon {
+    background: rgba(255,255,255,.08);
+}
+
+body.dark-mode .cms-hub-site__card-footer,
+body.dark-mode .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
+body.dark-mode .cms-hub-site__card-link--image-right .cms-hub-site__card-media {
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .cms-hub-site__cta {
+    background: rgba(255,255,255,.96);
+    color: var(--cms-hub-accent);
+}
+
 @media (max-width: 720px) {
     .cms-hub-site__grid,
     .cms-hub-site__grid--cols-2,

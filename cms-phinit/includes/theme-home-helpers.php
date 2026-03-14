@@ -491,9 +491,45 @@ function phinit_get_homepage_feed_sections(): array
         return [];
     }
 
+    $hasFeedConsent = true;
+
+    if (class_exists('CMS_Feed')) {
+        $feedPlugin = \CMS_Feed::instance();
+        if (method_exists($feedPlugin, 'has_public_feed_consent')) {
+            $hasFeedConsent = $feedPlugin->has_public_feed_consent();
+        }
+    }
+
+    if ($hasFeedConsent && class_exists('\\CMS\\Services\\CookieConsentService')) {
+        $hasFeedConsent = \CMS\Services\CookieConsentService::getInstance()->hasConsentForService('cms_feed', 'external_media', true);
+    }
+
+    if (!$hasFeedConsent) {
+        return [];
+    }
+
     try {
         $feedDb = \CMS_Feed_Database::instance();
         $feedSections = [];
+        $usedChannelIds = [];
+
+        $appendFeedSection = static function (array &$sections, array &$usedIds, array $channel, int $feedCount, \CMS_Feed_Database $database): void {
+            $channelId = (int)($channel['id'] ?? 0);
+            if ($channelId <= 0 || in_array($channelId, $usedIds, true) || empty($channel['is_active'])) {
+                return;
+            }
+
+            $items = (array)$database->get_items(['channel_id' => $channelId], 0, max(1, $feedCount));
+            if ($items === []) {
+                return;
+            }
+
+            $sections[] = [
+                'channel' => $channel,
+                'items' => $items,
+            ];
+            $usedIds[] = $channelId;
+        };
 
         foreach ([[$feed1Id, $feed1Count], [$feed2Id, $feed2Count]] as [$feedId, $feedCount]) {
             if ($feedId <= 0) {
@@ -501,14 +537,28 @@ function phinit_get_homepage_feed_sections(): array
             }
 
             $channel = $feedDb->get_channel($feedId);
-            if (!$channel || empty($channel['is_active'])) {
+            if (!$channel) {
                 continue;
             }
 
-            $feedSections[] = [
-                'channel' => (array) $channel,
-                'items' => (array) $feedDb->get_items(['channel_id' => $feedId], 0, $feedCount),
-            ];
+            $appendFeedSection($feedSections, $usedChannelIds, (array)$channel, (int)$feedCount, $feedDb);
+        }
+
+        if (count($feedSections) < 2) {
+            $fallbackCounts = [$feed1Count, $feed2Count];
+            $fallbackChannels = array_values(array_filter(
+                (array)$feedDb->get_channels(),
+                static fn(array $channel): bool => !empty($channel['is_active'])
+            ));
+
+            foreach ($fallbackChannels as $index => $channel) {
+                $count = $fallbackCounts[count($feedSections)] ?? end($fallbackCounts) ?: 5;
+                $appendFeedSection($feedSections, $usedChannelIds, (array)$channel, (int)$count, $feedDb);
+
+                if (count($feedSections) >= 2) {
+                    break;
+                }
+            }
         }
 
         return $feedSections;

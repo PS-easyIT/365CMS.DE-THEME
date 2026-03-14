@@ -185,7 +185,7 @@ if (empty($_showList) || $featuredPosts === []) {
                 </div>
                 <?php endif; ?>
                 <div class="sb-featured-body">
-                    <span class="sb-featured-title-badge"><?php echo $_fpTitle; ?></span>
+                    <span class="sb-featured-title-badge"><span class="sb-featured-title-badge__text"><?php echo $_fpTitle; ?></span></span>
                     <div class="sb-featured-body-inner">
                         <span class="sb-featured-title"><?php echo $_fpTitle; ?></span>
                     </div>

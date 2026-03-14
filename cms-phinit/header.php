@@ -169,6 +169,21 @@ try {
 $_languageSwitchUrl = '';
 $_languageSwitchDisplay = '';
 if ($_showLanguageSwitch) {
+    $normalizeLanguageLabel = static function (string $label, string $targetLocale): string {
+        $normalized = strtoupper(trim($label));
+        $targetLocale = strtolower(trim($targetLocale));
+
+        if ($targetLocale === 'en' && in_array($normalized, ['GB', 'UK', 'US'], true)) {
+            return 'EN';
+        }
+
+        if ($targetLocale === 'de' && in_array($normalized, ['DE', 'GER'], true)) {
+            return 'DE';
+        }
+
+        return $normalized;
+    };
+
     $flagToEmoji = static function (string $countryCode): string {
         $countryCode = strtoupper(preg_replace('/[^A-Z]/i', '', $countryCode) ?? '');
         if (strlen($countryCode) !== 2) {
@@ -192,11 +207,13 @@ if ($_showLanguageSwitch) {
     if ($_switchTargetLocale === 'de') {
         $_languageFlag = 'de';
         $_languageAriaLabel = 'Zur deutschen Version wechseln';
-        $_languageSwitchDisplay = $_languageMode === 'flag' ? $flagToEmoji('de') : 'DE';
+        $_languageSwitchDisplay = $_languageMode === 'flag'
+            ? $flagToEmoji('de')
+            : $normalizeLanguageLabel('DE', $_switchTargetLocale);
     } else {
         $_languageSwitchDisplay = $_languageMode === 'flag'
             ? $flagToEmoji($_languageFlag)
-            : ($_languageLabel !== '' ? $_languageLabel : strtoupper(trim($_switchTargetLocale)));
+            : $normalizeLanguageLabel($_languageLabel !== '' ? $_languageLabel : strtoupper(trim($_switchTargetLocale)), $_switchTargetLocale);
     }
 }
 ?>
@@ -318,7 +335,6 @@ if ($_showLanguageSwitch) {
                     <span class="logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
                     <?php endif; ?>
                 <?php else: ?>
-                    <span class="logo-icon" aria-hidden="true"><?php echo htmlspecialchars(mb_substr($_logoPart1, 0, 1)); ?></span>
                     <span class="logo-text"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></span>
                 <?php endif; ?>
             </a>

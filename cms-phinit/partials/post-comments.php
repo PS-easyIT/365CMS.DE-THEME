@@ -18,7 +18,6 @@ $commentNameValue = trim((string) ($_POST['author'] ?? $_POST['comment_name'] ??
 $commentEmailValue = trim((string) ($_POST['email'] ?? $_POST['comment_email'] ?? ''));
 $commentUser = class_exists('\\CMS\\Auth') && \CMS\Auth::isLoggedIn() ? \CMS\Auth::getCurrentUser() : null;
 $commentUserName = trim((string) ($commentUser->display_name ?? $commentUser->username ?? ''));
-$commentUserEmail = trim((string) ($commentUser->email ?? ''));
 $commentUserInitials = 'M';
 
 if ($commentUserName !== '') {
@@ -145,8 +144,8 @@ if (!$showComments) {
                             <div class="comment-profile-card__avatar" aria-hidden="true"><?php echo htmlspecialchars($commentUserInitials, ENT_QUOTES); ?></div>
                             <div class="comment-profile-card__content">
                                 <strong class="comment-profile-card__name"><?php echo htmlspecialchars($commentUserName !== '' ? $commentUserName : 'Mitglied', ENT_QUOTES); ?></strong>
-                                <?php if ($commentUserEmail !== ''): ?>
-                                <span class="comment-profile-card__email"><?php echo htmlspecialchars($commentUserEmail, ENT_QUOTES); ?></span>
+                                <?php if ($commentUserName !== ''): ?>
+                                <span class="comment-profile-card__email"><?php echo htmlspecialchars($commentUserName, ENT_QUOTES); ?></span>
                                 <?php endif; ?>
                                 <span class="comment-profile-card__meta">Dein Kommentar wird automatisch mit deinem hinterlegten Mitgliederprofil eingereicht.</span>
                             </div>

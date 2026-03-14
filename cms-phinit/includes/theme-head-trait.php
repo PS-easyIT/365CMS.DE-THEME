@@ -146,7 +146,7 @@ trait CMS_Phinit_Theme_Head_Trait
             $db = \CMS\Database::instance();
             $prefix = $db->prefix();
             $p = $db->get_row(
-                "SELECT p.*, u.display_name AS author_name
+                "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}users u ON u.id = p.author_id
                  WHERE p.slug = ? AND p.status = 'published' LIMIT 1",

@@ -11,7 +11,7 @@ if ($feedSections === []) {
     return;
 }
 ?>
-<section class="content-section home-section home-section--rss" data-anim data-anim-delay="3">
+<section class="content-section home-section home-section--rss" data-anim data-anim-delay="3" data-cms-feed-protected>
     <div class="feed-dual-grid">
         <?php foreach ($feedSections as $feedSection): ?>
         <section class="feed-dual-col">

@@ -1040,6 +1040,68 @@ body.dark-mode .comment-profile-card {
     box-shadow: none;
 }
 
+body.dark-mode .post-meta,
+body.dark-mode .post-meta__label,
+body.dark-mode .post-share,
+body.dark-mode .share-btn,
+body.dark-mode .post-alt-language,
+body.dark-mode .comment-form-wrap__intro,
+body.dark-mode .comment-profile-card__email,
+body.dark-mode .comment-profile-card__meta,
+body.dark-mode .field-optional,
+body.dark-mode .form-helper-text {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .post-body,
+body.dark-mode .comment-text,
+body.dark-mode .comment-anonymous-toggle__text,
+body.dark-mode .comment-empty-state,
+body.dark-mode .comment-empty-state__content p {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .post-header,
+body.dark-mode .post-body,
+body.dark-mode .post-nav a,
+body.dark-mode .comments-section,
+body.dark-mode .comment-profile-card {
+    background: var(--bg-dark-2);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .post-hero-media,
+body.dark-mode .post-meta,
+body.dark-mode .post-share,
+body.dark-mode .post-nav a,
+body.dark-mode .comments-section__meta {
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .share-btn {
+    background: var(--bg-dark-3);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .post-nav .direction {
+    color: var(--text-muted);
+}
+
+body.dark-mode .comment-form-wrap h4,
+body.dark-mode .comment-profile-card__name,
+body.dark-mode .comment-anonymous-toggle__text strong,
+body.dark-mode .comment-empty-state__content strong {
+    color: var(--text-primary);
+}
+
+body.dark-mode .form-group label {
+    color: var(--text-muted);
+}
+
+body.dark-mode .comment-anonymous-toggle__text small {
+    color: var(--text-secondary);
+}
+
 body.dark-mode .comment-profile-card__status {
     background: rgba(20, 184, 166, .16);
     color: #7dd3fc;

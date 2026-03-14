@@ -190,6 +190,32 @@ html.dark-mode body .toc {
     border-color: var(--border-dark);
 }
 
+body.dark-mode .social-widget,
+html.dark-mode body .social-widget {
+    background: var(--bg-dark-3);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .toc-title__count {
+    background: rgba(255,255,255,.06);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .toc-title__chevron,
+body.dark-mode .toc-muted-count,
+body.dark-mode .toc-count,
+body.dark-mode .toc-list li a {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .toc--collapsible .toc-panel {
+    border-top-color: var(--border-dark);
+}
+
+body.dark-mode .social-widget-title {
+    color: var(--text-primary);
+}
+
 @media (max-width: 768px) {
     .content-layout {
         grid-template-columns: 1fr;

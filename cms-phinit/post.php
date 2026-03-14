@@ -97,7 +97,7 @@ if (isset($post) && !empty($post)) {
 
     try {
         $postObj = $db->get_row(
-            "SELECT p.*, u.display_name AS author_name, c.name AS category_name
+            "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name, c.name AS category_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}users u ON u.id = p.author_id
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id

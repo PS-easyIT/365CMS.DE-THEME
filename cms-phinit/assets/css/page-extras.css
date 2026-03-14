@@ -369,6 +369,30 @@ body.dark-mode .search-field input {
     color: var(--text-white);
 }
 
+body.dark-mode .search-summary-card__label,
+body.dark-mode .search-result-date,
+body.dark-mode .search-result-path,
+body.dark-mode .search-empty-state__text,
+body.dark-mode .search-results-summary,
+body.dark-mode .error-desc,
+body.dark-mode .error-suggestions__copy,
+body.dark-mode .empty-state,
+body.dark-mode .empty-state__text {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .search-result-excerpt,
+body.dark-mode .search-empty-state__tips,
+body.dark-mode .error-help-card__text,
+body.dark-mode .error-actions .btn-outline,
+body.dark-mode .error-actions .btn-ghost {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .search-result-footer {
+    border-top-color: var(--border-dark);
+}
+
 body.dark-mode .search-result-row__icon {
     background: rgba(20, 184, 166, .14);
 }
@@ -611,6 +635,11 @@ body.dark-mode .error-hero__eyebrow {
 body.dark-mode .error-suggestions__eyebrow {
     background: rgba(232, 168, 56, .16);
     color: #f7c66b;
+}
+
+body.dark-mode .error-actions .btn-outline,
+body.dark-mode .error-actions .btn-ghost {
+    border-color: var(--border-dark);
 }
 
 @media (max-width: 480px) {

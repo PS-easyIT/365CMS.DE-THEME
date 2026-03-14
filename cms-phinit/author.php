@@ -21,6 +21,7 @@ $authorProfileUrl = $siteUrl . '/author/' . rawurlencode($authorSlug !== '' ? $a
 $showActivity = !empty($author['show_activity']);
 $authorInitials = 'AU';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$displayNameLabel = $currentLocale === 'en' ? 'Display name' : 'Anzeigename';
 
 $authorBioNormalized = preg_replace('/\s+/u', ' ', mb_strtolower($authorBio, 'UTF-8'));
 $authorBioPlaceholders = [
@@ -72,23 +73,29 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
 
         <aside class="author-profile-sidebar" aria-label="<?php echo htmlspecialchars(phinit_t('public_profile_data', [], $currentLocale), ENT_QUOTES); ?>">
             <h2><?php echo htmlspecialchars(phinit_t('public_profile_data', [], $currentLocale), ENT_QUOTES); ?></h2>
-            <?php if (!empty($authorDetails)): ?>
+            <?php if (!empty($authorDetails) || $authorName !== ''): ?>
             <div class="author-profile-details">
+                <?php if ($authorName !== ''): ?>
+                <div class="author-profile-detail">
+                    <span class="author-profile-detail__label"><?php echo htmlspecialchars($displayNameLabel, ENT_QUOTES); ?></span>
+                    <div class="author-profile-detail__value"><?php echo htmlspecialchars($authorName, ENT_QUOTES); ?></div>
+                </div>
+                <?php endif; ?>
                 <?php foreach ($authorDetails as $detail): ?>
                 <?php
                     $detail = is_array($detail) ? $detail : [];
                     $detailLabel = trim((string) ($detail['label'] ?? '')); 
                     $detailValue = trim((string) ($detail['value'] ?? ''));
                     $detailType = trim((string) ($detail['type'] ?? 'text'));
-                    if ($detailLabel === '' || $detailValue === '') {
+                    if ($detailLabel === '' || $detailValue === '' || $detailType === 'email') {
                         continue;
                     }
                 ?>
                 <div class="author-profile-detail">
                     <span class="author-profile-detail__label"><?php echo htmlspecialchars($detailLabel, ENT_QUOTES); ?></span>
                     <div class="author-profile-detail__value">
-                        <?php if (in_array($detailType, ['url', 'email'], true)): ?>
-                            <?php $href = $detailType === 'email' ? 'mailto:' . $detailValue : $detailValue; ?>
+                        <?php if ($detailType === 'url'): ?>
+                            <?php $href = $detailValue; ?>
                             <a href="<?php echo htmlspecialchars($href, ENT_QUOTES); ?>"<?php echo $detailType === 'url' ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
                         <?php else: ?>
                             <?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?>
