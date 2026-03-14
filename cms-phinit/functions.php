@@ -11,12 +11,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-defined('CMS_PHINIT_THEME_VERSION') || define('CMS_PHINIT_THEME_VERSION', '1.4.1');
+defined('CMS_PHINIT_THEME_VERSION') || define('CMS_PHINIT_THEME_VERSION', '1.4.2');
 defined('CMS_PHINIT_THEME_DIR') || define('CMS_PHINIT_THEME_DIR', THEME_PATH . 'cms-phinit/');
 defined('CMS_PHINIT_THEME_URL') || define('CMS_PHINIT_THEME_URL', rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-template-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-content-helpers.php';
+require_once CMS_PHINIT_THEME_DIR . 'includes/theme-media-archive-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-assets-trait.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-head-trait.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-navigation-trait.php';

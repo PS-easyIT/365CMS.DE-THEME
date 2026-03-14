@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.5.4",
-  "release_date": "2026-03-11",
+  "release_date": "2026-03-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.4.2",
+      "date": "2026-03-14",
+      "changes": [
+        "functions.php + page.php: sichere Bildarchiv-Seite für lokale Artikelbilder und Cover ergänzt",
+        "includes/theme-media-archive-helpers.php: Medienkategorien, lokale Bildreferenzen und Artikelnutzung robust zusammengeführt",
+        "partials/page-image-archive.php + assets/css/page-image-archive.css: kategorisierte Archivübersicht mit Nutzungslisten und Statistik ergänzt",
+        "includes/theme-assets-trait.php: Bildarchiv-Stylesheet nur für Archiv-Slugs bedingt eingebunden"
+      ]
+    },
     {
       "version": "1.4.1",
       "date": "2026-03-11",
