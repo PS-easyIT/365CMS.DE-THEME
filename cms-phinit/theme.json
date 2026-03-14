@@ -598,34 +598,54 @@
           "default": true
         },
         "show_info_card3": {
-          "label": "3. Themenbereich-Card anzeigen (Repo-Card)",
+          "label": "3. Themenbereich-Card anzeigen (Projekte-Card)",
           "type": "checkbox",
           "default": false
         },
         "info_card3_title": {
           "label": "3. Card: Titel",
           "type": "text",
-          "default": "💻 GitHub / GitLab"
+          "default": "🚀 Projekte"
         },
         "info_card3_text": {
           "label": "3. Card: Beschreibung",
           "type": "textarea",
-          "default": "Skripte, Tools und Automatisierungen im öffentlichen Repository."
+          "default": "Wichtige Plattformen, Repositories und Tools im Schnellzugriff."
         },
         "info_card3_link_text": {
-          "label": "3. Card: Button-Text",
+          "label": "3. Card: Projekt 1 Name",
           "type": "text",
-          "default": "Zum Repository →"
+          "default": "365CMS.DE"
         },
         "info_card3_link_url": {
-          "label": "3. Card: Button-URL (absolut oder relativ)",
+          "label": "3. Card: Projekt 1 URL (absolut oder relativ)",
+          "type": "url",
+          "default": "https://365cms.de"
+        },
+        "info_card3_link_text_2": {
+          "label": "3. Card: Projekt 2 Name",
+          "type": "text",
+          "default": "365NETWORK.DE"
+        },
+        "info_card3_link_url_2": {
+          "label": "3. Card: Projekt 2 URL (absolut oder relativ)",
+          "type": "url",
+          "default": "https://365network.de"
+        },
+        "info_card3_link_text_3": {
+          "label": "3. Card: Projekt 3 Name",
+          "type": "text",
+          "default": "GitHub"
+        },
+        "info_card3_link_url_3": {
+          "label": "3. Card: Projekt 3 URL (absolut oder relativ)",
           "type": "url",
           "default": "https://github.com/"
         },
         "info_card3_badge": {
-          "label": "3. Card: Badge-Text (z. B. \"25+ Repos\")",
+          "label": "3. Card: Badge-Text",
           "type": "text",
-          "default": "25+ Repos"
+          "default": "Projekte"
         },
         "info_card3_style": {
           "label": "3. Card: Stil",
@@ -634,7 +654,7 @@
           "options": [
             {"value": "default", "label": "Standard (Teal-Akzent)"},
             {"value": "gold",    "label": "Gold"},
-            {"value": "repo",    "label": "Repo-Card (dunkel)"}
+            {"value": "repo",    "label": "Projekte-Card"}
           ]
         },
         "show_feed_section": {

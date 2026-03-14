@@ -185,18 +185,6 @@ if (empty($_showList) || $featuredPosts === []) {
                 </div>
                 <?php endif; ?>
                 <div class="sb-featured-body">
-                    <?php if ($_fpCat !== '' || $_fpDate !== ''): ?>
-                    <div class="sb-featured-badges">
-                        <?php if ($_fpCat !== ''): ?>
-                        <span class="sb-featured-cat"><?php echo $_fpCat; ?></span>
-                        <?php endif; ?>
-                        <?php if ($_fpDate !== ''): ?>
-                        <span class="sb-featured-meta-badge">
-                            <time datetime="<?php echo htmlspecialchars($_fpDateIso, ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fpDate, ENT_QUOTES); ?></time>
-                        </span>
-                        <?php endif; ?>
-                    </div>
-                    <?php endif; ?>
                     <span class="sb-featured-title-badge"><?php echo $_fpTitle; ?></span>
                     <div class="sb-featured-body-inner">
                         <span class="sb-featured-title"><?php echo $_fpTitle; ?></span>

@@ -20,6 +20,7 @@ $updatedAt = (string) ($post['updated_at'] ?? '');
 $categorySlug = urlencode(phinit_display_text($post['category_name'] ?? ''));
 $authorId = (int) ($post['author_id'] ?? 0);
 $authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 ?>
 <header class="post-header" data-anim>
 
@@ -33,8 +34,8 @@ $authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
                <?php echo phinit_image_loading_attributes(true); ?>
              itemprop="image">
         <?php if ($showReadingTime && $readingTime > 0): ?>
-        <span class="post-hero-reading-badge" aria-label="Lesezeit <?php echo (int) $readingTime; ?> Minuten">
-            &#x23F1; <strong><?php echo (int) $readingTime; ?></strong>&thinsp;Min.
+        <span class="post-hero-reading-badge" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>">
+            <?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>
         </span>
         <?php endif; ?>
     </div>
@@ -51,7 +52,7 @@ $authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
                 <span class="post-meta__icon" aria-hidden="true">📅</span>
                 <strong itemprop="datePublished">
                 <time datetime="<?php echo htmlspecialchars($publishedAt, ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars(date('d.m.Y', strtotime($publishedAt !== '' ? $publishedAt : 'now')), ENT_QUOTES); ?>
+                    <?php echo htmlspecialchars(phinit_format_date($publishedAt !== '' ? $publishedAt : 'now', 'numeric', $currentLocale), ENT_QUOTES); ?>
                 </time>
                 </strong>
             </span>
@@ -75,16 +76,15 @@ $authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
             <?php endif; ?>
             <?php if ($showReadingTime && $readingTime > 0 && (!$showPostHero || empty($post['featured_image']))): ?>
             <span class="post-meta__item reading-time-badge">
-                <span class="post-meta__icon" aria-hidden="true">&#x23F1;</span>
-                <strong><?php echo $readingTime; ?></strong>&thinsp;Min.
+                <?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>
             </span>
             <?php endif; ?>
             <?php if ($commentCount > 0): ?>
             <span class="post-meta__item post-meta__item--comments">
                 <?php if ($commentLinkTarget !== ''): ?>
-                <a href="<?php echo htmlspecialchars($commentLinkTarget, ENT_QUOTES); ?>" class="post-meta__link"><span class="post-meta__icon" aria-hidden="true">💬</span><?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></a>
+                <a href="<?php echo htmlspecialchars($commentLinkTarget, ENT_QUOTES); ?>" class="post-meta__link"><span class="post-meta__icon" aria-hidden="true">💬</span><?php echo htmlspecialchars(phinit_comment_count_text($commentCount, $currentLocale), ENT_QUOTES); ?></a>
                 <?php else: ?>
-                <span class="post-meta__icon" aria-hidden="true">💬</span><?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?>
+                <span class="post-meta__icon" aria-hidden="true">💬</span><?php echo htmlspecialchars(phinit_comment_count_text($commentCount, $currentLocale), ENT_QUOTES); ?>
                 <?php endif; ?>
             </span>
             <?php endif; ?>
@@ -97,9 +97,9 @@ $authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
             <?php if ($updatedAt !== '' && $updatedAt !== $publishedAt): ?>
             <span class="post-meta__item post-meta__item--updated">
                 <span class="post-meta__icon" aria-hidden="true">🔄</span>
-                <span class="post-meta__label">Aktualisiert:</span>
+                <span class="post-meta__label"><?php echo htmlspecialchars(phinit_t('updated_label', [], $currentLocale), ENT_QUOTES); ?></span>
                 <time datetime="<?php echo htmlspecialchars($updatedAt, ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars(date('d.m.Y', strtotime($updatedAt)), ENT_QUOTES); ?>
+                    <?php echo htmlspecialchars(phinit_format_date($updatedAt, 'numeric', $currentLocale), ENT_QUOTES); ?>
                 </time>
             </span>
             <?php endif; ?>

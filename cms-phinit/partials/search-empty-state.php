@@ -8,30 +8,33 @@ if (!defined('ABSPATH')) {
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : '';
 $queryTrimmed = isset($queryTrimmed) ? (string) $queryTrimmed : '';
 $searchEmptyStateMode = isset($searchEmptyStateMode) ? (string) $searchEmptyStateMode : 'idle';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$searchUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/search', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/search';
+$blogUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog';
 ?>
 <?php if ($searchEmptyStateMode === 'query'): ?>
 <section class="search-empty-state search-empty-state--query" data-anim data-anim-delay="2">
     <p class="search-empty-state__icon">🔍</p>
-    <h2 class="search-empty-state__title">Keine Ergebnisse</h2>
+    <h2 class="search-empty-state__title"><?php echo htmlspecialchars(phinit_t('no_results', [], $currentLocale), ENT_QUOTES); ?></h2>
     <p class="search-empty-state__text">
-        Für „<strong><?php echo htmlspecialchars($queryTrimmed, ENT_QUOTES); ?></strong>“ wurden leider keine passenden Inhalte gefunden. Versuche einen allgemeineren Begriff oder nimm den Typ-Filter zurück.
+        <?php echo htmlspecialchars(phinit_t('no_results_for', ['query' => $queryTrimmed], $currentLocale), ENT_QUOTES); ?>
     </p>
     <ul class="search-empty-state__tips">
-        <li>Nutze kürzere oder allgemeinere Begriffe.</li>
-        <li>Teste ohne Typ-Filter, falls einer aktiv ist.</li>
-        <li>Prüfe alternative Schreibweisen oder Synonyme.</li>
+        <li><?php echo htmlspecialchars(phinit_t('search_tip_1', [], $currentLocale), ENT_QUOTES); ?></li>
+        <li><?php echo htmlspecialchars(phinit_t('search_tip_2', [], $currentLocale), ENT_QUOTES); ?></li>
+        <li><?php echo htmlspecialchars(phinit_t('search_tip_3', [], $currentLocale), ENT_QUOTES); ?></li>
     </ul>
     <div class="search-empty-state__actions">
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/search" class="btn btn-outline">Neue Suche starten</a>
+        <a href="<?php echo htmlspecialchars($searchUrl, ENT_QUOTES); ?>" class="btn btn-outline"><?php echo htmlspecialchars(phinit_t('new_search', [], $currentLocale), ENT_QUOTES); ?></a>
     </div>
 </section>
 <?php else: ?>
 <section class="search-empty-state search-empty-state--idle" data-anim data-anim-delay="2">
     <p class="search-empty-state__icon">🔎</p>
-    <h2 class="search-empty-state__title">Suche starten</h2>
-    <p class="search-empty-state__text">Gib einen Suchbegriff ein, um Artikel, Seiten und weitere Inhalte in einer kompakten Ergebnisübersicht zu finden.</p>
+    <h2 class="search-empty-state__title"><?php echo htmlspecialchars(phinit_t('search_intro_title', [], $currentLocale), ENT_QUOTES); ?></h2>
+    <p class="search-empty-state__text"><?php echo htmlspecialchars(phinit_t('search_intro_text', [], $currentLocale), ENT_QUOTES); ?></p>
     <div class="search-empty-state__actions">
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog" class="btn btn-outline">Zum Blog</a>
+        <a href="<?php echo htmlspecialchars($blogUrl, ENT_QUOTES); ?>" class="btn btn-outline"><?php echo htmlspecialchars(phinit_t('go_to_blog', [], $currentLocale), ENT_QUOTES); ?></a>
     </div>
 </section>
 <?php endif; ?>

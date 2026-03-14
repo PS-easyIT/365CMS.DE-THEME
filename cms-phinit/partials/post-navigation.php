@@ -8,15 +8,18 @@ if (!defined('ABSPATH')) {
 $prevPost = isset($prevPost) && is_array($prevPost) ? $prevPost : null;
 $nextPost = isset($nextPost) && is_array($nextPost) ? $nextPost : null;
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$permalinkService = class_exists('CMS\\Services\\PermalinkService') ? \CMS\Services\PermalinkService::getInstance() : null;
 
 if (!$prevPost && !$nextPost) {
     return;
 }
 ?>
-<nav class="post-nav" aria-label="Artikel-Navigation">
+<nav class="post-nav" aria-label="<?php echo htmlspecialchars(phinit_t('article_navigation', [], $currentLocale), ENT_QUOTES); ?>">
     <?php if ($prevPost): ?>
-    <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
-        <span class="direction">← Vorheriger Beitrag</span>
+    <?php $prevUrl = $permalinkService ? $permalinkService->buildPostUrl($prevPost, $currentLocale) : ($siteUrl . '/blog/' . ($prevPost['slug'] ?? '')); ?>
+    <a href="<?php echo htmlspecialchars($prevUrl, ENT_QUOTES); ?>">
+        <span class="direction"><?php echo htmlspecialchars(phinit_t('previous_post', [], $currentLocale), ENT_QUOTES); ?></span>
         <span class="nav-title"><?php echo phinit_escape_text($prevPost['title'] ?? ''); ?></span>
     </a>
     <?php else: ?>
@@ -24,8 +27,9 @@ if (!$prevPost && !$nextPost) {
     <?php endif; ?>
 
     <?php if ($nextPost): ?>
-    <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
-        <span class="direction">Nächster Beitrag →</span>
+    <?php $nextUrl = $permalinkService ? $permalinkService->buildPostUrl($nextPost, $currentLocale) : ($siteUrl . '/blog/' . ($nextPost['slug'] ?? '')); ?>
+    <a href="<?php echo htmlspecialchars($nextUrl, ENT_QUOTES); ?>">
+        <span class="direction"><?php echo htmlspecialchars(phinit_t('next_post', [], $currentLocale), ENT_QUOTES); ?></span>
         <span class="nav-title"><?php echo phinit_escape_text($nextPost['title'] ?? ''); ?></span>
     </a>
     <?php endif; ?>

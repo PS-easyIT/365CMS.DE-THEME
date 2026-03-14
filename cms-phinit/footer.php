@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 $siteUrl   = SITE_URL;
 $siteTitle = \CMS\ThemeManager::instance()->getSiteTitle();
 $year      = date('Y');
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 // Customizer
 try {
@@ -21,20 +22,20 @@ try {
 
     // Brand
     $_brandName     = $c->get('footer', 'footer_brand_name', 'PHINIT.DE');
-    $_footerDesc    = $c->get('footer', 'footer_tagline', 'IT-Profi-Blog für Microsoft 365, PowerShell, Linux und moderne IT-Administration. Praxisnah, fundiert, auf Deutsch.');
+    $_footerDesc    = $c->get('footer', 'footer_tagline', phinit_is_english_locale($currentLocale) ? 'IT pro blog for Microsoft 365, PowerShell, Linux, and modern IT administration. Practical, well-founded, and concise.' : 'IT-Profi-Blog für Microsoft 365, PowerShell, Linux und moderne IT-Administration. Praxisnah, fundiert, auf Deutsch.');
 
     // Spaltentitel
-    $_col2Title     = $c->get('footer', 'footer_col2_title', 'Themen');
-    $_col3Title     = $c->get('footer', 'footer_col3_title', 'Seiten');
-    $_col4Title     = $c->get('footer', 'footer_col4_title', 'Rechtliches');
+    $_col2Title     = $c->get('footer', 'footer_col2_title', phinit_is_english_locale($currentLocale) ? 'Topics' : 'Themen');
+    $_col3Title     = $c->get('footer', 'footer_col3_title', phinit_is_english_locale($currentLocale) ? 'Pages' : 'Seiten');
+    $_col4Title     = $c->get('footer', 'footer_col4_title', phinit_is_english_locale($currentLocale) ? 'Legal' : 'Rechtliches');
 
     // Copyright
-    $_copyrightRaw  = $c->get('footer', 'copyright_text', '© {year} {site_title} – Alle Rechte vorbehalten');
+    $_copyrightRaw  = $c->get('footer', 'copyright_text', phinit_is_english_locale($currentLocale) ? '© {year} {site_title} – All rights reserved' : '© {year} {site_title} – Alle Rechte vorbehalten');
     $_copyright     = str_replace(['{year}', '{site_title}'], [$year, $siteTitle], (string)$_copyrightRaw);
 
     // Toggles
     $_showConsent    = false; // Default: aus – CMS-Admin muss cookie_consent_enabled aktivieren
-    $_consentText    = $c->get('footer', 'consent_text', 'Diese Website verwendet Cookies für Analyse-Zwecke.');
+    $_consentText    = $c->get('footer', 'consent_text', phinit_is_english_locale($currentLocale) ? 'This website uses cookies for analytics purposes.' : 'Diese Website verwendet Cookies für Analyse-Zwecke.');
     $_consentPrivUrl = $c->get('footer', 'consent_privacy_url', '/cookie-policy');
     $_showBackToTop  = filter_var($c->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
     $_showNetworkBar = filter_var($c->get('footer', 'show_network_bar', false), FILTER_VALIDATE_BOOLEAN);
@@ -65,13 +66,13 @@ try {
     }
 } catch (\Throwable $e) {
     $_brandName     = 'PHINIT.DE';
-    $_footerDesc    = 'IT-Profi-Blog für Microsoft 365, PowerShell & Linux.';
-    $_col2Title     = 'Themen';
-    $_col3Title     = 'Seiten';
-    $_col4Title     = 'Rechtliches';
-    $_copyright     = '© ' . $year . ' ' . $siteTitle . ' – Alle Rechte vorbehalten';
+    $_footerDesc    = phinit_is_english_locale($currentLocale) ? 'IT pro blog for Microsoft 365, PowerShell & Linux.' : 'IT-Profi-Blog für Microsoft 365, PowerShell & Linux.';
+    $_col2Title     = phinit_is_english_locale($currentLocale) ? 'Topics' : 'Themen';
+    $_col3Title     = phinit_is_english_locale($currentLocale) ? 'Pages' : 'Seiten';
+    $_col4Title     = phinit_is_english_locale($currentLocale) ? 'Legal' : 'Rechtliches';
+    $_copyright     = phinit_is_english_locale($currentLocale) ? '© ' . $year . ' ' . $siteTitle . ' – All rights reserved' : '© ' . $year . ' ' . $siteTitle . ' – Alle Rechte vorbehalten';
     $_showConsent   = false; // Default: aus
-    $_consentText   = 'Diese Website verwendet Cookies für Analyse-Zwecke.';
+    $_consentText   = phinit_is_english_locale($currentLocale) ? 'This website uses cookies for analytics purposes.' : 'Diese Website verwendet Cookies für Analyse-Zwecke.';
     $_consentPrivUrl = '/cookie-policy';
     $_showBackToTop = true;
     $_showNetworkBar = false;
@@ -202,7 +203,7 @@ try {
                         <?php else: ?>
                             <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/ueber-uns">Über mich</a></li>
                             <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kontakt">Kontakt</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" target="_blank" rel="noopener">RSS-Feed</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $currentLocale, $siteUrl), ENT_QUOTES); ?>" target="_blank" rel="noopener">RSS-Feed</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -248,16 +249,16 @@ try {
 
 <!-- Back to Top -->
 <?php if ($_showBackToTop): ?>
-<button id="back-to-top" class="back-to-top-btn" aria-label="Zum Seitenanfang">↑</button>
+<button id="back-to-top" class="back-to-top-btn" aria-label="<?php echo htmlspecialchars(phinit_t('back_to_top', [], $currentLocale), ENT_QUOTES); ?>">↑</button>
 <?php endif; ?>
 
 <!-- Einwilligungsbanner (DSGVO) -->
 <?php if ($_showConsent): ?>
 <div id="consent-banner" role="alert" aria-live="polite">
-    <p><?php echo htmlspecialchars($_consentText, ENT_QUOTES); ?> <a href="<?php echo htmlspecialchars($siteUrl . $_consentPrivUrl, ENT_QUOTES); ?>" class="consent-link">Mehr erfahren</a></p>
+    <p><?php echo htmlspecialchars($_consentText, ENT_QUOTES); ?> <a href="<?php echo htmlspecialchars(phinit_localized_href((string) $_consentPrivUrl, $currentLocale, $siteUrl), ENT_QUOTES); ?>" class="consent-link"><?php echo htmlspecialchars(phinit_t('learn_more', [], $currentLocale), ENT_QUOTES); ?></a></p>
     <div class="consent-btns">
-        <button class="btn btn-sm btn-accent" id="consent-accept">Einwilligen</button>
-        <button class="btn btn-sm btn-ghost btn-consent-decline" id="consent-decline">Ablehnen</button>
+        <button class="btn btn-sm btn-accent" id="consent-accept"><?php echo htmlspecialchars(phinit_t('consent_accept', [], $currentLocale), ENT_QUOTES); ?></button>
+        <button class="btn btn-sm btn-ghost btn-consent-decline" id="consent-decline"><?php echo htmlspecialchars(phinit_t('consent_decline', [], $currentLocale), ENT_QUOTES); ?></button>
     </div>
 </div>
 <?php endif; ?>

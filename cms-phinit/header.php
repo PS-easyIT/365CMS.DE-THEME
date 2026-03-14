@@ -149,6 +149,11 @@ try {
     $_showBreadcrumb = true; $_bcOnPosts = true; $_bcOnPages = true;
 }
 
+$_headerSearchPlaceholder = trim((string) ($_searchPH ?? ''));
+if ($_headerSearchPlaceholder === '' || $_headerSearchPlaceholder === 'Suchen …' || $_headerSearchPlaceholder === 'Suchen…') {
+    $_headerSearchPlaceholder = phinit_t('search_posts_placeholder', [], $_currentLocale);
+}
+
 // Haupt-Navigation laden
 $mainMenuItems = [];
 try {
@@ -264,36 +269,36 @@ if ($_showLanguageSwitch) {
                 ?></strong>
             </span>
 
-            <nav class="member-bar__nav" aria-label="Member-Navigation">
+            <nav class="member-bar__nav" aria-label="<?php echo htmlspecialchars(phinit_t('member_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
                 <?php if (!empty($memberEditLink['show'])): ?>
                 <a href="<?php echo htmlspecialchars((string) ($memberEditLink['url'] ?? '#'), ENT_QUOTES); ?>" class="member-bar__link member-bar__link--edit">
-                    <span class="member-bar__icon">✏️</span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? 'Bearbeiten'), ENT_QUOTES); ?>
+                    <span class="member-bar__icon">✏️</span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? phinit_t('edit', [], $_currentLocale)), ENT_QUOTES); ?>
                 </a>
                 <?php endif; ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member" class="member-bar__link">
-                    <span class="member-bar__icon">📊</span> Dashboard
+                    <span class="member-bar__icon">📊</span> <?php echo htmlspecialchars(phinit_t('dashboard', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-bar__link">
-                    <span class="member-bar__icon">👤</span> Profil
+                    <span class="member-bar__icon">👤</span> <?php echo htmlspecialchars(phinit_t('profile', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/notifications" class="member-bar__link">
-                    <span class="member-bar__icon">🔔</span> Benachrichtigungen                    <?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>                </a>
+                    <span class="member-bar__icon">🔔</span> <?php echo htmlspecialchars(phinit_t('notifications', [], $_currentLocale), ENT_QUOTES); ?>                    <?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>                </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/favorites" class="member-bar__link">
-                    <span class="member-bar__icon">⭐</span> Favoriten
+                    <span class="member-bar__icon">⭐</span> <?php echo htmlspecialchars(phinit_t('favorites', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-bar__link">
-                    <span class="member-bar__icon">🔒</span> Sicherheit
+                    <span class="member-bar__icon">🔒</span> <?php echo htmlspecialchars(phinit_t('security', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
             </nav>
 
             <div class="member-bar__actions">
                 <?php if ($_showRss): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/feed" class="member-bar__link" aria-label="RSS-Feed abonnieren" title="RSS Feed">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link" aria-label="<?php echo htmlspecialchars(phinit_t('rss_subscribe', [], $_currentLocale), ENT_QUOTES); ?>" title="RSS Feed">
                     <svg class="rss-svg-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
                 </a>
                 <?php endif; ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-bar__link member-bar__logout" title="Abmelden">
-                    <span class="member-bar__icon">🚪</span> Logout
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-bar__link member-bar__logout" title="<?php echo htmlspecialchars(phinit_t('logout_title', [], $_currentLocale), ENT_QUOTES); ?>">
+                    <span class="member-bar__icon">🚪</span> <?php echo htmlspecialchars(phinit_t('logout', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
             </div>
 
@@ -306,7 +311,7 @@ if ($_showLanguageSwitch) {
         <div class="hdr-inner">
 
             <!-- Logo (jetzt in Bar 2, immer sichtbar) -->
-            <a href="<?php echo htmlspecialchars($_localizedCurrentHomeUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
+            <a href="<?php echo htmlspecialchars($_localizedCurrentHomeUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars(phinit_t('site_home_aria', ['site' => $siteTitle], $_currentLocale), ENT_QUOTES); ?>">
                 <?php if (!empty($_logoUrl)): ?>
                     <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" <?php echo phinit_image_loading_attributes(true); ?>>
                     <?php if ($_showLogoText): ?>
@@ -355,7 +360,7 @@ if ($_showLanguageSwitch) {
                 return false;
             };
             ?>
-            <nav class="main-nav" aria-label="Hauptnavigation">
+            <nav class="main-nav" aria-label="<?php echo htmlspecialchars(phinit_t('main_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
                     <?php if (!empty($mainMenuItems)): ?>
                         <?php foreach ($mainMenuItems as $index => $item): ?>
                             <?php
@@ -379,7 +384,7 @@ if ($_showLanguageSwitch) {
                                         aria-expanded="false"
                                         aria-haspopup="true"
                                         aria-controls="main-nav-dropdown-<?php echo (int) $index; ?>"
-                                        aria-label="Untermenü für <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?> öffnen">
+                                        aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => $itemLabel], $_currentLocale), ENT_QUOTES); ?>">
                                     <span aria-hidden="true">▾</span>
                                 </button>
                                 </div>
@@ -400,7 +405,7 @@ if ($_showLanguageSwitch) {
                         <?php endforeach; ?>
                     <?php else: ?>
                         <!-- Fallback-Menü -->
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Startseite</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
                         <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Linux / BASH</a>
                         <div class="has-dropdown" data-nav-dropdown>
                             <div class="main-nav__item-head">
@@ -410,7 +415,7 @@ if ($_showLanguageSwitch) {
                                     aria-expanded="false"
                                     aria-haspopup="true"
                                     aria-controls="main-nav-dropdown-fallback-powershell"
-                                    aria-label="Untermenü für PowerShell öffnen">
+                                    aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => 'PowerShell'], $_currentLocale), ENT_QUOTES); ?>">
                                 <span aria-hidden="true">▾</span>
                             </button>
                             </div>
@@ -428,7 +433,7 @@ if ($_showLanguageSwitch) {
             <!-- Header-Tools (rechts, in Bar 2) -->
             <div class="hdr-tools">
                 <?php if ($_showDarkMode): ?>
-                <button class="util-link util-dark-toggle" aria-label="Dark Mode umschalten" aria-pressed="false" title="Dark Mode">🌙</button>
+                <button class="util-link util-dark-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode">🌙</button>
                 <?php endif; ?>
 
                 <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
@@ -442,18 +447,18 @@ if ($_showLanguageSwitch) {
 
                 <?php if ($_showSearch): ?>
                 <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars(rtrim($siteUrl, '/') . $_localizedPath('/search', $_currentLocale), ENT_QUOTES); ?>">
-                    <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_searchPH, ENT_QUOTES); ?>" aria-label="Suchbegriff eingeben">
-                    <button type="submit" aria-label="Suche starten">🔍</button>
+                    <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_headerSearchPlaceholder, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars(phinit_t('search_term_input', [], $_currentLocale), ENT_QUOTES); ?>">
+                    <button type="submit" aria-label="<?php echo htmlspecialchars(phinit_t('search_start', [], $_currentLocale), ENT_QUOTES); ?>">🔍</button>
                 </form>
                 <?php endif; ?>
 
                 <?php if ($isLoggedIn && $currentUser): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/dashboard" class="util-link" title="Mein Konto">👤</a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/dashboard" class="util-link" title="<?php echo htmlspecialchars(phinit_t('account', [], $_currentLocale), ENT_QUOTES); ?>">👤</a>
                 <?php else: ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline util-login-link" aria-label="Einloggen">Login</a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline util-login-link" aria-label="<?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
 
-                <button class="burger-btn" id="burger-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+                <button class="burger-btn" id="burger-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('menu_open', [], $_currentLocale), ENT_QUOTES); ?>" aria-expanded="false" aria-controls="mobile-menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -464,10 +469,10 @@ if ($_showLanguageSwitch) {
         </div>
 
         <!-- Mobiles Menü -->
-        <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile Navigation" aria-hidden="true">
+        <nav class="mobile-menu" id="mobile-menu" aria-label="<?php echo htmlspecialchars(phinit_t('mobile_navigation', [], $_currentLocale), ENT_QUOTES); ?>" aria-hidden="true">
             <div class="mob-search">
                 <form role="search" method="GET" action="<?php echo htmlspecialchars(rtrim($siteUrl, '/') . $_localizedPath('/search', $_currentLocale), ENT_QUOTES); ?>">
-                    <input type="search" name="q" placeholder="Suchen …" aria-label="Mobilsuche">
+                    <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_headerSearchPlaceholder, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars(phinit_t('mobile_search', [], $_currentLocale), ENT_QUOTES); ?>">
                 </form>
             </div>
             <?php if (!empty($mainMenuItems)): ?>
@@ -480,20 +485,20 @@ if ($_showLanguageSwitch) {
                     <?php endif; ?>
                 <?php endforeach; ?>
             <?php else: ?>
-                <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>">Startseite</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>">Linux / BASH</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>">PowerShell</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>">Microsoft 365</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>">Datenschutz</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>">News</a>
                 <?php if (!$isLoggedIn): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 Login</a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 <?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
             <?php endif; ?>
             <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
             <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>" class="mobile-menu__lang-link" aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
                 <span class="mobile-menu__lang-icon" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
-                <span>Sprache wechseln</span>
+                <span><?php echo htmlspecialchars(phinit_t('switch_language', [], $_currentLocale), ENT_QUOTES); ?></span>
             </a>
             <?php endif; ?>
         </nav>
@@ -502,7 +507,7 @@ if ($_showLanguageSwitch) {
     <?php if ($_showQuicklinks): ?>
     <div class="quicklinks-bar">
         <div class="hdr-inner hdr-sub">
-                    <nav class="sub-nav" aria-label="Quicklinks">
+                    <nav class="sub-nav" aria-label="<?php echo htmlspecialchars(phinit_t('quicklinks', [], $_currentLocale), ENT_QUOTES); ?>">
                         <?php if (!empty($quicklinkItems)): ?>
                             <?php foreach ($quicklinkItems as $ql): ?>
                             <a href="<?php echo htmlspecialchars($_localizedHref((string) ($ql['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($ql['label'] ?? '', ENT_QUOTES); ?></a>

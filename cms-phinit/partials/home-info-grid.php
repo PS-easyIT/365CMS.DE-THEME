@@ -13,11 +13,40 @@ if (empty($_showInfoGrid)) {
 
 $_c1Href = !empty($_c1LinkUrl) ? (str_starts_with((string) $_c1LinkUrl, 'http') ? (string) $_c1LinkUrl : $siteUrl . (string) $_c1LinkUrl) : '';
 $_c2Href = !empty($_c2LinkUrl) ? (str_starts_with((string) $_c2LinkUrl, 'http') ? (string) $_c2LinkUrl : $siteUrl . (string) $_c2LinkUrl) : '';
-$_c3IsRepo = (string) ($_c3Style ?? '') === 'repo';
+$_c3Style = (string) ($_c3Style ?? '');
+$_c3IsProjects = $_c3Style === 'repo' || $_c3Style === 'projects';
 $_c3IsGold = (string) ($_c3Style ?? '') === 'gold';
-$_c3Classes = 'info-card' . ($_c3IsRepo ? ' info-card--repo' : ($_c3IsGold ? ' info-card--gold' : ''));
-$_c3FullUrl = str_starts_with((string) ($_c3LinkUrl ?? ''), 'http') ? (string) $_c3LinkUrl : $siteUrl . (string) ($_c3LinkUrl ?? '');
-$_c3IsExternal = str_starts_with((string) ($_c3LinkUrl ?? ''), 'http');
+$_c3Classes = 'info-card' . ($_c3IsProjects ? ' info-card--projects' : ($_c3IsGold ? ' info-card--gold' : ''));
+
+$_resolveCardUrl = static function (string $url) use ($siteUrl): string {
+    $url = trim($url);
+
+    if ($url === '') {
+        return '';
+    }
+
+    return str_starts_with($url, 'http') ? $url : $siteUrl . $url;
+};
+
+$_c3ProjectLinks = [];
+foreach ([
+    ['text' => (string) ($_c3LinkText ?? ''), 'url' => (string) ($_c3LinkUrl ?? '')],
+    ['text' => (string) ($_c3LinkText2 ?? ''), 'url' => (string) ($_c3LinkUrl2 ?? '')],
+    ['text' => (string) ($_c3LinkText3 ?? ''), 'url' => (string) ($_c3LinkUrl3 ?? '')],
+] as $_c3ProjectLink) {
+    $_label = trim((string) ($_c3ProjectLink['text'] ?? ''));
+    $_url = $_resolveCardUrl((string) ($_c3ProjectLink['url'] ?? ''));
+
+    if ($_label === '' || $_url === '') {
+        continue;
+    }
+
+    $_c3ProjectLinks[] = [
+        'label' => $_label,
+        'url' => $_url,
+        'external' => str_starts_with((string) ($_c3ProjectLink['url'] ?? ''), 'http'),
+    ];
+}
 ?>
 <section class="content-section home-section home-section--info" data-anim data-anim-delay="1">
     <div class="section-header">
@@ -44,24 +73,43 @@ $_c3IsExternal = str_starts_with((string) ($_c3LinkUrl ?? ''), 'http');
         </div>
         <?php if (!empty($_showCard3)): ?>
         <div class="<?php echo htmlspecialchars($_c3Classes, ENT_QUOTES); ?>">
-            <?php if ($_c3IsRepo): ?>
-            <div class="info-card-repo-icon" aria-hidden="true">
-                <svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <?php if ($_c3IsProjects): ?>
+            <div class="info-card-projects-head">
+                <div class="info-card-projects-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h18"></path><path d="M7 3.5h10a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z"></path><path d="M8 12h3"></path><path d="M13 12h3"></path><path d="M8 16h8"></path></svg>
+                </div>
+                <h3><?php echo htmlspecialchars((string) ($_c3Title ?? ''), ENT_QUOTES); ?></h3>
             </div>
-            <?php endif; ?>
+            <?php else: ?>
             <h3><?php echo htmlspecialchars((string) ($_c3Title ?? ''), ENT_QUOTES); ?></h3>
+            <?php endif; ?>
             <?php if (!empty($_c3Text)): ?>
             <p><?php echo htmlspecialchars((string) $_c3Text, ENT_QUOTES); ?></p>
             <?php endif; ?>
+            <?php if ($_c3IsProjects && $_c3ProjectLinks !== []): ?>
+            <div class="info-card-projects-footer">
+                <?php if (!empty($_c3Badge)): ?>
+                <span class="info-card-projects-badge"><?php echo htmlspecialchars((string) $_c3Badge, ENT_QUOTES); ?></span>
+                <?php endif; ?>
+                <div class="info-card-project-links">
+                    <?php foreach ($_c3ProjectLinks as $_c3ProjectLink): ?>
+                    <a href="<?php echo htmlspecialchars((string) $_c3ProjectLink['url'], ENT_QUOTES); ?>"
+                       class="info-card-project-link"
+                       <?php echo !empty($_c3ProjectLink['external']) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo htmlspecialchars((string) $_c3ProjectLink['label'], ENT_QUOTES); ?></a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php else: ?>
             <?php if (!empty($_c3Badge)): ?>
-            <span class="repo-badge repo-badge--inline"><?php echo htmlspecialchars((string) $_c3Badge, ENT_QUOTES); ?></span>
+            <span class="<?php echo $_c3IsProjects ? 'info-card-projects-badge' : 'repo-badge repo-badge--inline'; ?>"><?php echo htmlspecialchars((string) $_c3Badge, ENT_QUOTES); ?></span>
             <?php endif; ?>
-            <?php if ($_c3FullUrl !== '' && !empty($_c3LinkText)): ?>
-            <a href="<?php echo htmlspecialchars($_c3FullUrl, ENT_QUOTES); ?>"
-               class="btn btn-sm info-card-cta <?php echo $_c3IsRepo ? 'btn-accent' : 'btn-outline'; ?>"
-               <?php echo $_c3IsExternal ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+            <?php if (!$_c3IsProjects && !empty($_c3LinkText) && !empty($_c3LinkUrl)): ?>
+            <a href="<?php echo htmlspecialchars($_resolveCardUrl((string) $_c3LinkUrl), ENT_QUOTES); ?>"
+               class="btn btn-sm info-card-cta btn-outline"
+               <?php echo str_starts_with((string) $_c3LinkUrl, 'http') ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
                 <?php echo htmlspecialchars((string) $_c3LinkText, ENT_QUOTES); ?>
             </a>
+            <?php endif; ?>
             <?php endif; ?>
         </div>
         <?php endif; ?>

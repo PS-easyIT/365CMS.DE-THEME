@@ -37,6 +37,7 @@ $exc_len      = max(10, (int)($exc_len ?? 180));
 $show_cat     = isset($show_cat)     ? (bool)$show_cat     : true;
 $show_date    = isset($show_date)    ? (bool)$show_date    : true;
 $show_rt      = isset($show_rt)      ? (bool)$show_rt      : true;
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $displayDate  = $card['published_at'] ?? ($card['created_at'] ?? null);
 $permalink    = (string) ($card['permalink'] ?? ($siteUrl . '/blog/' . ($card['slug'] ?? '')));
 
@@ -92,14 +93,14 @@ if ($show_rt && $show_meta) {
             <span class="cat"><?php echo phinit_escape_text($card['category_name'] ?? ''); ?></span>
             <?php endif; ?>
             <?php if ($show_date && !empty($displayDate)): ?>
-            <span><?php echo htmlspecialchars(date('j. F Y', strtotime((string)$displayDate)), ENT_QUOTES); ?></span>
+            <span><?php echo htmlspecialchars(phinit_format_date((string) $displayDate, 'long', $currentLocale), ENT_QUOTES); ?></span>
             <?php endif; ?>
             <?php if ($show_rt && $_pc_rt > 0): ?>
-            <span class="read"><?php echo $_pc_rt; ?> Min.</span>
+            <span class="read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?></span>
             <?php endif; ?>
             <a class="article-meta__more"
                href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>">
-                &hellip; Weiter lesen &rarr;
+                <?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?>
             </a>
         </div>
         <?php endif; ?>

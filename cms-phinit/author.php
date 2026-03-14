@@ -20,6 +20,18 @@ $authorSlug = trim((string) ($author['slug'] ?? ''));
 $authorProfileUrl = $siteUrl . '/author/' . rawurlencode($authorSlug !== '' ? $authorSlug : ('user-' . (int) ($author['id'] ?? 0)));
 $showActivity = !empty($author['show_activity']);
 $authorInitials = 'AU';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+
+$authorBioNormalized = preg_replace('/\s+/u', ' ', mb_strtolower($authorBio, 'UTF-8'));
+$authorBioPlaceholders = [
+    'öffentliche profilangaben dieses accounts, freigegeben über den datenschutz-bereich im member-dashboard.',
+    'öffentliche profilangaben dieses accounts, freigegeben über den datenschutz-bereich im member dashboard.',
+    'public profile details for this account, shared via the privacy area in the member dashboard.',
+];
+
+if (is_string($authorBioNormalized) && in_array(trim($authorBioNormalized), $authorBioPlaceholders, true)) {
+    $authorBio = '';
+}
 
 if ($authorName !== '') {
     $parts = preg_split('/\s+/u', $authorName) ?: [];
@@ -31,11 +43,9 @@ if ($authorName !== '') {
 }
 
 $permalinkService = \CMS\Services\PermalinkService::getInstance();
-
-include __DIR__ . '/header.php';
 ?>
 
-<main class="container blog-shell author-profile-shell">
+<div class="container page-shell page-shell--compact author-profile-shell">
     <section class="author-profile-hero" data-anim>
         <div class="author-profile-card">
             <div class="author-profile-card__inner">
@@ -51,19 +61,17 @@ include __DIR__ . '/header.php';
                 <?php endif; ?>
 
                 <div class="author-profile-card__content">
-                    <div class="author-profile-card__eyebrow">Autorinnen & Autoren</div>
+                    <div class="author-profile-card__eyebrow"><?php echo htmlspecialchars(phinit_t('authors', [], $currentLocale), ENT_QUOTES); ?></div>
                     <h1><?php echo htmlspecialchars($authorName, ENT_QUOTES); ?></h1>
                     <?php if ($authorBio !== ''): ?>
                     <p class="author-profile-card__bio"><?php echo htmlspecialchars($authorBio, ENT_QUOTES); ?></p>
-                    <?php else: ?>
-                    <p class="author-profile-card__bio">Öffentliche Profilangaben dieses Accounts, freigegeben über den Datenschutz-Bereich im Member-Dashboard.</p>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
 
-        <aside class="author-profile-sidebar" aria-label="Profilangaben">
-            <h2>Öffentliche Profilangaben</h2>
+        <aside class="author-profile-sidebar" aria-label="<?php echo htmlspecialchars(phinit_t('public_profile_data', [], $currentLocale), ENT_QUOTES); ?>">
+            <h2><?php echo htmlspecialchars(phinit_t('public_profile_data', [], $currentLocale), ENT_QUOTES); ?></h2>
             <?php if (!empty($authorDetails)): ?>
             <div class="author-profile-details">
                 <?php foreach ($authorDetails as $detail): ?>
@@ -90,13 +98,13 @@ include __DIR__ . '/header.php';
                 <?php endforeach; ?>
             </div>
             <?php else: ?>
-            <p class="author-profile-posts__empty">Für diese Author-Seite wurden aktuell keine zusätzlichen Profilfelder freigegeben.</p>
+            <p class="author-profile-posts__empty"><?php echo htmlspecialchars(phinit_t('no_public_profile_data', [], $currentLocale), ENT_QUOTES); ?></p>
             <?php endif; ?>
         </aside>
     </section>
 
     <section class="author-profile-posts" data-anim data-anim-delay="1">
-        <h2><?php echo $showActivity ? 'Veröffentlichte Beiträge' : 'Beiträge dieses Autors'; ?></h2>
+        <h2><?php echo htmlspecialchars($showActivity ? phinit_t('published_posts', [], $currentLocale) : phinit_t('author_posts', [], $currentLocale), ENT_QUOTES); ?></h2>
 
         <?php if (!empty($posts)): ?>
         <div class="article-list article-list--framed">
@@ -104,10 +112,15 @@ include __DIR__ . '/header.php';
             <?php
                 $post = (array) $post;
                 $postTitle = trim((string) ($post['title'] ?? 'Beitrag'));
-                $postExcerpt = trim((string) ($post['excerpt'] ?? ''));
-                if ($postExcerpt === '') {
-                    $postExcerpt = mb_substr(trim(strip_tags((string) ($post['content'] ?? ''))), 0, 180);
+                $postExcerpt = function_exists('phinit_excerpt_plain_text')
+                    ? phinit_excerpt_plain_text((string) ($post['excerpt'] ?? ''))
+                    : trim(strip_tags((string) ($post['excerpt'] ?? '')));
+                if ($postExcerpt === '' && !empty($post['content'])) {
+                    $postExcerpt = function_exists('phinit_excerpt_plain_text')
+                        ? phinit_excerpt_plain_text((string) $post['content'])
+                        : trim(strip_tags((string) $post['content']));
                 }
+                $postExcerpt = mb_strimwidth($postExcerpt, 0, 180, '…');
                 $postCategory = trim((string) ($post['category_name'] ?? 'Beitrag'));
                 $postPath = $permalinkService->buildPostPath($post);
                 $postUrl = $siteUrl . $postPath;
@@ -133,9 +146,9 @@ include __DIR__ . '/header.php';
                     <p><?php echo htmlspecialchars($postExcerpt, ENT_QUOTES); ?></p>
                     <div class="article-meta">
                         <?php if ($postTimestamp !== false): ?>
-                        <time datetime="<?php echo htmlspecialchars(date(DATE_ATOM, $postTimestamp), ENT_QUOTES); ?>"><?php echo htmlspecialchars(date('j. F Y', $postTimestamp), ENT_QUOTES); ?></time>
+                        <time datetime="<?php echo htmlspecialchars(date(DATE_ATOM, $postTimestamp), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_format_date(date(DATE_ATOM, $postTimestamp), 'long', $currentLocale), ENT_QUOTES); ?></time>
                         <?php endif; ?>
-                        <a class="article-meta__more" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>">Artikel lesen →</a>
+                        <a class="article-meta__more" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_article', [], $currentLocale), ENT_QUOTES); ?></a>
                     </div>
                 </div>
             </article>
@@ -143,7 +156,7 @@ include __DIR__ . '/header.php';
         </div>
 
         <?php if ($totalPages > 1): ?>
-        <nav class="blog-pagination" aria-label="Seitennavigation Author-Seite">
+        <nav class="blog-pagination" aria-label="<?php echo htmlspecialchars(phinit_t('author_nav', [], $currentLocale), ENT_QUOTES); ?>">
             <?php for ($page = 1; $page <= $totalPages; $page++): ?>
                 <?php if ($page === $currentPage): ?>
                 <span class="current" aria-current="page"><?php echo $page; ?></span>
@@ -154,9 +167,7 @@ include __DIR__ . '/header.php';
         </nav>
         <?php endif; ?>
         <?php else: ?>
-        <p class="author-profile-posts__empty"><?php echo htmlspecialchars($authorName, ENT_QUOTES); ?> hat aktuell noch keine veröffentlichten Beiträge.</p>
+        <p class="author-profile-posts__empty"><?php echo htmlspecialchars(phinit_t('author_no_posts', ['name' => $authorName], $currentLocale), ENT_QUOTES); ?></p>
         <?php endif; ?>
     </section>
-</main>
-
-<?php include __DIR__ . '/footer.php';
+</div>

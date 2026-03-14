@@ -83,6 +83,317 @@ if (!function_exists('phinit_current_request_path')) {
     }
 }
 
+if (!function_exists('phinit_get_current_locale')) {
+    function phinit_get_current_locale(): string
+    {
+        static $locale = null;
+
+        if (is_string($locale) && $locale !== '') {
+            return $locale;
+        }
+
+        $locale = 'de';
+
+        try {
+            $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext(phinit_current_request_path());
+            $resolvedLocale = strtolower(trim((string) ($context['locale'] ?? 'de')));
+            if ($resolvedLocale !== '') {
+                $locale = $resolvedLocale;
+            }
+        } catch (\Throwable) {
+        }
+
+        return $locale;
+    }
+}
+
+if (!function_exists('phinit_is_english_locale')) {
+    function phinit_is_english_locale(?string $locale = null): bool
+    {
+        return strtolower(trim((string) ($locale ?? phinit_get_current_locale()))) === 'en';
+    }
+}
+
+if (!function_exists('phinit_localized_path')) {
+    function phinit_localized_path(string $path, ?string $locale = null): string
+    {
+        $resolvedLocale = trim((string) ($locale ?? phinit_get_current_locale()));
+
+        try {
+            return \CMS\Services\ContentLocalizationService::getInstance()->buildLocalizedPath($path, $resolvedLocale);
+        } catch (\Throwable) {
+            return $path;
+        }
+    }
+}
+
+if (!function_exists('phinit_localized_href')) {
+    function phinit_localized_href(string $url, ?string $locale = null, ?string $siteUrl = null): string
+    {
+        $resolvedLocale = trim((string) ($locale ?? phinit_get_current_locale()));
+        $siteBase = rtrim((string) ($siteUrl ?? (defined('SITE_URL') ? SITE_URL : '')), '/');
+        $trimmedUrl = trim($url);
+
+        if ($trimmedUrl === '' || $trimmedUrl === '#') {
+            return $trimmedUrl;
+        }
+
+        try {
+            $localization = \CMS\Services\ContentLocalizationService::getInstance();
+
+            if (preg_match('#^https?://#i', $trimmedUrl) === 1) {
+                if ($siteBase === '' || !str_starts_with($trimmedUrl, $siteBase)) {
+                    return $trimmedUrl;
+                }
+
+                $path = (string) (parse_url($trimmedUrl, PHP_URL_PATH) ?? '/');
+                $query = (string) (parse_url($trimmedUrl, PHP_URL_QUERY) ?? '');
+
+                return $siteBase . $localization->buildLocalizedPath($path, $resolvedLocale) . ($query !== '' ? '?' . $query : '');
+            }
+
+            if (!str_starts_with($trimmedUrl, '/')) {
+                return $trimmedUrl;
+            }
+
+            return $siteBase . $localization->buildLocalizedPath($trimmedUrl, $resolvedLocale);
+        } catch (\Throwable) {
+            if (str_starts_with($trimmedUrl, '/') && $siteBase !== '') {
+                return $siteBase . $trimmedUrl;
+            }
+
+            return $trimmedUrl;
+        }
+    }
+}
+
+if (!function_exists('phinit_translation_catalog')) {
+    function phinit_translation_catalog(): array
+    {
+        return [
+            'de' => [
+                'continue_reading' => '… Weiter lesen →',
+                'read_time_short' => '⏱ {minutes} Min.',
+                'read_time_aria' => 'Lesezeit {minutes} Minuten',
+                'updated_label' => 'Aktualisiert:',
+                'comment_count_one' => '{count} Kommentar',
+                'comment_count_other' => '{count} Kommentare',
+                'article_navigation' => 'Artikel-Navigation',
+                'previous_post' => '← Vorheriger Beitrag',
+                'next_post' => 'Nächster Beitrag →',
+                'archive_navigation' => 'Archiv-Seitennavigation',
+                'previous_page' => '← Zurück',
+                'previous_page_aria' => 'Vorherige Seite',
+                'next_page' => 'Weiter →',
+                'next_page_aria' => 'Nächste Seite',
+                'home' => 'Startseite',
+                'search_posts_placeholder' => 'Beiträge durchsuchen…',
+                'search_submit' => 'Suchen',
+                'search_term_input' => 'Suchbegriff eingeben',
+                'search_start' => 'Suche starten',
+                'search_results_for' => 'Suchergebnisse für',
+                'hits' => '{count} Treffer',
+                'reset' => 'Zurücksetzen',
+                'no_results' => 'Keine Ergebnisse',
+                'no_results_for' => 'Für „{query}“ wurden leider keine passenden Inhalte gefunden. Versuche einen allgemeineren Begriff oder nimm den Typ-Filter zurück.',
+                'search_tip_1' => 'Nutze kürzere oder allgemeinere Begriffe.',
+                'search_tip_2' => 'Teste ohne Typ-Filter, falls einer aktiv ist.',
+                'search_tip_3' => 'Prüfe alternative Schreibweisen oder Synonyme.',
+                'new_search' => 'Neue Suche starten',
+                'go_to_blog' => 'Zum Blog',
+                'search_intro_title' => 'Suche starten',
+                'search_intro_text' => 'Gib einen Suchbegriff ein, um Artikel, Seiten und weitere Inhalte in einer kompakten Ergebnisübersicht zu finden.',
+                'member_navigation' => 'Member-Navigation',
+                'dashboard' => 'Dashboard',
+                'profile' => 'Profil',
+                'notifications' => 'Benachrichtigungen',
+                'favorites' => 'Favoriten',
+                'security' => 'Sicherheit',
+                'rss_subscribe' => 'RSS-Feed abonnieren',
+                'logout' => 'Logout',
+                'logout_title' => 'Abmelden',
+                'site_home_aria' => '{site} – Startseite',
+                'main_navigation' => 'Hauptnavigation',
+                'submenu_open_for' => 'Untermenü für {label} öffnen',
+                'darkmode_toggle' => 'Dark Mode umschalten',
+                'account' => 'Mein Konto',
+                'login' => 'Login',
+                'menu_open' => 'Menü öffnen',
+                'mobile_navigation' => 'Mobile Navigation',
+                'mobile_search' => 'Mobilsuche',
+                'switch_language' => 'Sprache wechseln',
+                'quicklinks' => 'Quicklinks',
+                'back_to_top' => 'Zum Seitenanfang',
+                'learn_more' => 'Mehr erfahren',
+                'consent_accept' => 'Einwilligen',
+                'consent_decline' => 'Ablehnen',
+                'edit' => 'Bearbeiten',
+                'edit_hubsite' => 'Diese HubSite bearbeiten',
+                'edit_post' => 'Diesen Beitrag bearbeiten',
+                'edit_page' => 'Diese Seite bearbeiten',
+                'favorite' => 'Favorit',
+                'favorited' => 'Gespeichert',
+                'favorite_add' => 'Zu Favoriten hinzufügen',
+                'favorite_remove' => 'Aus Favoriten entfernen',
+                'authors' => 'Autorinnen & Autoren',
+                'public_profile_default' => 'Öffentliche Profilangaben dieses Accounts, freigegeben über den Datenschutz-Bereich im Member-Dashboard.',
+                'public_profile_data' => 'Öffentliche Profilangaben',
+                'no_public_profile_data' => 'Für diese Author-Seite wurden aktuell keine zusätzlichen Profilfelder freigegeben.',
+                'published_posts' => 'Veröffentlichte Beiträge',
+                'author_posts' => 'Beiträge dieses Autors',
+                'read_article' => 'Artikel lesen →',
+                'author_nav' => 'Seitennavigation Author-Seite',
+                'author_no_posts' => '{name} hat aktuell noch keine veröffentlichten Beiträge.',
+            ],
+            'en' => [
+                'continue_reading' => '… Continue reading →',
+                'read_time_short' => '⏱ {minutes} min read',
+                'read_time_aria' => 'Reading time {minutes} minutes',
+                'updated_label' => 'Updated:',
+                'comment_count_one' => '{count} comment',
+                'comment_count_other' => '{count} comments',
+                'article_navigation' => 'Article navigation',
+                'previous_post' => '← Previous post',
+                'next_post' => 'Next post →',
+                'archive_navigation' => 'Archive page navigation',
+                'previous_page' => '← Back',
+                'previous_page_aria' => 'Previous page',
+                'next_page' => 'Next →',
+                'next_page_aria' => 'Next page',
+                'home' => 'Home',
+                'search_posts_placeholder' => 'Search posts…',
+                'search_submit' => 'Search',
+                'search_term_input' => 'Enter search term',
+                'search_start' => 'Start search',
+                'search_results_for' => 'Search results for',
+                'hits' => '{count} hits',
+                'reset' => 'Reset',
+                'no_results' => 'No results',
+                'no_results_for' => 'Unfortunately, no matching content was found for “{query}”. Try a broader term or remove the type filter.',
+                'search_tip_1' => 'Use shorter or more general terms.',
+                'search_tip_2' => 'Try again without a type filter if one is active.',
+                'search_tip_3' => 'Check alternative spellings or synonyms.',
+                'new_search' => 'Start a new search',
+                'go_to_blog' => 'Go to the blog',
+                'search_intro_title' => 'Start searching',
+                'search_intro_text' => 'Enter a search term to find posts, pages, and other content in a compact results overview.',
+                'member_navigation' => 'Member navigation',
+                'dashboard' => 'Dashboard',
+                'profile' => 'Profile',
+                'notifications' => 'Notifications',
+                'favorites' => 'Favorites',
+                'security' => 'Security',
+                'rss_subscribe' => 'Subscribe to RSS feed',
+                'logout' => 'Logout',
+                'logout_title' => 'Sign out',
+                'site_home_aria' => '{site} – Home',
+                'main_navigation' => 'Main navigation',
+                'submenu_open_for' => 'Open submenu for {label}',
+                'darkmode_toggle' => 'Toggle dark mode',
+                'account' => 'My account',
+                'login' => 'Login',
+                'menu_open' => 'Open menu',
+                'mobile_navigation' => 'Mobile navigation',
+                'mobile_search' => 'Mobile search',
+                'switch_language' => 'Switch language',
+                'quicklinks' => 'Quick links',
+                'back_to_top' => 'Back to top',
+                'learn_more' => 'Learn more',
+                'consent_accept' => 'Accept',
+                'consent_decline' => 'Decline',
+                'edit' => 'Edit',
+                'edit_hubsite' => 'Edit this hub site',
+                'edit_post' => 'Edit this post',
+                'edit_page' => 'Edit this page',
+                'favorite' => 'Favorite',
+                'favorited' => 'Saved',
+                'favorite_add' => 'Add to favorites',
+                'favorite_remove' => 'Remove from favorites',
+                'authors' => 'Authors',
+                'public_profile_default' => 'Public profile details for this account, shared via the privacy area in the member dashboard.',
+                'public_profile_data' => 'Public profile details',
+                'no_public_profile_data' => 'No additional profile fields are currently shared for this author page.',
+                'published_posts' => 'Published posts',
+                'author_posts' => 'Posts by this author',
+                'read_article' => 'Read article →',
+                'author_nav' => 'Author page navigation',
+                'author_no_posts' => '{name} has not published any posts yet.',
+            ],
+        ];
+    }
+}
+
+if (!function_exists('phinit_t')) {
+    function phinit_t(string $key, array $replacements = [], ?string $locale = null): string
+    {
+        $catalog = phinit_translation_catalog();
+        $resolvedLocale = strtolower(trim((string) ($locale ?? phinit_get_current_locale())));
+        $messages = $catalog[$resolvedLocale] ?? $catalog['de'];
+        $message = $messages[$key] ?? ($catalog['de'][$key] ?? $key);
+
+        if ($replacements !== []) {
+            $replacePairs = [];
+            foreach ($replacements as $replaceKey => $replaceValue) {
+                $replacePairs['{' . $replaceKey . '}'] = (string) $replaceValue;
+            }
+            $message = strtr($message, $replacePairs);
+        }
+
+        return $message;
+    }
+}
+
+if (!function_exists('phinit_comment_count_text')) {
+    function phinit_comment_count_text(int $count, ?string $locale = null): string
+    {
+        $key = $count === 1 ? 'comment_count_one' : 'comment_count_other';
+        return phinit_t($key, ['count' => $count], $locale);
+    }
+}
+
+if (!function_exists('phinit_format_date')) {
+    function phinit_format_date(?string $dateValue, string $style = 'long', ?string $locale = null): string
+    {
+        $rawValue = trim((string) $dateValue);
+        if ($rawValue === '') {
+            return '';
+        }
+
+        $timestamp = strtotime($rawValue);
+        if ($timestamp === false) {
+            return '';
+        }
+
+        $resolvedLocale = strtolower(trim((string) ($locale ?? phinit_get_current_locale())));
+        $intlLocale = $resolvedLocale === 'en' ? 'en_US' : 'de_DE';
+        $pattern = $style === 'numeric'
+            ? ($resolvedLocale === 'en' ? 'MM/dd/yyyy' : 'dd.MM.yyyy')
+            : ($resolvedLocale === 'en' ? 'MMMM d, yyyy' : 'd. MMMM yyyy');
+
+        if (class_exists('IntlDateFormatter')) {
+            $formatter = new \IntlDateFormatter(
+                $intlLocale,
+                \IntlDateFormatter::NONE,
+                \IntlDateFormatter::NONE,
+                date_default_timezone_get(),
+                \IntlDateFormatter::GREGORIAN,
+                $pattern
+            );
+
+            $formatted = $formatter->format($timestamp);
+            if ($formatted !== false) {
+                return (string) $formatted;
+            }
+        }
+
+        $fallbackPattern = $style === 'numeric'
+            ? ($resolvedLocale === 'en' ? 'm/d/Y' : 'd.m.Y')
+            : ($resolvedLocale === 'en' ? 'F j, Y' : 'd.m.Y');
+
+        return date($fallbackPattern, $timestamp);
+    }
+}
+
 if (!function_exists('phinit_get_member_edit_link')) {
     /**
      * @return array{show:bool,url:string,label:string,entity:string,entityId:int}
@@ -127,7 +438,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
                     return [
                         'show' => true,
                         'url' => rtrim((string) SITE_URL, '/') . '/admin/hub-sites?action=edit&id=' . (int) $hubPage['id'],
-                        'label' => 'Diese HubSite bearbeiten',
+                        'label' => phinit_t('edit_hubsite'),
                         'entity' => 'hub',
                         'entityId' => (int) $hubPage['id'],
                     ];
@@ -149,7 +460,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
                     return [
                         'show' => true,
                         'url' => rtrim((string) SITE_URL, '/') . '/admin/posts?action=edit&id=' . $postId,
-                        'label' => 'Diesen Beitrag bearbeiten',
+                        'label' => phinit_t('edit_post'),
                         'entity' => 'post',
                         'entityId' => $postId,
                     ];
@@ -169,7 +480,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
                 return [
                     'show' => true,
                     'url' => rtrim((string) SITE_URL, '/') . '/admin/hub-sites?action=edit&id=' . (int) $hubPage['id'],
-                    'label' => 'Diese HubSite bearbeiten',
+                    'label' => phinit_t('edit_hubsite'),
                     'entity' => 'hub',
                     'entityId' => (int) $hubPage['id'],
                 ];
@@ -189,7 +500,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
                 return [
                     'show' => true,
                     'url' => rtrim((string) SITE_URL, '/') . '/admin/pages?action=edit&id=' . $pageId,
-                    'label' => 'Diese Seite bearbeiten',
+                    'label' => phinit_t('edit_page'),
                     'entity' => 'page',
                     'entityId' => $pageId,
                 ];
@@ -421,8 +732,8 @@ if (!function_exists('phinit_get_favorite_control')) {
                 'featured_image' => $featuredImage,
                 'badge' => $badge,
             ],
-            'label' => 'Favorit',
-            'title' => 'Zu Favoriten hinzufügen',
+            'label' => phinit_t('favorite'),
+            'title' => phinit_t('favorite_add'),
             'action' => 'add',
         ];
 
@@ -464,8 +775,8 @@ if (!function_exists('phinit_get_favorite_control')) {
             return $state;
         }
 
-        $state['label'] = $state['isFavorited'] ? 'Gespeichert' : 'Favorit';
-        $state['title'] = $state['isFavorited'] ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen';
+        $state['label'] = $state['isFavorited'] ? phinit_t('favorited') : phinit_t('favorite');
+        $state['title'] = $state['isFavorited'] ? phinit_t('favorite_remove') : phinit_t('favorite_add');
         $state['action'] = $state['isFavorited'] ? 'remove' : 'add';
 
         return $state;

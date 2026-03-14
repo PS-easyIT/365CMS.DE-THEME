@@ -54,10 +54,18 @@ try {
 
 $sidebarActiveColor = $sanitizeColor($getMemberText('sidebar_active_color', '#1e3a5f'), '#1e3a5f');
 $sidebarStyle = '--member-sidebar-active-color: ' . $sidebarActiveColor . ';';
+$memberPermissions = [];
+
+try {
+    $memberPermissions = \CMS\Services\MemberService::getInstance()->getUserPermissions((int) ($currentUser->id ?? 0));
+} catch (\Throwable $e) {}
+
+$canSubmitPosts = !empty($memberPermissions['can_post']);
 
 $memberNav = [
     ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member/dashboard', 'visible' => $getMemberToggle('show_sidebar_dashboard', true)],
     ['slug' => 'profile',    'icon' => '👤', 'label' => 'Profil',        'url' => '/member/profile', 'visible' => $getMemberToggle('show_sidebar_profile', true)],
+    ['slug' => 'posts',      'icon' => '✍️', 'label' => 'Artikel',       'url' => '/member/posts', 'visible' => $canSubmitPosts],
     ['slug' => 'privacy',    'icon' => '🔐', 'label' => 'Datenschutz',   'url' => '/member/privacy', 'visible' => $getMemberToggle('show_sidebar_privacy', true)],
     ['slug' => 'notifications', 'icon' => '🔔', 'label' => 'Benachrichtigungen', 'url' => '/member/notifications', 'visible' => $getMemberToggle('show_sidebar_notifications', true)],
     ['slug' => 'favorites',  'icon' => '⭐', 'label' => 'Favoriten',     'url' => '/member/favorites', 'visible' => $getMemberToggle('show_sidebar_favorites', true)],

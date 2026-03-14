@@ -219,10 +219,14 @@ $greeting = $hour < 12 ? 'Guten Morgen' : ($hour < 18 ? 'Guten Tag' : 'Guten Abe
 
 $favoriteUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/favorites';
 $profileUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/profile';
+$postsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/posts';
 $securityUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/security';
 $commentsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/comments';
 $analyticsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/analytics';
 $notificationsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/notifications';
+
+$memberPermissions = $memberService->getUserPermissions((int) $currentUser->id);
+$canSubmitPosts = !empty($memberPermissions['can_post']);
 
 $isAdmin    = $auth->isAdmin();
 
@@ -319,7 +323,7 @@ $overviewCards = [
     'favorites' => ['slug' => 'favorites', 'enabled' => $showCardFavorites, 'icon' => $getMemberText('card_favorites_icon', '⭐'), 'title' => $getMemberText('card_favorites_title', 'Gespeicherte Favoriten'), 'value' => (string) $favCount, 'url' => $favoriteUrl, 'class' => 'member-overview-card--favorite'],
     'comments' => ['slug' => 'comments', 'enabled' => $showCardComments, 'icon' => $getMemberText('card_comments_icon', '💬'), 'title' => $getMemberText('card_comments_title', 'Eigene Kommentare'), 'value' => (string) $commentCount, 'url' => $commentsUrl, 'class' => 'member-overview-card--comment'],
     'notifications' => ['slug' => 'notifications', 'enabled' => $showCardNotifications, 'icon' => $getMemberText('card_notifications_icon', '🔔'), 'title' => $getMemberText('card_notifications_title', 'Letzte Benachrichtigungen'), 'value' => (string) $notificationCount, 'url' => $notificationsUrl, 'class' => 'member-overview-card--notification'],
-    'posts' => ['slug' => 'posts', 'enabled' => $showCardPosts, 'icon' => $getMemberText('card_posts_icon', '📝'), 'title' => $getMemberText('card_posts_title', 'Veröffentlichte Beiträge'), 'value' => (string) $postCount, 'url' => '', 'class' => 'member-overview-card--post'],
+    'posts' => ['slug' => 'posts', 'enabled' => $showCardPosts, 'icon' => $getMemberText('card_posts_icon', '📝'), 'title' => $getMemberText('card_posts_title', 'Veröffentlichte Beiträge'), 'value' => (string) $postCount, 'url' => $canSubmitPosts ? $postsUrl : '', 'class' => 'member-overview-card--post'],
     'security' => ['slug' => 'security', 'enabled' => $showCardSecurity, 'icon' => $getMemberText('card_security_icon', '🔒'), 'title' => $getMemberText('card_security_title', 'Sicherheitsbereich öffnen'), 'value' => $isAdmin ? 'Admin' : 'Aktiv', 'url' => $securityUrl, 'class' => 'member-overview-card--security'],
 ];
 
@@ -365,6 +369,9 @@ include $themeDir . 'header.php';
                 <p><?php echo htmlspecialchars($welcomeText !== '' ? $welcomeText : 'Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.', ENT_QUOTES); ?></p>
 
                 <div class="member-dashboard-hero__actions">
+                    <?php if ($canSubmitPosts): ?>
+                    <a href="<?php echo $postsUrl; ?>" class="member-hero-action">✍️ Neuen Artikel schreiben</a>
+                    <?php endif; ?>
                     <?php if ($showHeroFavorites): ?>
                     <a href="<?php echo $favoriteUrl; ?>" class="member-hero-action">⭐ Favoriten</a>
                     <?php endif; ?>
@@ -514,6 +521,11 @@ include $themeDir . 'header.php';
         <div class="member-quicklinks member-quicklinks--dashboard" data-anim data-anim-delay="3">
             <h3><?php echo htmlspecialchars(trim(($quicklinksIcon !== '' ? $quicklinksIcon . ' ' : '') . ($quicklinksTitle !== '' ? $quicklinksTitle : 'Schnellzugriff')), ENT_QUOTES); ?></h3>
             <div class="member-quicklinks-grid">
+                <?php if ($canSubmitPosts): ?>
+                <a href="<?php echo $postsUrl; ?>" class="member-quicklink-card">
+                    <span>✍️</span> Artikel schreiben
+                </a>
+                <?php endif; ?>
                 <?php if ($showQuicklinkProfile): ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-quicklink-card">
                     <span>👤</span> Profil bearbeiten
