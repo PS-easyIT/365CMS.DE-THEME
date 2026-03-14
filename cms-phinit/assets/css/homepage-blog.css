@@ -551,22 +551,23 @@ body.dark-mode .repo-card {
 .sb-download-list a:hover { color: var(--accent-teal-light); }
 
 .sb-social-links {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(26px, 1fr));
-    gap: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
     width: 100%;
-    justify-items: stretch;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
 }
 
 .sb-social-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    min-height: 24px;
-    aspect-ratio: 1 / 1;
-    border-radius: 6px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    min-height: 32px;
+    border-radius: 7px;
     border: 1px solid var(--border-color);
     background: var(--bg-secondary);
     color: var(--text-secondary);
@@ -583,13 +584,14 @@ body.dark-mode .repo-card {
 
 .sb-social-link svg {
     display: block;
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
     pointer-events: none;
     flex-shrink: 0;
 }
 .sb-social-link--linkedin:hover { background: #0a66c2; border-color: #0a66c2; }
 .sb-social-link--github:hover { background: #24292f; border-color: #24292f; }
+.sb-social-link--gitlab:hover { background: #fc6d26; border-color: #fc6d26; }
 .sb-social-link--twitter:hover { background: #000; border-color: #000; }
 .sb-social-link--mastodon:hover { background: #563acc; border-color: #563acc; }
 .sb-social-link--youtube:hover { background: #ff0000; border-color: #ff0000; }
@@ -973,6 +975,126 @@ body.dark-mode .sb-social-link--github:hover { background: #f0f6fc; border-color
     line-clamp: 3;
     text-shadow: 0 1px 4px rgba(0, 0, 0, .55);
     margin: 0;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media {
+    background: var(--bg-primary);
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-rotator {
+    min-height: 220px;
+    background: var(--bg-primary);
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-post {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-widget--featured-rotating .sb-featured-post,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media.sb-widget--featured-rotating .sb-featured-post {
+    border-bottom: none;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-post:hover {
+    background: var(--bg-secondary);
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-thumb,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-thumb--placeholder {
+    position: relative;
+    inset: auto;
+    width: 84px;
+    min-width: 84px;
+    height: 62px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-thumb--placeholder {
+    font-size: 22px;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-body {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    gap: 0;
+    background: none;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-body::before {
+    display: none;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-body-inner {
+    padding: 0;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-badges {
+    position: static;
+    margin-bottom: 6px;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-cat,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-meta-badge {
+    pointer-events: auto;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-title-badge {
+    display: none !important;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-title {
+    display: -webkit-box;
+    color: var(--text-primary);
+    text-shadow: none;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-post:hover .sb-featured-title {
+    color: var(--accent-teal);
+    text-shadow: none;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-below .sb-featured-post {
+    flex-direction: column;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-below .sb-featured-thumb,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-below .sb-featured-thumb--placeholder {
+    width: 100%;
+    min-width: 0;
+    height: 108px;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side .sb-featured-post {
+    flex-direction: row;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-compact-media .sb-featured-rotator {
+    min-height: 190px;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-compact-media.sb-widget--featured-media-side .sb-featured-thumb,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-compact-media.sb-widget--featured-media-side .sb-featured-thumb--placeholder {
+    width: 72px;
+    min-width: 72px;
+    height: 54px;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-compact-media.sb-widget--featured-media-below .sb-featured-thumb,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-compact-media.sb-widget--featured-media-below .sb-featured-thumb--placeholder {
+    height: 88px;
 }
 
 .sb-featured-meta-badge time {

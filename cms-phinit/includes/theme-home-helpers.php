@@ -55,6 +55,7 @@ function phinit_get_homepage_view_model(): array
         '_sbSocialLabel' => 'Folge uns',
         '_sbSocialLinkedin' => '',
         '_sbSocialGithub' => '',
+        '_sbSocialGitlab' => '',
         '_sbSocialTwitter' => '',
         '_sbSocialMastodon' => '',
         '_sbSocialRss' => '',
@@ -62,6 +63,7 @@ function phinit_get_homepage_view_model(): array
         '_sbSocialXing' => '',
         '_sbLabelLinkedin' => 'LinkedIn',
         '_sbLabelGithub' => 'GitHub',
+        '_sbLabelGitlab' => 'GitLab',
         '_sbLabelRss' => 'RSS Feed',
         '_sbShowIdentity' => true,
         '_sbIdentityLogoUrl' => '',
@@ -81,12 +83,19 @@ function phinit_get_homepage_view_model(): array
         '_sbFeaturedRotateSeconds' => 6,
         '_sbFeaturedTitleSize' => 12.5,
         '_sbFeaturedBadgeSize' => 10.0,
+        '_sbFeaturedImageLayout' => 'auto',
         '_sbFeaturedPostId1' => 0,
         '_sbFeaturedPostId2' => 0,
         '_sbFeaturedPostId3' => 0,
         '_sbFeaturedPostId4' => 0,
         '_sbFeaturedPostId5' => 0,
         '_sbFeaturedPostId6' => 0,
+        '_sbFeaturedCustomImage1' => '',
+        '_sbFeaturedCustomImage2' => '',
+        '_sbFeaturedCustomImage3' => '',
+        '_sbFeaturedCustomImage4' => '',
+        '_sbFeaturedCustomImage5' => '',
+        '_sbFeaturedCustomImage6' => '',
         '_showInfoGrid' => true,
         '_c1Title' => '🖥️ Admin Anleitungen',
         '_c1Text' => '',
@@ -166,6 +175,7 @@ function phinit_get_homepage_view_model(): array
             '_sbSocialLabel' => $customizer->get('homepage', 'sidebar_social_label', 'Folge uns'),
             '_sbSocialLinkedin' => $customizer->get('social', 'social_linkedin', ''),
             '_sbSocialGithub' => $customizer->get('social', 'social_github', ''),
+            '_sbSocialGitlab' => $customizer->get('social', 'social_gitlab', ''),
             '_sbSocialTwitter' => $customizer->get('social', 'social_twitter', ''),
             '_sbSocialMastodon' => $customizer->get('social', 'social_mastodon', ''),
             '_sbSocialRss' => $customizer->get('social', 'social_rss', ''),
@@ -173,6 +183,7 @@ function phinit_get_homepage_view_model(): array
             '_sbSocialXing' => $customizer->get('social', 'social_xing', ''),
             '_sbLabelLinkedin' => $customizer->get('social', 'social_label_linkedin', 'LinkedIn'),
             '_sbLabelGithub' => $customizer->get('social', 'social_label_github', 'GitHub'),
+            '_sbLabelGitlab' => $customizer->get('social', 'social_label_gitlab', 'GitLab'),
             '_sbLabelRss' => $customizer->get('social', 'social_label_rss', 'RSS Feed'),
             '_sbShowIdentity' => filter_var($customizer->get('homepage', 'sidebar_show_identity', true), FILTER_VALIDATE_BOOLEAN),
             '_sbIdentityLogoUrl' => $customizer->get('homepage', 'sidebar_identity_logo_url', ''),
@@ -196,12 +207,19 @@ function phinit_get_homepage_view_model(): array
             '_sbFeaturedRotateSeconds' => max(2, min(60, (int) $customizer->get('homepage', 'sidebar_featured_rotate_seconds', 6))),
             '_sbFeaturedTitleSize' => max(10, min(20, (float) $customizer->get('homepage', 'sidebar_featured_title_size', 12.5))),
             '_sbFeaturedBadgeSize' => max(8, min(18, (float) $customizer->get('homepage', 'sidebar_featured_badge_size', 10))),
+            '_sbFeaturedImageLayout' => $customizer->get('homepage', 'sidebar_featured_image_layout', 'auto'),
             '_sbFeaturedPostId1' => (int) $customizer->get('homepage', 'sidebar_featured_post_1', 0),
             '_sbFeaturedPostId2' => (int) $customizer->get('homepage', 'sidebar_featured_post_2', 0),
             '_sbFeaturedPostId3' => (int) $customizer->get('homepage', 'sidebar_featured_post_3', 0),
             '_sbFeaturedPostId4' => (int) $customizer->get('homepage', 'sidebar_featured_post_4', 0),
             '_sbFeaturedPostId5' => (int) $customizer->get('homepage', 'sidebar_featured_post_5', 0),
             '_sbFeaturedPostId6' => (int) $customizer->get('homepage', 'sidebar_featured_post_6', 0),
+            '_sbFeaturedCustomImage1' => $customizer->get('homepage', 'sidebar_featured_custom_image_1', ''),
+            '_sbFeaturedCustomImage2' => $customizer->get('homepage', 'sidebar_featured_custom_image_2', ''),
+            '_sbFeaturedCustomImage3' => $customizer->get('homepage', 'sidebar_featured_custom_image_3', ''),
+            '_sbFeaturedCustomImage4' => $customizer->get('homepage', 'sidebar_featured_custom_image_4', ''),
+            '_sbFeaturedCustomImage5' => $customizer->get('homepage', 'sidebar_featured_custom_image_5', ''),
+            '_sbFeaturedCustomImage6' => $customizer->get('homepage', 'sidebar_featured_custom_image_6', ''),
             '_showInfoGrid' => filter_var($customizer->get('homepage', 'show_info_grid', true), FILTER_VALIDATE_BOOLEAN),
             '_c1Title' => $customizer->get('homepage', 'info_card1_title', '🖥️ Admin Anleitungen'),
             '_c1Text' => $customizer->get('homepage', 'info_card1_text', 'Schritt-für-Schritt-Tutorials für Microsoft 365 Administration.'),
@@ -375,14 +393,18 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
 
         $sbFeaturedPosts = [];
         if ($_sbShowFeaturedPosts) {
-            $_fpIds = array_values(array_filter([
-                (int) ($viewModel['_sbFeaturedPostId1'] ?? 0),
-                (int) ($viewModel['_sbFeaturedPostId2'] ?? 0),
-                (int) ($viewModel['_sbFeaturedPostId3'] ?? 0),
-                (int) ($viewModel['_sbFeaturedPostId4'] ?? 0),
-                (int) ($viewModel['_sbFeaturedPostId5'] ?? 0),
-                (int) ($viewModel['_sbFeaturedPostId6'] ?? 0),
-            ]));
+            $_featuredSlots = [
+                ['id' => (int) ($viewModel['_sbFeaturedPostId1'] ?? 0), 'custom_image' => trim((string) ($viewModel['_sbFeaturedCustomImage1'] ?? ''))],
+                ['id' => (int) ($viewModel['_sbFeaturedPostId2'] ?? 0), 'custom_image' => trim((string) ($viewModel['_sbFeaturedCustomImage2'] ?? ''))],
+                ['id' => (int) ($viewModel['_sbFeaturedPostId3'] ?? 0), 'custom_image' => trim((string) ($viewModel['_sbFeaturedCustomImage3'] ?? ''))],
+                ['id' => (int) ($viewModel['_sbFeaturedPostId4'] ?? 0), 'custom_image' => trim((string) ($viewModel['_sbFeaturedCustomImage4'] ?? ''))],
+                ['id' => (int) ($viewModel['_sbFeaturedPostId5'] ?? 0), 'custom_image' => trim((string) ($viewModel['_sbFeaturedCustomImage5'] ?? ''))],
+                ['id' => (int) ($viewModel['_sbFeaturedPostId6'] ?? 0), 'custom_image' => trim((string) ($viewModel['_sbFeaturedCustomImage6'] ?? ''))],
+            ];
+            $_fpIds = array_values(array_map(
+                static fn(array $_slot): int => (int) $_slot['id'],
+                array_filter($_featuredSlots, static fn(array $_slot): bool => (int) ($_slot['id'] ?? 0) > 0)
+            ));
 
             if ($_fpIds !== []) {
                 $_fpIn = implode(',', array_map('intval', $_fpIds));
@@ -400,10 +422,19 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                     $_fpMap[(int) $_fpPost['id']] = $_fpPost;
                 }
 
-                foreach ($_fpIds as $_fpId) {
-                    if (isset($_fpMap[$_fpId])) {
-                        $sbFeaturedPosts[] = $_fpMap[$_fpId];
+                foreach ($_featuredSlots as $_slot) {
+                    $_slotId = (int) ($_slot['id'] ?? 0);
+                    if ($_slotId <= 0 || !isset($_fpMap[$_slotId])) {
+                        continue;
                     }
+
+                    $_fpPost = $_fpMap[$_slotId];
+                    $_customImage = trim((string) ($_slot['custom_image'] ?? ''));
+                    if ($_customImage !== '') {
+                        $_fpPost['custom_sidebar_image'] = $_customImage;
+                    }
+
+                    $sbFeaturedPosts[] = $_fpPost;
                 }
             }
         }

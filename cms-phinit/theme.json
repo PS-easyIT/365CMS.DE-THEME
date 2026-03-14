@@ -526,6 +526,16 @@
           "type": "text",
           "default": "GitHub"
         },
+        "social_gitlab": {
+          "label": "GitLab-Profil-URL",
+          "type": "url",
+          "default": ""
+        },
+        "social_label_gitlab": {
+          "label": "GitLab-Label",
+          "type": "text",
+          "default": "GitLab"
+        },
         "social_twitter": {
           "label": "Twitter/X-Profil-URL",
           "type": "url",
@@ -663,6 +673,46 @@
           "default": 10,
           "min": 8,
           "max": 18
+        },
+        "sidebar_featured_image_layout": {
+          "label": "Sidebar Featured: Bildposition bei eigenen Bildern",
+          "type": "select",
+          "default": "auto",
+          "options": {
+            "auto": "Automatisch (kompakt bei Projekten/Social)",
+            "side": "Daneben",
+            "below": "Darunter"
+          }
+        },
+        "sidebar_featured_custom_image_1": {
+          "label": "Sidebar Featured: Eigenes Bild 1 (URL)",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_2": {
+          "label": "Sidebar Featured: Eigenes Bild 2 (URL)",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_3": {
+          "label": "Sidebar Featured: Eigenes Bild 3 (URL)",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_4": {
+          "label": "Sidebar Featured: Eigenes Bild 4 (URL)",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_5": {
+          "label": "Sidebar Featured: Eigenes Bild 5 (URL)",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_6": {
+          "label": "Sidebar Featured: Eigenes Bild 6 (URL)",
+          "type": "text",
+          "default": ""
         },
         "featured_section_title": {
           "label": "Titel der Featured-Sektion",
