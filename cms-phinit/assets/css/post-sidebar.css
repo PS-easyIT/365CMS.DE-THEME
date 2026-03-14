@@ -193,11 +193,23 @@ html.dark-mode body .toc {
 @media (max-width: 768px) {
     .content-layout {
         grid-template-columns: 1fr;
+        gap: 18px;
     }
 
     .sidebar {
         position: static;
-        order: -1;
+        order: 0;
+        gap: 12px;
+    }
+
+    .toc,
+    .social-widget {
+        padding: 14px 16px;
+    }
+
+    .toc-list li a {
+        padding: 8px 10px;
+        border-radius: 8px;
     }
 }
 

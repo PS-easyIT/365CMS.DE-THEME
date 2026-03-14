@@ -76,27 +76,13 @@ try {
 ?>
 
 <div class="container blog-shell">
-
-    <!-- Archiv-Navigation: Startseite + Suchfeld -->
-    <div class="blog-archive-bar">
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/"
-           class="blog-archive-back">&#8592; Startseite</a>
-        <form class="blog-search-form" method="GET"
-              action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog">
-            <input type="search" name="q"
-                   placeholder="Beiträge durchsuchen&hellip;"
-                   value="<?php echo htmlspecialchars($_bQuery, ENT_QUOTES); ?>">
-            <button type="submit" aria-label="Suchen">&#128269;</button>
-        </form>
-    </div>
-
-    <?php if ($_bQuery !== ''): ?>
-    <p class="blog-search-hint">
-        Suchergebnisse für <strong>&bdquo;<?php echo htmlspecialchars($_bQuery, ENT_QUOTES); ?>&ldquo;</strong>
-        &mdash; <?php echo $_bTotal; ?> Treffer
-        &nbsp;<a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog">&#10005; Zurücksetzen</a>
-    </p>
-    <?php endif; ?>
+    <?php
+    get_theme_part('partials/blog-archive-toolbar', [
+        'siteUrl' => $siteUrl,
+        'blogQuery' => $_bQuery,
+        'blogTotal' => $_bTotal,
+    ]);
+    ?>
 
     <?php if (!empty($_bPosts)): ?>
 
@@ -112,32 +98,13 @@ try {
         endforeach; ?>
     </div>
 
-    <!-- Pagination -->
-    <?php if ($_bPages > 1): ?>
-    <nav class="pagination pagination--spaced" aria-label="Archiv-Seitennavigation">
-        <?php if ($_blogPage > 1): ?>
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $_blogPage - 1; ?>"
-           class="page-link" aria-label="Vorherige Seite">← Zurück</a>
-        <?php endif; ?>
-
-        <?php for ($_pg = 1; $_pg <= $_bPages; $_pg++): ?>
-            <?php if ($_pg === 1 || $_pg === $_bPages || abs($_pg - $_blogPage) <= 2): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $_pg; ?>"
-               class="page-link <?php echo $_pg === $_blogPage ? 'active' : ''; ?>"
-               <?php echo $_pg === $_blogPage ? 'aria-current="page"' : ''; ?>>
-                <?php echo $_pg; ?>
-            </a>
-            <?php elseif (abs($_pg - $_blogPage) === 3): ?>
-            <span class="page-link dots" aria-hidden="true">…</span>
-            <?php endif; ?>
-        <?php endfor; ?>
-
-        <?php if ($_blogPage < $_bPages): ?>
-        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog?page=<?php echo $_blogPage + 1; ?>"
-           class="page-link" aria-label="Nächste Seite">Weiter →</a>
-        <?php endif; ?>
-    </nav>
-    <?php endif; ?>
+    <?php
+    get_theme_part('partials/blog-archive-pagination', [
+        'siteUrl' => $siteUrl,
+        'blogPage' => $_blogPage,
+        'blogPages' => $_bPages,
+    ]);
+    ?>
 
     <?php else: ?>
     <div class="empty-state" data-anim>

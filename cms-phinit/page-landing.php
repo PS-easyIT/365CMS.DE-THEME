@@ -57,7 +57,7 @@ if (!$pageProvidedByRouter) {
     $landingContent = phinit_prepare_renderable_content($landingContent, 'page', (int)($page['id'] ?? 0));
 }
 $landingHeadingData = phinit_with_heading_ids($landingContent, [2, 3]);
-$landingContent = $landingHeadingData['html'];
+$landingContent = phinit_enhance_content_images($landingHeadingData['html']);
 
 // Meta-Daten auslesen
 $meta       = is_array($page['meta'] ?? null) ? $page['meta'] : [];
@@ -84,7 +84,7 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
             <img src="<?php echo htmlspecialchars($page['thumbnail'], ENT_QUOTES); ?>"
                  alt="<?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?>"
                  class="landing-hero__img"
-                 loading="eager">
+                  <?php echo phinit_image_loading_attributes(true); ?>>
         </div>
         <?php endif; ?>
 

@@ -106,9 +106,16 @@ if ($showToc) {
     if (count($tocItems) < $tocMinHeadings) $tocItems = [];
 }
 
+$content = phinit_enhance_content_images($content);
+
 // ── CSRF & Kommentar-Handler ───────────────────────────────────────────
 $commentError = $commentSuccess = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
+    $honeypot = trim((string) ($_POST['comment_hp'] ?? ''));
+    if ($honeypot !== '') {
+        header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')) . '?commented=1#comments');
+        exit;
+    }
     if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
         $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
     } else {
@@ -132,84 +139,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
 try { $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0)); } catch (\Throwable $e) { $csrfToken = ''; }
 // ── Reading Time ───────────────────────────────────────────────────────
 $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($content, $readingTimeWpm) : 0;
+$readingTime = $readTime;
+$commentLinkTarget = '#comments';
+$favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
+    'title' => (string) ($post['title'] ?? 'Beitrag'),
+    'url' => '/blog/' . rawurlencode((string) ($post['slug'] ?? '')),
+    'excerpt' => trim((string) ($post['excerpt'] ?? '')),
+    'featured_image' => (string) ($post['featured_image'] ?? ''),
+    'badge' => (string) ($post['category_name'] ?? 'Beitrag'),
+]);
+
+$postTags = [];
+if ($showPostTags) {
+    try {
+        $tagRows = $db->get_results(
+            "SELECT t.name, t.slug FROM {$pfx}tags t
+             INNER JOIN {$pfx}post_tags pt ON pt.tag_id = t.id
+             WHERE pt.post_id = ? ORDER BY t.name ASC",
+            [(int)($post['id'] ?? 0)]
+        ) ?: [];
+        $postTags = array_map(fn($tag) => (array) $tag, $tagRows);
+    } catch (\Throwable) {}
+}
 ?>
 
 <div class="container post-container">
 <article class="article-layout--wide" itemscope itemtype="https://schema.org/BlogPosting">
 
     <!-- ── Post-Header ───────────────────────────────────────────────── -->
-    <header class="post-header" data-anim>
-        <?php if ($showPostHero && !empty($post['featured_image'])): ?>
-        <div class="post-hero-media">
-            <img class="post-hero-img"
-                 src="<?php echo htmlspecialchars($post['featured_image'], ENT_QUOTES); ?>"
-                 alt="<?php echo htmlspecialchars($post['title'] ?? '', ENT_QUOTES); ?>"
-                 loading="eager" itemprop="image">
-            <?php if (!empty($post['category_name'])): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="post-hero-badge badge badge-teal">
-                <?php echo phinit_escape_text($post['category_name'] ?? ''); ?>
-            </a>
-            <?php endif; ?>
-        </div>
-        <?php endif; ?>
-
-        <div class="post-header-body">
-            <?php if ((!$showPostHero || empty($post['featured_image'])) && !empty($post['category_name'])): ?>
-            <div class="post-cats">
-                <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . urlencode(phinit_display_text($post['category_name'] ?? '')), ENT_QUOTES); ?>" class="badge badge-teal">
-                    <?php echo phinit_escape_text($post['category_name'] ?? ''); ?>
-                </a>
-            </div>
-            <?php endif; ?>
-
-            <h1 class="post-title" itemprop="headline">
-                <?php echo phinit_escape_text($post['title'] ?? ''); ?>
-            </h1>
-            <?php if ($showPostMeta): ?>
-            <div class="post-meta">
-                <span>📅 <strong itemprop="datePublished" content="<?php echo htmlspecialchars($post['published_at'] ?? '', ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars(date('j. F Y', strtotime($post['published_at'] ?? 'now')), ENT_QUOTES); ?>
-                </strong></span>
-                <?php if (!empty($post['author_name'])): ?>
-                <span>👤 <strong itemprop="author"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></strong></span>
-                <?php endif; ?>
-                <?php if ($showReadingTime && $readTime): ?>
-                <span>⏱ <?php echo $readTime; ?> Min. Lesezeit</span>
-                <?php endif; ?>
-                <?php if ($commentCount > 0): ?>
-                <span><a href="#comments" class="post-meta__link">💬 <?php echo $commentCount; ?> Kommentar<?php echo $commentCount !== 1 ? 'e' : ''; ?></a></span>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
-        </div>
-    </header>
+    <?php include __DIR__ . '/partials/post-header.php'; ?>
 
     <!-- ── Inline-TOC (aufklappbar) ──────────────────────────────────── -->
-    <?php if (!empty($tocItems)): ?>
-    <details class="toc-inline" data-inline-toc data-anim data-anim-delay="1">
-        <summary class="toc-inline__toggle">
-            <span class="toc-inline__toggle-main">
-                <span class="toc-inline__toggle-icon" aria-hidden="true">📋</span>
-                <span class="toc-inline__toggle-text"><?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></span>
-            </span>
-            <span class="toc-inline__toggle-meta">
-                <span class="toc-inline__count"><?php echo (int) count($tocItems); ?> Punkte</span>
-                <span class="toc-inline__chevron" aria-hidden="true">▾</span>
-            </span>
-        </summary>
-        <nav class="toc-inline__body" aria-label="Inhaltsverzeichnis des Artikels">
-            <ul role="list">
-                <?php foreach ($tocItems as $item): ?>
-                <li class="<?php echo $item['level'] === 3 ? 'toc-h3' : ''; ?>">
-                    <a href="#<?php echo htmlspecialchars($item['id'], ENT_QUOTES); ?>">
-                        <?php echo phinit_escape_text($item['text'] ?? ''); ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </nav>
-    </details>
-    <?php endif; ?>
+    <?php include __DIR__ . '/partials/post-inline-toc.php'; ?>
 
     <!-- ── Artikel-Body ──────────────────────────────────────────────── -->
     <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
@@ -232,103 +193,12 @@ $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($conten
     </div>
 
     <!-- ── Vor-/Nächster Artikel ──────────────────────────────────────── -->
-    <?php if ($prevPost || $nextPost): ?>
-    <nav class="post-nav" aria-label="Artikel-Navigation">
-        <?php if ($prevPost): ?>
-        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($prevPost['slug'] ?? ''), ENT_QUOTES); ?>">
-            <span class="direction">← Vorheriger Beitrag</span>
-            <span class="nav-title"><?php echo phinit_escape_text($prevPost['title'] ?? ''); ?></span>
-        </a>
-        <?php else: ?><span></span><?php endif; ?>
-        <?php if ($nextPost): ?>
-        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($nextPost['slug'] ?? ''), ENT_QUOTES); ?>">
-            <span class="direction">Nächster Beitrag →</span>
-            <span class="nav-title"><?php echo phinit_escape_text($nextPost['title'] ?? ''); ?></span>
-        </a>
-        <?php endif; ?>
-    </nav>
-    <?php endif; ?>
+    <?php include __DIR__ . '/partials/post-navigation.php'; ?>
 
     <!-- ── Kommentare ─────────────────────────────────────────────────── -->
-    <?php if ($showComments): ?>
-    <section class="comments-section" id="comments">
-        <h2 class="comments-title"><?php echo htmlspecialchars($commentsHeader, ENT_QUOTES); ?></h2>
+    <?php include __DIR__ . '/partials/post-comments.php'; ?>
 
-        <?php if (!empty($comments)): ?>
-            <?php foreach ($comments as $comment): ?>
-            <div class="comment-item">
-                <div class="comment-avatar" aria-hidden="true">
-                    <?php echo htmlspecialchars(strtoupper(substr($comment['author'] ?? 'A', 0, 1)), ENT_QUOTES); ?>
-                </div>
-                <div class="comment-body-wrap">
-                    <div class="comment-author-line">
-                        <span class="comment-author"><?php echo htmlspecialchars($comment['author'] ?? '', ENT_QUOTES); ?></span>
-                        <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime($comment['post_date'] ?? 'now')), ENT_QUOTES); ?></span>
-                    </div>
-                    <p class="comment-text"><?php echo htmlspecialchars($comment['content'] ?? '', ENT_QUOTES); ?></p>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="comment-empty-state">Noch keine Kommentare. Sei der Erste!</p>
-        <?php endif; ?>
-
-        <?php if ($commentError): ?>
-        <div class="alert-box alert-box--error">
-            ❌ <?php echo htmlspecialchars($commentError, ENT_QUOTES); ?>
-        </div>
-        <?php endif; ?>
-
-        <div class="comment-form-wrap">
-            <h4><?php echo htmlspecialchars($commentFormHeader, ENT_QUOTES); ?></h4>
-            <form method="POST" action="#comments" novalidate>
-                <input type="hidden" name="submit_comment" value="1">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
-                <input type="hidden" name="post_id"    value="<?php echo (int)($post['id'] ?? 0); ?>">
-                <div class="form-group form-group--spaced">
-                    <label for="comment_text">Kommentar <span class="field-required">*</span></label>
-                    <textarea id="comment_text" name="comment_text" class="form-control" required placeholder="Dein Kommentar …" rows="4"></textarea>
-                </div>
-                <div class="form-row form-row--spaced">
-                    <div class="form-group">
-                        <label for="comment_name">Name <span class="field-required">*</span></label>
-                        <input type="text" id="comment_name" name="comment_name" class="form-control" required placeholder="Dein Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="comment_email">E-Mail <span class="field-required">*</span></label>
-                        <input type="email" id="comment_email" name="comment_email" class="form-control" required placeholder="dein@email.de">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Kommentar abschicken</button>
-            </form>
-        </div>
-    </section>
-    <?php endif; ?>
-
-    <!-- Tags -->
-    <?php
-    if ($showPostTags) {
-        $tagRows = [];
-        try {
-            $tagRows = $db->get_results(
-                "SELECT t.name, t.slug FROM {$pfx}tags t
-                 INNER JOIN {$pfx}post_tags pt ON pt.tag_id = t.id
-                 WHERE pt.post_id = ? ORDER BY t.name ASC",
-                [(int)($post['id'] ?? 0)]
-            ) ?: [];
-        } catch (\Throwable) {}
-        if (!empty($tagRows)): ?>
-        <div class="post-tags" data-anim>
-            <span>🏷️ Tags:</span>
-            <?php foreach ($tagRows as $tag): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . ($tag['slug'] ?? ''), ENT_QUOTES); ?>" class="tag-link">
-                <?php echo phinit_escape_text($tag['name'] ?? ''); ?>
-            </a>
-            <?php endforeach; ?>
-        </div>
-        <?php endif;
-    }
-    ?>
+    <?php include __DIR__ . '/partials/post-tags.php'; ?>
 
 </article>
 </div><!-- /.container -->

@@ -30,7 +30,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 <?php endif; ?>
                 <img src="<?php echo htmlspecialchars((string) $post['featured_image'], ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars((string) ($post['title'] ?? ''), ENT_QUOTES); ?>"
-                     loading="lazy">
+                     <?php echo phinit_image_loading_attributes(); ?>>
             </div>
             <?php else: ?>
             <div class="post-card-thumb post-card-thumb--placeholder">

@@ -135,7 +135,7 @@ $readingTime = function_exists('phinit_reading_time')
 
 // ── Auto-ID Injection für h2/h3 (TOC-Voraussetzung) ────────────────────────
 $headingData = phinit_with_heading_ids($content, [2, 3]);
-$content = $headingData['html'];
+$content = phinit_enhance_content_images($headingData['html']);
 $post['content'] = $content;
 
 // ── TOC generieren ──────────────────────────────────────────────────────────
@@ -269,6 +269,14 @@ if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
+$favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
+    'title' => (string) ($post['title'] ?? 'Beitrag'),
+    'url' => '/blog/' . rawurlencode((string) ($post['slug'] ?? '')),
+    'excerpt' => trim((string) ($post['excerpt'] ?? '')),
+    'featured_image' => (string) ($post['featured_image'] ?? ''),
+    'badge' => (string) ($post['category_name'] ?? 'Beitrag'),
+]);
+
 $commentError = $commentError ?? '';
 $commentSuccess = $commentSuccess ?? '';
 
@@ -304,6 +312,7 @@ if ($sidebarPosition === 'left') {
                 'showReadingTime' => $showReadingTime,
                 'readingTime' => $readingTime,
                 'commentCount' => $commentCount,
+                'favoriteControl' => $favoriteControl,
             ]); ?>
 
             <!-- Artikel-Body -->

@@ -329,6 +329,15 @@ body.dark-mode .main-nav .dropdown a.active {
     height: var(--quicklinks-h); display: flex; justify-content: center; align-items: center;
 }
 
+body.dark-mode .quicklinks-bar {
+    background: #0d1420;
+    border-top-color: #1e2d3d;
+}
+
+body.dark-mode .quicklinks-bar a {
+    color: #94a3b8;
+}
+
 .hdr-sub { height: var(--quicklinks-h); align-items: center; }
 .sub-nav  { display: flex; gap: 0; height: 100%; }
 .sub-nav a {

@@ -52,8 +52,17 @@ if (!$pageProvidedByRouter) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
 }
 $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3]);
-$pageContent = $pageHeadingData['html'];
+$pageContent = phinit_enhance_content_images($pageHeadingData['html']);
 $isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
+$favoriteControl = !$isHubSitePage
+    ? phinit_get_favorite_control('page', (int) ($page['id'] ?? 0), [
+        'title' => (string) ($page['title'] ?? 'Seite'),
+        'url' => phinit_current_request_path(),
+        'excerpt' => trim(mb_substr(strip_tags($pageContent), 0, 180)),
+        'featured_image' => (string) ($page['featured_image'] ?? ''),
+        'badge' => 'Seite',
+    ])
+    : [];
 
 // Nicht gefunden → Fehlermeldung im Content-Bereich anzeigen (Header wurde bereits gesendet)
 $pageNotFound = empty($page);
@@ -96,17 +105,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
     <!-- Seiten-Titel -->
     <?php if ($_pg_showTitle): ?>
-    <div class="page-header-block<?php echo (!empty($page['featured_image']) && $_pg_showHero) ? ' page-header-block--with-image' : ''; ?>" data-anim>
-        <?php if (!empty($page['featured_image']) && $_pg_showHero): ?>
-        <img class="page-hero-img"
-             src="<?php echo htmlspecialchars($page['featured_image'], ENT_QUOTES); ?>"
-             alt="<?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?>"
-             loading="eager">
-        <?php endif; ?>
-        <div class="page-header-body">
-            <h1><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></h1>
-        </div>
-    </div>
+    <?php include __DIR__ . '/partials/page-header-block.php'; ?>
     <?php endif; ?>
 
     <?php if ($_pg_layout === 'two-col' && $_pg_showSidebar): ?>
@@ -115,31 +114,8 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
         <div data-anim data-anim-delay="1">
             <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
-            <details class="toc-box page-toc page-toc--inline" data-inline-toc>
-                <summary class="page-toc__summary">
-                    <span class="page-toc__summary-main">
-                        <span class="page-toc__summary-icon" aria-hidden="true">&#x1F4CB;</span>
-                        <span class="page-toc__summary-copy">
-                            <span class="page-toc__eyebrow">Schnellnavigation</span>
-                            <span class="page-toc__summary-text">Inhaltsverzeichnis</span>
-                        </span>
-                    </span>
-                    <span class="page-toc__summary-meta">
-                        <span class="page-toc__count"><?php echo (int) count($_pg_toc); ?> Punkte</span>
-                        <span class="page-toc__hint" aria-hidden="true"></span>
-                        <span class="page-toc__chevron" aria-hidden="true">▾</span>
-                    </span>
-                </summary>
-                <nav class="page-toc__body" aria-label="Inhaltsverzeichnis der Seite">
-                    <ol class="page-toc__list">
-                        <?php foreach ($_pg_toc as $_ti): ?>
-                        <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
-                            <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
-                        </li>
-                        <?php endforeach; ?>
-                    </ol>
-                </nav>
-            </details>
+            <?php $pageTocClass = ''; ?>
+            <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
             <?php endif; ?>
             <div class="page-content"><?php echo $pageContent; ?></div>
             <?php echo $_pg_updatedPill; ?>
@@ -147,15 +123,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
 
         <aside class="post-sidebar">
             <?php if ($_pg_sidebarNav && !empty($_pgNavItems)): ?>
-            <div class="sidebar-widget page-sidebar-nav">
-                <h4 class="page-sidebar-nav__title">Navigation</h4>
-                <nav>
-                    <?php foreach ($_pgNavItems as $_ni): ?>
-                    <a href="<?php echo htmlspecialchars($_ni['url'] ?? '#', ENT_QUOTES); ?>"
-                       class="page-sidebar-nav__link"><?php echo htmlspecialchars($_ni['label'] ?? '', ENT_QUOTES); ?></a>
-                    <?php endforeach; ?>
-                </nav>
-            </div>
+            <?php include __DIR__ . '/partials/page-sidebar-nav.php'; ?>
             <?php endif; ?>
         </aside>
 
@@ -165,31 +133,8 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <!-- Volle Breite oder schmal -->
     <?php $pageContentClass = $_pg_layout === 'narrow' ? ' page-content--narrow' : ''; ?>
     <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
-    <details class="toc-box page-toc page-toc--inline<?php echo $pageContentClass; ?>" data-inline-toc data-anim>
-        <summary class="page-toc__summary">
-            <span class="page-toc__summary-main">
-                <span class="page-toc__summary-icon" aria-hidden="true">&#x1F4CB;</span>
-                <span class="page-toc__summary-copy">
-                    <span class="page-toc__eyebrow">Schnellnavigation</span>
-                    <span class="page-toc__summary-text">Inhaltsverzeichnis</span>
-                </span>
-            </span>
-            <span class="page-toc__summary-meta">
-                <span class="page-toc__count"><?php echo (int) count($_pg_toc); ?> Punkte</span>
-                <span class="page-toc__hint" aria-hidden="true"></span>
-                <span class="page-toc__chevron" aria-hidden="true">▾</span>
-            </span>
-        </summary>
-        <nav class="page-toc__body" aria-label="Inhaltsverzeichnis der Seite">
-            <ol class="page-toc__list">
-                <?php foreach ($_pg_toc as $_ti): ?>
-                <li class="page-toc__item<?php echo $_ti['level'] === 3 ? ' page-toc__item--nested' : ''; ?>">
-                    <a href="#<?php echo htmlspecialchars($_ti['id'], ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars($_ti['text'], ENT_QUOTES); ?></a>
-                </li>
-                <?php endforeach; ?>
-            </ol>
-        </nav>
-    </details>
+    <?php $pageTocClass = $pageContentClass; ?>
+    <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
     <?php endif; ?>
     <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
         <?php echo $pageContent; ?>

@@ -24,6 +24,7 @@ $db          = \CMS\Database::instance();
 $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'dashboard';
+$pageFavorites = phinit_get_page_favorites_for_user((int) $currentUser->id);
 
 // Hilfsfunktion: Tabelle existiert?
 $_tableExists = function (string $table) use ($db): bool {
@@ -50,6 +51,7 @@ if ($_hasFavorites) {
         ) ?: 0;
     } catch (\Throwable $e) {}
 }
+$favCount += count($pageFavorites);
 
 $commentCount = 0;
 if ($_hasComments) {
@@ -105,9 +107,33 @@ if ($_hasFavorites && $_hasPosts) {
     } catch (\Throwable $e) {}
 }
 
+$recentFavorites = array_merge(
+    array_map(static fn(array $favorite): array => [
+        'title' => (string) ($favorite['post_title'] ?? 'Beitrag'),
+        'url' => '/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? '')),
+        'created_at' => (string) ($favorite['created_at'] ?? ''),
+    ], $recentFavorites),
+    array_map(static fn(array $favorite): array => [
+        'title' => (string) ($favorite['title'] ?? 'Seite'),
+        'url' => (string) ($favorite['url'] ?? '#'),
+        'created_at' => (string) ($favorite['created_at'] ?? ''),
+    ], $pageFavorites)
+);
+
+usort($recentFavorites, static function (array $a, array $b): int {
+    return strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? ''));
+});
+
+$recentFavorites = array_slice($recentFavorites, 0, 5);
+
 // Begrüßung
 $hour     = (int)date('H');
 $greeting = $hour < 12 ? 'Guten Morgen' : ($hour < 18 ? 'Guten Tag' : 'Guten Abend');
+
+$favoriteUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/favorites';
+$profileUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/profile';
+$securityUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/security';
+$commentsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/comments';
 
 // Admin-Analysen laden (nur für Admins)
 $isAdmin    = $auth->isAdmin();
@@ -153,29 +179,60 @@ include $themeDir . 'header.php';
 
     <div class="member-main">
 
-        <!-- Begrüßung -->
-        <div class="member-welcome" data-anim>
-            <h1><?php echo $greeting; ?>, <?php echo htmlspecialchars(explode(' ', $currentUser->username)[0]); ?>! 👋</h1>
-            <p>Willkommen in deinem persönlichen Bereich. Hier findest du deine Favoriten, Kommentare und Einstellungen.</p>
-        </div>
+        <section class="member-dashboard-hero" data-anim>
+            <div class="member-dashboard-hero__content">
+                <span class="member-dashboard-hero__eyebrow">🏠 Member Home</span>
+                <h1><?php echo $greeting; ?>, <?php echo htmlspecialchars(explode(' ', $currentUser->username)[0]); ?>! 👋</h1>
+                <p>Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.</p>
 
-        <!-- Stat-Cards -->
-        <div class="member-stats" data-anim data-anim-delay="1">
-            <div class="member-stat-card">
-                <div class="member-stat-icon">⭐</div>
-                <div class="member-stat-value"><?php echo $favCount; ?></div>
-                <div class="member-stat-label">Favoriten</div>
+                <div class="member-dashboard-hero__actions">
+                    <a href="<?php echo $favoriteUrl; ?>" class="member-hero-action">⭐ Favoriten</a>
+                    <a href="<?php echo $profileUrl; ?>" class="member-hero-action">👤 Profil</a>
+                    <a href="<?php echo $securityUrl; ?>" class="member-hero-action">🔒 Sicherheit</a>
+                    <a href="<?php echo $commentsUrl; ?>" class="member-hero-action">💬 Kommentare</a>
+                </div>
             </div>
-            <div class="member-stat-card">
-                <div class="member-stat-icon">💬</div>
-                <div class="member-stat-value"><?php echo $commentCount; ?></div>
-                <div class="member-stat-label">Kommentare</div>
+
+            <aside class="member-dashboard-hero__panel">
+                <h3>Kontostatus</h3>
+                <dl class="member-dashboard-hero__facts">
+                    <div>
+                        <dt>Mitglied seit</dt>
+                        <dd><?php echo htmlspecialchars(date('d.m.Y', strtotime((string) ($currentUser->created_at ?? 'now'))), ENT_QUOTES); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Rolle</dt>
+                        <dd><?php echo htmlspecialchars(ucfirst((string) ($currentUser->role ?? 'member')), ENT_QUOTES); ?></dd>
+                    </div>
+                    <div>
+                        <dt>E-Mail</dt>
+                        <dd><?php echo htmlspecialchars((string) ($currentUser->email ?? '–'), ENT_QUOTES); ?></dd>
+                    </div>
+                </dl>
+            </aside>
+        </section>
+
+        <div class="member-dashboard-overview" data-anim data-anim-delay="1">
+            <a href="<?php echo $favoriteUrl; ?>" class="member-overview-card member-overview-card--favorite">
+                <span class="member-overview-card__icon">⭐</span>
+                <strong><?php echo $favCount; ?></strong>
+                <span>Gespeicherte Favoriten</span>
+            </a>
+            <a href="<?php echo $commentsUrl; ?>" class="member-overview-card member-overview-card--comment">
+                <span class="member-overview-card__icon">💬</span>
+                <strong><?php echo $commentCount; ?></strong>
+                <span>Eigene Kommentare</span>
+            </a>
+            <div class="member-overview-card member-overview-card--post">
+                <span class="member-overview-card__icon">📝</span>
+                <strong><?php echo $postCount; ?></strong>
+                <span>Veröffentlichte Beiträge</span>
             </div>
-            <div class="member-stat-card">
-                <div class="member-stat-icon">📝</div>
-                <div class="member-stat-value"><?php echo $postCount; ?></div>
-                <div class="member-stat-label">Beiträge</div>
-            </div>
+            <a href="<?php echo $securityUrl; ?>" class="member-overview-card member-overview-card--security">
+                <span class="member-overview-card__icon">🔒</span>
+                <strong><?php echo $isAdmin ? 'Admin' : 'Aktiv'; ?></strong>
+                <span>Sicherheitsbereich öffnen</span>
+            </a>
         </div>
 
         <?php if ($isAdmin): ?>
@@ -220,7 +277,7 @@ include $themeDir . 'header.php';
         <?php endif; ?>
 
         <!-- 2-Column Grid -->
-        <div class="member-grid-2" data-anim data-anim-delay="2">
+        <div class="member-grid-2 member-grid-2--dashboard" data-anim data-anim-delay="2">
 
             <!-- Letzte Kommentare -->
             <div class="member-card">
@@ -254,8 +311,8 @@ include $themeDir . 'header.php';
                 <ul class="member-activity-list">
                     <?php foreach ($recentFavorites as $f): ?>
                     <li>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($f['post_slug'] ?? ''), ENT_QUOTES); ?>"><?php echo htmlspecialchars($f['post_title'] ?? 'Beitrag', ENT_QUOTES); ?></a>
-                        <span class="member-activity-date"><?php echo date('d.m.Y', strtotime($f['created_at'])); ?></span>
+                        <a href="<?php echo htmlspecialchars(str_starts_with((string) ($f['url'] ?? '#'), 'http') ? (string) ($f['url'] ?? '#') : ($siteUrl . (string) ($f['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($f['title'] ?? 'Favorit', ENT_QUOTES); ?></a>
+                        <span class="member-activity-date"><?php echo date('d.m.Y', strtotime((string) ($f['created_at'] ?? 'now'))); ?></span>
                     </li>
                     <?php endforeach; ?>
                 </ul>
@@ -269,7 +326,7 @@ include $themeDir . 'header.php';
         </div><!-- /.member-grid-2 -->
 
         <!-- Schnellzugriff -->
-        <div class="member-quicklinks" data-anim data-anim-delay="3">
+        <div class="member-quicklinks member-quicklinks--dashboard" data-anim data-anim-delay="3">
             <h3>🚀 Schnellzugriff</h3>
             <div class="member-quicklinks-grid">
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-quicklink-card">

@@ -68,7 +68,7 @@ if ($show_rt && $show_meta) {
         <?php if (!empty($card['featured_image'])): ?>
         <img src="<?php echo htmlspecialchars($card['featured_image'], ENT_QUOTES); ?>"
              alt="<?php echo phinit_escape_text($card['title'] ?? ''); ?>"
-             loading="lazy">
+               <?php echo phinit_image_loading_attributes(); ?>>
         <?php else: ?>
         <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
         <?php endif; ?>

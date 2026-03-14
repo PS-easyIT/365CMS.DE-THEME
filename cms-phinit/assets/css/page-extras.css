@@ -431,7 +431,37 @@ body.dark-mode .search-result-type--speakers { background: rgba(244, 63, 94, .18
    Error Pages  (404.php, error.php)
    ══════════════════════════════════════════════════════════════════ */
 .error-hero {
-    text-align: center; padding: 80px 20px 60px;
+    padding: 12px 0 0;
+}
+
+.error-hero__panel {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 34px;
+    border: 1px solid var(--border-color);
+    border-radius: calc(var(--radius) + 4px);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-secondary) 68%, white) 0%, var(--bg-primary) 100%);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.error-hero__panel--compact {
+    max-width: 780px;
+}
+
+.error-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: .38rem .82rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent-teal) 12%, white);
+    color: var(--accent-teal);
+    font-size: .74rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
 }
 .error-code {
     font-family: var(--font-brand); font-size: 5rem; font-weight: 900;
@@ -468,24 +498,158 @@ body.dark-mode .search-result-type--speakers { background: rgba(244, 63, 94, .18
 .error-actions .btn-ghost:hover { border-color: var(--accent-blue, var(--primary-color)); color: var(--accent-blue, var(--primary-color)); }
 
 .error-shell {
-    padding-top: 48px;
-    padding-bottom: 48px;
+    padding-top: 32px;
+    padding-bottom: 56px;
 }
 
 .error-suggestions {
-    max-width: 700px; margin: 3rem auto 0; padding: 0 20px 60px;
+    max-width: 1120px;
+    margin: 2rem auto 0;
+    padding: 0 0 24px;
+}
+
+.error-suggestions__head {
+    max-width: 720px;
+    margin: 0 auto 18px;
+    text-align: center;
+}
+
+.error-suggestions__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: .35rem .75rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent-color) 18%, white);
+    color: #9a6700;
+    font-size: .74rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
 }
 
 .error-suggestions__title,
 .error-suggestions h3 {
-    font-size: 1.05rem; font-weight: 700; margin: 0 0 16px;
-    color: var(--text-secondary); text-align: center;
+    font-size: clamp(1.22rem, 2.6vw, 1.65rem);
+    font-weight: 800;
+    margin: 0 0 10px;
+    color: var(--text-primary);
+    text-align: center;
 }
+
+.error-suggestions__copy {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.65;
+}
+
 .error-suggestions .posts-grid { margin: 0; }
+
+.error-suggestions__grid .post-card {
+    min-height: 100%;
+}
+
+.error-help-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.error-help-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--bg-primary);
+    text-align: left;
+}
+
+.error-help-card__icon {
+    font-size: 1.1rem;
+}
+
+.error-help-card__title {
+    color: var(--text-primary);
+    font-size: .95rem;
+}
+
+.error-help-card__text {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: .88rem;
+    line-height: 1.6;
+}
+
+.error-actions .btn-outline,
+.error-actions .btn-ghost {
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    background: transparent;
+}
+
+.error-actions .btn-outline:hover,
+.error-actions .btn-ghost:hover {
+    border-color: var(--accent-blue, var(--primary-color));
+    color: var(--accent-blue, var(--primary-color));
+}
+
+body.dark-mode .error-hero__panel,
+body.dark-mode .error-help-card {
+    background: var(--bg-dark-2);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .error-hero__eyebrow {
+    background: rgba(20, 184, 166, .14);
+    color: #7dd3c7;
+}
+
+body.dark-mode .error-suggestions__eyebrow {
+    background: rgba(232, 168, 56, .16);
+    color: #f7c66b;
+}
 
 @media (max-width: 480px) {
     .error-code { font-size: 3.5rem; }
     .error-actions { flex-direction: column; align-items: center; }
+}
+
+@media (max-width: 768px) {
+    .error-shell {
+        padding-top: 18px;
+        padding-bottom: 40px;
+    }
+
+    .error-hero__panel {
+        padding: 24px 18px;
+    }
+
+    .error-help-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .error-suggestions {
+        margin-top: 1.5rem;
+    }
+
+    .error-suggestions__head {
+        margin-bottom: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-hero__eyebrow,
+    .error-suggestions__eyebrow {
+        font-size: .68rem;
+    }
+
+    .error-help-card {
+        padding: 14px;
+    }
 }
 
 /* ══════════════════════════════════════════════════════════════════

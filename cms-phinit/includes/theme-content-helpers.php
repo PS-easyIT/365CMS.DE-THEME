@@ -17,7 +17,7 @@ if (!function_exists('phinit_prepare_renderable_content')) {
         }
 
         try {
-            return \CMS\Router::instance()->prepareRenderableContent($content, $type, $id);
+            return phinit_enhance_content_images((string) \CMS\Router::instance()->prepareRenderableContent($content, $type, $id));
         } catch (\Throwable) {
             try {
                 $rendered = \CMS\Services\EditorService::getInstance()->renderContent($content);
@@ -26,11 +26,54 @@ if (!function_exists('phinit_prepare_renderable_content')) {
                     $rendered = \CMS\Services\SiteTableService::getInstance()->replaceShortcodes($rendered);
                 }
 
-                return $rendered;
+                return phinit_enhance_content_images($rendered);
             } catch (\Throwable) {
-                return $content;
+                return phinit_enhance_content_images($content);
             }
         }
+    }
+}
+
+if (!function_exists('phinit_enhance_content_images')) {
+    /**
+     * Ergänzt Inhaltsbilder standardmäßig um Lazy Loading und asynchrones Decoding.
+     */
+    function phinit_enhance_content_images(string $html): string
+    {
+        if (trim($html) === '' || stripos($html, '<img') === false) {
+            return $html;
+        }
+
+        $enhanced = preg_replace_callback(
+            '/<img\b[^>]*>/i',
+            static function (array $matches): string {
+                $tag = (string) ($matches[0] ?? '');
+                if ($tag === '') {
+                    return $tag;
+                }
+
+                $closing = str_ends_with($tag, '/>') ? '/>' : '>';
+                $baseTag = substr($tag, 0, -strlen($closing));
+                $attrs = [];
+
+                if (preg_match('/\sloading\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
+                    $attrs[] = 'loading="lazy"';
+                }
+
+                if (preg_match('/\sdecoding\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
+                    $attrs[] = 'decoding="async"';
+                }
+
+                if ($attrs === []) {
+                    return $tag;
+                }
+
+                return rtrim($baseTag) . ' ' . implode(' ', $attrs) . $closing;
+            },
+            $html
+        );
+
+        return is_string($enhanced) ? $enhanced : $html;
     }
 }
 

@@ -379,6 +379,11 @@
     width: 100%;
 }
 
+body.dark-mode .page-content,
+body.dark-mode .post-body {
+    color: var(--text-primary);
+}
+
 body.dark-mode .page-content code {
     background: rgba(255,255,255,.08);
     color: #f9a8d4;

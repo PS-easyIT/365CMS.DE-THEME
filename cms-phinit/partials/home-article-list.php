@@ -41,6 +41,7 @@ if (empty($_showList) || $featuredPosts === []) {
         $_sbFeatProjMode = $_sbFeaturedActive && $_sbShowProjects;
         $_sbFeatSocialMode = $_sbFeaturedActive && $_sbShowSocial;
         $_sbFeatSlice = $_sbFeatProjMode ? array_slice($sbFeaturedPosts, 0, 2) : $sbFeaturedPosts;
+        $_sbEnableFeaturedRotation = count($_sbFeatSlice) > 2;
         $_sbAsideClass = 'homepage-list-sidebar'
             . ($_sbFeaturedActive ? ' homepage-list-sidebar--feat' : '')
             . ($_sbFeatProjMode ? ' homepage-list-sidebar--feat-proj' : '')
@@ -59,7 +60,7 @@ if (empty($_showList) || $featuredPosts === []) {
             <a href="<?php echo htmlspecialchars($_idLink, ENT_QUOTES); ?>" class="sb-identity">
                 <?php if (!empty($_sbIdentityLogoUrl)): ?>
                 <img src="<?php echo htmlspecialchars($_sbIdentityLogoUrl, ENT_QUOTES); ?>"
-                     alt="Site Logo" class="sb-identity-logo" loading="lazy">
+                     alt="Site Logo" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?>>
                 <?php endif; ?>
                 <?php if (!empty($_sbIdentityTagline)): ?>
                 <span class="sb-identity-tagline"><?php echo htmlspecialchars($_sbIdentityTagline, ENT_QUOTES); ?></span>
@@ -102,9 +103,15 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php endif; ?>
 
         <?php if ($_sbShowFeaturedPosts && !empty($sbFeaturedPosts)): ?>
-        <div class="sb-widget sb-widget--featured">
+        <div class="sb-widget sb-widget--featured<?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?>"
+             <?php if ($_sbEnableFeaturedRotation): ?>data-featured-rotator data-rotate-interval="6000"<?php endif; ?>>
             <div class="sb-widget-title"><?php echo htmlspecialchars((string) $_sbFeaturedPostsLabel, ENT_QUOTES); ?></div>
+            <?php if ($_sbEnableFeaturedRotation): ?>
+            <div class="sb-featured-rotator" aria-live="polite">
+            <?php endif; ?>
             <?php foreach ($_sbFeatSlice as $_fp):
+                $_fpIndex = (int) array_search($_fp, $_sbFeatSlice, true);
+                $_fpIsActive = $_fpIndex === 0;
                 $_fpHref = htmlspecialchars((string) ($_fp['permalink'] ?? ($siteUrl . '/blog/' . ($_fp['slug'] ?? ''))), ENT_QUOTES);
                 $_fpTitle = htmlspecialchars((string) ($_fp['title'] ?? ''), ENT_QUOTES);
                 $_fpDateRaw = $_fp['published_at'] ?? ($_fp['created_at'] ?? '');
@@ -112,10 +119,12 @@ if (empty($_showList) || $featuredPosts === []) {
                 $_fpCat = htmlspecialchars((string) ($_fp['category_name'] ?? ''), ENT_QUOTES);
                 $_fpThumb = !empty($_fp['featured_image']) ? htmlspecialchars((string) $_fp['featured_image'], ENT_QUOTES) : '';
             ?>
-            <a href="<?php echo $_fpHref; ?>" class="sb-featured-post">
+            <a href="<?php echo $_fpHref; ?>"
+               class="sb-featured-post<?php echo $_sbEnableFeaturedRotation ? ' sb-featured-post--slide' : ''; ?><?php echo $_fpIsActive ? ' is-active' : ''; ?>"
+               <?php if ($_sbEnableFeaturedRotation): ?>data-featured-slide data-slide-index="<?php echo $_fpIndex; ?>" aria-hidden="<?php echo $_fpIsActive ? 'false' : 'true'; ?>" tabindex="<?php echo $_fpIsActive ? '0' : '-1'; ?>"<?php endif; ?>>
                 <?php if ($_fpThumb !== ''): ?>
                 <img src="<?php echo $_fpThumb; ?>" alt="<?php echo $_fpTitle; ?>"
-                     class="sb-featured-thumb" loading="lazy" width="64" height="48">
+                     class="sb-featured-thumb" <?php echo phinit_image_loading_attributes(); ?> width="64" height="48">
                 <?php else: ?>
                 <div class="sb-featured-thumb sb-featured-thumb--placeholder" aria-hidden="true">
                     <?php echo mb_substr(strip_tags((string) ($_fp['title'] ?? '?')), 0, 1); ?>
@@ -125,6 +134,7 @@ if (empty($_showList) || $featuredPosts === []) {
                     <?php if ($_fpCat !== ''): ?>
                     <span class="sb-featured-cat"><?php echo $_fpCat; ?></span>
                     <?php endif; ?>
+                    <span class="sb-featured-title-badge"><?php echo $_fpTitle; ?></span>
                     <div class="sb-featured-body-inner">
                         <span class="sb-featured-title"><?php echo $_fpTitle; ?></span>
                         <?php if ($_fpDate !== ''): ?>
@@ -134,6 +144,23 @@ if (empty($_showList) || $featuredPosts === []) {
                 </div>
             </a>
             <?php endforeach; ?>
+            <?php if ($_sbEnableFeaturedRotation): ?>
+            </div>
+            <div class="sb-featured-rotator-nav" aria-label="Weitere Beiträge">
+                <?php foreach ($_sbFeatSlice as $_fp):
+                    $_fpIndex = (int) array_search($_fp, $_sbFeatSlice, true);
+                    $_fpButtonTitle = htmlspecialchars((string) ($_fp['title'] ?? ('Beitrag ' . ($_fpIndex + 1))), ENT_QUOTES);
+                    $_fpIsActive = $_fpIndex === 0;
+                ?>
+                <button type="button"
+                        class="sb-featured-rotator-dot<?php echo $_fpIsActive ? ' is-active' : ''; ?>"
+                        data-featured-dot
+                        data-slide-target="<?php echo $_fpIndex; ?>"
+                        aria-label="Beitrag anzeigen: <?php echo $_fpButtonTitle; ?>"
+                        aria-pressed="<?php echo $_fpIsActive ? 'true' : 'false'; ?>"></button>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 

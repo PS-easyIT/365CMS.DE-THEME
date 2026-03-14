@@ -299,7 +299,7 @@ if ($_showLanguageSwitch) {
             <!-- Logo (jetzt in Bar 2, immer sichtbar) -->
             <a href="<?php echo htmlspecialchars($_localizedCurrentHomeUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?> – Startseite">
                 <?php if (!empty($_logoUrl)): ?>
-                    <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" loading="eager">
+                    <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" <?php echo phinit_image_loading_attributes(true); ?>>
                     <?php if ($_showLogoText): ?>
                     <span class="logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
                     <?php endif; ?>

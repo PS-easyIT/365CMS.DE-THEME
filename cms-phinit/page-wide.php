@@ -43,7 +43,7 @@ if (!$pageProvidedByRouter) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', (int)($page['id'] ?? 0));
 }
 $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3]);
-$pageContent = $pageHeadingData['html'];
+$pageContent = phinit_enhance_content_images($pageHeadingData['html']);
 ?>
 
 <div class="container page-shell page-shell--wide">

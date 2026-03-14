@@ -85,19 +85,6 @@ html.dark-mode body {
     --text-muted:    #94a3b8;
     --border-color:  #2a3a4d;
 }
-body.dark-mode .article-card,
-body.dark-mode .feed-card,
-body.dark-mode .info-card,
-body.dark-mode .comment-form-wrap { background: var(--bg-dark-3); border-color: var(--border-dark); }
-body.dark-mode .article-card:hover { background: #1e2d3d; }
-body.dark-mode .quicklinks-bar  { background: #0d1420; border-top-color: #1e2d3d; }
-body.dark-mode .quicklinks-bar a{ color: #94a3b8; }
-/* — Dark Mode: Suche — */
-body.dark-mode .search-result-item          { background: var(--bg-dark-3); border-color: var(--border-dark); }
-body.dark-mode .search-result-item:hover    { background: #1e2d3d; }
-/* — Dark Mode: Seiteninhalte — */
-body.dark-mode .page-content,
-body.dark-mode .post-body                   { color: var(--text-primary); }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    2. RESET & BASE

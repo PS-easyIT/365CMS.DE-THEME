@@ -23,6 +23,7 @@ $db          = \CMS\Database::instance();
 $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'security';
+$themeDir    = \CMS\ThemeManager::instance()->getThemePath();
 
 $success = '';
 $error   = '';
@@ -85,104 +86,141 @@ $sessions = [];
 try {
     $hasSessions = (bool)$db->getPdo()->query("SELECT 1 FROM `{$prefix}user_sessions` LIMIT 1")->fetch();
     if ($hasSessions) {
-        $sessions = $db->get_results(
+        $sessions = array_map(
+            static fn($session) => (array) $session,
+            $db->get_results(
             "SELECT id, ip_address, user_agent, created_at, last_activity
              FROM {$prefix}user_sessions
              WHERE user_id = ?
              ORDER BY last_activity DESC
              LIMIT 10",
             [(int)$currentUser->id]
+        ) ?: []
         );
     }
 } catch (\Throwable $e) {}
-?>
-<div class="member-layout">
 
+$sessionCount = count($sessions);
+$lastActivity = $sessionCount > 0 ? (string) ($sessions[0]['last_activity'] ?? '') : '';
+$securityTips = [
+    'Mindestens 12 Zeichen mit Groß-/Kleinbuchstaben, Zahl und Sonderzeichen nutzen.',
+    'Passwort nicht an anderer Stelle wiederverwenden.',
+    'Nach sensiblen Änderungen aktive Sitzungen prüfen und alte Geräte ausloggen.',
+];
+
+include $themeDir . 'header.php';
+?>
+<div class="container member-container">
     <?php include __DIR__ . '/partials/member-nav.php'; ?>
 
-    <main class="member-main" id="main-content">
+    <div class="member-main" id="main-content">
 
-        <div class="member-page-header">
-            <h1>🔒 Sicherheit</h1>
-            <p>Passwort ändern und Anmelde-Sitzungen verwalten.</p>
-        </div>
+        <section class="member-security-hero" data-anim>
+            <div class="member-security-hero__content">
+                <span class="member-security-hero__eyebrow">🔒 Sicherheitscenter</span>
+                <h1>Sicherheit & Sitzungen</h1>
+                <p>Verwalte dein Passwort, prüfe zuletzt aktive Geräte und halte dein Konto mit wenigen Schritten sauber abgesichert.</p>
+            </div>
+            <div class="member-security-hero__stats">
+                <div class="member-security-stat">
+                    <span class="member-security-stat__label">Aktive Sitzungen</span>
+                    <strong><?php echo $sessionCount; ?></strong>
+                </div>
+                <div class="member-security-stat">
+                    <span class="member-security-stat__label">Zuletzt aktiv</span>
+                    <strong><?php echo htmlspecialchars($lastActivity !== '' ? date('d.m.Y H:i', strtotime($lastActivity)) : 'Gerade eben', ENT_QUOTES); ?></strong>
+                </div>
+            </div>
+        </section>
 
         <?php if ($success): ?>
-        <div class="alert alert-success"><?php echo htmlspecialchars($success, ENT_QUOTES); ?></div>
+        <div class="member-alert member-alert-success" data-anim data-anim-delay="1"><?php echo htmlspecialchars($success, ENT_QUOTES); ?></div>
         <?php endif; ?>
         <?php if ($error): ?>
-        <div class="alert alert-error"><?php echo htmlspecialchars($error, ENT_QUOTES); ?></div>
+        <div class="member-alert member-alert-error" data-anim data-anim-delay="1"><?php echo htmlspecialchars($error, ENT_QUOTES); ?></div>
         <?php endif; ?>
 
-        <!-- Passwort ändern -->
-        <div class="member-card">
-            <h3>🔑 Passwort ändern</h3>
-
-            <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-form">
-                <input type="hidden" name="action_security" value="change_password">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
-
-                <div class="form-group">
-                    <label for="current_password" class="form-label">Aktuelles Passwort <span class="field-required">*</span></label>
-                    <input type="password" id="current_password" name="current_password"
-                           class="form-control" autocomplete="current-password" required>
+        <div class="member-grid-2 member-grid-2--security" data-anim data-anim-delay="1.5">
+            <div class="member-card member-card--security-form">
+                <div class="member-card-header">
+                    <h3>🔑 Passwort ändern</h3>
                 </div>
 
-                <div class="form-group">
-                    <label for="new_password" class="form-label">Neues Passwort <span class="field-required">*</span></label>
-                    <input type="password" id="new_password" name="new_password"
-                           class="form-control" autocomplete="new-password"
-                           minlength="12" required>
-                    <small class="form-text">Mindestens 12 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen.</small>
+                <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-security-form">
+                    <input type="hidden" name="action_security" value="change_password">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+
+                    <div class="member-form-group">
+                        <label for="current_password" class="member-label">Aktuelles Passwort <span class="req">*</span></label>
+                        <input type="password" id="current_password" name="current_password" class="member-input" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="member-form-group">
+                        <label for="new_password" class="member-label">Neues Passwort <span class="req">*</span></label>
+                        <input type="password" id="new_password" name="new_password" class="member-input" autocomplete="new-password" minlength="12" required>
+                        <p class="member-form-hint">Mindestens 12 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen.</p>
+                    </div>
+
+                    <div class="member-form-group">
+                        <label for="new_password_repeat" class="member-label">Neues Passwort wiederholen <span class="req">*</span></label>
+                        <input type="password" id="new_password_repeat" name="new_password_repeat" class="member-input" autocomplete="new-password" minlength="12" required>
+                    </div>
+
+                    <div class="member-actions member-actions--compact">
+                        <button type="submit" class="btn btn-primary">🔒 Passwort ändern</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="member-card member-card--security-side">
+                <div class="member-card-header">
+                    <h3>🛡️ Schnellcheck</h3>
                 </div>
 
-                <div class="form-group">
-                    <label for="new_password_repeat" class="form-label">Neues Passwort wiederholen <span class="field-required">*</span></label>
-                    <input type="password" id="new_password_repeat" name="new_password_repeat"
-                           class="form-control" autocomplete="new-password"
-                           minlength="12" required>
-                </div>
+                <ul class="member-security-checklist">
+                    <?php foreach ($securityTips as $tip): ?>
+                    <li><?php echo htmlspecialchars($tip, ENT_QUOTES); ?></li>
+                    <?php endforeach; ?>
+                </ul>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">🔒 Passwort ändern</button>
+                <div class="member-security-note">
+                    <strong>Hinweis:</strong>
+                    <p>Wenn dir ein Gerät unbekannt vorkommt, ändere sofort dein Passwort und überprüfe offene Browser-Sitzungen.</p>
                 </div>
-            </form>
-        </div>
-
-        <?php if (!empty($sessions)): ?>
-        <!-- Aktive Sitzungen -->
-        <div class="member-card member-card--spaced">
-            <h3>📱 Aktive Sitzungen</h3>
-            <div class="users-table-container">
-                <table class="users-table">
-                    <thead>
-                        <tr>
-                            <th>IP-Adresse</th>
-                            <th>Browser / Gerät</th>
-                            <th>Zuletzt aktiv</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($sessions as $session):
-                            $s = is_object($session) ? (array)$session : (array)$session;
-                            $ua = $s['user_agent'] ?? '';
-                            // Kurzes UA-Label
-                            $uaLabel = mb_strlen($ua) > 60 ? mb_substr($ua, 0, 60) . '…' : $ua;
-                        ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($s['ip_address'] ?? '–', ENT_QUOTES); ?></td>
-                            <td title="<?php echo htmlspecialchars($ua, ENT_QUOTES); ?>"><?php echo htmlspecialchars($uaLabel, ENT_QUOTES); ?></td>
-                            <td><?php echo htmlspecialchars(
-                                !empty($s['last_activity']) ? date('j. M Y H:i', strtotime($s['last_activity'])) : '–',
-                                ENT_QUOTES
-                            ); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
             </div>
         </div>
-        <?php endif; ?>
 
-    </main>
+        <div class="member-card member-card--spaced" data-anim data-anim-delay="2">
+            <div class="member-card-header">
+                <h3>📱 Aktive Sitzungen</h3>
+            </div>
+
+            <?php if (!empty($sessions)): ?>
+            <div class="member-session-list">
+                <?php foreach ($sessions as $session):
+                    $ua = (string) ($session['user_agent'] ?? 'Unbekanntes Gerät');
+                    $uaLabel = mb_strlen($ua) > 70 ? mb_substr($ua, 0, 70) . '…' : $ua;
+                ?>
+                <article class="member-session-item">
+                    <div class="member-session-item__main">
+                        <strong><?php echo htmlspecialchars($uaLabel, ENT_QUOTES); ?></strong>
+                        <span><?php echo htmlspecialchars((string) ($session['ip_address'] ?? '–'), ENT_QUOTES); ?></span>
+                    </div>
+                    <div class="member-session-item__meta">
+                        <span>Erstellt: <?php echo htmlspecialchars(!empty($session['created_at']) ? date('d.m.Y H:i', strtotime((string) $session['created_at'])) : '–', ENT_QUOTES); ?></span>
+                        <span>Zuletzt aktiv: <?php echo htmlspecialchars(!empty($session['last_activity']) ? date('d.m.Y H:i', strtotime((string) $session['last_activity'])) : '–', ENT_QUOTES); ?></span>
+                    </div>
+                </article>
+                <?php endforeach; ?>
+            </div>
+            <?php else: ?>
+            <div class="member-empty">
+                <p>📭 Zurzeit wurden keine zusätzlichen aktiven Sitzungen gefunden.</p>
+            </div>
+            <?php endif; ?>
+        </div>
+
+    </div>
 </div>
+
+<?php include $themeDir . 'footer.php'; ?>

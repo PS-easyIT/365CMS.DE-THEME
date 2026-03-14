@@ -19,12 +19,15 @@ $errorMsg   = $error_message ?? 'Bitte versuche es später erneut oder kontaktie
 <div class="container error-shell">
 
     <div class="error-hero" data-anim>
-        <div class="error-code"><?php echo $errorCode; ?></div>
-        <h1 class="error-title"><?php echo htmlspecialchars($errorTitle, ENT_QUOTES); ?></h1>
-        <p class="error-desc"><?php echo htmlspecialchars($errorMsg, ENT_QUOTES); ?></p>
-        <div class="error-actions">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="btn btn-primary">← Zur Startseite</a>
-            <a href="javascript:history.back()" class="btn btn-outline">↩ Zurück</a>
+        <div class="error-hero__panel error-hero__panel--compact">
+            <span class="error-hero__eyebrow">Systemhinweis</span>
+            <div class="error-code"><?php echo $errorCode; ?></div>
+            <h1 class="error-title"><?php echo htmlspecialchars($errorTitle, ENT_QUOTES); ?></h1>
+            <p class="error-desc"><?php echo htmlspecialchars($errorMsg, ENT_QUOTES); ?></p>
+            <div class="error-actions">
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="btn btn-primary">← Zur Startseite</a>
+                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog" class="btn btn-outline">📰 Zum Blog</a>
+            </div>
         </div>
     </div>
 

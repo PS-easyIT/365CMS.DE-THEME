@@ -133,13 +133,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
 
         try {
-            $db = \CMS\Database::instance();
-            $contentType = $db->get_var(
-                "SELECT content_type FROM {$db->prefix()}pages WHERE slug = ? AND status = 'published' LIMIT 1",
-                [$slug]
-            );
-
-            return (string) $contentType === 'hub';
+            return \CMS\Services\SiteTableService::getInstance()->hubExistsBySlug($slug);
         } catch (\Throwable $e) {
             return false;
         }
@@ -204,6 +198,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $pageExtrasCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-extras.css';
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
+        $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
         $footerConsentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/footer-consent.css';
 
         $cbVersion = '';
@@ -268,6 +263,11 @@ trait CMS_Phinit_Theme_Assets_Trait
         if ($loadHomepageBlogCss && file_exists($homepageBlogCssFile)) {
             $homepageBlogVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($homepageBlogCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/homepage-blog.css', $homepageBlogVersion));
+        }
+
+        if ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
+            $hubSitesVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($hubSitesCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/hub-sites.css', $hubSitesVersion));
         }
 
         if (file_exists($footerConsentCssFile)) {
