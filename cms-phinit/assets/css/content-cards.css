@@ -85,6 +85,19 @@
     box-shadow: var(--shadow);
 }
 
+.home-section--grid .post-card {
+    display: grid;
+    grid-template-columns: 108px minmax(0, 1fr);
+    grid-template-areas:
+        'thumb title'
+        'thumb topmeta'
+        'excerpt excerpt'
+        'footer footer';
+    column-gap: 16px;
+    row-gap: 0;
+    padding: 16px;
+}
+
 .post-card-thumb {
     position: relative;
     display: block;
@@ -99,6 +112,27 @@
     height: var(--hp-tile-thumb-h, 161px);
     min-height: var(--hp-tile-thumb-h, 161px);
     max-height: 200px;
+}
+
+.home-section--grid .post-card-thumb,
+.home-section--grid .post-card-thumb--placeholder {
+    grid-area: thumb;
+    width: 108px;
+    min-width: 108px;
+    max-width: 108px;
+    height: 81px;
+    min-height: 81px;
+    max-height: 81px;
+    border-radius: calc(var(--radius) - 2px);
+}
+
+.home-section--grid .post-card-thumb img {
+    width: 108px;
+    height: 81px;
+}
+
+.home-section--grid .post-card-badge {
+    display: none;
 }
 
 .post-card-thumb img {
@@ -150,6 +184,10 @@
     padding: 14px 16px 15px;
 }
 
+.home-section--grid .post-card-body {
+    display: contents;
+}
+
 .post-card-title {
     font-size: 1rem;
     font-weight: 700;
@@ -157,6 +195,31 @@
     margin: 0 0 8px;
     color: var(--text-primary);
     font-family: var(--font-brand);
+}
+
+.home-section--grid .post-card-title {
+    grid-area: title;
+    align-self: end;
+    margin: 0 0 6px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.post-card-top-meta {
+    display: none;
+}
+
+.home-section--grid .post-card-top-meta {
+    grid-area: topmeta;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin: 0;
 }
 
 .post-card-title a {
@@ -180,6 +243,11 @@
     overflow: hidden;
 }
 
+.home-section--grid .post-card-excerpt {
+    grid-area: excerpt;
+    margin-top: 14px;
+}
+
 .post-card-meta {
     display: flex;
     align-items: center;
@@ -189,6 +257,12 @@
     padding-top: 14px;
     font-size: var(--fs-xs);
     color: var(--text-muted);
+}
+
+.home-section--grid .post-card-meta {
+    grid-area: footer;
+    margin-top: 14px;
+    padding-top: 0;
 }
 
 .post-card-meta__left {
@@ -210,6 +284,10 @@
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
+}
+
+.post-card-meta__more-label--mobile {
+    display: none;
 }
 
 .post-card-meta__more:hover {
@@ -313,5 +391,165 @@ body.dark-mode .post-card:hover {
 @media (max-width: 768px) {
     .posts-grid {
         grid-template-columns: 1fr;
+    }
+
+    .post-card,
+    .home-section--grid .post-card {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
+        padding: 0;
+    }
+
+    .post-card-thumb,
+    .post-card-thumb--placeholder,
+    .home-section--grid .post-card-thumb,
+    .home-section--grid .post-card-thumb--placeholder {
+        flex: 0 0 96px;
+        width: 96px;
+        min-width: 96px;
+        aspect-ratio: auto;
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
+    }
+
+    .home-shell .post-card-thumb,
+    .home-shell .post-card-thumb--placeholder {
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
+    }
+
+    .post-card-thumb img {
+        object-position: center top;
+    }
+
+    .post-card-badge {
+        display: none;
+    }
+
+    .post-card-body,
+    .home-section--grid .post-card-body {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding: 11px 13px 34px;
+    }
+
+    .post-card-title,
+    .home-section--grid .post-card-title {
+        order: 1;
+        margin-bottom: 5px;
+        font-size: .98rem;
+    }
+
+    .home-section--grid .post-card-top-meta {
+        order: 2;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 5px 9px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        font-size: var(--fs-xs);
+        color: var(--text-muted);
+    }
+
+    .post-card-excerpt,
+    .home-section--grid .post-card-excerpt {
+        order: 3;
+        margin-top: 7px;
+    }
+
+    .post-card-meta,
+    .home-section--grid .post-card-meta {
+        order: 4;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 5px 9px;
+        margin-top: auto;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-right: 110px;
+    }
+
+    .post-card-meta__left,
+    .home-section--grid .post-card-meta__left {
+        gap: 5px 9px;
+    }
+
+    .post-card-meta__more,
+    .home-section--grid .post-card-meta__more {
+        order: 99;
+        display: inline-flex;
+        position: absolute;
+        right: 13px;
+        bottom: 11px;
+        width: auto;
+        justify-content: flex-end;
+        margin-top: 0;
+        margin-left: auto;
+    }
+
+    .post-card-meta__more-label--desktop {
+        display: none;
+    }
+
+    .post-card-meta__more-label--mobile {
+        display: inline;
+    }
+}
+
+@media (max-width: 480px) {
+    .post-card-thumb,
+    .post-card-thumb--placeholder,
+    .home-section--grid .post-card-thumb,
+    .home-section--grid .post-card-thumb--placeholder {
+        flex-basis: 80px;
+        width: 80px;
+        min-width: 80px;
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
+    }
+
+    .home-shell .post-card-thumb,
+    .home-shell .post-card-thumb--placeholder {
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
+    }
+
+    .post-card-body,
+    .home-section--grid .post-card-body {
+        padding: 10px 12px 32px;
+    }
+
+    .post-card-title,
+    .home-section--grid .post-card-title {
+        font-size: .92rem;
+    }
+
+    .home-section--grid .post-card-top-meta {
+        gap: 4px 8px;
+        font-size: .74rem;
+    }
+
+    .post-card-meta,
+    .home-section--grid .post-card-meta {
+        gap: 4px 8px;
+        font-size: .74rem;
+        padding-right: 96px;
+    }
+
+    .post-card-meta__more,
+    .home-section--grid .post-card-meta__more {
+        right: 12px;
+        bottom: 10px;
     }
 }

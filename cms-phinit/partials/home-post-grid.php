@@ -9,6 +9,7 @@ $gridPosts = isset($gridPosts) && is_array($gridPosts) ? $gridPosts : [];
 $currentPage = isset($currentPage) ? (int) $currentPage : 1;
 $totalPages = isset($totalPages) ? (int) $totalPages : 1;
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 if (empty($_showTileGrid) || $gridPosts === []) {
     return;
@@ -22,6 +23,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
     <div class="posts-grid posts-grid--cols-<?php echo (int) $_tileCols; ?>">
         <?php foreach ($gridPosts as $i => $post): ?>
         <article class="post-card" data-anim data-anim-delay="<?php echo min((int) $i + 1, 4); ?>">
+            <?php $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? ''); ?>
 
             <?php if (!empty($post['featured_image'])): ?>
             <div class="post-card-thumb">
@@ -47,6 +49,11 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                         <?php echo phinit_escape_text($post['title'] ?? ''); ?>
                     </a>
                 </h3>
+                <?php if (!empty($_showTileDate) && !empty($postDateRaw)): ?>
+                <div class="post-card-top-meta">
+                    <span class="post-card-top-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $postDateRaw, 'long', $currentLocale), ENT_QUOTES); ?></span>
+                </div>
+                <?php endif; ?>
                 <?php
                 $_tileExc = function_exists('phinit_excerpt_plain_text')
                     ? phinit_excerpt_plain_text((string) ($post['excerpt'] ?? ''))
@@ -64,14 +71,11 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                     <?php if (!empty($_showTileCat) && !empty($post['category_name'])): ?>
                     <span class="cat"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
                     <?php endif; ?>
-                    <?php if (!empty($_showTileDate)): ?>
-                    <?php $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? ''); ?>
-                    <span><?php echo htmlspecialchars(!empty($postDateRaw) ? date('j. M. Y', strtotime((string) $postDateRaw)) : '', ENT_QUOTES); ?></span>
-                    <?php endif; ?>
                     </div>
                     <a class="post-card-meta__more"
                        href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . ($post['slug'] ?? ''))), ENT_QUOTES); ?>">
-                        &hellip; Weiter &rarr;
+                        <span class="post-card-meta__more-label post-card-meta__more-label--desktop"><?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?></span>
+                        <span class="post-card-meta__more-label post-card-meta__more-label--mobile">Weiter</span>
                     </a>
                 </div>
             </div>

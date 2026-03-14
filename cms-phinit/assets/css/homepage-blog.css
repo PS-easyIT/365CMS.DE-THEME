@@ -1625,9 +1625,13 @@ body.dark-mode .feed-dual-col {
 
     .article-card {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items: stretch;
         gap: 0;
         padding: 0;
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
         border: 1px solid var(--border-color);
         border-bottom: 1px solid var(--border-color);
         border-radius: var(--radius);
@@ -1648,11 +1652,14 @@ body.dark-mode .feed-dual-col {
 
     .article-thumb,
     .article-thumb-placeholder {
-        width: 100% !important;
-        height: 161px !important;
-        max-height: 161px !important;
-        min-height: 0 !important;
+        flex: 0 0 96px !important;
+        width: 96px !important;
+        min-width: 96px !important;
+        height: 195px !important;
+        max-height: 195px !important;
+        min-height: 195px !important;
         flex: none !important;
+        align-self: stretch !important;
         aspect-ratio: auto;
         border-radius: 0;
     }
@@ -1660,27 +1667,15 @@ body.dark-mode .feed-dual-col {
     .article-thumb img {
         width: 100% !important;
         height: 100% !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
         max-height: none;
         object-fit: cover;
         object-position: center top;
     }
 
     .thumb-badge {
-        top: 10px;
-        left: 10px;
-        z-index: 2;
-        display: inline-flex;
-        align-items: center;
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: .68rem;
-        font-weight: 700;
-        letter-spacing: .03em;
-        box-shadow: 0 2px 8px rgba(0,0,0,.18);
-        max-width: calc(100% - 20px);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        display: none;
     }
 
     .article-body {
@@ -1688,35 +1683,44 @@ body.dark-mode .feed-dual-col {
         flex-direction: column;
         flex: 1;
         min-width: 0;
-        padding: 14px 16px 15px;
+        position: relative;
+        justify-content: flex-start;
+        padding: 11px 13px 34px;
         align-self: auto;
+        overflow: hidden;
     }
 
     .article-body h4 {
         font-size: 1rem !important;
-        margin: 0 0 8px;
+        order: 1;
+        margin: 0 0 5px;
         line-height: 1.35;
         font-family: var(--font-brand);
     }
 
     .article-body p {
+        order: 3;
         display: -webkit-box !important;
         -webkit-box-orient: vertical !important;
         -webkit-line-clamp: 3 !important;
         line-clamp: 3 !important;
         overflow: hidden !important;
-        margin-bottom: 0;
+        margin: 7px 0 0;
         font-size: var(--fs-sm) !important;
         line-height: 1.6;
     }
 
     .article-meta {
+        order: 2;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 10px 12px;
-        margin-top: auto;
-        padding-top: 14px;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 5px 9px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-right: 110px;
     }
 
     .article-meta .cat {
@@ -1732,8 +1736,62 @@ body.dark-mode .feed-dual-col {
     }
 
     .article-meta__more {
+        order: 99;
+        display: inline-flex;
+        position: absolute;
+        right: 13px;
+        bottom: 11px;
+        width: auto;
+        justify-content: flex-end;
+        margin-top: 0;
         margin-left: auto;
         flex-shrink: 0;
+    }
+
+    .article-list > .article-card,
+    .article-list.article-list--framed > .article-card {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+    }
+
+    .article-list > .article-card > .article-thumb,
+    .article-list > .article-card > .article-thumb-placeholder,
+    .article-list.article-list--framed > .article-card > .article-thumb,
+    .article-list.article-list--framed > .article-card > .article-thumb-placeholder {
+        display: flex !important;
+        align-items: stretch !important;
+        flex: 0 0 96px !important;
+        width: 96px !important;
+        max-width: 96px !important;
+        min-width: 96px !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+        align-self: stretch !important;
+        overflow: hidden !important;
+    }
+
+    .article-list > .article-card > .article-thumb > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > img {
+        display: block !important;
+        width: 100% !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+        object-fit: cover !important;
+    }
+
+    .article-list > .article-card > .article-body,
+    .article-list.article-list--framed > .article-card > .article-body {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        width: auto !important;
+        overflow: hidden !important;
     }
 
     body.dark-mode .article-card {
@@ -1782,20 +1840,31 @@ body.dark-mode .feed-dual-col {
 
     .article-card {
         border-radius: calc(var(--radius) - 1px);
+        height: 195px;
+        min-height: 195px;
+        max-height: 195px;
     }
 
     .article-thumb,
     .article-thumb-placeholder {
-        height: 161px !important;
-        max-height: 161px !important;
+        flex-basis: 80px !important;
+        width: 80px !important;
+        min-width: 80px !important;
+        height: 195px !important;
+        max-height: 195px !important;
+        min-height: 195px !important;
+        align-self: stretch !important;
         aspect-ratio: auto;
     }
 
-    .thumb-badge {
-        top: 8px;
-        left: 8px;
-        font-size: .62rem;
-        max-width: calc(100% - 16px);
+    .article-thumb img {
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+    }
+
+    .article-body {
+        padding: 10px 12px 32px;
     }
 
     .article-body h4 {
@@ -1808,13 +1877,61 @@ body.dark-mode .feed-dual-col {
     }
 
     .article-meta {
-        gap: 8px 10px;
-        padding-top: 12px;
+        gap: 4px 8px;
         font-size: .74rem;
+        padding-right: 96px;
     }
 
     .article-meta__more {
         font-size: .78rem;
+        right: 12px;
+        bottom: 10px;
+    }
+
+    .article-list > .article-card,
+    .article-list.article-list--framed > .article-card {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+    }
+
+    .article-list > .article-card > .article-thumb,
+    .article-list > .article-card > .article-thumb-placeholder,
+    .article-list.article-list--framed > .article-card > .article-thumb,
+    .article-list.article-list--framed > .article-card > .article-thumb-placeholder {
+        display: flex !important;
+        align-items: stretch !important;
+        flex: 0 0 80px !important;
+        width: 80px !important;
+        max-width: 80px !important;
+        min-width: 80px !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+        align-self: stretch !important;
+        overflow: hidden !important;
+    }
+
+    .article-list > .article-card > .article-thumb > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > img {
+        display: block !important;
+        width: 100% !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+        object-fit: cover !important;
+    }
+
+    .article-list > .article-card > .article-body,
+    .article-list.article-list--framed > .article-card > .article-body {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        width: auto !important;
+        overflow: hidden !important;
     }
 }
 
