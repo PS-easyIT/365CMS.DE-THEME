@@ -253,3 +253,17 @@ pre:hover .code-copy-btn {
 .member-bar__link:hover .rss-svg-icon {
     color: #fff;
 }
+
+.member-bar__link--edit {
+    color: var(--accent-color, #e8a838);
+    font-weight: 700;
+}
+
+.member-bar__link--edit:hover,
+.member-bar__link--edit:focus-visible {
+    color: #fff;
+}
+
+.member-bar__link--edit .member-bar__icon {
+    transform: translateY(-1px);
+}

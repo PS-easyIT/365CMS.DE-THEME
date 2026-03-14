@@ -18,11 +18,14 @@ $themeUrl     = $themeManager->getThemeUrl();
 $siteUrl      = SITE_URL;
 $isLoggedIn   = function_exists('theme_is_logged_in') ? theme_is_logged_in() : false;
 $currentUser  = null;
+$isAdminUser  = false;
+$memberEditLink = ['show' => false, 'url' => '', 'label' => ''];
 
 try {
     $auth = \CMS\Auth::instance();
     if ($isLoggedIn) {
         $currentUser = $auth->getCurrentUser();
+        $isAdminUser = $auth->isAdmin();
     }
 } catch (\Throwable $e) {
     // Auth nicht verfügbar – kein Fehler ausgeben
@@ -80,6 +83,10 @@ $_localizedHref = static function (string $url, ?string $locale = null) use ($_c
 };
 
 $_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_currentLocale);
+
+if ($isLoggedIn && $currentUser !== null && $isAdminUser && function_exists('phinit_get_member_edit_link')) {
+    $memberEditLink = phinit_get_member_edit_link((string) ($_requestContext['base_uri'] ?? $_requestPath), $_currentLocale);
+}
 
 // Ungelesene Benachrichtigungen zählen (für Badge in Member-Bar)
 $notifCount = 0;
@@ -258,6 +265,11 @@ if ($_showLanguageSwitch) {
             </span>
 
             <nav class="member-bar__nav" aria-label="Member-Navigation">
+                <?php if (!empty($memberEditLink['show'])): ?>
+                <a href="<?php echo htmlspecialchars((string) ($memberEditLink['url'] ?? '#'), ENT_QUOTES); ?>" class="member-bar__link member-bar__link--edit">
+                    <span class="member-bar__icon">✏️</span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? 'Bearbeiten'), ENT_QUOTES); ?>
+                </a>
+                <?php endif; ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member" class="member-bar__link">
                     <span class="member-bar__icon">📊</span> Dashboard
                 </a>

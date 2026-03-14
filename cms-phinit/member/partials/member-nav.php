@@ -31,6 +31,10 @@ $memberNav = [
     ['slug' => 'forum',      'icon' => '🗣️', 'label' => 'Forum',         'url' => '/member/forum'],
     ['slug' => 'security',   'icon' => '🔒', 'label' => 'Sicherheit',    'url' => '/member/security'],
 ];
+
+if ($isAdmin) {
+    $memberNav[] = ['slug' => 'analytics', 'icon' => '📈', 'label' => 'Analytics', 'url' => '/member/analytics'];
+}
 ?>
 <aside class="member-sidebar" aria-label="Mitglieder-Navigation">
     <div class="member-sidebar-user">

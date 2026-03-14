@@ -83,6 +83,124 @@ if (!function_exists('phinit_current_request_path')) {
     }
 }
 
+if (!function_exists('phinit_get_member_edit_link')) {
+    /**
+     * @return array{show:bool,url:string,label:string,entity:string,entityId:int}
+     */
+    function phinit_get_member_edit_link(?string $requestPath = null, ?string $locale = null): array
+    {
+        $default = [
+            'show' => false,
+            'url' => '',
+            'label' => '',
+            'entity' => '',
+            'entityId' => 0,
+        ];
+
+        try {
+            $auth = \CMS\Auth::instance();
+            if (!$auth->isLoggedIn() || !$auth->isAdmin()) {
+                return $default;
+            }
+        } catch (\Throwable) {
+            return $default;
+        }
+
+        $path = trim((string) ($requestPath ?? phinit_current_request_path()));
+        $path = $path !== '' ? $path : '/';
+        $resolvedLocale = trim((string) ($locale ?? 'de'));
+
+        try {
+            $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($path);
+            $path = trim((string) ($context['base_uri'] ?? $path));
+            $resolvedLocale = trim((string) ($context['locale'] ?? $resolvedLocale));
+        } catch (\Throwable) {
+        }
+
+        $path = $path !== '' ? $path : '/';
+
+        try {
+            $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+            if ($path === '/' && $host !== '') {
+                $hubPage = \CMS\Services\SiteTableService::getInstance()->getHubPageByDomain($host, $resolvedLocale !== '' ? $resolvedLocale : 'de');
+                if (is_array($hubPage) && (int) ($hubPage['id'] ?? 0) > 0) {
+                    return [
+                        'show' => true,
+                        'url' => rtrim((string) SITE_URL, '/') . '/admin/hub-sites?action=edit&id=' . (int) $hubPage['id'],
+                        'label' => 'Diese HubSite bearbeiten',
+                        'entity' => 'hub',
+                        'entityId' => (int) $hubPage['id'],
+                    ];
+                }
+            }
+        } catch (\Throwable) {
+        }
+
+        try {
+            $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($path);
+            if ($postSlug !== null && $postSlug !== '') {
+                $db = \CMS\Database::instance();
+                $postId = (int) ($db->get_var(
+                    "SELECT id FROM {$db->getPrefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                    [$postSlug]
+                ) ?: 0);
+
+                if ($postId > 0) {
+                    return [
+                        'show' => true,
+                        'url' => rtrim((string) SITE_URL, '/') . '/admin/posts?action=edit&id=' . $postId,
+                        'label' => 'Diesen Beitrag bearbeiten',
+                        'entity' => 'post',
+                        'entityId' => $postId,
+                    ];
+                }
+            }
+        } catch (\Throwable) {
+        }
+
+        $slug = trim($path, '/');
+        if ($slug === '' || str_contains($slug, '/')) {
+            return $default;
+        }
+
+        try {
+            $hubPage = \CMS\Services\SiteTableService::getInstance()->getHubPageBySlug($slug, $resolvedLocale !== '' ? $resolvedLocale : 'de');
+            if (is_array($hubPage) && (int) ($hubPage['id'] ?? 0) > 0) {
+                return [
+                    'show' => true,
+                    'url' => rtrim((string) SITE_URL, '/') . '/admin/hub-sites?action=edit&id=' . (int) $hubPage['id'],
+                    'label' => 'Diese HubSite bearbeiten',
+                    'entity' => 'hub',
+                    'entityId' => (int) $hubPage['id'],
+                ];
+            }
+        } catch (\Throwable) {
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+            $pageRow = $db->get_row(
+                "SELECT id FROM {$db->getPrefix()}pages WHERE slug = ? AND status = 'published' LIMIT 1",
+                [$slug]
+            );
+            $pageId = (int) ($pageRow->id ?? 0);
+
+            if ($pageId > 0) {
+                return [
+                    'show' => true,
+                    'url' => rtrim((string) SITE_URL, '/') . '/admin/pages?action=edit&id=' . $pageId,
+                    'label' => 'Diese Seite bearbeiten',
+                    'entity' => 'page',
+                    'entityId' => $pageId,
+                ];
+            }
+        } catch (\Throwable) {
+        }
+
+        return $default;
+    }
+}
+
 if (!function_exists('phinit_page_favorites_meta_key')) {
     function phinit_page_favorites_meta_key(): string
     {

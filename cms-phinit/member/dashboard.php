@@ -134,40 +134,9 @@ $favoriteUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/favorites';
 $profileUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/profile';
 $securityUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/security';
 $commentsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/comments';
+$analyticsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/analytics';
 
-// Admin-Analysen laden (nur für Admins)
 $isAdmin    = $auth->isAdmin();
-$adminStats = [];
-if ($isAdmin) {
-    try {
-        $adminStats['total_users'] = $_hasUsers ? (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}users"
-        ) ?: 0 : 0;
-        $adminStats['total_posts'] = $_hasPosts ? (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'"
-        ) ?: 0 : 0;
-        $adminStats['total_comments'] = $_hasComments ? (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}comments"
-        ) ?: 0 : 0;
-        $adminStats['pending_comments'] = $_hasComments ? (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}comments WHERE status = 'pending'"
-        ) ?: 0 : 0;
-        $adminStats['total_views'] = $_hasPosts ? (int)$db->get_var(
-            "SELECT COALESCE(SUM(views), 0) FROM {$prefix}posts"
-        ) ?: 0 : 0;
-        $adminStats['posts_today'] = $_hasPosts ? (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published' AND DATE(created_at) = CURDATE()"
-        ) ?: 0 : 0;
-        $adminStats['users_today'] = $_hasUsers ? (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}users WHERE DATE(created_at) = CURDATE()"
-        ) ?: 0 : 0;
-    } catch (\Throwable $e) {
-        $adminStats = array_merge([
-            'total_users' => 0, 'total_posts' => 0, 'total_comments' => 0,
-            'pending_comments' => 0, 'total_views' => 0, 'posts_today' => 0, 'users_today' => 0,
-        ], $adminStats);
-    }
-}
 
 // Theme Header
 $themeDir = \CMS\ThemeManager::instance()->getThemePath();
@@ -190,6 +159,9 @@ include $themeDir . 'header.php';
                     <a href="<?php echo $profileUrl; ?>" class="member-hero-action">👤 Profil</a>
                     <a href="<?php echo $securityUrl; ?>" class="member-hero-action">🔒 Sicherheit</a>
                     <a href="<?php echo $commentsUrl; ?>" class="member-hero-action">💬 Kommentare</a>
+                    <?php if ($isAdmin): ?>
+                    <a href="<?php echo $analyticsUrl; ?>" class="member-hero-action">📈 Analytics</a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -234,47 +206,6 @@ include $themeDir . 'header.php';
                 <span>Sicherheitsbereich öffnen</span>
             </a>
         </div>
-
-        <?php if ($isAdmin): ?>
-        <!-- Admin-Analysen -->
-        <div class="member-card member-admin-analytics" data-anim data-anim-delay="1.5">
-            <div class="member-card-header">
-                <h3>📈 CMS-Analysen</h3>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/admin/" class="member-card-link">Admincenter →</a>
-            </div>
-            <div class="member-stats member-stats--admin">
-                <div class="member-stat-card member-stat-card--admin">
-                    <div class="member-stat-icon">👥</div>
-                    <div class="member-stat-value"><?php echo number_format($adminStats['total_users']); ?></div>
-                    <div class="member-stat-label">Benutzer gesamt</div>
-                    <?php if ($adminStats['users_today'] > 0): ?>
-                    <div class="member-stat-badge">+<?php echo $adminStats['users_today']; ?> heute</div>
-                    <?php endif; ?>
-                </div>
-                <div class="member-stat-card member-stat-card--admin">
-                    <div class="member-stat-icon">📄</div>
-                    <div class="member-stat-value"><?php echo number_format($adminStats['total_posts']); ?></div>
-                    <div class="member-stat-label">Veröffentlicht</div>
-                    <?php if ($adminStats['posts_today'] > 0): ?>
-                    <div class="member-stat-badge">+<?php echo $adminStats['posts_today']; ?> heute</div>
-                    <?php endif; ?>
-                </div>
-                <div class="member-stat-card member-stat-card--admin">
-                    <div class="member-stat-icon">💬</div>
-                    <div class="member-stat-value"><?php echo number_format($adminStats['total_comments']); ?></div>
-                    <div class="member-stat-label">Kommentare</div>
-                    <?php if ($adminStats['pending_comments'] > 0): ?>
-                    <div class="member-stat-badge member-stat-badge--warn"><?php echo $adminStats['pending_comments']; ?> ausstehend</div>
-                    <?php endif; ?>
-                </div>
-                <div class="member-stat-card member-stat-card--admin">
-                    <div class="member-stat-icon">👁️</div>
-                    <div class="member-stat-value"><?php echo number_format($adminStats['total_views']); ?></div>
-                    <div class="member-stat-label">Seitenaufrufe</div>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
 
         <!-- 2-Column Grid -->
         <div class="member-grid-2 member-grid-2--dashboard" data-anim data-anim-delay="2">
