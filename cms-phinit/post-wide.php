@@ -74,7 +74,7 @@ try {
     $nextPost = $nextOb ? (array)$nextOb : null;
 } catch (\Throwable) { $prevPost = null; $nextPost = null; }
 try {
-    $commentRows  = $db->get_results("SELECT id, author, content, post_date FROM {$pfx}comments WHERE post_id = ? AND status = 'approved' ORDER BY post_date ASC", [(int)($post['id'] ?? 0)]) ?: [];
+    $commentRows  = \CMS\Services\CommentService::getInstance()->getApprovedForPost((int)($post['id'] ?? 0));
     $comments     = array_map(fn($c) => (array)$c, $commentRows);
     $commentCount = count($comments);
 } catch (\Throwable) { $comments = []; $commentCount = 0; }

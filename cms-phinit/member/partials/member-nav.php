@@ -58,6 +58,7 @@ $sidebarStyle = '--member-sidebar-active-color: ' . $sidebarActiveColor . ';';
 $memberNav = [
     ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member/dashboard', 'visible' => $getMemberToggle('show_sidebar_dashboard', true)],
     ['slug' => 'profile',    'icon' => '👤', 'label' => 'Profil',        'url' => '/member/profile', 'visible' => $getMemberToggle('show_sidebar_profile', true)],
+    ['slug' => 'privacy',    'icon' => '🔐', 'label' => 'Datenschutz',   'url' => '/member/privacy', 'visible' => $getMemberToggle('show_sidebar_privacy', true)],
     ['slug' => 'notifications', 'icon' => '🔔', 'label' => 'Benachrichtigungen', 'url' => '/member/notifications', 'visible' => $getMemberToggle('show_sidebar_notifications', true)],
     ['slug' => 'favorites',  'icon' => '⭐', 'label' => 'Favoriten',     'url' => '/member/favorites', 'visible' => $getMemberToggle('show_sidebar_favorites', true)],
     ['slug' => 'comments',   'icon' => '💬', 'label' => 'Kommentare',    'url' => '/member/comments', 'visible' => $getMemberToggle('show_sidebar_comments', true)],

@@ -590,6 +590,15 @@
     color: var(--text-primary);
 }
 
+.comment-author--link {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.comment-author--link:hover {
+    color: var(--accent-teal);
+}
+
 .comment-date {
     font-size: var(--fs-xs);
     color: var(--text-light);
@@ -920,6 +929,42 @@ textarea.form-control {
     margin-top: 8px;
 }
 
+.comment-anonymous-toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1px solid rgba(30,58,95,.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,.72);
+    cursor: pointer;
+}
+
+.comment-anonymous-toggle input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--primary-color);
+}
+
+.comment-anonymous-toggle__text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+}
+
+.comment-anonymous-toggle__text strong {
+    color: var(--text-primary);
+    font-size: .92rem;
+}
+
+.comment-anonymous-toggle__text small {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+}
+
 .comment-form__actions .btn {
     min-height: 46px;
 }
@@ -992,6 +1037,11 @@ body.dark-mode .form-control {
 
 body.dark-mode .comment-form-wrap {
     background: linear-gradient(180deg, rgba(17,24,39,.94) 0%, rgba(15,23,42,.92) 100%);
+}
+
+body.dark-mode .comment-anonymous-toggle {
+    background: rgba(15,23,42,.32);
+    border-color: rgba(71,85,105,.72);
 }
 
 body.dark-mode .comment-form-wrap__notice {

@@ -18,6 +18,8 @@ $favoriteControl = isset($favoriteControl) && is_array($favoriteControl) ? $favo
 $publishedAt = (string) ($post['published_at'] ?? '');
 $updatedAt = (string) ($post['updated_at'] ?? '');
 $categorySlug = urlencode(phinit_display_text($post['category_name'] ?? ''));
+$authorId = (int) ($post['author_id'] ?? 0);
+$authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
 ?>
 <header class="post-header" data-anim>
 
@@ -57,7 +59,13 @@ $categorySlug = urlencode(phinit_display_text($post['category_name'] ?? ''));
                 </time>
             </strong></span>
             <?php if (!empty($post['author_name'])): ?>
-            <span>👤 <strong itemprop="author"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></strong></span>
+            <span>👤 <strong itemprop="author">
+                <?php if ($authorUrl !== ''): ?>
+                <a href="<?php echo htmlspecialchars($authorUrl, ENT_QUOTES); ?>" class="post-meta__link"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></a>
+                <?php else: ?>
+                <?php echo phinit_escape_text($post['author_name'] ?? ''); ?>
+                <?php endif; ?>
+            </strong></span>
             <?php endif; ?>
             <?php if ($showReadingTime): ?>
             <span class="reading-time-badge">&#x23F1; <strong><?php echo $readingTime; ?></strong>&thinsp;Min.</span>

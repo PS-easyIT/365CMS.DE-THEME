@@ -48,6 +48,7 @@ if ($commentSessionError !== '' || $commentSessionSuccess !== '') {
 $commentFormAction = rtrim((string) SITE_URL, '/') . '/comments/post';
 $commentCount = count($comments);
 $commentCountLabel = $commentCount === 1 ? '1 Kommentar' : $commentCount . ' Kommentare';
+$commentAnonymousChecked = !empty($_POST['comment_anonymous']);
 
 if (!$showComments) {
     return;
@@ -64,6 +65,9 @@ if (!$showComments) {
         <?php
             $commentDepth = max(0, (int) ($comment['depth'] ?? (!empty($comment['parent_id']) ? 1 : 0)));
             $commentClasses = 'comment-item';
+            $commentUserId = (int) ($comment['user_id'] ?? 0);
+            $commentIsAnonymous = !empty($comment['is_anonymous']);
+            $commentAuthorUrl = ($commentUserId > 0 && !$commentIsAnonymous) ? (rtrim((string) SITE_URL, '/') . '/author/user-' . $commentUserId) : '';
             if ($commentDepth > 0) {
                 $commentClasses .= ' comment-item--reply';
             }
@@ -77,7 +81,11 @@ if (!$showComments) {
             </div>
             <div class="comment-body-wrap">
                 <div class="comment-author-line">
+                    <?php if ($commentAuthorUrl !== ''): ?>
+                    <a href="<?php echo htmlspecialchars($commentAuthorUrl, ENT_QUOTES); ?>" class="comment-author comment-author--link"><?php echo htmlspecialchars((string) ($comment['author'] ?? ''), ENT_QUOTES); ?></a>
+                    <?php else: ?>
                     <span class="comment-author"><?php echo htmlspecialchars((string) ($comment['author'] ?? ''), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
                     <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime((string) ($comment['post_date'] ?? 'now'))), ENT_QUOTES); ?></span>
                 </div>
                 <p class="comment-text"><?php echo htmlspecialchars((string) ($comment['content'] ?? ''), ENT_QUOTES); ?></p>
@@ -144,6 +152,13 @@ if (!$showComments) {
                             </div>
                         </div>
                     </div>
+                    <label class="comment-anonymous-toggle" for="comment_anonymous">
+                        <input type="checkbox" id="comment_anonymous" name="comment_anonymous" value="1" <?php echo $commentAnonymousChecked ? 'checked' : ''; ?>>
+                        <span class="comment-anonymous-toggle__text">
+                            <strong>Anonym veröffentlichen</strong>
+                            <small>Dein Konto bleibt intern zugeordnet, öffentlich erscheint der Kommentar nur als „Anonym“.</small>
+                        </span>
+                    </label>
                 </div>
                 <?php else: ?>
                 <div class="form-group">
