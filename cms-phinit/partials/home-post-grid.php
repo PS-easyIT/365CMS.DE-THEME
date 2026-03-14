@@ -23,7 +23,15 @@ if (empty($_showTileGrid) || $gridPosts === []) {
     <div class="posts-grid posts-grid--cols-<?php echo (int) $_tileCols; ?>">
         <?php foreach ($gridPosts as $i => $post): ?>
         <article class="post-card" data-anim data-anim-delay="<?php echo min((int) $i + 1, 4); ?>">
-            <?php $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? ''); ?>
+            <?php
+            $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? '');
+            $tileReadTime = !empty($post['read_time']) ? (int) $post['read_time'] : 0;
+            if ($tileReadTime < 1 && !empty($post['content'])) {
+                $tileReadTime = function_exists('phinit_reading_time')
+                    ? phinit_reading_time((string) $post['content'])
+                    : max(1, (int) round(str_word_count(strip_tags((string) $post['content'])) / 220));
+            }
+            ?>
 
             <?php if (!empty($post['featured_image'])): ?>
             <div class="post-card-thumb">
@@ -52,6 +60,13 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 <?php if (!empty($_showTileDate) && !empty($postDateRaw)): ?>
                 <div class="post-card-top-meta">
                     <span class="post-card-top-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $postDateRaw, 'long', $currentLocale), ENT_QUOTES); ?></span>
+                    <?php if ($tileReadTime > 0): ?>
+                    <span class="post-card-top-meta__read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
+                </div>
+                <?php elseif ($tileReadTime > 0): ?>
+                <div class="post-card-top-meta">
+                    <span class="post-card-top-meta__read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?></span>
                 </div>
                 <?php endif; ?>
                 <?php

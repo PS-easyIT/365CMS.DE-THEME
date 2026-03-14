@@ -89,14 +89,22 @@ if ($show_rt && $show_meta) {
         <?php endif; ?>
         <?php if ($show_meta): ?>
         <div class="article-meta">
+            <?php if (($show_date && !empty($displayDate)) || ($show_rt && $_pc_rt > 0)): ?>
+            <span class="article-meta__primary">
+                <span class="article-meta__timing">
+                    <?php if ($show_date && !empty($displayDate)): ?>
+                    <span class="article-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $displayDate, 'long', $currentLocale), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
+                    <?php if ($show_rt && $_pc_rt > 0): ?>
+                    <span class="read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
+                </span>
+            </span>
+            <?php endif; ?>
+        </div>
+        <div class="article-footer">
             <?php if ($show_cat && !empty($card['category_name'])): ?>
             <span class="cat"><?php echo phinit_escape_text($card['category_name'] ?? ''); ?></span>
-            <?php endif; ?>
-            <?php if ($show_date && !empty($displayDate)): ?>
-            <span><?php echo htmlspecialchars(phinit_format_date((string) $displayDate, 'long', $currentLocale), ENT_QUOTES); ?></span>
-            <?php endif; ?>
-            <?php if ($show_rt && $_pc_rt > 0): ?>
-            <span class="read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?></span>
             <?php endif; ?>
             <a class="article-meta__more"
                href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>">

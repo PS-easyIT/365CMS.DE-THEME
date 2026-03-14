@@ -222,6 +222,15 @@
     margin: 0;
 }
 
+.home-section--grid .post-card-top-meta__read {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
 .post-card-title a {
     color: inherit;
     text-decoration: none;
@@ -408,6 +417,8 @@ body.dark-mode .post-card:hover {
     .post-card-thumb--placeholder,
     .home-section--grid .post-card-thumb,
     .home-section--grid .post-card-thumb--placeholder {
+        display: flex;
+        align-items: stretch;
         flex: 0 0 96px;
         width: 96px;
         min-width: 96px;
@@ -415,6 +426,7 @@ body.dark-mode .post-card:hover {
         height: 195px;
         min-height: 195px;
         max-height: 195px;
+        overflow: hidden;
     }
 
     .home-shell .post-card-thumb,
@@ -425,6 +437,10 @@ body.dark-mode .post-card:hover {
     }
 
     .post-card-thumb img {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 195px;
+        max-height: 195px;
         object-position: center top;
     }
 
@@ -436,8 +452,7 @@ body.dark-mode .post-card:hover {
     .home-section--grid .post-card-body {
         display: flex;
         flex-direction: column;
-        position: relative;
-        padding: 11px 13px 34px;
+        padding: 11px 13px 11px;
     }
 
     .post-card-title,
@@ -469,31 +484,36 @@ body.dark-mode .post-card:hover {
     .post-card-meta,
     .home-section--grid .post-card-meta {
         order: 4;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        gap: 5px 9px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 10px;
         margin-top: auto;
         margin-bottom: 0;
         padding-top: 0;
-        padding-right: 110px;
+        padding-right: 0;
     }
 
     .post-card-meta__left,
     .home-section--grid .post-card-meta__left {
+        display: inline-flex;
+        align-items: flex-end;
         gap: 5px 9px;
+        min-width: 0;
+        flex: 1 1 auto;
     }
 
     .post-card-meta__more,
     .home-section--grid .post-card-meta__more {
         order: 99;
         display: inline-flex;
-        position: absolute;
-        right: 13px;
-        bottom: 11px;
         width: auto;
         justify-content: flex-end;
         margin-top: 0;
         margin-left: auto;
+        position: static;
+        flex: 0 0 auto;
     }
 
     .post-card-meta__more-label--desktop {
@@ -510,12 +530,15 @@ body.dark-mode .post-card:hover {
     .post-card-thumb--placeholder,
     .home-section--grid .post-card-thumb,
     .home-section--grid .post-card-thumb--placeholder {
+        display: flex;
+        align-items: stretch;
         flex-basis: 80px;
         width: 80px;
         min-width: 80px;
         height: 195px;
         min-height: 195px;
         max-height: 195px;
+        overflow: hidden;
     }
 
     .home-shell .post-card-thumb,
@@ -527,7 +550,7 @@ body.dark-mode .post-card:hover {
 
     .post-card-body,
     .home-section--grid .post-card-body {
-        padding: 10px 12px 32px;
+        padding: 10px 12px 10px;
     }
 
     .post-card-title,
@@ -542,14 +565,13 @@ body.dark-mode .post-card:hover {
 
     .post-card-meta,
     .home-section--grid .post-card-meta {
-        gap: 4px 8px;
+        gap: 8px;
         font-size: .74rem;
-        padding-right: 96px;
+        padding-right: 0;
     }
 
     .post-card-meta__more,
     .home-section--grid .post-card-meta__more {
-        right: 12px;
-        bottom: 10px;
+        position: static;
     }
 }
