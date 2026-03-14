@@ -660,7 +660,7 @@
         "show_feed_section": {
           "label": "RSS-Feed-Sektion anzeigen",
           "type": "checkbox",
-          "default": false
+          "default": true
         },
         "sidebar_featured_badge_style": {
           "label": "Sidebar Featured: Badge-Stil",

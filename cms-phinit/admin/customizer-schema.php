@@ -238,7 +238,7 @@ return [
                 'show_tile_date'             => ['label' => 'Grid: Datum anzeigen',         'type' => 'checkbox', 'default' => true],
                 'tile_grid_image_height'     => ['label' => 'Kartenbildhöhe im Grid (px)',  'type' => 'number',   'default' => '161', 'min' => 161, 'max' => 300],
                 'tile_grid_link_url'         => ['label' => '„Archiv" URL',                'type' => 'text',     'default' => '/archiv'],
-                'show_feed_section'          => ['label' => 'RSS-Feed-Sektion anzeigen',    'type' => 'checkbox', 'default' => false],
+                'show_feed_section'          => ['label' => 'RSS-Feed-Sektion anzeigen',    'type' => 'checkbox', 'default' => true],
                 'feed1_channel_id'           => ['label' => 'Feed 1 – Kanal (cms-feed)',    'type' => 'select',   'default' => '0', 'options' => ['0' => '— Kein Feed —']],
                 'feed1_count'                => ['label' => 'Feed 1 – Anzahl Einträge',     'type' => 'number',   'default' => '5'],
                 'feed2_channel_id'           => ['label' => 'Feed 2 – Kanal (cms-feed)',    'type' => 'select',   'default' => '0', 'options' => ['0' => '— Kein Feed —']],
