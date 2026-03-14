@@ -21,7 +21,12 @@ $db          = \CMS\Database::instance();
 $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'favorites';
-$pageFavorites = [];
+
+$favoriteSections = [
+    'posts' => ['label' => 'Beiträge', 'icon' => '📝', 'items' => []],
+    'pages' => ['label' => 'Seiten', 'icon' => '📄', 'items' => []],
+    'other' => ['label' => 'Sonstiges', 'icon' => '🗂️', 'items' => []],
+];
 
 // Favorit entfernen
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_favorite'])) {
@@ -50,11 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_favorite'])) {
 
 $csrfToken = \CMS\Security::instance()->generateToken('member_favorites');
 
-// Paginierung
-$page    = max(1, (int)($_GET['page'] ?? 1));
-$perPage = 12;
-$offset  = ($page - 1) * $perPage;
-
 $postFavorites = array_map(
     static function ($row) use ($siteUrl): array {
         $favorite = (array) $row;
@@ -69,6 +69,8 @@ $postFavorites = array_map(
             'featured_image' => (string) ($favorite['featured_image'] ?? ''),
             'badge' => (string) ($favorite['category_name'] ?? 'Beitrag'),
             'created_at' => (string) ($favorite['created_at'] ?? ''),
+            'section' => 'posts',
+            'type_label' => 'Beitrag',
         ];
     },
     $db->get_results(
@@ -94,6 +96,8 @@ $pageFavorites = array_map(
         'featured_image' => (string) ($favorite['featured_image'] ?? ''),
         'badge' => (string) ($favorite['badge'] ?? 'Seite'),
         'created_at' => (string) ($favorite['created_at'] ?? ''),
+        'section' => 'pages',
+        'type_label' => 'Seite',
     ],
     phinit_get_page_favorites_for_user((int) $currentUser->id)
 );
@@ -104,8 +108,15 @@ usort($allFavorites, static function (array $a, array $b): int {
 });
 
 $total = count($allFavorites);
-$pages = max(1, (int) ceil($total / $perPage));
-$favorites = array_slice($allFavorites, $offset, $perPage);
+
+foreach ($allFavorites as $favorite) {
+    $sectionKey = (string) ($favorite['section'] ?? 'other');
+    if (!isset($favoriteSections[$sectionKey])) {
+        $sectionKey = 'other';
+    }
+
+    $favoriteSections[$sectionKey]['items'][] = $favorite;
+}
 
 $themeDir = \CMS\ThemeManager::instance()->getThemePath();
 include $themeDir . 'header.php';
@@ -118,63 +129,84 @@ include $themeDir . 'header.php';
 
         <div class="member-page-title" data-anim>
             <h1>⭐ Favoriten</h1>
-            <p><?php echo $total; ?> gespeicherte Einträge</p>
+            <p><?php echo $total; ?> gespeicherte Einträge – aufgeteilt in Beiträge, Seiten und sonstige Merkliste.</p>
         </div>
 
-        <?php if (!empty($favorites)): ?>
-        <div class="member-fav-grid" data-anim data-anim-delay="1">
-            <?php foreach ($favorites as $fav): ?>
-            <article class="member-fav-card">
-                <?php if (!empty($fav['featured_image'])): ?>
-                <div class="member-fav-img">
-                    <img src="<?php echo htmlspecialchars($fav['featured_image'], ENT_QUOTES); ?>"
-                         alt="<?php echo htmlspecialchars($fav['title'] ?? '', ENT_QUOTES); ?>" <?php echo phinit_image_loading_attributes(); ?>>
-                </div>
-                <?php endif; ?>
-                <div class="member-fav-body">
-                    <?php if (!empty($fav['badge'])): ?>
-                    <span class="member-fav-badge"><?php echo htmlspecialchars($fav['badge']); ?></span>
-                    <?php endif; ?>
-                    <h3>
-                        <a href="<?php echo htmlspecialchars((string) ($fav['url'] ?? '#'), ENT_QUOTES); ?>">
-                            <?php echo htmlspecialchars($fav['title'] ?? 'Unbekannter Favorit', ENT_QUOTES); ?>
-                        </a>
-                    </h3>
-                    <?php if (!empty($fav['excerpt'])): ?>
-                    <p><?php echo htmlspecialchars(mb_substr(strip_tags($fav['excerpt']), 0, 120)); ?>…</p>
-                    <?php endif; ?>
-                    <div class="member-fav-meta">
-                        <span><?php echo date('d.m.Y', strtotime((string) ($fav['created_at'] ?? 'now'))); ?></span>
-                        <form method="POST" class="member-fav-remove" onsubmit="return confirm('Favorit wirklich entfernen?');">
-                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
-                            <input type="hidden" name="favorite_id" value="<?php echo (int)$fav['id']; ?>">
-                            <input type="hidden" name="favorite_storage" value="<?php echo htmlspecialchars((string) ($fav['storage'] ?? 'post'), ENT_QUOTES); ?>">
-                            <input type="hidden" name="favorite_content_id" value="<?php echo (int) ($fav['content_id'] ?? 0); ?>">
-                            <button type="submit" name="remove_favorite" value="1" class="member-fav-remove-btn" title="Entfernen">✕</button>
-                        </form>
-                    </div>
-                </div>
-            </article>
+        <div class="member-dashboard-overview member-dashboard-overview--analytics" data-anim data-anim-delay=".5">
+            <?php foreach ($favoriteSections as $section): ?>
+            <div class="member-overview-card">
+                <span class="member-overview-card__icon"><?php echo htmlspecialchars((string) ($section['icon'] ?? '⭐'), ENT_QUOTES); ?></span>
+                <strong><?php echo count((array) ($section['items'] ?? [])); ?></strong>
+                <span><?php echo htmlspecialchars((string) ($section['label'] ?? 'Favoriten'), ENT_QUOTES); ?></span>
+            </div>
             <?php endforeach; ?>
         </div>
 
-        <?php if ($pages > 1): ?>
-        <div class="member-pagination">
-            <?php if ($page > 1): ?>
-            <a href="?page=<?php echo $page - 1; ?>" class="btn btn-sm btn-secondary">← Zurück</a>
-            <?php endif; ?>
-            <span>Seite <?php echo $page; ?> von <?php echo $pages; ?></span>
-            <?php if ($page < $pages): ?>
-            <a href="?page=<?php echo $page + 1; ?>" class="btn btn-sm btn-secondary">Weiter →</a>
-            <?php endif; ?>
-        </div>
-        <?php endif; ?>
+        <?php if ($total > 0): ?>
+            <?php $sectionDelay = 1; ?>
+            <?php foreach ($favoriteSections as $section): ?>
+            <section class="member-card member-card--spaced" data-anim data-anim-delay="<?php echo htmlspecialchars((string) $sectionDelay, ENT_QUOTES); ?>">
+                <div class="member-card-header member-card-header--stacked">
+                    <div>
+                        <h3><?php echo htmlspecialchars((string) ($section['icon'] ?? '⭐') . ' ' . ($section['label'] ?? 'Favoriten'), ENT_QUOTES); ?></h3>
+                        <p class="member-card-subtitle"><?php echo count((array) ($section['items'] ?? [])); ?> Einträge</p>
+                    </div>
+                </div>
 
+                <?php if (!empty($section['items'])): ?>
+                <div class="member-fav-grid member-fav-grid--section">
+                    <?php foreach ($section['items'] as $fav): ?>
+                    <article class="member-fav-card">
+                        <?php if (!empty($fav['featured_image'])): ?>
+                        <div class="member-fav-img">
+                            <img src="<?php echo htmlspecialchars((string) $fav['featured_image'], ENT_QUOTES); ?>"
+                                 alt="<?php echo htmlspecialchars((string) ($fav['title'] ?? ''), ENT_QUOTES); ?>" <?php echo phinit_image_loading_attributes(); ?>>
+                        </div>
+                        <?php endif; ?>
+                        <div class="member-fav-body">
+                            <div class="member-fav-badges">
+                                <span class="member-fav-badge"><?php echo htmlspecialchars((string) ($fav['type_label'] ?? 'Favorit'), ENT_QUOTES); ?></span>
+                                <?php if (!empty($fav['badge'])): ?>
+                                <span class="member-fav-badge member-fav-badge--muted"><?php echo htmlspecialchars((string) $fav['badge'], ENT_QUOTES); ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <h3>
+                                <a href="<?php echo htmlspecialchars((string) ($fav['url'] ?? '#'), ENT_QUOTES); ?>">
+                                    <?php echo htmlspecialchars((string) ($fav['title'] ?? 'Unbekannter Favorit'), ENT_QUOTES); ?>
+                                </a>
+                            </h3>
+                            <?php if (!empty($fav['excerpt'])): ?>
+                            <p><?php echo htmlspecialchars(mb_substr(strip_tags((string) $fav['excerpt']), 0, 140), ENT_QUOTES); ?>…</p>
+                            <?php else: ?>
+                            <p>Gespeichert, damit du später blitzschnell wieder hier landest.</p>
+                            <?php endif; ?>
+                            <div class="member-fav-meta">
+                                <span><?php echo htmlspecialchars(date('d.m.Y', strtotime((string) ($fav['created_at'] ?? 'now'))), ENT_QUOTES); ?></span>
+                                <form method="post" class="member-fav-remove" onsubmit="return confirm('Favorit wirklich entfernen?');">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                    <input type="hidden" name="favorite_id" value="<?php echo (int) ($fav['id'] ?? 0); ?>">
+                                    <input type="hidden" name="favorite_storage" value="<?php echo htmlspecialchars((string) ($fav['storage'] ?? 'post'), ENT_QUOTES); ?>">
+                                    <input type="hidden" name="favorite_content_id" value="<?php echo (int) ($fav['content_id'] ?? 0); ?>">
+                                    <button type="submit" name="remove_favorite" value="1" class="member-fav-remove-btn" title="Entfernen">✕</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div class="member-empty member-empty--soft">
+                    <p>Noch keine Einträge in „<?php echo htmlspecialchars((string) ($section['label'] ?? 'Favoriten'), ENT_QUOTES); ?>“ gespeichert.</p>
+                </div>
+                <?php endif; ?>
+            </section>
+            <?php $sectionDelay++; ?>
+            <?php endforeach; ?>
         <?php else: ?>
         <div class="member-empty-state" data-anim>
             <p class="member-empty-state__icon">📭</p>
             <p><strong>Noch keine Favoriten</strong></p>
-            <p>Speichere Beiträge als Favoriten, um sie hier wiederzufinden.</p>
+            <p>Speichere Beiträge oder Seiten als Favoriten, um sie hier wiederzufinden.</p>
             <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/blog" class="btn btn-primary member-empty-state__action">📖 Beiträge entdecken</a>
         </div>
         <?php endif; ?>

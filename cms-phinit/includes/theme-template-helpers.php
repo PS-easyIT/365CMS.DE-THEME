@@ -323,6 +323,7 @@ if (!function_exists('phinit_get_favorite_control')) {
             'isFavorited' => false,
             'loginUrl' => $loginUrl,
             'csrfToken' => '',
+            'formGuardToken' => '',
             'label' => 'Favorit',
             'title' => 'Zu Favoriten hinzufügen',
             'action' => 'add',
@@ -419,6 +420,7 @@ if (!function_exists('phinit_get_favorite_control')) {
             }
 
             $state['csrfToken'] = \CMS\Security::instance()->generateToken('phinit_favorite_' . $contentType . '_' . $contentId);
+            $state['formGuardToken'] = \CMS\Security::instance()->generateToken('form_guard');
         } catch (\Throwable) {
             return $state;
         }
@@ -455,8 +457,57 @@ if (!function_exists('phinit_render_favorite_button')) {
         $contentType = htmlspecialchars((string) ($favoriteControl['contentType'] ?? 'post'), ENT_QUOTES, 'UTF-8');
         $contentId = (int) ($favoriteControl['contentId'] ?? 0);
         $csrfToken = htmlspecialchars((string) ($favoriteControl['csrfToken'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $formGuardToken = htmlspecialchars((string) ($favoriteControl['formGuardToken'] ?? ''), ENT_QUOTES, 'UTF-8');
         $pressed = $isActive ? 'true' : 'false';
 
-        return '<form method="post" class="content-favorite-form"><input type="hidden" name="phinit_toggle_favorite" value="1"><input type="hidden" name="favorite_content_type" value="' . $contentType . '"><input type="hidden" name="favorite_content_id" value="' . $contentId . '"><input type="hidden" name="favorite_csrf_token" value="' . $csrfToken . '"><button type="submit" class="' . $class . '" aria-pressed="' . $pressed . '" aria-label="' . $title . '" title="' . $title . '"><span class="content-favorite__icon" aria-hidden="true">' . $icon . '</span><span class="content-favorite__label">' . $label . '</span></button></form>';
+        return '<form method="post" class="content-favorite-form"><input type="hidden" name="csrf_token" value="' . $formGuardToken . '"><input type="hidden" name="phinit_toggle_favorite" value="1"><input type="hidden" name="favorite_content_type" value="' . $contentType . '"><input type="hidden" name="favorite_content_id" value="' . $contentId . '"><input type="hidden" name="favorite_csrf_token" value="' . $csrfToken . '"><button type="submit" class="' . $class . '" aria-pressed="' . $pressed . '" aria-label="' . $title . '" title="' . $title . '"><span class="content-favorite__icon" aria-hidden="true">' . $icon . '</span><span class="content-favorite__label">' . $label . '</span></button></form>';
+    }
+}
+
+if (!function_exists('phinit_render_member_flash')) {
+    /**
+     * @param array<string,mixed>|null $flash
+     */
+    function phinit_render_member_flash(?array $flash): string
+    {
+        if (!is_array($flash) || $flash === []) {
+            return '';
+        }
+
+        $type = trim((string) ($flash['type'] ?? 'info'));
+        $message = trim((string) ($flash['message'] ?? ''));
+        $payload = is_array($flash['payload'] ?? null) ? $flash['payload'] : [];
+        $backupCodes = is_array($payload['backup_codes'] ?? null) ? $payload['backup_codes'] : [];
+
+        if ($message === '' && $backupCodes === []) {
+            return '';
+        }
+
+        $classMap = [
+            'success' => 'member-alert-success',
+            'danger' => 'member-alert-error',
+            'error' => 'member-alert-error',
+            'warning' => 'member-alert-warning',
+            'info' => 'member-alert-info',
+        ];
+
+        $class = $classMap[$type] ?? 'member-alert-info';
+        $html = '<div class="member-alert ' . $class . '">';
+
+        if ($message !== '') {
+            $html .= '<p class="member-alert__message">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+        }
+
+        if ($backupCodes !== []) {
+            $html .= '<div class="member-backup-codes"><strong>Backup-Codes</strong><div class="member-backup-codes__grid">';
+            foreach ($backupCodes as $code) {
+                $html .= '<code>' . htmlspecialchars((string) $code, ENT_QUOTES, 'UTF-8') . '</code>';
+            }
+            $html .= '</div><p class="member-backup-codes__hint">Bitte speichere diese Codes sicher. Sie werden nur jetzt vollständig angezeigt.</p></div>';
+        }
+
+        $html .= '</div>';
+
+        return $html;
     }
 }

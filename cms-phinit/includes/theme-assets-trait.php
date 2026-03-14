@@ -292,6 +292,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $this->scriptsOutput = true;
 
+        $requestPath = $this->getRequestPath();
         $jsFile = CMS_PHINIT_THEME_DIR . 'assets/js/navigation.js';
         $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
         $deferScripts = filter_var(
@@ -301,6 +302,10 @@ trait CMS_Phinit_Theme_Assets_Trait
         $deferAttr = $deferScripts ? ' defer' : '';
 
         echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '"' . $deferAttr . '></script>' . "\n";
+
+        if (str_starts_with($requestPath, '/member') && function_exists('cms_asset_url')) {
+            echo '<script src="' . htmlspecialchars(cms_asset_url('js/member-dashboard.js'), ENT_QUOTES, 'UTF-8') . '"' . $deferAttr . '></script>' . "\n";
+        }
     }
 
     private function isLocalFontsEnabled(): bool

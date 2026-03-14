@@ -16,6 +16,22 @@ if (!defined('ABSPATH')) {
 $activePage = $activePage ?? 'dashboard';
 $siteUrl    = SITE_URL;
 
+$memberMeta = [];
+$memberDisplayName = trim((string) ($currentUser->display_name ?? $currentUser->username ?? 'Benutzer'));
+$memberAvatarUrl = '';
+
+try {
+    $memberMeta = \CMS\Services\MemberService::getInstance()->getUserMeta((int) ($currentUser->id ?? 0));
+    $fullName = trim((string) ($memberMeta['first_name'] ?? '') . ' ' . (string) ($memberMeta['last_name'] ?? ''));
+    if ($fullName !== '') {
+        $memberDisplayName = $fullName;
+    }
+    if (!empty($currentUser->display_name)) {
+        $memberDisplayName = trim((string) $currentUser->display_name);
+    }
+    $memberAvatarUrl = trim((string) ($memberMeta['avatar'] ?? ''));
+} catch (\Throwable $e) {}
+
 $isAdmin = false;
 try {
     $isAdmin = \CMS\Auth::instance()->isAdmin();
@@ -24,6 +40,8 @@ try {
 $memberNav = [
     ['slug' => 'dashboard',  'icon' => '📊', 'label' => 'Dashboard',     'url' => '/member/dashboard'],
     ['slug' => 'profile',    'icon' => '👤', 'label' => 'Profil',        'url' => '/member/profile'],
+    ['slug' => 'notifications', 'icon' => '🔔', 'label' => 'Benachrichtigungen', 'url' => '/member/notifications'],
+    ['slug' => 'messages',   'icon' => '✉️', 'label' => 'Nachrichten',   'url' => '/member/messages'],
     ['slug' => 'favorites',  'icon' => '⭐', 'label' => 'Favoriten',     'url' => '/member/favorites'],
     ['slug' => 'comments',   'icon' => '💬', 'label' => 'Kommentare',    'url' => '/member/comments'],
     ['slug' => 'newsletter', 'icon' => '📧', 'label' => 'Newsletter',    'url' => '/member/newsletter'],
@@ -39,10 +57,19 @@ if ($isAdmin) {
 <aside class="member-sidebar" aria-label="Mitglieder-Navigation">
     <div class="member-sidebar-user">
         <div class="member-avatar">
-            <?php echo strtoupper(mb_substr($currentUser->username ?? 'U', 0, 2)); ?>
+            <?php if ($memberAvatarUrl !== ''): ?>
+            <img src="<?php echo htmlspecialchars($memberAvatarUrl, ENT_QUOTES); ?>"
+                 alt="<?php echo htmlspecialchars($memberDisplayName, ENT_QUOTES); ?>"
+                 class="member-avatar__image"
+                 loading="lazy"
+                 width="44"
+                 height="44">
+            <?php else: ?>
+            <?php echo strtoupper(mb_substr($memberDisplayName !== '' ? $memberDisplayName : (string) ($currentUser->username ?? 'U'), 0, 2)); ?>
+            <?php endif; ?>
         </div>
         <div class="member-user-info">
-            <strong><?php echo htmlspecialchars($currentUser->username ?? 'Benutzer', ENT_QUOTES); ?></strong>
+            <strong><?php echo htmlspecialchars($memberDisplayName !== '' ? $memberDisplayName : (string) ($currentUser->username ?? 'Benutzer'), ENT_QUOTES); ?></strong>
             <span><?php echo htmlspecialchars($currentUser->email ?? '', ENT_QUOTES); ?></span>
         </div>
     </div>
