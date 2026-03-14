@@ -239,6 +239,86 @@ body.dark-mode .auth-site-name { color: var(--text-white); }
     box-shadow: var(--shadow-md);
 }
 
+.member-admin-notice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    border: 1px solid var(--member-admin-notice-border, rgba(37, 99, 235, .28));
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--member-admin-notice-background, #eff6ff), var(--member-admin-notice-soft, rgba(37, 99, 235, .08)));
+    box-shadow: var(--shadow-sm);
+}
+
+.member-admin-notice__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: var(--member-admin-notice-badge-bg, rgba(37, 99, 235, .14));
+    color: var(--member-admin-notice-accent, #2563eb);
+    font-size: 1.2rem;
+    box-shadow: inset 0 0 0 1px var(--member-admin-notice-border, rgba(37, 99, 235, .2));
+}
+
+.member-admin-notice__content {
+    display: grid;
+    gap: 8px;
+    flex: 1 1 auto;
+}
+
+.member-admin-notice__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--member-admin-notice-accent, #2563eb);
+}
+
+.member-admin-notice h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--text-primary);
+}
+
+.member-admin-notice p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.65;
+}
+
+.member-admin-notice__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--member-admin-notice-border, rgba(37, 99, 235, .28));
+    color: var(--member-admin-notice-accent, #2563eb);
+    font-size: .84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.member-admin-notice__action:hover {
+    background: var(--member-admin-notice-background, #eff6ff);
+    color: var(--member-admin-notice-accent, #2563eb);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
 .member-dashboard-hero__eyebrow,
 .member-security-hero__eyebrow {
     display: inline-flex;
@@ -1372,6 +1452,10 @@ body.dark-mode .member-analytics-vital { background: var(--bg-dark-3); border-co
 body.dark-mode .member-input { background: var(--bg-dark-2); border-color: var(--border-dark); color: var(--text-primary); }
 body.dark-mode .member-dashboard-hero__panel,
 body.dark-mode .member-security-hero__stats { background: rgba(15, 23, 42, .34); border-color: rgba(255,255,255,.12); }
+body.dark-mode .member-admin-notice { background: linear-gradient(135deg, var(--member-admin-notice-soft, rgba(37, 99, 235, .12)), rgba(15, 23, 42, .44)); border-color: var(--member-admin-notice-border, rgba(96, 165, 250, .24)); }
+body.dark-mode .member-admin-notice__icon { background: rgba(255,255,255,.08); }
+body.dark-mode .member-admin-notice__action { background: rgba(255,255,255,.06); border-color: var(--member-admin-notice-border, rgba(96, 165, 250, .22)); color: var(--member-admin-notice-accent, #93c5fd); }
+body.dark-mode .member-admin-notice__action:hover { background: rgba(255,255,255,.12); color: var(--member-admin-notice-accent, #bfdbfe); }
 body.dark-mode .member-security-note { background: rgba(45, 212, 191, .08); border-color: rgba(45, 212, 191, .18); }
 body.dark-mode .member-session-item { background: var(--bg-dark-2); }
 body.dark-mode .member-analytics-link { background: var(--bg-dark-2); color: var(--text-primary); }
@@ -1405,6 +1489,8 @@ body.dark-mode .member-notification-item__icon { background: rgba(96, 165, 250, 
     .member-comment-header { flex-direction: column; }
     .member-dashboard-hero,
     .member-security-hero { grid-template-columns: 1fr; padding: 22px 20px; }
+    .member-admin-notice { flex-direction: column; align-items: flex-start; padding: 18px 18px; }
+    .member-admin-notice__icon { width: 42px; height: 42px; }
     .member-dashboard-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .member-session-item { grid-template-columns: 1fr; }
     .member-analytics-hero { flex-direction: column; padding: 20px; }

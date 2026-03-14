@@ -632,6 +632,38 @@
           "type": "checkbox",
           "default": false
         },
+        "sidebar_featured_badge_style": {
+          "label": "Sidebar Featured: Badge-Stil",
+          "type": "select",
+          "default": "teal",
+          "options": [
+            {"value": "neutral", "label": "Neutral"},
+            {"value": "teal", "label": "Teal"},
+            {"value": "gold", "label": "Gold"},
+            {"value": "dark", "label": "Dark"}
+          ]
+        },
+        "sidebar_featured_rotate_seconds": {
+          "label": "Sidebar Featured: Wechsel alle X Sekunden",
+          "type": "number",
+          "default": 6,
+          "min": 2,
+          "max": 60
+        },
+        "sidebar_featured_title_size": {
+          "label": "Sidebar Featured: Titelgröße (px)",
+          "type": "number",
+          "default": 12.5,
+          "min": 10,
+          "max": 20
+        },
+        "sidebar_featured_badge_size": {
+          "label": "Sidebar Featured: Badge-Schriftgröße (px)",
+          "type": "number",
+          "default": 10,
+          "min": 8,
+          "max": 18
+        },
         "featured_section_title": {
           "label": "Titel der Featured-Sektion",
           "type": "text",
@@ -1012,6 +1044,61 @@
           "label": "Begrüßungsbereich anzeigen",
           "type": "checkbox",
           "default": true
+        },
+        "show_admin_notice": {
+          "label": "Admin-Benachrichtigung anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "admin_notice_roles": {
+          "label": "Admin-Benachrichtigung: Sichtbare Rollen (CSV)",
+          "type": "text",
+          "default": "all"
+        },
+        "admin_notice_variant": {
+          "label": "Admin-Benachrichtigung: Typ",
+          "type": "select",
+          "default": "info",
+          "options": {
+            "info": "Info",
+            "warning": "Warnung",
+            "success": "Erfolg"
+          }
+        },
+        "admin_notice_accent_color": {
+          "label": "Admin-Benachrichtigung: Akzentfarbe",
+          "type": "color",
+          "default": "#2563eb"
+        },
+        "admin_notice_background_color": {
+          "label": "Admin-Benachrichtigung: Hintergrundfarbe",
+          "type": "color",
+          "default": "#eff6ff"
+        },
+        "admin_notice_kicker": {
+          "label": "Admin-Benachrichtigung: Kicker",
+          "type": "text",
+          "default": "📣 Admin-Benachrichtigung"
+        },
+        "admin_notice_title": {
+          "label": "Admin-Benachrichtigung: Titel",
+          "type": "text",
+          "default": "Wichtiger Hinweis für Mitglieder"
+        },
+        "admin_notice_text": {
+          "label": "Admin-Benachrichtigung: Text",
+          "type": "textarea",
+          "default": "Hier kannst du wichtige Hinweise, Wartungsfenster oder kurze Updates für dein Memberdashboard platzieren."
+        },
+        "admin_notice_link_label": {
+          "label": "Admin-Benachrichtigung: Link-Text",
+          "type": "text",
+          "default": "Mehr erfahren"
+        },
+        "admin_notice_link_url": {
+          "label": "Admin-Benachrichtigung: Link-URL",
+          "type": "text",
+          "default": ""
         },
         "welcome_eyebrow": {
           "label": "Begrüßungs-Kicker",

@@ -40,8 +40,15 @@ if (empty($_showList) || $featuredPosts === []) {
         $_sbFeaturedActive = $_sbShowFeaturedPosts && !empty($sbFeaturedPosts);
         $_sbFeatProjMode = $_sbFeaturedActive && $_sbShowProjects;
         $_sbFeatSocialMode = $_sbFeaturedActive && $_sbShowSocial;
-        $_sbFeatSlice = $_sbFeatProjMode ? array_slice($sbFeaturedPosts, 0, 2) : $sbFeaturedPosts;
+        $_sbFeatSlice = array_slice($sbFeaturedPosts, 0, 6);
         $_sbEnableFeaturedRotation = count($_sbFeatSlice) > 2;
+        $_sbFeaturedBadgeStyle = in_array((string) ($_sbFeaturedBadgeStyle ?? 'teal'), ['neutral', 'teal', 'gold', 'dark'], true)
+            ? (string) $_sbFeaturedBadgeStyle
+            : 'teal';
+        $_sbFeaturedRotateSeconds = max(2, min(60, (int) ($_sbFeaturedRotateSeconds ?? 6)));
+        $_sbFeaturedRotateInterval = $_sbFeaturedRotateSeconds * 1000;
+        $_sbFeaturedTitleSize = max(10, min(20, (float) ($_sbFeaturedTitleSize ?? 12.5)));
+        $_sbFeaturedBadgeSize = max(8, min(18, (float) ($_sbFeaturedBadgeSize ?? 10)));
         $_sbAsideClass = 'homepage-list-sidebar'
             . ($_sbFeaturedActive ? ' homepage-list-sidebar--feat' : '')
             . ($_sbFeatProjMode ? ' homepage-list-sidebar--feat-proj' : '')
@@ -54,7 +61,7 @@ if (empty($_showList) || $featuredPosts === []) {
     </div><!-- /.homepage-list-main -->
     <aside class="<?php echo $_sbAsideClass; ?>">
 
-        <?php if (!$_sbFeaturedActive && $_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
+        <?php if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
         <div class="sb-widget sb-widget--identity">
             <?php $_idLink = !empty($_sbIdentityLinkUrl) ? $_sbIdentityLinkUrl : '/'; ?>
             <a href="<?php echo htmlspecialchars($_idLink, ENT_QUOTES); ?>" class="sb-identity">
@@ -103,8 +110,9 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php endif; ?>
 
         <?php if ($_sbShowFeaturedPosts && !empty($sbFeaturedPosts)): ?>
-        <div class="sb-widget sb-widget--featured<?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?>"
-             <?php if ($_sbEnableFeaturedRotation): ?>data-featured-rotator data-rotate-interval="6000"<?php endif; ?>>
+        <div class="sb-widget sb-widget--featured sb-widget--featured-badge-style-<?php echo htmlspecialchars($_sbFeaturedBadgeStyle, ENT_QUOTES); ?><?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?>"
+                                 style="--sb-featured-title-size: <?php echo htmlspecialchars(number_format($_sbFeaturedTitleSize, 1, '.', ''), ENT_QUOTES); ?>px; --sb-featured-badge-size: <?php echo htmlspecialchars(number_format($_sbFeaturedBadgeSize, 1, '.', ''), ENT_QUOTES); ?>px;"
+               <?php if ($_sbEnableFeaturedRotation): ?>data-featured-rotator data-rotate-interval="<?php echo (int) $_sbFeaturedRotateInterval; ?>"<?php endif; ?>>
             <div class="sb-widget-title"><?php echo htmlspecialchars((string) $_sbFeaturedPostsLabel, ENT_QUOTES); ?></div>
             <?php if ($_sbEnableFeaturedRotation): ?>
             <div class="sb-featured-rotator" aria-live="polite">
@@ -116,6 +124,7 @@ if (empty($_showList) || $featuredPosts === []) {
                 $_fpTitle = htmlspecialchars((string) ($_fp['title'] ?? ''), ENT_QUOTES);
                 $_fpDateRaw = $_fp['published_at'] ?? ($_fp['created_at'] ?? '');
                 $_fpDate = !empty($_fpDateRaw) ? date('j. M Y', strtotime((string) $_fpDateRaw)) : '';
+                $_fpDateIso = !empty($_fpDateRaw) ? date('c', strtotime((string) $_fpDateRaw)) : '';
                 $_fpCat = htmlspecialchars((string) ($_fp['category_name'] ?? ''), ENT_QUOTES);
                 $_fpThumb = !empty($_fp['featured_image']) ? htmlspecialchars((string) $_fp['featured_image'], ENT_QUOTES) : '';
             ?>
@@ -131,15 +140,21 @@ if (empty($_showList) || $featuredPosts === []) {
                 </div>
                 <?php endif; ?>
                 <div class="sb-featured-body">
-                    <?php if ($_fpCat !== ''): ?>
-                    <span class="sb-featured-cat"><?php echo $_fpCat; ?></span>
+                    <?php if ($_fpCat !== '' || $_fpDate !== ''): ?>
+                    <div class="sb-featured-badges">
+                        <?php if ($_fpCat !== ''): ?>
+                        <span class="sb-featured-cat"><?php echo $_fpCat; ?></span>
+                        <?php endif; ?>
+                        <?php if ($_fpDate !== ''): ?>
+                        <span class="sb-featured-meta-badge">
+                            <time datetime="<?php echo htmlspecialchars($_fpDateIso, ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fpDate, ENT_QUOTES); ?></time>
+                        </span>
+                        <?php endif; ?>
+                    </div>
                     <?php endif; ?>
                     <span class="sb-featured-title-badge"><?php echo $_fpTitle; ?></span>
                     <div class="sb-featured-body-inner">
                         <span class="sb-featured-title"><?php echo $_fpTitle; ?></span>
-                        <?php if ($_fpDate !== ''): ?>
-                        <span class="sb-featured-meta"><?php echo $_fpDate; ?></span>
-                        <?php endif; ?>
                     </div>
                 </div>
             </a>

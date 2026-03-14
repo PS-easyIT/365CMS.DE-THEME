@@ -36,8 +36,48 @@ $getMemberText = static function (string $key, string $default = '') use ($theme
     return trim((string) $themeCustomizer->get('memberdashboard', $key, $default));
 };
 
+$getMemberList = static function (string $key, string $default = '') use ($themeCustomizer): array {
+    $raw = (string) $themeCustomizer->get('memberdashboard', $key, $default);
+    $normalized = str_replace(["\r\n", "\r", ';', '|'], [",", ",", ",", ","], strtolower($raw));
+
+    return array_values(array_filter(array_map(
+        static fn (string $value): string => trim($value),
+        explode(',', $normalized)
+    )));
+};
+
+$normalizeMemberLink = static function (string $url) use ($siteUrl): string {
+    $url = trim($url);
+    if ($url === '') {
+        return '';
+    }
+
+    if (preg_match('#^https?://#i', $url) === 1) {
+        return $url;
+    }
+
+    if (str_starts_with($url, '/')) {
+        return $siteUrl . $url;
+    }
+
+    return $siteUrl . '/' . ltrim($url, '/');
+};
+
 $sanitizeColor = static function (string $value, string $fallback): string {
     return preg_match('/^#[0-9a-f]{6}$/i', $value) ? $value : $fallback;
+};
+
+$hexToRgba = static function (string $hexColor, float $alpha, string $fallback): string {
+    if (preg_match('/^#([0-9a-f]{6})$/i', $hexColor, $matches) !== 1) {
+        return $fallback;
+    }
+
+    $hex = $matches[1];
+    $red = hexdec(substr($hex, 0, 2));
+    $green = hexdec(substr($hex, 2, 2));
+    $blue = hexdec(substr($hex, 4, 2));
+
+    return sprintf('rgba(%d, %d, %d, %.2f)', $red, $green, $blue, $alpha);
 };
 
 $sortByConfiguredOrder = static function (array $items, string $order): array {
@@ -186,6 +226,40 @@ $notificationsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/notificati
 
 $isAdmin    = $auth->isAdmin();
 
+$showAdminNotice = $getMemberToggle('show_admin_notice', false);
+$adminNoticeRoles = $getMemberList('admin_notice_roles', 'all');
+$adminNoticeVariant = strtolower($getMemberText('admin_notice_variant', 'info'));
+$adminNoticeVariant = in_array($adminNoticeVariant, ['info', 'warning', 'success'], true) ? $adminNoticeVariant : 'info';
+$adminNoticeKicker = $getMemberText('admin_notice_kicker', '📣 Admin-Benachrichtigung');
+$adminNoticeTitle = $getMemberText('admin_notice_title', 'Wichtiger Hinweis für Mitglieder');
+$adminNoticeText = $getMemberText('admin_notice_text', 'Hier kannst du wichtige Hinweise, Wartungsfenster oder kurze Updates für dein Memberdashboard platzieren.');
+$adminNoticeLinkLabel = $getMemberText('admin_notice_link_label', 'Mehr erfahren');
+$adminNoticeLinkUrl = $normalizeMemberLink($getMemberText('admin_notice_link_url', ''));
+$adminNoticeRole = strtolower(trim((string) ($currentUser->role ?? 'member')));
+$adminNoticeAllowedRoles = $adminNoticeRoles === [] ? ['all'] : $adminNoticeRoles;
+$adminNoticeRoleAllowed = in_array('all', $adminNoticeAllowedRoles, true) || in_array($adminNoticeRole, $adminNoticeAllowedRoles, true);
+
+$adminNoticeDefaults = [
+    'info' => ['icon' => 'ℹ️', 'accent' => '#2563eb', 'background' => '#eff6ff'],
+    'warning' => ['icon' => '⚠️', 'accent' => '#d97706', 'background' => '#fffbeb'],
+    'success' => ['icon' => '✅', 'accent' => '#059669', 'background' => '#ecfdf5'],
+];
+
+$adminNoticeConfig = $adminNoticeDefaults[$adminNoticeVariant];
+$adminNoticeAccentColor = $sanitizeColor($getMemberText('admin_notice_accent_color', $adminNoticeConfig['accent']), $adminNoticeConfig['accent']);
+$adminNoticeBackgroundColor = $sanitizeColor($getMemberText('admin_notice_background_color', $adminNoticeConfig['background']), $adminNoticeConfig['background']);
+$adminNoticeBorderColor = $hexToRgba($adminNoticeAccentColor, 0.28, 'rgba(37, 99, 235, 0.28)');
+$adminNoticeSoftColor = $hexToRgba($adminNoticeAccentColor, 0.10, 'rgba(37, 99, 235, 0.10)');
+$adminNoticeBadgeColor = $hexToRgba($adminNoticeAccentColor, 0.14, 'rgba(37, 99, 235, 0.14)');
+$adminNoticeStyle = implode(' ', [
+    '--member-admin-notice-accent: ' . $adminNoticeAccentColor . ';',
+    '--member-admin-notice-background: ' . $adminNoticeBackgroundColor . ';',
+    '--member-admin-notice-border: ' . $adminNoticeBorderColor . ';',
+    '--member-admin-notice-soft: ' . $adminNoticeSoftColor . ';',
+    '--member-admin-notice-badge-bg: ' . $adminNoticeBadgeColor . ';',
+]);
+$hasAdminNotice = $showAdminNotice && $adminNoticeRoleAllowed && ($adminNoticeTitle !== '' || $adminNoticeText !== '');
+
 $showWelcome = $getMemberToggle('show_welcome', true);
 $welcomeEyebrow = $getMemberText('welcome_eyebrow', '🏠 Member Home');
 $welcomeTitleTemplate = $getMemberText('welcome_title', '{greeting}, {name}! 👋');
@@ -261,6 +335,27 @@ include $themeDir . 'header.php';
     <?php include __DIR__ . '/partials/member-nav.php'; ?>
 
     <div class="member-main member-main--dashboard" style="<?php echo htmlspecialchars($dashboardStyle, ENT_QUOTES); ?>">
+
+        <?php if ($hasAdminNotice): ?>
+        <section class="member-admin-notice member-admin-notice--<?php echo htmlspecialchars($adminNoticeVariant, ENT_QUOTES); ?>" data-anim style="<?php echo htmlspecialchars($adminNoticeStyle, ENT_QUOTES); ?>">
+            <span class="member-admin-notice__icon" aria-hidden="true"><?php echo htmlspecialchars((string) $adminNoticeConfig['icon'], ENT_QUOTES); ?></span>
+            <div class="member-admin-notice__content">
+                <?php if ($adminNoticeKicker !== ''): ?>
+                <span class="member-admin-notice__eyebrow"><?php echo htmlspecialchars($adminNoticeKicker, ENT_QUOTES); ?></span>
+                <?php endif; ?>
+                <?php if ($adminNoticeTitle !== ''): ?>
+                <h2><?php echo htmlspecialchars($adminNoticeTitle, ENT_QUOTES); ?></h2>
+                <?php endif; ?>
+                <?php if ($adminNoticeText !== ''): ?>
+                <p><?php echo htmlspecialchars($adminNoticeText, ENT_QUOTES); ?></p>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($adminNoticeLinkUrl !== '' && $adminNoticeLinkLabel !== ''): ?>
+            <a href="<?php echo htmlspecialchars($adminNoticeLinkUrl, ENT_QUOTES); ?>" class="member-admin-notice__action"><?php echo htmlspecialchars($adminNoticeLinkLabel, ENT_QUOTES); ?></a>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
 
         <?php if ($showWelcome): ?>
         <section class="member-dashboard-hero" data-anim>
