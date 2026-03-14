@@ -119,24 +119,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
     if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
         $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
     } else {
-        $name    = htmlspecialchars(trim($_POST['comment_name']  ?? ''), ENT_QUOTES);
-        $email   = filter_var(trim($_POST['comment_email'] ?? ''), FILTER_VALIDATE_EMAIL);
-        $text    = htmlspecialchars(trim($_POST['comment_text'] ?? ''), ENT_QUOTES);
-        if (empty($name) || !$email || empty($text)) {
+        $commentUser = \CMS\Auth::isLoggedIn() ? \CMS\Auth::getCurrentUser() : null;
+        $commentUserId = !empty($commentUser->id) ? (int) $commentUser->id : null;
+        $name    = trim((string) ($_POST['comment_name'] ?? ''));
+        $emailRaw = trim((string) ($_POST['comment_email'] ?? ''));
+        $email   = $commentUserId ? $emailRaw : filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
+        $text    = trim((string) ($_POST['comment_text'] ?? ''));
+        if ($text === '' || ($commentUserId === null && ($name === '' || !$email))) {
             $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
         } else {
             try {
-                $db->execute(
-                    "INSERT INTO {$pfx}comments (post_id, author, author_email, author_ip, content, status) VALUES (?, ?, ?, ?, ?, 'pending')",
-                    [(int)($post['id'] ?? 0), $name, (string)$email, $_SERVER['REMOTE_ADDR'] ?? '', $text]
+                $newId = \CMS\Services\CommentService::getInstance()->createPendingComment(
+                    (int) ($post['id'] ?? 0),
+                    $name,
+                    (string) $email,
+                    $text,
+                    (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+                    $commentUserId
                 );
-                header('Location: ' . htmlspecialchars($siteUrl . '/blog/' . ($post['slug'] ?? ''), ENT_QUOTES) . '?commented=1#comments');
-                exit;
+                if ($newId === false) {
+                    $commentError = 'Bitte alle Pflichtfelder korrekt ausfüllen.';
+                } else {
+                    header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')) . '?commented=1#comments');
+                    exit;
+                }
             } catch (\Throwable $ex) { $commentError = 'Fehler beim Speichern des Kommentars.'; }
         }
     }
 }
-try { $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0)); } catch (\Throwable $e) { $csrfToken = ''; }
+if ((int) ($_GET['commented'] ?? 0) === 1) {
+    $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
+}
+try { $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0)); } catch (\Throwable $e) { $csrfToken = ''; }
 // ── Reading Time ───────────────────────────────────────────────────────
 $readTime = function_exists('phinit_reading_time') ? phinit_reading_time($content, $readingTimeWpm) : 0;
 $readingTime = $readTime;

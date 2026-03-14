@@ -228,9 +228,11 @@ if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subm
     if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
         $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
     } else {
+        $commentUser = \CMS\Auth::isLoggedIn() ? \CMS\Auth::getCurrentUser() : null;
+        $commentUserId = !empty($commentUser->id) ? (int) $commentUser->id : null;
         $name     = trim((string)($_POST['comment_name']  ?? ''));
         $emailRaw = trim((string)($_POST['comment_email'] ?? ''));
-        $email    = filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
+        $email    = $commentUserId ? $emailRaw : filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
         $text     = trim((string)($_POST['comment_text'] ?? ''));
         $honeypot = trim((string)($_POST['comment_hp'] ?? ''));
 
@@ -239,7 +241,7 @@ if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subm
             exit;
         }
 
-        if ($name === '' || !$email || $text === '') {
+        if ($text === '' || ($commentUserId === null && ($name === '' || !$email))) {
             $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
         } else {
             try {
@@ -249,7 +251,7 @@ if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subm
                     (string)$email,
                     $text,
                     (string)($_SERVER['REMOTE_ADDR'] ?? ''),
-                    \CMS\Auth::isLoggedIn() ? (int)(\CMS\Auth::getCurrentUser()->id ?? 0) : null
+                    $commentUserId
                 );
 
                 if ($newId === false) {
@@ -281,7 +283,7 @@ $commentError = $commentError ?? '';
 $commentSuccess = $commentSuccess ?? '';
 
 try {
-    $csrfToken = \CMS\Security::instance()->generateToken('comment_post_' . ($post['id'] ?? 0));
+    $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0));
 } catch (\Throwable $e) {
     $csrfToken = '';
 }
