@@ -174,94 +174,6 @@ trait CMS_Phinit_Theme_Assets_Trait
             || http_response_code() === 404;
     }
 
-    private function isPostRequest(string $path): bool
-    {
-        $postSlug = null;
-
-        try {
-            if (class_exists('CMS\\Services\\PermalinkService')) {
-                $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($path);
-            }
-        } catch (\Throwable $e) {
-            $postSlug = null;
-        }
-
-        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/(?P<slug>[^/]+)$#', $path, $matches) === 1) {
-            $postSlug = rawurldecode((string) ($matches['slug'] ?? ''));
-        }
-
-        if ($postSlug === null || trim($postSlug) === '') {
-            return false;
-        }
-
-        try {
-            $db = \CMS\Database::instance();
-            $row = $db->get_row(
-                "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
-                [$postSlug]
-            );
-
-            return $row !== null;
-        } catch (\Throwable $e) {
-            return false;
-        }
-    }
-
-    private function isHubSiteRequest(string $path): bool
-    {
-        if ($path === '/' || $this->isBlogListingRequest($path) || $this->isAuthOrMemberRequest($path) || $this->isPageExtrasRequest($path)) {
-            return false;
-        }
-
-        if ($this->isPostRequest($path)) {
-            return false;
-        }
-
-        $slug = trim($path, '/');
-        if ($slug === '' || str_contains($slug, '/')) {
-            return false;
-        }
-
-        try {
-            return \CMS\Services\SiteTableService::getInstance()->hubExistsBySlug($slug);
-        } catch (\Throwable $e) {
-            return false;
-        }
-    }
-
-    private function isRichContentRequest(string $path, bool $isHubSite): bool
-    {
-        if ($isHubSite || $this->isAuthOrMemberRequest($path) || $this->isPageExtrasRequest($path) || $this->isBlogListingRequest($path)) {
-            return false;
-        }
-
-        return $this->isPostRequest($path) || ($path !== '/' && !str_contains(trim($path, '/'), '/'));
-    }
-
-    private function isTemplateStylesRequest(string $path, bool $isHubSite): bool
-    {
-        if ($isHubSite || $this->isAuthOrMemberRequest($path) || $this->isPageExtrasRequest($path) || $this->isBlogListingRequest($path)) {
-            return false;
-        }
-
-        return $this->isPostRequest($path) || ($path !== '/' && !str_contains(trim($path, '/'), '/'));
-    }
-
-    private function isPageDetailRequest(string $path, bool $isHubSite): bool
-    {
-        if ($isHubSite || $this->isAuthOrMemberRequest($path) || $this->isPageExtrasRequest($path) || $this->isBlogListingRequest($path)) {
-            return false;
-        }
-
-        if ($this->isPostRequest($path)) {
-            return false;
-        }
-
-        $slug = trim($path, '/');
-
-        return $slug !== '' && !str_contains($slug, '/');
-    }
-
     private function isCookieConsentPageRequest(string $path): bool
     {
         return $path === '/cookie-einstellungen';
@@ -432,18 +344,6 @@ trait CMS_Phinit_Theme_Assets_Trait
         $scripts = [
             'assets/js/navigation.js',
         ];
-
-        if ($requestContext['isRichContent']) {
-            $scripts[] = 'assets/js/content-interactions.js';
-        }
-
-        if ($requestContext['isBlogListing']) {
-            $scripts[] = 'assets/js/homepage-widgets.js';
-        }
-
-        if ($requestPath === '/member/security') {
-            $scripts[] = 'assets/js/member-security.js';
-        }
 
         foreach ($scripts as $scriptRelativePath) {
             $scriptFile = CMS_PHINIT_THEME_DIR . str_replace('/', DIRECTORY_SEPARATOR, $scriptRelativePath);

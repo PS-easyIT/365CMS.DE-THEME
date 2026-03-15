@@ -5,10 +5,16 @@
 (function () {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', () => {
+    const boot = () => {
         initPasskeys();
         initBackupCodeCopy();
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+        boot();
+    }
 
     function setFormFeedback(form, message) {
         if (!(form instanceof HTMLElement) || !message) {

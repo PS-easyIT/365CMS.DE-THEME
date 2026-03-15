@@ -42,8 +42,10 @@ $customizer->setTheme('cms-phinit');
 
 $baseConfig = phinit_merge_customizer_config(
     phinit_build_customizer_base_config($customizer),
-    is_array($legacyConfig) ? $legacyConfig : []
+    phinit_strip_customizer_legacy_aliases(is_array($legacyConfig) ? $legacyConfig : [])
 );
+
+phinit_migrate_customizer_legacy_aliases($baseConfig, $customizer);
 
 // cms-feed Kanal-Optionen dynamisch laden
 $_feedOpts = ['0' => '— Kein Feed —'];

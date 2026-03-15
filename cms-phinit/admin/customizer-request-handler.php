@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 
 use CMS\AuditLogger;
 use CMS\Auth;
+use CMS\Database;
 use CMS\Security;
 use CMS\Services\ThemeCustomizer;
 
@@ -16,6 +17,142 @@ use CMS\Services\ThemeCustomizer;
 function phinit_get_advanced_raw_code_fields(): array
 {
     return ['custom_css', 'custom_head_code', 'custom_footer_code'];
+}
+
+/**
+ * @return array<string, array<string, string>>
+ */
+function phinit_get_customizer_legacy_alias_map(): array
+{
+    return [
+        'homepage' => [
+            'article_list_label' => 'featured_section_title',
+            'article_list_count' => 'featured_posts_count',
+            'show_info_grid' => 'show_info_cards',
+            'tile_grid_label' => 'grid_section_title',
+            'tile_grid_count' => 'grid_posts_per_page',
+        ],
+    ];
+}
+
+/**
+ * Entfernt migrierte Legacy-Alias-Felder aus der aktiven Customizer-Konfiguration,
+ * damit Save/Reset/UI nur noch mit kanonischen theme.json-Keys arbeiten.
+ *
+ * @param array<string, array<string, mixed>> $config
+ * @return array<string, array<string, mixed>>
+ */
+function phinit_strip_customizer_legacy_aliases(array $config): array
+{
+    foreach (phinit_get_customizer_legacy_alias_map() as $category => $aliases) {
+        if (!isset($config[$category]['sections']) || !is_array($config[$category]['sections'])) {
+            continue;
+        }
+
+        foreach (array_keys($aliases) as $legacyKey) {
+            unset($config[$category]['sections'][$legacyKey]);
+        }
+    }
+
+    return $config;
+}
+
+function phinit_normalize_customizer_alias_key(string $category, string $fieldKey): string
+{
+    $aliases = phinit_get_customizer_legacy_alias_map();
+    if (!isset($aliases[$category][$fieldKey])) {
+        return $fieldKey;
+    }
+
+    return $aliases[$category][$fieldKey];
+}
+
+/**
+ * Migriert gespeicherte Legacy-Alias-Werte in die kanonischen theme.json-Keys.
+ *
+ * @param array<string, array<string, mixed>> $config
+ */
+function phinit_migrate_customizer_legacy_aliases(array $config, ThemeCustomizer $customizer): void
+{
+    $aliasMap = phinit_get_customizer_legacy_alias_map();
+    if ($aliasMap === []) {
+        return;
+    }
+
+    try {
+        $db = Database::instance();
+        $prefix = $db->getPrefix();
+
+        foreach ($aliasMap as $category => $aliases) {
+            if (!isset($config[$category]['sections']) || !is_array($config[$category]['sections']) || $aliases === []) {
+                continue;
+            }
+
+            $queryKeys = array_values(array_unique(array_merge(array_keys($aliases), array_values($aliases))));
+            $placeholders = implode(', ', array_fill(0, count($queryKeys), '?'));
+            $params = array_merge([$customizer->getTheme(), $category], $queryKeys);
+
+            $stmt = $db->execute(
+                "SELECT setting_key, setting_value, user_id
+                 FROM {$prefix}theme_customizations
+                 WHERE theme_slug = ?
+                   AND setting_category = ?
+                   AND setting_key IN ({$placeholders})",
+                $params
+            );
+
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if (!is_array($rows) || $rows === []) {
+                continue;
+            }
+
+            $byUser = [];
+            foreach ($rows as $row) {
+                $userBucket = array_key_exists('user_id', $row) && $row['user_id'] !== null
+                    ? (string) (int) $row['user_id']
+                    : 'global';
+                $settingKey = (string) ($row['setting_key'] ?? '');
+                if ($settingKey === '') {
+                    continue;
+                }
+
+                $byUser[$userBucket][$settingKey] = [
+                    'value' => (string) ($row['setting_value'] ?? ''),
+                    'userId' => $userBucket === 'global' ? null : (int) $userBucket,
+                ];
+            }
+
+            foreach ($byUser as $settingsByKey) {
+                foreach ($aliases as $legacyKey => $canonicalKey) {
+                    if (!isset($settingsByKey[$legacyKey])) {
+                        continue;
+                    }
+
+                    $userId = $settingsByKey[$legacyKey]['userId'];
+                    $canonicalExists = isset($settingsByKey[$canonicalKey]);
+
+                    if (!$canonicalExists) {
+                        $fieldConfig = $config[$category]['sections'][$canonicalKey] ?? null;
+                        if (!is_array($fieldConfig)) {
+                            continue;
+                        }
+
+                        $normalizedValue = phinit_normalize_customizer_post_value(
+                            (string) ($fieldConfig['type'] ?? 'text'),
+                            $settingsByKey[$legacyKey]['value'],
+                            $fieldConfig
+                        );
+
+                        $customizer->set($category, $canonicalKey, $normalizedValue, $userId);
+                    }
+
+                    $customizer->reset($category, $legacyKey, $userId);
+                }
+            }
+        }
+    } catch (\Throwable $_e) {
+        // Defensive best-effort migration: Frontend-Fallbacks bleiben erhalten.
+    }
 }
 
 function phinit_is_advanced_raw_code_field(string $category, string $fieldKey): bool
@@ -233,9 +370,16 @@ function phinit_normalize_customizer_import_data(array $config, array $importDat
         }
 
         foreach ($categoryValues as $fieldKey => $rawValue) {
-            $normalizedFieldKey = (string) $fieldKey;
+            $sourceFieldKey = (string) $fieldKey;
+            $normalizedFieldKey = $sourceFieldKey;
             if ($category === 'advanced' && $normalizedFieldKey === 'custom_header_code') {
                 $normalizedFieldKey = 'custom_head_code';
+            }
+
+            $normalizedFieldKey = phinit_normalize_customizer_alias_key($category, $normalizedFieldKey);
+
+            if ($normalizedFieldKey !== $sourceFieldKey && array_key_exists($normalizedFieldKey, $categoryValues)) {
+                continue;
             }
 
             $fieldConfig = $categoryConfig[$normalizedFieldKey] ?? null;

@@ -93,7 +93,7 @@ $sidebarAdminIcon = $getMemberText('sidebar_admin_icon', '⚙️');
             <img src="<?php echo htmlspecialchars($memberAvatarUrl, ENT_QUOTES); ?>"
                  alt="<?php echo htmlspecialchars($memberDisplayName, ENT_QUOTES); ?>"
                  class="member-avatar__image"
-                 loading="lazy"
+                  <?php echo phinit_image_loading_attributes(true, false); ?>
                  width="44"
                  height="44">
             <?php else: ?>

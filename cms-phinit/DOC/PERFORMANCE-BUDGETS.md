@@ -84,29 +84,40 @@ Für das Repository existiert jetzt bereits eine **manuell startbare Lighthouse-
 ### Aktueller Workflow-Stand
 
 - Start per **GitHub Actions → workflow_dispatch**
-- benötigt eine echte `baseUrl` auf Preview-/Staging-Umgebung
-- erwartet zusätzlich einen real existierenden `postPath`, damit Einzelbeiträge reproduzierbar gemessen werden
+- automatische Läufe für **Pull Requests** auf Theme-/Workflow-Änderungen
+- geplanter **Wochenlauf** per `schedule`
+- nutzt Workflow-Inputs **oder** eine optionale Repo-Konfigdatei `.github/cms-phinit-lighthouse-targets.json` als Zielkonfiguration
 - führt pro Zielseite **3 Lighthouse-Läufe** aus
 - lädt den LHCI-Ordner als Artefakt hoch und veröffentlicht zusätzlich temporäre Reports
 
-### Pflicht-Inputs für manuelle Läufe
+### Zielkonfiguration für manuelle und automatische Läufe
+
+Pflichtwerte für reproduzierbare LHCI-Läufe:
 
 - `baseUrl` – Basis-Domain der Preview/Staging-Site
 - `postPath` – konkreter Pfad eines veröffentlichten Einzelbeitrags
 
-Optionale Inputs:
+Diese Werte können auf zwei Wegen geliefert werden:
+
+1. **manuell pro Run** über `workflow_dispatch`
+2. **dauerhaft im Repository** über `.github/cms-phinit-lighthouse-targets.json`
+
+Als Vorlage liegt `.github/cms-phinit-lighthouse-targets.example.json` im Repository. Für automatische PR-/Schedule-Läufe wird die Datei ohne `.example` mit echten Zielen erwartet.
+
+Optionale Pfade mit Default-Werten:
 
 - `homePath` – Default: `/`
 - `blogPath` – Default: `/blog`
 - `memberSecurityPath` – Default: `/member/security`
 
+Wenn Pflichtwerte für automatische PR-/Schedule-Läufe fehlen, wird der Workflow bewusst mit Hinweis **übersprungen** statt fehlerhaft zu starten.
+
 ### Nächster Ausbauschritt
 
-Sobald für das Repository ein reproduzierbarer lokaler Start in CI oder eine stabile Preview-URL pro Pull Request vorliegt, wird die manuelle Prüfung weiter ausgebaut durch:
+Die Grundautomatisierung ist jetzt verankert. Sinnvolle nächste Vertiefungen sind künftig vor allem:
 
-1. eine `lighthouserc`-Konfiguration mit den vier Ziel-URLs
-2. wiederholte Läufe mit Median-Auswertung
-3. Budget-Assertions für Performance und ggf. Accessibility
-4. PR-Sichtbarkeit über CI-Berichte
+1. Preview-URLs pro Pull Request dynamisch aus einer Hosting-Plattform einspeisen
+2. zusätzliche Assertions, z. B. für Accessibility oder Ressourcenbudgets
+3. optionales PR-Kommentar-/Check-Reporting mit kompaktem Budget-Diff
 
-Der erste Schritt ist mit der neuen Workflow-/Config-Schablone vorbereitet; offen bleibt vor allem die automatische PR-Anbindung an eine verlässliche Preview-Quelle.
+Der zentrale Engpass ist damit nicht mehr die Workflow-Integration im Theme-Repo, sondern nur noch die Qualität bzw. Herkunft der bereitgestellten Preview-Ziele.

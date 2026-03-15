@@ -8,10 +8,16 @@
     const prefersReducedMotion = () =>
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    document.addEventListener('DOMContentLoaded', () => {
+    const boot = () => {
         initFeaturedSidebarTitleBadges();
         initFeaturedSidebarRotators();
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+        boot();
+    }
 
     function initFeaturedSidebarTitleBadges() {
         const badges = Array.from(document.querySelectorAll('.sb-featured-title-badge'));

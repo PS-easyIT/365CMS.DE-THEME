@@ -54,7 +54,7 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                 <img src="<?php echo htmlspecialchars($authorAvatar, ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($authorName, ENT_QUOTES); ?>"
                      class="author-profile-avatar"
-                     loading="lazy"
+                     <?php echo phinit_image_loading_attributes(true, false); ?>
                      width="86"
                      height="86">
                 <?php else: ?>

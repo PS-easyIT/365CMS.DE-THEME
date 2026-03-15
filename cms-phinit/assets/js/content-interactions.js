@@ -5,12 +5,18 @@
 (function () {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', () => {
+    const boot = () => {
         initTocHighlight();
         initInlineToc();
         initShareButtons();
         initCodeCopyButtons();
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+        boot();
+    }
 
     function initTocHighlight() {
         const toc = document.querySelector('.toc-list');

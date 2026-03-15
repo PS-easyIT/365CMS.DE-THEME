@@ -5,6 +5,28 @@
 (function () {
     'use strict';
 
+    const scriptBaseUrl = (() => {
+        const currentScript = document.currentScript;
+        if (currentScript instanceof HTMLScriptElement && currentScript.src) {
+            return new URL('./', currentScript.src).href;
+        }
+
+        return new URL('./', window.location.href).href;
+    })();
+    const loadedFeatureModules = new Set();
+    const scheduleBackgroundTask = (callback) => {
+        if (typeof callback !== 'function') {
+            return;
+        }
+
+        if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(() => callback(), { timeout: 1500 });
+            return;
+        }
+
+        window.setTimeout(callback, 1);
+    };
+
     /* ── Helpers: Data-Attribute Toggles vom Body lesen ──────── */
     const bodyData = () => document.body.dataset;
     const isEnabled = (key, fallback = true) => {
@@ -26,7 +48,66 @@
         initFlashMessages();
         if (isEnabled('backToTop'))     initBackToTop();
         initConsentBanner();
+        loadDeferredFeatureModules();
     });
+
+    function loadDeferredFeatureModules() {
+        const moduleQueue = [];
+
+        if (needsContentInteractions()) {
+            moduleQueue.push('content-interactions.js');
+        }
+
+        if (needsHomepageWidgets()) {
+            moduleQueue.push('homepage-widgets.js');
+        }
+
+        if (needsMemberSecurity()) {
+            moduleQueue.push('member-security.js');
+        }
+
+        moduleQueue.forEach((moduleFile) => {
+            scheduleBackgroundTask(() => {
+                loadFeatureModule(moduleFile);
+            });
+        });
+    }
+
+    function loadFeatureModule(moduleFile) {
+        if (loadedFeatureModules.has(moduleFile)) {
+            return;
+        }
+
+        loadedFeatureModules.add(moduleFile);
+        import(new URL(moduleFile, scriptBaseUrl).href).catch(() => {
+            loadedFeatureModules.delete(moduleFile);
+        });
+    }
+
+    function needsContentInteractions() {
+        return Boolean(
+            document.querySelector('.toc-list')
+            || document.querySelector('[data-inline-toc]')
+            || document.querySelector('[data-share-copy]')
+            || document.querySelector('[data-share-print]')
+            || document.querySelector('pre > code')
+        );
+    }
+
+    function needsHomepageWidgets() {
+        return Boolean(
+            document.querySelector('.sb-featured-title-badge')
+            || document.querySelector('[data-featured-rotator]')
+        );
+    }
+
+    function needsMemberSecurity() {
+        return Boolean(
+            document.querySelector('[data-passkey-form]')
+            || document.querySelector('[data-passkey-register]')
+            || document.querySelector('.member-backup-codes')
+        );
+    }
 
     /* ── Sticky Header ─────────────────────────────────────────── */
     function initStickyHeader() {

@@ -93,7 +93,7 @@ include $themeDir . 'header.php';
                             <img src="<?php echo htmlspecialchars((string) $userMeta['avatar'], ENT_QUOTES); ?>"
                                  alt="<?php echo htmlspecialchars($controller->getDisplayName(), ENT_QUOTES); ?>"
                                  class="member-avatar__image"
-                                 loading="lazy"
+                                   <?php echo phinit_image_loading_attributes(true, false); ?>
                                  width="88"
                                  height="88">
                             <?php else: ?>

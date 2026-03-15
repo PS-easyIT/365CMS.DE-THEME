@@ -130,7 +130,7 @@ include $themeDir . 'header.php';
                 <div class="member-totp-setup">
                     <div class="member-totp-setup__qr">
                         <?php if ($totpQrUrl !== ''): ?>
-                        <img src="<?php echo htmlspecialchars($totpQrUrl, ENT_QUOTES); ?>" alt="TOTP QR-Code" loading="lazy">
+                        <img src="<?php echo htmlspecialchars($totpQrUrl, ENT_QUOTES); ?>" alt="TOTP QR-Code" <?php echo phinit_image_loading_attributes(true, false); ?>>
                         <?php else: ?>
                         <div class="member-totp-placeholder">QR-Code nicht verfügbar</div>
                         <?php endif; ?>

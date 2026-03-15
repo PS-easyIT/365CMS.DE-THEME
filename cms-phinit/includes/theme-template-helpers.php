@@ -144,10 +144,12 @@ if (!function_exists('phinit_image_loading_attributes')) {
     /**
      * Liefert standardisierte Loading-/Priority-Attribute für Theme-Bilder.
      */
-    function phinit_image_loading_attributes(bool $aboveTheFold = false): string
+    function phinit_image_loading_attributes(bool $aboveTheFold = false, bool $highPriority = true): string
     {
         if ($aboveTheFold) {
-            return 'loading="eager" fetchpriority="high" decoding="async"';
+            return $highPriority
+                ? 'loading="eager" fetchpriority="high" decoding="async"'
+                : 'loading="eager" decoding="async"';
         }
 
         return 'loading="lazy" decoding="async"';

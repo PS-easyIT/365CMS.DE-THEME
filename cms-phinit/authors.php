@@ -68,7 +68,7 @@ foreach ($authors as $authorEntry) {
                 <img src="<?php echo htmlspecialchars($authorAvatar, ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($authorName, ENT_QUOTES); ?>"
                      class="phinit-author-card__avatar"
-                     loading="lazy"
+                     <?php echo phinit_image_loading_attributes(true, false); ?>
                      width="72"
                      height="72">
                 <?php else: ?>

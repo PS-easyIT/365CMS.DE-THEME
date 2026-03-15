@@ -442,7 +442,7 @@
       "settings": {
         "logo_url": {
           "label": "Logo-URL (leer = Text-Logo)",
-          "type": "text",
+          "type": "url",
           "default": ""
         },
         "logo_text_part1": {
@@ -619,7 +619,7 @@
         },
         "consent_privacy_url": {
           "label": "Datenschutz-Link im Consent-Banner",
-          "type": "text",
+          "type": "url",
           "default": "/cookie-policy"
         },
         "show_network_bar": {
@@ -1840,7 +1840,7 @@
         },
         "admin_notice_link_url": {
           "label": "Admin-Benachrichtigung: Link-URL",
-          "type": "text",
+          "type": "url",
           "default": ""
         },
         "welcome_eyebrow": {

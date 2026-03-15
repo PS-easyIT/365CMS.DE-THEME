@@ -12,20 +12,19 @@ Die folgenden Punkte aus Phase 1 wurden bereits umgesetzt:
 - ✅ **SEC-01**: Öffentliche Author-/Profil-Links werden per Scheme-Allowlist abgesichert und bei ungültigen Schemes nicht mehr als anklickbare Links gerendert.
 - ✅ **CUS-02**: Der Key-Drift zwischen `custom_header_code` und `custom_head_code` wurde bereinigt; die Runtime akzeptiert Legacy-Daten weiterhin als Fallback.
 - ✅ **SEC-03**: Die redundanten lokalen Kommentar-POST-Handler in den Post-Templates wurden entfernt; der gemeinsame Flow über `/comments/post` ist jetzt die einzige aktive Wahrheit.
-- ✅ **CUS-03 (teilweise)**: Fehlende Share-Optionen wurden ergänzt; Homepage-Views zeigen jetzt die kanonischen `theme.json`-Felder (`featured_section_title`, `featured_posts_count`, `show_info_cards`, `grid_section_title`, `grid_posts_per_page`), die Runtime liest diese Keys bevorzugt mit Fallback, und Post-Optionen wie `show_post_nav` / `show_author_box` sind nicht länger reine Karteileichen.
+- ✅ **CUS-03**: Fehlende Share-Optionen wurden ergänzt; Homepage-Views zeigen die kanonischen `theme.json`-Felder (`featured_section_title`, `featured_posts_count`, `show_info_cards`, `grid_section_title`, `grid_posts_per_page`), Post-Optionen wie `show_post_nav` / `show_author_box` sind nicht länger reine Karteileichen, und die `theme.json`-Settings sind jetzt vollständig in `tabGroups`/`tabViews` des Customizers verankert.
 - ✅ **SEC-02**: Der Advanced-Tab verlangt bei Raw-Code-Änderungen jetzt eine explizite Bestätigung; Save/Import protokollieren Feldänderungen revisionsfähig über das Core-Audit-Log, ohne den eigentlichen Code im Log abzulegen.
 - ✅ **SEC-04**: Der Customizer-Import prüft Upload-Herkunft, Dateiendung, MIME-Typ und die erwartete Root-Struktur (`theme`, `exported_at`, `customizations`) jetzt deutlich strenger; blockierte Versuche landen im Audit-Log.
-- ✅ **CUS-04 (weitgehend)**: `theme.json` trägt jetzt auch die bisher nur im PHP-Schema beschriebenen Homepage-/Sidebar-, SEO-, Layout-, Header-, Footer-, Typografie-, Farb- sowie Zusatzfelder für Posts/Pages; im Legacy-Schema bleiben nur noch fünf veraltete Homepage-Alias-Keys (`article_list_label`, `article_list_count`, `show_info_grid`, `tile_grid_label`, `tile_grid_count`) als bewusste Fallback-Schicht zurück.
+- ✅ **CUS-04**: `theme.json` ist jetzt auch für die zuletzt verbliebenen Homepage-Alias-Fälle die einzige aktive Wahrheit; der Customizer entfernt die fünf Alt-Keys (`article_list_label`, `article_list_count`, `show_info_grid`, `tile_grid_label`, `tile_grid_count`) aus dem Live-Schema, migriert bestehende DB-Werte beim Laden auf die kanonischen Keys und mappt Legacy-Imports automatisch um.
 - ✅ **MAINT-01**: `index.php` nutzt keine `extract()`-Aufrufe mehr; `get_theme_part()` und der Core-`ThemeManager::render()` rendern Templates/Header/Footer jetzt über einen kontrollierten Scope mit validierten Variablennamen statt per pauschalem `extract()`.
-- ✅ **PERF-04 (teilweise)**: Das erste Inhaltsbild wird nicht mehr pauschal lazy geladen, sondern standardmäßig mit `loading="eager"` und `fetchpriority="high"` bevorzugt behandelt.
-- ✅ **PERF-04 (weitgehend)**: Content-Bilder ergänzen bei lokalen Assets jetzt zusätzlich fehlende `width`-/`height`-Attribute automatisch; zentrale Karten-/Hero-Templates schreiben Dimensionsattribute ebenfalls mit, wodurch Lazy Loading weniger CLS-Risiko erzeugt.
-- ✅ **PERF-01 (weitgehend)**: Die Request-Klassifizierung für den Asset-Pfad nutzt jetzt einen zentralen, pro Request gecachten Kontext und wiederverwendet für Blogposts denselben gecachten Post-Lookup wie der Head-Pfad, statt zusätzlich eine separate Existenzabfrage auszuführen.
-- ✅ **PERF-02 (weitgehend)**: Meta-Tags, Schema.org, Breadcrumb und Seitentitel teilen sich jetzt gebündelte SEO-/Layout-Settings sowie gecachte Post-/Page-Daten, sodass der Head-Pfad pro Request deutlich weniger redundante Post-/Page- und Customizer-Lookups erzeugt.
-- ✅ **PERF-03 (teilweise)**: `navigation.js` wurde auf ein schlankes Core-Bundle reduziert; Content-, Homepage- und Member-Security-Interaktionen werden jetzt über separate Dateien nur auf passenden Requests geladen.
-- ✅ **PERF-05 (weitgehend)**: Die Startseite injiziert ihre dynamischen Abstände/Projektlogos nicht mehr über einen Template-`<style>`-Block, sondern über CSS-Variablen direkt am Container bzw. am jeweiligen Karten-Element.
-- ✅ **PERF-05 (weitgehend)**: Mit `DOC/PERFORMANCE-BUDGETS.md`, `cms-phinit/lighthouserc.js` und `.github/workflows/cms-phinit-lighthouse.yml` existiert jetzt ein verbindlicher Minimalprozess plus eine manuell startbare Lighthouse-CI-Schablone für die vier Kernpfade; offen bleibt vor allem die automatische PR-Anbindung an eine stabile Preview-Umgebung.
+- ✅ **PERF-04**: Above-the-fold-Bilder werden im Theme jetzt konsistent nicht mehr unnötig lazy geladen: Das erste Inhaltsbild bleibt `eager`/high-priority, sichtbare Avatare und Security-/Preview-Bilder laden explizit `eager`, und lokale Bilder ergänzen weiterhin fehlende `width`-/`height`-Attribute automatisch.
+- ✅ **PERF-01**: Die Request-Klassifizierung für den Asset-Pfad läuft jetzt vollständig über einen zentralen, pro Request gecachten Kontext; die früher parallelen Klassifizierungshelfer im Asset-Trait wurden entfernt, und Blogposts nutzen denselben gecachten Post-Lookup wie der Head-Pfad statt zusätzlicher Existenzabfragen.
+- ✅ **PERF-02**: Meta-Tags, Schema.org, Breadcrumb und Seitentitel teilen sich jetzt gebündelte SEO-/Layout-Settings sowie gecachte Post-/Page-Daten, sodass der Head-Pfad pro Request ohne redundante Post-/Page- und Customizer-Lookups auskommt und nur noch einen aktiven Cache-/Helper-Pfad nutzt.
+- ✅ **PERF-03**: Das globale JS wurde auf einen echten Core-Bootstrap reduziert; Speziallogik für Rich-Content, Homepage-Widgets und Member-Security wird nach `DOMContentLoaded` per Feature-Erkennung on-demand per `import()` nachgeladen, statt über zusätzliche direkte `<script>`-Tags im Head vorab an passenden Requests gebunden zu sein.
+- ✅ **PERF-05**: Die Startseite injiziert ihre dynamischen Abstände/Projektlogos nicht mehr über einen Template-`<style>`-Block, sondern über CSS-Variablen direkt am Container bzw. am jeweiligen Karten-Element.
+- ✅ **PERF-05**: Mit `DOC/PERFORMANCE-BUDGETS.md`, `cms-phinit/lighthouserc.js` und `.github/workflows/cms-phinit-lighthouse.yml` existiert jetzt ein verbindlicher Minimalprozess inklusive manueller, PR-basierter und geplanter Lighthouse-Läufe; die Zielpfade lassen sich über Workflow-Inputs oder eine optionale Repo-Konfigdatei reproduzierbar auf eine Preview-/Staging-Quelle legen.
 
-Noch offen bleiben vor allem die Performance-Punkte aus Phase 3 sowie die späteren Mess-/Budget-Schritte aus Phase 4.
+Offen bleiben jetzt vor allem externe Mess- und Betriebsfragen aus Phase 4, also echte Lab-/Field-Metriken und die Qualität der bereitgestellten Preview-Ziele.
 
 ## Zielbild
 
@@ -88,55 +87,57 @@ Schwerpunktmäßig geprüft wurden unter anderem:
 - Admin-Schutz für den Customizer
 - keine aktuellen Diagnosefehler im Theme-Ordner
 
-Gleichzeitig gibt es **mehrere echte Audit-Befunde**, vor allem in drei Clustern:
+Die **ursprünglichen Audit-Befunde** lagen vor allem in drei Clustern:
 
 1. **Customizer-Drift und Validierungs-Lücken**  
-   `theme.json`, PHP-Schema, Request-Handler und Runtime-Code sind nicht mehr vollständig synchron.
+   `theme.json`, PHP-Schema, Request-Handler und Runtime-Code waren nicht mehr vollständig synchron.
 2. **Sicherheitsrelevante Escape-Hatches**  
-   Besonders kritisch sind unvalidierte Werte, die direkt in `<style>` oder als `href`/öffentliche URLs landen.
+   Besonders kritisch waren unvalidierte Werte, die direkt in `<style>` oder als `href`/öffentliche URLs landen konnten.
 3. **vermeidbare Laufzeitkosten im Header-/Asset-Pfad**  
-   Mehrere Request-Klassifizierungen und Meta-/Schema-/Breadcrumb-Abfragen wiederholen Datenbankzugriffe pro Request.
+   Mehrere Request-Klassifizierungen und Meta-/Schema-/Breadcrumb-Abfragen wiederholten Datenbankzugriffe pro Request.
+
+**Stand heute:** Die statischen Theme-Befunde aus Phase 1 bis 3 sind abgearbeitet. Offen bleiben vor allem externe Mess- und Betriebsfragen aus Phase 4, also reale Preview-/Staging-Ziele und darauf basierende Lab-/Field-Messungen.
 
 ## Audit-Score auf Code-Ebene
 
-> Kein Laborwert, sondern eine statische Einschätzung aus dem Code-Review.
+> Kein Laborwert, sondern eine statische Einschätzung aus dem Code-Review nach den bisherigen Umsetzungen.
 
 | Bereich | Einschätzung | Kurzbegründung |
 |---|---|---|
-| Customizer | B- | mächtig und flexibel, aber mit Drift zwischen Schema, Runtime und Validierung |
-| Sicherheit | B- | viele korrekte Escapes, aber mehrere unvalidierte Ausgabewege |
-| Performance | B | gute Asset-Aufteilung, aber redundante DB-Checks und ein globales JS-Bundle |
-| Wartbarkeit | B | gute Modulstruktur, aber verteilte Verantwortlichkeiten und einige Legacy-Spuren |
+| Customizer | A- | Schema, UI und Save-/Import-Flow sind weitgehend konsolidiert; relevante Drift-Befunde wurden bereinigt |
+| Sicherheit | A- | die kritischen Theme-Befunde zu URL-Allowlist, Import-Härtung und privilegiertem Raw-Code-Flow sind abgearbeitet |
+| Performance | B+ | Head-/Asset-Pfad und JS-/Bildstrategie wurden deutlich entschlackt; reale Metriken fehlen weiterhin ohne Testziel |
+| Wartbarkeit | B+ | Legacy-Spuren wie `extract()`-Pfade und parallele Klassifizierungslogik wurden reduziert, das Theme bleibt aber modular verteilt |
 
-## Wichtigste Befunde
+## Wichtigste Befunde aus dem Ausgangsaudit
 
 ### Kritisch / hoch priorisiert
 
-| ID | Bereich | Priorität | Befund | Betroffene Dateien |
-|---|---|---:|---|---|
-| CUS-01 | Customizer / Security | Hoch | **fehlende serverseitige Validierung** für viele Customizer-Felder; Werte werden später direkt in CSS-Variablen und Runtime-Ausgabe eingebettet | `admin/customizer-request-handler.php`, `includes/theme-assets-trait.php` |
-| SEC-01 | Security | Hoch | **öffentliche URL-Felder werden ohne Scheme-Allowlist ausgegeben**; insbesondere Autoren-Profilfelder mit Typ `url` werden als `href` gerendert | `author.php`, `authors.php` |
-| CUS-02 | Customizer | Hoch | **Key-Mismatch `custom_header_code` vs. `custom_head_code`** zwischen `theme.json`, PHP-Schema und Runtime-Ausgabe | `theme.json`, `admin/customizer-schema.php`, `includes/theme-assets-trait.php` |
+| ID | Bereich | Priorität | Ausgangsbefund | Betroffene Dateien | Status |
+|---|---|---:|---|---|---|
+| CUS-01 | Customizer / Security | Hoch | **fehlende serverseitige Validierung** für viele Customizer-Felder; Werte werden später direkt in CSS-Variablen und Runtime-Ausgabe eingebettet | `admin/customizer-request-handler.php`, `includes/theme-assets-trait.php` | umgesetzt |
+| SEC-01 | Security | Hoch | **öffentliche URL-Felder werden ohne Scheme-Allowlist ausgegeben**; insbesondere Autoren-Profilfelder mit Typ `url` werden als `href` gerendert | `author.php`, `authors.php` | umgesetzt |
+| CUS-02 | Customizer | Hoch | **Key-Mismatch `custom_header_code` vs. `custom_head_code`** zwischen `theme.json`, PHP-Schema und Runtime-Ausgabe | `theme.json`, `admin/customizer-schema.php`, `includes/theme-assets-trait.php` | umgesetzt |
 
 ### Mittel priorisiert
 
-| ID | Bereich | Priorität | Befund | Betroffene Dateien |
-|---|---|---:|---|---|
-| SEC-02 | Security | Mittel | **Advanced-Customizer erlaubt absichtlich rohen Head-/Footer-Code**; das ist ein Admin-Escape-Hatch und muss als privilegierte Funktion behandelt werden | `admin/customizer-request-handler.php`, `includes/theme-assets-trait.php` |
-| CUS-03 | Customizer | Mittel | neue/aktuelle Felder sind nicht überall sauber in die UI-Gruppen integriert (z. B. Share-Optionen) | `theme.json`, `admin/customizer-schema.php` |
-| PERF-01 | Performance | Mittel | Request-Klassifizierung für Assets nutzt wiederholt DB-Zugriffe im Head-Pfad | `includes/theme-assets-trait.php` |
-| PERF-02 | Performance | Mittel | Meta-Tags, Schema.org, Breadcrumb und Seitentitel führen auf Post-/Page-Requests mehrfach ähnliche Datenbankabfragen aus | `includes/theme-head-trait.php` |
-| PERF-03 | Performance | Mittel | globales `navigation.js` wird themeweit geladen, obwohl Teile davon nur auf Spezialseiten gebraucht werden | `includes/theme-assets-trait.php`, `assets/js/navigation.js` |
-| PERF-04 | Performance / UX | Mittel | `phinit_enhance_content_images()` setzt pauschal `loading="lazy"` für Content-Bilder, ohne First-Viewport-/LCP-Ausnahme oder Dimensions-Absicherung | `includes/theme-content-helpers.php` |
-| SEC-03 | Security / Maintainability | Mittel | Legacy-Kommentarlogik in `post.php` ist redundant und verwendet einen anderen Token-Namen als das aktuelle Formularziel `/comments/post` | `post.php`, `partials/post-comments.php` |
+| ID | Bereich | Priorität | Ausgangsbefund | Betroffene Dateien | Status |
+|---|---|---:|---|---|---|
+| SEC-02 | Security | Mittel | **Advanced-Customizer erlaubt absichtlich rohen Head-/Footer-Code**; das ist ein Admin-Escape-Hatch und muss als privilegierte Funktion behandelt werden | `admin/customizer-request-handler.php`, `includes/theme-assets-trait.php` | umgesetzt |
+| CUS-03 | Customizer | Mittel | neue/aktuelle Felder sind nicht überall sauber in die UI-Gruppen integriert (z. B. Share-Optionen) | `theme.json`, `admin/customizer-schema.php` | umgesetzt |
+| PERF-01 | Performance | Mittel | Request-Klassifizierung für Assets nutzt wiederholt DB-Zugriffe im Head-Pfad | `includes/theme-assets-trait.php` | umgesetzt |
+| PERF-02 | Performance | Mittel | Meta-Tags, Schema.org, Breadcrumb und Seitentitel führen auf Post-/Page-Requests mehrfach ähnliche Datenbankabfragen aus | `includes/theme-head-trait.php` | umgesetzt |
+| PERF-03 | Performance | Mittel | globales `navigation.js` wird themeweit geladen, obwohl Teile davon nur auf Spezialseiten gebraucht werden | `includes/theme-assets-trait.php`, `assets/js/navigation.js` | umgesetzt |
+| PERF-04 | Performance / UX | Mittel | `phinit_enhance_content_images()` setzt pauschal `loading="lazy"` für Content-Bilder, ohne First-Viewport-/LCP-Ausnahme oder Dimensions-Absicherung | `includes/theme-content-helpers.php` | umgesetzt |
+| SEC-03 | Security / Maintainability | Mittel | Legacy-Kommentarlogik in `post.php` ist redundant und verwendet einen anderen Token-Namen als das aktuelle Formularziel `/comments/post` | `post.php`, `partials/post-comments.php` | umgesetzt |
 
 ### Niedriger priorisiert
 
-| ID | Bereich | Priorität | Befund | Betroffene Dateien |
-|---|---|---:|---|---|
-| MAINT-01 | Wartbarkeit | Niedrig | `extract()` wird mehrfach genutzt; aktuell intern kontrolliert, aber fehleranfällig bei späteren Refactorings | `index.php`, `includes/theme-template-helpers.php`, `blog-single.php` |
-| PERF-05 | Performance | Niedrig | Inline-Styles auf der Startseite sind klein, aber bündeln dynamische Bild-URLs in das HTML statt in CSS/Token-Logik | `index.php` |
-| SEC-04 | Security | Niedrig | Import-Funktion prüft JSON-Größe, aber nicht MIME-Typ, Struktur-Schema oder Feld-Allowlist streng genug | `admin/customizer-request-handler.php` |
+| ID | Bereich | Priorität | Ausgangsbefund | Betroffene Dateien | Status |
+|---|---|---:|---|---|---|
+| MAINT-01 | Wartbarkeit | Niedrig | `extract()` wird mehrfach genutzt; aktuell intern kontrolliert, aber fehleranfällig bei späteren Refactorings | `index.php`, `includes/theme-template-helpers.php`, `blog-single.php` | umgesetzt |
+| PERF-05 | Performance | Niedrig | Inline-Styles auf der Startseite sind klein, aber bündeln dynamische Bild-URLs in das HTML statt in CSS/Token-Logik | `index.php` | umgesetzt |
+| SEC-04 | Security | Niedrig | Import-Funktion prüft JSON-Größe, aber nicht MIME-Typ, Struktur-Schema oder Feld-Allowlist streng genug | `admin/customizer-request-handler.php` | umgesetzt |
 
 ## Detailbewertung nach Audit-Bereich
 
@@ -150,11 +151,11 @@ Gleichzeitig gibt es **mehrere echte Audit-Befunde**, vor allem in drei Clustern
 - Export/Import ist bereits integriert.
 - Der Feldrenderer unterstützt mehrere Typen, inklusive Select, Number und Post-Picker.
 
-#### Befunde
+#### Ursprüngliche Befunde
 
 ##### CUS-01 – fehlende serverseitige Feldvalidierung
 
-Der Request-Handler speichert Werte weitgehend roh:
+Ausgangsbefund: Der Request-Handler speicherte Werte weitgehend roh:
 
 - Checkboxen werden korrekt als `1`/`0` behandelt.
 - Nicht-Advanced-Textareas werden mit `strip_tags()` bereinigt.
@@ -168,7 +169,7 @@ Das ist problematisch, weil `generatePhinitCSS()` Werte später direkt in CSS sc
 
 **Folge:** Ein manipuliertes POST kann ungültige oder schädliche Werte dauerhaft speichern.
 
-**Status:** weitgehend umgesetzt. Der Request-Handler normalisiert jetzt Farben, Zahlen, Selects, Post-Picker und URLs schema-aware; zusätzlich rendern `theme.json`-URL-/Bildfelder im Customizer nicht mehr als generische Textfelder, sondern wieder als echte URL-Inputs, sodass UI und Validierung konsistent zusammenspielen.
+**Status:** umgesetzt. Der Request-Handler normalisiert jetzt Farben, Zahlen, Selects, Post-Picker und URLs schema-aware; zusätzlich sind die fachlich relevanten URL-/Bildfelder in `theme.json` und im verbliebenen Legacy-PHP-Schema wieder konsistent als `url` typisiert. Dadurch verwenden UI, Save-Flow und Import dieselbe Validierungslogik, statt einzelne Felder noch als freie Textinputs an der URL-Prüfung vorbeizuschleusen.
 
 ##### CUS-02 – Key-Mismatch im Advanced-Bereich
 
@@ -194,7 +195,7 @@ Die Konfiguration lebt an mehreren Stellen:
 
 Neue Settings können dadurch technisch existieren, aber in der UI unvollständig gruppiert oder schlechter auffindbar sein. Das betrifft insbesondere die Weiterentwicklung des Post-/Share-Bereichs.
 
-**Status:** weitgehend umgesetzt. Share-Optionen, Post-Navigation und Autorenbox-Einstellungen sind in der UI sichtbar; zusätzlich wurden die Homepage-Gruppen/Views auf die kanonischen `theme.json`-Keys ausgerichtet. `theme.json` deckt inzwischen nahezu alle bislang nur im PHP-Schema definierten Customizer-Felder ab; lediglich fünf alte Homepage-Alias-Keys bleiben im Legacy-Schema als Fallback für bestehende Installationen erhalten.
+**Status:** umgesetzt. Share-Optionen, Post-Navigation und Autorenbox-Einstellungen sind in der UI sichtbar; zusätzlich sind die `theme.json`-Settings vollständig in die `tabGroups`/`tabViews` des Customizers eingehängt. Die früheren Homepage-Alias-Keys werden nicht mehr als eigene aktive Schema-Felder geführt, sondern nur noch beim Lesen alter Bestandsdaten bzw. alter Import-Dateien auf die kanonischen Keys migriert.
 
 #### Empfehlung
 
@@ -210,7 +211,7 @@ Neue Settings können dadurch technisch existieren, aber in der UI unvollständi
 4. **Import validieren**  
    nur bekannte Kategorien/Felder übernehmen, unbekannte Keys verwerfen.
 
-**Aktueller Rest für die vollständige Kanonisierung:** Die letzten Legacy-Alias-Felder auf der Startseite (`article_list_label`, `article_list_count`, `show_info_grid`, `tile_grid_label`, `tile_grid_count`) können perspektivisch entfernt werden, sobald ein gezielter Migrationspfad für Alt-Installationen vorhanden ist.
+**Status:** umgesetzt. Für die früheren Homepage-Alias-Felder (`article_list_label`, `article_list_count`, `show_info_grid`, `tile_grid_label`, `tile_grid_count`) existiert jetzt ein gezielter Migrationspfad: Der Admin-Customizer schreibt nur noch die kanonischen `theme.json`-Keys, migriert vorhandene Datenbankwerte best-effort beim Laden und ordnet Legacy-Importe automatisch den neuen Feldern zu.
 
 ### 2. Sicherheits-Audit
 
@@ -222,7 +223,7 @@ Neue Settings können dadurch technisch existieren, aber in der UI unvollständi
 - Favoriten-Flow nutzt einen separaten Token-Mechanismus
 - `target="_blank"` ist an vielen Stellen sauber mit `rel="noopener noreferrer"` kombiniert
 
-#### Befunde
+#### Ursprüngliche Befunde
 
 ##### SEC-01 – öffentliche URL-Felder ohne Scheme-Allowlist
 
@@ -294,7 +295,7 @@ Es fehlt eine strikte Feld-/Struktur-Allowlist.
 - Above-the-fold-Helfer `phinit_image_loading_attributes(true)` nutzt `fetchpriority="high"`
 - `loading="lazy"` und `decoding="async"` werden systematisch ergänzt
 
-#### Befunde
+#### Ursprüngliche Befunde
 
 ##### PERF-01 – Request-Klassifizierung erzeugt Laufzeitkosten im Asset-Pfad
 
@@ -312,6 +313,8 @@ Dabei werden teils Datenbankabfragen zur Route-Erkennung verwendet. Das ist funk
 - Routing-Kontext einmal zentral ermitteln und cachen
 - Asset-Entscheidung auf bereits bekannte Request-Metadaten stützen
 
+**Status:** umgesetzt. Der Asset-Pfad arbeitet jetzt ausschließlich mit dem zentralen `getRequestContext()`-Cache; die früher parallel vorhandenen Hilfsmethoden für Post-/Hub-/Page-Erkennung im Asset-Trait wurden entfernt. Dadurch bleibt nur noch ein aktiver Klassifizierungspfad übrig, der den gecachten Head-/Post-Kontext wiederverwendet und keine zweite Logikspur mehr mitbringt.
+
 ##### PERF-02 – mehrfach ähnliche Header-Abfragen
 
 `includes/theme-head-trait.php` lädt für einen Request mehrfach ähnliche Informationen:
@@ -323,7 +326,7 @@ Dabei werden teils Datenbankabfragen zur Route-Erkennung verwendet. Das ist funk
 
 Vor allem auf Post-/Page-Requests entstehen dadurch mehrere einzelne Abfragen für verwandte Daten.
 
-**Status:** weitgehend umgesetzt. Post- und Page-Requests teilen sich jetzt einen gecachten Head-Datensatz (inklusive Seitentitel/-beschreibung/-Bild für Pages), und wiederholt benötigte SEO-/Layout-Settings werden pro Request einmal gebündelt geladen. Ein späterer optionaler Feinschliff wäre höchstens ein formales Head-ViewModel-Objekt statt der aktuellen Helper-/Cache-Schicht.
+**Status:** umgesetzt. `includes/theme-head-trait.php` arbeitet inzwischen durchgängig mit einer gemeinsamen Cache-/Helper-Schicht: SEO-/Layout-Settings werden pro Request einmal gebündelt geladen, Post-Daten über `getCurrentHeadPost()` einmal aufgelöst und Page-Daten samt Titel über `getCurrentHeadPage()` bzw. `getCurrentHeadPageTitle()` wiederverwendet. Für Meta-Tags, Schema.org, Breadcrumb und Seitentitel existiert damit kein zweiter Query-Pfad mehr; ein separates Head-ViewModel wäre nur noch eine stilistische Alternative, aber kein offener Performance-Befund.
 
 ##### PERF-03 – globales JavaScript-Bundle für alle Seiten
 
@@ -346,18 +349,20 @@ Das ist praktisch, aber nicht jede Seite braucht alle Features.
 - `assets/js/content-interactions.js` lädt TOC-, Share- und Code-Copy-Logik nur für Rich-Content-Requests.
 - `assets/js/homepage-widgets.js` lädt Featured-Rotator-/Badge-Logik nur für Blog-/Homepage-Requests.
 - `assets/js/member-security.js` lädt Passkey-/Backup-Code-Interaktionen nur für `/member/security`.
-- `includes/theme-assets-trait.php` verdrahtet die Dateien jetzt requestabhängig statt das frühere Komplettpaket global auszugeben.
+- `includes/theme-assets-trait.php` liefert nur noch den Core-Bootstrap direkt aus; die Spezialmodule werden nach dem ersten Render per Feature-Erkennung und `import()` nachgeladen.
 
 **Empfehlung:**
 
 - mindestens in 2–3 Bündel schneiden, z. B. `core`, `content`, `member`
 - oder per data-attributgestütztem on-demand Import weiterentwickeln
 
+**Status:** umgesetzt. Die Bundle-Trennung ist nicht mehr nur requestabhängig über mehrere direkte `<script>`-Tags, sondern wird jetzt tatsächlich on-demand abgearbeitet: `navigation.js` bleibt als globales Core-Skript übrig und lädt Speziallogik erst nach `DOMContentLoaded` bei erkannter DOM-/Seiten-Relevanz nach. Damit sinkt die initiale JS-Nutzlast auf Seiten ohne TOC, Featured-Rotator oder Passkey-UI weiter, und der Head-Pfad bleibt schlanker.
+
 ##### PERF-04 – pauschales Lazy Loading aller Content-Bilder
 
 `phinit_enhance_content_images()` ergänzt allen Inhaltsbildern `loading="lazy"`, sofern das Attribut fehlt. Das spart Daten, kann aber erste sichtbare Content-Bilder verlangsamen und ohne `width`/`height` Layoutverschiebungen begünstigen.
 
-**Status:** weitgehend umgesetzt. Das erste Inhaltsbild bleibt eager/high-priority; zusätzlich ergänzt die Runtime bei lokal auflösbaren Bildern jetzt fehlende `width`-/`height`-Attribute automatisch. Relevante Karten- und Hero-Templates schreiben Dimensionsattribute ebenfalls mit, sodass Lazy-Loading-Bilder weniger häufig Layoutverschiebungen verursachen.
+**Status:** umgesetzt. Das erste Inhaltsbild bleibt eager/high-priority; zusätzlich ergänzt die Runtime bei lokal auflösbaren Bildern jetzt fehlende `width`-/`height`-Attribute automatisch. Relevante Karten- und Hero-Templates schreiben Dimensionsattribute ebenfalls mit, und sichtbare Avatar-/Preview-Bilder in Autor-, Member- und Security-Views werden nicht mehr unnötig mit `loading="lazy"` verzögert.
 
 **Empfehlung:**
 
@@ -366,17 +371,15 @@ Das ist praktisch, aber nicht jede Seite braucht alle Features.
 
 ##### PERF-05 – keine Messwerte im Theme selbst verankert
 
-Der ursprüngliche Inline-Style-Befund auf der Startseite ist weitgehend bereinigt: Die Homepage setzt ihre dynamischen Spacing-Werte und Projekt-Logo-Hintergründe jetzt über CSS-Variablen am jeweiligen Element statt über einen Template-`<style>`-Block. Zusätzlich definieren `DOC/PERFORMANCE-BUDGETS.md`, `cms-phinit/lighthouserc.js` und `.github/workflows/cms-phinit-lighthouse.yml` jetzt einen verbindlichen Minimalprozess samt manuell auslösbarer Lighthouse-CI-Schablone. Offen bleibt vor allem die automatische PR-Anbindung an eine stabile Preview-Umgebung.
+Der ursprüngliche Inline-Style-Befund auf der Startseite ist umgesetzt: Die Homepage setzt ihre dynamischen Spacing-Werte und Projekt-Logo-Hintergründe jetzt über CSS-Variablen am jeweiligen Element statt über einen Template-`<style>`-Block. Zusätzlich verankern `DOC/PERFORMANCE-BUDGETS.md`, `cms-phinit/lighthouserc.js` und `.github/workflows/cms-phinit-lighthouse.yml` jetzt einen sichtbaren Prozess für Budgets, CWV-Grenzen und wiederholbare Lighthouse-Läufe.
 
-Es gibt derzeit keinen sichtbaren Prozess für:
+**Status:** umgesetzt. Der Workflow unterstützt inzwischen manuelle Runs, PR-getriggerte Läufe und einen geplanten Wochenlauf. Die benötigten Zielpfade können über Workflow-Inputs oder eine Repo-Datei `.github/cms-phinit-lighthouse-targets.json` (Vorlage: `.github/cms-phinit-lighthouse-targets.example.json`) bereitgestellt werden; fehlen Pflichtwerte, wird der Lauf mit Hinweis übersprungen statt unkontrolliert zu scheitern.
 
-- Performance-Budgets
-- CWV-Grenzen
-- regelmäßige Lighthouse-Prüfung
-
-**Hinweis:** In diesem Audit wurden keine echten Lab-/Field-Metriken gemessen. Das ist ein separater nächster Schritt.
+**Hinweis:** In diesem Audit wurden weiterhin keine echten Lab-/Field-Metriken gemessen. Das bleibt ein separater Betriebs- bzw. Monitoring-Schritt außerhalb des Theme-Codes.
 
 ## Empfohlene Abarbeitungsreihenfolge
+
+> Stand nach dieser Umsetzungsrunde: **Phase 1 bis 3 sind im Theme-Code abgearbeitet.** Übrig bleiben vor allem Phase-4-Themen, die eine reale Preview-/Staging-Site und echte Messläufe benötigen.
 
 ### Phase 1 – Sicherheits- und Datenintegritäts-Fixes
 
