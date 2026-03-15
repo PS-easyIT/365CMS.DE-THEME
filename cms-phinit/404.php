@@ -78,7 +78,8 @@ try {
                 <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>" class="post-card-thumb">
                     <img src="<?php echo htmlspecialchars($p['featured_image'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($p['title'] ?? '', ENT_QUOTES); ?>"
-                        <?php echo phinit_image_loading_attributes(); ?>>
+                        <?php echo phinit_image_loading_attributes(); ?>
+                        <?php echo phinit_image_dimension_attributes((string) ($p['featured_image'] ?? ''), 640, 360); ?>>
                     <?php if (!empty($p['category_name'])): ?>
                     <span class="post-card-badge"><?php echo phinit_escape_text($p['category_name'] ?? ''); ?></span>
                     <?php endif; ?>

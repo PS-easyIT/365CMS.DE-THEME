@@ -95,8 +95,12 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                     <span class="author-profile-detail__label"><?php echo htmlspecialchars($detailLabel, ENT_QUOTES); ?></span>
                     <div class="author-profile-detail__value">
                         <?php if ($detailType === 'url'): ?>
-                            <?php $href = $detailValue; ?>
-                            <a href="<?php echo htmlspecialchars($href, ENT_QUOTES); ?>"<?php echo $detailType === 'url' ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
+                            <?php $href = phinit_safe_public_url($detailValue, $siteUrl); ?>
+                            <?php if ($href !== ''): ?>
+                            <a href="<?php echo htmlspecialchars($href, ENT_QUOTES); ?>"<?php echo preg_match('/^mailto:/i', $href) === 1 ? '' : ' target="_blank" rel="noopener noreferrer"'; ?>><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
+                            <?php else: ?>
+                            <?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?>
+                            <?php endif; ?>
                         <?php else: ?>
                             <?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?>
                         <?php endif; ?>

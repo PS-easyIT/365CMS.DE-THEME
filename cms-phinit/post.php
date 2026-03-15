@@ -62,6 +62,13 @@ $showShareLinkedin = $czBool('posts', 'show_share_linkedin', true);
 $showShareTwitter  = $czBool('posts', 'show_share_twitter', true);
 $showShareEmail    = $czBool('posts', 'show_share_email', true);
 $showShareCopy     = $czBool('posts', 'show_share_copy', true);
+$showShareMastodon = $czBool('posts', 'show_share_mastodon', true);
+$showSharePrint    = $czBool('posts', 'show_share_print', true);
+$showPostNav       = $czBool('posts', 'show_post_nav', true);
+$showAuthorBox     = $czBool('posts', 'show_author_box', true);
+$authorBoxNameCfg  = trim((string)$czGet('posts', 'author_name', ''));
+$authorBoxBio      = trim((string)$czGet('posts', 'author_bio', ''));
+$authorBoxAvatar   = trim((string)$czGet('posts', 'author_avatar_url', ''));
 $showComments      = $czBool('posts', 'show_comments', true);
 $commentsHeader    = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
 $commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
@@ -97,7 +104,7 @@ if (isset($post) && !empty($post)) {
 
     try {
         $postObj = $db->get_row(
-            "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name, c.name AS category_name
+            "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name, c.name AS category_name, c.slug AS category_slug
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}users u ON u.id = p.author_id
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
@@ -195,20 +202,7 @@ if ($showSidebarRelated) {
 }
 
 // ── Tags laden ──────────────────────────────────────────────────────────────
-$postTags = [];
-if ($showPostTags) {
-    try {
-        $tagRows = $db->get_results(
-            "SELECT t.id, t.name, t.slug
-             FROM {$prefix}post_tags t
-             INNER JOIN {$prefix}post_tag_rel ptr ON ptr.tag_id = t.id
-             WHERE ptr.post_id = ?
-             ORDER BY t.name ASC",
-            [(int)($post['id'] ?? 0)]
-        ) ?: [];
-        $postTags = array_map(fn($r) => (array)$r, $tagRows);
-    } catch (\Throwable) {}
-}
+$postTags = $showPostTags ? phinit_parse_post_tags((string) ($post['tags'] ?? '')) : [];
 
 // ── Kommentare laden ────────────────────────────────────────────────────────
 $comments     = [];
@@ -219,52 +213,6 @@ if ($showComments) {
         $comments     = array_map(fn($c) => (array)$c, $commentRows);
         $commentCount = count($comments);
     } catch (\Throwable) {}
-}
-
-// ── Kommentar abschicken ────────────────────────────────────────────────────
-if ($showComments && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
-    $commentError   = '';
-    $commentSuccess = '';
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
-        $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
-    } else {
-        $commentUser = \CMS\Auth::isLoggedIn() ? \CMS\Auth::getCurrentUser() : null;
-        $commentUserId = !empty($commentUser->id) ? (int) $commentUser->id : null;
-        $name     = trim((string)($_POST['comment_name']  ?? ''));
-        $emailRaw = trim((string)($_POST['comment_email'] ?? ''));
-        $email    = $commentUserId ? $emailRaw : filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
-        $text     = trim((string)($_POST['comment_text'] ?? ''));
-        $honeypot = trim((string)($_POST['comment_hp'] ?? ''));
-
-        if ($honeypot !== '') {
-            header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string)($post['slug'] ?? '')) . '?commented=1#comments');
-            exit;
-        }
-
-        if ($text === '' || ($commentUserId === null && ($name === '' || !$email))) {
-            $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
-        } else {
-            try {
-                $newId = \CMS\Services\CommentService::getInstance()->createPendingComment(
-                    (int)($post['id'] ?? 0),
-                    $name,
-                    (string)$email,
-                    $text,
-                    (string)($_SERVER['REMOTE_ADDR'] ?? ''),
-                    $commentUserId
-                );
-
-                if ($newId === false) {
-                    $commentError = 'Bitte alle Pflichtfelder korrekt ausfüllen.';
-                } else {
-                    header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string)($post['slug'] ?? '')) . '?commented=1#comments');
-                    exit;
-                }
-            } catch (\Throwable $ex) {
-                $commentError = 'Fehler beim Speichern des Kommentars.';
-            }
-        }
-    }
 }
 
 if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
@@ -281,6 +229,19 @@ $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0),
 
 $commentError = $commentError ?? '';
 $commentSuccess = $commentSuccess ?? '';
+
+$authorId = (int) ($post['author_id'] ?? 0);
+$authorBoxName = trim((string) ($post['author_name'] ?? ''));
+if ($authorBoxName === '') {
+    $authorBoxName = $authorBoxNameCfg;
+}
+$authorBoxUrl = $authorId > 0
+    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, null, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId)
+    : '';
+$authorBoxAvatarUrl = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url($authorBoxAvatar, $siteUrl, ['http', 'https'])
+    : $authorBoxAvatar;
+$renderAuthorBox = $showAuthorBox && ($authorBoxName !== '' || $authorBoxBio !== '' || $authorBoxAvatarUrl !== '');
 
 try {
     $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0));
@@ -325,7 +286,8 @@ if ($sidebarPosition === 'left') {
                 <?php if ($showPostTags && !empty($postTags)): ?>
                 <div class="post-tags">
                     <?php foreach ($postTags as $tag): ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . urlencode(phinit_display_text($tag['slug'] ?? '')), ENT_QUOTES); ?>" class="post-tag">#<?php echo phinit_escape_text($tag['name'] ?? ''); ?></a>
+                    <?php $tagUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/tag/' . rawurlencode((string) ($tag['slug'] ?? '')), null, $siteUrl) : rtrim($siteUrl, '/') . '/tag/' . rawurlencode((string) ($tag['slug'] ?? '')); ?>
+                    <a href="<?php echo htmlspecialchars($tagUrl, ENT_QUOTES); ?>" class="post-tag">#<?php echo phinit_escape_text($tag['name'] ?? ''); ?></a>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
@@ -334,19 +296,27 @@ if ($sidebarPosition === 'left') {
                 <?php if ($showShareButtons): ?>
                 <div class="post-share">
                     <span>Teilen:</span>
-                    <?php $postUrl = htmlspecialchars(urlencode($siteUrl . '/blog/' . ($post['slug'] ?? '')), ENT_QUOTES); ?>
-                    <?php $postTitle = htmlspecialchars(urlencode($post['title'] ?? ''), ENT_QUOTES); ?>
+                    <?php $postUrlRaw = rtrim($siteUrl, '/') . phinit_current_request_path(); ?>
+                    <?php $postUrl = htmlspecialchars(rawurlencode($postUrlRaw), ENT_QUOTES); ?>
+                    <?php $postTitleRaw = (string) ($post['title'] ?? ''); ?>
+                    <?php $postTitle = htmlspecialchars(rawurlencode($postTitleRaw), ENT_QUOTES); ?>
                     <?php if ($showShareLinkedin): ?>
                     <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer" aria-label="Auf LinkedIn teilen">in LinkedIn</a>
                     <?php endif; ?>
                     <?php if ($showShareTwitter): ?>
                     <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Auf Twitter/X teilen">𝕏 Twitter</a>
                     <?php endif; ?>
+                    <?php if ($showShareMastodon): ?>
+                    <a href="<?php echo htmlspecialchars(phinit_get_mastodon_share_url($postUrlRaw, $postTitleRaw, $socialMastodon), ENT_QUOTES); ?>" class="share-btn ma" target="_blank" rel="noopener noreferrer" aria-label="Auf Mastodon teilen">🦣 Mastodon</a>
+                    <?php endif; ?>
                     <?php if ($showShareEmail): ?>
                     <a href="mailto:?subject=<?php echo $postTitle; ?>&body=<?php echo $postUrl; ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
                     <?php endif; ?>
                     <?php if ($showShareCopy): ?>
-                    <button class="share-btn cp" aria-label="Link kopieren">📋 Kopieren</button>
+                    <button type="button" class="share-btn cp" data-share-copy="1" aria-label="Link kopieren">📋 Kopieren</button>
+                    <?php endif; ?>
+                    <?php if ($showSharePrint): ?>
+                    <button type="button" class="share-btn pr" data-share-print="1" aria-label="Artikel drucken">🖨 Drucken</button>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
@@ -359,11 +329,22 @@ if ($sidebarPosition === 'left') {
         </article>
 
         <!-- Vor-/Nächster Artikel -->
+        <?php if ($showPostNav): ?>
         <?php get_theme_part('partials/post-navigation', [
             'prevPost' => $prevPost,
             'nextPost' => $nextPost,
             'siteUrl' => $siteUrl,
         ]); ?>
+        <?php endif; ?>
+
+        <?php if ($renderAuthorBox): ?>
+        <?php get_theme_part('partials/post-author-box', [
+            'authorName' => $authorBoxName,
+            'authorBio' => $authorBoxBio,
+            'authorAvatarUrl' => $authorBoxAvatarUrl,
+            'authorUrl' => $authorBoxUrl,
+        ]); ?>
+        <?php endif; ?>
 
         <!-- Kommentare -->
         <?php get_theme_part('partials/post-comments', [

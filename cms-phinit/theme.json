@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -13,6 +13,10 @@
     "post":        "post.php",
     "blog-single": "blog-single.php",
     "blog":        "blog.php",
+    "category":    "category.php",
+    "tag":         "tag.php",
+    "authors":     "authors.php",
+    "sitemap":     "sitemap.php",
     "login":       "login.php",
     "register":    "register.php",
     "404":         "404.php",
@@ -131,10 +135,25 @@
           "type": "color",
           "default": "#0f2240"
         },
+        "primary_mid": {
+          "label": "Primärfarbe Mittel",
+          "type": "color",
+          "default": "#1a3255"
+        },
+        "primary_light": {
+          "label": "Primärfarbe Hell",
+          "type": "color",
+          "default": "#2a4f7c"
+        },
         "accent_color": {
           "label": "Akzentfarbe (Gold)",
           "type": "color",
           "default": "#e8a838"
+        },
+        "accent_hover": {
+          "label": "Akzentfarbe Hover",
+          "type": "color",
+          "default": "#d4922a"
         },
         "accent_teal": {
           "label": "Akzentfarbe Teal",
@@ -161,10 +180,20 @@
           "type": "color",
           "default": "#f1f5f9"
         },
+        "bg_dark": {
+          "label": "Dark-Mode Hintergrund",
+          "type": "color",
+          "default": "#0a0f1a"
+        },
         "accent_blue": {
           "label": "Akzentfarbe Blau",
           "type": "color",
           "default": "#2d7dd2"
+        },
+        "accent_blue2": {
+          "label": "Akzentfarbe Blau 2",
+          "type": "color",
+          "default": "#4a9eff"
         },
         "accent_teal_light": {
           "label": "Akzentfarbe Teal Hell (Links/Hover)",
@@ -191,6 +220,26 @@
           "type": "color",
           "default": "#94a3b8"
         },
+        "text_nav": {
+          "label": "Navigationstext allgemein",
+          "type": "color",
+          "default": "#e2e8f0"
+        },
+        "text_nav_member": {
+          "label": "Member-Bar Text",
+          "type": "color",
+          "default": "#e2e8f0"
+        },
+        "text_nav_main": {
+          "label": "Hauptnavigation Text",
+          "type": "color",
+          "default": "#e2e8f0"
+        },
+        "text_nav_quicklinks": {
+          "label": "Quicklinks Text",
+          "type": "color",
+          "default": "#b0bec5"
+        },
         "text_nav_dropdown": {
           "label": "Dropdown Text",
           "type": "color",
@@ -216,10 +265,25 @@
           "type": "color",
           "default": "#0f172a"
         },
+        "footer_bottom_bg": {
+          "label": "Footer Bottom Hintergrund",
+          "type": "color",
+          "default": "#080d15"
+        },
         "footer_border": {
           "label": "Footer-Randfarbe",
           "type": "color",
           "default": "#1e3a5f"
+        },
+        "success_color": {
+          "label": "Statusfarbe Erfolg",
+          "type": "color",
+          "default": "#16a34a"
+        },
+        "error_color": {
+          "label": "Statusfarbe Fehler",
+          "type": "color",
+          "default": "#dc2626"
         },
         "progress_bar_start": {
           "label": "Fortschrittsbalken Startfarbe",
@@ -328,6 +392,48 @@
             "600": "Semi-Bold (600)",
             "700": "Bold (700)"
           }
+        },
+        "article_title_fontsize": {
+          "label": "Artikelkarten-Titelgröße (px)",
+          "type": "number",
+          "default": 16,
+          "min": 12,
+          "max": 28
+        },
+        "tile_title_fontsize": {
+          "label": "Grid-Karten-Titelgröße (px)",
+          "type": "number",
+          "default": 15,
+          "min": 12,
+          "max": 24
+        },
+        "article_excerpt_fontsize": {
+          "label": "Artikel-Auszug Schriftgröße (px)",
+          "type": "number",
+          "default": 13,
+          "min": 11,
+          "max": 20
+        },
+        "article_excerpt_length": {
+          "label": "Artikel-Auszugslänge",
+          "type": "number",
+          "default": 180,
+          "min": 40,
+          "max": 500
+        },
+        "tile_excerpt_fontsize": {
+          "label": "Grid-Auszug Schriftgröße (px)",
+          "type": "number",
+          "default": 12,
+          "min": 10,
+          "max": 18
+        },
+        "tile_excerpt_length": {
+          "label": "Grid-Auszugslänge",
+          "type": "number",
+          "default": 160,
+          "min": 40,
+          "max": 400
         }
       }
     },
@@ -359,6 +465,11 @@
           "type": "checkbox",
           "default": false
         },
+        "logo_accent_color": {
+          "label": "Logo-Akzentfarbe",
+          "type": "color",
+          "default": "#4a9eff"
+        },
         "logo_max_height": {
           "label": "Logo-Maximalhöhe (px)",
           "type": "number",
@@ -386,10 +497,31 @@
           "type": "checkbox",
           "default": true
         },
+        "member_bar_height": {
+          "label": "Member-Bar Höhe (px)",
+          "type": "number",
+          "default": 36,
+          "min": 28,
+          "max": 64
+        },
+        "main_nav_height": {
+          "label": "Hauptnavigation Höhe (px)",
+          "type": "number",
+          "default": 48,
+          "min": 36,
+          "max": 80
+        },
         "show_quicklinks": {
           "label": "Quicklinks-Leiste anzeigen",
           "type": "checkbox",
           "default": true
+        },
+        "sub_bar_height": {
+          "label": "Quicklinks-Leiste Höhe (px)",
+          "type": "number",
+          "default": 30,
+          "min": 24,
+          "max": 56
         },
         "show_language_switcher": {
           "label": "Sprachschalter anzeigen",
@@ -500,7 +632,11 @@
         "network_bar_link2_label": { "label": "Netzwerk-Link 2 – Label", "type": "text", "default": "" },
         "network_bar_link2_url":   { "label": "Netzwerk-Link 2 – URL",   "type": "url",  "default": "" },
         "network_bar_link3_label": { "label": "Netzwerk-Link 3 – Label", "type": "text", "default": "" },
-        "network_bar_link3_url":   { "label": "Netzwerk-Link 3 – URL",   "type": "url",  "default": "" }
+        "network_bar_link3_url":   { "label": "Netzwerk-Link 3 – URL",   "type": "url",  "default": "" },
+        "network_bar_link4_label": { "label": "Netzwerk-Link 4 – Label", "type": "text", "default": "" },
+        "network_bar_link4_url":   { "label": "Netzwerk-Link 4 – URL",   "type": "url",  "default": "" },
+        "network_bar_link5_label": { "label": "Netzwerk-Link 5 – Label", "type": "text", "default": "" },
+        "network_bar_link5_url":   { "label": "Netzwerk-Link 5 – URL",   "type": "url",  "default": "" }
       }
     },
     "social": {
@@ -571,6 +707,46 @@
     "homepage": {
       "label": "Startseite",
       "settings": {
+        "show_repo_card": {
+          "label": "Repo-Card anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "repo_card_title": {
+          "label": "Repo-Card Titel",
+          "type": "text",
+          "default": "PS-easyIT Script-Repository"
+        },
+        "repo_card_description": {
+          "label": "Repo-Card Beschreibung",
+          "type": "textarea",
+          "default": "25+ Code-signierte PowerShell-Module für M365 Administration. Enterprise-ready & Open Source."
+        },
+        "repo_card_badge": {
+          "label": "Repo-Card Badge",
+          "type": "text",
+          "default": "25+ Repos"
+        },
+        "repo_card_btn_text": {
+          "label": "Repo-Card Button-Text",
+          "type": "text",
+          "default": "Zum GitHub →"
+        },
+        "repo_card_btn_url": {
+          "label": "Repo-Card Button-URL (absolut oder relativ)",
+          "type": "url",
+          "default": "https://github.com/phinit/"
+        },
+        "show_article_list": {
+          "label": "Artikel-Liste anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "featured_section_title": {
+          "label": "Titel der Featured-Sektion",
+          "type": "text",
+          "default": "Aktuelle Beiträge"
+        },
         "featured_posts_count": {
           "label": "Anzahl Featured-Beiträge",
           "type": "number",
@@ -578,24 +754,381 @@
           "min": 1,
           "max": 6
         },
-        "grid_posts_per_page": {
-          "label": "Beiträge pro Seite im Grid",
-          "type": "number",
-          "default": 9,
-          "min": 3,
-          "max": 24
+        "article_list_link_url": {
+          "label": "Artikel-Liste Link-URL (absolut oder relativ)",
+          "type": "url",
+          "default": "/blog"
         },
-        "tile_grid_image_height": {
-          "label": "Kartenbildhöhe im Grid (px)",
+        "article_thumb_width": {
+          "label": "Artikel-Thumbnail Breite (px)",
           "type": "number",
-          "default": 161,
-          "min": 161,
-          "max": 300
+          "default": 190,
+          "min": 80,
+          "max": 420
+        },
+        "article_thumb_height": {
+          "label": "Artikel-Thumbnail Höhe (px)",
+          "type": "number",
+          "default": 115,
+          "min": 60,
+          "max": 320
+        },
+        "show_article_excerpt": {
+          "label": "Artikel-Auszug anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_article_meta": {
+          "label": "Artikel-Metadaten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_article_badge": {
+          "label": "Kategorie-Badge auf Thumbnail anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_meta_category": {
+          "label": "Metadatum Kategorie anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_meta_date": {
+          "label": "Metadatum Datum anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_meta_readtime": {
+          "label": "Metadatum Lesezeit anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_list_sidebar": {
+          "label": "Sidebar neben Artikelliste anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "list_sidebar_width": {
+          "label": "Sidebar-Breite in der Artikelliste (px)",
+          "type": "number",
+          "default": 260,
+          "min": 160,
+          "max": 420
+        },
+        "list_sidebar_title": {
+          "label": "Sidebar Titel",
+          "type": "text",
+          "default": ""
+        },
+        "list_sidebar_content": {
+          "label": "Sidebar Inhalt (HTML)",
+          "type": "textarea",
+          "default": ""
+        },
+        "sidebar_show_identity": {
+          "label": "Site-Identity Widget anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_identity_logo_url": {
+          "label": "Site-Identity Logo-URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_identity_tagline": {
+          "label": "Site-Identity Tagline",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_identity_link_url": {
+          "label": "Site-Identity Link-URL",
+          "type": "url",
+          "default": "/"
+        },
+        "sidebar_show_projects": {
+          "label": "Projekt-Widget anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_project1_name": {
+          "label": "Projekt 1 Name",
+          "type": "text",
+          "default": "365CMS.DE"
+        },
+        "sidebar_project1_logo_url": {
+          "label": "Projekt 1 Logo-URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_project1_desc": {
+          "label": "Projekt 1 Beschreibung",
+          "type": "text",
+          "default": "Das eigene CMS – modular & flexibel"
+        },
+        "sidebar_project1_url": {
+          "label": "Projekt 1 URL",
+          "type": "url",
+          "default": "https://365cms.de"
+        },
+        "sidebar_project2_name": {
+          "label": "Projekt 2 Name",
+          "type": "text",
+          "default": "365NETWORK.DE"
+        },
+        "sidebar_project2_logo_url": {
+          "label": "Projekt 2 Logo-URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_project2_desc": {
+          "label": "Projekt 2 Beschreibung",
+          "type": "text",
+          "default": "Business-Netzwerk-Plattform"
+        },
+        "sidebar_project2_url": {
+          "label": "Projekt 2 URL",
+          "type": "url",
+          "default": "https://365network.de"
+        },
+        "sidebar_show_status": {
+          "label": "Status-Widget anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_status_label": {
+          "label": "Status-Widget Titel",
+          "type": "text",
+          "default": "Dienst-Status"
+        },
+        "sidebar_status_services": {
+          "label": "Status-Dienste (Name|URL|Kürzel, eine Zeile pro Dienst)",
+          "type": "textarea",
+          "default": "Microsoft 365|https://status.office365.com|M365\nAzure|https://status.azure.com|AZ\nGitHub|https://githubstatus.com|GH\nCloudflare|https://www.cloudflarestatus.com|CF"
+        },
+        "sidebar_show_downloads": {
+          "label": "Downloads-Widget anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "sidebar_downloads_label": {
+          "label": "Downloads-Widget Titel",
+          "type": "text",
+          "default": "Downloads & Checklisten"
+        },
+        "sidebar_downloads_items": {
+          "label": "Downloads (Titel|URL, eine Zeile pro Link)",
+          "type": "textarea",
+          "default": ""
+        },
+        "sidebar_show_social": {
+          "label": "Social-Widget anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_social_label": {
+          "label": "Social-Widget Titel",
+          "type": "text",
+          "default": "Folge uns"
+        },
+        "sidebar_show_notice": {
+          "label": "Hinweis-Widget anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "sidebar_notice_title": {
+          "label": "Hinweis Titel",
+          "type": "text",
+          "default": "💡 Aktueller Hinweis"
+        },
+        "sidebar_notice_text": {
+          "label": "Hinweis Text",
+          "type": "textarea",
+          "default": ""
+        },
+        "sidebar_notice_url": {
+          "label": "Hinweis Link-URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_notice_url_text": {
+          "label": "Hinweis Link-Text",
+          "type": "text",
+          "default": "Mehr erfahren →"
+        },
+        "sidebar_show_featured_posts": {
+          "label": "Featured-Posts Widget anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "sidebar_featured_posts_label": {
+          "label": "Featured-Posts Widget Titel",
+          "type": "text",
+          "default": "📌 Empfohlene Artikel"
+        },
+        "sidebar_featured_badge_style": {
+          "label": "Sidebar Featured: Badge-Stil",
+          "type": "select",
+          "default": "teal",
+          "options": [
+            {"value": "neutral", "label": "Neutral"},
+            {"value": "teal", "label": "Teal"},
+            {"value": "gold", "label": "Gold"},
+            {"value": "dark", "label": "Dark"}
+          ]
+        },
+        "sidebar_featured_rotate_seconds": {
+          "label": "Sidebar Featured: Wechsel alle X Sekunden",
+          "type": "number",
+          "default": 6,
+          "min": 2,
+          "max": 60
+        },
+        "sidebar_featured_title_size": {
+          "label": "Sidebar Featured: Titelgröße (px)",
+          "type": "number",
+          "default": 12.5,
+          "min": 10,
+          "max": 20
+        },
+        "sidebar_featured_badge_size": {
+          "label": "Sidebar Featured: Badge-Schriftgröße (px)",
+          "type": "number",
+          "default": 10,
+          "min": 8,
+          "max": 18
+        },
+        "sidebar_featured_image_layout": {
+          "label": "Sidebar Featured: Bildposition bei eigenen Bildern",
+          "type": "select",
+          "default": "auto",
+          "options": {
+            "auto": "Automatisch (kompakt bei Projekten/Social)",
+            "side": "Daneben",
+            "below": "Darunter"
+          }
+        },
+        "sidebar_featured_post_1": {
+          "label": "Sidebar Featured: Beitrag 1",
+          "type": "post_picker",
+          "default": ""
+        },
+        "sidebar_featured_post_2": {
+          "label": "Sidebar Featured: Beitrag 2",
+          "type": "post_picker",
+          "default": ""
+        },
+        "sidebar_featured_post_3": {
+          "label": "Sidebar Featured: Beitrag 3",
+          "type": "post_picker",
+          "default": ""
+        },
+        "sidebar_featured_post_4": {
+          "label": "Sidebar Featured: Beitrag 4",
+          "type": "post_picker",
+          "default": ""
+        },
+        "sidebar_featured_post_5": {
+          "label": "Sidebar Featured: Beitrag 5",
+          "type": "post_picker",
+          "default": ""
+        },
+        "sidebar_featured_post_6": {
+          "label": "Sidebar Featured: Beitrag 6",
+          "type": "post_picker",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_1": {
+          "label": "Sidebar Featured: Eigenes Bild 1 (URL)",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_2": {
+          "label": "Sidebar Featured: Eigenes Bild 2 (URL)",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_3": {
+          "label": "Sidebar Featured: Eigenes Bild 3 (URL)",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_4": {
+          "label": "Sidebar Featured: Eigenes Bild 4 (URL)",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_5": {
+          "label": "Sidebar Featured: Eigenes Bild 5 (URL)",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_featured_custom_image_6": {
+          "label": "Sidebar Featured: Eigenes Bild 6 (URL)",
+          "type": "url",
+          "default": ""
         },
         "show_info_cards": {
           "label": "Kategorie-Info-Cards anzeigen",
           "type": "checkbox",
           "default": true
+        },
+        "info_card1_title": {
+          "label": "1. Card: Titel",
+          "type": "text",
+          "default": "🖥️ Admin Anleitungen"
+        },
+        "info_card1_text": {
+          "label": "1. Card: Beschreibung",
+          "type": "textarea",
+          "default": "Schritt-für-Schritt-Tutorials für Microsoft 365 Administration."
+        },
+        "info_card1_link_text": {
+          "label": "1. Card: Link-Text",
+          "type": "text",
+          "default": "Alle Anleitungen ansehen →"
+        },
+        "info_card1_link_url": {
+          "label": "1. Card: Link-URL (absolut oder relativ)",
+          "type": "url",
+          "default": "/kategorie/anleitungen"
+        },
+        "info_card1_style": {
+          "label": "1. Card: Stil",
+          "type": "select",
+          "default": "default",
+          "options": [
+            {"value": "default", "label": "Standard (Teal-Akzent)"},
+            {"value": "gold", "label": "Gold"}
+          ]
+        },
+        "info_card2_title": {
+          "label": "2. Card: Titel",
+          "type": "text",
+          "default": "🔒 DSGVO & Compliance"
+        },
+        "info_card2_text": {
+          "label": "2. Card: Beschreibung",
+          "type": "textarea",
+          "default": "Konfigurationsanleitungen und Best Practices für Microsoft Purview."
+        },
+        "info_card2_link_text": {
+          "label": "2. Card: Link-Text",
+          "type": "text",
+          "default": "Compliance-Center →"
+        },
+        "info_card2_link_url": {
+          "label": "2. Card: Link-URL (absolut oder relativ)",
+          "type": "url",
+          "default": "/kategorie/compliance"
+        },
+        "info_card2_style": {
+          "label": "2. Card: Stil",
+          "type": "select",
+          "default": "gold",
+          "options": [
+            {"value": "default", "label": "Standard (Teal-Akzent)"},
+            {"value": "gold", "label": "Gold"}
+          ]
         },
         "show_info_card3": {
           "label": "3. Themenbereich-Card anzeigen (Projekte-Card)",
@@ -653,96 +1186,98 @@
           "default": "repo",
           "options": [
             {"value": "default", "label": "Standard (Teal-Akzent)"},
-            {"value": "gold",    "label": "Gold"},
-            {"value": "repo",    "label": "Projekte-Card"}
+            {"value": "gold", "label": "Gold"},
+            {"value": "repo", "label": "Projekte-Card"}
           ]
+        },
+        "show_tile_grid": {
+          "label": "Beitrags-Grid anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "grid_section_title": {
+          "label": "Titel des Beitrags-Grids",
+          "type": "text",
+          "default": "Alle Artikel"
+        },
+        "grid_posts_per_page": {
+          "label": "Beiträge pro Seite im Grid",
+          "type": "number",
+          "default": 9,
+          "min": 3,
+          "max": 24
+        },
+        "tile_grid_columns": {
+          "label": "Spalten im Beitrags-Grid",
+          "type": "select",
+          "default": "3",
+          "options": {
+            "2": "2 Spalten",
+            "3": "3 Spalten",
+            "4": "4 Spalten"
+          }
+        },
+        "show_tile_excerpt": {
+          "label": "Grid-Auszug anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_tile_category": {
+          "label": "Grid-Kategorie anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_tile_date": {
+          "label": "Grid-Datum anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "tile_grid_image_height": {
+          "label": "Kartenbildhöhe im Grid (px)",
+          "type": "number",
+          "default": 161,
+          "min": 161,
+          "max": 300
+        },
+        "tile_grid_link_url": {
+          "label": "Grid-Link-URL (absolut oder relativ)",
+          "type": "url",
+          "default": "/archiv"
         },
         "show_feed_section": {
           "label": "RSS-Feed-Sektion anzeigen",
           "type": "checkbox",
           "default": true
         },
-        "sidebar_featured_badge_style": {
-          "label": "Sidebar Featured: Badge-Stil",
+        "feed1_channel_id": {
+          "label": "Feed 1 Kanal",
           "type": "select",
-          "default": "teal",
-          "options": [
-            {"value": "neutral", "label": "Neutral"},
-            {"value": "teal", "label": "Teal"},
-            {"value": "gold", "label": "Gold"},
-            {"value": "dark", "label": "Dark"}
-          ]
-        },
-        "sidebar_featured_rotate_seconds": {
-          "label": "Sidebar Featured: Wechsel alle X Sekunden",
-          "type": "number",
-          "default": 6,
-          "min": 2,
-          "max": 60
-        },
-        "sidebar_featured_title_size": {
-          "label": "Sidebar Featured: Titelgröße (px)",
-          "type": "number",
-          "default": 12.5,
-          "min": 10,
-          "max": 20
-        },
-        "sidebar_featured_badge_size": {
-          "label": "Sidebar Featured: Badge-Schriftgröße (px)",
-          "type": "number",
-          "default": 10,
-          "min": 8,
-          "max": 18
-        },
-        "sidebar_featured_image_layout": {
-          "label": "Sidebar Featured: Bildposition bei eigenen Bildern",
-          "type": "select",
-          "default": "auto",
+          "default": "0",
           "options": {
-            "auto": "Automatisch (kompakt bei Projekten/Social)",
-            "side": "Daneben",
-            "below": "Darunter"
+            "0": "— Kein Feed —"
           }
         },
-        "sidebar_featured_custom_image_1": {
-          "label": "Sidebar Featured: Eigenes Bild 1 (URL)",
-          "type": "text",
-          "default": ""
+        "feed1_count": {
+          "label": "Feed 1 Eintragsanzahl",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 20
         },
-        "sidebar_featured_custom_image_2": {
-          "label": "Sidebar Featured: Eigenes Bild 2 (URL)",
-          "type": "text",
-          "default": ""
+        "feed2_channel_id": {
+          "label": "Feed 2 Kanal",
+          "type": "select",
+          "default": "0",
+          "options": {
+            "0": "— Kein Feed —"
+          }
         },
-        "sidebar_featured_custom_image_3": {
-          "label": "Sidebar Featured: Eigenes Bild 3 (URL)",
-          "type": "text",
-          "default": ""
-        },
-        "sidebar_featured_custom_image_4": {
-          "label": "Sidebar Featured: Eigenes Bild 4 (URL)",
-          "type": "text",
-          "default": ""
-        },
-        "sidebar_featured_custom_image_5": {
-          "label": "Sidebar Featured: Eigenes Bild 5 (URL)",
-          "type": "text",
-          "default": ""
-        },
-        "sidebar_featured_custom_image_6": {
-          "label": "Sidebar Featured: Eigenes Bild 6 (URL)",
-          "type": "text",
-          "default": ""
-        },
-        "featured_section_title": {
-          "label": "Titel der Featured-Sektion",
-          "type": "text",
-          "default": "Aktuelle Beiträge"
-        },
-        "grid_section_title": {
-          "label": "Titel des Beitrags-Grids",
-          "type": "text",
-          "default": "Alle Artikel"
+        "feed2_count": {
+          "label": "Feed 2 Eintragsanzahl",
+          "type": "number",
+          "default": 5,
+          "min": 1,
+          "max": 20
         },
         "spacing_repo_card": {
           "label": "Abstand nach Repo-Card (px)",
@@ -802,6 +1337,20 @@
           "default": 340,
           "min": 100,
           "max": 800
+        },
+        "post_hero_width": {
+          "label": "Hero-Bild Breite (px)",
+          "type": "number",
+          "default": 162,
+          "min": 120,
+          "max": 420
+        },
+        "post_title_fontsize": {
+          "label": "Beitragstitel Schriftgröße (px)",
+          "type": "number",
+          "default": 28,
+          "min": 18,
+          "max": 56
         },
         "show_post_meta": {
           "label": "Post-Meta anzeigen (Datum, Kategorie)",
@@ -894,6 +1443,26 @@
           "type": "checkbox",
           "default": true
         },
+        "show_share_mastodon": {
+          "label": "Mastodon-Share anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_share_print": {
+          "label": "Print-Button anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_tech_card": {
+          "label": "Tech-Card in Tech-Artikeln anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "tech_card_header": {
+          "label": "Tech-Card Titel",
+          "type": "text",
+          "default": "Tech-Details"
+        },
         "show_post_nav": {
           "label": "Vor-/Zurück-Navigation anzeigen",
           "type": "checkbox",
@@ -946,6 +1515,18 @@
       "settings": {
         "show_page_title": {
           "label": "Seitentitel anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "page_title_fontsize": {
+          "label": "Seitentitel Schriftgröße (px)",
+          "type": "number",
+          "default": 28,
+          "min": 18,
+          "max": 56
+        },
+        "show_page_hero": {
+          "label": "Seitenbild im Header anzeigen",
           "type": "checkbox",
           "default": true
         },
@@ -1045,6 +1626,34 @@
           "min": 0,
           "max": 24
         },
+        "content_gap": {
+          "label": "Abstand zwischen Content-Spalten (px)",
+          "type": "number",
+          "default": 28,
+          "min": 0,
+          "max": 80
+        },
+        "spacing_header_content": {
+          "label": "Abstand Header zu Content (px)",
+          "type": "number",
+          "default": 25,
+          "min": 0,
+          "max": 80
+        },
+        "spacing_content_footer": {
+          "label": "Abstand Content zu Footer (px)",
+          "type": "number",
+          "default": 25,
+          "min": 0,
+          "max": 120
+        },
+        "spacing_sections": {
+          "label": "Allgemeiner Sektionsabstand (px)",
+          "type": "number",
+          "default": 40,
+          "min": 0,
+          "max": 120
+        },
         "sidebar_position": {
           "label": "Sidebar-Position (Beiträge)",
           "type": "select",
@@ -1102,6 +1711,70 @@
         },
         "dns_prefetch": {
           "label": "DNS-Prefetch aktiv",
+          "type": "checkbox",
+          "default": true
+        }
+      }
+    },
+    "seo": {
+      "label": "SEO",
+      "settings": {
+        "meta_robots": {
+          "label": "Standard-Meta-Robots",
+          "type": "select",
+          "default": "index,follow",
+          "options": {
+            "index,follow": "index, follow",
+            "noindex,follow": "noindex, follow",
+            "noindex,nofollow": "noindex, nofollow"
+          }
+        },
+        "canonical_self": {
+          "label": "Canonical-Tag auf eigene URL setzen",
+          "type": "checkbox",
+          "default": true
+        },
+        "og_site_name": {
+          "label": "OpenGraph Site Name",
+          "type": "text",
+          "default": ""
+        },
+        "og_type_default": {
+          "label": "Standard OpenGraph-Typ",
+          "type": "select",
+          "default": "website",
+          "options": {
+            "website": "website",
+            "blog": "blog",
+            "article": "article"
+          }
+        },
+        "twitter_card_type": {
+          "label": "Twitter Card Typ",
+          "type": "select",
+          "default": "summary_large_image",
+          "options": {
+            "summary_large_image": "summary_large_image",
+            "summary": "summary"
+          }
+        },
+        "structured_data": {
+          "label": "Schema.org Markup aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
+        "breadcrumb_schema": {
+          "label": "Breadcrumb-Schema aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
+        "noindex_search": {
+          "label": "Suchseiten auf noindex setzen",
+          "type": "checkbox",
+          "default": true
+        },
+        "noindex_404": {
+          "label": "404-Seiten auf noindex setzen",
           "type": "checkbox",
           "default": true
         }
@@ -1485,7 +2158,7 @@
     "advanced": {
       "label": "Erweitert",
       "settings": {
-        "custom_header_code": {
+        "custom_head_code": {
           "label": "Zusätzlicher Code im &lt;head&gt;",
           "type": "textarea",
           "default": "",

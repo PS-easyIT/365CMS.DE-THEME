@@ -16,7 +16,8 @@ $hasHeroImage = !empty($page['featured_image']) && $_pg_showHero;
     <img class="page-hero-img"
          src="<?php echo htmlspecialchars((string) $page['featured_image'], ENT_QUOTES); ?>"
          alt="<?php echo htmlspecialchars((string) ($page['title'] ?? ''), ENT_QUOTES); ?>"
-         <?php echo phinit_image_loading_attributes(true); ?>>
+            <?php echo phinit_image_loading_attributes(true); ?>
+            <?php echo phinit_image_dimension_attributes((string) ($page['featured_image'] ?? '')); ?>>
     <?php endif; ?>
     <div class="page-header-body">
         <h1><?php echo htmlspecialchars((string) ($page['title'] ?? ''), ENT_QUOTES); ?></h1>

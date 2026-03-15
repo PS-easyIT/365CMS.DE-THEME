@@ -42,6 +42,81 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
     }
 
+    /**
+     * @return array{path:string,isAuthOrMember:bool,isBlogListing:bool,isPageExtras:bool,isPost:bool,isHubSite:bool,isPageDetail:bool,isRichContent:bool,isTemplateStyles:bool,postSlug:?string}
+     */
+    private function getRequestContext(): array
+    {
+        if (is_array($this->requestContextCache)) {
+            return $this->requestContextCache;
+        }
+
+        $path = $this->getRequestPath();
+        $isAuthOrMember = $this->isAuthOrMemberRequest($path);
+        $isBlogListing = $this->isBlogListingRequest($path);
+        $isPageExtras = $this->isPageExtrasRequest($path);
+        $postSlug = null;
+
+        try {
+            if (class_exists('CMS\Services\PermalinkService')) {
+                $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($path);
+            }
+        } catch (\Throwable) {
+            $postSlug = null;
+        }
+
+        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/(?P<slug>[^/]+)$#', $path, $matches) === 1) {
+            $postSlug = rawurldecode((string) ($matches['slug'] ?? ''));
+        }
+
+        $isPost = false;
+        if (is_string($postSlug) && trim($postSlug) !== '') {
+            try {
+                $db = \CMS\Database::instance();
+                $row = $db->get_row(
+                    "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                    [$postSlug]
+                );
+                $isPost = $row !== null;
+            } catch (\Throwable) {
+                $isPost = false;
+            }
+        }
+
+        $isHubSite = false;
+        if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras && $path !== '/') {
+            $slug = trim($path, '/');
+            if ($slug !== '' && !str_contains($slug, '/')) {
+                try {
+                    $isHubSite = \CMS\Services\SiteTableService::getInstance()->hubExistsBySlug($slug);
+                } catch (\Throwable) {
+                    $isHubSite = false;
+                }
+            }
+        }
+
+        $isPageDetail = false;
+        if (!$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && !$isPost) {
+            $slug = trim($path, '/');
+            $isPageDetail = $slug !== '' && !str_contains($slug, '/');
+        }
+
+        $this->requestContextCache = [
+            'path' => $path,
+            'isAuthOrMember' => $isAuthOrMember,
+            'isBlogListing' => $isBlogListing,
+            'isPageExtras' => $isPageExtras,
+            'isPost' => $isPost,
+            'isHubSite' => $isHubSite,
+            'isPageDetail' => $isPageDetail,
+            'isRichContent' => !$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail),
+            'isTemplateStyles' => !$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail),
+            'postSlug' => is_string($postSlug) && $postSlug !== '' ? $postSlug : null,
+        ];
+
+        return $this->requestContextCache;
+    }
+
     private function emitStylesheet(string $href, bool $async = false): void
     {
         $escapedHref = htmlspecialchars($href, ENT_QUOTES, 'UTF-8');
@@ -184,20 +259,27 @@ trait CMS_Phinit_Theme_Assets_Trait
         return $slug !== '' && in_array($slug, phinit_image_archive_page_slugs(), true);
     }
 
+    private function isSpecialPageRequest(string $path): bool
+    {
+        return in_array($path, ['/sitemap', '/autoren', '/authors'], true);
+    }
+
     public function enqueueStyles(): void
     {
-        $requestPath = $this->getRequestPath();
-        $isHubSiteRequest = $this->isHubSiteRequest($requestPath);
-        $loadHomepageBlogCss = $this->isBlogListingRequest($requestPath);
-        $loadMemberAuthCss = $this->isAuthOrMemberRequest($requestPath);
-        $loadPostDetailCss = $this->isPostRequest($requestPath);
-        $loadPostSidebarCss = $this->isPostRequest($requestPath);
-        $loadPageDetailCss = $this->isPageDetailRequest($requestPath, $isHubSiteRequest);
+        $requestContext = $this->getRequestContext();
+        $requestPath = $requestContext['path'];
+        $isHubSiteRequest = $requestContext['isHubSite'];
+        $loadHomepageBlogCss = $requestContext['isBlogListing'];
+        $loadMemberAuthCss = $requestContext['isAuthOrMember'];
+        $loadPostDetailCss = $requestContext['isPost'];
+        $loadPostSidebarCss = $requestContext['isPost'];
+        $loadPageDetailCss = $requestContext['isPageDetail'];
         $loadCookieConsentCss = $this->isCookieConsentPageRequest($requestPath);
         $loadImageArchiveCss = $this->isImageArchiveRequest($requestPath);
-        $loadPageExtrasCss = $this->isPageExtrasRequest($requestPath);
-        $loadRichContentCss = $this->isRichContentRequest($requestPath, $isHubSiteRequest);
-        $loadTemplateCss = $this->isTemplateStylesRequest($requestPath, $isHubSiteRequest);
+        $loadSpecialPagesCss = $this->isSpecialPageRequest($requestPath);
+        $loadPageExtrasCss = $requestContext['isPageExtras'];
+        $loadRichContentCss = $requestContext['isRichContent'];
+        $loadTemplateCss = $requestContext['isTemplateStyles'];
         $loadContentCardsCss = $loadHomepageBlogCss || $loadPageExtrasCss;
 
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
@@ -212,6 +294,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $pageExtrasCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-extras.css';
         $pageCookieConsentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-cookie-consent.css';
         $imageArchiveCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-image-archive.css';
+        $specialPagesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-special-pages.css';
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
         $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
@@ -276,6 +359,11 @@ trait CMS_Phinit_Theme_Assets_Trait
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-image-archive.css', $imageArchiveVersion));
         }
 
+        if ($loadSpecialPagesCss && file_exists($specialPagesCssFile)) {
+            $specialPagesVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($specialPagesCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/page-special-pages.css', $specialPagesVersion));
+        }
+
         if ($loadPageExtrasCss && file_exists($pageExtrasCssFile)) {
             $pageExtrasVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageExtrasCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-extras.css', $pageExtrasVersion));
@@ -318,16 +406,39 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $this->scriptsOutput = true;
 
-        $requestPath = $this->getRequestPath();
-        $jsFile = CMS_PHINIT_THEME_DIR . 'assets/js/navigation.js';
-        $version = file_exists($jsFile) ? filemtime($jsFile) : CMS_PHINIT_THEME_VERSION;
+        $requestContext = $this->getRequestContext();
+        $requestPath = $requestContext['path'];
         $deferScripts = filter_var(
             $this->getCustomizerSettingWithFallback('performance', 'defer_scripts', true),
             FILTER_VALIDATE_BOOLEAN
         );
         $deferAttr = $deferScripts ? ' defer' : '';
 
-        echo '<script src="' . CMS_PHINIT_THEME_URL . 'assets/js/navigation.js?v=' . $version . '"' . $deferAttr . '></script>' . "\n";
+        $scripts = [
+            'assets/js/navigation.js',
+        ];
+
+        if ($requestContext['isRichContent']) {
+            $scripts[] = 'assets/js/content-interactions.js';
+        }
+
+        if ($requestContext['isBlogListing']) {
+            $scripts[] = 'assets/js/homepage-widgets.js';
+        }
+
+        if ($requestPath === '/member/security') {
+            $scripts[] = 'assets/js/member-security.js';
+        }
+
+        foreach ($scripts as $scriptRelativePath) {
+            $scriptFile = CMS_PHINIT_THEME_DIR . str_replace('/', DIRECTORY_SEPARATOR, $scriptRelativePath);
+            if (!file_exists($scriptFile)) {
+                continue;
+            }
+
+            $version = filemtime($scriptFile);
+            echo '<script src="' . $this->themeAssetUrl($scriptRelativePath, $version) . '"' . $deferAttr . '></script>' . "\n";
+        }
 
         if (str_starts_with($requestPath, '/member') && function_exists('cms_asset_url')) {
             echo '<script src="' . htmlspecialchars(cms_asset_url('js/member-dashboard.js'), ENT_QUOTES, 'UTF-8') . '"' . $deferAttr . '></script>' . "\n";
@@ -596,7 +707,11 @@ trait CMS_Phinit_Theme_Assets_Trait
     public function outputCustomHeaderCode(): void
     {
         try {
-            $code = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'custom_head_code', '');
+            $customizer = \CMS\Services\ThemeCustomizer::instance();
+            $code = $customizer->get('advanced', 'custom_head_code', '');
+            if (trim((string) $code) === '') {
+                $code = $customizer->get('advanced', 'custom_header_code', '');
+            }
             if (!empty(trim((string) $code))) {
                 echo "\n" . (string) $code . "\n";
             }

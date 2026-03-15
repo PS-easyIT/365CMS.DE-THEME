@@ -16,11 +16,23 @@ if (!function_exists('get_theme_part')) {
             return;
         }
 
-        if (!empty($vars)) {
-            extract($vars, EXTR_SKIP);
-        }
+        $render = static function (string $__phinitFile, array $__phinitVars): void {
+            foreach ($__phinitVars as $__phinitKey => $__phinitValue) {
+                if (!is_string($__phinitKey) || preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $__phinitKey) !== 1) {
+                    continue;
+                }
 
-        include $file;
+                if (in_array($__phinitKey, ['__phinitFile', '__phinitVars', 'render'], true)) {
+                    continue;
+                }
+
+                ${$__phinitKey} = $__phinitValue;
+            }
+
+            include $__phinitFile;
+        };
+
+        $render($file, $vars);
     }
 }
 
@@ -49,6 +61,85 @@ if (!function_exists('phinit_escape_text')) {
     }
 }
 
+if (!function_exists('phinit_safe_public_url')) {
+    /**
+     * Validiert öffentliche URL-Werte für Frontend-Links mit Scheme-Allowlist.
+     */
+    function phinit_safe_public_url(?string $value, ?string $siteUrl = null, array $allowedSchemes = ['http', 'https', 'mailto']): string
+    {
+        $url = trim((string) $value);
+        if ($url === '') {
+            return '';
+        }
+
+        if (str_starts_with($url, '/')) {
+            if (str_starts_with($url, '//')) {
+                return '';
+            }
+
+            return $url;
+        }
+
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        if ($scheme === '' || !in_array($scheme, $allowedSchemes, true)) {
+            return '';
+        }
+
+        if ($scheme === 'mailto') {
+            $address = preg_replace('/^mailto:/i', '', $url) ?? '';
+            return filter_var($address, FILTER_VALIDATE_EMAIL) ? 'mailto:' . $address : '';
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
+    }
+}
+
+if (!function_exists('phinit_safe_public_media_url')) {
+    /**
+     * Normalisiert öffentliche Medien-URLs für Frontend-Bilder/Backgrounds.
+     * Erlaubt absolute HTTP(S)-URLs, root-relative Pfade und einfache relative Upload-/Asset-Pfade.
+     */
+    function phinit_safe_public_media_url(?string $value, ?string $siteUrl = null): string
+    {
+        $url = trim((string) $value);
+        if ($url === '') {
+            return '';
+        }
+
+        if (preg_match('/^[A-Za-z]:[\\\\\/]/', $url) === 1) {
+            return '';
+        }
+
+        $siteBase = rtrim((string) ($siteUrl ?? (defined('SITE_URL') ? SITE_URL : '')), '/');
+        $normalizedUrl = str_replace('\\', '/', $url);
+
+        if (str_starts_with($normalizedUrl, '//')) {
+            return '';
+        }
+
+        if (preg_match('#^https?://#i', $normalizedUrl) === 1) {
+            return filter_var($normalizedUrl, FILTER_VALIDATE_URL) ? $normalizedUrl : '';
+        }
+
+        if (str_starts_with($normalizedUrl, '/')) {
+            return $siteBase !== '' ? $siteBase . $normalizedUrl : $normalizedUrl;
+        }
+
+        $relativePath = preg_replace('#^(?:\./)+#', '', $normalizedUrl) ?? '';
+        $relativePath = ltrim($relativePath, '/');
+
+        if ($relativePath === '' || str_contains($relativePath, '..')) {
+            return '';
+        }
+
+        if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $relativePath) === 1) {
+            return '';
+        }
+
+        return $siteBase !== '' ? $siteBase . '/' . $relativePath : '/' . $relativePath;
+    }
+}
+
 if (!function_exists('phinit_image_loading_attributes')) {
     /**
      * Liefert standardisierte Loading-/Priority-Attribute für Theme-Bilder.
@@ -60,6 +151,159 @@ if (!function_exists('phinit_image_loading_attributes')) {
         }
 
         return 'loading="lazy" decoding="async"';
+    }
+}
+
+if (!function_exists('phinit_get_local_image_path')) {
+    /**
+     * Löst öffentliche Bild-Referenzen auf einen lokalen Dateipfad auf, wenn möglich.
+     */
+    function phinit_get_local_image_path(?string $reference): string
+    {
+        $value = trim(html_entity_decode((string) $reference, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        if ($value === '' || str_starts_with($value, 'data:') || str_starts_with($value, '//')) {
+            return '';
+        }
+
+        $basePath = rtrim((string) ABSPATH, "\\/");
+        $siteUrl = rtrim((string) (defined('SITE_URL') ? SITE_URL : ''), '/');
+        $uploadUrl = rtrim((string) (defined('UPLOAD_URL') ? UPLOAD_URL : ''), '/');
+        $uploadPath = rtrim((string) (defined('UPLOAD_PATH') ? UPLOAD_PATH : ''), "\\/");
+        $themeUrl = rtrim((string) (defined('CMS_PHINIT_THEME_URL') ? CMS_PHINIT_THEME_URL : ''), '/');
+        $themeDir = rtrim((string) (defined('CMS_PHINIT_THEME_DIR') ? CMS_PHINIT_THEME_DIR : ''), "\\/");
+        $candidates = [];
+
+        $appendAbsoluteCandidate = static function (array &$paths, string $candidate): void {
+            $candidate = trim($candidate);
+            if ($candidate === '') {
+                return;
+            }
+
+            $normalized = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $candidate);
+            $paths[] = $normalized;
+        };
+
+        $appendRelativeCandidate = static function (array &$paths, string $root, string $relativePath): void {
+            $relativePath = trim(str_replace('\\', '/', $relativePath), '/');
+            if ($root === '' || $relativePath === '' || str_contains($relativePath, '..')) {
+                return;
+            }
+
+            $paths[] = rtrim($root, "\\/") . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        };
+
+        $appendFromSitePath = static function (array &$paths, string $path) use ($appendRelativeCandidate, $basePath): void {
+            $path = trim((string) parse_url($path, PHP_URL_PATH));
+            if ($path === '') {
+                return;
+            }
+
+            $appendRelativeCandidate($paths, $basePath, $path);
+        };
+
+        if (preg_match('/^[A-Za-z]:[\\\\\/]/', $value) === 1) {
+            $appendAbsoluteCandidate($candidates, $value);
+        } elseif (preg_match('#^https?://#i', $value) === 1) {
+            if ($siteUrl !== '' && str_starts_with($value, $siteUrl . '/')) {
+                $appendFromSitePath($candidates, $value);
+            }
+
+            if ($uploadUrl !== '' && str_starts_with($value, $uploadUrl . '/')) {
+                $relativeUploadPath = ltrim(substr($value, strlen($uploadUrl)), '/');
+                $appendRelativeCandidate($candidates, $uploadPath !== '' ? $uploadPath : $basePath, $relativeUploadPath);
+            }
+
+            if ($themeUrl !== '' && str_starts_with($value, $themeUrl . '/')) {
+                $relativeThemePath = ltrim(substr($value, strlen($themeUrl)), '/');
+                $appendRelativeCandidate($candidates, $themeDir, $relativeThemePath);
+            }
+
+            if (preg_match('#/media-file(?:$|\?)#', $value) === 1) {
+                $query = (string) parse_url($value, PHP_URL_QUERY);
+                parse_str($query, $params);
+                $mediaPath = trim(str_replace('\\', '/', (string) ($params['path'] ?? '')), '/');
+                $appendRelativeCandidate($candidates, $basePath, $mediaPath);
+                $appendRelativeCandidate($candidates, $uploadPath !== '' ? $uploadPath : $basePath, $mediaPath);
+            }
+        } elseif (str_starts_with($value, '/media-file')) {
+            $query = (string) parse_url($value, PHP_URL_QUERY);
+            parse_str($query, $params);
+            $mediaPath = trim(str_replace('\\', '/', (string) ($params['path'] ?? '')), '/');
+            $appendRelativeCandidate($candidates, $basePath, $mediaPath);
+            $appendRelativeCandidate($candidates, $uploadPath !== '' ? $uploadPath : $basePath, $mediaPath);
+        } elseif (str_starts_with($value, '/')) {
+            $appendFromSitePath($candidates, $value);
+        } else {
+            $appendRelativeCandidate($candidates, $uploadPath !== '' ? $uploadPath : $basePath, $value);
+            $appendRelativeCandidate($candidates, $themeDir, $value);
+            $appendRelativeCandidate($candidates, $basePath, $value);
+        }
+
+        foreach (array_values(array_unique($candidates)) as $candidate) {
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+}
+
+if (!function_exists('phinit_get_image_dimensions')) {
+    /**
+     * Ermittelt Bilddimensionen für lokale Bilder mit kleinem Request-Cache.
+     *
+     * @return array{width:int,height:int}|null
+     */
+    function phinit_get_image_dimensions(?string $reference): ?array
+    {
+        static $dimensionCache = [];
+
+        $cacheKey = trim((string) $reference);
+        if ($cacheKey === '') {
+            return null;
+        }
+
+        if (array_key_exists($cacheKey, $dimensionCache)) {
+            return $dimensionCache[$cacheKey];
+        }
+
+        $filePath = phinit_get_local_image_path($cacheKey);
+        if ($filePath === '') {
+            $dimensionCache[$cacheKey] = null;
+            return null;
+        }
+
+        $size = @getimagesize($filePath);
+        if (!is_array($size) || empty($size[0]) || empty($size[1])) {
+            $dimensionCache[$cacheKey] = null;
+            return null;
+        }
+
+        $dimensionCache[$cacheKey] = [
+            'width' => max(1, (int) $size[0]),
+            'height' => max(1, (int) $size[1]),
+        ];
+
+        return $dimensionCache[$cacheKey];
+    }
+}
+
+if (!function_exists('phinit_image_dimension_attributes')) {
+    /**
+     * Liefert width-/height-Attribute für Bilder. Nutzt lokale Dateimaße oder optionale Fallbacks.
+     */
+    function phinit_image_dimension_attributes(?string $reference, int $fallbackWidth = 0, int $fallbackHeight = 0): string
+    {
+        $dimensions = phinit_get_image_dimensions($reference);
+        $width = max(0, (int) ($dimensions['width'] ?? $fallbackWidth));
+        $height = max(0, (int) ($dimensions['height'] ?? $fallbackHeight));
+
+        if ($width < 1 || $height < 1) {
+            return '';
+        }
+
+        return 'width="' . $width . '" height="' . $height . '"';
     }
 }
 

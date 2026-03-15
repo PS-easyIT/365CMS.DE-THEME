@@ -42,6 +42,20 @@
     margin: 1.45em 0 .55em;
 }
 
+.page-content .editorjs-block > h2,
+.page-content .editorjs-block > h3,
+.page-content .editorjs-block > h4,
+.page-content .editorjs-block > h5,
+.page-content .editorjs-block > h6,
+.post-body .editorjs-block > h2,
+.post-body .editorjs-block > h3,
+.post-body .editorjs-block > h4,
+.post-body .editorjs-block > h5,
+.post-body .editorjs-block > h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .page-content p,
 .page-content ul,
 .page-content ol,

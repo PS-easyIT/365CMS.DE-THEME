@@ -9,12 +9,19 @@ $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
 $blogQuery = isset($blogQuery) ? trim((string) $blogQuery) : '';
 $blogTotal = isset($blogTotal) ? (int) $blogTotal : 0;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
-$homeUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/';
-$blogUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog';
+$homeUrl = isset($backUrl) && trim((string) $backUrl) !== ''
+    ? (string) $backUrl
+    : (function_exists('phinit_localized_href') ? phinit_localized_href('/', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/');
+$blogUrl = isset($blogBaseUrl) && trim((string) $blogBaseUrl) !== ''
+    ? (string) $blogBaseUrl
+    : (function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog');
+$backLabel = isset($backLabel) && trim((string) $backLabel) !== ''
+    ? (string) $backLabel
+    : phinit_t('home', [], $currentLocale);
 ?>
 <div class="blog-archive-bar" data-anim data-anim-delay="1">
     <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES); ?>"
-       class="blog-archive-back">&#8592; <?php echo htmlspecialchars(phinit_t('home', [], $currentLocale), ENT_QUOTES); ?></a>
+       class="blog-archive-back">&#8592; <?php echo htmlspecialchars($backLabel, ENT_QUOTES); ?></a>
     <form class="blog-search-form" method="GET"
           action="<?php echo htmlspecialchars($blogUrl, ENT_QUOTES); ?>">
         <input type="search" name="q"

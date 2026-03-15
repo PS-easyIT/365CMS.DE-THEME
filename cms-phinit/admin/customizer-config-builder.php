@@ -114,9 +114,8 @@ function phinit_normalize_customizer_field(array $fieldConfig): array
             $type = 'checkbox';
             break;
 
-        case 'url':
         case 'image':
-            $type = 'text';
+            $type = 'url';
             break;
 
         case 'font':

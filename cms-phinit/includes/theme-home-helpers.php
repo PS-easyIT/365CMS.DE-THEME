@@ -137,6 +137,32 @@ function phinit_get_homepage_view_model(): array
 
     try {
         $customizer = ThemeCustomizer::instance();
+        $siteUrl = defined('SITE_URL') ? (string) SITE_URL : '';
+
+        $featuredSectionTitle = $customizer->get('homepage', 'featured_section_title', null);
+        if (!is_string($featuredSectionTitle) || trim($featuredSectionTitle) === '') {
+            $featuredSectionTitle = $customizer->get('homepage', 'article_list_label', 'Aktuell');
+        }
+
+        $featuredPostsCount = $customizer->get('homepage', 'featured_posts_count', null);
+        if (!is_numeric((string) $featuredPostsCount)) {
+            $featuredPostsCount = $customizer->get('homepage', 'article_list_count', 4);
+        }
+
+        $showInfoCards = $customizer->get('homepage', 'show_info_cards', null);
+        if ($showInfoCards === null || $showInfoCards === '') {
+            $showInfoCards = $customizer->get('homepage', 'show_info_grid', true);
+        }
+
+        $gridSectionTitle = $customizer->get('homepage', 'grid_section_title', null);
+        if (!is_string($gridSectionTitle) || trim($gridSectionTitle) === '') {
+            $gridSectionTitle = $customizer->get('homepage', 'tile_grid_label', 'Weitere Beiträge');
+        }
+
+        $gridPostsPerPage = $customizer->get('homepage', 'grid_posts_per_page', null);
+        if (!is_numeric((string) $gridPostsPerPage)) {
+            $gridPostsPerPage = $customizer->get('homepage', 'tile_grid_count', 6);
+        }
 
         return array_merge($defaults, [
             '_showRepo' => filter_var($customizer->get('homepage', 'show_repo_card', true), FILTER_VALIDATE_BOOLEAN),
@@ -146,8 +172,8 @@ function phinit_get_homepage_view_model(): array
             '_repoBtnText' => $customizer->get('homepage', 'repo_card_btn_text', 'Zum GitHub →'),
             '_repoBtnUrl' => $customizer->get('homepage', 'repo_card_btn_url', 'https://github.com/'),
             '_showList' => filter_var($customizer->get('homepage', 'show_article_list', true), FILTER_VALIDATE_BOOLEAN),
-            '_listLabel' => $customizer->get('homepage', 'article_list_label', 'Aktuell'),
-            '_listCount' => max(1, (int) $customizer->get('homepage', 'article_list_count', 4)),
+            '_listLabel' => (string) $featuredSectionTitle,
+            '_listCount' => max(1, (int) $featuredPostsCount),
             '_listLinkUrl' => $customizer->get('homepage', 'article_list_link_url', '/blog'),
             '_listThumbW' => max(80, (int) $customizer->get('homepage', 'article_thumb_width', 190)),
             '_listThumbH' => max(60, (int) $customizer->get('homepage', 'article_thumb_height', 115)),
@@ -166,10 +192,14 @@ function phinit_get_homepage_view_model(): array
             '_sbShowProjects' => filter_var($customizer->get('homepage', 'sidebar_show_projects', true), FILTER_VALIDATE_BOOLEAN),
             '_sbProj1Name' => $customizer->get('homepage', 'sidebar_project1_name', '365CMS.DE'),
             '_sbProj1Desc' => $customizer->get('homepage', 'sidebar_project1_desc', 'Das eigene CMS – modular & flexibel'),
-            '_sbProj1Url' => $customizer->get('homepage', 'sidebar_project1_url', 'https://365cms.de'),
+            '_sbProj1Url' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_project1_url', 'https://365cms.de'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'sidebar_project1_url', 'https://365cms.de'),
             '_sbProj2Name' => $customizer->get('homepage', 'sidebar_project2_name', '365NETWORK.DE'),
             '_sbProj2Desc' => $customizer->get('homepage', 'sidebar_project2_desc', 'Business-Netzwerk-Plattform'),
-            '_sbProj2Url' => $customizer->get('homepage', 'sidebar_project2_url', 'https://365network.de'),
+            '_sbProj2Url' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_project2_url', 'https://365network.de'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'sidebar_project2_url', 'https://365network.de'),
             '_sbShowStatus' => filter_var($customizer->get('homepage', 'sidebar_show_status', true), FILTER_VALIDATE_BOOLEAN),
             '_sbStatusLabel' => $customizer->get('homepage', 'sidebar_status_label', 'Dienst-Status'),
             '_sbShowDownloads' => filter_var($customizer->get('homepage', 'sidebar_show_downloads', false), FILTER_VALIDATE_BOOLEAN),
@@ -190,11 +220,19 @@ function phinit_get_homepage_view_model(): array
             '_sbLabelGitlab' => $customizer->get('social', 'social_label_gitlab', 'GitLab'),
             '_sbLabelRss' => $customizer->get('social', 'social_label_rss', 'RSS Feed'),
             '_sbShowIdentity' => filter_var($customizer->get('homepage', 'sidebar_show_identity', true), FILTER_VALIDATE_BOOLEAN),
-            '_sbIdentityLogoUrl' => $customizer->get('homepage', 'sidebar_identity_logo_url', ''),
+            '_sbIdentityLogoUrl' => function_exists('phinit_safe_public_media_url')
+                ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_identity_logo_url', ''), $siteUrl)
+                : $customizer->get('homepage', 'sidebar_identity_logo_url', ''),
             '_sbIdentityTagline' => $customizer->get('homepage', 'sidebar_identity_tagline', ''),
-            '_sbIdentityLinkUrl' => $customizer->get('homepage', 'sidebar_identity_link_url', '/'),
-            '_sbProj1LogoUrl' => $customizer->get('homepage', 'sidebar_project1_logo_url', ''),
-            '_sbProj2LogoUrl' => $customizer->get('homepage', 'sidebar_project2_logo_url', ''),
+            '_sbIdentityLinkUrl' => function_exists('phinit_safe_public_url')
+                ? (phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_identity_link_url', '/'), $siteUrl, ['http', 'https']) ?: '/')
+                : $customizer->get('homepage', 'sidebar_identity_link_url', '/'),
+            '_sbProj1LogoUrl' => function_exists('phinit_safe_public_media_url')
+                ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_project1_logo_url', ''), $siteUrl)
+                : $customizer->get('homepage', 'sidebar_project1_logo_url', ''),
+            '_sbProj2LogoUrl' => function_exists('phinit_safe_public_media_url')
+                ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_project2_logo_url', ''), $siteUrl)
+                : $customizer->get('homepage', 'sidebar_project2_logo_url', ''),
             '_sbStatusServices' => $customizer->get(
                 'homepage',
                 'sidebar_status_services',
@@ -224,7 +262,7 @@ function phinit_get_homepage_view_model(): array
             '_sbFeaturedCustomImage4' => $customizer->get('homepage', 'sidebar_featured_custom_image_4', ''),
             '_sbFeaturedCustomImage5' => $customizer->get('homepage', 'sidebar_featured_custom_image_5', ''),
             '_sbFeaturedCustomImage6' => $customizer->get('homepage', 'sidebar_featured_custom_image_6', ''),
-            '_showInfoGrid' => filter_var($customizer->get('homepage', 'show_info_grid', true), FILTER_VALIDATE_BOOLEAN),
+            '_showInfoGrid' => filter_var($showInfoCards, FILTER_VALIDATE_BOOLEAN),
             '_c1Title' => $customizer->get('homepage', 'info_card1_title', '🖥️ Admin Anleitungen'),
             '_c1Text' => $customizer->get('homepage', 'info_card1_text', 'Schritt-für-Schritt-Tutorials für Microsoft 365 Administration.'),
             '_c1LinkText' => $customizer->get('homepage', 'info_card1_link_text', 'Alle Anleitungen ansehen →'),
@@ -247,8 +285,8 @@ function phinit_get_homepage_view_model(): array
             '_c3Badge' => $customizer->get('homepage', 'info_card3_badge', 'Projekte'),
             '_c3Style' => $customizer->get('homepage', 'info_card3_style', 'repo'),
             '_showTileGrid' => filter_var($customizer->get('homepage', 'show_tile_grid', true), FILTER_VALIDATE_BOOLEAN),
-            '_tileLabel' => $customizer->get('homepage', 'tile_grid_label', 'Weitere Beiträge'),
-            '_tileCount' => max(1, (int) $customizer->get('homepage', 'tile_grid_count', 6)),
+            '_tileLabel' => (string) $gridSectionTitle,
+            '_tileCount' => max(1, (int) $gridPostsPerPage),
             '_tileCols' => max(2, min(4, (int) $customizer->get('homepage', 'tile_grid_columns', 3))),
             '_showTileExc' => filter_var($customizer->get('homepage', 'show_tile_excerpt', true), FILTER_VALIDATE_BOOLEAN),
             '_showTileCat' => filter_var($customizer->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN),

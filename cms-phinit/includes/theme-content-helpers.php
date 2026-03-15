@@ -36,7 +36,9 @@ if (!function_exists('phinit_prepare_renderable_content')) {
 
 if (!function_exists('phinit_enhance_content_images')) {
     /**
-     * Ergänzt Inhaltsbilder standardmäßig um Lazy Loading und asynchrones Decoding.
+     * Ergänzt Inhaltsbilder standardmäßig um Loading-/Priority-Attribute.
+     * Das erste Inhaltsbild wird bevorzugt behandelt, um Above-the-fold-/LCP-Bilder
+     * nicht versehentlich zu verlangsamen.
      */
     function phinit_enhance_content_images(string $html): string
     {
@@ -44,24 +46,49 @@ if (!function_exists('phinit_enhance_content_images')) {
             return $html;
         }
 
+        $imageIndex = 0;
+
         $enhanced = preg_replace_callback(
             '/<img\b[^>]*>/i',
-            static function (array $matches): string {
+            static function (array $matches) use (&$imageIndex): string {
                 $tag = (string) ($matches[0] ?? '');
                 if ($tag === '') {
                     return $tag;
                 }
+
+                $imageIndex++;
+                $isFirstImage = $imageIndex === 1;
 
                 $closing = str_ends_with($tag, '/>') ? '/>' : '>';
                 $baseTag = substr($tag, 0, -strlen($closing));
                 $attrs = [];
 
                 if (preg_match('/\sloading\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
-                    $attrs[] = 'loading="lazy"';
+                    $attrs[] = $isFirstImage ? 'loading="eager"' : 'loading="lazy"';
+                }
+
+                if ($isFirstImage && preg_match('/\sfetchpriority\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
+                    $attrs[] = 'fetchpriority="high"';
                 }
 
                 if (preg_match('/\sdecoding\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
                     $attrs[] = 'decoding="async"';
+                }
+
+                $hasWidth = preg_match('/\swidth\s*=\s*["\'][^"\']*["\']/i', $tag) === 1;
+                $hasHeight = preg_match('/\sheight\s*=\s*["\'][^"\']*["\']/i', $tag) === 1;
+
+                if ((!$hasWidth || !$hasHeight) && preg_match('/\ssrc\s*=\s*["\']([^"\']+)["\']/i', $tag, $srcMatch) === 1) {
+                    $dimensions = phinit_get_image_dimensions((string) ($srcMatch[1] ?? ''));
+                    if (is_array($dimensions)) {
+                        if (!$hasWidth && !empty($dimensions['width'])) {
+                            $attrs[] = 'width="' . max(1, (int) $dimensions['width']) . '"';
+                        }
+
+                        if (!$hasHeight && !empty($dimensions['height'])) {
+                            $attrs[] = 'height="' . max(1, (int) $dimensions['height']) . '"';
+                        }
+                    }
                 }
 
                 if ($attrs === []) {

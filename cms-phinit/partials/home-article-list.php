@@ -106,7 +106,7 @@ if (empty($_showList) || $featuredPosts === []) {
             <a href="<?php echo htmlspecialchars($_idLink, ENT_QUOTES); ?>" class="sb-identity">
                 <?php if (!empty($_sbIdentityLogoUrl)): ?>
                 <img src="<?php echo htmlspecialchars($_sbIdentityLogoUrl, ENT_QUOTES); ?>"
-                     alt="Site Logo" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?>>
+                     alt="Site Logo" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes((string) $_sbIdentityLogoUrl); ?>>
                 <?php endif; ?>
                 <?php if (!empty($_sbIdentityTagline)): ?>
                 <span class="sb-identity-tagline"><?php echo htmlspecialchars($_sbIdentityTagline, ENT_QUOTES); ?></span>
@@ -127,9 +127,13 @@ if (empty($_showList) || $featuredPosts === []) {
                 $_pCardClass = !empty($pLogo)
                     ? ($pLogo === $_sbProj1LogoUrl ? ' sb-project-card--project1' : ($pLogo === $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
                     : '';
+                $_pCardStyle = !empty($pLogo)
+                    ? '--sb-project-card-image: url(\'' . htmlspecialchars((string) $pLogo, ENT_QUOTES) . '\');'
+                    : '';
             ?>
             <a href="<?php echo htmlspecialchars((string) $pUrl, ENT_QUOTES); ?>"
                class="sb-project-card<?php echo $_pCardClass; ?>"
+               <?php if ($_pCardStyle !== ''): ?>style="<?php echo $_pCardStyle; ?>"<?php endif; ?>
                target="_blank" rel="noopener noreferrer">
                 <?php if (empty($pLogo)): ?>
                 <div class="sb-project-placeholder-bg"
@@ -224,9 +228,13 @@ if (empty($_showList) || $featuredPosts === []) {
                 $_pCardClass = !empty($pLogo)
                     ? ($pLogo === $_sbProj1LogoUrl ? ' sb-project-card--project1' : ($pLogo === $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
                     : '';
+                $_pCardStyle = !empty($pLogo)
+                    ? '--sb-project-card-image: url(\'' . htmlspecialchars((string) $pLogo, ENT_QUOTES) . '\');'
+                    : '';
             ?>
             <a href="<?php echo htmlspecialchars((string) $pUrl, ENT_QUOTES); ?>"
                class="sb-project-card<?php echo $_pCardClass; ?>"
+               <?php if ($_pCardStyle !== ''): ?>style="<?php echo $_pCardStyle; ?>"<?php endif; ?>
                target="_blank" rel="noopener noreferrer">
                 <?php if (empty($pLogo)): ?>
                 <div class="sb-project-placeholder-bg"

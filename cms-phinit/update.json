@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.5.4",
   "release_date": "2026-03-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.0",
+      "date": "2026-03-14",
+      "changes": [
+        "ThemeRouter + category.php + tag.php: Kategorie- und Tag-Archive mit Suche, Paginierung und CMS-Phinit-Listing-Layout ergänzt",
+        "authors.php + sitemap.php + includes/theme-special-pages-helpers.php: Autorenübersicht und HTML-Sitemap für Leser ergänzt",
+        "partials/blog-archive-toolbar.php + partials/blog-archive-pagination.php: flexible Archiv-Basis-URLs und Query-Erhalt für Spezialarchive ergänzt",
+        "theme.json + functions.php + includes/theme-assets-trait.php: neue Templates, Share-Optionen und Spezialseiten-Stylesheet registriert"
+      ]
+    },
     {
       "version": "1.4.2",
       "date": "2026-03-14",

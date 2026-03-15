@@ -51,6 +51,14 @@ if (!defined('ABSPATH')) {
                 <input type="hidden" name="action" value="import_settings">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
                 <input type="file" name="import_file" accept=".json" class="form-control form-control-sm mb-2">
+                <?php if ($activeTab === 'advanced'): ?>
+                    <label class="form-check mb-2 small text-secondary">
+                        <input class="form-check-input" type="checkbox" name="advanced_code_acknowledged" value="1">
+                        <span class="form-check-label">
+                            Import mit enthaltenem Custom-Code bewusst freigeben
+                        </span>
+                    </label>
+                <?php endif; ?>
                 <button type="submit" class="btn btn-sm btn-outline-primary w-100">
                     ⬆️ Importieren
                 </button>

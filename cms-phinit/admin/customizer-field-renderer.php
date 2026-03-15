@@ -62,6 +62,14 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             <textarea id="<?php echo $id; ?>" name="<?php echo $name; ?>"
                       class="form-control" rows="<?php echo (int) ($field['rows'] ?? 3); ?>"><?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?></textarea>
 
+        <?php elseif (($field['type'] ?? 'text') === 'url'): ?>
+            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <input type="url" id="<?php echo $id; ?>" name="<?php echo $name; ?>"
+                   value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
+                   class="form-control"
+                   inputmode="url"
+                   placeholder="https://example.com/ oder /interner-pfad">
+
         <?php elseif (($field['type'] ?? 'text') === 'number'): ?>
             <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
             <input type="number" id="<?php echo $id; ?>" name="<?php echo $name; ?>"

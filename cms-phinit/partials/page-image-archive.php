@@ -102,6 +102,7 @@ $emptyMessage = trim((string) ($imageArchive['empty_message'] ?? ''));
                                         alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>"
                                         loading="lazy"
                                         decoding="async"
+                                        <?php echo phinit_image_dimension_attributes((string) ($item['image_url'] ?? '')); ?>
                                     >
                                 </a>
 

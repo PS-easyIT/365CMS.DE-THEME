@@ -7,13 +7,105 @@ if (!defined('ABSPATH')) {
 
 trait CMS_Phinit_Theme_Head_Trait
 {
+    private function getHeadRequestPath(): string
+    {
+        if (method_exists($this, 'getRequestContext')) {
+            $context = $this->getRequestContext();
+            return (string) ($context['path'] ?? '/');
+        }
+
+        return (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+    }
+
+    private function getCurrentHeadPost(): ?array
+    {
+        if ($this->currentHeadPostResolved) {
+            return $this->currentHeadPostCache;
+        }
+
+        $this->currentHeadPostResolved = true;
+        $this->currentHeadPostCache = null;
+
+        $path = $this->getHeadRequestPath();
+        $postSlug = null;
+
+        if (method_exists($this, 'getRequestContext')) {
+            $context = $this->getRequestContext();
+            if (!empty($context['isPost'])) {
+                $postSlug = $context['postSlug'] ?? null;
+            }
+        }
+
+        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/([\w-]+)$#', $path, $matches) === 1) {
+            $postSlug = (string) ($matches[1] ?? '');
+        }
+
+        if (!is_string($postSlug) || trim($postSlug) === '') {
+            return null;
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+            $prefix = $db->prefix();
+            $row = $db->get_row(
+                "SELECT p.slug, p.title, p.excerpt, p.featured_image, p.published_at, p.updated_at,
+                        COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name
+                 FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}users u ON u.id = p.author_id
+                 WHERE p.slug = ? AND p.status = 'published' LIMIT 1",
+                [$postSlug]
+            );
+
+            $this->currentHeadPostCache = $row ? (array) $row : null;
+        } catch (\Throwable) {
+            $this->currentHeadPostCache = null;
+        }
+
+        return $this->currentHeadPostCache;
+    }
+
+    private function getCurrentHeadPageTitle(): ?string
+    {
+        if ($this->currentHeadPageTitleResolved) {
+            return $this->currentHeadPageTitleCache;
+        }
+
+        $this->currentHeadPageTitleResolved = true;
+        $this->currentHeadPageTitleCache = null;
+
+        $path = $this->getHeadRequestPath();
+        $slug = ltrim($path, '/');
+        if ($slug === '' || str_contains($slug, '/')) {
+            return null;
+        }
+
+        $skipRoutes = ['blog', 'login', 'register', 'logout', 'search', 'feed', 'member', 'sitemap', 'autoren', 'authors'];
+        if (in_array($slug, $skipRoutes, true)) {
+            return null;
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+            $prefix = $db->prefix();
+            $title = $db->get_var(
+                "SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1",
+                [$slug]
+            );
+            $this->currentHeadPageTitleCache = $title ? phinit_display_text((string) $title) : null;
+        } catch (\Throwable) {
+            $this->currentHeadPageTitleCache = null;
+        }
+
+        return $this->currentHeadPageTitleCache;
+    }
+
     public function outputMetaTags(): void
     {
         $tm = \CMS\ThemeManager::instance();
         $siteTitle = $tm->getSiteTitle() ?? '';
         $sitDesc = $tm->getSiteDescription() ?? '';
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
-        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $uri = $this->getHeadRequestPath();
 
         $ogTitle = $siteTitle;
         $ogDesc = $sitDesc;
@@ -44,26 +136,15 @@ trait CMS_Phinit_Theme_Head_Trait
             $metaRobots = 'noindex,follow';
         }
 
-        if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
-            try {
-                $db = \CMS\Database::instance();
-                $prefix = $db->prefix();
-                $p = $db->get_row(
-                    "SELECT title, excerpt, featured_image FROM {$prefix}posts WHERE slug = ? AND status = 'published' LIMIT 1",
-                    [$m[1]]
-                );
-                if ($p) {
-                    $p = is_object($p) ? (array) $p : (array) $p;
-                    $ogTitle = ($p['title'] ?? '') . ' – ' . $siteTitle;
-                    $ogDesc = mb_substr(function_exists('phinit_excerpt_plain_text') ? phinit_excerpt_plain_text($p['excerpt'] ?? '') : strip_tags($p['excerpt'] ?? ''), 0, 200);
-                    if (empty($ogDesc)) {
-                        $ogDesc = mb_substr($sitDesc, 0, 200);
-                    }
-                    $ogImg = $p['featured_image'] ?? '';
-                    $ogType = 'article';
-                }
-            } catch (\Throwable) {
+        $currentPost = $this->getCurrentHeadPost();
+        if (is_array($currentPost)) {
+            $ogTitle = ((string) ($currentPost['title'] ?? '')) . ' – ' . $siteTitle;
+            $ogDesc = mb_substr(function_exists('phinit_excerpt_plain_text') ? phinit_excerpt_plain_text((string) ($currentPost['excerpt'] ?? '')) : strip_tags((string) ($currentPost['excerpt'] ?? '')), 0, 200);
+            if (empty($ogDesc)) {
+                $ogDesc = mb_substr($sitDesc, 0, 200);
             }
+            $ogImg = (string) ($currentPost['featured_image'] ?? '');
+            $ogType = 'article';
         }
 
         if (empty($ogImg) && $cz) {
@@ -124,7 +205,7 @@ trait CMS_Phinit_Theme_Head_Trait
         $tm = \CMS\ThemeManager::instance();
         $siteTitle = $tm->getSiteTitle() ?? '';
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
-        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $uri = $this->getHeadRequestPath();
 
         $webSite = [
             '@context' => 'https://schema.org',
@@ -139,29 +220,17 @@ trait CMS_Phinit_Theme_Head_Trait
         ];
         echo '<script type="application/ld+json">' . json_encode($webSite, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
 
-        if (!preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
+        $currentPost = $this->getCurrentHeadPost();
+        if (!is_array($currentPost)) {
             return;
         }
         try {
-            $db = \CMS\Database::instance();
-            $prefix = $db->prefix();
-            $p = $db->get_row(
-                "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name
-                 FROM {$prefix}posts p
-                 LEFT JOIN {$prefix}users u ON u.id = p.author_id
-                 WHERE p.slug = ? AND p.status = 'published' LIMIT 1",
-                [$m[1]]
-            );
-            if (!$p) {
-                return;
-            }
-            $p = is_object($p) ? (array) $p : (array) $p;
             $cz = null;
             try {
                 $cz = \CMS\Services\ThemeCustomizer::instance();
             } catch (\Throwable) {
             }
-            $authorName = $p['author_name'] ?? ($cz ? (string) $cz->get('posts', 'author_name', '') : '');
+            $authorName = $currentPost['author_name'] ?? ($cz ? (string) $cz->get('posts', 'author_name', '') : '');
             $authorAvatar = $cz ? (string) $cz->get('posts', 'author_avatar_url', '') : '';
             $orgImg = $cz ? (string) $cz->get('advanced', 'og_default_image', '') : '';
             $publisher = ['@type' => 'Organization', 'name' => $siteTitle];
@@ -171,11 +240,11 @@ trait CMS_Phinit_Theme_Head_Trait
             $bp = [
                 '@context' => 'https://schema.org',
                 '@type' => 'BlogPosting',
-                'headline' => $p['title'] ?? '',
-                'description' => mb_substr(strip_tags($p['excerpt'] ?? ''), 0, 200),
-                'url' => $siteUrl . '/blog/' . $m[1],
-                'datePublished' => (string) ($p['published_at'] ?? ''),
-                'dateModified' => !empty($p['updated_at']) ? (string) $p['updated_at'] : (string) ($p['published_at'] ?? ''),
+                'headline' => $currentPost['title'] ?? '',
+                'description' => mb_substr(strip_tags((string) ($currentPost['excerpt'] ?? '')), 0, 200),
+                'url' => $siteUrl . '/blog/' . (string) ($currentPost['slug'] ?? ''),
+                'datePublished' => (string) ($currentPost['published_at'] ?? ''),
+                'dateModified' => !empty($currentPost['updated_at']) ? (string) $currentPost['updated_at'] : (string) ($currentPost['published_at'] ?? ''),
                 'publisher' => $publisher,
             ];
             if (!empty($authorName)) {
@@ -184,8 +253,8 @@ trait CMS_Phinit_Theme_Head_Trait
                     $bp['author']['image'] = $authorAvatar;
                 }
             }
-            if (!empty($p['featured_image'])) {
-                $bp['image'] = $p['featured_image'];
+            if (!empty($currentPost['featured_image'])) {
+                $bp['image'] = $currentPost['featured_image'];
             }
             echo '<script type="application/ld+json">' . json_encode($bp, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
         } catch (\Throwable) {
@@ -212,7 +281,7 @@ trait CMS_Phinit_Theme_Head_Trait
         }
 
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
-        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $uri = $this->getHeadRequestPath();
         if ($uri === '/' || $uri === '') {
             return;
         }
@@ -229,12 +298,9 @@ trait CMS_Phinit_Theme_Head_Trait
         $crumbs = [['label' => 'Home', 'url' => $siteUrl . '/']];
         $title = '';
         try {
-            $db = \CMS\Database::instance();
-            $prefix = $db->prefix();
-            if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
+            if (($currentPost = $this->getCurrentHeadPost()) !== null) {
                 $crumbs[] = ['label' => 'Blog', 'url' => $siteUrl . '/blog'];
-                $t = $db->get_var("SELECT title FROM {$prefix}posts WHERE slug = ? LIMIT 1", [$m[1]]);
-                $title = $t ? phinit_display_text((string) $t) : phinit_display_text($m[1]);
+                $title = phinit_display_text((string) ($currentPost['title'] ?? ''));
             } elseif ($uri === '/blog') {
                 $title = 'Blog';
             } elseif (preg_match('#^/kategorie/([\w-]+)$#', $uri, $m)) {
@@ -266,8 +332,8 @@ trait CMS_Phinit_Theme_Head_Trait
             } else {
                 $slug = ltrim($uri, '/');
                 if (!str_contains($slug, '/')) {
-                    $t = $db->get_var("SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1", [$slug]);
-                    $title = $t ? phinit_display_text((string) $t) : phinit_display_text(ucwords(str_replace('-', ' ', $slug)));
+                    $pageTitle = $this->getCurrentHeadPageTitle();
+                    $title = $pageTitle !== null ? $pageTitle : phinit_display_text(ucwords(str_replace('-', ' ', $slug)));
                 }
             }
         } catch (\Throwable) {
@@ -314,32 +380,20 @@ trait CMS_Phinit_Theme_Head_Trait
 
     public function filterPageTitle(string $siteTitle): string
     {
-        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $uri = $this->getHeadRequestPath();
         $siteTitle = phinit_display_text($siteTitle);
 
         try {
-            $db = \CMS\Database::instance();
-            $prefix = $db->prefix();
-
-            if (preg_match('#^/blog/([\w-]+)$#', $uri, $m)) {
-                $title = $db->get_var(
-                    "SELECT title FROM {$prefix}posts WHERE slug = ? AND status = 'published' LIMIT 1",
-                    [$m[1]]
-                );
-                if ($title) {
-                    return phinit_display_text((string) $title) . ' – ' . $siteTitle;
-                }
+            if (($currentPost = $this->getCurrentHeadPost()) !== null) {
+                return phinit_display_text((string) ($currentPost['title'] ?? '')) . ' – ' . $siteTitle;
             }
 
             $skipRoutes = ['', '/', 'blog', 'login', 'register', 'logout', 'search', 'feed', 'member'];
             $slug = ltrim($uri, '/');
             if (!empty($slug) && !in_array($slug, $skipRoutes, true) && !str_contains($slug, '/')) {
-                $title = $db->get_var(
-                    "SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1",
-                    [$slug]
-                );
-                if ($title) {
-                    return phinit_display_text((string) $title) . ' – ' . $siteTitle;
+                $pageTitle = $this->getCurrentHeadPageTitle();
+                if ($pageTitle !== null && $pageTitle !== '') {
+                    return $pageTitle . ' – ' . $siteTitle;
                 }
             }
 

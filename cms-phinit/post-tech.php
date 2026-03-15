@@ -200,48 +200,6 @@ $content = phinit_enhance_content_images($content);
 
 $commentError = '';
 $commentSuccess = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
-    $honeypot = trim((string) ($_POST['comment_hp'] ?? ''));
-
-    if ($honeypot !== '') {
-        header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')) . '?commented=1#comments');
-        exit;
-    }
-
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
-        $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
-    } else {
-        $commentUser = \CMS\Auth::isLoggedIn() ? \CMS\Auth::getCurrentUser() : null;
-        $commentUserId = !empty($commentUser->id) ? (int) $commentUser->id : null;
-        $name = trim((string) ($_POST['comment_name'] ?? ''));
-        $emailRaw = trim((string) ($_POST['comment_email'] ?? ''));
-        $email = $commentUserId ? $emailRaw : filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
-        $text = trim((string) ($_POST['comment_text'] ?? ''));
-
-        if ($text === '' || ($commentUserId === null && ($name === '' || !$email))) {
-            $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
-        } else {
-            try {
-                $newId = \CMS\Services\CommentService::getInstance()->createPendingComment(
-                    (int) ($post['id'] ?? 0),
-                    $name,
-                    (string) $email,
-                    $text,
-                    (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
-                    $commentUserId
-                );
-                if ($newId === false) {
-                    $commentError = 'Bitte alle Pflichtfelder korrekt ausfüllen.';
-                } else {
-                    header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')) . '?commented=1#comments');
-                    exit;
-                }
-            } catch (\Throwable) {
-                $commentError = 'Fehler beim Speichern des Kommentars.';
-            }
-        }
-    }
-}
 
 if ((int) ($_GET['commented'] ?? 0) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';

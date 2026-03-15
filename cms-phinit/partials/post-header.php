@@ -17,9 +17,12 @@ $extraMetaItems = isset($extraMetaItems) && is_array($extraMetaItems) ? $extraMe
 $favoriteControl = isset($favoriteControl) && is_array($favoriteControl) ? $favoriteControl : [];
 $publishedAt = (string) ($post['published_at'] ?? '');
 $updatedAt = (string) ($post['updated_at'] ?? '');
-$categorySlug = urlencode(phinit_display_text($post['category_name'] ?? ''));
+$categorySlug = rawurlencode(phinit_display_text($post['category_slug'] ?? $post['category_name'] ?? ''));
 $authorId = (int) ($post['author_id'] ?? 0);
-$authorUrl = $authorId > 0 ? $siteUrl . '/author/user-' . $authorId : '';
+$authorUrl = $authorId > 0 ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, null, $siteUrl) : $siteUrl . '/author/user-' . $authorId) : '';
+$categoryUrl = !empty($post['category_name'])
+    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/kategorie/' . $categorySlug, null, $siteUrl) : $siteUrl . '/kategorie/' . $categorySlug)
+    : '';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 ?>
 <header class="post-header" data-anim>
@@ -31,7 +34,8 @@ $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_curre
         <img class="post-hero-img"
              src="<?php echo htmlspecialchars((string) $post['featured_image'], ENT_QUOTES); ?>"
              alt="<?php echo htmlspecialchars((string) ($post['title'] ?? ''), ENT_QUOTES); ?>"
-               <?php echo phinit_image_loading_attributes(true); ?>
+                             <?php echo phinit_image_loading_attributes(true); ?>
+                             <?php echo phinit_image_dimension_attributes((string) ($post['featured_image'] ?? '')); ?>
              itemprop="image">
         <?php if ($showReadingTime && $readingTime > 0): ?>
         <span class="post-hero-reading-badge" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>">
@@ -59,7 +63,7 @@ $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_curre
             <?php if (!empty($post['category_name'])): ?>
             <span class="post-meta__item post-meta__item--category">
                 <span class="post-meta__icon" aria-hidden="true">🏷️</span>
-                <a href="<?php echo htmlspecialchars($siteUrl . '/kategorie/' . $categorySlug, ENT_QUOTES); ?>" class="post-meta__link"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></a>
+                <a href="<?php echo htmlspecialchars($categoryUrl, ENT_QUOTES); ?>" class="post-meta__link"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></a>
             </span>
             <?php endif; ?>
             <?php if (!empty($post['author_name'])): ?>

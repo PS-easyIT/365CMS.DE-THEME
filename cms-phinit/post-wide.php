@@ -41,6 +41,12 @@ $showToc          = $czBool('posts', 'show_toc', true);
 $tocMinHeadings   = max(1, (int)$czGet('posts', 'toc_min_headings', 3));
 $tocHeaderText    = (string)$czGet('posts', 'toc_header_text', 'Inhaltsverzeichnis');
 $showShareButtons = $czBool('posts', 'show_share_buttons', true);
+$showShareLinkedin = $czBool('posts', 'show_share_linkedin', true);
+$showShareTwitter = $czBool('posts', 'show_share_twitter', true);
+$showShareEmail = $czBool('posts', 'show_share_email', true);
+$showShareCopy = $czBool('posts', 'show_share_copy', true);
+$showShareMastodon = $czBool('posts', 'show_share_mastodon', true);
+$showSharePrint = $czBool('posts', 'show_share_print', true);
 $showComments     = $czBool('posts', 'show_comments', true);
 $commentsHeader   = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
 $commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
@@ -55,7 +61,7 @@ if (isset($post) && !empty($post)) {
     if (empty($slug)) { http_response_code(404); get_theme_part('404'); exit; }
     try {
         $postObj = $db->get_row(
-            "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name, c.name AS category_name
+            "SELECT p.*, COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name, c.name AS category_name, c.slug AS category_slug
              FROM {$pfx}posts p
              LEFT JOIN {$pfx}users u ON u.id = p.author_id
              LEFT JOIN {$pfx}post_categories c ON c.id = p.category_id
@@ -108,45 +114,8 @@ if ($showToc) {
 
 $content = phinit_enhance_content_images($content);
 
-// ── CSRF & Kommentar-Handler ───────────────────────────────────────────
+// ── Kommentarstatus & CSRF für /comments/post ─────────────────────────
 $commentError = $commentSuccess = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
-    $honeypot = trim((string) ($_POST['comment_hp'] ?? ''));
-    if ($honeypot !== '') {
-        header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')) . '?commented=1#comments');
-        exit;
-    }
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'comment_post_' . ($post['id'] ?? 0))) {
-        $commentError = 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.';
-    } else {
-        $commentUser = \CMS\Auth::isLoggedIn() ? \CMS\Auth::getCurrentUser() : null;
-        $commentUserId = !empty($commentUser->id) ? (int) $commentUser->id : null;
-        $name    = trim((string) ($_POST['comment_name'] ?? ''));
-        $emailRaw = trim((string) ($_POST['comment_email'] ?? ''));
-        $email   = $commentUserId ? $emailRaw : filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
-        $text    = trim((string) ($_POST['comment_text'] ?? ''));
-        if ($text === '' || ($commentUserId === null && ($name === '' || !$email))) {
-            $commentError = 'Bitte alle Pflichtfelder ausfüllen.';
-        } else {
-            try {
-                $newId = \CMS\Services\CommentService::getInstance()->createPendingComment(
-                    (int) ($post['id'] ?? 0),
-                    $name,
-                    (string) $email,
-                    $text,
-                    (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
-                    $commentUserId
-                );
-                if ($newId === false) {
-                    $commentError = 'Bitte alle Pflichtfelder korrekt ausfüllen.';
-                } else {
-                    header('Location: ' . $siteUrl . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')) . '?commented=1#comments');
-                    exit;
-                }
-            } catch (\Throwable $ex) { $commentError = 'Fehler beim Speichern des Kommentars.'; }
-        }
-    }
-}
 if ((int) ($_GET['commented'] ?? 0) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
@@ -165,15 +134,7 @@ $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0),
 
 $postTags = [];
 if ($showPostTags) {
-    try {
-        $tagRows = $db->get_results(
-            "SELECT t.name, t.slug FROM {$pfx}tags t
-             INNER JOIN {$pfx}post_tags pt ON pt.tag_id = t.id
-             WHERE pt.post_id = ? ORDER BY t.name ASC",
-            [(int)($post['id'] ?? 0)]
-        ) ?: [];
-        $postTags = array_map(fn($tag) => (array) $tag, $tagRows);
-    } catch (\Throwable) {}
+    $postTags = phinit_parse_post_tags((string) ($post['tags'] ?? ''));
 }
 ?>
 
@@ -195,13 +156,29 @@ if ($showPostTags) {
         <div class="post-share">
             <span>Teilen:</span>
             <?php
-            $postUrl   = htmlspecialchars(urlencode($siteUrl . '/blog/' . ($post['slug'] ?? '')), ENT_QUOTES);
-            $postTitle = htmlspecialchars(urlencode($post['title'] ?? ''), ENT_QUOTES);
+            $postUrlRaw = rtrim($siteUrl, '/') . phinit_current_request_path();
+            $postUrl = htmlspecialchars(rawurlencode($postUrlRaw), ENT_QUOTES);
+            $postTitleRaw = (string) ($post['title'] ?? '');
+            $postTitle = htmlspecialchars(rawurlencode($postTitleRaw), ENT_QUOTES);
             ?>
+            <?php if ($showShareLinkedin): ?>
             <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in LinkedIn</a>
+            <?php endif; ?>
+            <?php if ($showShareTwitter): ?>
             <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏 Twitter</a>
+            <?php endif; ?>
+            <?php if ($showShareMastodon): ?>
+            <a href="<?php echo htmlspecialchars(phinit_get_mastodon_share_url($postUrlRaw, $postTitleRaw, (string) $czGet('social', 'social_mastodon', '')), ENT_QUOTES); ?>" class="share-btn ma" target="_blank" rel="noopener noreferrer" aria-label="Mastodon">🦣 Mastodon</a>
+            <?php endif; ?>
+            <?php if ($showShareEmail): ?>
             <a href="mailto:?subject=<?php echo $postTitle; ?>&body=<?php echo $postUrl; ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
-            <button class="share-btn cp" aria-label="Link kopieren">📋 Link kopieren</button>
+            <?php endif; ?>
+            <?php if ($showShareCopy): ?>
+            <button type="button" class="share-btn cp" data-share-copy="1" aria-label="Link kopieren">📋 Link kopieren</button>
+            <?php endif; ?>
+            <?php if ($showSharePrint): ?>
+            <button type="button" class="share-btn pr" data-share-print="1" aria-label="Artikel drucken">🖨 Drucken</button>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
     </div>

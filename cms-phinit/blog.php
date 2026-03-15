@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 $siteUrl = SITE_URL;
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 // Suche + Pagination
 $_bQuery  = trim($_GET['q'] ?? '');
@@ -81,6 +82,7 @@ try {
         'siteUrl' => $siteUrl,
         'blogQuery' => $_bQuery,
         'blogTotal' => $_bTotal,
+        'blogBaseUrl' => function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog',
     ]);
     ?>
 
@@ -103,6 +105,8 @@ try {
         'siteUrl' => $siteUrl,
         'blogPage' => $_blogPage,
         'blogPages' => $_bPages,
+        'blogBaseUrl' => function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog',
+        'queryParams' => $_bQuery !== '' ? ['q' => $_bQuery] : [],
     ]);
     ?>
 

@@ -5,8 +5,459 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use CMS\AuditLogger;
+use CMS\Auth;
 use CMS\Security;
 use CMS\Services\ThemeCustomizer;
+
+/**
+ * @return list<string>
+ */
+function phinit_get_advanced_raw_code_fields(): array
+{
+    return ['custom_css', 'custom_head_code', 'custom_footer_code'];
+}
+
+function phinit_is_advanced_raw_code_field(string $category, string $fieldKey): bool
+{
+    return $category === 'advanced' && in_array($fieldKey, phinit_get_advanced_raw_code_fields(), true);
+}
+
+function phinit_customizer_can_manage_advanced_code(): bool
+{
+    if (!class_exists(Auth::class)) {
+        return false;
+    }
+
+    if (function_exists('current_user_can')) {
+        if (current_user_can('themes.customize') || current_user_can('settings.system')) {
+            return true;
+        }
+    }
+
+    return Auth::instance()->isAdmin();
+}
+
+function phinit_customizer_has_advanced_code_acknowledgement(): bool
+{
+    return (string) ($_POST['advanced_code_acknowledged'] ?? '') === '1';
+}
+
+/**
+ * @return array{empty: bool, length: int, sha256: string}
+ */
+function phinit_get_advanced_code_fingerprint(string $value): array
+{
+    return [
+        'empty' => $value === '',
+        'length' => strlen($value),
+        'sha256' => substr(hash('sha256', $value), 0, 16),
+    ];
+}
+
+/**
+ * @param array<string, array{before: string, after: string}> $changes
+ * @return array<string, array<string, mixed>>
+ */
+function phinit_summarize_advanced_code_changes(array $changes): array
+{
+    $summary = [];
+
+    foreach ($changes as $fieldKey => $change) {
+        $summary[$fieldKey] = [
+            'before' => phinit_get_advanced_code_fingerprint($change['before']),
+            'after' => phinit_get_advanced_code_fingerprint($change['after']),
+        ];
+    }
+
+    return $summary;
+}
+
+/**
+ * @param array<string, array{before: string, after: string}> $changes
+ */
+function phinit_log_advanced_code_event(string $action, ThemeCustomizer $customizer, array $changes, string $severity = 'warning'): void
+{
+    if (!class_exists(AuditLogger::class) || $changes === []) {
+        return;
+    }
+
+    $fieldNames = implode(', ', array_keys($changes));
+    $descriptions = [
+        'save' => 'Advanced-Custom-Code aktualisiert: ' . $fieldNames,
+        'import' => 'Advanced-Custom-Code aus Import übernommen: ' . $fieldNames,
+        'reset' => 'Advanced-Custom-Code auf Standard zurückgesetzt: ' . $fieldNames,
+        'denied' => 'Unzulässiger Advanced-Custom-Code-Versuch blockiert: ' . $fieldNames,
+    ];
+
+    AuditLogger::instance()->log(
+        $action === 'denied' ? AuditLogger::CAT_SECURITY : AuditLogger::CAT_THEME,
+        'theme.customizer.advanced_code.' . $action,
+        $descriptions[$action] ?? ('Advanced-Custom-Code-Ereignis: ' . $fieldNames),
+        'theme',
+        null,
+        [
+            'theme' => $customizer->getTheme(),
+            'fields' => array_keys($changes),
+            'changes' => phinit_summarize_advanced_code_changes($changes),
+        ],
+        $severity
+    );
+}
+
+/**
+ * @param array<string, mixed> $fieldConfig
+ */
+function phinit_normalize_customizer_post_value(string $fieldType, mixed $rawValue, array $fieldConfig): string
+{
+    if ($fieldType === 'checkbox') {
+        return !empty($rawValue) ? '1' : '0';
+    }
+
+    $value = is_string($rawValue) ? trim($rawValue) : trim((string) $rawValue);
+    $default = $fieldConfig['default'] ?? '';
+
+    switch ($fieldType) {
+        case 'color':
+            if ($value === '') {
+                return (string) $default;
+            }
+
+            return preg_match('/^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $value) === 1
+                ? $value
+                : (string) $default;
+
+        case 'number':
+            if ($value === '' || !is_numeric($value)) {
+                return (string) $default;
+            }
+
+            $number = (float) $value;
+            if (isset($fieldConfig['min']) && is_numeric((string) $fieldConfig['min'])) {
+                $number = max((float) $fieldConfig['min'], $number);
+            }
+            if (isset($fieldConfig['max']) && is_numeric((string) $fieldConfig['max'])) {
+                $number = min((float) $fieldConfig['max'], $number);
+            }
+
+            $step = isset($fieldConfig['step']) && is_numeric((string) $fieldConfig['step'])
+                ? (float) $fieldConfig['step']
+                : null;
+            if ($step !== null && $step >= 1.0) {
+                return (string) (int) round($number);
+            }
+
+            $formatted = rtrim(rtrim(number_format($number, 4, '.', ''), '0'), '.');
+            return $formatted !== '' ? $formatted : (string) $default;
+
+        case 'select':
+            $options = $fieldConfig['options'] ?? [];
+            if (!is_array($options) || $options === []) {
+                return $value;
+            }
+
+            $allowedValues = [];
+            foreach ($options as $optionKey => $optionValue) {
+                if (is_array($optionValue)) {
+                    $allowedValues[] = (string) ($optionValue['value'] ?? $optionKey);
+                    continue;
+                }
+
+                $allowedValues[] = is_int($optionKey) ? (string) $optionValue : (string) $optionKey;
+            }
+
+            return in_array($value, $allowedValues, true) ? $value : (string) $default;
+
+        case 'post_picker':
+            return ctype_digit($value) ? $value : '';
+
+        case 'url':
+            if ($value === '') {
+                return '';
+            }
+
+            if (str_starts_with($value, '/')) {
+                return str_starts_with($value, '//') ? '' : $value;
+            }
+
+            $scheme = strtolower((string) parse_url($value, PHP_URL_SCHEME));
+            if ($scheme === 'mailto') {
+                $email = preg_replace('/^mailto:/i', '', $value) ?? '';
+                return filter_var($email, FILTER_VALIDATE_EMAIL) ? 'mailto:' . $email : (string) $default;
+            }
+
+            if (!in_array($scheme, ['http', 'https'], true)) {
+                return (string) $default;
+            }
+
+            return filter_var($value, FILTER_VALIDATE_URL) ? $value : (string) $default;
+
+        case 'textarea':
+            return !empty($fieldConfig['allow_raw'])
+                ? (string) $rawValue
+                : strip_tags((string) $rawValue);
+
+        default:
+            return $value;
+    }
+}
+
+/**
+ * @param array<string, mixed> $config
+ * @param array<string, mixed> $importData
+ * @return array<string, array<string, string>>
+ */
+function phinit_normalize_customizer_import_data(array $config, array $importData, ThemeCustomizer $customizer): array
+{
+    $importTheme = $importData['theme'] ?? null;
+    if (is_string($importTheme) && $importTheme !== '' && $importTheme !== $customizer->getTheme()) {
+        return [];
+    }
+
+    $rawCustomizations = $importData['customizations'] ?? null;
+    if (!is_array($rawCustomizations) || $rawCustomizations === []) {
+        return [];
+    }
+
+    $normalized = [];
+
+    foreach ($rawCustomizations as $categoryKey => $categoryValues) {
+        $category = (string) $categoryKey;
+        if (!isset($config[$category]['sections']) || !is_array($categoryValues)) {
+            continue;
+        }
+
+        $categoryConfig = $config[$category]['sections'];
+        if (!is_array($categoryConfig)) {
+            continue;
+        }
+
+        foreach ($categoryValues as $fieldKey => $rawValue) {
+            $normalizedFieldKey = (string) $fieldKey;
+            if ($category === 'advanced' && $normalizedFieldKey === 'custom_header_code') {
+                $normalizedFieldKey = 'custom_head_code';
+            }
+
+            $fieldConfig = $categoryConfig[$normalizedFieldKey] ?? null;
+            if (!is_array($fieldConfig)) {
+                continue;
+            }
+
+            if ($category === 'advanced' && in_array($normalizedFieldKey, ['custom_css', 'custom_head_code', 'custom_footer_code'], true)) {
+                $fieldConfig['allow_raw'] = true;
+            }
+
+            $fieldType = (string) ($fieldConfig['type'] ?? 'text');
+            $normalized[$category][$normalizedFieldKey] = phinit_normalize_customizer_post_value($fieldType, $rawValue, $fieldConfig);
+        }
+    }
+
+    return $normalized;
+}
+
+/**
+ * @param array<string, array<string, string>> $normalizedSettings
+ * @return array<string, array{before: string, after: string}>
+ */
+function phinit_collect_advanced_import_changes(array $normalizedSettings, ThemeCustomizer $customizer): array
+{
+    $changes = [];
+
+    $advancedSettings = $normalizedSettings['advanced'] ?? null;
+    if (!is_array($advancedSettings)) {
+        return $changes;
+    }
+
+    foreach (phinit_get_advanced_raw_code_fields() as $fieldKey) {
+        if (!array_key_exists($fieldKey, $advancedSettings)) {
+            continue;
+        }
+
+        $before = (string) $customizer->get('advanced', $fieldKey, '');
+        $after = (string) $advancedSettings[$fieldKey];
+        if ($before === $after) {
+            continue;
+        }
+
+        $changes[$fieldKey] = [
+            'before' => $before,
+            'after' => $after,
+        ];
+    }
+
+    return $changes;
+}
+
+/**
+ * @return list<string>
+ */
+function phinit_get_customizer_import_allowed_mime_types(): array
+{
+    return [
+        'application/json',
+        'text/json',
+        'text/plain',
+        'application/octet-stream',
+    ];
+}
+
+/**
+ * @return list<string>
+ */
+function phinit_get_customizer_import_allowed_top_level_keys(): array
+{
+    return ['theme', 'exported_at', 'customizations'];
+}
+
+function phinit_log_customizer_import_rejection(ThemeCustomizer $customizer, string $reason, array $metadata = []): void
+{
+    if (!class_exists(AuditLogger::class)) {
+        return;
+    }
+
+    AuditLogger::instance()->log(
+        AuditLogger::CAT_SECURITY,
+        'theme.customizer.import.denied',
+        'Customizer-Import blockiert: ' . $reason,
+        'theme',
+        null,
+        array_merge([
+            'theme' => $customizer->getTheme(),
+            'reason' => $reason,
+        ], $metadata),
+        'warning'
+    );
+}
+
+/**
+ * @param mixed $file
+ * @return array{ok: bool, message: string, tmpName?: string, originalName?: string, mime?: string}
+ */
+function phinit_validate_customizer_import_upload(mixed $file): array
+{
+    if (!is_array($file)) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – bitte eine gültige JSON-Datei auswählen.',
+        ];
+    }
+
+    $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($error !== UPLOAD_ERR_OK) {
+        return [
+            'ok' => false,
+            'message' => 'Datei-Upload fehlgeschlagen oder Datei zu groß (&gt;512 KB).',
+        ];
+    }
+
+    $size = (int) ($file['size'] ?? 0);
+    if ($size <= 0 || $size >= 524288) {
+        return [
+            'ok' => false,
+            'message' => 'Datei-Upload fehlgeschlagen oder Datei zu groß (&gt;512 KB).',
+        ];
+    }
+
+    $tmpName = (string) ($file['tmp_name'] ?? '');
+    $originalName = strtolower(trim((string) ($file['name'] ?? '')));
+    if ($tmpName === '' || !is_file($tmpName) || $originalName === '' || !str_ends_with($originalName, '.json')) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – bitte eine gültige JSON-Datei auswählen.',
+        ];
+    }
+
+    if (!is_uploaded_file($tmpName) && PHP_SAPI !== 'cli') {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Upload-Herkunft konnte nicht verifiziert werden.',
+        ];
+    }
+
+    $mime = '';
+    if (function_exists('finfo_open') && function_exists('finfo_file')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo !== false) {
+            $detectedMime = finfo_file($finfo, $tmpName);
+            finfo_close($finfo);
+            $mime = is_string($detectedMime) ? strtolower(trim($detectedMime)) : '';
+        }
+    }
+
+    if ($mime !== '' && !in_array($mime, phinit_get_customizer_import_allowed_mime_types(), true)) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – der Upload muss eine JSON-Datei sein.',
+            'mime' => $mime,
+        ];
+    }
+
+    return [
+        'ok' => true,
+        'message' => '',
+        'tmpName' => $tmpName,
+        'originalName' => $originalName,
+        'mime' => $mime,
+    ];
+}
+
+/**
+ * @return array{ok: bool, message: string, data?: array<string, mixed>}
+ */
+function phinit_decode_customizer_import_payload(string $raw, ThemeCustomizer $customizer): array
+{
+    if (trim($raw) === '') {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die JSON-Datei ist leer.',
+        ];
+    }
+
+    $data = json_decode($raw, true);
+    if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die JSON-Datei ist syntaktisch ungültig.',
+        ];
+    }
+
+    $unknownTopLevelKeys = array_values(array_diff(array_keys($data), phinit_get_customizer_import_allowed_top_level_keys()));
+    if ($unknownTopLevelKeys !== []) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die JSON-Struktur enthält unbekannte Root-Keys.',
+        ];
+    }
+
+    $theme = $data['theme'] ?? null;
+    if ($theme !== null && (!is_string($theme) || trim($theme) === '' || trim($theme) !== $customizer->getTheme())) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Datei gehört nicht zu diesem Theme.',
+        ];
+    }
+
+    $exportedAt = $data['exported_at'] ?? null;
+    if ($exportedAt !== null && (!is_string($exportedAt) || trim($exportedAt) === '' || strtotime($exportedAt) === false)) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – das Exportdatum ist ungültig.',
+        ];
+    }
+
+    if (!isset($data['customizations']) || !is_array($data['customizations']) || $data['customizations'] === []) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – es wurden keine kompatiblen Einstellungen gefunden.',
+        ];
+    }
+
+    return [
+        'ok' => true,
+        'message' => '',
+        'data' => $data,
+    ];
+}
 
 /**
  * Verarbeitet POST-Aktionen des Phinit-Customizers.
@@ -43,6 +494,22 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             $resetTab = $activeTab;
         }
 
+        $advancedChanges = [];
+        if ($resetTab === 'advanced') {
+            foreach (phinit_get_advanced_raw_code_fields() as $fieldKey) {
+                $before = (string) $customizer->get('advanced', $fieldKey, '');
+                $defaultValue = (string) (($config[$resetTab]['sections'][$fieldKey]['default'] ?? ''));
+                if ($before === $defaultValue) {
+                    continue;
+                }
+
+                $advancedChanges[$fieldKey] = [
+                    'before' => $before,
+                    'after' => $defaultValue,
+                ];
+            }
+        }
+
         $ok = true;
         foreach ($config[$resetTab]['sections'] as $fieldKey => $fieldConfig) {
             $defaultValue = $fieldConfig['default'] ?? '';
@@ -53,6 +520,10 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             if (!$customizer->set($storageTab, (string) $fieldKey, (string) $defaultValue)) {
                 $ok = false;
             }
+        }
+
+        if ($ok && $advancedChanges !== []) {
+            phinit_log_advanced_code_event('reset', $customizer, $advancedChanges);
         }
 
         return [
@@ -70,23 +541,76 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             $saveTab = $activeTab;
         }
 
+        $advancedChanges = [];
         $ok = true;
         foreach ($config[$saveTab]['sections'] as $fieldKey => $fieldConfig) {
             $fieldName = $saveTab . '_' . $fieldKey;
             $fieldType = (string) ($fieldConfig['type'] ?? 'text');
             $storageTab = (string) ($fieldConfig['storageTab'] ?? $saveTab);
 
-            if ($fieldType === 'checkbox') {
-                $value = isset($_POST[$fieldName]) ? '1' : '0';
-            } elseif ($fieldType === 'textarea' && !in_array($saveTab, ['advanced'], true)) {
-                $value = strip_tags((string) ($_POST[$fieldName] ?? ''));
-            } else {
-                $value = (string) ($_POST[$fieldName] ?? '');
+            if (phinit_is_advanced_raw_code_field($saveTab, (string) $fieldKey)) {
+                $fieldConfig['allow_raw'] = true;
             }
+
+            $rawValue = $fieldType === 'checkbox'
+                ? (isset($_POST[$fieldName]) ? '1' : '0')
+                : ($_POST[$fieldName] ?? '');
+            $value = phinit_normalize_customizer_post_value($fieldType, $rawValue, is_array($fieldConfig) ? $fieldConfig : []);
+
+            if (phinit_is_advanced_raw_code_field($saveTab, (string) $fieldKey)) {
+                $before = (string) $customizer->get($storageTab, (string) $fieldKey, '');
+                if ($before !== $value) {
+                    $advancedChanges[(string) $fieldKey] = [
+                        'before' => $before,
+                        'after' => $value,
+                    ];
+                }
+            }
+        }
+
+        if ($advancedChanges !== []) {
+            if (!phinit_customizer_can_manage_advanced_code()) {
+                phinit_log_advanced_code_event('denied', $customizer, $advancedChanges, 'warning');
+
+                return [
+                    'alertMsg' => 'Der privilegierte Custom-Code-Bereich darf nur mit passender Berechtigung geändert werden.',
+                    'alertType' => 'danger',
+                    'activeTab' => $saveTab,
+                ];
+            }
+
+            if (!phinit_customizer_has_advanced_code_acknowledgement()) {
+                phinit_log_advanced_code_event('denied', $customizer, $advancedChanges, 'warning');
+
+                return [
+                    'alertMsg' => 'Bitte bestätige vor dem Speichern, dass eigener Head-/Footer-Code bzw. CSS sofort live wirksam wird.',
+                    'alertType' => 'danger',
+                    'activeTab' => $saveTab,
+                ];
+            }
+        }
+
+        foreach ($config[$saveTab]['sections'] as $fieldKey => $fieldConfig) {
+            $fieldName = $saveTab . '_' . $fieldKey;
+            $fieldType = (string) ($fieldConfig['type'] ?? 'text');
+            $storageTab = (string) ($fieldConfig['storageTab'] ?? $saveTab);
+
+            if (phinit_is_advanced_raw_code_field($saveTab, (string) $fieldKey)) {
+                $fieldConfig['allow_raw'] = true;
+            }
+
+            $rawValue = $fieldType === 'checkbox'
+                ? (isset($_POST[$fieldName]) ? '1' : '0')
+                : ($_POST[$fieldName] ?? '');
+            $value = phinit_normalize_customizer_post_value($fieldType, $rawValue, is_array($fieldConfig) ? $fieldConfig : []);
 
             if (!$customizer->set($storageTab, (string) $fieldKey, $value)) {
                 $ok = false;
             }
+        }
+
+        if ($ok && $advancedChanges !== []) {
+            phinit_log_advanced_code_event('save', $customizer, $advancedChanges);
         }
 
         return [
@@ -117,23 +641,82 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
 
     if ($postAction === 'import_settings') {
         $file = $_FILES['import_file'] ?? null;
-        if (is_array($file) && ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK && (($file['size'] ?? 0) < 524288)) {
-            $tmpName = (string) ($file['tmp_name'] ?? '');
-            $raw = $tmpName !== '' ? file_get_contents($tmpName) : false;
-            $data = json_decode($raw ?: '', true);
-            $importOk = is_array($data) && $customizer->import($data);
+        $uploadValidation = phinit_validate_customizer_import_upload($file);
+        if (!($uploadValidation['ok'] ?? false)) {
+            phinit_log_customizer_import_rejection($customizer, 'invalid_upload', [
+                'mime' => (string) ($uploadValidation['mime'] ?? ''),
+                'filename' => strtolower(trim((string) (($file['name'] ?? '') ?: ''))),
+            ]);
+
+            return [
+                'alertMsg' => (string) ($uploadValidation['message'] ?? 'Import fehlgeschlagen.'),
+                'alertType' => 'danger',
+                'activeTab' => $activeTab,
+            ];
+        }
+
+        $tmpName = (string) ($uploadValidation['tmpName'] ?? '');
+        $raw = file_get_contents($tmpName);
+        $decodedImport = phinit_decode_customizer_import_payload((string) ($raw ?: ''), $customizer);
+        if (!($decodedImport['ok'] ?? false)) {
+            phinit_log_customizer_import_rejection($customizer, 'invalid_payload', [
+                'mime' => (string) ($uploadValidation['mime'] ?? ''),
+                'filename' => (string) ($uploadValidation['originalName'] ?? ''),
+            ]);
+
+            return [
+                'alertMsg' => (string) ($decodedImport['message'] ?? 'Import fehlgeschlagen.'),
+                'alertType' => 'danger',
+                'activeTab' => $activeTab,
+            ];
+        }
+
+        $data = $decodedImport['data'] ?? [];
+        if (is_array($data)) {
+            $normalizedImport = is_array($data)
+                ? phinit_normalize_customizer_import_data($config, $data, $customizer)
+                : [];
+            $advancedImportChanges = phinit_collect_advanced_import_changes($normalizedImport, $customizer);
+
+            if ($advancedImportChanges !== []) {
+                if (!phinit_customizer_can_manage_advanced_code()) {
+                    phinit_log_advanced_code_event('denied', $customizer, $advancedImportChanges, 'warning');
+
+                    return [
+                        'alertMsg' => 'Der Import enthält privilegierten Custom-Code und wurde ohne passende Berechtigung blockiert.',
+                        'alertType' => 'danger',
+                        'activeTab' => $activeTab,
+                    ];
+                }
+
+                if (!phinit_customizer_has_advanced_code_acknowledgement()) {
+                    phinit_log_advanced_code_event('denied', $customizer, $advancedImportChanges, 'warning');
+
+                    return [
+                        'alertMsg' => 'Bitte bestätige vor dem Import, dass enthaltenes Custom-CSS bzw. Head-/Footer-Code sofort live wirksam wird.',
+                        'alertType' => 'danger',
+                        'activeTab' => $activeTab,
+                    ];
+                }
+            }
+
+            $importOk = $normalizedImport !== [] && $customizer->setMultiple($normalizedImport);
+
+            if ($importOk && $advancedImportChanges !== []) {
+                phinit_log_advanced_code_event('import', $customizer, $advancedImportChanges);
+            }
 
             return [
                 'alertMsg' => $importOk
                     ? 'Einstellungen erfolgreich importiert.'
-                    : 'Import fehlgeschlagen – ungültige JSON-Datei.',
+                    : 'Import fehlgeschlagen – ungültige, leere oder nicht kompatible JSON-Datei.',
                 'alertType' => $importOk ? 'success' : 'danger',
                 'activeTab' => $activeTab,
             ];
         }
 
         return [
-            'alertMsg' => 'Datei-Upload fehlgeschlagen oder Datei zu groß (&gt;512 KB).',
+            'alertMsg' => 'Import fehlgeschlagen – ungültige, leere oder nicht kompatible JSON-Datei.',
             'alertType' => 'danger',
             'activeTab' => $activeTab,
         ];

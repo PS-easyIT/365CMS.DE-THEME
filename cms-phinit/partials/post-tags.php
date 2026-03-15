@@ -16,7 +16,8 @@ if (!$showPostTags || empty($postTags)) {
 <div class="post-tags" data-anim>
     <span>🏷️ Tags:</span>
     <?php foreach ($postTags as $tag): ?>
-    <a href="<?php echo htmlspecialchars($siteUrl . '/tag/' . ((string) ($tag['slug'] ?? '')), ENT_QUOTES); ?>" class="tag-link">
+    <?php $tagUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/tag/' . rawurlencode((string) ($tag['slug'] ?? '')), null, $siteUrl) : rtrim($siteUrl, '/') . '/tag/' . rawurlencode((string) ($tag['slug'] ?? '')); ?>
+    <a href="<?php echo htmlspecialchars($tagUrl, ENT_QUOTES); ?>" class="tag-link">
         <?php echo phinit_escape_text($tag['name'] ?? ''); ?>
     </a>
     <?php endforeach; ?>

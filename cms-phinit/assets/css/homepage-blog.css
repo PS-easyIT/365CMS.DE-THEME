@@ -437,6 +437,7 @@ body.dark-mode .repo-card {
     overflow: hidden;
     text-decoration: none;
     background-color: #111;
+    background-image: var(--sb-project-card-image, none);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center 38%;
