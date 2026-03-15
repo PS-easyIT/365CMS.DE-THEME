@@ -142,6 +142,34 @@ if (!function_exists('phinit_safe_public_media_url')) {
 
 if (!function_exists('phinit_image_loading_attributes')) {
     /**
+     * Prüft, ob browserbasiertes Image-Lazy-Loading per Customizer aktiv ist.
+     */
+    function phinit_is_image_lazy_loading_enabled(): bool
+    {
+        static $lazyLoadingEnabled = null;
+
+        if (is_bool($lazyLoadingEnabled)) {
+            return $lazyLoadingEnabled;
+        }
+
+        $lazyLoadingEnabled = true;
+
+        try {
+            $setting = \CMS\Services\ThemeCustomizer::instance()->get('performance', 'lazyload_images', true);
+            $lazyLoadingEnabled = filter_var($setting, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($lazyLoadingEnabled === null) {
+                $lazyLoadingEnabled = true;
+            }
+        } catch (\Throwable) {
+            $lazyLoadingEnabled = true;
+        }
+
+        return $lazyLoadingEnabled;
+    }
+}
+
+if (!function_exists('phinit_image_loading_attributes')) {
+    /**
      * Liefert standardisierte Loading-/Priority-Attribute für Theme-Bilder.
      */
     function phinit_image_loading_attributes(bool $aboveTheFold = false, bool $highPriority = true): string
@@ -150,6 +178,10 @@ if (!function_exists('phinit_image_loading_attributes')) {
             return $highPriority
                 ? 'loading="eager" fetchpriority="high" decoding="async"'
                 : 'loading="eager" decoding="async"';
+        }
+
+        if (!phinit_is_image_lazy_loading_enabled()) {
+            return 'decoding="async"';
         }
 
         return 'loading="lazy" decoding="async"';

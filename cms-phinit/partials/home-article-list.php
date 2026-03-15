@@ -47,7 +47,7 @@ if (empty($_showList) || $featuredPosts === []) {
     <div class="homepage-list-main">
     <?php endif; ?>
     <div class="article-list article-list--framed">
-        <?php foreach ($featuredPosts as $post):
+        <?php foreach ($featuredPosts as $postIndex => $post):
             get_theme_part('partials/post-card', [
                 'card' => (array) $post,
                 'siteUrl' => $siteUrl,
@@ -57,6 +57,8 @@ if (empty($_showList) || $featuredPosts === []) {
                 'show_cat' => $_showMetaCat,
                 'show_date' => $_showMetaDate,
                 'show_rt' => $_showMetaRT,
+                'above_the_fold_image' => $postIndex === 0,
+                'image_high_priority' => $postIndex === 0,
             ]);
         endforeach; ?>
     </div>

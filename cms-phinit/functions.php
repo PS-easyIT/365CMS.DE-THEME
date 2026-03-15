@@ -58,13 +58,13 @@ final class CMS_Phinit_Theme
         \CMS\Hooks::addAction('before_render', [$this, 'handleFavoriteToggleRequest'], 1);
 
         // Assets
+        \CMS\Hooks::addAction('head', [$this, 'outputCustomHeaderCode'], 0);
         \CMS\Hooks::addAction('head', [$this, 'outputPreconnect'],       1);
         \CMS\Hooks::addAction('head', [$this, 'outputGoogleFonts'],      5);
         \CMS\Hooks::addAction('head', [$this, 'outputMetaTags'],         8);
         \CMS\Hooks::addAction('head', [$this, 'enqueueStyles'],         15);
         \CMS\Hooks::addAction('head', [$this, 'outputCustomStyles'],    20);
         \CMS\Hooks::addAction('head', [$this, 'outputSchemaOrg'],       25);
-        \CMS\Hooks::addAction('head', [$this, 'outputCustomHeaderCode'], 99);
 
         // Scripts ans Ende des Body
         \CMS\Hooks::addAction('body_end', [$this, 'enqueueScripts'],        10);

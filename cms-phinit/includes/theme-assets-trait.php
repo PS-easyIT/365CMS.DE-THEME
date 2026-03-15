@@ -243,7 +243,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         if (file_exists($uiChromeCssFile)) {
             $uiChromeVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($uiChromeCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion));
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion), true);
         }
 
         if ($loadTemplateCss && file_exists($templateCssFile)) {
@@ -253,7 +253,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         if ($loadContentCardsCss && file_exists($contentCardsCssFile)) {
             $contentCardsVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($contentCardsCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion));
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion), true);
         }
 
         if ($loadMemberAuthCss && file_exists($memberAuthCssFile)) {
@@ -575,7 +575,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $localCssUrls = $this->getRequestedLocalFontCssUrls();
         if ($this->canServeRequestedFontsLocally() && $localCssUrls !== []) {
             foreach ($localCssUrls as $localCssUrl) {
-                echo '<link rel="stylesheet" href="' . htmlspecialchars($localCssUrl, ENT_QUOTES) . '">' . "\n";
+                $this->emitStylesheet((string) $localCssUrl, true);
             }
             return;
         }
@@ -614,7 +614,7 @@ trait CMS_Phinit_Theme_Assets_Trait
                 return;
             }
             $url = 'https://fonts.googleapis.com/css2?family=' . implode('&family=', $families) . '&display=swap';
-            echo '<link rel="stylesheet" href="' . htmlspecialchars($url) . '">' . "\n";
+            $this->emitStylesheet($url, true);
         } catch (\Throwable $e) {
         }
     }

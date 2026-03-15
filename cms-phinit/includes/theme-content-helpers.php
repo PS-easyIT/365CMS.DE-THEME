@@ -58,13 +58,18 @@ if (!function_exists('phinit_enhance_content_images')) {
 
                 $imageIndex++;
                 $isFirstImage = $imageIndex === 1;
+                $lazyLoadingEnabled = phinit_is_image_lazy_loading_enabled();
 
                 $closing = str_ends_with($tag, '/>') ? '/>' : '>';
                 $baseTag = substr($tag, 0, -strlen($closing));
                 $attrs = [];
 
                 if (preg_match('/\sloading\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
-                    $attrs[] = $isFirstImage ? 'loading="eager"' : 'loading="lazy"';
+                    if ($isFirstImage) {
+                        $attrs[] = 'loading="eager"';
+                    } elseif ($lazyLoadingEnabled) {
+                        $attrs[] = 'loading="lazy"';
+                    }
                 }
 
                 if ($isFirstImage && preg_match('/\sfetchpriority\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
