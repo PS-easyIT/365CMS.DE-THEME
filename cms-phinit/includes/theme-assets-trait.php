@@ -697,9 +697,18 @@ trait CMS_Phinit_Theme_Assets_Trait
             'text_muted' => '--text-muted',
             'text_nav' => '--text-nav',
             'text_nav_member' => '--text-nav-member',
+            'text_nav_member_hover' => '--text-nav-member-hover',
             'text_nav_main' => '--text-nav-main',
+            'text_nav_main_hover' => '--text-nav-main-hover',
             'text_nav_quicklinks' => '--text-nav-quicklinks',
+            'text_nav_quicklinks_hover' => '--text-nav-quicklinks-hover',
             'text_nav_dropdown' => '--text-nav-dropdown',
+            'text_nav_dropdown_hover' => '--text-nav-dropdown-hover',
+            'text_nav_mobile_hover' => '--text-nav-mobile-hover',
+            'text_nav_footer_hover' => '--text-nav-footer-hover',
+            'text_nav_footer_bottom_hover' => '--text-nav-footer-bottom-hover',
+            'text_nav_network_hover' => '--text-nav-network-hover',
+            'text_nav_member_sidebar_hover' => '--text-nav-member-sidebar-hover',
             'page_edge_tint_color' => '--page-edge-overlay-color',
             'logo_suffix_color' => '--logo-suffix-color',
             'border_light' => '--border-color',
@@ -827,6 +836,33 @@ trait CMS_Phinit_Theme_Assets_Trait
             $css .= "    --quicklinks-h: {$subBarH}px;\n";
         }
 
+        $headerMenuVarMap = [
+            'member_bar_font_size' => ['header', '--member-bar-link-size', 'px'],
+            'member_bar_item_spacing' => ['header', '--member-bar-link-gap', 'px'],
+            'main_nav_font_size' => ['header', '--main-nav-link-size', 'px'],
+            'main_nav_item_spacing' => ['header', '--main-nav-link-space', 'px'],
+            'dropdown_nav_font_size' => ['header', '--dropdown-link-size', 'px'],
+            'dropdown_nav_item_spacing' => ['header', '--dropdown-link-space', 'px'],
+            'quicklinks_font_size' => ['header', '--quicklinks-link-size', 'px'],
+            'quicklinks_item_spacing' => ['header', '--quicklinks-link-space', 'px'],
+            'mobile_menu_font_size' => ['header', '--mobile-menu-link-size', 'px'],
+            'mobile_menu_item_spacing' => ['header', '--mobile-menu-link-space', 'px'],
+            'footer_menu_font_size' => ['footer', '--footer-menu-link-size', 'px'],
+            'footer_menu_item_spacing' => ['footer', '--footer-menu-link-gap', 'px'],
+            'footer_bottom_font_size' => ['footer', '--footer-bottom-link-size', 'px'],
+            'footer_bottom_item_spacing' => ['footer', '--footer-bottom-link-gap', 'px'],
+            'network_bar_font_size' => ['footer', '--network-bar-link-size', 'px'],
+            'network_bar_item_spacing' => ['footer', '--network-bar-link-gap', 'px'],
+            'sidebar_menu_font_size' => ['memberdashboard', '--member-sidebar-link-size', 'px'],
+            'sidebar_menu_item_spacing' => ['memberdashboard', '--member-sidebar-link-gap', 'px'],
+        ];
+        foreach ($headerMenuVarMap as $key => [$category, $varName, $unit]) {
+            $val = $c->get($category, $key, '');
+            if ($val !== '' && $val !== null) {
+                $css .= "    {$varName}: {$val}{$unit};\n";
+            }
+        }
+
         $heroH = $c->get('posts', 'post_hero_height', '');
         $heroW = $c->get('posts', 'post_hero_width', '');
         if (!empty($heroH)) {
@@ -834,6 +870,19 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
         if (!empty($heroW)) {
             $css .= "    --post-hero-w: {$heroW}px;\n";
+        }
+
+        $pageHeroW = $c->get('pages', 'page_hero_width', '');
+        $pageHeroH = $c->get('pages', 'page_hero_height', '');
+        $pageHeroFitMode = (string) $c->get('pages', 'page_hero_fit_mode', 'contain');
+        if (!empty($pageHeroW)) {
+            $css .= "    --page-hero-w: {$pageHeroW}px;\n";
+        }
+        if (!empty($pageHeroH)) {
+            $css .= "    --page-hero-h: {$pageHeroH}px;\n";
+        }
+        if (in_array($pageHeroFitMode, ['contain', 'cover'], true)) {
+            $css .= "    --page-hero-fit: {$pageHeroFitMode};\n";
         }
 
         $css .= "}\n";
@@ -865,6 +914,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $css .= ".member-bar__greeting { color: var(--text-nav-member, rgba(255,255,255,.7)); }\n";
         $css .= ".sub-nav a { color: var(--text-nav-quicklinks, var(--text-secondary)); }\n";
         $css .= ".main-nav .dropdown a { color: var(--text-nav-dropdown, rgba(226,232,240,.92)); }\n";
+        $css .= ".main-nav__toggle { font-weight: var(--fw-nav, 600); }\n";
         $css .= ".site-footer { background: var(--footer-bg); border-top: 3px solid var(--footer-border); }\n";
         $css .= ".footer-bottom { background: var(--footer-bottom-bg); }\n";
         $css .= ".site-logo .logo-accent { color: var(--logo-accent, var(--accent-teal-light)); }\n";
@@ -904,6 +954,15 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $pageTitleFs = (int) ($c->get('pages', 'page_title_fontsize', 28) ?: 28);
         $css .= ".page-header-block h1 { font-size: {$pageTitleFs}px !important; }\n";
+
+        if (!empty($pageHeroW)) {
+            $pageWidth = max(80, (int) $pageHeroW);
+            $css .= ".page-hero-img { flex: 0 0 {$pageWidth}px !important; width: {$pageWidth}px !important; }\n";
+        }
+        if (!empty($pageHeroH)) {
+            $pageHeight = max(100, (int) $pageHeroH);
+            $css .= ".page-hero-img { height: {$pageHeight}px !important; min-height: {$pageHeight}px !important; max-height: {$pageHeight}px !important; }\n";
+        }
 
         $excerptFs = (int) ($c->get('typography', 'article_excerpt_fontsize', 13) ?: 13);
         $css .= ".article-body p { font-size: {$excerptFs}px !important; display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important; }\n";

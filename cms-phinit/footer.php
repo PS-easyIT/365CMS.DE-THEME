@@ -15,6 +15,7 @@ $siteUrl   = SITE_URL;
 $siteTitle = \CMS\ThemeManager::instance()->getSiteTitle();
 $year      = date('Y');
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$isLoggedIn = function_exists('theme_is_logged_in') ? theme_is_logged_in() : false;
 
 // Customizer
 try {
@@ -82,6 +83,14 @@ try {
     $_liLabel = 'LinkedIn'; $_ghLabel = 'GitHub'; $_rssLabel = 'RSS Feed';
     $_networkLinks = [];
 }
+
+$_footerAccountUrl = $isLoggedIn ? $siteUrl . '/member/dashboard' : $siteUrl . '/login';
+$_footerAccountLabel = $isLoggedIn
+    ? phinit_t('account', [], $currentLocale)
+    : phinit_t('login', [], $currentLocale);
+$_footerAccountTitle = $isLoggedIn
+    ? phinit_t('account', [], $currentLocale)
+    : phinit_t('login', [], $currentLocale);
 // Cookie Consent: Banner nur anzeigen wenn CMS-Admin cookie_consent_enabled = '1' gesetzt hat
 try {
     if (class_exists('\\CMS\\Services\\CookieConsentService')
@@ -140,8 +149,9 @@ try {
                         <?php echo htmlspecialchars($_brandName, ENT_QUOTES); ?>
                     </a>
                     <p><?php echo htmlspecialchars($_footerDesc, ENT_QUOTES); ?></p>
-                    <?php if ($_showSocial): ?>
-                    <div class="social-icons">
+                    <div class="footer-brand__actions">
+                        <?php if ($_showSocial): ?>
+                        <div class="social-icons">
                         <?php if (!empty($_liUrl)): ?>
                         <a href="<?php echo htmlspecialchars($_liUrl, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_liLabel, ENT_QUOTES); ?>">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -175,8 +185,20 @@ try {
                         <a href="<?php echo htmlspecialchars($_rssUrl, ENT_QUOTES); ?>" class="rss" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_rssLabel, ENT_QUOTES); ?>">
                             <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
                         </a>
+                        </div>
+                        <?php endif; ?>
+                        <a href="<?php echo htmlspecialchars($_footerAccountUrl, ENT_QUOTES); ?>"
+                           class="footer-account-link<?php echo $isLoggedIn ? ' footer-account-link--member' : ' footer-account-link--login'; ?>"
+                           aria-label="<?php echo htmlspecialchars($_footerAccountLabel, ENT_QUOTES); ?>"
+                           title="<?php echo htmlspecialchars($_footerAccountTitle, ENT_QUOTES); ?>">
+                            <?php if ($isLoggedIn): ?>
+                            <span aria-hidden="true">👤</span>
+                            <?php else: ?>
+                            <span aria-hidden="true">🔑</span>
+                            <span><?php echo htmlspecialchars($_footerAccountLabel, ENT_QUOTES); ?></span>
+                            <?php endif; ?>
+                        </a>
                     </div>
-                    <?php endif; ?>
                 </div>
 
                 <!-- Navigation 1 (aus Menü-Editor: footer-topics) -->

@@ -263,12 +263,15 @@
 }
 
 .page-hero-img {
-    flex: 0 0 162px;
-    width: 162px;
-    object-fit: cover;
-    object-position: center top;
-    min-height: 140px;
-    max-height: 280px;
+    flex: 0 0 var(--page-hero-w, 162px);
+    width: var(--page-hero-w, 162px);
+    height: var(--page-hero-h, 220px);
+    object-fit: var(--page-hero-fit, contain);
+    object-position: center center;
+    min-height: var(--page-hero-h, 220px);
+    max-height: var(--page-hero-h, 220px);
+    background: color-mix(in srgb, var(--bg-secondary, #f1f5f9) 88%, white 12%);
+    display: block;
     border-right: 1px solid var(--border-color);
 }
 
@@ -361,7 +364,8 @@
     .page-hero-img {
         flex: none;
         width: 100%;
-        min-height: unset;
+        height: min(var(--page-hero-h, 220px), 180px);
+        min-height: min(var(--page-hero-h, 220px), 180px);
         max-height: 180px;
         border-right: none;
         border-bottom: 1px solid var(--border-color);

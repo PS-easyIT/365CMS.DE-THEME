@@ -448,30 +448,11 @@ if ($_showLanguageSwitch) {
 
             <!-- Header-Tools (rechts, in Bar 2) -->
             <div class="hdr-tools">
-                <?php if ($_showDarkMode): ?>
-                <button class="util-link util-dark-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode">🌙</button>
-                <?php endif; ?>
-
-                <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
-                <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>"
-                   class="util-link util-language-switch util-language-switch--<?php echo $_languageMode === 'flag' ? 'flag' : 'text'; ?>"
-                   aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>"
-                   title="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
-                    <span class="util-language-switch__value" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
-                </a>
-                <?php endif; ?>
-
                 <?php if ($_showSearch): ?>
                 <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars(rtrim($siteUrl, '/') . $_localizedPath('/search', $_currentLocale), ENT_QUOTES); ?>">
                     <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_headerSearchPlaceholder, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars(phinit_t('search_term_input', [], $_currentLocale), ENT_QUOTES); ?>">
                     <button type="submit" aria-label="<?php echo htmlspecialchars(phinit_t('search_start', [], $_currentLocale), ENT_QUOTES); ?>">🔍</button>
                 </form>
-                <?php endif; ?>
-
-                <?php if ($isLoggedIn && $currentUser): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/dashboard" class="util-link" title="<?php echo htmlspecialchars(phinit_t('account', [], $_currentLocale), ENT_QUOTES); ?>">👤</a>
-                <?php else: ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="btn btn-sm btn-outline util-login-link" aria-label="<?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
 
                 <button class="burger-btn" id="burger-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('menu_open', [], $_currentLocale), ENT_QUOTES); ?>" aria-expanded="false" aria-controls="mobile-menu">
@@ -538,6 +519,22 @@ if ($_showLanguageSwitch) {
                             <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/exchange', $_currentLocale), ENT_QUOTES); ?>">Exchange</a>
                         <?php endif; ?>
                     </nav>
+                    <?php if ($_showDarkMode || ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== '')): ?>
+                    <div class="quicklinks-tools" aria-label="<?php echo htmlspecialchars(phinit_t('header_controls', [], $_currentLocale), ENT_QUOTES); ?>">
+                        <?php if ($_showDarkMode): ?>
+                        <button class="quicklinks-tool quicklinks-tool--icon util-dark-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode">🌙</button>
+                        <?php endif; ?>
+
+                        <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
+                        <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>"
+                           class="quicklinks-tool quicklinks-tool--language util-language-switch util-language-switch--<?php echo $_languageMode === 'flag' ? 'flag' : 'text'; ?>"
+                           aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>"
+                           title="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
+                            <span class="util-language-switch__value" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
         </div>
     </div>
     <?php endif; /* $_showQuicklinks */ ?>

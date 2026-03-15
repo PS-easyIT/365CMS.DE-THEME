@@ -11,7 +11,7 @@ body.dark-mode .auth-alert--success         { background: rgba(22,163,74,.15); b
 body.dark-mode .member-sidebar              { background: var(--bg-dark-3); border-color: var(--border-dark); }
 body.dark-mode .member-nav-link             { color: var(--text-secondary); }
 body.dark-mode .member-nav-link:hover,
-body.dark-mode .member-nav-link.active      { background: rgba(74,158,255,.12); color: var(--accent-blue); }
+body.dark-mode .member-nav-link.active      { background: rgba(74,158,255,.12); color: var(--text-nav-member-sidebar-hover, var(--accent-blue)); }
 body.dark-mode .member-sidebar-user         { border-color: var(--border-dark); }
 body.dark-mode .member-content-card         { background: var(--bg-dark-3); border-color: var(--border-dark); }
 
@@ -189,19 +189,22 @@ body.dark-mode .auth-site-name { color: var(--text-white); }
 .member-nav {
     flex: 1 1 auto;
     padding: .5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--member-sidebar-link-gap, 0px);
 }
 .member-nav-link {
     display: flex; align-items: center; gap: 10px;
-    padding: .6rem 1.2rem; font-size: .875rem;
+    padding: .6rem 1.2rem; font-size: var(--member-sidebar-link-size, .875rem);
     color: var(--text-secondary); text-decoration: none;
     border-left: 3px solid transparent; transition: var(--transition-fast);
 }
-.member-nav-link:hover { background: var(--bg-secondary); color: var(--primary-color); }
+.member-nav-link:hover { background: var(--bg-secondary); color: var(--text-nav-member-sidebar-hover, var(--primary-color)); }
 .member-nav-link.active {
     background: rgba(30,58,95,.06); color: var(--member-sidebar-active-color, var(--primary-color));
     border-left-color: var(--member-sidebar-active-color, var(--primary-color)); font-weight: 600;
 }
-.member-nav-link:hover { color: var(--member-sidebar-active-color, var(--primary-color)); }
+.member-nav-link:hover { color: var(--text-nav-member-sidebar-hover, var(--member-sidebar-active-color, var(--primary-color))); }
 .member-nav-icon { font-size: 1rem; width: 20px; text-align: center; }
 .member-sidebar-bottom {
     margin-top: auto;
