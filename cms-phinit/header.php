@@ -332,7 +332,7 @@ if ($_showLanguageSwitch) {
                 <?php if (!empty($_logoUrl)): ?>
                     <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" <?php echo phinit_image_loading_attributes(true); ?>>
                     <?php if ($_showLogoText): ?>
-                    <span class="logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><?php echo htmlspecialchars($_logoSuffix); ?></span>
+                    <span class="logo-text logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></span>
                     <?php endif; ?>
                 <?php else: ?>
                     <span class="logo-text"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></span>

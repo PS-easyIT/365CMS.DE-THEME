@@ -1,0 +1,63 @@
+name: CMS Phinit Lighthouse
+
+'on':
+  workflow_dispatch:
+    inputs:
+      baseUrl:
+        description: 'Vollständige Basis-URL der Preview/Staging-Site (z. B. https://staging.example.com)'
+        required: true
+        type: string
+      homePath:
+        description: 'Pfad für die Startseite'
+        required: false
+        default: '/'
+        type: string
+      blogPath:
+        description: 'Pfad für das Blog-/Archivziel'
+        required: false
+        default: '/blog'
+        type: string
+      postPath:
+        description: 'Pfad für einen typischen Einzelbeitrag'
+        required: true
+        type: string
+      memberSecurityPath:
+        description: 'Pfad für die Member-Security-Seite'
+        required: false
+        default: '/member/security'
+        type: string
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Lighthouse CI installieren
+        run: npm install -g @lhci/cli@0.15.x
+
+      - name: Lighthouse-Läufe ausführen
+        env:
+          LHCI_BASE_URL: ${{ inputs.baseUrl }}
+          LHCI_HOME_PATH: ${{ inputs.homePath }}
+          LHCI_BLOG_PATH: ${{ inputs.blogPath }}
+          LHCI_POST_PATH: ${{ inputs.postPath }}
+          LHCI_MEMBER_SECURITY_PATH: ${{ inputs.memberSecurityPath }}
+        run: lhci autorun --config=cms-phinit/lighthouserc.js
+
+      - name: LHCI-Artefakte hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cms-phinit-lighthouse-report
+          path: .lighthouseci
+          if-no-files-found: warn

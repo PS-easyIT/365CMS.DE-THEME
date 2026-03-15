@@ -16,14 +16,14 @@ Die folgenden Punkte aus Phase 1 wurden bereits umgesetzt:
 - ✅ **SEC-02**: Der Advanced-Tab verlangt bei Raw-Code-Änderungen jetzt eine explizite Bestätigung; Save/Import protokollieren Feldänderungen revisionsfähig über das Core-Audit-Log, ohne den eigentlichen Code im Log abzulegen.
 - ✅ **SEC-04**: Der Customizer-Import prüft Upload-Herkunft, Dateiendung, MIME-Typ und die erwartete Root-Struktur (`theme`, `exported_at`, `customizations`) jetzt deutlich strenger; blockierte Versuche landen im Audit-Log.
 - ✅ **CUS-04 (weitgehend)**: `theme.json` trägt jetzt auch die bisher nur im PHP-Schema beschriebenen Homepage-/Sidebar-, SEO-, Layout-, Header-, Footer-, Typografie-, Farb- sowie Zusatzfelder für Posts/Pages; im Legacy-Schema bleiben nur noch fünf veraltete Homepage-Alias-Keys (`article_list_label`, `article_list_count`, `show_info_grid`, `tile_grid_label`, `tile_grid_count`) als bewusste Fallback-Schicht zurück.
-- ✅ **MAINT-01 (teilweise)**: `index.php` nutzt keine `extract()`-Aufrufe mehr; `get_theme_part()` rendert Partials jetzt über einen kontrollierten Scope mit validierten Variablennamen statt per pauschalem `extract()`.
+- ✅ **MAINT-01**: `index.php` nutzt keine `extract()`-Aufrufe mehr; `get_theme_part()` und der Core-`ThemeManager::render()` rendern Templates/Header/Footer jetzt über einen kontrollierten Scope mit validierten Variablennamen statt per pauschalem `extract()`.
 - ✅ **PERF-04 (teilweise)**: Das erste Inhaltsbild wird nicht mehr pauschal lazy geladen, sondern standardmäßig mit `loading="eager"` und `fetchpriority="high"` bevorzugt behandelt.
 - ✅ **PERF-04 (weitgehend)**: Content-Bilder ergänzen bei lokalen Assets jetzt zusätzlich fehlende `width`-/`height`-Attribute automatisch; zentrale Karten-/Hero-Templates schreiben Dimensionsattribute ebenfalls mit, wodurch Lazy Loading weniger CLS-Risiko erzeugt.
-- ✅ **PERF-01 (teilweise)**: Die Request-Klassifizierung für den Asset-Pfad nutzt jetzt einen zentralen, pro Request gecachten Kontext statt wiederholt dieselbe Post-/Hub-/Page-Erkennung aufzurufen.
-- ✅ **PERF-02 (teilweise)**: Meta-Tags, Schema.org, Breadcrumb und Seitentitel teilen sich jetzt gecachte Post-/Page-Daten, sodass dieselben Post-/Page-Abfragen im Head-Bereich nicht mehrfach ausgeführt werden.
+- ✅ **PERF-01 (weitgehend)**: Die Request-Klassifizierung für den Asset-Pfad nutzt jetzt einen zentralen, pro Request gecachten Kontext und wiederverwendet für Blogposts denselben gecachten Post-Lookup wie der Head-Pfad, statt zusätzlich eine separate Existenzabfrage auszuführen.
+- ✅ **PERF-02 (weitgehend)**: Meta-Tags, Schema.org, Breadcrumb und Seitentitel teilen sich jetzt gebündelte SEO-/Layout-Settings sowie gecachte Post-/Page-Daten, sodass der Head-Pfad pro Request deutlich weniger redundante Post-/Page- und Customizer-Lookups erzeugt.
 - ✅ **PERF-03 (teilweise)**: `navigation.js` wurde auf ein schlankes Core-Bundle reduziert; Content-, Homepage- und Member-Security-Interaktionen werden jetzt über separate Dateien nur auf passenden Requests geladen.
 - ✅ **PERF-05 (weitgehend)**: Die Startseite injiziert ihre dynamischen Abstände/Projektlogos nicht mehr über einen Template-`<style>`-Block, sondern über CSS-Variablen direkt am Container bzw. am jeweiligen Karten-Element.
-- ✅ **PERF-05 (teilweise)**: Mit `DOC/PERFORMANCE-BUDGETS.md` existiert jetzt ein verbindlicher Minimalprozess für Zielseiten, Lighthouse-Zielwerte, Asset-Budgets und Review-Dokumentation, bis eine vollautomatische CI-Messung praktikabel ist.
+- ✅ **PERF-05 (weitgehend)**: Mit `DOC/PERFORMANCE-BUDGETS.md`, `cms-phinit/lighthouserc.js` und `.github/workflows/cms-phinit-lighthouse.yml` existiert jetzt ein verbindlicher Minimalprozess plus eine manuell startbare Lighthouse-CI-Schablone für die vier Kernpfade; offen bleibt vor allem die automatische PR-Anbindung an eine stabile Preview-Umgebung.
 
 Noch offen bleiben vor allem die Performance-Punkte aus Phase 3 sowie die späteren Mess-/Budget-Schritte aus Phase 4.
 
@@ -275,7 +275,7 @@ Es fehlt eine strikte Feld-/Struktur-Allowlist.
 
 `extract()` ist hier derzeit intern kontrolliert, aber als Muster fehleranfällig. Es erschwert Nachvollziehbarkeit und erhöht die Chance auf unbeabsichtigtes Variablen-Shadowing.
 
-**Status:** teilweise umgesetzt. Die Startseite arbeitet jetzt mit expliziten Zuweisungen statt `extract()`, und der Partial-Loader verwendet einen validierten lokalen Scope statt `extract($vars)`. Der verbleibende Altpfad betrifft vor allem den Upstream-Render-Handoff in `blog-single.php`/`ThemeManager`.
+**Status:** umgesetzt. Die Startseite arbeitet mit expliziten Zuweisungen statt `extract()`, der Partial-Loader verwendet einen validierten lokalen Scope, und auch der Core-Renderpfad (`ThemeManager::render()` inkl. Header/Footer) reicht Variablen jetzt ohne pauschales `extract()` weiter.
 
 #### Empfehlung
 
@@ -323,10 +323,7 @@ Dabei werden teils Datenbankabfragen zur Route-Erkennung verwendet. Das ist funk
 
 Vor allem auf Post-/Page-Requests entstehen dadurch mehrere einzelne Abfragen für verwandte Daten.
 
-**Empfehlung:**
-
-- Header-ViewModel pro Request aufbauen
-- Post/Page-Datensatz einmal laden und wiederverwenden
+**Status:** weitgehend umgesetzt. Post- und Page-Requests teilen sich jetzt einen gecachten Head-Datensatz (inklusive Seitentitel/-beschreibung/-Bild für Pages), und wiederholt benötigte SEO-/Layout-Settings werden pro Request einmal gebündelt geladen. Ein späterer optionaler Feinschliff wäre höchstens ein formales Head-ViewModel-Objekt statt der aktuellen Helper-/Cache-Schicht.
 
 ##### PERF-03 – globales JavaScript-Bundle für alle Seiten
 
@@ -369,7 +366,7 @@ Das ist praktisch, aber nicht jede Seite braucht alle Features.
 
 ##### PERF-05 – keine Messwerte im Theme selbst verankert
 
-Der ursprüngliche Inline-Style-Befund auf der Startseite ist weitgehend bereinigt: Die Homepage setzt ihre dynamischen Spacing-Werte und Projekt-Logo-Hintergründe jetzt über CSS-Variablen am jeweiligen Element statt über einen Template-`<style>`-Block. Zusätzlich definiert `DOC/PERFORMANCE-BUDGETS.md` jetzt einen verbindlichen Minimalprozess für Zielseiten, Grenzwerte und Review-Dokumentation. Offen bleibt vor allem eine spätere CI-Automatisierung.
+Der ursprüngliche Inline-Style-Befund auf der Startseite ist weitgehend bereinigt: Die Homepage setzt ihre dynamischen Spacing-Werte und Projekt-Logo-Hintergründe jetzt über CSS-Variablen am jeweiligen Element statt über einen Template-`<style>`-Block. Zusätzlich definieren `DOC/PERFORMANCE-BUDGETS.md`, `cms-phinit/lighthouserc.js` und `.github/workflows/cms-phinit-lighthouse.yml` jetzt einen verbindlichen Minimalprozess samt manuell auslösbarer Lighthouse-CI-Schablone. Offen bleibt vor allem die automatische PR-Anbindung an eine stabile Preview-Umgebung.
 
 Es gibt derzeit keinen sichtbaren Prozess für:
 

@@ -79,11 +79,34 @@ Bei größeren Frontend-Änderungen soll im Review oder Commit-Kontext kurz fest
 
 ## Automatisierungspfad
 
-Sobald für das Repository ein reproduzierbarer lokaler Start in CI vorliegt, wird die manuelle Prüfung ergänzt durch:
+Für das Repository existiert jetzt bereits eine **manuell startbare Lighthouse-CI-Schablone** über `.github/workflows/cms-phinit-lighthouse.yml` plus `cms-phinit/lighthouserc.js`.
+
+### Aktueller Workflow-Stand
+
+- Start per **GitHub Actions → workflow_dispatch**
+- benötigt eine echte `baseUrl` auf Preview-/Staging-Umgebung
+- erwartet zusätzlich einen real existierenden `postPath`, damit Einzelbeiträge reproduzierbar gemessen werden
+- führt pro Zielseite **3 Lighthouse-Läufe** aus
+- lädt den LHCI-Ordner als Artefakt hoch und veröffentlicht zusätzlich temporäre Reports
+
+### Pflicht-Inputs für manuelle Läufe
+
+- `baseUrl` – Basis-Domain der Preview/Staging-Site
+- `postPath` – konkreter Pfad eines veröffentlichten Einzelbeitrags
+
+Optionale Inputs:
+
+- `homePath` – Default: `/`
+- `blogPath` – Default: `/blog`
+- `memberSecurityPath` – Default: `/member/security`
+
+### Nächster Ausbauschritt
+
+Sobald für das Repository ein reproduzierbarer lokaler Start in CI oder eine stabile Preview-URL pro Pull Request vorliegt, wird die manuelle Prüfung weiter ausgebaut durch:
 
 1. eine `lighthouserc`-Konfiguration mit den vier Ziel-URLs
 2. wiederholte Läufe mit Median-Auswertung
 3. Budget-Assertions für Performance und ggf. Accessibility
 4. PR-Sichtbarkeit über CI-Berichte
 
-Bis dahin gilt dieses Dokument als verbindlicher Minimalprozess für `PERF-05`.
+Der erste Schritt ist mit der neuen Workflow-/Config-Schablone vorbereitet; offen bleibt vor allem die automatische PR-Anbindung an eine verlässliche Preview-Quelle.

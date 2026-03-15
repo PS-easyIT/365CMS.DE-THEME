@@ -56,30 +56,45 @@ trait CMS_Phinit_Theme_Assets_Trait
         $isBlogListing = $this->isBlogListingRequest($path);
         $isPageExtras = $this->isPageExtrasRequest($path);
         $postSlug = null;
-
-        try {
-            if (class_exists('CMS\Services\PermalinkService')) {
-                $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($path);
-            }
-        } catch (\Throwable) {
-            $postSlug = null;
-        }
-
-        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/(?P<slug>[^/]+)$#', $path, $matches) === 1) {
-            $postSlug = rawurldecode((string) ($matches['slug'] ?? ''));
-        }
-
         $isPost = false;
-        if (is_string($postSlug) && trim($postSlug) !== '') {
+
+        if (method_exists($this, 'getCurrentHeadPost')) {
             try {
-                $db = \CMS\Database::instance();
-                $row = $db->get_row(
-                    "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
-                    [$postSlug]
-                );
-                $isPost = $row !== null;
+                $currentHeadPost = $this->getCurrentHeadPost();
+                if (is_array($currentHeadPost) && !empty($currentHeadPost['slug'])) {
+                    $postSlug = (string) $currentHeadPost['slug'];
+                    $isPost = true;
+                }
             } catch (\Throwable) {
+                $postSlug = null;
                 $isPost = false;
+            }
+        }
+
+        if (!$isPost) {
+            try {
+                if (class_exists('CMS\Services\PermalinkService')) {
+                    $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($path);
+                }
+            } catch (\Throwable) {
+                $postSlug = null;
+            }
+
+            if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/(?P<slug>[^/]+)$#', $path, $matches) === 1) {
+                $postSlug = rawurldecode((string) ($matches['slug'] ?? ''));
+            }
+
+            if (is_string($postSlug) && trim($postSlug) !== '') {
+                try {
+                    $db = \CMS\Database::instance();
+                    $row = $db->get_row(
+                        "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                        [$postSlug]
+                    );
+                    $isPost = $row !== null;
+                } catch (\Throwable) {
+                    $isPost = false;
+                }
             }
         }
 

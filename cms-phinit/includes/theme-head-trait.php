@@ -17,6 +17,121 @@ trait CMS_Phinit_Theme_Head_Trait
         return (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
     }
 
+    /**
+     * @return array{
+     *   meta_robots:string,
+     *   canonical_self:bool,
+     *   og_site_name:string,
+     *   og_type_default:string,
+     *   twitter_card_type:string,
+     *   noindex_search:bool,
+     *   noindex_404:bool,
+     *   structured_data:bool,
+     *   breadcrumb_schema:bool,
+     *   show_breadcrumb:bool,
+     *   breadcrumb_on_posts:bool,
+     *   breadcrumb_on_pages:bool,
+     *   og_default_image:string,
+     *   primary_color:string,
+     *   author_name:string,
+     *   author_avatar_url:string
+     * }
+     */
+    private function getHeadCustomizerSettings(): array
+    {
+        static $resolved = false;
+        static $settings = [
+            'meta_robots' => 'index,follow',
+            'canonical_self' => true,
+            'og_site_name' => '',
+            'og_type_default' => 'website',
+            'twitter_card_type' => 'summary_large_image',
+            'noindex_search' => true,
+            'noindex_404' => true,
+            'structured_data' => true,
+            'breadcrumb_schema' => true,
+            'show_breadcrumb' => true,
+            'breadcrumb_on_posts' => true,
+            'breadcrumb_on_pages' => true,
+            'og_default_image' => '',
+            'primary_color' => '#1e3a5f',
+            'author_name' => '',
+            'author_avatar_url' => '',
+        ];
+
+        if ($resolved) {
+            return $settings;
+        }
+
+        $resolved = true;
+
+        try {
+            $cz = \CMS\Services\ThemeCustomizer::instance();
+        } catch (\Throwable) {
+            return $settings;
+        }
+
+        try {
+            $settings['meta_robots'] = (string) $cz->get('seo', 'meta_robots', $settings['meta_robots']);
+            $settings['canonical_self'] = filter_var($cz->get('seo', 'canonical_self', $settings['canonical_self']), FILTER_VALIDATE_BOOLEAN);
+            $settings['og_site_name'] = (string) $cz->get('seo', 'og_site_name', $settings['og_site_name']);
+            $settings['og_type_default'] = (string) $cz->get('seo', 'og_type_default', $settings['og_type_default']);
+            $settings['twitter_card_type'] = (string) $cz->get('seo', 'twitter_card_type', $settings['twitter_card_type']);
+            $settings['noindex_search'] = filter_var($cz->get('seo', 'noindex_search', $settings['noindex_search']), FILTER_VALIDATE_BOOLEAN);
+            $settings['noindex_404'] = filter_var($cz->get('seo', 'noindex_404', $settings['noindex_404']), FILTER_VALIDATE_BOOLEAN);
+            $settings['structured_data'] = filter_var($cz->get('seo', 'structured_data', $settings['structured_data']), FILTER_VALIDATE_BOOLEAN);
+            $settings['breadcrumb_schema'] = filter_var($cz->get('seo', 'breadcrumb_schema', $settings['breadcrumb_schema']), FILTER_VALIDATE_BOOLEAN);
+            $settings['show_breadcrumb'] = filter_var($cz->get('layout', 'show_breadcrumb', $settings['show_breadcrumb']), FILTER_VALIDATE_BOOLEAN);
+            $settings['breadcrumb_on_posts'] = filter_var($cz->get('layout', 'breadcrumb_on_posts', $settings['breadcrumb_on_posts']), FILTER_VALIDATE_BOOLEAN);
+            $settings['breadcrumb_on_pages'] = filter_var($cz->get('layout', 'breadcrumb_on_pages', $settings['breadcrumb_on_pages']), FILTER_VALIDATE_BOOLEAN);
+            $settings['og_default_image'] = (string) $cz->get('advanced', 'og_default_image', $settings['og_default_image']);
+            $settings['primary_color'] = (string) $cz->get('colors', 'primary_color', $settings['primary_color']);
+            $settings['author_name'] = (string) $cz->get('posts', 'author_name', $settings['author_name']);
+            $settings['author_avatar_url'] = (string) $cz->get('posts', 'author_avatar_url', $settings['author_avatar_url']);
+        } catch (\Throwable) {
+        }
+
+        return $settings;
+    }
+
+    private function buildHeadDescription(string $fallback, ?string $excerpt = null, ?string $content = null, int $limit = 200): string
+    {
+        $candidate = trim((string) $excerpt);
+        if ($candidate === '') {
+            $candidate = trim(strip_tags((string) $content));
+        }
+
+        if ($candidate === '') {
+            $candidate = trim($fallback);
+        }
+
+        return mb_substr($candidate, 0, $limit);
+    }
+
+    private function resolveHeadPostSlug(?string $path = null): ?string
+    {
+        $resolvedPath = $path ?? $this->getHeadRequestPath();
+        $postSlug = null;
+
+        try {
+            if (class_exists('CMS\Services\PermalinkService')) {
+                $postSlug = \CMS\Services\PermalinkService::getInstance()->extractPostSlugFromPath($resolvedPath);
+            }
+        } catch (\Throwable) {
+            $postSlug = null;
+        }
+
+        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/([\w-]+)$#', $resolvedPath, $matches) === 1) {
+            $postSlug = (string) ($matches[1] ?? '');
+        }
+
+        if (!is_string($postSlug) || trim($postSlug) === '') {
+            return null;
+        }
+
+        return trim($postSlug);
+    }
+
     private function getCurrentHeadPost(): ?array
     {
         if ($this->currentHeadPostResolved) {
@@ -27,18 +142,7 @@ trait CMS_Phinit_Theme_Head_Trait
         $this->currentHeadPostCache = null;
 
         $path = $this->getHeadRequestPath();
-        $postSlug = null;
-
-        if (method_exists($this, 'getRequestContext')) {
-            $context = $this->getRequestContext();
-            if (!empty($context['isPost'])) {
-                $postSlug = $context['postSlug'] ?? null;
-            }
-        }
-
-        if (($postSlug === null || $postSlug === '') && preg_match('#^/blog/([\w-]+)$#', $path, $matches) === 1) {
-            $postSlug = (string) ($matches[1] ?? '');
-        }
+        $postSlug = $this->resolveHeadPostSlug($path);
 
         if (!is_string($postSlug) || trim($postSlug) === '') {
             return null;
@@ -64,17 +168,30 @@ trait CMS_Phinit_Theme_Head_Trait
         return $this->currentHeadPostCache;
     }
 
-    private function getCurrentHeadPageTitle(): ?string
+    private function getCurrentHeadPage(): ?array
     {
-        if ($this->currentHeadPageTitleResolved) {
-            return $this->currentHeadPageTitleCache;
+        static $resolved = false;
+        static $cache = null;
+
+        if ($resolved) {
+            return $cache;
         }
 
-        $this->currentHeadPageTitleResolved = true;
-        $this->currentHeadPageTitleCache = null;
+        $resolved = true;
+        $cache = null;
 
-        $path = $this->getHeadRequestPath();
-        $slug = ltrim($path, '/');
+        $slug = '';
+        if (method_exists($this, 'getRequestContext')) {
+            $context = $this->getRequestContext();
+            if (empty($context['isPageDetail']) || !empty($context['isPost'])) {
+                return null;
+            }
+
+            $slug = trim((string) ($context['path'] ?? ''), '/');
+        } else {
+            $slug = trim($this->getHeadRequestPath(), '/');
+        }
+
         if ($slug === '' || str_contains($slug, '/')) {
             return null;
         }
@@ -87,14 +204,34 @@ trait CMS_Phinit_Theme_Head_Trait
         try {
             $db = \CMS\Database::instance();
             $prefix = $db->prefix();
-            $title = $db->get_var(
-                "SELECT title FROM {$prefix}pages WHERE slug = ? AND status = 'published' LIMIT 1",
+            $row = $db->get_row(
+                "SELECT slug, title, excerpt, content, featured_image, updated_at
+                 FROM {$prefix}pages
+                 WHERE slug = ? AND status = 'published' LIMIT 1",
                 [$slug]
             );
-            $this->currentHeadPageTitleCache = $title ? phinit_display_text((string) $title) : null;
+
+            $cache = $row ? (array) $row : null;
         } catch (\Throwable) {
-            $this->currentHeadPageTitleCache = null;
+            $cache = null;
         }
+
+        return $cache;
+    }
+
+    private function getCurrentHeadPageTitle(): ?string
+    {
+        if ($this->currentHeadPageTitleResolved) {
+            return $this->currentHeadPageTitleCache;
+        }
+
+        $this->currentHeadPageTitleResolved = true;
+        $this->currentHeadPageTitleCache = null;
+
+        $currentPage = $this->getCurrentHeadPage();
+        $this->currentHeadPageTitleCache = is_array($currentPage)
+            ? phinit_display_text((string) ($currentPage['title'] ?? ''))
+            : null;
 
         return $this->currentHeadPageTitleCache;
     }
@@ -106,6 +243,8 @@ trait CMS_Phinit_Theme_Head_Trait
         $sitDesc = $tm->getSiteDescription() ?? '';
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
         $uri = $this->getHeadRequestPath();
+        $settings = $this->getHeadCustomizerSettings();
+        $currentPage = $this->getCurrentHeadPage();
 
         $ogTitle = $siteTitle;
         $ogDesc = $sitDesc;
@@ -113,59 +252,46 @@ trait CMS_Phinit_Theme_Head_Trait
         $ogType = 'website';
         $canonical = $siteUrl . $uri;
 
-        $cz = null;
-        try {
-            $cz = \CMS\Services\ThemeCustomizer::instance();
-        } catch (\Throwable) {
-        }
-
-        $metaRobots = $cz ? (string) $cz->get('seo', 'meta_robots', 'index,follow') : 'index,follow';
-        $canonicalSelf = $cz ? filter_var($cz->get('seo', 'canonical_self', true), FILTER_VALIDATE_BOOLEAN) : true;
-        $ogSiteName = $cz ? (string) $cz->get('seo', 'og_site_name', '') : '';
-        $ogTypeDefault = $cz ? (string) $cz->get('seo', 'og_type_default', 'website') : 'website';
-        $twitterCard = $cz ? (string) $cz->get('seo', 'twitter_card_type', 'summary_large_image') : 'summary_large_image';
-        $noindexSearch = $cz ? filter_var($cz->get('seo', 'noindex_search', true), FILTER_VALIDATE_BOOLEAN) : true;
-        $noindex404 = $cz ? filter_var($cz->get('seo', 'noindex_404', true), FILTER_VALIDATE_BOOLEAN) : true;
-
-        $ogType = $ogTypeDefault;
+        $metaRobots = $settings['meta_robots'];
+        $canonicalSelf = $settings['canonical_self'];
+        $ogType = $settings['og_type_default'];
 
         $httpCode = http_response_code();
-        if ($noindex404 && $httpCode === 404) {
+        if ($settings['noindex_404'] && $httpCode === 404) {
             $metaRobots = 'noindex,follow';
-        } elseif ($noindexSearch && $uri === '/search') {
+        } elseif ($settings['noindex_search'] && $uri === '/search') {
             $metaRobots = 'noindex,follow';
         }
 
         $currentPost = $this->getCurrentHeadPost();
         if (is_array($currentPost)) {
             $ogTitle = ((string) ($currentPost['title'] ?? '')) . ' – ' . $siteTitle;
-            $ogDesc = mb_substr(function_exists('phinit_excerpt_plain_text') ? phinit_excerpt_plain_text((string) ($currentPost['excerpt'] ?? '')) : strip_tags((string) ($currentPost['excerpt'] ?? '')), 0, 200);
-            if (empty($ogDesc)) {
-                $ogDesc = mb_substr($sitDesc, 0, 200);
-            }
+            $postExcerpt = function_exists('phinit_excerpt_plain_text')
+                ? phinit_excerpt_plain_text((string) ($currentPost['excerpt'] ?? ''))
+                : strip_tags((string) ($currentPost['excerpt'] ?? ''));
+            $ogDesc = $this->buildHeadDescription($sitDesc, $postExcerpt, null);
             $ogImg = (string) ($currentPost['featured_image'] ?? '');
             $ogType = 'article';
-        }
-
-        if (empty($ogImg) && $cz) {
-            try {
-                $ogImg = (string) $cz->get('advanced', 'og_default_image', '');
-            } catch (\Throwable) {
+        } elseif (is_array($currentPage)) {
+            $pageTitle = phinit_display_text((string) ($currentPage['title'] ?? ''));
+            if ($pageTitle !== '') {
+                $ogTitle = $pageTitle . ' – ' . $siteTitle;
             }
+            $ogDesc = $this->buildHeadDescription(
+                $sitDesc,
+                (string) ($currentPage['excerpt'] ?? ''),
+                (string) ($currentPage['content'] ?? '')
+            );
+            $ogImg = (string) ($currentPage['featured_image'] ?? '');
         }
 
-        $themeColor = '#1e3a5f';
-        try {
-            if ($cz) {
-                $tc = $cz->get('colors', 'primary_color', '#1e3a5f');
-                if (!empty($tc)) {
-                    $themeColor = $tc;
-                }
-            }
-        } catch (\Throwable) {
+        if (empty($ogImg)) {
+            $ogImg = $settings['og_default_image'];
         }
 
-        $ogSiteFinal = !empty($ogSiteName) ? $ogSiteName : $siteTitle;
+        $themeColor = $settings['primary_color'] !== '' ? $settings['primary_color'] : '#1e3a5f';
+
+        $ogSiteFinal = !empty($settings['og_site_name']) ? $settings['og_site_name'] : $siteTitle;
 
         echo '<meta name="description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
         echo '<meta name="robots" content="' . htmlspecialchars($metaRobots, ENT_QUOTES) . '">' . "\n";
@@ -184,6 +310,7 @@ trait CMS_Phinit_Theme_Head_Trait
             echo '<meta property="og:image" content="' . htmlspecialchars($ogImg, ENT_QUOTES) . '">' . "\n";
         }
 
+        $twitterCard = $settings['twitter_card_type'];
         $twitterCardFinal = (!empty($ogImg) && $twitterCard === 'summary_large_image') ? 'summary_large_image' : $twitterCard;
         echo '<meta name="twitter:card" content="' . htmlspecialchars($twitterCardFinal, ENT_QUOTES) . '">' . "\n";
         echo '<meta name="twitter:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
@@ -195,11 +322,9 @@ trait CMS_Phinit_Theme_Head_Trait
 
     public function outputSchemaOrg(): void
     {
-        try {
-            if (!filter_var(\CMS\Services\ThemeCustomizer::instance()->get('seo', 'structured_data', true), FILTER_VALIDATE_BOOLEAN)) {
-                return;
-            }
-        } catch (\Throwable) {
+        $settings = $this->getHeadCustomizerSettings();
+        if (!$settings['structured_data']) {
+            return;
         }
 
         $tm = \CMS\ThemeManager::instance();
@@ -207,6 +332,7 @@ trait CMS_Phinit_Theme_Head_Trait
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
         $uri = $this->getHeadRequestPath();
 
+        $currentPage = $this->getCurrentHeadPage();
         $webSite = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
@@ -221,18 +347,40 @@ trait CMS_Phinit_Theme_Head_Trait
         echo '<script type="application/ld+json">' . json_encode($webSite, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
 
         $currentPost = $this->getCurrentHeadPost();
-        if (!is_array($currentPost)) {
+        if (!is_array($currentPost) && !is_array($currentPage)) {
             return;
         }
-        try {
-            $cz = null;
-            try {
-                $cz = \CMS\Services\ThemeCustomizer::instance();
-            } catch (\Throwable) {
+
+        if (is_array($currentPage) && !is_array($currentPost)) {
+            $pageSchema = [
+                '@context' => 'https://schema.org',
+                '@type' => 'WebPage',
+                'name' => (string) ($currentPage['title'] ?? ''),
+                'headline' => (string) ($currentPage['title'] ?? ''),
+                'description' => $this->buildHeadDescription(
+                    '',
+                    (string) ($currentPage['excerpt'] ?? ''),
+                    (string) ($currentPage['content'] ?? '')
+                ),
+                'url' => $siteUrl . $uri,
+            ];
+
+            if (!empty($currentPage['updated_at'])) {
+                $pageSchema['dateModified'] = (string) $currentPage['updated_at'];
             }
-            $authorName = $currentPost['author_name'] ?? ($cz ? (string) $cz->get('posts', 'author_name', '') : '');
-            $authorAvatar = $cz ? (string) $cz->get('posts', 'author_avatar_url', '') : '';
-            $orgImg = $cz ? (string) $cz->get('advanced', 'og_default_image', '') : '';
+
+            if (!empty($currentPage['featured_image'])) {
+                $pageSchema['image'] = (string) $currentPage['featured_image'];
+            }
+
+            echo '<script type="application/ld+json">' . json_encode($pageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+            return;
+        }
+
+        try {
+            $authorName = $currentPost['author_name'] ?? $settings['author_name'];
+            $authorAvatar = $settings['author_avatar_url'];
+            $orgImg = $settings['og_default_image'];
             $publisher = ['@type' => 'Organization', 'name' => $siteTitle];
             if (!empty($orgImg)) {
                 $publisher['logo'] = ['@type' => 'ImageObject', 'url' => $orgImg];
@@ -267,18 +415,13 @@ trait CMS_Phinit_Theme_Head_Trait
             return;
         }
 
-        try {
-            $c = \CMS\Services\ThemeCustomizer::instance();
-            $show = filter_var($c->get('layout', 'show_breadcrumb', true), FILTER_VALIDATE_BOOLEAN);
-            if (!$show) {
-                return;
-            }
-            $onPosts = filter_var($c->get('layout', 'breadcrumb_on_posts', true), FILTER_VALIDATE_BOOLEAN);
-            $onPages = filter_var($c->get('layout', 'breadcrumb_on_pages', true), FILTER_VALIDATE_BOOLEAN);
-        } catch (\Throwable) {
-            $onPosts = true;
-            $onPages = true;
+        $settings = $this->getHeadCustomizerSettings();
+        if (!$settings['show_breadcrumb']) {
+            return;
         }
+
+        $onPosts = $settings['breadcrumb_on_posts'];
+        $onPages = $settings['breadcrumb_on_pages'];
 
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
         $uri = $this->getHeadRequestPath();
@@ -350,12 +493,7 @@ trait CMS_Phinit_Theme_Head_Trait
             $ldItems[] = ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $c['label'], 'item' => $c['url']];
         }
         $ldItems[] = ['@type' => 'ListItem', 'position' => count($ldItems) + 1, 'name' => strip_tags($title), 'item' => $siteUrl . $uri];
-        $bcSchema = true;
-        try {
-            $bcSchema = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('seo', 'breadcrumb_schema', true), FILTER_VALIDATE_BOOLEAN);
-        } catch (\Throwable) {
-        }
-        if ($bcSchema) {
+        if ($settings['breadcrumb_schema']) {
             echo '<script type="application/ld+json">' . json_encode(
                 ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $ldItems],
                 JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
