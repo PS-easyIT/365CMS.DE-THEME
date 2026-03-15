@@ -167,9 +167,55 @@
         const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
         if (!dropdowns.length) return;
 
-        const closeAll = (except = null) => {
+        const getImmediateDropdownPanel = (dropdown) => {
+            return Array.from(dropdown.children).find((child) => child.classList && child.classList.contains('dropdown')) || null;
+        };
+
+        const getAncestorPath = (dropdown) => {
+            const path = [];
+            let current = dropdown;
+
+            while (current) {
+                path.push(current);
+                current = current.parentElement ? current.parentElement.closest('[data-nav-dropdown]') : null;
+            }
+
+            return path;
+        };
+
+        const updateDropdownAlignment = (dropdown) => {
+            const panel = getImmediateDropdownPanel(dropdown);
+            if (!(panel instanceof HTMLElement)) {
+                return;
+            }
+
+            dropdown.classList.remove('is-align-left', 'is-align-end');
+
+            const dropdownDepth = Number.parseInt(dropdown.dataset.navDepth || '0', 10);
+            const dropdownRect = dropdown.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            const panelWidth = panelRect.width || panel.offsetWidth || 240;
+
+            if (dropdownDepth <= 0) {
+                if (dropdownRect.left + panelWidth > window.innerWidth - 16) {
+                    dropdown.classList.add('is-align-end');
+                }
+
+                return;
+            }
+
+            const spaceRight = window.innerWidth - dropdownRect.right;
+            const spaceLeft = dropdownRect.left;
+            if (spaceRight < panelWidth && spaceLeft > spaceRight) {
+                dropdown.classList.add('is-align-left');
+            }
+        };
+
+        const closeAll = (exceptions = []) => {
+            const keepOpen = new Set(Array.isArray(exceptions) ? exceptions : [exceptions]);
+
             dropdowns.forEach((dropdown) => {
-                if (except !== null && dropdown === except) {
+                if (keepOpen.has(dropdown)) {
                     return;
                 }
 
@@ -185,16 +231,32 @@
             const toggle = dropdown.querySelector('.main-nav__toggle');
             if (!toggle) return;
 
+            dropdown.addEventListener('mouseenter', () => {
+                updateDropdownAlignment(dropdown);
+            });
+
+            dropdown.addEventListener('focusin', () => {
+                updateDropdownAlignment(dropdown);
+            });
+
             toggle.addEventListener('click', (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
                 const willOpen = !dropdown.classList.contains('is-open');
-                closeAll(dropdown);
+                const keepOpen = willOpen ? getAncestorPath(dropdown) : getAncestorPath(dropdown).slice(1);
+                updateDropdownAlignment(dropdown);
+                closeAll(keepOpen);
                 dropdown.classList.toggle('is-open', willOpen);
                 toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
             });
         });
+
+        window.addEventListener('resize', () => {
+            dropdowns.forEach((dropdown) => {
+                updateDropdownAlignment(dropdown);
+            });
+        }, { passive: true });
 
         document.addEventListener('click', (event) => {
             const target = event.target;
@@ -274,13 +336,49 @@
 
     /* ── Scroll Animations (IntersectionObserver) ──────────────── */
     function initScrollAnimations() {
-        const els = document.querySelectorAll('[data-anim]');
+        const els = Array.from(document.querySelectorAll('[data-anim]'));
         if (!els.length) return;
+
+        const revealElement = (element) => {
+            element.classList.add('is-visible');
+        };
+
+        const isInitiallyVisible = (element) => {
+            const rect = element.getBoundingClientRect();
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+            const revealOffset = 40;
+
+            return rect.bottom >= 0 && rect.top <= Math.max(revealOffset, viewportHeight - revealOffset);
+        };
+
+        const initiallyVisibleElements = els.filter((element) => isInitiallyVisible(element));
+        initiallyVisibleElements.forEach(revealElement);
+
+        const remainingElements = els.filter((element) => !element.classList.contains('is-visible'));
+        if (!remainingElements.length) {
+            return;
+        }
+
+        if (typeof window.IntersectionObserver !== 'function') {
+            remainingElements.forEach(revealElement);
+            return;
+        }
+
         const observer = new IntersectionObserver(
-            (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } }),
+            (entries) => entries.forEach(e => { if (e.isIntersecting) { revealElement(e.target); observer.unobserve(e.target); } }),
             { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
         );
-        els.forEach(el => observer.observe(el));
+
+        remainingElements.forEach(el => observer.observe(el));
+
+        window.requestAnimationFrame(() => {
+            remainingElements.forEach((element) => {
+                if (!element.classList.contains('is-visible') && isInitiallyVisible(element)) {
+                    revealElement(element);
+                    observer.unobserve(element);
+                }
+            });
+        });
     }
 
     /* ── Active Nav Link ───────────────────────────────────────── */

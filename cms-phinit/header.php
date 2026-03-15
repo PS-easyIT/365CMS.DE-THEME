@@ -168,6 +168,7 @@ try {
 
 $_languageSwitchUrl = '';
 $_languageSwitchDisplay = '';
+$_languageSwitchHeaderDisplay = '';
 if ($_showLanguageSwitch) {
     $normalizeLanguageLabel = static function (string $label, string $targetLocale): string {
         $normalized = strtoupper(trim($label));
@@ -210,10 +211,12 @@ if ($_showLanguageSwitch) {
         $_languageSwitchDisplay = $_languageMode === 'flag'
             ? $flagToEmoji('de')
             : $normalizeLanguageLabel('DE', $_switchTargetLocale);
+        $_languageSwitchHeaderDisplay = $flagToEmoji('de');
     } else {
         $_languageSwitchDisplay = $_languageMode === 'flag'
             ? $flagToEmoji($_languageFlag)
             : $normalizeLanguageLabel($_languageLabel !== '' ? $_languageLabel : strtoupper(trim($_switchTargetLocale)), $_switchTargetLocale);
+        $_languageSwitchHeaderDisplay = $flagToEmoji($_languageFlag);
     }
 }
 ?>
@@ -362,63 +365,103 @@ if ($_showLanguageSwitch) {
                 if ($candidate === '/') { return $_navUri === '/'; }
                 return $_navUri === $candidate || str_starts_with($_navUri, rtrim($candidate, '/') . '/');
             };
-            $navItemHasActiveBranch = static function (array $item) use ($navIsActive): bool {
+            $navItemHasActiveBranch = static function (array $item) use ($navIsActive, &$navItemHasActiveBranch): bool {
                 if ($navIsActive((string) ($item['url'] ?? ''))) {
                     return true;
                 }
 
                 foreach (($item['children'] ?? []) as $child) {
-                    if (is_array($child) && $navIsActive((string) ($child['url'] ?? ''))) {
+                    if (is_array($child) && $navItemHasActiveBranch($child)) {
                         return true;
                     }
                 }
 
                 return false;
             };
-            ?>
-            <nav class="main-nav" aria-label="<?php echo htmlspecialchars(phinit_t('main_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
-                    <?php if (!empty($mainMenuItems)): ?>
-                        <?php foreach ($mainMenuItems as $index => $item): ?>
-                            <?php
-                            $itemUrl = (string) ($item['url'] ?? '#');
-                            $itemHref = $_localizedHref($itemUrl);
-                            $itemLabel = (string) ($item['label'] ?? '');
-                            $itemChildren = is_array($item['children'] ?? null) ? $item['children'] : [];
-                            $itemIsCurrent = $navIsActive($itemUrl);
-                            $itemIsActiveBranch = $navItemHasActiveBranch($item);
-                            ?>
-                            <?php if (!empty($item['children'])): ?>
-                            <div class="has-dropdown<?php echo $itemIsActiveBranch ? ' is-active-branch' : ''; ?>" data-nav-dropdown>
-                                <div class="main-nav__item-head">
-                                          <a href="<?php echo htmlspecialchars($itemHref, ENT_QUOTES); ?>"
-                                   class="main-nav__link<?php echo $itemIsActiveBranch ? ' active' : ''; ?>"
-                                   <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?>>
+            $dropdownIndex = 0;
+            $renderDesktopMenuItems = static function (array $items, int $depth = 0) use (&$renderDesktopMenuItems, $navIsActive, $navItemHasActiveBranch, $_localizedHref, $_currentLocale, &$dropdownIndex): void {
+                foreach ($items as $item) {
+                    if (!is_array($item)) {
+                        continue;
+                    }
+
+                    $itemUrl = (string) ($item['url'] ?? '#');
+                    $itemHref = $_localizedHref($itemUrl);
+                    $itemLabel = trim((string) ($item['label'] ?? ''));
+                    $itemChildren = is_array($item['children'] ?? null) ? $item['children'] : [];
+                    $itemIsCurrent = $navIsActive($itemUrl);
+                    $itemIsActiveBranch = $navItemHasActiveBranch($item);
+                    $linkClass = 'main-nav__link' . ($itemIsActiveBranch ? ' active' : '') . ($depth > 0 ? ' main-nav__link--submenu' : '');
+                    $target = ((string) ($item['target'] ?? '_self')) === '_blank' ? '_blank' : '_self';
+                    $targetAttributes = $target === '_blank' ? ' target="_blank" rel="noopener noreferrer"' : '';
+
+                    if ($itemLabel === '') {
+                        continue;
+                    }
+
+                    if ($itemChildren !== []) {
+                        $dropdownIndex++;
+                        ?>
+                        <div class="has-dropdown<?php echo $depth > 0 ? ' has-dropdown--nested' : ''; ?><?php echo $itemIsActiveBranch ? ' is-active-branch' : ''; ?>" data-nav-dropdown data-nav-depth="<?php echo (int) $depth; ?>">
+                            <div class="main-nav__item-head">
+                                <a href="<?php echo htmlspecialchars($itemHref, ENT_QUOTES); ?>"
+                                   class="<?php echo htmlspecialchars($linkClass, ENT_QUOTES); ?>"
+                                   <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?><?php echo $targetAttributes; ?>>
                                     <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
                                 </a>
                                 <button type="button"
-                                        class="main-nav__toggle<?php echo $itemIsActiveBranch ? ' active' : ''; ?>"
+                                        class="main-nav__toggle<?php echo $itemIsActiveBranch ? ' active' : ''; ?><?php echo $depth > 0 ? ' main-nav__toggle--submenu' : ''; ?>"
                                         aria-expanded="false"
                                         aria-haspopup="true"
-                                        aria-controls="main-nav-dropdown-<?php echo (int) $index; ?>"
+                                        aria-controls="main-nav-dropdown-<?php echo (int) $dropdownIndex; ?>"
                                         aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => $itemLabel], $_currentLocale), ENT_QUOTES); ?>">
-                                    <span aria-hidden="true">▾</span>
+                                    <span aria-hidden="true"><?php echo $depth > 0 ? '▸' : '▾'; ?></span>
                                 </button>
-                                </div>
-                                <div class="dropdown" id="main-nav-dropdown-<?php echo (int) $index; ?>">
-                                    <?php foreach ($itemChildren as $child): ?>
-                                                <a href="<?php echo htmlspecialchars($_localizedHref((string) ($child['url'] ?? '#')), ENT_QUOTES); ?>"
-                                       <?php echo $navIsActive($child['url'] ?? '') ? ' class="active" aria-current="page"' : ''; ?>><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
-                                    <?php endforeach; ?>
-                                </div>
                             </div>
-                            <?php else: ?>
-                                     <a href="<?php echo htmlspecialchars($itemHref, ENT_QUOTES); ?>"
-                               class="main-nav__link<?php echo $itemIsCurrent ? ' active' : ''; ?>"
-                               <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?>>
-                                <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
-                            </a>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
+                            <div class="dropdown dropdown--level-<?php echo (int) ($depth + 1); ?>" id="main-nav-dropdown-<?php echo (int) $dropdownIndex; ?>">
+                                <?php $renderDesktopMenuItems($itemChildren, $depth + 1); ?>
+                            </div>
+                        </div>
+                        <?php
+                        continue;
+                    }
+                    ?>
+                    <a href="<?php echo htmlspecialchars($itemHref, ENT_QUOTES); ?>"
+                       class="<?php echo htmlspecialchars($linkClass, ENT_QUOTES); ?>"
+                       <?php echo $itemIsCurrent ? ' aria-current="page"' : ''; ?><?php echo $targetAttributes; ?>>
+                        <?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?>
+                    </a>
+                    <?php
+                }
+            };
+            $renderMobileMenuItems = static function (array $items, int $depth = 0) use (&$renderMobileMenuItems, $_localizedHref): void {
+                foreach ($items as $item) {
+                    if (!is_array($item)) {
+                        continue;
+                    }
+
+                    $itemLabel = trim((string) ($item['label'] ?? ''));
+                    if ($itemLabel === '') {
+                        continue;
+                    }
+
+                    $target = ((string) ($item['target'] ?? '_self')) === '_blank' ? '_blank' : '_self';
+                    $targetAttributes = $target === '_blank' ? ' target="_blank" rel="noopener noreferrer"' : '';
+                    $depthClass = $depth > 0 ? ' mobile-menu__child mobile-menu__child--depth-' . min($depth, 4) : '';
+                    ?>
+                    <a href="<?php echo htmlspecialchars($_localizedHref((string) ($item['url'] ?? '#')), ENT_QUOTES); ?>" class="<?php echo htmlspecialchars(trim($depthClass), ENT_QUOTES); ?>"<?php echo $targetAttributes; ?>><?php echo htmlspecialchars($itemLabel, ENT_QUOTES); ?></a>
+                    <?php
+
+                    $children = is_array($item['children'] ?? null) ? $item['children'] : [];
+                    if ($children !== []) {
+                        $renderMobileMenuItems($children, $depth + 1);
+                    }
+                }
+            };
+            ?>
+            <nav class="main-nav" aria-label="<?php echo htmlspecialchars(phinit_t('main_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
+                    <?php if (!empty($mainMenuItems)): ?>
+                        <?php $renderDesktopMenuItems($mainMenuItems); ?>
                     <?php else: ?>
                         <!-- Fallback-Menü -->
                         <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
@@ -448,12 +491,36 @@ if ($_showLanguageSwitch) {
 
             <!-- Header-Tools (rechts, in Bar 2) -->
             <div class="hdr-tools">
+                <?php if ($_showDarkMode || ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== '')): ?>
+                <div class="hdr-tools__toggles" aria-label="<?php echo htmlspecialchars(phinit_t('header_controls', [], $_currentLocale), ENT_QUOTES); ?>">
+                    <?php if ($_showDarkMode): ?>
+                    <button class="util-link util-dark-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode">🌙</button>
+                    <?php endif; ?>
+
+                    <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchHeaderDisplay !== ''): ?>
+                    <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>"
+                       class="util-link util-language-switch util-language-switch--flag"
+                       aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>"
+                       title="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
+                        <span class="util-language-switch__value" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchHeaderDisplay, ENT_QUOTES); ?></span>
+                    </a>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
                 <?php if ($_showSearch): ?>
                 <form class="hdr-search" role="search" method="GET" action="<?php echo htmlspecialchars(rtrim($siteUrl, '/') . $_localizedPath('/search', $_currentLocale), ENT_QUOTES); ?>">
                     <input type="search" name="q" placeholder="<?php echo htmlspecialchars($_headerSearchPlaceholder, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars(phinit_t('search_term_input', [], $_currentLocale), ENT_QUOTES); ?>">
                     <button type="submit" aria-label="<?php echo htmlspecialchars(phinit_t('search_start', [], $_currentLocale), ENT_QUOTES); ?>">🔍</button>
                 </form>
                 <?php endif; ?>
+
+                <a href="<?php echo htmlspecialchars($isLoggedIn ? $siteUrl . '/member/dashboard' : $siteUrl . '/login', ENT_QUOTES); ?>"
+                   class="util-link util-login-link"
+                   aria-label="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"
+                   title="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>">
+                    <span aria-hidden="true"><?php echo $isLoggedIn ? '👤' : '🔑'; ?></span>
+                </a>
 
                 <button class="burger-btn" id="burger-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('menu_open', [], $_currentLocale), ENT_QUOTES); ?>" aria-expanded="false" aria-controls="mobile-menu">
                     <span></span>
@@ -473,14 +540,7 @@ if ($_showLanguageSwitch) {
                 </form>
             </div>
             <?php if (!empty($mainMenuItems)): ?>
-                <?php foreach ($mainMenuItems as $item): ?>
-                <a href="<?php echo htmlspecialchars($_localizedHref((string) ($item['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($item['label'] ?? '', ENT_QUOTES); ?></a>
-                    <?php if (!empty($item['children'])): ?>
-                        <?php foreach ($item['children'] as $child): ?>
-                        <a href="<?php echo htmlspecialchars($_localizedHref((string) ($child['url'] ?? '#')), ENT_QUOTES); ?>" class="mobile-menu__child"><?php echo htmlspecialchars($child['label'] ?? '', ENT_QUOTES); ?></a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                <?php $renderMobileMenuItems($mainMenuItems); ?>
             <?php else: ?>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>">Linux / BASH</a>
@@ -519,22 +579,6 @@ if ($_showLanguageSwitch) {
                             <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/exchange', $_currentLocale), ENT_QUOTES); ?>">Exchange</a>
                         <?php endif; ?>
                     </nav>
-                    <?php if ($_showDarkMode || ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== '')): ?>
-                    <div class="quicklinks-tools" aria-label="<?php echo htmlspecialchars(phinit_t('header_controls', [], $_currentLocale), ENT_QUOTES); ?>">
-                        <?php if ($_showDarkMode): ?>
-                        <button class="quicklinks-tool quicklinks-tool--icon util-dark-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode">🌙</button>
-                        <?php endif; ?>
-
-                        <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
-                        <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>"
-                           class="quicklinks-tool quicklinks-tool--language util-language-switch util-language-switch--<?php echo $_languageMode === 'flag' ? 'flag' : 'text'; ?>"
-                           aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>"
-                           title="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
-                            <span class="util-language-switch__value" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
-                        </a>
-                        <?php endif; ?>
-                    </div>
-                    <?php endif; ?>
         </div>
     </div>
     <?php endif; /* $_showQuicklinks */ ?>

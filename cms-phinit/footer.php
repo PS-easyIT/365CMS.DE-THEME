@@ -187,17 +187,6 @@ try {
                         </a>
                         </div>
                         <?php endif; ?>
-                        <a href="<?php echo htmlspecialchars($_footerAccountUrl, ENT_QUOTES); ?>"
-                           class="footer-account-link<?php echo $isLoggedIn ? ' footer-account-link--member' : ' footer-account-link--login'; ?>"
-                           aria-label="<?php echo htmlspecialchars($_footerAccountLabel, ENT_QUOTES); ?>"
-                           title="<?php echo htmlspecialchars($_footerAccountTitle, ENT_QUOTES); ?>">
-                            <?php if ($isLoggedIn): ?>
-                            <span aria-hidden="true">👤</span>
-                            <?php else: ?>
-                            <span aria-hidden="true">🔑</span>
-                            <span><?php echo htmlspecialchars($_footerAccountLabel, ENT_QUOTES); ?></span>
-                            <?php endif; ?>
-                        </a>
                     </div>
                 </div>
 
