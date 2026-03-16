@@ -55,8 +55,23 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $path = $this->getRequestPath();
         $isAuthOrMember = $this->isAuthOrMemberRequest($path);
-        $isBlogListing = $this->isBlogListingRequest($path);
         $isPageExtras = $this->isPageExtrasRequest($path);
+        $isRootHubDomain = false;
+
+        if ($path === '/' && !$isAuthOrMember && !$isPageExtras) {
+            try {
+                $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
+                if ($host !== '') {
+                    $siteTableService = \CMS\Services\SiteTableService::getInstance();
+                    $isRootHubDomain = $siteTableService->getHubPageByDomain($host, 'de') !== null
+                        || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+                }
+            } catch (\Throwable) {
+                $isRootHubDomain = false;
+            }
+        }
+
+        $isBlogListing = !$isRootHubDomain && $this->isBlogListingRequest($path);
         $postSlug = null;
         $isPost = false;
 
@@ -101,14 +116,23 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
 
         $isHubSite = false;
-        if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras && $path !== '/') {
-            $slug = trim($path, '/');
-            if ($slug !== '' && !str_contains($slug, '/')) {
-                try {
-                    $isHubSite = \CMS\Services\SiteTableService::getInstance()->hubExistsBySlug($slug);
-                } catch (\Throwable) {
-                    $isHubSite = false;
+        if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras) {
+            try {
+                $siteTableService = \CMS\Services\SiteTableService::getInstance();
+                if ($path === '/') {
+                    $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
+                    if ($host !== '') {
+                        $isHubSite = $siteTableService->getHubPageByDomain($host, 'de') !== null
+                            || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+                    }
+                } else {
+                    $slug = trim($path, '/');
+                    if ($slug !== '' && !str_contains($slug, '/')) {
+                        $isHubSite = $siteTableService->hubExistsBySlug($slug);
+                    }
                 }
+            } catch (\Throwable) {
+                $isHubSite = false;
             }
         }
 
