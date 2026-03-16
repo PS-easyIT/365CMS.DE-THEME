@@ -1227,6 +1227,16 @@ body.dark-mode .auth-site-name { color: var(--text-white); }
 .member-card-link { font-size: .8rem; color: var(--accent-teal); font-weight: 500; }
 .member-card-link:hover { text-decoration: underline; }
 
+.member-dashboard-feature-card--m365 {
+    border-color: var(--member-dashboard-feature-border, rgba(37, 99, 235, 0.16));
+    background: linear-gradient(135deg, var(--member-dashboard-feature-soft, rgba(37, 99, 235, 0.08)), rgba(13, 148, 136, 0.05)), var(--bg-primary);
+}
+
+.member-dashboard-feature-card--m365 p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
 /* Grids */
 .member-grid-2 {
     display: grid; grid-template-columns: 1fr 1fr;

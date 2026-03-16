@@ -224,6 +224,41 @@ $securityUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/security';
 $commentsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/comments';
 $analyticsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/analytics';
 $notificationsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/notifications';
+$m365LicenseUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/plugin/m365-license';
+
+$m365Settings = [];
+if (class_exists('CMS_M365LIC_Repository')) {
+    try {
+        $m365Settings = \CMS_M365LIC_Repository::instance()->get_settings();
+    } catch (\Throwable $e) {
+        $m365Settings = [];
+    }
+}
+
+$m365WidgetMetaRaw = function_exists('get_option') ? (string) get_option('member_dashboard_widget_meta_cms-m365lic', '') : '';
+$m365WidgetMeta = $m365WidgetMetaRaw !== '' ? \CMS\Json::decodeArray($m365WidgetMetaRaw, []) : [];
+$m365CardIcon = trim((string) ($m365WidgetMeta['icon'] ?? '🧮'));
+$m365SettingsTitle = trim((string) ($m365Settings['page_title'] ?? ''));
+$m365CardTitle = $m365SettingsTitle !== ''
+    ? $m365SettingsTitle
+    : trim((string) ($m365WidgetMeta['title'] ?? 'M365 Lizenzberater'));
+$m365IntroText = trim((string) ($m365Settings['page_intro'] ?? ''));
+$m365CardDescription = $m365IntroText !== ''
+    ? $m365IntroText
+    : trim((string) ($m365WidgetMeta['description'] ?? 'Prüfe passende Microsoft-365-Lizenzen direkt im geschützten Mitgliederbereich – inklusive der für Mitglieder geltenden Limits und Regeln.'));
+$m365CardAccent = preg_match('/^#[0-9a-f]{6}$/i', (string) ($m365WidgetMeta['color'] ?? '')) === 1
+    ? (string) $m365WidgetMeta['color']
+    : '#2563eb';
+$m365CardBorderColor = $hexToRgba($m365CardAccent, 0.16, 'rgba(37, 99, 235, 0.16)');
+$m365CardSoftColor = $hexToRgba($m365CardAccent, 0.08, 'rgba(37, 99, 235, 0.08)');
+$m365CardStyle = implode(' ', [
+    '--member-dashboard-feature-accent: ' . $m365CardAccent . ';',
+    '--member-dashboard-feature-border: ' . $m365CardBorderColor . ';',
+    '--member-dashboard-feature-soft: ' . $m365CardSoftColor . ';',
+]);
+
+$pluginManager = \CMS\PluginManager::instance();
+$hasM365LicensePlugin = $pluginManager->isPluginActive('cms-m365lic');
 
 $memberPermissions = $memberService->getUserPermissions((int) $currentUser->id);
 $canSubmitPosts = !empty($memberPermissions['can_post']);
@@ -413,8 +448,18 @@ include $themeDir . 'header.php';
         </section>
         <?php endif; ?>
 
+        <?php if ($hasM365LicensePlugin): ?>
+        <section class="member-card member-card--spaced member-dashboard-feature-card member-dashboard-feature-card--m365" data-anim data-anim-delay="1" style="<?php echo htmlspecialchars($m365CardStyle, ENT_QUOTES); ?>">
+            <div class="member-card-header">
+                <h3><?php echo htmlspecialchars(trim(($m365CardIcon !== '' ? $m365CardIcon . ' ' : '') . ($m365CardTitle !== '' ? $m365CardTitle : 'M365 Lizenzberater')), ENT_QUOTES); ?></h3>
+                <a href="<?php echo $m365LicenseUrl; ?>" class="member-card-link">Jetzt öffnen →</a>
+            </div>
+            <p><?php echo htmlspecialchars($m365CardDescription !== '' ? $m365CardDescription : 'Prüfe passende Microsoft-365-Lizenzen direkt im geschützten Mitgliederbereich – inklusive der für Mitglieder geltenden Limits und Regeln.', ENT_QUOTES); ?></p>
+        </section>
+        <?php endif; ?>
+
         <?php if ($overviewCards !== []): ?>
-        <div class="member-dashboard-overview" data-anim data-anim-delay="1">
+        <div class="member-dashboard-overview" data-anim data-anim-delay="2">
             <?php foreach ($overviewCards as $card): ?>
             <?php if ($card['url'] !== ''): ?>
             <a href="<?php echo htmlspecialchars((string) $card['url'], ENT_QUOTES); ?>" class="member-overview-card <?php echo htmlspecialchars((string) $card['class'], ENT_QUOTES); ?>">
