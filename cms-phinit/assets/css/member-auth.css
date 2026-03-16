@@ -205,6 +205,12 @@ body.dark-mode .auth-site-name { color: var(--text-white); }
     border-left-color: var(--member-sidebar-active-color, var(--primary-color)); font-weight: 600;
 }
 .member-nav-link:hover { color: var(--text-nav-member-sidebar-hover, var(--member-sidebar-active-color, var(--primary-color))); }
+.member-nav-link--child {
+    padding-left: 2.65rem;
+    font-size: .82rem;
+    color: var(--text-muted);
+}
+.member-nav-link--child .member-nav-icon { width: 16px; font-size: .9rem; }
 .member-nav-icon { font-size: 1rem; width: 20px; text-align: center; }
 .member-sidebar-bottom {
     margin-top: auto;

@@ -55,6 +55,29 @@ try {
 $sidebarActiveColor = $sanitizeColor($getMemberText('sidebar_active_color', '#1e3a5f'), '#1e3a5f');
 $sidebarStyle = '--member-sidebar-active-color: ' . $sidebarActiveColor . ';';
 $memberPermissions = [];
+$requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '/member/dashboard');
+$currentMenuSlug = $activePage;
+$memberController = null;
+
+if (preg_match('#/member/plugin/([a-zA-Z0-9_-]+)#', $requestUri, $matches) === 1) {
+    $currentMenuSlug = 'plugin_' . $matches[1];
+}
+
+if (isset($controller) && is_object($controller) && method_exists($controller, 'getMenuItems')) {
+    $memberController = $controller;
+} else {
+    try {
+        if (!class_exists('CMS\\MemberArea\\MemberController')) {
+            require_once ABSPATH . 'member/includes/class-member-controller.php';
+        }
+
+        if (class_exists('CMS\\MemberArea\\MemberController')) {
+            $memberController = \CMS\MemberArea\MemberController::instance();
+        }
+    } catch (\Throwable $e) {
+        $memberController = null;
+    }
+}
 
 try {
     $memberPermissions = \CMS\Services\MemberService::getInstance()->getUserPermissions((int) ($currentUser->id ?? 0));
@@ -81,6 +104,35 @@ if ($isAdmin && $getMemberToggle('show_sidebar_analytics', true)) {
 }
 
 $memberNav = array_values(array_filter($memberNav, static fn (array $item): bool => (bool) ($item['visible'] ?? true)));
+
+$pluginParentItems = [];
+$pluginChildrenByParent = [];
+
+if ($memberController !== null && method_exists($memberController, 'getMenuItems')) {
+    try {
+        $allMenuItems = $memberController->getMenuItems($currentMenuSlug);
+
+        foreach ($allMenuItems as $item) {
+            $slug = (string) ($item['slug'] ?? '');
+            $category = (string) ($item['category'] ?? '');
+
+            if ($slug === '' || ($category !== 'plugins' && !str_starts_with($slug, 'plugin_'))) {
+                continue;
+            }
+
+            $parentSlug = (string) ($item['parent_slug'] ?? '');
+            if ($parentSlug !== '') {
+                $pluginChildrenByParent[$parentSlug][] = $item;
+                continue;
+            }
+
+            $pluginParentItems[] = $item;
+        }
+    } catch (\Throwable $e) {
+        $pluginParentItems = [];
+        $pluginChildrenByParent = [];
+    }
+}
 
 $showSidebarAdminLink = $isAdmin && $getMemberToggle('show_sidebar_admin_link', true);
 $sidebarAdminLabel = $getMemberText('sidebar_admin_label', 'Zum Admincenter');
@@ -113,6 +165,25 @@ $sidebarAdminIcon = $getMemberText('sidebar_admin_icon', '⚙️');
             <span class="member-nav-icon"><?php echo $item['icon']; ?></span>
             <?php echo htmlspecialchars($item['label']); ?>
         </a>
+        <?php endforeach; ?>
+
+        <?php foreach ($pluginParentItems as $item): ?>
+        <?php $pluginSlug = (string) ($item['slug'] ?? ''); ?>
+        <a href="<?php echo htmlspecialchars($siteUrl . (string) ($item['url'] ?? '#'), ENT_QUOTES); ?>"
+           class="member-nav-link<?php echo !empty($item['active']) ? ' active' : ''; ?>"
+           <?php echo !empty($item['active']) ? 'aria-current="page"' : ''; ?>>
+            <span class="member-nav-icon"><?php echo htmlspecialchars((string) ($item['icon'] ?? '🧩'), ENT_QUOTES); ?></span>
+            <?php echo htmlspecialchars((string) ($item['label'] ?? 'Plugin'), ENT_QUOTES); ?>
+        </a>
+
+        <?php foreach ($pluginChildrenByParent[$pluginSlug] ?? [] as $childItem): ?>
+        <a href="<?php echo htmlspecialchars($siteUrl . (string) ($childItem['url'] ?? '#'), ENT_QUOTES); ?>"
+           class="member-nav-link member-nav-link--child<?php echo !empty($childItem['active']) ? ' active' : ''; ?>"
+           <?php echo !empty($childItem['active']) ? 'aria-current="page"' : ''; ?>>
+            <span class="member-nav-icon"><?php echo htmlspecialchars((string) ($childItem['icon'] ?? '↳'), ENT_QUOTES); ?></span>
+            <?php echo htmlspecialchars('- ' . (string) ($childItem['label'] ?? 'Unterpunkt'), ENT_QUOTES); ?>
+        </a>
+        <?php endforeach; ?>
         <?php endforeach; ?>
     </nav>
     <div class="member-sidebar-bottom">
