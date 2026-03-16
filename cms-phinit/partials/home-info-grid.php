@@ -48,7 +48,7 @@ foreach ([
     ];
 }
 ?>
-<section class="content-section home-section home-section--info" data-anim data-anim-delay="1">
+<section class="content-section home-section home-section--info">
     <div class="section-header">
         <span class="section-label section-label--dark">Themenbereiche</span>
     </div>

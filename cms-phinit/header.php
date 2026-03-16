@@ -16,20 +16,6 @@ $siteTitle    = $themeManager->getSiteTitle();
 $siteDesc     = $themeManager->getSiteDescription();
 $themeUrl     = $themeManager->getThemeUrl();
 $siteUrl      = SITE_URL;
-$isLoggedIn   = function_exists('theme_is_logged_in') ? theme_is_logged_in() : false;
-$currentUser  = null;
-$isAdminUser  = false;
-$memberEditLink = ['show' => false, 'url' => '', 'label' => ''];
-
-try {
-    $auth = \CMS\Auth::instance();
-    if ($isLoggedIn) {
-        $currentUser = $auth->getCurrentUser();
-        $isAdminUser = $auth->isAdmin();
-    }
-} catch (\Throwable $e) {
-    // Auth nicht verfügbar – kein Fehler ausgeben
-}
 
 $_requestPath = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
 $_requestQuery = trim((string) ($_SERVER['QUERY_STRING'] ?? ''));
@@ -83,12 +69,59 @@ $_localizedHref = static function (string $url, ?string $locale = null) use ($_c
 };
 
 $_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_currentLocale);
+?>
+<!DOCTYPE html>
+<html lang="<?php echo htmlspecialchars($_currentLocale, ENT_QUOTES, 'UTF-8'); ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars(\CMS\Hooks::applyFilters('page_title', $siteTitle), ENT_QUOTES, 'UTF-8'); ?></title>
+    <script>
+    (function () {
+        try {
+            var storedTheme = localStorage.getItem('cms365-theme');
+            if (storedTheme === null) {
+                storedTheme = localStorage.getItem('cms-phinit-theme');
+                if (storedTheme !== null) {
+                    localStorage.setItem('cms365-theme', storedTheme);
+                }
+            }
+
+            if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                document.addEventListener('DOMContentLoaded', function () {
+                    if (document.body) {
+                        document.body.classList.add('dark-mode');
+                    }
+                }, { once: true });
+            }
+        } catch (error) {
+            console.warn('Dark-Mode konnte vorab nicht initialisiert werden.', error);
+        }
+    })();
+    </script>
+    <?php \CMS\Hooks::doAction('head'); ?>
+</head>
+<?php
+$isLoggedIn   = function_exists('theme_is_logged_in') ? theme_is_logged_in() : false;
+$currentUser  = null;
+$isAdminUser  = false;
+$memberEditLink = ['show' => false, 'url' => '', 'label' => ''];
+
+try {
+    $auth = \CMS\Auth::instance();
+    if ($isLoggedIn) {
+        $currentUser = $auth->getCurrentUser();
+        $isAdminUser = $auth->isAdmin();
+    }
+} catch (\Throwable $e) {
+    // Auth nicht verfügbar – kein Fehler ausgeben
+}
 
 if ($isLoggedIn && $currentUser !== null && $isAdminUser && function_exists('phinit_get_member_edit_link')) {
     $memberEditLink = phinit_get_member_edit_link((string) ($_requestContext['base_uri'] ?? $_requestPath), $_currentLocale);
 }
 
-// Ungelesene Benachrichtigungen zählen (für Badge in Member-Bar)
 $notifCount = 0;
 if ($isLoggedIn && $currentUser !== null) {
     try {
@@ -100,14 +133,13 @@ if ($isLoggedIn && $currentUser !== null) {
                 [$_userId]
             ) ?? 0);
         }
-    } catch (\Throwable) {}
+    } catch (\Throwable) {
+    }
 }
 
-// Customizer-Einstellungen (mit Fallbacks)
 try {
     $customizer    = \CMS\Services\ThemeCustomizer::instance();
 
-    // Logo
     $_logoUrl       = $customizer->get('header', 'logo_url', '');
     $_logoPart1     = $customizer->get('header', 'logo_text_part1', 'PHIN');
     $_logoPart2     = $customizer->get('header', 'logo_text_part2', 'IT');
@@ -115,7 +147,6 @@ try {
     $_showLogoText  = filter_var($customizer->get('header', 'show_logo_text_with_image', false), FILTER_VALIDATE_BOOLEAN);
     $_logoMaxH      = (int)$customizer->get('header', 'logo_max_height', 28);
 
-    // Toggles
     $_showSearch    = filter_var($customizer->get('header', 'show_search_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_searchPH      = $customizer->get('header', 'search_placeholder', 'Suchen …');
     $_showDarkMode  = filter_var($customizer->get('layout', 'enable_dark_mode_toggle', true), FILTER_VALIDATE_BOOLEAN);
@@ -129,7 +160,6 @@ try {
     $_languageFlag = strtolower(trim((string) $customizer->get('header', 'language_switcher_flag', 'gb')));
     $_languageAriaLabel = trim((string) $customizer->get('header', 'language_switcher_aria_label', 'Zur englischen Version wechseln'));
 
-    // Layout-Toggles für JS
     $_enableStickyHeader    = filter_var($customizer->get('layout', 'enable_sticky_header', true), FILTER_VALIDATE_BOOLEAN);
     $_enableProgressBar     = filter_var($customizer->get('layout', 'enable_progress_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_enableBackToTop       = filter_var($customizer->get('layout', 'enable_back_to_top', true), FILTER_VALIDATE_BOOLEAN);
@@ -154,13 +184,11 @@ if ($_headerSearchPlaceholder === '' || $_headerSearchPlaceholder === 'Suchen �
     $_headerSearchPlaceholder = phinit_t('search_posts_placeholder', [], $_currentLocale);
 }
 
-// Haupt-Navigation laden
 $mainMenuItems = [];
 try {
     $mainMenuItems = \CMS\ThemeManager::instance()->getMenu('primary');
 } catch (\Throwable $e) {}
 
-// Quicklinks laden (Sub-Navigation)
 $quicklinkItems = [];
 try {
     $quicklinkItems = \CMS\ThemeManager::instance()->getMenu('quicklinks');
@@ -220,38 +248,6 @@ if ($_showLanguageSwitch) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="<?php echo htmlspecialchars($_currentLocale, ENT_QUOTES, 'UTF-8'); ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars(\CMS\Hooks::applyFilters('page_title', $siteTitle), ENT_QUOTES, 'UTF-8'); ?></title>
-    <script>
-    (function () {
-        try {
-            var storedTheme = localStorage.getItem('cms365-theme');
-            if (storedTheme === null) {
-                storedTheme = localStorage.getItem('cms-phinit-theme');
-                if (storedTheme !== null) {
-                    localStorage.setItem('cms365-theme', storedTheme);
-                }
-            }
-
-            if (storedTheme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-                document.addEventListener('DOMContentLoaded', function () {
-                    if (document.body) {
-                        document.body.classList.add('dark-mode');
-                    }
-                }, { once: true });
-            }
-        } catch (error) {
-            console.warn('Dark-Mode konnte vorab nicht initialisiert werden.', error);
-        }
-    })();
-    </script>
-    <?php \CMS\Hooks::doAction('head'); ?>
-</head>
 <body<?php
     $bodyClasses = \CMS\Hooks::applyFilters('body_class', '');
     echo $bodyClasses ? ' class="' . htmlspecialchars($bodyClasses, ENT_QUOTES) . '"' : '';

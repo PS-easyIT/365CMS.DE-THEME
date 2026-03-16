@@ -7,6 +7,8 @@ if (!defined('ABSPATH')) {
 
 trait CMS_Phinit_Theme_Assets_Trait
 {
+    private ?string $homepageLeadImageCache = null;
+
     private function getCustomizerSettingWithFallback(string $category, string $key, mixed $default = null, array $legacyKeys = []): mixed
     {
         try {
@@ -145,6 +147,22 @@ trait CMS_Phinit_Theme_Assets_Trait
         echo '<noscript><link rel="stylesheet" href="' . $escapedHref . '"></noscript>' . "\n";
     }
 
+    public function outputCriticalResourceHints(): void
+    {
+        $requestContext = $this->getRequestContext();
+        $requestPath = (string) ($requestContext['path'] ?? '/');
+        if (!in_array($requestPath, ['/', '/blog'], true)) {
+            return;
+        }
+
+        $homepageLeadImage = $this->getHomepageLeadImageUrl();
+        if ($homepageLeadImage === '') {
+            return;
+        }
+
+        echo '<link rel="preload" as="image" href="' . htmlspecialchars($homepageLeadImage, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+    }
+
     private function themeAssetUrl(string $relativePath, string|int $version): string
     {
         return CMS_PHINIT_THEME_URL . ltrim($relativePath, '/') . '?v=' . rawurlencode((string) $version);
@@ -241,9 +259,10 @@ trait CMS_Phinit_Theme_Assets_Trait
             $this->emitStylesheet($this->themeAssetUrl('assets/css/header-navigation.css', $headerNavigationVersion));
         }
 
+        $uiChromeIsCritical = $loadHomepageBlogCss || $loadPageDetailCss || $loadPostDetailCss || $isHubSiteRequest;
         if (file_exists($uiChromeCssFile)) {
             $uiChromeVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($uiChromeCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion), true);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion), !$uiChromeIsCritical);
         }
 
         if ($loadTemplateCss && file_exists($templateCssFile)) {
@@ -251,9 +270,10 @@ trait CMS_Phinit_Theme_Assets_Trait
             $this->emitStylesheet($this->themeAssetUrl('assets/css/templates.css', $templateVersion));
         }
 
+        $contentCardsIsCritical = $loadHomepageBlogCss;
         if ($loadContentCardsCss && file_exists($contentCardsCssFile)) {
             $contentCardsVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($contentCardsCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion), true);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion), !$contentCardsIsCritical);
         }
 
         if ($loadMemberAuthCss && file_exists($memberAuthCssFile)) {
@@ -987,5 +1007,44 @@ trait CMS_Phinit_Theme_Assets_Trait
             }
         } catch (\Throwable $e) {
         }
+    }
+
+    private function getHomepageLeadImageUrl(): string
+    {
+        if ($this->homepageLeadImageCache !== null) {
+            return $this->homepageLeadImageCache;
+        }
+
+        $this->homepageLeadImageCache = '';
+
+        try {
+            $db = \CMS\Database::instance();
+            $prefix = $db->getPrefix();
+            $contentLocale = function_exists('phinit_get_request_content_locale')
+                ? phinit_get_request_content_locale()
+                : 'de';
+            $localization = class_exists('CMS\\Services\\ContentLocalizationService')
+                ? \CMS\Services\ContentLocalizationService::getInstance()
+                : null;
+            $localeCondition = function_exists('phinit_build_homepage_post_locale_condition')
+                ? phinit_build_homepage_post_locale_condition($contentLocale, $localization)
+                : '';
+            $row = $db->get_row(
+                "SELECT featured_image
+                 FROM {$prefix}posts
+                 WHERE status = 'published'
+                   AND featured_image IS NOT NULL
+                   AND featured_image != ''
+                   {$localeCondition}
+                 ORDER BY COALESCE(published_at, created_at) DESC, id DESC
+                 LIMIT 1"
+            );
+
+            $this->homepageLeadImageCache = trim((string) ($row->featured_image ?? ''));
+        } catch (\Throwable) {
+            $this->homepageLeadImageCache = '';
+        }
+
+        return $this->homepageLeadImageCache;
     }
 }

@@ -61,6 +61,7 @@ final class CMS_Phinit_Theme
         \CMS\Hooks::addAction('head', [$this, 'outputCustomHeaderCode'], 0);
         \CMS\Hooks::addAction('head', [$this, 'outputPreconnect'],       1);
         \CMS\Hooks::addAction('head', [$this, 'outputGoogleFonts'],      5);
+        \CMS\Hooks::addAction('head', [$this, 'outputCriticalResourceHints'], 7);
         \CMS\Hooks::addAction('head', [$this, 'outputMetaTags'],         8);
         \CMS\Hooks::addAction('head', [$this, 'enqueueStyles'],         15);
         \CMS\Hooks::addAction('head', [$this, 'outputCustomStyles'],    20);

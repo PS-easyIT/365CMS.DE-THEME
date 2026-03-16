@@ -38,7 +38,7 @@ if (empty($_showList) || $featuredPosts === []) {
     return;
 }
 ?>
-<section class="content-section home-section home-section--list" data-anim>
+<section class="content-section home-section home-section--list">
     <div class="section-header">
         <span class="section-label">📄 <?php echo htmlspecialchars((string) $_listLabel, ENT_QUOTES); ?></span>
     </div>
