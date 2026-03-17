@@ -1,8 +1,23 @@
 # CMS Phinit – Customizer-, Sicherheits- und Performance-Audit
 
-Stand: 2026-03-14  
+Stand: 2026-03-17  
 Scope: statischer Code-Audit des Themes `cms-phinit` in `365CMS.DE-THEME` inklusive Dateiinventar.  
 Nicht enthalten: echte Lighthouse-/WebPageTest-Messläufe, Lasttests, Browser-Matrix-Tests, visuelle Regressionstests.
+
+## Live-/Testsite-Nachtrag vom 17.03.2026
+
+Zusätzlich zum statischen Theme-Audit wurde die öffentliche PhinIT-Site live gegen `https://phinit.de` und nach Deployment gegen `https://phinit.365cms.de` geprüft.
+
+Auf der Testsite inzwischen sichtbar verifiziert:
+
+- `forgot-password.php` wird öffentlich korrekt gerendert.
+- Login-/Register-/Footer-Verlinkungen zeigen auf die bereinigten Legal- und Recovery-Ziele.
+- `/.well-known/security.txt` ist erreichbar.
+
+Noch nicht vollständig im Test-Deploy sichtbar:
+
+- RSS-Feed liefert weiterhin rohe bzw. abgeschnittene Editor.js-JSON-Descriptions und benötigt noch einen frischen Deploy des jüngsten Core-Fixes.
+- Einige Header-/Server-Themen (z. B. effektive CSP-Auslieferung) bleiben weiterhin Infrastruktur- bzw. Hosting-Themen außerhalb des reinen Theme-Codes.
 
 ## Fortschritt seit Audit-Erstellung
 

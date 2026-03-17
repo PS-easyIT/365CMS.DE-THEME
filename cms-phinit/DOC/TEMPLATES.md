@@ -263,6 +263,44 @@ Vollbreite-Marketing-Seite mit Hero, Feature-Cards-Grid und optionalem CTA-Banne
 
 ---
 
+## Öffentliche Spezialseiten außerhalb des Content-Template-Registers
+
+Neben den klassischen Post-/Page-Templates verwendet `cms-phinit` zusätzlich dedizierte öffentliche Spezialseiten, die direkt über den Core gerendert werden.
+
+### `login.php`
+
+Öffentliche Login-Seite im PhinIT-Layout.
+
+**Besonderheiten:**
+
+- verlinkt kanonisch auf `/forgot-password` und `/register`
+- nutzt lokalisierte Pfadhelfer für DE/EN
+- ist als Auth-Seite für private/no-store-Cacheprofile gedacht
+
+### `register.php`
+
+Öffentliche Registrierungsseite im PhinIT-Layout.
+
+**Besonderheiten:**
+
+- verlinkt konsistent auf `/datenschutz` statt auf Legacy-Rechtstextpfade
+- nutzt lokalisierte Login-/Legal-Links
+- ist als Auth-Seite für private/no-store-Cacheprofile gedacht
+
+### `forgot-password.php`
+
+Öffentliche Recovery-Seite für Passwort-Reset-Anfragen und Token-basierte Passwort-Neuvergabe.
+
+**Besonderheiten:**
+
+- rendert Anfrage-, Reset- und Abschlusszustände in einem separaten Theme-Template
+- verwendet CSRF-Schutz für Recovery-Aktionen
+- versendet Reset-Mails über den zentralen Mail-Service des Core
+- nutzt DE/EN-Varianten über lokalisierte Pfade
+- gehört fachlich in dieselbe Cache-/Sicherheitsklasse wie Login/Register
+
+---
+
 ## Zusammenfassung
 
 | Template | Datei | Sidebar | TOC | Tech-Karte | Landing-Elemente |

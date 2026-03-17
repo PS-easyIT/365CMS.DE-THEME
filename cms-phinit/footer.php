@@ -120,6 +120,15 @@ try {
 $footerTopicsMenu = [];
 $footerPagesMenu  = [];
 $footerLegalMenu  = [];
+$privacyUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/datenschutz', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/datenschutz';
+$imprintUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/impressum', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/impressum';
+$termsUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/agb', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/agb';
 try {
     $footerTopicsMenu = \CMS\ThemeManager::instance()->getMenu('footer-topics');
 } catch (\Throwable $e) {}
@@ -250,11 +259,9 @@ try {
                     <a href="<?php echo htmlspecialchars($_lItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_lItem['label'] ?? '', ENT_QUOTES); ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/impressum">Impressum</a>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutzerklaerung">Datenschutz</a>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/disclaimer">Disclaimer</a>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/cookie-policy">Cookie-Policy</a>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/privacy-statement">Privacy Statement</a>
+                    <a href="<?php echo htmlspecialchars($imprintUrl, ENT_QUOTES); ?>">Impressum</a>
+                    <a href="<?php echo htmlspecialchars($privacyUrl, ENT_QUOTES); ?>">Datenschutz</a>
+                    <a href="<?php echo htmlspecialchars($termsUrl, ENT_QUOTES); ?>">AGB</a>
                 <?php endif; ?>
             </div>
         </div>

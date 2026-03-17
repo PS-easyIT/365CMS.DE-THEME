@@ -19,6 +19,7 @@
     "sitemap":     "sitemap.php",
     "login":       "login.php",
     "register":    "register.php",
+    "forgot-password": "forgot-password.php",
     "404":         "404.php",
     "error":       "error.php",
     "search":      "search.php"

@@ -32,6 +32,13 @@ try {
 
 $siteUrl   = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$forgotPasswordUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/forgot-password';
+$registerUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/register', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/register';
 ?>
 
 <div class="auth-wrapper">
@@ -73,7 +80,7 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
             <div class="auth-form-group">
                 <label for="loginPassword" class="auth-label">
                     Passwort
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/forgot-password" class="auth-forgot-link">Vergessen?</a>
+                    <a href="<?php echo htmlspecialchars($forgotPasswordUrl, ENT_QUOTES); ?>" class="auth-forgot-link">Vergessen?</a>
                 </label>
                 <input type="password" id="loginPassword" name="password" class="auth-input"
                        autocomplete="current-password" required minlength="8"
@@ -92,7 +99,7 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 
         <!-- Footer -->
         <div class="auth-footer">
-            <p>Noch kein Konto? <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/register">Jetzt registrieren</a></p>
+            <p>Noch kein Konto? <a href="<?php echo htmlspecialchars($registerUrl, ENT_QUOTES); ?>">Jetzt registrieren</a></p>
         </div>
 
     </div>

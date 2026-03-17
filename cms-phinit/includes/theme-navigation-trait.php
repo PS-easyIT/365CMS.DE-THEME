@@ -75,9 +75,8 @@ trait CMS_Phinit_Theme_Navigation_Trait
             if (empty($tm->getMenu('footer'))) {
                 $tm->saveMenu('footer', [
                     ['label' => 'Impressum',            'url' => '/impressum'],
-                    ['label' => 'Datenschutzerklärung', 'url' => '/datenschutzerklaerung'],
-                    ['label' => 'Disclaimer',           'url' => '/disclaimer'],
-                    ['label' => 'Cookie-Policy',        'url' => '/cookie-policy'],
+                    ['label' => 'Datenschutz',          'url' => '/datenschutz'],
+                    ['label' => 'AGB',                  'url' => '/agb'],
                 ]);
             }
         } catch (\Throwable $e) {

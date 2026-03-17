@@ -30,6 +30,13 @@ try {
 
 $siteUrl   = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$privacyUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/datenschutz', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/datenschutz';
+$loginUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/login';
 ?>
 
 <div class="auth-wrapper">
@@ -103,7 +110,7 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
             <div class="auth-remember">
                 <label class="auth-checkbox-label">
                     <input type="checkbox" name="accept_terms" value="1" required>
-                    <span>Ich akzeptiere die <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutzerklaerung" target="_blank" rel="noopener">Datenschutzerklärung</a></span>
+                    <span>Ich akzeptiere die <a href="<?php echo htmlspecialchars($privacyUrl, ENT_QUOTES); ?>" target="_blank" rel="noopener">Datenschutzerklärung</a></span>
                 </label>
             </div>
 
@@ -112,7 +119,7 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 
         <!-- Footer -->
         <div class="auth-footer">
-            <p>Bereits registriert? <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login">Jetzt anmelden</a></p>
+            <p>Bereits registriert? <a href="<?php echo htmlspecialchars($loginUrl, ENT_QUOTES); ?>">Jetzt anmelden</a></p>
         </div>
 
     </div>
