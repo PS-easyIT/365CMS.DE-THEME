@@ -140,6 +140,28 @@ if (!function_exists('phinit_safe_public_media_url')) {
     }
 }
 
+if (!function_exists('phinit_normalize_public_media_url')) {
+    /**
+     * Konvertiert öffentliche Medienreferenzen (inkl. legacy /media-file URLs) in frontend-taugliche Direkt-URLs.
+     */
+    function phinit_normalize_public_media_url(?string $value, bool $preferInline = true, ?string $siteUrl = null): string
+    {
+        $url = trim((string) $value);
+        if ($url === '') {
+            return '';
+        }
+
+        try {
+            if (class_exists('\\CMS\\Services\\MediaDeliveryService')) {
+                $url = \CMS\Services\MediaDeliveryService::getInstance()->normalizeUrl($url, $preferInline);
+            }
+        } catch (\Throwable) {
+        }
+
+        return phinit_safe_public_media_url($url, $siteUrl);
+    }
+}
+
 if (!function_exists('phinit_image_loading_attributes')) {
     /**
      * Prüft, ob browserbasiertes Image-Lazy-Loading per Customizer aktiv ist.

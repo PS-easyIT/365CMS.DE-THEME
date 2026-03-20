@@ -151,7 +151,7 @@ require_once __DIR__ . '/header.php';
                 <?php if (!empty($sectors)): ?>
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🏭 Branche</h3>
-                    <select name="sector" class="filter-select" onchange="this.form.submit()">
+                    <select name="sector" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Branchen</option>
                         <?php foreach ($sectors as $sec): if (!$sec) continue; ?>
                             <option value="<?php echo htmlspecialchars($sec, ENT_QUOTES); ?>"
@@ -166,7 +166,7 @@ require_once __DIR__ . '/header.php';
                 <?php if (!empty($locations)): ?>
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">📍 Standort</h3>
-                    <select name="location" class="filter-select" onchange="this.form.submit()">
+                    <select name="location" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Städte</option>
                         <?php foreach ($locations as $loc): if (!$loc) continue; ?>
                             <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES); ?>"
@@ -180,7 +180,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">📊 Unternehmensgröße</h3>
-                    <div style="display:flex;flex-direction:column;gap:.375rem;">
+                    <div class="filter-link-list">
                         <?php
                         $sizeOpts = ['' => 'Alle', '1-10' => '1–10 Mitarbeiter', '11-50' => '11–50', '51-200' => '51–200', '201-500' => '201–500', '500+' => '500+'];
                         foreach ($sizeOpts as $val => $lbl): ?>
@@ -194,7 +194,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗂️ Sortierung</h3>
-                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <select name="sort" class="filter-select" data-auto-submit-filter>
                         <option value="latest" <?php echo $sort === 'latest' ? 'selected' : ''; ?>>🕐 Neueste zuerst</option>
                         <option value="name"   <?php echo $sort === 'name'   ? 'selected' : ''; ?>>🔤 Name A–Z</option>
                         <option value="size"   <?php echo $sort === 'size'   ? 'selected' : ''; ?>>📊 Größe</option>
@@ -203,7 +203,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $sector || $size || $location): ?>
                     <div class="filter-panel">
-                        <a href="/companies" class="btn btn-secondary" style="width:100%;text-align:center;">✖ Filter zurücksetzen</a>
+                        <a href="/companies" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -278,7 +278,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">🏢</div>
                 <h3>Keine Unternehmen gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/companies" class="btn btn-secondary" style="margin-top:1rem;">✖ Filter zurücksetzen</a>
+                <a href="/companies" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>

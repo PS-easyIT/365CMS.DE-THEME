@@ -23,14 +23,30 @@ if (!defined('ABSPATH')) {
             </svg>
             Speichern
         </button>
-        <button type="submit" form="customizer-form" name="action" value="reset_theme_tab"
+        <button type="button"
                 class="btn btn-outline-secondary"
-                onclick="return confirm('Alle Felder dieses Tabs auf Standardwerte zurücksetzen?');">
+                data-confirm-message="Alle Felder dieses Tabs auf Standardwerte zurücksetzen?"
+                data-confirm-submit-target="phinit-customizer-reset-submit">
             ↩️ Tab zurücksetzen
+        </button>
+        <button type="submit" form="customizer-form" name="action" value="reset_theme_tab"
+                id="phinit-customizer-reset-submit" class="d-none" aria-hidden="true" tabindex="-1">
+            Tab zurücksetzen
         </button>
         <span id="unsaved-hint" class="ms-auto text-warning phinit-customizer__unsaved-hint">
             ⚠️ Ungespeicherte Änderungen
         </span>
         <span class="text-muted ms-auto phinit-customizer__shortcut-hint">Strg+S zum Speichern</span>
+    </div>
+</div>
+
+<div class="phinit-customizer__confirm-backdrop" id="phinit-customizer-confirm" hidden aria-hidden="true">
+    <div class="phinit-customizer__confirm-modal" role="dialog" aria-modal="true" aria-labelledby="phinit-customizer-confirm-title">
+        <h2 id="phinit-customizer-confirm-title" class="phinit-customizer__confirm-title">Änderung bestätigen</h2>
+        <p id="phinit-customizer-confirm-message" class="phinit-customizer__confirm-message">Möchtest du fortfahren?</p>
+        <div class="phinit-customizer__confirm-actions">
+            <button type="button" class="btn btn-outline-secondary" data-confirm-cancel>Abbrechen</button>
+            <button type="button" class="btn btn-primary" data-confirm-accept>Fortfahren</button>
+        </div>
     </div>
 </div>

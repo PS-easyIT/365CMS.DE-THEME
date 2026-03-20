@@ -26,11 +26,18 @@ try {
     $_bDb   = \CMS\Database::instance();
     $_bPfx  = $_bDb->getPrefix();
     $_bPdo  = $_bDb->getPdo();
+    $_bLocaleCondition = function_exists('phinit_build_homepage_post_locale_condition')
+        ? phinit_build_homepage_post_locale_condition($currentLocale)
+        : '';
 
-    $_bWhere = "p.status = 'published'";
+    $_bWhere = "p.status = 'published'{$_bLocaleCondition}";
     $_bBind  = [];
     if ($_bQuery !== '') {
-        $_bWhere .= " AND (p.title LIKE ? OR p.excerpt LIKE ?)";
+        if ($currentLocale === 'en') {
+            $_bWhere .= " AND (COALESCE(NULLIF(p.title_en, ''), p.title) LIKE ? OR COALESCE(NULLIF(p.excerpt_en, ''), p.excerpt) LIKE ?)";
+        } else {
+            $_bWhere .= " AND (p.title LIKE ? OR p.excerpt LIKE ?)";
+        }
         $_bLike   = '%' . $_bQuery . '%';
         $_bBind   = [$_bLike, $_bLike];
     }
@@ -44,8 +51,7 @@ try {
     $_bOffset  = ($_blogPage - 1) * $_blogPer;
 
     $_stmtRows = $_bPdo->prepare(
-        "SELECT p.id, p.title, p.slug, p.excerpt, p.content,
-                p.featured_image, p.published_at, p.views,
+        "SELECT p.*, 
                 c.name AS category_name
          FROM {$_bPfx}posts p
          LEFT JOIN {$_bPfx}post_categories c ON c.id = p.category_id
@@ -55,6 +61,9 @@ try {
     );
     $_stmtRows->execute(array_merge($_bBind, [$_blogPer, $_bOffset]));
     $_bPosts = $_stmtRows->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+    if (function_exists('phinit_prepare_homepage_posts')) {
+        $_bPosts = phinit_prepare_homepage_posts($_bPosts, $currentLocale);
+    }
 } catch (\Throwable $_bE) {
     $_bPosts = [];
     $_bTotal = 0;

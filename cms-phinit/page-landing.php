@@ -56,7 +56,7 @@ $landingContent = (string)($page['content'] ?? '');
 if (!$pageProvidedByRouter) {
     $landingContent = phinit_prepare_renderable_content($landingContent, 'page', (int)($page['id'] ?? 0));
 }
-$landingHeadingData = phinit_with_heading_ids($landingContent, [2, 3]);
+$landingHeadingData = phinit_with_heading_ids($landingContent, [2, 3, 4, 5, 6]);
 $landingContent = phinit_enhance_content_images($landingHeadingData['html']);
 
 // Meta-Daten auslesen

@@ -8,6 +8,7 @@
     const boot = () => {
         initTocHighlight();
         initInlineToc();
+        initPowerShellHighlighting();
         initShareButtons();
         initCodeCopyButtons();
     };
@@ -20,7 +21,7 @@
 
     function initTocHighlight() {
         const toc = document.querySelector('.toc-list');
-        const headings = document.querySelectorAll('.post-body h2, .post-body h3');
+        const headings = document.querySelectorAll('.post-body h2, .post-body h3, .post-body h4, .post-body h5, .post-body h6, .page-content h2, .page-content h3, .page-content h4, .page-content h5, .page-content h6');
         if (!toc || !headings.length) return;
 
         const observer = new IntersectionObserver(
@@ -72,6 +73,78 @@
                 });
             });
         });
+    }
+
+    function initPowerShellHighlighting() {
+        document.querySelectorAll('pre > code').forEach((codeEl) => {
+            const classNames = Array.from(codeEl.classList, (className) => className.toLowerCase());
+            const isPowerShell = classNames.some((className) => [
+                'language-powershell',
+                'language-ps',
+                'language-ps1',
+                'language-pwsh'
+            ].includes(className));
+
+            if (!isPowerShell || codeEl.dataset.syntaxHighlighted === 'true') {
+                return;
+            }
+
+            const pre = codeEl.parentElement;
+            if (pre) {
+                pre.classList.add('code-block--powershell');
+                pre.dataset.codeLanguage = 'PowerShell';
+            }
+
+            const original = codeEl.textContent || '';
+            if (original.trim() === '') {
+                codeEl.dataset.syntaxHighlighted = 'true';
+                return;
+            }
+
+            codeEl.innerHTML = highlightPowerShell(original);
+            codeEl.dataset.syntaxHighlighted = 'true';
+        });
+    }
+
+    function highlightPowerShell(source) {
+        const placeholders = [];
+        let working = source;
+
+        const token = (html) => {
+            const marker = `%%PS_TOKEN_${placeholders.length}%%`;
+            placeholders.push({ marker, html });
+            return marker;
+        };
+
+        const wrapToken = (className, value) => token(`<span class="ps-token ${className}">${escapeHtml(value)}</span>`);
+
+        working = working.replace(/@"[\s\S]*?"@|@'[\s\S]*?'@/g, (match) => wrapToken('ps-string', match));
+        working = working.replace(/'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"/g, (match) => wrapToken('ps-string', match));
+        working = working.replace(/(^|\s)(#.*)$/gm, (match, prefix, comment) => `${prefix}${wrapToken('ps-comment', comment)}`);
+        working = working.replace(/\[[A-Za-z_][A-Za-z0-9_.\[\]]*\]/g, (match) => wrapToken('ps-type', match));
+        working = working.replace(/\$[A-Za-z_][\w:.-]*/g, (match) => wrapToken('ps-variable', match));
+        working = working.replace(/(^|\s)(-[A-Za-z][\w-]*)/g, (match, prefix, parameter) => `${prefix}${wrapToken('ps-parameter', parameter)}`);
+        working = working.replace(/\b(?:function|filter|param|dynamicparam|begin|process|end|if|else|elseif|switch|foreach|for|while|do|until|return|try|catch|finally|throw|trap|break|continue|in|class|enum|default|data|parallel|workflow)\b/gi, (match) => wrapToken('ps-keyword', match));
+        working = working.replace(/\$(?:true|false|null)\b/gi, (match) => wrapToken('ps-constant', match));
+        working = working.replace(/\b[A-Za-z]+(?:-[A-Za-z0-9]+)+\b/g, (match) => wrapToken('ps-cmdlet', match));
+        working = working.replace(/\b\d+(?:\.\d+)?\b/g, (match) => wrapToken('ps-number', match));
+        working = working.replace(/[|=]+>|\|\||&&|\|/g, (match) => wrapToken('ps-operator', match));
+
+        let html = escapeHtml(working);
+        placeholders.forEach(({ marker, html: replacement }) => {
+            html = html.replace(marker, replacement);
+        });
+
+        return html;
+    }
+
+    function escapeHtml(value) {
+        return value
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     function initShareButtons() {

@@ -50,25 +50,39 @@ $related_header = $related_header ?? 'Ähnliche Artikel';
 $related_posts  = $related_posts  ?? [];
 $post_tags      = $post_tags      ?? [];
 $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
+$toc_tree       = function_exists('phinit_build_toc_tree') ? phinit_build_toc_tree(is_array($toc_items) ? $toc_items : []) : [];
+
+$renderSidebarTocTree = static function (array $nodes, bool $nested = false) use (&$renderSidebarTocTree): void {
+    if ($nodes === []) {
+        return;
+    }
+    ?>
+    <ul class="toc-list<?php echo $nested ? ' toc-list--nested' : ''; ?>" role="list">
+        <?php foreach ($nodes as $_sb_node): ?>
+        <?php $_sb_level = max(1, (int) ($_sb_node['level'] ?? 2)); ?>
+        <li class="toc-item toc-item--level-<?php echo $_sb_level; ?>">
+            <a class="toc-link" href="#<?php echo htmlspecialchars((string) ($_sb_node['id'] ?? ''), ENT_QUOTES); ?>">
+                <?php echo htmlspecialchars((string) ($_sb_node['text'] ?? ''), ENT_QUOTES); ?>
+            </a>
+            <?php if (!empty($_sb_node['children']) && is_array($_sb_node['children'])): ?>
+                <?php $renderSidebarTocTree($_sb_node['children'], true); ?>
+            <?php endif; ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php
+};
 ?>
 <aside class="sidebar" aria-label="Seitenleiste">
 
     <!-- TOC -->
-    <?php if ($show_toc && !empty($toc_items)): ?>
-    <div class="toc<?php echo $toc_sticky ? ' toc-sticky' : ''; ?>">
+    <?php if ($show_toc && !empty($toc_tree)): ?>
+    <nav class="toc<?php echo $toc_sticky ? ' toc-sticky' : ''; ?>" aria-label="Inhaltsverzeichnis des Artikels">
         <div class="toc-title"><?php echo htmlspecialchars($toc_header, ENT_QUOTES); ?></div>
         <div class="toc-panel">
-            <ul class="toc-list" role="list">
-                <?php foreach ($toc_items as $_sb_item): ?>
-                <li class="<?php echo (int)($_sb_item['level'] ?? 2) === 3 ? 'toc-h3' : ''; ?>">
-                    <a href="#<?php echo htmlspecialchars($_sb_item['id'] ?? '', ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($_sb_item['text'] ?? '', ENT_QUOTES); ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
+            <?php $renderSidebarTocTree($toc_tree); ?>
         </div>
-    </div>
+    </nav>
     <?php endif; ?>
 
     <!-- Social Icons -->
@@ -119,8 +133,8 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
         <div class="toc-title">📰 <?php echo htmlspecialchars($related_header, ENT_QUOTES); ?></div>
         <ul class="toc-list" role="list">
             <?php foreach ($related_posts as $_sb_rel): ?>
-            <li>
-                <a href="<?php echo htmlspecialchars($site_url . '/blog/' . ($_sb_rel['slug'] ?? ''), ENT_QUOTES); ?>">
+            <li class="toc-item">
+                <a class="toc-link" href="<?php echo htmlspecialchars($site_url . '/blog/' . ($_sb_rel['slug'] ?? ''), ENT_QUOTES); ?>">
                     <?php echo htmlspecialchars($_sb_rel['title'] ?? '', ENT_QUOTES); ?>
                 </a>
             </li>
@@ -135,8 +149,8 @@ $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
         <div class="toc-title">🏷 Tags</div>
         <ul class="toc-list" role="list">
             <?php foreach ($post_tags as $_sb_tag): ?>
-            <li>
-                <a href="<?php echo htmlspecialchars($site_url . '/tag/' . urlencode(phinit_display_text($_sb_tag['slug'] ?? $_sb_tag['name'] ?? '')), ENT_QUOTES); ?>">
+            <li class="toc-item">
+                <a class="toc-link" href="<?php echo htmlspecialchars($site_url . '/tag/' . urlencode(phinit_display_text($_sb_tag['slug'] ?? $_sb_tag['name'] ?? '')), ENT_QUOTES); ?>">
                     <?php echo phinit_escape_text($_sb_tag['name'] ?? ''); ?>
                 </a>
             </li>

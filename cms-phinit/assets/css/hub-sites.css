@@ -1201,6 +1201,29 @@ body.dark-mode .cms-hub-site .cms-site-table thead th {
     color: var(--text-primary);
 }
 
+body.dark-mode .cms-hub-site .cms-site-table th,
+body.dark-mode .cms-hub-site .cms-site-table td {
+    border-bottom-color: var(--border-dark);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .cms-hub-site .cms-site-table td {
+    background: color-mix(in srgb, var(--bg-dark-2) 72%, transparent 28%);
+}
+
+body.dark-mode .cms-hub-site .cms-site-table-title {
+    color: #fff;
+}
+
+body.dark-mode .cms-hub-site .cms-site-table-description,
+body.dark-mode .cms-hub-site .cms-site-table-actions {
+    color: rgba(226,232,240,.82);
+}
+
+body.dark-mode .cms-hub-site .cms-site-table-actions a {
+    color: #fff;
+}
+
 body.dark-mode .cms-hub-site .cms-site-table tbody tr:hover td,
 body.dark-mode .cms-hub-site .cms-site-table--hover tbody tr:hover td {
     background: color-mix(in srgb, var(--cms-hub-accent) 14%, var(--bg-dark-3));

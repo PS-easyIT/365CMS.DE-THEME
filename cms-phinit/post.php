@@ -140,8 +140,8 @@ $readingTime = function_exists('phinit_reading_time')
     ? phinit_reading_time($content, $readingTimeWpm)
     : max(1, (int)ceil(str_word_count(strip_tags($content)) / $readingTimeWpm));
 
-// ── Auto-ID Injection für h2/h3 (TOC-Voraussetzung) ────────────────────────
-$headingData = phinit_with_heading_ids($content, [2, 3]);
+// ── Auto-ID Injection für h2–h6 (TOC-Voraussetzung) ────────────────────────
+$headingData = phinit_with_heading_ids($content, [2, 3, 4, 5, 6]);
 $content = phinit_enhance_content_images($headingData['html']);
 $post['content'] = $content;
 
@@ -229,6 +229,7 @@ $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0),
 
 $commentError = $commentError ?? '';
 $commentSuccess = $commentSuccess ?? '';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 $authorId = (int) ($post['author_id'] ?? 0);
 $authorBoxName = trim((string) ($post['author_name'] ?? ''));
@@ -236,7 +237,7 @@ if ($authorBoxName === '') {
     $authorBoxName = $authorBoxNameCfg;
 }
 $authorBoxUrl = $authorId > 0
-    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, null, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId)
+    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId)
     : '';
 $authorBoxAvatarUrl = function_exists('phinit_safe_public_url')
     ? phinit_safe_public_url($authorBoxAvatar, $siteUrl, ['http', 'https'])
@@ -286,7 +287,7 @@ if ($sidebarPosition === 'left') {
                 <?php if ($showPostTags && !empty($postTags)): ?>
                 <div class="post-tags">
                     <?php foreach ($postTags as $tag): ?>
-                    <?php $tagUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/tag/' . rawurlencode((string) ($tag['slug'] ?? '')), null, $siteUrl) : rtrim($siteUrl, '/') . '/tag/' . rawurlencode((string) ($tag['slug'] ?? '')); ?>
+                    <?php $tagUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/tag/' . rawurlencode((string) ($tag['slug'] ?? '')), $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/tag/' . rawurlencode((string) ($tag['slug'] ?? '')); ?>
                     <a href="<?php echo htmlspecialchars($tagUrl, ENT_QUOTES); ?>" class="post-tag">#<?php echo phinit_escape_text($tag['name'] ?? ''); ?></a>
                     <?php endforeach; ?>
                 </div>

@@ -35,12 +35,16 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                        id="<?php echo $id; ?>"
                        value="<?php echo htmlspecialchars($currentValue ?: '#000000', ENT_QUOTES); ?>"
                        class="form-control form-control-color phinit-customizer__color-input"
-                       oninput="syncColor('<?php echo $id; ?>','<?php echo $id; ?>_txt','<?php echo $name; ?>')">
+                      data-color-picker
+                      data-sync-target-text="<?php echo htmlspecialchars($id . '_txt', ENT_QUOTES); ?>"
+                      data-sync-target-hidden="<?php echo htmlspecialchars($name, ENT_QUOTES); ?>">
                 <input type="text"
                        id="<?php echo $id; ?>_txt"
                        value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                        class="form-control font-monospace phinit-customizer__color-text"
-                       oninput="syncColorTxt('<?php echo $id; ?>','<?php echo $id; ?>_txt','<?php echo $name; ?>')">
+                      data-color-text
+                      data-sync-target-picker="<?php echo htmlspecialchars($id, ENT_QUOTES); ?>"
+                      data-sync-target-hidden="<?php echo htmlspecialchars($name, ENT_QUOTES); ?>">
                 <input type="hidden" name="<?php echo $name; ?>"
                        id="<?php echo $name; ?>"
                        value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>">

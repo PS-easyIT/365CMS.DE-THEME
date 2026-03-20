@@ -13,10 +13,12 @@ Auf der Testsite inzwischen sichtbar verifiziert:
 - `forgot-password.php` wird öffentlich korrekt gerendert.
 - Login-/Register-/Footer-Verlinkungen zeigen auf die bereinigten Legal- und Recovery-Ziele.
 - `/.well-known/security.txt` ist erreichbar.
+- `/security.txt` ist ebenfalls als Alias erreichbar.
+- `HEAD`-Checks auf `/forgot-password`, `/feed`, `/security.txt` und `/.well-known/security.txt` liefern auf der Testsite jetzt `200 OK`.
 
 Noch nicht vollständig im Test-Deploy sichtbar:
 
-- RSS-Feed liefert weiterhin rohe bzw. abgeschnittene Editor.js-JSON-Descriptions und benötigt noch einen frischen Deploy des jüngsten Core-Fixes.
+- Der RSS-Core-Fix ist auf der Testsite inzwischen grundsätzlich aktiv: Ein Abruf mit zusätzlichem Query-Parameter liefert bereits Plaintext-Descriptions statt roher Editor.js-JSON. Der kanonische Feed unter `/feed` zeigt aktuell aber noch den alten/stalen Inhalt, sodass das verbleibende Problem jetzt eher bei der Feed-Cache-Aktualisierung des Standardpfads liegt als im ausgelieferten PHP-Code selbst.
 - Einige Header-/Server-Themen (z. B. effektive CSP-Auslieferung) bleiben weiterhin Infrastruktur- bzw. Hosting-Themen außerhalb des reinen Theme-Codes.
 
 ## Fortschritt seit Audit-Erstellung

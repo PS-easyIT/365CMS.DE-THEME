@@ -7,6 +7,31 @@ if (!defined('ABSPATH')) {
 
 $_pg_toc = isset($_pg_toc) && is_array($_pg_toc) ? $_pg_toc : [];
 $pageTocClass = isset($pageTocClass) ? (string) $pageTocClass : '';
+$pageTocTree = function_exists('phinit_build_toc_tree') ? phinit_build_toc_tree($_pg_toc) : [];
+
+if ($pageTocTree === []) {
+    return;
+}
+?>
+<?php
+$renderPageTocTree = static function (array $nodes, bool $nested = false) use (&$renderPageTocTree): void {
+    if ($nodes === []) {
+        return;
+    }
+    ?>
+    <ol class="page-toc__list<?php echo $nested ? ' page-toc__list--nested' : ''; ?>">
+        <?php foreach ($nodes as $node): ?>
+        <?php $level = max(1, (int) ($node['level'] ?? 2)); ?>
+        <li class="page-toc__item page-toc__item--level-<?php echo $level; ?>">
+            <a href="#<?php echo htmlspecialchars((string) ($node['id'] ?? ''), ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars((string) ($node['text'] ?? ''), ENT_QUOTES); ?></a>
+            <?php if (!empty($node['children']) && is_array($node['children'])): ?>
+                <?php $renderPageTocTree($node['children'], true); ?>
+            <?php endif; ?>
+        </li>
+        <?php endforeach; ?>
+    </ol>
+    <?php
+};
 ?>
 <details class="toc-box page-toc page-toc--inline<?php echo htmlspecialchars($pageTocClass, ENT_QUOTES); ?>" data-inline-toc<?php echo $pageTocClass === '' ? ' data-anim' : ''; ?>>
     <summary class="page-toc__summary">
@@ -24,12 +49,6 @@ $pageTocClass = isset($pageTocClass) ? (string) $pageTocClass : '';
         </span>
     </summary>
     <nav class="page-toc__body" aria-label="Inhaltsverzeichnis der Seite">
-        <ol class="page-toc__list">
-            <?php foreach ($_pg_toc as $_ti): ?>
-            <li class="page-toc__item<?php echo (($_ti['level'] ?? 0) === 3) ? ' page-toc__item--nested' : ''; ?>">
-                <a href="#<?php echo htmlspecialchars((string) ($_ti['id'] ?? ''), ENT_QUOTES); ?>" class="page-toc__link"><?php echo htmlspecialchars((string) ($_ti['text'] ?? ''), ENT_QUOTES); ?></a>
-            </li>
-            <?php endforeach; ?>
-        </ol>
+        <?php $renderPageTocTree($pageTocTree); ?>
     </nav>
 </details>

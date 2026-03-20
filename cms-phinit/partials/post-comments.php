@@ -48,6 +48,7 @@ $commentFormAction = rtrim((string) SITE_URL, '/') . '/comments/post';
 $commentCount = count($comments);
 $commentCountLabel = $commentCount === 1 ? '1 Kommentar' : $commentCount . ' Kommentare';
 $commentAnonymousChecked = !empty($_POST['comment_anonymous']);
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 if (!$showComments) {
     return;
@@ -66,7 +67,9 @@ if (!$showComments) {
             $commentClasses = 'comment-item';
             $commentUserId = (int) ($comment['user_id'] ?? 0);
             $commentIsAnonymous = !empty($comment['is_anonymous']);
-            $commentAuthorUrl = ($commentUserId > 0 && !$commentIsAnonymous) ? (rtrim((string) SITE_URL, '/') . '/author/user-' . $commentUserId) : '';
+            $commentAuthorUrl = ($commentUserId > 0 && !$commentIsAnonymous)
+                ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $commentUserId, $currentLocale, (string) SITE_URL) : rtrim((string) SITE_URL, '/') . '/author/user-' . $commentUserId)
+                : '';
             if ($commentDepth > 0) {
                 $commentClasses .= ' comment-item--reply';
             }

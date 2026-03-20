@@ -86,33 +86,17 @@ try {
 } catch (\Throwable) { $comments = []; $commentCount = 0; }
 
 // ── Auto-ID-Injection + TOC ────────────────────────────────────────────
-$content   = $post['content'] ?? '';
-$usedSlugs = [];
-$content   = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/i', function ($m) use (&$usedSlugs) {
-    $level = $m[1]; $attrs = $m[2]; $inner = $m[3];
-    if (preg_match('/id="[^"]+"/i', $attrs)) return $m[0];
-    $text = strip_tags($inner);
-    $slug = mb_strtolower(trim($text));
-    $slug = str_replace(['ä','ö','ü','ß'], ['ae','oe','ue','ss'], $slug);
-    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
-    $slug = trim($slug, '-') ?: 'h';
-    $base = $slug;
-    $i = 2;
-    while (isset($usedSlugs[$slug])) { $slug = $base . '-' . $i++; }
-    $usedSlugs[$slug] = true;
-    return "<h{$level}{$attrs} id=\"{$slug}\">{$inner}</h{$level}>";
-}, $content) ?? $content;
-
+$content = (string) ($post['content'] ?? '');
+$headingData = phinit_with_heading_ids($content, [2, 3, 4, 5, 6]);
 $tocItems = [];
 if ($showToc) {
-    preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/i', $content, $tm, PREG_SET_ORDER);
-    foreach ($tm as $match) {
-        $tocItems[] = ['level' => (int)$match[1], 'id' => $match[2], 'text' => strip_tags($match[3])];
+    $tocItems = $headingData['toc'];
+    if (count($tocItems) < $tocMinHeadings) {
+        $tocItems = [];
     }
-    if (count($tocItems) < $tocMinHeadings) $tocItems = [];
 }
 
-$content = phinit_enhance_content_images($content);
+$content = phinit_enhance_content_images($headingData['html']);
 
 // ── Kommentarstatus & CSRF für /comments/post ─────────────────────────
 $commentError = $commentSuccess = '';

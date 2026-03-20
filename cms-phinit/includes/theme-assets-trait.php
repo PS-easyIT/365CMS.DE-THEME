@@ -694,21 +694,13 @@ trait CMS_Phinit_Theme_Assets_Trait
 
             $gaId = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'google_analytics_id', '');
             if (!empty(trim((string) $gaId)) && preg_match('/^G-[A-Z0-9]{6,}$/', trim((string) $gaId))) {
-                $gaId = htmlspecialchars(trim((string) $gaId), ENT_QUOTES);
-                echo "<script>\n";
-                echo "(function(){\n";
-                echo "  var consent = localStorage.getItem('cms-consent');\n";
-                echo "  if (consent !== 'accepted') return;\n";
-                echo "  var s = document.createElement('script');\n";
-                echo "  s.async = true;\n";
-                echo "  s.src = 'https://www.googletagmanager.com/gtag/js?id={$gaId}';\n";
-                echo "  document.head.appendChild(s);\n";
-                echo "  window.dataLayer = window.dataLayer || [];\n";
-                echo "  function gtag(){dataLayer.push(arguments);}\n";
-                echo "  gtag('js', new Date());\n";
-                echo "  gtag('config', '{$gaId}', {anonymize_ip: true});\n";
-                echo "})();\n";
-                echo "</script>\n";
+                $gaId = trim((string) $gaId);
+                $analyticsLoaderFile = CMS_PHINIT_THEME_DIR . 'assets/js/analytics-loader.js';
+
+                if (is_file($analyticsLoaderFile)) {
+                    $analyticsLoaderUrl = $this->themeAssetUrl('assets/js/analytics-loader.js', filemtime($analyticsLoaderFile));
+                    echo '<script src="' . htmlspecialchars($analyticsLoaderUrl, ENT_QUOTES, 'UTF-8') . '" data-ga-id="' . htmlspecialchars($gaId, ENT_QUOTES, 'UTF-8') . '" defer></script>' . "\n";
+                }
             }
         } catch (\Throwable $e) {
         }
@@ -1064,7 +1056,9 @@ trait CMS_Phinit_Theme_Assets_Trait
                  LIMIT 1"
             );
 
-            $this->homepageLeadImageCache = trim((string) ($row->featured_image ?? ''));
+            $this->homepageLeadImageCache = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url((string) ($row->featured_image ?? ''), true)
+                : trim((string) ($row->featured_image ?? ''));
         } catch (\Throwable) {
             $this->homepageLeadImageCache = '';
         }

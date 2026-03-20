@@ -134,7 +134,7 @@ if (!function_exists('phinit_with_heading_ids')) {
      * @param array<int,int> $levels
      * @return array{html:string,toc:array<int,array{level:int,id:string,text:string}>}
      */
-    function phinit_with_heading_ids(string $html, array $levels = [2, 3]): array
+    function phinit_with_heading_ids(string $html, array $levels = [2, 3, 4, 5, 6]): array
     {
         if (trim($html) === '') {
             return ['html' => '', 'toc' => []];
@@ -185,6 +185,67 @@ if (!function_exists('phinit_with_heading_ids')) {
             'html' => is_string($htmlWithIds) ? $htmlWithIds : $html,
             'toc'  => $toc,
         ];
+    }
+}
+
+if (!function_exists('phinit_build_toc_tree')) {
+    /**
+     * Wandelt flache TOC-Einträge in eine hierarchische Baumstruktur um.
+     *
+     * @param array<int,array{level?:int,id?:string,text?:string}> $items
+     * @return array<int,array{level:int,id:string,text:string,children:array<int,array{level:int,id:string,text:string,children:array}>}>
+     */
+    function phinit_build_toc_tree(array $items): array
+    {
+        $tree = [];
+        $stack = [];
+
+        foreach ($items as $item) {
+            $level = max(1, (int) ($item['level'] ?? 2));
+            $id = trim((string) ($item['id'] ?? ''));
+            $text = trim((string) ($item['text'] ?? ''));
+
+            if ($id === '' || $text === '') {
+                continue;
+            }
+
+            $node = [
+                'level' => $level,
+                'id' => $id,
+                'text' => $text,
+                'children' => [],
+            ];
+
+            while ($stack !== [] && $level <= (int) ($stack[count($stack) - 1]['level'] ?? 0)) {
+                array_pop($stack);
+            }
+
+            if ($stack === []) {
+                $tree[] = $node;
+                $nodeIndex = array_key_last($tree);
+                if ($nodeIndex !== null) {
+                    $stack[] = [
+                        'level' => $level,
+                        'node' => &$tree[$nodeIndex],
+                    ];
+                }
+                continue;
+            }
+
+            $parentIndex = count($stack) - 1;
+            $parentNode = &$stack[$parentIndex]['node'];
+            $parentNode['children'][] = $node;
+            $nodeIndex = array_key_last($parentNode['children']);
+
+            if ($nodeIndex !== null) {
+                $stack[] = [
+                    'level' => $level,
+                    'node' => &$parentNode['children'][$nodeIndex],
+                ];
+            }
+        }
+
+        return $tree;
     }
 }
 

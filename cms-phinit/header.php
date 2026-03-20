@@ -69,6 +69,14 @@ $_localizedHref = static function (string $url, ?string $locale = null) use ($_c
 };
 
 $_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_currentLocale);
+$_themeInitScriptUrl = '';
+
+if (defined('CMS_PHINIT_THEME_DIR') && defined('CMS_PHINIT_THEME_URL')) {
+    $_themeInitScriptFile = CMS_PHINIT_THEME_DIR . 'assets/js/theme-init.js';
+    if (is_file($_themeInitScriptFile)) {
+        $_themeInitScriptUrl = CMS_PHINIT_THEME_URL . 'assets/js/theme-init.js?v=' . rawurlencode((string) filemtime($_themeInitScriptFile));
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($_currentLocale, ENT_QUOTES, 'UTF-8'); ?>">
@@ -76,30 +84,9 @@ $_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_curren
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars(\CMS\Hooks::applyFilters('page_title', $siteTitle), ENT_QUOTES, 'UTF-8'); ?></title>
-    <script>
-    (function () {
-        try {
-            var storedTheme = localStorage.getItem('cms365-theme');
-            if (storedTheme === null) {
-                storedTheme = localStorage.getItem('cms-phinit-theme');
-                if (storedTheme !== null) {
-                    localStorage.setItem('cms365-theme', storedTheme);
-                }
-            }
-
-            if (storedTheme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-                document.addEventListener('DOMContentLoaded', function () {
-                    if (document.body) {
-                        document.body.classList.add('dark-mode');
-                    }
-                }, { once: true });
-            }
-        } catch (error) {
-            console.warn('Dark-Mode konnte vorab nicht initialisiert werden.', error);
-        }
-    })();
-    </script>
+    <?php if ($_themeInitScriptUrl !== ''): ?>
+    <script src="<?php echo htmlspecialchars($_themeInitScriptUrl, ENT_QUOTES, 'UTF-8'); ?>"></script>
+    <?php endif; ?>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 <?php

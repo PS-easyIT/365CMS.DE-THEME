@@ -184,8 +184,14 @@
     gap: .4rem;
 }
 
-.page-toc__item--nested {
-    margin-left: 0;
+.page-toc__list--nested {
+    margin: .45rem 0 0 .45rem;
+    padding-left: .95rem;
+    border-left: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent 16%);
+}
+
+.page-toc__item {
+    list-style: none;
 }
 
 .page-toc__link {
@@ -197,9 +203,17 @@
     color: var(--text-secondary);
     text-decoration: none;
     transition: var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.page-toc__item--nested .page-toc__link {
+.page-toc__item--level-2 > .page-toc__link {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.page-toc__item--level-3 > .page-toc__link {
     padding-left: 1.15rem;
     font-size: .83rem;
 }

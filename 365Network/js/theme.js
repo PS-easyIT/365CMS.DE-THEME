@@ -42,6 +42,31 @@
         }
     }
 
+    function initDirectoryAutoSubmit() {
+        document.querySelectorAll('[data-auto-submit-filter]').forEach(function (element) {
+            element.addEventListener('change', function () {
+                const form = element.form;
+                if (form) {
+                    form.requestSubmit();
+                }
+            });
+        });
+    }
+
+    function initHistoryBackButtons() {
+        document.querySelectorAll('[data-history-back]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (window.history.length > 1) {
+                    window.history.back();
+                    return;
+                }
+
+                const fallbackUrl = button.getAttribute('data-history-fallback') || '/';
+                window.location.href = fallbackUrl;
+            });
+        });
+    }
+
     // Beim Laden anwenden (verhindert FOUC)
     applyDarkMode(getStoredMode());
 
@@ -50,6 +75,9 @@
         if (themeToggle) {
             themeToggle.addEventListener('click', toggleDarkMode);
         }
+
+        initDirectoryAutoSubmit();
+        initHistoryBackButtons();
 
         // System-Präferenz-Änderung beobachten
         if (window.matchMedia) {

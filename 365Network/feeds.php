@@ -139,7 +139,7 @@ require_once __DIR__ . '/header.php';
         <aside class="directory-filters" aria-label="Feed-Quellen">
             <div class="filter-panel">
                 <h3 class="filter-panel-title">📡 Quellen</h3>
-                <div style="display:flex;flex-direction:column;gap:.375rem;">
+                <div class="filter-link-list">
                     <a href="?<?php echo $search ? 'q=' . urlencode($search) : ''; ?>"
                        class="feed-source-link <?php echo $source === 0 ? 'is-active' : ''; ?>">
                         Alle Quellen
@@ -151,7 +151,7 @@ require_once __DIR__ . '/header.php';
                         </a>
                     <?php endforeach; ?>
                     <?php if (empty($sources) && $hasPlugin) : ?>
-                        <p style="font-size:.85rem;color:var(--muted-color);">Noch keine Quellen konfiguriert.</p>
+                        <p class="form-text">Noch keine Quellen konfiguriert.</p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -162,7 +162,7 @@ require_once __DIR__ . '/header.php';
                     <?php if ($source) : ?><input type="hidden" name="source" value="<?php echo $source; ?>"><?php endif; ?>
                     <div class="filter-group">
                         <label class="filter-label" for="f-sort">Sortierung</label>
-                        <select name="sort" id="f-sort" class="filter-select" onchange="this.form.submit()">
+                        <select name="sort" id="f-sort" class="filter-select" data-auto-submit-filter>
                             <option value="latest" <?php echo $sort === 'latest' ? 'selected' : ''; ?>>🕐 Neueste zuerst</option>
                             <option value="title"  <?php echo $sort === 'title' ? 'selected' : ''; ?>>🔤 Titel A–Z</option>
                         </select>

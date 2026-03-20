@@ -159,7 +159,7 @@ require_once __DIR__ . '/header.php';
                 <?php if (!empty($locations)): ?>
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">📍 Standort</h3>
-                    <select name="location" class="filter-select" onchange="this.form.submit()">
+                    <select name="location" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Städte</option>
                         <?php foreach ($locations as $loc): if (!$loc) continue; ?>
                             <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES); ?>"
@@ -175,7 +175,7 @@ require_once __DIR__ . '/header.php';
                 <?php if (!empty($skills)): ?>
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🛠️ Skills</h3>
-                    <select name="skill" class="filter-select" onchange="this.form.submit()">
+                    <select name="skill" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Skills</option>
                         <?php foreach ($skills as $sk): if (!$sk) continue; ?>
                             <option value="<?php echo htmlspecialchars($sk, ENT_QUOTES); ?>"
@@ -190,7 +190,7 @@ require_once __DIR__ . '/header.php';
                 <!-- Verfügbarkeit -->
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">✅ Verfügbarkeit</h3>
-                    <div style="display:flex;flex-direction:column;gap:.375rem;">
+                    <div class="filter-link-list">
                         <?php
                         $availOpts = ['' => 'Alle', 'available' => '✅ Verfügbar', 'limited' => '🟡 Eingeschränkt', 'booked' => '🔴 Gebucht'];
                         foreach ($availOpts as $val => $label): ?>
@@ -205,7 +205,7 @@ require_once __DIR__ . '/header.php';
                 <!-- Sortierung -->
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗂️ Sortierung</h3>
-                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <select name="sort" class="filter-select" data-auto-submit-filter>
                         <option value="latest"     <?php echo $sort === 'latest'     ? 'selected' : ''; ?>>🕐 Neueste zuerst</option>
                         <option value="name"       <?php echo $sort === 'name'       ? 'selected' : ''; ?>>🔤 Name A–Z</option>
                         <option value="experience" <?php echo $sort === 'experience' ? 'selected' : ''; ?>>⭐ Erfahrung</option>
@@ -214,7 +214,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $location || $skill || $avail): ?>
                     <div class="filter-panel">
-                        <a href="/experts" class="btn btn-secondary" style="width:100%;text-align:center;">✖ Filter zurücksetzen</a>
+                        <a href="/experts" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -292,7 +292,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">👤</div>
                 <h3>Keine Experten gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/experts" class="btn btn-secondary" style="margin-top:1rem;">✖ Filter zurücksetzen</a>
+                <a href="/experts" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>

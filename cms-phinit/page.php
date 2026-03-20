@@ -53,7 +53,7 @@ $isImageArchivePage = is_array($page) && phinit_is_image_archive_page($page);
 if (!$pageProvidedByRouter) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
 }
-$pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3]);
+$pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
 $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
 $isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
 $favoriteControl = !$isHubSitePage

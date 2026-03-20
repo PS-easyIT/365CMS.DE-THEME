@@ -441,13 +441,24 @@
             return;
         }
 
+        function notifyConsentChange(state) {
+            window.dispatchEvent(new CustomEvent('cms-cookie-consent-change', {
+                detail: {
+                    state: state,
+                    accepted: state === 'accepted'
+                }
+            }));
+        }
+
         if (btnOk) btnOk.addEventListener('click', () => {
             localStorage.setItem('cms-consent', 'accepted');
             banner.style.display = 'none';
+            notifyConsentChange('accepted');
         });
         if (btnDecl) btnDecl.addEventListener('click', () => {
             localStorage.setItem('cms-consent', 'declined');
             banner.style.display = 'none';
+            notifyConsentChange('declined');
         });
     }
 })();

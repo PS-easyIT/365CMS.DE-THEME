@@ -328,17 +328,34 @@ function phinit_build_homepage_post_locale_condition(string $locale, ?\CMS\Servi
     $localization ??= \CMS\Services\ContentLocalizationService::getInstance();
     $locale = $localization->normalizeLocale($locale);
 
+    $baseContentCondition = "(CHAR_LENGTH(TRIM(COALESCE(p.content, ''))) > 0"
+        . " OR CHAR_LENGTH(TRIM(COALESCE(p.excerpt, ''))) > 0"
+        . " OR CHAR_LENGTH(TRIM(COALESCE(p.title, ''))) > 0)";
+
+    $englishContentCondition = "(CHAR_LENGTH(TRIM(COALESCE(p.content_en, ''))) > 0"
+        . " OR CHAR_LENGTH(TRIM(COALESCE(p.excerpt_en, ''))) > 0"
+        . " OR CHAR_LENGTH(TRIM(COALESCE(p.title_en, ''))) > 0)";
+
+    $legacyEnglishOnlyCondition = "(CHAR_LENGTH(TRIM(COALESCE(p.slug_en, ''))) > 0"
+        . " AND NOT {$englishContentCondition})";
+
     if ($locale === '' || $locale === 'de') {
-        return '';
+        return " AND {$baseContentCondition} AND NOT {$legacyEnglishOnlyCondition}";
     }
 
     if (!in_array($locale, $localization->getContentLocales(), true)) {
         return '';
     }
 
-    return " AND (CHAR_LENGTH(TRIM(COALESCE(p.content_{$locale}, ''))) > 0"
+    $localizedContentCondition = "(CHAR_LENGTH(TRIM(COALESCE(p.content_{$locale}, ''))) > 0"
         . " OR CHAR_LENGTH(TRIM(COALESCE(p.excerpt_{$locale}, ''))) > 0"
         . " OR CHAR_LENGTH(TRIM(COALESCE(p.title_{$locale}, ''))) > 0)";
+
+    if ($locale === 'en') {
+        return " AND ({$localizedContentCondition} OR {$legacyEnglishOnlyCondition})";
+    }
+
+    return " AND {$localizedContentCondition}";
 }
 
 /**
@@ -357,6 +374,14 @@ function phinit_prepare_homepage_posts(array $posts, string $locale): array
 
         foreach ($posts as $post) {
             $localizedPost = $localization->localizePost($post, $locale);
+            $localizedPost['featured_image'] = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url((string) ($localizedPost['featured_image'] ?? ''), true)
+                : (string) ($localizedPost['featured_image'] ?? '');
+            if (!empty($localizedPost['custom_sidebar_image'])) {
+                $localizedPost['custom_sidebar_image'] = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) $localizedPost['custom_sidebar_image'], true)
+                    : (string) $localizedPost['custom_sidebar_image'];
+            }
             $localizedPost['permalink'] = $permalinkService->buildPostUrl($localizedPost, $locale);
             $prepared[] = $localizedPost;
         }
@@ -364,6 +389,14 @@ function phinit_prepare_homepage_posts(array $posts, string $locale): array
         return $prepared;
     } catch (\Throwable $_e) {
         foreach ($posts as $post) {
+            $post['featured_image'] = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url((string) ($post['featured_image'] ?? ''), true)
+                : (string) ($post['featured_image'] ?? '');
+            if (!empty($post['custom_sidebar_image'])) {
+                $post['custom_sidebar_image'] = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) $post['custom_sidebar_image'], true)
+                    : (string) $post['custom_sidebar_image'];
+            }
             $post['permalink'] = rtrim((string) SITE_URL, '/') . '/blog/' . (string) ($post['slug'] ?? '');
             $prepared[] = $post;
         }

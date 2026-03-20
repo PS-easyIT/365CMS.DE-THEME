@@ -17,10 +17,13 @@ $authorBio = trim((string) ($author['bio'] ?? ''));
 $authorAvatar = trim((string) ($author['avatar_url'] ?? ''));
 $authorDetails = isset($author['details']) && is_array($author['details']) ? $author['details'] : [];
 $authorSlug = trim((string) ($author['slug'] ?? ''));
-$authorProfileUrl = $siteUrl . '/author/' . rawurlencode($authorSlug !== '' ? $authorSlug : ('user-' . (int) ($author['id'] ?? 0)));
 $showActivity = !empty($author['show_activity']);
 $authorInitials = 'AU';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$authorProfilePath = (string) ($author['profile_url'] ?? ('/author/' . rawurlencode($authorSlug !== '' ? $authorSlug : ('user-' . (int) ($author['id'] ?? 0)))));
+$authorProfileUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href($authorProfilePath, $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . $authorProfilePath;
 $displayNameLabel = $currentLocale === 'en' ? 'Display name' : 'Anzeigename';
 
 $authorBioNormalized = preg_replace('/\s+/u', ' ', mb_strtolower($authorBio, 'UTF-8'));
@@ -122,6 +125,9 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
             <?php foreach ($posts as $post): ?>
             <?php
                 $post = (array) $post;
+                if (class_exists('CMS\Services\ContentLocalizationService')) {
+                    $post = \CMS\Services\ContentLocalizationService::getInstance()->localizePost($post, $currentLocale);
+                }
                 $postTitle = trim((string) ($post['title'] ?? 'Beitrag'));
                 $postExcerpt = function_exists('phinit_excerpt_plain_text')
                     ? phinit_excerpt_plain_text((string) ($post['excerpt'] ?? ''))
@@ -133,7 +139,7 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                 }
                 $postExcerpt = mb_strimwidth($postExcerpt, 0, 180, '…');
                 $postCategory = trim((string) ($post['category_name'] ?? 'Beitrag'));
-                $postPath = $permalinkService->buildPostPath($post);
+                $postPath = $permalinkService->buildPostPath($post, $currentLocale);
                 $postUrl = $siteUrl . $postPath;
                 $postDate = trim((string) ($post['published_at'] ?? $post['created_at'] ?? ''));
                 $postTimestamp = $postDate !== '' ? strtotime($postDate) : false;

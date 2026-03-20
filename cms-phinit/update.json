@@ -1,13 +1,40 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.0",
+  "version": "1.5.3",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.5.4",
-  "release_date": "2026-03-14",
+  "release_date": "2026-03-18",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.3",
+      "date": "2026-03-18",
+      "changes": [
+        "admin/customizer-styles.php + assets/css/customizer-admin.css: kompletter Customizer-Styleblock aus Inline-CSS in ein cachebares Admin-Stylesheet ausgelagert",
+        "admin/customizer-field-renderer.php + assets/js/customizer-admin.js: Farbfelder arbeiten jetzt datengetrieben über zentrale Event-Listener statt über oninput-Handler im Markup",
+        "admin/customizer-action-bar.php + assets/js/customizer-admin.js: Reset-Bestätigung aus onclick in data-confirm-message plus zentrales Admin-JS verschoben"
+      ]
+    },
+    {
+      "version": "1.5.2",
+      "date": "2026-03-18",
+      "changes": [
+        "admin/customizer-scripts.php + assets/js/customizer-admin.js: ausführliche Customizer-Interaktionen (Unsaved-Warnung, Shortcuts, Preview-Drawer, Farb-Presets und Font-Previews) aus ausführbarem Inline-JavaScript in ein cachebares Admin-Asset ausgelagert",
+        "admin/customizer-scripts.php: Theme-Admin liefert nur noch passive JSON-Konfiguration und bindet das neue Customizer-Asset mit filemtime-basiertem Cache-Busting ein",
+        "admin/customizer-styles.php: Font-Preview-Widget nutzt jetzt eine wiederverwendbare CSS-Klasse statt Inline-style-Strings aus dem JavaScript",
+        "includes/theme-assets-trait.php + assets/js/analytics-loader.js + assets/js/navigation.js: Google-Analytics-Bootstrap aus Inline-JavaScript in ein consent-fähiges Theme-Asset verlagert; das Theme-Banner sendet jetzt ein zentrales cms-cookie-consent-change-Event für nachgelagerte Integrationen"
+      ]
+    },
+    {
+      "version": "1.5.1",
+      "date": "2026-03-18",
+      "changes": [
+        "header.php + assets/js/theme-init.js: früher Dark-Mode-Init aus dem Header-Template in ein cachebares Head-Asset ausgelagert, damit der Header ohne Inline-Skript auskommt und der Dark-Mode weiter vor dem ersten Paint greifen kann",
+        "header.php: Theme-Init-Skript wird nur geladen, wenn das Asset vorhanden ist, inklusive filemtime-basiertem Cache-Busting"
+      ]
+    },
     {
       "version": "1.5.0",
       "date": "2026-03-14",

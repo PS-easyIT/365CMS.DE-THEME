@@ -167,7 +167,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">👔 Anstellungsart</h3>
-                    <select name="type" class="filter-select" onchange="this.form.submit()">
+                    <select name="type" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle</option>
                         <?php foreach ($typeLabels as $val => $lbl): ?>
                             <option value="<?php echo $val; ?>" <?php echo $type === $val ? 'selected' : ''; ?>><?php echo $lbl; ?></option>
@@ -177,7 +177,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">📈 Erfahrungsstufe</h3>
-                    <select name="level" class="filter-select" onchange="this.form.submit()">
+                    <select name="level" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle</option>
                         <?php foreach ($levelLabels as $val => $lbl): ?>
                             <option value="<?php echo $val; ?>" <?php echo $level === $val ? 'selected' : ''; ?>><?php echo $lbl; ?></option>
@@ -187,7 +187,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🌐 Remote-Option</h3>
-                    <div style="display:flex;flex-direction:column;gap:.375rem;">
+                    <div class="filter-link-list">
                         <a href="?<?php echo http_build_query(array_merge($_GET, ['remote' => '', 'page' => 1])); ?>"
                            class="filter-link <?php echo $remote === '' ? 'is-active' : ''; ?>">Alle</a>
                         <?php foreach ($remoteLabels as $val => $lbl): ?>
@@ -199,7 +199,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗂️ Sortierung</h3>
-                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <select name="sort" class="filter-select" data-auto-submit-filter>
                         <option value="latest" <?php echo $sort === 'latest' ? 'selected' : ''; ?>>🕐 Neueste zuerst</option>
                         <option value="title"  <?php echo $sort === 'title'  ? 'selected' : ''; ?>>🔤 Titel A–Z</option>
                         <option value="views"  <?php echo $sort === 'views'  ? 'selected' : ''; ?>>👁 Meiste Aufrufe</option>
@@ -208,7 +208,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $type || $level || $remote): ?>
                     <div class="filter-panel">
-                        <a href="/jobs" class="btn btn-secondary" style="width:100%;text-align:center;">✖ Filter zurücksetzen</a>
+                        <a href="/jobs" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -298,7 +298,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">💼</div>
                 <h3>Keine Stellenprofile gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/jobs" class="btn btn-secondary" style="margin-top:1rem;">✖ Filter zurücksetzen</a>
+                <a href="/jobs" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>

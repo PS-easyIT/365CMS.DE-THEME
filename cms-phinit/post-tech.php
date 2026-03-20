@@ -149,47 +149,12 @@ $diffInfo = $diffLabels[$techDiff] ?? null;
 
 $tocItems = [];
 $content = (string) ($post['content'] ?? '');
-$usedSlugs = [];
-$content = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h\1>/si', function ($matches) use (&$usedSlugs) {
-    $tag = $matches[1];
-    $attrs = $matches[2];
-    $inner = $matches[3];
-
-    if (preg_match('/\bid=["\']([^"\']+)["\']/i', $attrs)) {
-        return $matches[0];
-    }
-
-    $text = phinit_display_text(strip_tags($inner));
-    $slug = mb_strtolower($text, 'UTF-8');
-    $slug = preg_replace('/[äÄ]/', 'ae', $slug);
-    $slug = preg_replace('/[öÖ]/', 'oe', $slug);
-    $slug = preg_replace('/[üÜ]/', 'ue', $slug);
-    $slug = preg_replace('/ß/', 'ss', $slug);
-    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
-    $slug = trim((string) $slug, '-') ?: 'heading';
-    $base = $slug;
-    $i = 2;
-
-    while (in_array($slug, $usedSlugs, true)) {
-        $slug = $base . '-' . $i++;
-    }
-
-    $usedSlugs[] = $slug;
-
-    return "<h{$tag}{$attrs} id=\"{$slug}\">{$inner}</h{$tag}>";
-}, $content) ?? $content;
-
+$headingData = phinit_with_heading_ids($content, [2, 3, 4, 5, 6]);
+$content = $headingData['html'];
 $post['content'] = $content;
 
 if ($showToc) {
-    preg_match_all('/<h([23])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h\1>/si', $content, $matches, PREG_SET_ORDER);
-    foreach ($matches as $match) {
-        $tocItems[] = [
-            'level' => (int) $match[1],
-            'id' => $match[2],
-            'text' => phinit_display_text(strip_tags($match[3])),
-        ];
-    }
+    $tocItems = $headingData['toc'];
 
     if (count($tocItems) < $tocMinHeadings) {
         $tocItems = [];

@@ -14,7 +14,13 @@ if (!defined('ABSPATH')) {
 }
 
 use CMS\Services\ThemeCustomizer;
+use CMS\Auth;
 use CMS\Security;
+
+if (!Auth::instance()->isAdmin()) {
+    header('Location: ' . SITE_URL);
+    exit;
+}
 
 // Helper für Sidebar laden
 $possiblePaths = [
@@ -1266,6 +1272,19 @@ $coreAdminCssUrl = function_exists('cms_asset_url')
 $coreAdminJsUrl = function_exists('cms_asset_url')
     ? cms_asset_url('js/admin.js')
     : SITE_URL . '/assets/js/admin.js';
+
+$themeUrl = class_exists('\CMS\ThemeManager')
+    ? rtrim((string) \CMS\ThemeManager::instance()->getThemeUrl(), '/')
+    : rtrim(SITE_URL, '/') . '/themes/365Network';
+
+$customizerCssFile = dirname(__DIR__) . '/css/customizer-admin.css';
+$customizerJsFile  = dirname(__DIR__) . '/js/customizer-admin.js';
+$customizerCssUrl  = is_file($customizerCssFile)
+    ? $themeUrl . '/css/customizer-admin.css?v=' . rawurlencode((string) filemtime($customizerCssFile))
+    : '';
+$customizerJsUrl = is_file($customizerJsFile)
+    ? $themeUrl . '/js/customizer-admin.js?v=' . rawurlencode((string) filemtime($customizerJsFile))
+    : '';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -1275,37 +1294,10 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
     <title>Theme Customizer – <?php echo defined('SITE_NAME') ? htmlspecialchars(SITE_NAME) : '365Network'; ?></title>
     <link rel="stylesheet" href="<?php echo htmlspecialchars($coreMainCssUrl, ENT_QUOTES); ?>">
     <link rel="stylesheet" href="<?php echo htmlspecialchars($coreAdminCssUrl, ENT_QUOTES); ?>">
+    <?php if ($customizerCssUrl !== ''): ?>
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($customizerCssUrl, ENT_QUOTES); ?>">
+    <?php endif; ?>
     <?php renderAdminSidebarStyles(); ?>
-    <style>
-        .customizer-layout { display: flex; gap: 2rem; align-items: flex-start; }
-        .customizer-nav { width: 240px; flex-shrink: 0; background: #fff; border-radius: var(--card-radius, 10px); border: var(--card-border, 1px solid #e2e8f0); overflow: hidden; }
-        .customizer-nav a { display: block; padding: 1rem 1.5rem; color: #64748b; text-decoration: none; border-left: 3px solid transparent; transition: all .2s; font-size: .9rem; }
-        .customizer-nav a:hover { background: #f8fafc; color: var(--admin-primary, #3b82f6); }
-        .customizer-nav a.active { background: #eff6ff; color: var(--admin-primary, #3b82f6); border-left-color: var(--admin-primary, #3b82f6); font-weight: 600; }
-        .customizer-content { flex: 1; }
-        .form-actions-card { position: sticky; bottom: 1rem; z-index: 10; }
-
-        /* ── Farben-Tab: 3-Spalten-Karten-Layout ── */
-        .color-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-        .color-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; }
-        .color-card h4 { margin: 0 0 1rem 0; font-size: .95rem; font-weight: 700; color: #1e293b; padding-bottom: .75rem; border-bottom: 1px solid #f1f5f9; }
-        .color-card .form-group { margin-bottom: 1rem; }
-        .color-card .form-group:last-child { margin-bottom: 0; }
-        .color-card .form-label { font-size: .82rem; margin-bottom: .25rem; }
-        .color-card .form-text { font-size: .75rem; }
-        @media (max-width: 1200px) { .color-cards-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 800px) { .color-cards-grid { grid-template-columns: 1fr; } }
-
-        /* ── Startseite-Tab: 2-Spalten-Karten-Layout ── */
-        .homepage-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-        .homepage-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; }
-        .homepage-card h4 { margin: 0 0 1rem 0; font-size: .95rem; font-weight: 700; color: #1e293b; padding-bottom: .75rem; border-bottom: 1px solid #f1f5f9; }
-        .homepage-card .form-group { margin-bottom: 1rem; }
-        .homepage-card .form-group:last-child { margin-bottom: 0; }
-        .homepage-card .form-label { font-size: .85rem; margin-bottom: .25rem; }
-        .homepage-card .form-text { font-size: .78rem; }
-        @media (max-width: 900px) { .homepage-cards-grid { grid-template-columns: 1fr; } }
-    </style>
 </head>
 <body class="admin-body">
 
@@ -1330,7 +1322,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" enctype="multipart/form-data">
+        <form id="customizer-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" enctype="multipart/form-data">
             <input type="hidden" name="action" value="save_theme_options">
             <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
@@ -1360,28 +1352,32 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                     ?>
                     <div class="admin-card">
                         <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
-                        <div class="color-cards-grid">
+                        <div class="customizer-color-grid">
                             <?php foreach ($colorGroups as $groupTitle => $groupKeys): ?>
-                            <div class="color-card">
+                            <div class="customizer-color-card">
                                 <h4><?php echo $groupTitle; ?></h4>
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
                                     $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                                     $inputId   = "field_{$activeTab}_{$fieldKey}";
+                                    $textInputId = $inputId . '_text';
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
                                     <label for="<?php echo $inputId; ?>" class="form-label">
                                         <?php echo htmlspecialchars($field['label']); ?>
                                     </label>
-                                    <div style="display:flex;align-items:center;gap:10px;">
+                                    <div class="customizer-control-row">
                                         <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
-                                               style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
-                                        <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
-                                               class="form-control" style="width:120px;"
-                                               onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                               class="customizer-color-picker"
+                                               data-customizer-color-picker
+                                               data-sync-text="<?php echo $textInputId; ?>">
+                                        <input type="text" id="<?php echo $textInputId; ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                               class="form-control customizer-color-text"
+                                               data-customizer-color-text
+                                               data-sync-picker="<?php echo $inputId; ?>">
                                     </div>
                                     <?php if (!empty($field['description'])): ?>
                                         <small class="form-text"><?php echo $field['description']; ?></small>
@@ -1407,9 +1403,9 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                     ?>
                     <div class="admin-card">
                         <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
-                        <div class="homepage-cards-grid">
+                        <div class="customizer-section-grid">
                             <?php foreach ($homepageGroups as $groupTitle => $groupKeys): ?>
-                            <div class="homepage-card">
+                            <div class="customizer-section-card">
                                 <h4><?php echo $groupTitle; ?></h4>
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
@@ -1424,11 +1420,11 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                     </label>
 
                                     <?php if ($field['type'] === 'checkbox'): ?>
-                                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
+                                        <div class="customizer-checkbox-row">
                                             <input type="checkbox" id="<?php echo $inputId; ?>"
                                                    name="<?php echo $inputName; ?>" value="1"
                                                    <?php echo $val ? 'checked' : ''; ?>>
-                                            <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                            <label for="<?php echo $inputId; ?>" class="customizer-checkbox-label">Aktivieren</label>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'select'): ?>
@@ -1445,7 +1441,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                     <?php elseif ($field['type'] === 'number'): ?>
                                         <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
-                                               class="form-control" style="width:120px;" min="1" max="12">
+                                                 class="form-control customizer-number-input" min="1" max="12">
 
                                     <?php else: ?>
                                         <input type="<?php echo htmlspecialchars($field['type']); ?>"
@@ -1498,15 +1494,16 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                     ?>
                     <div class="admin-card">
                         <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
-                        <div class="homepage-cards-grid">
+                        <div class="customizer-section-grid">
                             <?php foreach ($cardGroups as $groupTitle => $groupKeys): ?>
-                            <div class="homepage-card">
+                            <div class="customizer-section-card">
                                 <h4><?php echo $groupTitle; ?></h4>
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
                                     $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                                     $inputId   = "field_{$activeTab}_{$fieldKey}";
+                                    $textInputId = $inputId . '_text';
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
@@ -1516,43 +1513,47 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 
                                     <?php if ($field['type'] === 'image_upload'): ?>
                                         <?php $previewUrl = $val ? htmlspecialchars((string)$val) : ''; ?>
-                                        <div style="display:flex;flex-direction:column;gap:10px;">
-                                            <div id="logo-preview-wrap" style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:6px;padding:12px;display:flex;align-items:center;gap:12px;min-height:60px;">
+                                        <div class="customizer-control-row-stack" data-customizer-logo-group>
+                                            <div class="customizer-logo-preview" data-customizer-logo-preview>
                                                 <?php if ($previewUrl): ?>
-                                                    <img id="logo-preview-img" src="<?php echo $previewUrl; ?>" alt="Logo" style="max-height:48px;max-width:200px;">
+                                                    <img src="<?php echo $previewUrl; ?>" alt="Logo" class="customizer-logo-preview-image">
                                                 <?php else: ?>
-                                                    <span id="logo-preview-img" style="color:#94a3b8;font-size:.85rem;">🖼️ Noch kein Logo ausgewählt</span>
+                                                    <span class="customizer-logo-preview-placeholder">🖼️ Noch kein Logo ausgewählt</span>
                                                 <?php endif; ?>
                                             </div>
-                                            <div style="display:flex;align-items:center;gap:8px;">
-                                                <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:.45rem .9rem;background:#3b82f6;color:#fff;border-radius:5px;font-size:.85rem;font-weight:600;">
+                                            <div class="customizer-control-row-inline">
+                                                <label class="customizer-upload-button">
                                                     📁 Bild hochladen
                                                     <input type="file" name="logo_upload_file" accept="image/*"
-                                                           style="display:none;" onchange="previewLogoUpload(this)">
+                                                           class="customizer-file-input"
+                                                           data-customizer-logo-upload>
                                                 </label>
-                                                <span style="color:#64748b;font-size:.8rem;">oder URL eingeben:</span>
+                                                <span class="customizer-upload-hint">oder URL eingeben:</span>
                                             </div>
                                             <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                                    value="<?php echo $previewUrl; ?>" class="form-control"
-                                                   placeholder="https://..." oninput="syncLogoUrlPreview(this.value)">
+                                                   placeholder="https://..." data-customizer-logo-url>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'color'): ?>
-                                        <div style="display:flex;align-items:center;gap:10px;">
+                                        <div class="customizer-control-row">
                                             <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                                    value="<?php echo htmlspecialchars((string)$val); ?>"
-                                                   style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
-                                            <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
-                                                   class="form-control" style="width:120px;"
-                                                   onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                                   class="customizer-color-picker"
+                                                   data-customizer-color-picker
+                                                   data-sync-text="<?php echo $textInputId; ?>">
+                                            <input type="text" id="<?php echo $textInputId; ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                                   class="form-control customizer-color-text"
+                                                   data-customizer-color-text
+                                                   data-sync-picker="<?php echo $inputId; ?>">
                                         </div>
 
                                     <?php elseif ($field['type'] === 'checkbox'): ?>
-                                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
+                                        <div class="customizer-checkbox-row">
                                             <input type="checkbox" id="<?php echo $inputId; ?>"
                                                    name="<?php echo $inputName; ?>" value="1"
                                                    <?php echo $val ? 'checked' : ''; ?>>
-                                            <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                            <label for="<?php echo $inputId; ?>" class="customizer-checkbox-label">Aktivieren</label>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'textarea'): ?>
@@ -1574,7 +1575,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                     <?php elseif ($field['type'] === 'number'): ?>
                                         <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
-                                               class="form-control" style="width:120px;">
+                                               class="form-control customizer-number-input">
 
                                     <?php else: ?>
                                         <input type="<?php echo htmlspecialchars($field['type']); ?>"
@@ -1601,6 +1602,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                         <?php foreach ($currentSection['sections'] as $fieldKey => $field):
                             $val       = $customizer->get($activeTab, $fieldKey, $field['default'] ?? '');
                             $inputId   = "field_{$activeTab}_{$fieldKey}";
+                            $textInputId = $inputId . '_text';
                             $inputName = "{$activeTab}_{$fieldKey}";
                         ?>
                         <div class="form-group">
@@ -1614,11 +1616,11 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                 ><?php echo htmlspecialchars((string)$val); ?></textarea>
 
                             <?php elseif ($field['type'] === 'checkbox'): ?>
-                                <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
+                                <div class="customizer-checkbox-row">
                                     <input type="checkbox" id="<?php echo $inputId; ?>"
                                            name="<?php echo $inputName; ?>" value="1"
                                            <?php echo $val ? 'checked' : ''; ?>>
-                                    <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                    <label for="<?php echo $inputId; ?>" class="customizer-checkbox-label">Aktivieren</label>
                                 </div>
 
                             <?php elseif ($field['type'] === 'select'): ?>
@@ -1634,35 +1636,39 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 
                             <?php elseif ($field['type'] === 'image_upload'): ?>
                                 <?php $previewUrl = $val ? htmlspecialchars((string)$val) : ''; ?>
-                                <div style="display:flex;flex-direction:column;gap:10px;">
-                                    <div id="logo-preview-wrap" style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:6px;padding:12px;display:flex;align-items:center;gap:12px;min-height:60px;">
+                                <div class="customizer-control-row-stack" data-customizer-logo-group>
+                                    <div class="customizer-logo-preview" data-customizer-logo-preview>
                                         <?php if ($previewUrl): ?>
-                                            <img id="logo-preview-img" src="<?php echo $previewUrl; ?>" alt="Logo" style="max-height:48px;max-width:200px;">
+                                            <img src="<?php echo $previewUrl; ?>" alt="Logo" class="customizer-logo-preview-image">
                                         <?php else: ?>
-                                            <span id="logo-preview-img" style="color:#94a3b8;font-size:.85rem;">🖼️ Noch kein Logo ausgewählt</span>
+                                            <span class="customizer-logo-preview-placeholder">🖼️ Noch kein Logo ausgewählt</span>
                                         <?php endif; ?>
                                     </div>
-                                    <div style="display:flex;align-items:center;gap:8px;">
-                                        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:.45rem .9rem;background:#3b82f6;color:#fff;border-radius:5px;font-size:.85rem;font-weight:600;">
+                                    <div class="customizer-control-row-inline">
+                                        <label class="customizer-upload-button">
                                             📁 Bild hochladen
                                             <input type="file" name="logo_upload_file" accept="image/*"
-                                                   style="display:none;" onchange="previewLogoUpload(this)">
+                                                   class="customizer-file-input"
+                                                   data-customizer-logo-upload>
                                         </label>
-                                        <span style="color:#64748b;font-size:.8rem;">oder URL eingeben:</span>
+                                        <span class="customizer-upload-hint">oder URL eingeben:</span>
                                     </div>
                                     <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                            value="<?php echo $previewUrl; ?>" class="form-control"
-                                           placeholder="https://..." oninput="syncLogoUrlPreview(this.value)">
+                                           placeholder="https://..." data-customizer-logo-url>
                                 </div>
 
                             <?php elseif ($field['type'] === 'color'): ?>
-                                <div style="display:flex;align-items:center;gap:10px;">
+                                <div class="customizer-control-row">
                                     <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
                                            value="<?php echo htmlspecialchars((string)$val); ?>"
-                                           style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
-                                    <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
-                                           class="form-control" style="width:120px;"
-                                           onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                           class="customizer-color-picker"
+                                           data-customizer-color-picker
+                                           data-sync-text="<?php echo $textInputId; ?>">
+                                    <input type="text" id="<?php echo $textInputId; ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                           class="form-control customizer-color-text"
+                                           data-customizer-color-text
+                                           data-sync-picker="<?php echo $inputId; ?>">
                                 </div>
 
                             <?php else: ?>
@@ -1681,11 +1687,11 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                     <?php endif; /* colors / homepage / header / footer / buttons / standard tab */ ?>
 
                     <!-- Sticky Speichern-Leiste -->
-                    <div class="admin-card form-actions-card">
-                        <div class="form-actions" style="justify-content:space-between;">
+                    <div class="admin-card customizer-sticky-card">
+                        <div class="form-actions customizer-form-actions">
                             <button type="submit" class="btn btn-primary">💾 Einstellungen speichern</button>
                             <button type="button" class="btn btn-secondary"
-                                    onclick="showResetConfirm()"
+                                    data-customizer-reset-open
                                     title="Alle Einstellungen dieses Tabs auf Standardwerte zurücksetzen">
                                 ↺ Auf Standardwerte zurücksetzen
                             </button>
@@ -1699,7 +1705,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 
     <!-- Verstecktes Reset-Formular (außerhalb des Haupt-Forms, verschachtelte Forms sind invalid HTML) -->
     <?php if (isset($config[$activeTab])): ?>
-    <form id="reset-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" style="display:none;">
+    <form id="reset-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" class="customizer-hidden">
         <input type="hidden" name="action" value="reset_theme_tab">
         <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
         <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
@@ -1709,193 +1715,26 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
     </div><!-- /.admin-content -->
 
     <!-- Reset-Bestätigungsmodal -->
-    <div id="confirm-reset-modal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width:480px;">
+    <div id="confirm-reset-modal" class="modal customizer-reset-modal" hidden aria-hidden="true">
+        <div class="modal-content customizer-reset-dialog">
             <div class="modal-header">
                 <h3>⚠️ Einstellungen zurücksetzen?</h3>
-                <button class="modal-close" onclick="closeResetModal()">&times;</button>
+                <button class="modal-close" type="button" data-customizer-reset-close>&times;</button>
             </div>
             <div class="modal-body">
                 <p>Alle Einstellungen dieses Tabs werden auf die <strong>Standard-Designwerte</strong> des 365Network-Themes zurückgesetzt.</p>
-                <p style="color:#64748b;font-size:.875rem;">Bereits gespeicherte Anpassungen gehen für diesen Bereich verloren.</p>
+                <p class="customizer-reset-note">Bereits gespeicherte Anpassungen gehen für diesen Bereich verloren.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeResetModal()">Abbrechen</button>
-                <button type="button" class="btn btn-danger" onclick="confirmReset()">↺ Zurücksetzen</button>
+                <button type="button" class="btn btn-secondary" data-customizer-reset-close>Abbrechen</button>
+                <button type="button" class="btn btn-danger" data-customizer-reset-confirm>↺ Zurücksetzen</button>
             </div>
         </div>
     </div>
 
     <script src="<?php echo htmlspecialchars($coreAdminJsUrl, ENT_QUOTES); ?>"></script>
-    <script>
-    // ── Farb-Picker ↔ Text-Input + Live-Vorschau ─────────────────────────────
-    (function () {
-
-        var liveStyle = document.createElement('style');
-        liveStyle.id  = 'customizer-live-preview';
-        document.head.appendChild(liveStyle);
-
-        // Mapping: input-name → CSS-Variable im 365Network-Theme
-        var cssVarMap = {
-            'colors_primary_color':     '--primary-color',
-            'colors_primary_hover':     '--primary-hover',
-            'colors_primary_light':     '--primary-light',
-            'colors_secondary_color':   '--secondary-color',
-            'colors_accent_color':      '--accent-color',
-            'colors_accent_hover':      '--accent-hover',
-            'colors_accent_light':      '--accent-light',
-            'colors_text_color':        '--text-color',
-            'colors_heading_color':     '--heading-color',
-            'colors_text_light':        '--text-light',
-            'colors_muted_color':       '--muted-color',
-            'colors_bg_color':          '--background-color',
-            'colors_bg_secondary':      '--bg-secondary',
-            'colors_link_color':        '--link-color',
-            'colors_link_hover_color':  '--link-hover-color',
-            'colors_border_color':      '--border-color',
-            'colors_success_color':     '--success-color',
-            'colors_error_color':       '--error-color',
-            'header_header_bg_color':   '--header-bg',
-            'header_header_text_color': '--header-text',
-            'header_header_accent_color': '--header-text-secondary',
-            'footer_footer_bg_color':   '--footer-bg',
-            'footer_footer_text_color': '--footer-text',
-            'footer_footer_link_color': '--footer-link-color',
-        };
-
-        function updateLivePreview() {
-            var rules = ':root {\n';
-            Object.keys(cssVarMap).forEach(function (name) {
-                var inp = document.querySelector('input[name="' + name + '"][type="color"]');
-                if (inp) {
-                    rules += '  ' + cssVarMap[name] + ': ' + inp.value + ';\n';
-                }
-            });
-            rules += '}';
-            liveStyle.textContent = rules;
-        }
-
-        // Farb-Picker ↔ Text-Input synchronisieren
-        document.querySelectorAll('input[type="color"]').forEach(function (picker) {
-            var textInput = picker.nextElementSibling;
-            if (textInput && textInput.tagName === 'INPUT' && textInput.type === 'text') {
-                picker.addEventListener('input', function () {
-                    textInput.value = this.value;
-                    updateLivePreview();
-                });
-                textInput.addEventListener('input', function () {
-                    var v = this.value.trim();
-                    if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-                        picker.value = v;
-                        updateLivePreview();
-                    }
-                });
-            }
-        });
-
-        // Farbpaletten-Vorschau einblenden (nur im Farben-Tab)
-        if (document.querySelector('input[name="colors_primary_color"]')) {
-            var paletteFields = [
-                { name: 'colors_primary_color',    label: 'Primär' },
-                { name: 'colors_secondary_color',  label: 'Sekundär' },
-                { name: 'colors_accent_color',     label: 'Akzent' },
-                { name: 'colors_text_color',       label: 'Text' },
-                { name: 'colors_bg_color',         label: 'Hintergrund' },
-                { name: 'colors_bg_secondary',     label: 'Surface' },
-                { name: 'colors_border_color',     label: 'Rahmen' },
-            ];
-            var palette = document.createElement('div');
-            palette.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
-
-            paletteFields.forEach(function (cf) {
-                var inp = document.querySelector('input[name="' + cf.name + '"][type="color"]');
-                if (!inp) { return; }
-                var swatch = document.createElement('div');
-                swatch.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
-                var dot = document.createElement('div');
-                dot.style.cssText = 'width:32px;height:32px;border-radius:50%;border:2px solid rgba(0,0,0,.1);background:' + inp.value + ';';
-                var lbl = document.createElement('span');
-                lbl.style.cssText = 'font-size:.68rem;color:#64748b;max-width:48px;text-align:center;line-height:1.2;';
-                lbl.textContent = cf.label;
-                swatch.appendChild(dot);
-                swatch.appendChild(lbl);
-                palette.appendChild(swatch);
-                inp.addEventListener('input', function () { dot.style.background = this.value; });
-            });
-
-            var firstCard = document.querySelector('.customizer-content .admin-card');
-            if (firstCard) {
-                var previewWrap = document.createElement('div');
-                previewWrap.style.cssText = 'padding:1rem;border-bottom:1px solid #f1f5f9;background:#fafafa;';
-                var title = document.createElement('div');
-                title.style.cssText = 'font-size:.75rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;';
-                title.textContent = 'Farb-Vorschau';
-                previewWrap.appendChild(title);
-                previewWrap.appendChild(palette);
-                firstCard.insertBefore(previewWrap, firstCard.firstChild);
-            }
-        }
-
-        // Strg+S → Speichern
-        document.addEventListener('keydown', function (e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                e.preventDefault();
-                var btn = document.querySelector('button[type="submit"].btn-primary');
-                if (btn) { btn.click(); }
-            }
-        });
-
-    })();
-
-    // globale Funktion für Text-Input-onchange
-    function updateLivePreview() {
-        var evt = new Event('input', { bubbles: true });
-        document.querySelectorAll('input[type="color"]').forEach(function (p) { p.dispatchEvent(evt); });
-    }
-
-    // ── Logo-Upload Vorschau ─────────────────────────────────────────────────
-    function previewLogoUpload(input) {
-        if (!input.files || !input.files[0]) { return; }
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var wrap = document.getElementById('logo-preview-wrap');
-            var img  = document.getElementById('logo-preview-img');
-            if (img && img.tagName === 'IMG') {
-                img.src = e.target.result;
-            } else if (wrap) {
-                wrap.innerHTML = '<img id="logo-preview-img" src="' + e.target.result + '" style="max-height:48px;max-width:200px;">';
-            }
-            var urlField = document.querySelector('input[name="header_logo_url"]');
-            if (urlField) { urlField.value = ''; }
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-
-    function syncLogoUrlPreview(url) {
-        var wrap = document.getElementById('logo-preview-wrap');
-        if (!wrap) { return; }
-        if (url && url.match(/^https?:\/\//)) {
-            wrap.innerHTML = '<img id="logo-preview-img" src="' + url + '" alt="Logo" style="max-height:48px;max-width:200px;" onerror="this.parentElement.innerHTML=\'<span style=color:#ef4444>Bild konnte nicht geladen werden</span>\'">';
-        }
-    }
-
-    // ── Reset-Modal ──────────────────────────────────────────────────────────
-    function showResetConfirm() {
-        var m = document.getElementById('confirm-reset-modal');
-        if (m) { m.style.display = 'flex'; }
-    }
-    function closeResetModal() {
-        var m = document.getElementById('confirm-reset-modal');
-        if (m) { m.style.display = 'none'; }
-    }
-    function confirmReset() {
-        closeResetModal();
-        document.getElementById('reset-form').submit();
-    }
-    window.addEventListener('click', function (e) {
-        var m = document.getElementById('confirm-reset-modal');
-        if (m && e.target === m) { closeResetModal(); }
-    });
-    </script>
+    <?php if ($customizerJsUrl !== ''): ?>
+        <script src="<?php echo htmlspecialchars($customizerJsUrl, ENT_QUOTES); ?>"></script>
+    <?php endif; ?>
 </body>
 </html>

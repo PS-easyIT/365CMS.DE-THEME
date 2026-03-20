@@ -8,19 +8,35 @@ if (!defined('ABSPATH')) {
 $tocItems = isset($tocItems) && is_array($tocItems) ? $tocItems : [];
 $tocHeaderText = isset($tocHeaderText) ? (string) $tocHeaderText : '📋 Inhaltsverzeichnis';
 
-if (empty($tocItems)) {
+$tocTree = function_exists('phinit_build_toc_tree') ? phinit_build_toc_tree($tocItems) : [];
+
+if (empty($tocTree)) {
     return;
 }
 ?>
-<div class="toc">
-    <div class="toc-title"><?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></div>
-    <ul class="toc-list" role="list">
-        <?php foreach ($tocItems as $item): ?>
-        <li class="<?php echo (($item['level'] ?? 0) === 3) ? 'toc-h3' : ''; ?>">
-            <a href="#<?php echo htmlspecialchars((string) ($item['id'] ?? ''), ENT_QUOTES); ?>">
-                <?php echo phinit_escape_text($item['text'] ?? ''); ?>
+<?php
+$renderTocTree = static function (array $nodes, bool $nested = false) use (&$renderTocTree): void {
+    if ($nodes === []) {
+        return;
+    }
+    ?>
+    <ul class="toc-list<?php echo $nested ? ' toc-list--nested' : ''; ?>" role="list">
+        <?php foreach ($nodes as $node): ?>
+        <?php $level = max(1, (int) ($node['level'] ?? 2)); ?>
+        <li class="toc-item toc-item--level-<?php echo $level; ?>">
+            <a class="toc-link" href="#<?php echo htmlspecialchars((string) ($node['id'] ?? ''), ENT_QUOTES); ?>">
+                <?php echo phinit_escape_text($node['text'] ?? ''); ?>
             </a>
+            <?php if (!empty($node['children']) && is_array($node['children'])): ?>
+                <?php $renderTocTree($node['children'], true); ?>
+            <?php endif; ?>
         </li>
         <?php endforeach; ?>
     </ul>
-</div>
+    <?php
+};
+?>
+<nav class="toc" aria-label="Inhaltsverzeichnis des Artikels">
+    <div class="toc-title"><?php echo htmlspecialchars($tocHeaderText, ENT_QUOTES); ?></div>
+    <?php $renderTocTree($tocTree); ?>
+</nav>

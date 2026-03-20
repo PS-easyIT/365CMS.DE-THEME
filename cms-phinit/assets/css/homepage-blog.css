@@ -2181,6 +2181,13 @@ body.dark-mode .feed-dual-col {
     flex-wrap: wrap;
 }
 
+.blog-archive-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .blog-archive-back {
     font-size: var(--fs-sm);
     color: var(--accent-teal);
@@ -2197,6 +2204,14 @@ body.dark-mode .feed-dual-col {
 .blog-archive-back:hover {
     color: var(--accent-teal-light);
     text-decoration: underline;
+}
+
+.blog-archive-back--secondary {
+    color: var(--text-secondary);
+}
+
+.blog-archive-back--secondary:hover {
+    color: var(--accent-teal);
 }
 
 .blog-search-form {
@@ -2603,6 +2618,12 @@ body.dark-mode .author-profile-detail {
     }
 
     .blog-archive-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .blog-archive-links {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;

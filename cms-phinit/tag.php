@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$siteUrl = SITE_URL;
+$siteUrl = function_exists('home_url') ? home_url() : SITE_URL;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $tag = isset($tag) ? (array) $tag : [];
 $posts = isset($posts) && is_array($posts) ? $posts : [];
@@ -19,26 +19,16 @@ $tagBaseUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/tag/' . rawurlencode($tagSlug), $currentLocale, $siteUrl)
     : rtrim($siteUrl, '/') . '/tag/' . rawurlencode($tagSlug);
 $blogUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog';
+$archiveSummary = 'Alle Beiträge, die mit diesem Schlagwort versehen wurden – praktisch für Serienthemen, Tools, Releases und How-to-Cluster.';
 ?>
 
 <div class="container blog-shell blog-shell--archive">
-    <section class="phinit-archive-hero" data-anim>
-        <div class="phinit-archive-hero__content">
-            <span class="phinit-archive-hero__eyebrow">Tag-Archiv</span>
-            <h1>#<?php echo htmlspecialchars($tagName, ENT_QUOTES); ?></h1>
-            <p class="phinit-archive-hero__lead">Alle Beiträge, die mit diesem Schlagwort versehen wurden – praktisch für Serienthemen, Tools, Releases und How-to-Cluster.</p>
-        </div>
-        <div class="phinit-archive-hero__stats" aria-label="Archivstatistik">
-            <div class="phinit-archive-stat">
-                <span class="phinit-archive-stat__value"><?php echo $total; ?></span>
-                <span class="phinit-archive-stat__label">Treffer</span>
-            </div>
-            <div class="phinit-archive-stat">
-                <span class="phinit-archive-stat__value">#<?php echo htmlspecialchars($tagName, ENT_QUOTES); ?></span>
-                <span class="phinit-archive-stat__label">Schlagwort</span>
-            </div>
-        </div>
-    </section>
+    <h1 class="visually-hidden">Tag: <?php echo htmlspecialchars($tagName, ENT_QUOTES); ?></h1>
+    <p class="blog-search-hint" data-anim>
+        Schlagwort <strong>#<?php echo htmlspecialchars($tagName, ENT_QUOTES); ?></strong>
+        &mdash; <?php echo $total; ?> Treffer
+        &mdash; <?php echo htmlspecialchars($archiveSummary, ENT_QUOTES); ?>
+    </p>
 
     <?php
     get_theme_part('partials/blog-archive-toolbar', [

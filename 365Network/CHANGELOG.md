@@ -14,6 +14,20 @@
 
 ---
 
+## v3.4.2 — März 2026
+
+### Customizer-Admin ohne Inline-CSS/-JS
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟡 refactor | Customizer/Admin | `admin/customizer.php` bindet den 365Network-Customizer jetzt über ausgelagerte Assets `css/customizer-admin.css` und `js/customizer-admin.js` an, statt Layout-Regeln und Verhaltenslogik direkt inline auszuliefern. |
+| 🔴 fix | Customizer/Security | Reset-Bestätigung, Logo-Vorschau und Farb-Synchronisierung arbeiten jetzt datengetrieben ohne `onclick`-, `oninput`- oder `onchange`-Handler; die URL-Vorschau rendert Fehlerzustände DOM-basiert statt über inline injiziertes `onerror`. |
+| 🔴 fix | Admin | Der 365Network-Customizer prüft jetzt explizit `Auth::instance()->isAdmin()` vor dem Rendern der Oberfläche und leitet Nicht-Admins sauber zurück zur Site. |
+| 🟡 refactor | Templates/JS | Directory-Filter in `companies.php`, `experts.php`, `events.php`, `feeds.php`, `jobs.php` und `speakers.php` submitten jetzt zentral über `js/theme.js` via `data-auto-submit-filter`; auch der Zurück-Button in `404.php` läuft nun ohne Inline-`history.back()` und mit Fallback-URL. |
+| 🎨 style | Templates/CSS | Wiederkehrende statische Inline-Stile für Filter-Link-Listen, Reset-Buttons und die 404-Shell wurden in `style.css` nach `.filter-link-list`, `.filter-reset-btn`, `.empty-state-reset-btn` und `.error-page-shell` überführt. |
+
+---
+
 ## v3.4.0 — Juni 2026
 
 ### Design-Overhaul: Mobiler Filter-Drawer, 4-Breakpoint-System, Card-Polish

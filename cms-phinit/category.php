@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$siteUrl = SITE_URL;
+$siteUrl = function_exists('home_url') ? home_url() : SITE_URL;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $category = isset($category) ? (array) $category : [];
 $posts = isset($posts) && is_array($posts) ? $posts : [];
@@ -19,29 +19,20 @@ $categoryDescription = trim((string) ($category['description'] ?? ''));
 $blogBaseUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/kategorie/' . rawurlencode($categorySlug), $currentLocale, $siteUrl)
     : rtrim($siteUrl, '/') . '/kategorie/' . rawurlencode($categorySlug);
+$homeUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/';
 $blogUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/blog', $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/blog';
+$archiveSummary = $categoryDescription !== ''
+    ? $categoryDescription
+    : 'Alle veröffentlichten Beiträge zu diesem Themenbereich – kompakt gesammelt und filterbar.';
 ?>
 
 <div class="container blog-shell blog-shell--archive">
-    <section class="phinit-archive-hero" data-anim>
-        <div class="phinit-archive-hero__content">
-            <span class="phinit-archive-hero__eyebrow">Kategorie-Archiv</span>
-            <h1><?php echo htmlspecialchars($categoryName, ENT_QUOTES); ?></h1>
-            <p class="phinit-archive-hero__lead">
-                <?php echo htmlspecialchars($categoryDescription !== '' ? $categoryDescription : 'Alle veröffentlichten Beiträge zu diesem Themenbereich – kompakt gesammelt und filterbar.', ENT_QUOTES); ?>
-            </p>
-        </div>
-        <div class="phinit-archive-hero__stats" aria-label="Archivstatistik">
-            <div class="phinit-archive-stat">
-                <span class="phinit-archive-stat__value"><?php echo $total; ?></span>
-                <span class="phinit-archive-stat__label">Beiträge</span>
-            </div>
-            <div class="phinit-archive-stat">
-                <span class="phinit-archive-stat__value"><?php echo htmlspecialchars($categoryName, ENT_QUOTES); ?></span>
-                <span class="phinit-archive-stat__label">Thema</span>
-            </div>
-        </div>
-    </section>
+    <h1 class="visually-hidden">Kategorie: <?php echo htmlspecialchars($categoryName, ENT_QUOTES); ?></h1>
+    <p class="blog-search-hint" data-anim>
+        Kategorie <strong><?php echo htmlspecialchars($categoryName, ENT_QUOTES); ?></strong>
+        &mdash; <?php echo $total; ?> Beiträge
+        &mdash; <?php echo htmlspecialchars($archiveSummary, ENT_QUOTES); ?>
+    </p>
 
     <?php
     get_theme_part('partials/blog-archive-toolbar', [
@@ -51,6 +42,8 @@ $blogUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/bl
         'blogBaseUrl' => $blogBaseUrl,
         'backUrl' => $blogUrl,
         'backLabel' => 'Alle Artikel',
+        'secondaryUrl' => $homeUrl,
+        'secondaryLabel' => 'Zur Startseite',
     ]);
     ?>
 

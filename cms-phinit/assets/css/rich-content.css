@@ -150,6 +150,35 @@
     overflow-x: auto;
 }
 
+.page-content pre.code-block--powershell,
+.post-body pre.code-block--powershell {
+    background:
+        linear-gradient(180deg, rgba(15, 37, 60, .98) 0%, rgba(10, 22, 38, .98) 100%);
+    border: 1px solid rgba(96, 165, 250, .2);
+    border-left: 4px solid #60a5fa;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, .18);
+    position: relative;
+    padding-top: 2.9rem;
+}
+
+.page-content pre.code-block--powershell::before,
+.post-body pre.code-block--powershell::before {
+    content: attr(data-code-language);
+    position: absolute;
+    top: .85rem;
+    left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    padding: .22rem .6rem;
+    border-radius: 999px;
+    background: rgba(96, 165, 250, .14);
+    color: #bfdbfe;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
 .page-content pre {
     background: var(--bg-dark-2);
     color: #e2e8f0;
@@ -162,6 +191,44 @@
     background: transparent;
     color: inherit;
     padding: 0;
+}
+
+.page-content pre code.language-powershell,
+.page-content pre code.language-ps,
+.page-content pre code.language-ps1,
+.page-content pre code.language-pwsh,
+.post-body pre code.language-powershell,
+.post-body pre code.language-ps,
+.post-body pre code.language-ps1,
+.post-body pre code.language-pwsh {
+    color: #e2e8f0;
+}
+
+.page-content .ps-token.ps-comment,
+.post-body .ps-token.ps-comment { color: #7dd3fc; font-style: italic; }
+.page-content .ps-token.ps-string,
+.post-body .ps-token.ps-string { color: #f9a8d4; }
+.page-content .ps-token.ps-variable,
+.post-body .ps-token.ps-variable { color: #fde68a; }
+.page-content .ps-token.ps-parameter,
+.post-body .ps-token.ps-parameter { color: #86efac; }
+.page-content .ps-token.ps-keyword,
+.post-body .ps-token.ps-keyword { color: #c4b5fd; font-weight: 600; }
+.page-content .ps-token.ps-cmdlet,
+.post-body .ps-token.ps-cmdlet { color: #93c5fd; }
+.page-content .ps-token.ps-type,
+.post-body .ps-token.ps-type { color: #fca5a5; }
+.page-content .ps-token.ps-number,
+.post-body .ps-token.ps-number { color: #fdba74; }
+.page-content .ps-token.ps-constant,
+.post-body .ps-token.ps-constant { color: #67e8f9; font-weight: 600; }
+.page-content .ps-token.ps-operator,
+.post-body .ps-token.ps-operator { color: #e5e7eb; }
+
+body.dark-mode .page-content pre.code-block--powershell,
+body.dark-mode .post-body pre.code-block--powershell {
+    border-color: rgba(96, 165, 250, .28);
+    box-shadow: 0 14px 28px rgba(2, 6, 23, .34);
 }
 
 .page-content table,
@@ -428,6 +495,46 @@ body.dark-mode .post-body .editorjs-link__content small,
 body.dark-mode .page-content figcaption,
 body.dark-mode .post-body figcaption {
     color: var(--text-light);
+}
+
+body.dark-mode .page-content table,
+body.dark-mode .post-body table,
+body.dark-mode .page-content .editorjs-table table,
+body.dark-mode .post-body .editorjs-table table,
+body.dark-mode .page-content .cms-site-table,
+body.dark-mode .post-body .cms-site-table {
+    background: transparent;
+}
+
+body.dark-mode .page-content th,
+body.dark-mode .page-content td,
+body.dark-mode .page-content .editorjs-table th,
+body.dark-mode .page-content .editorjs-table td,
+body.dark-mode .post-body .editorjs-table th,
+body.dark-mode .post-body .editorjs-table td,
+body.dark-mode .page-content .cms-site-table th,
+body.dark-mode .page-content .cms-site-table td,
+body.dark-mode .post-body .cms-site-table th,
+body.dark-mode .post-body .cms-site-table td {
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .page-content th,
+body.dark-mode .page-content .editorjs-table th,
+body.dark-mode .post-body .editorjs-table th,
+body.dark-mode .page-content .cms-site-table th,
+body.dark-mode .post-body .cms-site-table th {
+    background: color-mix(in srgb, var(--bg-dark-3) 86%, #0f172a 14%);
+    color: var(--text-primary);
+}
+
+body.dark-mode .page-content td,
+body.dark-mode .page-content .editorjs-table td,
+body.dark-mode .post-body .editorjs-table td,
+body.dark-mode .page-content .cms-site-table td,
+body.dark-mode .post-body .cms-site-table td {
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--bg-dark-2) 74%, transparent 26%);
 }
 
 @media (max-width: 768px) {

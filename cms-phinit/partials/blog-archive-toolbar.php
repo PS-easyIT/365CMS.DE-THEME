@@ -18,10 +18,22 @@ $blogUrl = isset($blogBaseUrl) && trim((string) $blogBaseUrl) !== ''
 $backLabel = isset($backLabel) && trim((string) $backLabel) !== ''
     ? (string) $backLabel
     : phinit_t('home', [], $currentLocale);
+$secondaryUrl = isset($secondaryUrl) && trim((string) $secondaryUrl) !== ''
+    ? (string) $secondaryUrl
+    : '';
+$secondaryLabel = isset($secondaryLabel) && trim((string) $secondaryLabel) !== ''
+    ? (string) $secondaryLabel
+    : '';
 ?>
 <div class="blog-archive-bar" data-anim data-anim-delay="1">
-    <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES); ?>"
-       class="blog-archive-back">&#8592; <?php echo htmlspecialchars($backLabel, ENT_QUOTES); ?></a>
+    <div class="blog-archive-links">
+        <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES); ?>"
+           class="blog-archive-back">&#8592; <?php echo htmlspecialchars($backLabel, ENT_QUOTES); ?></a>
+        <?php if ($secondaryUrl !== '' && $secondaryLabel !== ''): ?>
+        <a href="<?php echo htmlspecialchars($secondaryUrl, ENT_QUOTES); ?>"
+           class="blog-archive-back blog-archive-back--secondary"><?php echo htmlspecialchars($secondaryLabel, ENT_QUOTES); ?></a>
+        <?php endif; ?>
+    </div>
     <form class="blog-search-form" method="GET"
           action="<?php echo htmlspecialchars($blogUrl, ENT_QUOTES); ?>">
         <input type="search" name="q"

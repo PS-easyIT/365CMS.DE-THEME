@@ -41,7 +41,14 @@ $above_the_fold_image = isset($above_the_fold_image) ? (bool) $above_the_fold_im
 $image_high_priority = isset($image_high_priority) ? (bool) $image_high_priority : true;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $displayDate  = $card['published_at'] ?? ($card['created_at'] ?? null);
-$permalink    = (string) ($card['permalink'] ?? ($siteUrl . '/blog/' . ($card['slug'] ?? '')));
+$permalinkService = class_exists('CMS\\Services\\PermalinkService') ? \CMS\Services\PermalinkService::getInstance() : null;
+$permalink    = (string) ($card['permalink'] ?? '');
+if ($permalink === '' && $permalinkService !== null) {
+    $permalink = $permalinkService->buildPostUrl($card, $currentLocale);
+}
+if ($permalink === '') {
+    $permalink = $siteUrl . '/blog/' . ($card['slug'] ?? '');
+}
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')

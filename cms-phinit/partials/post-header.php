@@ -17,13 +17,13 @@ $extraMetaItems = isset($extraMetaItems) && is_array($extraMetaItems) ? $extraMe
 $favoriteControl = isset($favoriteControl) && is_array($favoriteControl) ? $favoriteControl : [];
 $publishedAt = (string) ($post['published_at'] ?? '');
 $updatedAt = (string) ($post['updated_at'] ?? '');
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $categorySlug = rawurlencode(phinit_display_text($post['category_slug'] ?? $post['category_name'] ?? ''));
 $authorId = (int) ($post['author_id'] ?? 0);
-$authorUrl = $authorId > 0 ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, null, $siteUrl) : $siteUrl . '/author/user-' . $authorId) : '';
+$authorUrl = $authorId > 0 ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId) : '';
 $categoryUrl = !empty($post['category_name'])
-    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/kategorie/' . $categorySlug, null, $siteUrl) : $siteUrl . '/kategorie/' . $categorySlug)
+    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/kategorie/' . $categorySlug, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/kategorie/' . $categorySlug)
     : '';
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 ?>
 <header class="post-header" data-anim>
 

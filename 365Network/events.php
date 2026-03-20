@@ -161,7 +161,7 @@ require_once __DIR__ . '/header.php';
                 <!-- Vergangen / Kommend -->
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">⏱️ Zeitraum</h3>
-                    <div style="display:flex;flex-direction:column;gap:.375rem;">
+                    <div class="filter-link-list">
                         <a href="?<?php echo http_build_query(array_merge($_GET, ['past' => '', 'page' => 1])); ?>"
                            class="filter-link <?php echo !$past ? 'is-active' : ''; ?>">📅 Kommende</a>
                         <a href="?<?php echo http_build_query(array_merge($_GET, ['past' => '1', 'page' => 1])); ?>"
@@ -172,7 +172,7 @@ require_once __DIR__ . '/header.php';
                 <?php if (!empty($categories)): ?>
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🏷️ Kategorie</h3>
-                    <select name="type" class="filter-select" onchange="this.form.submit()">
+                    <select name="type" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Kategorien</option>
                         <?php foreach ($categories as $cat): if (!$cat) continue; ?>
                             <option value="<?php echo htmlspecialchars($cat, ENT_QUOTES); ?>"
@@ -187,7 +187,7 @@ require_once __DIR__ . '/header.php';
                 <?php if (!empty($locations)): ?>
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">📍 Stadt</h3>
-                    <select name="location" class="filter-select" onchange="this.form.submit()">
+                    <select name="location" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Städte</option>
                         <?php foreach ($locations as $loc): if (!$loc) continue; ?>
                             <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES); ?>"
@@ -201,7 +201,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗂️ Sortierung</h3>
-                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <select name="sort" class="filter-select" data-auto-submit-filter>
                         <option value="date"   <?php echo $sort === 'date'   ? 'selected' : ''; ?>>📅 Datum</option>
                         <option value="name"   <?php echo $sort === 'name'   ? 'selected' : ''; ?>>🔤 Titel A–Z</option>
                         <option value="latest" <?php echo $sort === 'latest' ? 'selected' : ''; ?>>🕐 Neueste</option>
@@ -210,7 +210,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $type || $location || $month): ?>
                     <div class="filter-panel">
-                        <a href="/events<?php echo $past ? '?past=1' : ''; ?>" class="btn btn-secondary" style="width:100%;text-align:center;">✖ Filter zurücksetzen</a>
+                        <a href="/events<?php echo $past ? '?past=1' : ''; ?>" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -304,7 +304,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">📅</div>
                 <h3>Keine Events gefunden</h3>
                 <p><?php echo $past ? 'Keine vergangenen Events mit diesen Filtern.' : 'Aktuell keine kommenden Events geplant.'; ?></p>
-                <a href="/events" class="btn btn-secondary" style="margin-top:1rem;">✖ Filter zurücksetzen</a>
+                <a href="/events" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>

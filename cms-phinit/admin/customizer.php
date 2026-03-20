@@ -18,9 +18,14 @@ if (!defined('ABSPATH')) {
 use CMS\Auth;
 use CMS\Security;
 use CMS\Services\ThemeCustomizer;
+use CMS\ThemeManager;
 
 if (!defined('CMS_PHINIT_THEME_DIR')) {
     define('CMS_PHINIT_THEME_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+}
+
+if (!defined('CMS_PHINIT_THEME_URL')) {
+    define('CMS_PHINIT_THEME_URL', rtrim(ThemeManager::instance()->getThemeUrl(), '/') . '/');
 }
 
 if (!Auth::instance()->isAdmin()) {

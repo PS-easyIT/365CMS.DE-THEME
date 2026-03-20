@@ -14,7 +14,7 @@ $siteUrl = SITE_URL;
 
 <main id="main" class="site-main" role="main">
     <div class="container">
-        <div class="error-page" style="padding:var(--spacing-xl) 0;">
+        <div class="error-page error-page-shell">
             <div class="error-page-code">404</div>
             <h1>Seite nicht gefunden</h1>
             <p>Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
@@ -27,7 +27,7 @@ $siteUrl = SITE_URL;
                    class="btn btn-secondary">
                     Suche öffnen
                 </a>
-                <button onclick="history.back()" class="btn btn-outline" type="button">
+                <button class="btn btn-outline" type="button" data-history-back data-history-fallback="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/">
                     ← Zurück
                 </button>
             </div>

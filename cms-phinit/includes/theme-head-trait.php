@@ -270,7 +270,9 @@ trait CMS_Phinit_Theme_Head_Trait
                 ? phinit_excerpt_plain_text((string) ($currentPost['excerpt'] ?? ''))
                 : strip_tags((string) ($currentPost['excerpt'] ?? ''));
             $ogDesc = $this->buildHeadDescription($sitDesc, $postExcerpt, null);
-            $ogImg = (string) ($currentPost['featured_image'] ?? '');
+            $ogImg = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url((string) ($currentPost['featured_image'] ?? ''), true)
+                : (string) ($currentPost['featured_image'] ?? '');
             $ogType = 'article';
         } elseif (is_array($currentPage)) {
             $pageTitle = phinit_display_text((string) ($currentPage['title'] ?? ''));
@@ -282,7 +284,9 @@ trait CMS_Phinit_Theme_Head_Trait
                 (string) ($currentPage['excerpt'] ?? ''),
                 (string) ($currentPage['content'] ?? '')
             );
-            $ogImg = (string) ($currentPage['featured_image'] ?? '');
+            $ogImg = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url((string) ($currentPage['featured_image'] ?? ''), true)
+                : (string) ($currentPage['featured_image'] ?? '');
         }
 
         if (empty($ogImg)) {
@@ -370,7 +374,9 @@ trait CMS_Phinit_Theme_Head_Trait
             }
 
             if (!empty($currentPage['featured_image'])) {
-                $pageSchema['image'] = (string) $currentPage['featured_image'];
+                $pageSchema['image'] = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) $currentPage['featured_image'], true)
+                    : (string) $currentPage['featured_image'];
             }
 
             echo '<script type="application/ld+json">' . json_encode($pageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
@@ -402,7 +408,9 @@ trait CMS_Phinit_Theme_Head_Trait
                 }
             }
             if (!empty($currentPost['featured_image'])) {
-                $bp['image'] = $currentPost['featured_image'];
+                $bp['image'] = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) $currentPost['featured_image'], true)
+                    : (string) $currentPost['featured_image'];
             }
             echo '<script type="application/ld+json">' . json_encode($bp, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
         } catch (\Throwable) {

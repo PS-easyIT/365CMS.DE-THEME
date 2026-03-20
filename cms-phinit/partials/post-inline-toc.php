@@ -8,9 +8,33 @@ if (!defined('ABSPATH')) {
 $tocItems = isset($tocItems) && is_array($tocItems) ? $tocItems : [];
 $tocHeaderText = isset($tocHeaderText) ? (string) $tocHeaderText : 'Inhaltsverzeichnis';
 
-if (empty($tocItems)) {
+$tocTree = function_exists('phinit_build_toc_tree') ? phinit_build_toc_tree($tocItems) : [];
+
+if (empty($tocTree)) {
     return;
 }
+?>
+<?php
+$renderInlineTocTree = static function (array $nodes, bool $nested = false) use (&$renderInlineTocTree): void {
+    if ($nodes === []) {
+        return;
+    }
+    ?>
+    <ul class="toc-inline__list<?php echo $nested ? ' toc-inline__list--nested' : ''; ?>" role="list">
+        <?php foreach ($nodes as $node): ?>
+        <?php $level = max(1, (int) ($node['level'] ?? 2)); ?>
+        <li class="toc-inline__item toc-inline__item--level-<?php echo $level; ?>">
+            <a class="toc-inline__link" href="#<?php echo htmlspecialchars((string) ($node['id'] ?? ''), ENT_QUOTES); ?>">
+                <?php echo phinit_escape_text($node['text'] ?? ''); ?>
+            </a>
+            <?php if (!empty($node['children']) && is_array($node['children'])): ?>
+                <?php $renderInlineTocTree($node['children'], true); ?>
+            <?php endif; ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php
+};
 ?>
 <details class="toc-inline" data-inline-toc data-anim data-anim-delay="1">
     <summary class="toc-inline__toggle">
@@ -24,14 +48,6 @@ if (empty($tocItems)) {
         </span>
     </summary>
     <nav class="toc-inline__body" aria-label="Inhaltsverzeichnis des Artikels">
-        <ul role="list">
-            <?php foreach ($tocItems as $item): ?>
-            <li class="<?php echo (($item['level'] ?? 0) === 3) ? 'toc-h3' : ''; ?>">
-                <a href="#<?php echo htmlspecialchars((string) ($item['id'] ?? ''), ENT_QUOTES); ?>">
-                    <?php echo phinit_escape_text($item['text'] ?? ''); ?>
-                </a>
-            </li>
-            <?php endforeach; ?>
-        </ul>
+        <?php $renderInlineTocTree($tocTree); ?>
     </nav>
 </details>
