@@ -8,6 +8,10 @@ if (!defined('ABSPATH')) {
 $featuredPosts = isset($featuredPosts) && is_array($featuredPosts) ? $featuredPosts : [];
 $sbFeaturedPosts = isset($sbFeaturedPosts) && is_array($sbFeaturedPosts) ? $sbFeaturedPosts : [];
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$localizationService = class_exists('CMS\\Services\\ContentLocalizationService')
+    ? \CMS\Services\ContentLocalizationService::getInstance()
+    : null;
 
 $_renderSidebarWidgetTitle = static function (string $title, string $defaultIcon = ''): string {
     $rawTitle = trim($title);
@@ -162,8 +166,16 @@ if (empty($_showList) || $featuredPosts === []) {
             <?php if ($_sbEnableFeaturedRotation): ?>
             <div class="sb-featured-rotator" aria-live="polite">
             <?php endif; ?>
-            <?php foreach ($_sbFeatSlice as $_fp):
-                $_fpIndex = (int) array_search($_fp, $_sbFeatSlice, true);
+            <?php foreach ($_sbFeatSlice as $_fpIndex => $_fp):
+                $_fp = is_array($_fp) ? $_fp : [];
+                if ($localizationService !== null) {
+                    try {
+                        $_fp = $localizationService->localizePost($_fp, $currentLocale);
+                    } catch (\Throwable $_sidebarLocalizationError) {
+                        // Fallback: Widget bleibt mit Originaldaten renderbar.
+                    }
+                }
+                $_fpIndex = (int) $_fpIndex;
                 $_fpIsActive = $_fpIndex === 0;
                 $_fpHref = htmlspecialchars((string) ($_fp['permalink'] ?? ($siteUrl . '/blog/' . ($_fp['slug'] ?? ''))), ENT_QUOTES);
                 $_fpTitle = htmlspecialchars((string) ($_fp['title'] ?? ''), ENT_QUOTES);

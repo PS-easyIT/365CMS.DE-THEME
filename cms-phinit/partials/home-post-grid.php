@@ -10,6 +10,12 @@ $currentPage = isset($currentPage) ? (int) $currentPage : 1;
 $totalPages = isset($totalPages) ? (int) $totalPages : 1;
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$localizationService = class_exists('CMS\\Services\\ContentLocalizationService')
+    ? \CMS\Services\ContentLocalizationService::getInstance()
+    : null;
+$permalinkService = class_exists('CMS\\Services\\PermalinkService')
+    ? \CMS\Services\PermalinkService::getInstance()
+    : null;
 
 if (empty($_showTileGrid) || $gridPosts === []) {
     return;
@@ -22,14 +28,47 @@ if (empty($_showTileGrid) || $gridPosts === []) {
 
     <div class="posts-grid posts-grid--cols-<?php echo (int) $_tileCols; ?>">
         <?php foreach ($gridPosts as $i => $post): ?>
+        <?php
+        $post = is_array($post) ? $post : [];
+        if ($localizationService !== null) {
+            try {
+                $post = $localizationService->localizePost($post, $currentLocale);
+            } catch (\Throwable $_gridLocalizationError) {
+                // Fallback: rendere mit den gelieferten Werten weiter.
+            }
+        }
+        if ((string) ($post['permalink'] ?? '') === '' && $permalinkService !== null) {
+            try {
+                $post['permalink'] = $permalinkService->buildPostUrl($post, $currentLocale);
+            } catch (\Throwable $_gridPermalinkError) {
+                $post['permalink'] = '';
+            }
+        }
+        $displayTitle = trim((string) ($post['title'] ?? ''));
+        if ($displayTitle === '') {
+            $displayTitle = trim((string) ($post['title_en'] ?? ''));
+        }
+        $displayExcerptSource = trim((string) ($post['excerpt'] ?? ''));
+        if ($displayExcerptSource === '') {
+            $displayExcerptSource = trim((string) ($post['excerpt_en'] ?? ''));
+        }
+        $displayContentSource = trim((string) ($post['content'] ?? ''));
+        if ($displayContentSource === '') {
+            $displayContentSource = trim((string) ($post['content_en'] ?? ''));
+        }
+        $displaySlug = trim((string) ($post['slug'] ?? ''));
+        if ($displaySlug === '') {
+            $displaySlug = trim((string) ($post['slug_en'] ?? ''));
+        }
+        ?>
         <article class="post-card" data-anim data-anim-delay="<?php echo min((int) $i + 1, 4); ?>">
             <?php
             $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? '');
             $tileReadTime = !empty($post['read_time']) ? (int) $post['read_time'] : 0;
-            if ($tileReadTime < 1 && !empty($post['content'])) {
+                if ($tileReadTime < 1 && $displayContentSource !== '') {
                 $tileReadTime = function_exists('phinit_reading_time')
-                    ? phinit_reading_time((string) $post['content'])
-                    : max(1, (int) round(str_word_count(strip_tags((string) $post['content'])) / 220));
+                    ? phinit_reading_time($displayContentSource)
+                    : max(1, (int) round(str_word_count(strip_tags($displayContentSource)) / 220));
             }
             ?>
 
@@ -39,7 +78,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 <span class="post-card-badge"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
                 <?php endif; ?>
                 <img src="<?php echo htmlspecialchars((string) $post['featured_image'], ENT_QUOTES); ?>"
-                     alt="<?php echo htmlspecialchars((string) ($post['title'] ?? ''), ENT_QUOTES); ?>"
+                     alt="<?php echo htmlspecialchars($displayTitle, ENT_QUOTES); ?>"
                      <?php echo phinit_image_loading_attributes(); ?>
                      <?php echo phinit_image_dimension_attributes((string) ($post['featured_image'] ?? ''), 108, 81); ?>>
             </div>
@@ -54,8 +93,8 @@ if (empty($_showTileGrid) || $gridPosts === []) {
 
             <div class="post-card-body">
                 <h3 class="post-card-title">
-                    <a href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . ($post['slug'] ?? ''))), ENT_QUOTES); ?>">
-                        <?php echo phinit_escape_text($post['title'] ?? ''); ?>
+                    <a href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . $displaySlug)), ENT_QUOTES); ?>">
+                        <?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>
                     </a>
                 </h3>
                 <?php if (!empty($_showTileDate) && !empty($postDateRaw)): ?>
@@ -72,12 +111,12 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 <?php endif; ?>
                 <?php
                 $_tileExc = function_exists('phinit_excerpt_plain_text')
-                    ? phinit_excerpt_plain_text((string) ($post['excerpt'] ?? ''))
-                    : strip_tags((string) ($post['excerpt'] ?? ''));
-                if (trim($_tileExc) === '' && !empty($post['content'])) {
+                    ? phinit_excerpt_plain_text($displayExcerptSource)
+                    : strip_tags($displayExcerptSource);
+                if (trim($_tileExc) === '' && $displayContentSource !== '') {
                     $_tileExc = function_exists('phinit_excerpt_plain_text')
-                        ? phinit_excerpt_plain_text((string) $post['content'])
-                        : strip_tags((string) $post['content']);
+                        ? phinit_excerpt_plain_text($displayContentSource)
+                        : strip_tags($displayContentSource);
                 }
                 if (!empty($_showTileExc) && trim($_tileExc) !== ''): ?>
                 <p class="post-card-excerpt"><?php echo htmlspecialchars(mb_strimwidth($_tileExc, 0, (int) $_tileExcLen, '…'), ENT_QUOTES); ?></p>
@@ -89,7 +128,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                     <?php endif; ?>
                     </div>
                     <a class="post-card-meta__more"
-                       href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . ($post['slug'] ?? ''))), ENT_QUOTES); ?>">
+                       href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . $displaySlug)), ENT_QUOTES); ?>">
                         <span class="post-card-meta__more-label post-card-meta__more-label--desktop"><?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?></span>
                         <span class="post-card-meta__more-label post-card-meta__more-label--mobile">Weiter</span>
                     </a>

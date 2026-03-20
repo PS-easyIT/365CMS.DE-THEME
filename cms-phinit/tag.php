@@ -12,6 +12,11 @@ $posts = isset($posts) && is_array($posts) ? $posts : [];
 $total = isset($total) ? (int) $total : 0;
 $currentPage = isset($currentPage) ? (int) $currentPage : 1;
 $totalPages = isset($totalPages) ? (int) $totalPages : 1;
+$posts = array_map(
+    static fn($archivePost): array => is_object($archivePost) ? get_object_vars($archivePost) : (array) $archivePost,
+    $posts
+);
+$posts = function_exists('phinit_prepare_homepage_posts') ? phinit_prepare_homepage_posts($posts, $currentLocale) : $posts;
 $blogQuery = isset($query) ? trim((string) $query) : trim((string) ($_GET['q'] ?? ''));
 $tagName = trim((string) ($tag['name'] ?? 'Tag'));
 $tagSlug = trim((string) ($tag['slug'] ?? ''));

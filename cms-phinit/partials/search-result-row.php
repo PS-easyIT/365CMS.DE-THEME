@@ -12,12 +12,24 @@ $r = isset($r) && is_array($r) ? $r : [];
 $rType = (string) ($r['_type'] ?? 'post');
 $rTypeLabel = (string) ($r['_type_label'] ?? 'Beitrag');
 $rTypeIcon = (string) ($typeIcons[$rType] ?? '📄');
-$rTitle = (string) ($r['title'] ?? $r['name'] ?? 'Ohne Titel');
-$rExcerptSource = (string) ($r['excerpt'] ?? $r['meta_description'] ?? $r['description'] ?? $r['content'] ?? '');
+$rTitle = trim((string) ($r['title'] ?? ''));
+if ($rTitle === '') {
+    $rTitle = trim((string) ($r['title_en'] ?? $r['name'] ?? 'Ohne Titel'));
+}
+$rExcerptSource = trim((string) ($r['excerpt'] ?? ''));
+if ($rExcerptSource === '') {
+    $rExcerptSource = trim((string) ($r['excerpt_en'] ?? ''));
+}
+if ($rExcerptSource === '') {
+    $rExcerptSource = (string) ($r['meta_description'] ?? $r['description'] ?? $r['content'] ?? $r['content_en'] ?? '');
+}
 $rExcerpt = function_exists('phinit_excerpt_plain_text')
     ? phinit_excerpt_plain_text($rExcerptSource)
     : strip_tags($rExcerptSource);
-$rSlug = (string) ($r['slug'] ?? '');
+$rSlug = trim((string) ($r['slug'] ?? ''));
+if ($rSlug === '') {
+    $rSlug = trim((string) ($r['slug_en'] ?? ''));
+}
 
 if ($rType === 'post') {
     $rUrl = $siteUrl . '/blog/' . $rSlug;
