@@ -233,6 +233,11 @@ trait CMS_Phinit_Theme_Assets_Trait
         return in_array($path, ['/sitemap', '/autoren', '/authors'], true);
     }
 
+    private function isKnowledgebaseRequest(string $path): bool
+    {
+        return $path === '/kb' || str_starts_with($path, '/kb/');
+    }
+
     public function enqueueStyles(): void
     {
         $requestContext = $this->getRequestContext();
@@ -250,6 +255,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $loadRichContentCss = $requestContext['isRichContent'];
         $loadTemplateCss = $requestContext['isTemplateStyles'];
         $loadContentCardsCss = $loadHomepageBlogCss || $loadPageExtrasCss;
+        $loadKnowledgebaseCss = $this->isKnowledgebaseRequest($requestPath);
 
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
         $headerNavigationCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/header-navigation.css';
@@ -267,6 +273,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
         $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
+        $knowledgebaseCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-knowledgebase.css';
         $footerConsentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/footer-consent.css';
 
         $cbVersion = '';
@@ -353,6 +360,11 @@ trait CMS_Phinit_Theme_Assets_Trait
         if ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
             $hubSitesVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($hubSitesCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/hub-sites.css', $hubSitesVersion));
+        }
+
+        if ($loadKnowledgebaseCss && file_exists($knowledgebaseCssFile)) {
+            $knowledgebaseVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($knowledgebaseCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/page-knowledgebase.css', $knowledgebaseVersion));
         }
 
         if (file_exists($footerConsentCssFile)) {

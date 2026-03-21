@@ -607,6 +607,12 @@ trait CMS_Phinit_Theme_Head_Trait
         if (str_starts_with($uri, '/member') || str_starts_with($uri, '/dashboard')) {
             $add[] = 'is-member';
         }
+
+        if ($baseUri === '/kb' || str_starts_with($baseUri, '/kb/')) {
+            $add[] = 'is-knowledgebase';
+            $add[] = $baseUri === '/kb' ? 'is-knowledgebase-archive' : 'is-knowledgebase-single';
+        }
+
         return trim($classes . ' ' . implode(' ', $add));
     }
 }

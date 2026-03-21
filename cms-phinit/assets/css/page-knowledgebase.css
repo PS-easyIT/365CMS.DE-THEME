@@ -1,0 +1,303 @@
+/* ══════════════════════════════════════════════════════════════════
+   KNOWLEDGEBASE – CMS PHINIT
+   Wird nur auf /kb und /kb/... geladen
+══════════════════════════════════════════════════════════════════ */
+
+body.is-knowledgebase #main-content {
+    padding-top: 28px;
+    padding-bottom: 48px;
+}
+
+body.is-knowledgebase .cms-kb-content {
+    width: min(100%, var(--kb-content-max-width, 1200px));
+    margin: 0 auto;
+    display: grid;
+    gap: 24px;
+}
+
+body.is-knowledgebase .cms-kb-content--archive {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+body.is-knowledgebase .cms-kb-content--single .cms-kb-article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, var(--kb-sidebar-width, 300px));
+    gap: 24px;
+}
+
+body.is-knowledgebase .cms-kb-header,
+body.is-knowledgebase .cms-kb-filters,
+body.is-knowledgebase .cms-kb-listing,
+body.is-knowledgebase .cms-kb-sidebar,
+body.is-knowledgebase .cms-kb-body,
+body.is-knowledgebase .cms-kb-breadcrumbs,
+body.is-knowledgebase .cms-kb-sidebar__section {
+    background: var(--kb-surface, var(--bg-primary));
+    border: 1px solid var(--kb-border, var(--border-color));
+    border-radius: var(--kb-radius, var(--radius, 14px));
+    box-shadow: var(--shadow-sm);
+}
+
+body.is-knowledgebase .cms-kb-header,
+body.is-knowledgebase .cms-kb-filters,
+body.is-knowledgebase .cms-kb-body,
+body.is-knowledgebase .cms-kb-breadcrumbs,
+body.is-knowledgebase .cms-kb-sidebar,
+body.is-knowledgebase .cms-kb-sidebar__section {
+    padding: 22px 24px;
+}
+
+body.is-knowledgebase .cms-kb-header h1,
+body.is-knowledgebase .cms-kb-entry h2,
+body.is-knowledgebase .cms-kb-sidebar h2,
+body.is-knowledgebase .cms-kb-sidebar__section h2 {
+    margin-top: 0;
+    color: var(--text-primary);
+}
+
+body.is-knowledgebase .cms-kb-header h1 {
+    margin-bottom: 10px;
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    line-height: 1.15;
+}
+
+body.is-knowledgebase .cms-kb-header p,
+body.is-knowledgebase .cms-kb-entry__excerpt,
+body.is-knowledgebase .cms-kb-body,
+body.is-knowledgebase .cms-kb-sidebar,
+body.is-knowledgebase .cms-kb-sidebar__section p,
+body.is-knowledgebase .cms-kb-sidebar__section li {
+    color: var(--text-secondary);
+    line-height: 1.72;
+}
+
+body.is-knowledgebase .cms-kb-breadcrumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    color: var(--text-muted);
+    font-size: .84rem;
+}
+
+body.is-knowledgebase .cms-kb-breadcrumbs a {
+    color: var(--kb-accent, var(--accent-teal));
+    text-decoration: none;
+}
+
+body.is-knowledgebase .cms-kb-breadcrumbs a:hover,
+body.is-knowledgebase .cms-kb-breadcrumbs a:focus-visible {
+    text-decoration: underline;
+}
+
+body.is-knowledgebase .cms-kb-filters__form {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(180px, .8fr) auto auto;
+    gap: 12px;
+    align-items: end;
+}
+
+body.is-knowledgebase .cms-kb-filters label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: .83rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+body.is-knowledgebase .cms-kb-filters input,
+body.is-knowledgebase .cms-kb-filters select {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+body.is-knowledgebase .cms-kb-filters input:focus-visible,
+body.is-knowledgebase .cms-kb-filters select:focus-visible {
+    outline: none;
+    border-color: var(--kb-accent, var(--accent-teal));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 16%, transparent);
+}
+
+body.is-knowledgebase .cms-kb-filters button,
+body.is-knowledgebase .cms-kb-filters a {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: .92rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+body.is-knowledgebase .cms-kb-filters button {
+    border: 1px solid var(--kb-accent, var(--accent-teal));
+    background: var(--kb-accent, var(--accent-teal));
+    color: #fff;
+    cursor: pointer;
+}
+
+body.is-knowledgebase .cms-kb-filters button:hover,
+body.is-knowledgebase .cms-kb-filters button:focus-visible {
+    background: var(--kb-accent-hover, color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 88%, black 12%));
+    border-color: var(--kb-accent-hover, color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 88%, black 12%));
+}
+
+body.is-knowledgebase .cms-kb-filters a {
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+}
+
+body.is-knowledgebase .cms-kb-filters a:hover,
+body.is-knowledgebase .cms-kb-filters a:focus-visible {
+    border-color: var(--kb-accent, var(--accent-teal));
+    color: var(--text-primary);
+}
+
+body.is-knowledgebase .cms-kb-listing {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+}
+
+body.is-knowledgebase .cms-kb-entry {
+    padding: 18px 20px;
+    border: 1px solid var(--kb-border, var(--border-color));
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--kb-surface, var(--bg-primary)) 84%, var(--bg-secondary) 16%);
+}
+
+body.is-knowledgebase .cms-kb-entry + .cms-kb-entry {
+    margin-top: 0;
+}
+
+body.is-knowledgebase .cms-kb-entry__header {
+    margin-bottom: 10px;
+}
+
+body.is-knowledgebase .cms-kb-entry__meta,
+body.is-knowledgebase .cms-kb-entry__keyword,
+body.is-knowledgebase .cms-kb-entry__synonyms {
+    margin: 0 0 10px;
+    color: var(--text-muted);
+    font-size: .84rem;
+}
+
+body.is-knowledgebase .cms-kb-entry h2 {
+    margin-bottom: 0;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+}
+
+body.is-knowledgebase .cms-kb-entry h2 a,
+body.is-knowledgebase .cms-kb-sidebar a,
+body.is-knowledgebase .cms-kb-entry__link a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+body.is-knowledgebase .cms-kb-entry h2 a:hover,
+body.is-knowledgebase .cms-kb-entry h2 a:focus-visible,
+body.is-knowledgebase .cms-kb-sidebar a:hover,
+body.is-knowledgebase .cms-kb-sidebar a:focus-visible,
+body.is-knowledgebase .cms-kb-entry__link a:hover,
+body.is-knowledgebase .cms-kb-entry__link a:focus-visible {
+    color: var(--kb-accent, var(--accent-teal));
+    text-decoration: underline;
+}
+
+body.is-knowledgebase .cms-kb-entry__link {
+    margin-bottom: 0;
+}
+
+body.is-knowledgebase .cms-kb-sidebar {
+    align-self: start;
+}
+
+body.is-knowledgebase .cms-kb-sidebar__section + .cms-kb-sidebar__section {
+    margin-top: 16px;
+}
+
+body.is-knowledgebase .cms-kb-sidebar__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+body.is-knowledgebase .cms-kb-sidebar__list li + li {
+    margin-top: 10px;
+}
+
+body.is-knowledgebase .cms-kb-richtext {
+    color: var(--text-secondary);
+}
+
+body.is-knowledgebase .cms-kb-richtext > :first-child {
+    margin-top: 0;
+}
+
+body.is-knowledgebase .cms-kb-richtext > :last-child {
+    margin-bottom: 0;
+}
+
+body.is-knowledgebase .cms-kb-richtext h2,
+body.is-knowledgebase .cms-kb-richtext h3,
+body.is-knowledgebase .cms-kb-richtext h4 {
+    color: var(--text-primary);
+    margin-top: 1.8em;
+}
+
+body.is-knowledgebase .cms-kb-richtext a {
+    color: var(--kb-accent, var(--accent-teal));
+}
+
+body.is-knowledgebase .cms-kb-richtext code,
+body.is-knowledgebase .cms-kb-richtext pre {
+    font-family: var(--font-code);
+}
+
+@media (max-width: 1024px) {
+    body.is-knowledgebase .cms-kb-content--single .cms-kb-article {
+        grid-template-columns: 1fr;
+    }
+
+    body.is-knowledgebase .cms-kb-filters__form {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    body.is-knowledgebase #main-content {
+        padding-top: 18px;
+        padding-bottom: 34px;
+    }
+
+    body.is-knowledgebase .cms-kb-header,
+    body.is-knowledgebase .cms-kb-filters,
+    body.is-knowledgebase .cms-kb-body,
+    body.is-knowledgebase .cms-kb-breadcrumbs,
+    body.is-knowledgebase .cms-kb-sidebar,
+    body.is-knowledgebase .cms-kb-sidebar__section {
+        padding: 18px;
+    }
+
+    body.is-knowledgebase .cms-kb-listing {
+        padding: 14px;
+    }
+
+    body.is-knowledgebase .cms-kb-entry {
+        padding: 16px;
+    }
+
+    body.is-knowledgebase .cms-kb-filters__form {
+        grid-template-columns: 1fr;
+    }
+}
