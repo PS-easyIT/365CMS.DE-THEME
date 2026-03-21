@@ -470,6 +470,7 @@ if ($_showLanguageSwitch) {
                         <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Datenschutz</a>
                         <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">News</a>
                     <?php endif; ?>
+                    <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
                 </nav>
 
             <!-- Header-Tools (rechts, in Bar 2) -->
@@ -535,6 +536,7 @@ if ($_showLanguageSwitch) {
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 <?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
             <?php endif; ?>
+            <?php \CMS\Hooks::doAction('main_nav', 'mobile'); ?>
             <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== ''): ?>
             <a href="<?php echo htmlspecialchars($_languageSwitchUrl, ENT_QUOTES); ?>" class="mobile-menu__lang-link" aria-label="<?php echo htmlspecialchars($_languageAriaLabel, ENT_QUOTES); ?>">
                 <span class="mobile-menu__lang-icon" aria-hidden="true"><?php echo htmlspecialchars($_languageSwitchDisplay, ENT_QUOTES); ?></span>
