@@ -235,7 +235,9 @@ trait CMS_Phinit_Theme_Assets_Trait
 
     private function isKnowledgebaseRequest(string $path): bool
     {
-        return $path === '/kb' || str_starts_with($path, '/kb/');
+        return $path === '/kb'
+            || str_starts_with($path, '/kb/')
+            || $path === '/glossar';
     }
 
     public function enqueueStyles(): void

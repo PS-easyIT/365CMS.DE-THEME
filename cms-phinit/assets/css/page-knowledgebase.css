@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════
-   KNOWLEDGEBASE – CMS PHINIT
-   Wird nur auf /kb und /kb/... geladen
+    KNOWLEDGEBASE – CMS PHINIT
+    Wird auf /kb, /kb/... und /glossar geladen
 ══════════════════════════════════════════════════════════════════ */
 
 body.is-knowledgebase #main-content {
@@ -12,7 +12,7 @@ body.is-knowledgebase .cms-kb-content {
     width: min(100%, var(--kb-content-max-width, 1200px));
     margin: 0 auto;
     display: grid;
-    gap: 24px;
+    gap: 28px;
 }
 
 body.is-knowledgebase .cms-kb-content--archive,
@@ -81,6 +81,13 @@ body.is-knowledgebase .cms-kb-sidebar__section h2 {
 body.is-knowledgebase .cms-kb-hero {
     display: block;
     background: color-mix(in srgb, var(--kb-surface, var(--bg-primary)) 92%, var(--bg-secondary) 8%);
+}
+
+body.is-knowledgebase .cms-kb-content--archive .cms-kb-hero {
+    padding: 28px 30px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--bg-primary) 84%, transparent) 0%, color-mix(in srgb, var(--bg-primary) 96%, var(--bg-secondary) 4%) 100%),
+        color-mix(in srgb, var(--kb-surface, var(--bg-primary)) 88%, var(--bg-secondary) 12%);
 }
 
 body.is-knowledgebase .cms-kb-hero--single {
@@ -311,8 +318,8 @@ body.is-knowledgebase .cms-kb-filters a:focus-visible {
 
 body.is-knowledgebase .cms-kb-listing {
     display: grid;
-    gap: 18px;
-    padding: 18px;
+    gap: 20px;
+    padding: 0;
     background: transparent;
     border: none;
     box-shadow: none;
@@ -334,7 +341,146 @@ body.is-knowledgebase .cms-kb-section-head h2 {
 body.is-knowledgebase .cms-kb-entry-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
+    gap: 18px;
+}
+
+body.is-knowledgebase .cms-kb-archive-layout--grid,
+body.is-knowledgebase .cms-kb-archive-layout--list {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+body.is-knowledgebase .cms-kb-entry-grid--cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: stretch;
+}
+
+body.is-knowledgebase .cms-kb-content--overview .cms-kb-entry--card {
+    min-height: 100%;
+    padding: 22px 22px 20px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--bg-primary) 72%, transparent) 0%, var(--bg-primary) 100%),
+        var(--bg-primary);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+body.is-knowledgebase .cms-kb-content--overview .cms-kb-entry--card .cms-kb-entry__header {
+    display: grid;
+    gap: 0.45rem;
+}
+
+body.is-knowledgebase .cms-kb-content--overview .cms-kb-entry--card .cms-kb-entry__excerpt {
+    max-width: 44ch;
+}
+
+body.is-knowledgebase-glossary .cms-kb-archive-layout--list {
+    display: block;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry-grid--list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+    align-items: stretch;
+    gap: 0.9rem;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.045);
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list:hover,
+body.is-knowledgebase-glossary .cms-kb-entry--list:focus-within {
+    border-color: var(--kb-border, var(--border-color));
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.045);
+    transform: none;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__header {
+    gap: 0.35rem;
+}
+
+body.is-knowledgebase .cms-kb-entry__main {
+    display: grid;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+body.is-knowledgebase .cms-kb-entry__aside {
+    display: grid;
+    gap: 0.55rem;
+    align-content: space-between;
+    justify-items: end;
+    min-width: 0;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__aside {
+    position: relative;
+    padding-left: 1rem;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__aside::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        color-mix(in srgb, var(--kb-border, var(--border-color)) 88%, transparent) 12%,
+        color-mix(in srgb, var(--kb-border, var(--border-color)) 88%, transparent) 88%,
+        transparent 100%
+    );
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__main {
+    gap: 0.55rem;
+    align-content: start;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__excerpt {
+    max-width: none;
+    padding-right: 0.1rem;
+    margin-bottom: 0;
+    font-size: 0.94rem;
+    line-height: 1.58;
+    color: color-mix(in srgb, var(--text-secondary) 90%, var(--text-primary) 10%);
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__footer {
+    margin-top: auto;
+    justify-content: flex-end;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__meta {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    opacity: 0.92;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list h2 {
+    margin: 0;
+    font-size: clamp(1rem, 1.35vw, 1.16rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list h2 a {
+    transition: color .15s ease, text-decoration-color .15s ease;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.12em;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry--list h2 a:hover,
+body.is-knowledgebase-glossary .cms-kb-entry--list h2 a:focus-visible {
+    color: var(--kb-accent, var(--accent-teal));
+    text-decoration-color: currentColor;
 }
 
 body.is-knowledgebase .cms-kb-entry {
@@ -352,6 +498,14 @@ body.is-knowledgebase .cms-kb-entry:focus-within {
     border-color: color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 30%, var(--kb-border, var(--border-color)) 70%);
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     transform: translateY(-2px);
+}
+
+body.is-knowledgebase .cms-kb-content--overview .cms-kb-entry__meta,
+body.is-knowledgebase-glossary .cms-kb-entry__meta {
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--kb-accent, var(--accent-teal));
 }
 
 body.is-knowledgebase .cms-kb-entry__header {
@@ -381,6 +535,23 @@ body.is-knowledgebase .cms-kb-entry__keyword strong {
     color: var(--text-primary);
 }
 
+body.is-knowledgebase-glossary .cms-kb-entry__keyword {
+    justify-self: end;
+    max-width: 100%;
+    text-align: right;
+    padding: 0.36rem 0.62rem;
+    border-radius: 7px;
+    font-size: 0.76rem;
+    line-height: 1.3;
+    gap: 0.35rem;
+    background: color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 8%, var(--bg-primary) 92%);
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry__keyword strong {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+}
+
 body.is-knowledgebase .cms-kb-entry h2 {
     margin-bottom: 0;
     font-size: clamp(1.15rem, 2vw, 1.45rem);
@@ -408,6 +579,25 @@ body.is-knowledgebase .cms-kb-article__footer {
     display: flex;
     justify-content: flex-start;
     margin-top: auto;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry__footer {
+    margin-top: 0.2rem;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry__cta {
+    justify-self: end;
+    min-height: 34px;
+    padding: 0.52rem 0.82rem;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    line-height: 1;
+    transition: color .15s ease, border-color .15s ease, background .15s ease, transform .12s ease;
+}
+
+body.is-knowledgebase-glossary .cms-kb-entry__cta:hover,
+body.is-knowledgebase-glossary .cms-kb-entry__cta:focus-visible {
+    transform: translateY(-1px);
 }
 
 body.is-knowledgebase .cms-kb-entry__cta {
@@ -491,6 +681,77 @@ body.is-knowledgebase .cms-kb-related-block {
 
 body.is-knowledgebase .cms-kb-related-block h2 {
     margin-bottom: 1rem;
+}
+
+body.is-knowledgebase .cms-kb-related-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+body.is-knowledgebase .cms-kb-related-post {
+    display: grid;
+    gap: 0.65rem;
+    padding: 1rem 1.05rem;
+    border: 1px solid var(--kb-border, var(--border-color));
+    border-radius: var(--radius-sm, 8px);
+    background: color-mix(in srgb, var(--bg-primary) 96%, var(--bg-secondary) 4%);
+}
+
+body.is-knowledgebase .cms-kb-related-post__meta,
+body.is-knowledgebase .cms-kb-related-post__excerpt {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+body.is-knowledgebase .cms-kb-related-post__meta {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kb-accent, var(--accent-teal));
+}
+
+body.is-knowledgebase .cms-kb-related-post__title {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+body.is-knowledgebase .cms-kb-related-post__title a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+body.is-knowledgebase .cms-kb-related-post__title a:hover,
+body.is-knowledgebase .cms-kb-related-post__title a:focus-visible {
+    color: var(--kb-accent, var(--accent-teal));
+    text-decoration: underline;
+}
+
+body.is-knowledgebase .cms-kb-related-post__excerpt {
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+body.is-knowledgebase .cms-kb-related-post__cta {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 24%, var(--kb-border, var(--border-color)) 76%);
+    background: color-mix(in srgb, var(--kb-accent, var(--accent-teal)) 10%, var(--bg-primary) 90%);
+    color: var(--text-primary);
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+body.is-knowledgebase .cms-kb-related-post__cta:hover,
+body.is-knowledgebase .cms-kb-related-post__cta:focus-visible {
+    color: var(--kb-accent, var(--accent-teal));
+    text-decoration: none;
 }
 
 body.is-knowledgebase .cms-kb-related-block__list li {
@@ -634,6 +895,39 @@ body.is-knowledgebase .cms-kb-richtext pre {
         position: static;
         top: auto;
     }
+
+    body.is-knowledgebase-glossary .cms-kb-entry--list {
+        grid-template-columns: 1fr;
+    }
+
+    body.is-knowledgebase .cms-kb-entry__aside {
+        justify-items: start;
+        align-content: start;
+    }
+
+    body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__aside {
+        padding-left: 0;
+        padding-top: 0.3rem;
+    }
+
+    body.is-knowledgebase-glossary .cms-kb-entry--list .cms-kb-entry__aside::before {
+        inset: 0 0 auto 0;
+        width: auto;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            color-mix(in srgb, var(--kb-border, var(--border-color)) 88%, transparent) 14%,
+            color-mix(in srgb, var(--kb-border, var(--border-color)) 88%, transparent) 86%,
+            transparent 100%
+        );
+    }
+
+    body.is-knowledgebase-glossary .cms-kb-entry__keyword,
+    body.is-knowledgebase-glossary .cms-kb-entry__cta {
+        justify-self: start;
+        text-align: left;
+    }
 }
 
 @media (max-width: 768px) {
@@ -655,8 +949,12 @@ body.is-knowledgebase .cms-kb-richtext pre {
         padding: 18px;
     }
 
+    body.is-knowledgebase .cms-kb-content--archive .cms-kb-hero {
+        padding: 20px 18px;
+    }
+
     body.is-knowledgebase .cms-kb-listing {
-        padding: 14px;
+        padding: 0;
     }
 
     body.is-knowledgebase .cms-kb-entry {

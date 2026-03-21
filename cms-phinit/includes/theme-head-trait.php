@@ -608,9 +608,13 @@ trait CMS_Phinit_Theme_Head_Trait
             $add[] = 'is-member';
         }
 
-        if ($baseUri === '/kb' || str_starts_with($baseUri, '/kb/')) {
+        if ($baseUri === '/kb' || str_starts_with($baseUri, '/kb/') || $baseUri === '/glossar') {
             $add[] = 'is-knowledgebase';
-            $add[] = $baseUri === '/kb' ? 'is-knowledgebase-archive' : 'is-knowledgebase-single';
+            if ($baseUri === '/glossar') {
+                $add[] = 'is-knowledgebase-glossary';
+            } else {
+                $add[] = $baseUri === '/kb' ? 'is-knowledgebase-archive' : 'is-knowledgebase-single';
+            }
         }
 
         return trim($classes . ' ' . implode(' ', $add));
