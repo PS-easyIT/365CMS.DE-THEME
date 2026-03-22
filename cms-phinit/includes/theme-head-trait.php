@@ -438,7 +438,8 @@ trait CMS_Phinit_Theme_Head_Trait
         }
 
         $isPost = preg_match('#^/blog/[\w-]+$#', $uri);
-        $isPage = !$isPost && $uri !== '/blog' && !str_starts_with($uri, '/kategorie/') && !str_starts_with($uri, '/member') && $uri !== '/search';
+        $archiveRequest = function_exists('cms_parse_archive_request_path') ? cms_parse_archive_request_path($uri) : null;
+        $isPage = !$isPost && $uri !== '/blog' && $archiveRequest === null && !str_starts_with($uri, '/member') && $uri !== '/search';
         if ($isPost && !$onPosts) {
             return;
         }
@@ -454,9 +455,12 @@ trait CMS_Phinit_Theme_Head_Trait
                 $title = phinit_display_text((string) ($currentPost['title'] ?? ''));
             } elseif ($uri === '/blog') {
                 $title = 'Blog';
-            } elseif (preg_match('#^/kategorie/([\w-]+)$#', $uri, $m)) {
+            } elseif (is_array($archiveRequest)) {
                 $crumbs[] = ['label' => 'Blog', 'url' => $siteUrl . '/blog'];
-                $title = phinit_display_text(ucwords(str_replace('-', ' ', $m[1])));
+                $archiveSlug = rawurldecode((string) ($archiveRequest['tail'] ?? ''));
+                $title = $archiveSlug !== ''
+                    ? phinit_display_text(ucwords(str_replace('-', ' ', $archiveSlug)))
+                    : ((string) ($archiveRequest['type'] ?? '') === 'tag' ? 'Tag' : 'Kategorie');
             } elseif (str_starts_with($uri, '/member')) {
                 $crumbs[] = ['label' => 'Member', 'url' => $siteUrl . '/member'];
                 $memberLabels = [
@@ -543,8 +547,9 @@ trait CMS_Phinit_Theme_Head_Trait
                 }
             }
 
-            if (preg_match('#^/kategorie/([\.\w-]+)$#', $uri, $m)) {
-                $label = ucwords(str_replace('-', ' ', $m[1]));
+            $archiveRequest = function_exists('cms_parse_archive_request_path') ? cms_parse_archive_request_path($uri) : null;
+            if (is_array($archiveRequest)) {
+                $label = ucwords(str_replace('-', ' ', rawurldecode((string) ($archiveRequest['tail'] ?? ''))));
                 return $label . ' – ' . $siteTitle;
             }
 

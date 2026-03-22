@@ -124,7 +124,7 @@
     justify-content: space-between;
     padding: 14px 0;
     font-size: var(--footer-bottom-link-size, var(--fs-xs));
-    color: rgba(255,255,255,.35);
+    color: rgba(255,255,255,.78);
     gap: 12px;
 }
 
@@ -135,12 +135,12 @@
 }
 
 .footer-bottom-links a {
-    color: rgba(255,255,255,.35);
+    color: rgba(255,255,255,.82);
     transition: var(--transition-fast);
 }
 
 .footer-bottom-links a:hover {
-    color: var(--text-nav-footer-bottom-hover, rgba(255,255,255,.75));
+    color: var(--text-nav-footer-bottom-hover, rgba(255,255,255,.96));
 }
 
 /* Network Bar */

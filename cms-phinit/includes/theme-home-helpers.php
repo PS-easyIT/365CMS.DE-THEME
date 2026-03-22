@@ -438,7 +438,8 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             ? ($db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
                     p.title_en, p.excerpt_en, p.content_en,
-                    c.name AS category_name
+                    c.name AS category_name,
+                    c.slug AS category_slug
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                  WHERE p.status = 'published'
@@ -459,7 +460,8 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             ? ($db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
                     p.title_en, p.excerpt_en, p.content_en,
-                        c.name AS category_name
+                        c.name AS category_name,
+                        c.slug AS category_slug
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                  WHERE p.status = 'published'
@@ -488,9 +490,10 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             if ($_fpIds !== []) {
                 $_fpIn = implode(',', array_map('intval', $_fpIds));
                 $_fpRows = $db->get_results(
-                    "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
+                        "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
                             p.title_en, p.excerpt_en, p.content_en,
-                            c.name AS category_name
+                            c.name AS category_name,
+                            c.slug AS category_slug
                      FROM {$prefix}posts p
                      LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                      WHERE p.id IN ({$_fpIn}) AND p.status = 'published'{$localeCondition}"

@@ -146,11 +146,30 @@ body.dark-mode .repo-card {
     position: absolute;
     top: 6px;
     left: 6px;
-    font-size: .65rem;
+    display: inline-flex;
+    align-items: center;
+    font-size: .75rem;
     font-weight: 700;
     padding: 2px 7px;
     border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, .68);
     letter-spacing: .03em;
+    text-decoration: none;
+    transition: none;
+    transform: none;
+}
+
+.thumb-badge:hover,
+.thumb-badge:focus-visible {
+    text-decoration: none;
+    transform: none;
+    box-shadow: none;
+}
+
+.thumb-badge.badge-teal:hover,
+.thumb-badge.badge-teal:focus-visible {
+    background: var(--accent-teal);
+    color: #fff;
 }
 
 .badge-teal {
@@ -172,7 +191,7 @@ body.dark-mode .repo-card {
     flex-wrap: nowrap;
     gap: 8px;
     font-size: var(--fs-xs);
-    color: var(--text-muted);
+    color: #475569;
     margin-top: 0;
     padding-top: 0;
 }
@@ -193,7 +212,7 @@ body.dark-mode .repo-card {
     margin-top: auto;
     padding-top: 10px;
     font-size: var(--fs-xs);
-    color: var(--text-muted);
+    color: #475569;
 }
 
 .article-meta__more {
@@ -218,7 +237,7 @@ body.dark-mode .repo-card {
     align-items: center;
     gap: 4px;
     background: transparent;
-    color: var(--text-muted);
+    color: inherit;
     padding: 0;
     border: 0;
     border-radius: 0;
@@ -233,6 +252,7 @@ body.dark-mode .repo-card {
     gap: 8px;
     flex-wrap: nowrap;
     white-space: nowrap;
+    color: inherit;
 }
 
 .article-body h4 {
@@ -1508,11 +1528,11 @@ body.dark-mode .article-meta__primary,
 body.dark-mode .article-meta__date,
 body.dark-mode .article-footer,
 body.dark-mode .article-meta .read {
-    color: var(--text-secondary);
+    color: #cbd5e1;
 }
 
 body.dark-mode .article-meta__timing {
-    color: var(--text-secondary);
+    color: inherit;
 }
 
 body.dark-mode .article-meta__more,
@@ -1527,7 +1547,7 @@ body.dark-mode .article-meta__more:hover,
 body.dark-mode .homepage-sidebar-body a:hover,
 body.dark-mode .sb-download-list a:hover,
 body.dark-mode .blog-archive-back:hover {
-    color: #7dd3c7;
+    color: #579c93;
 }
 
 body.dark-mode .homepage-list-sidebar {

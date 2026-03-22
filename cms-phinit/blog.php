@@ -52,7 +52,8 @@ try {
 
     $_stmtRows = $_bPdo->prepare(
         "SELECT p.*, 
-                c.name AS category_name
+                c.name AS category_name,
+                c.slug AS category_slug
          FROM {$_bPfx}posts p
          LEFT JOIN {$_bPfx}post_categories c ON c.id = p.category_id
          WHERE {$_bWhere}

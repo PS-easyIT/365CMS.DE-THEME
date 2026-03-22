@@ -150,7 +150,7 @@ $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use
         <ul class="toc-list" role="list">
             <?php foreach ($post_tags as $_sb_tag): ?>
             <li class="toc-item">
-                <a class="toc-link" href="<?php echo htmlspecialchars($site_url . '/tag/' . urlencode(phinit_display_text($_sb_tag['slug'] ?? $_sb_tag['name'] ?? '')), ENT_QUOTES); ?>">
+                <a class="toc-link" href="<?php echo htmlspecialchars(function_exists('cms_get_archive_url') ? cms_get_archive_url('tag', phinit_display_text($_sb_tag['slug'] ?? $_sb_tag['name'] ?? ''), function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de') : $site_url . '/tag/' . urlencode(phinit_display_text($_sb_tag['slug'] ?? $_sb_tag['name'] ?? '')), ENT_QUOTES); ?>">
                     <?php echo phinit_escape_text($_sb_tag['name'] ?? ''); ?>
                 </a>
             </li>

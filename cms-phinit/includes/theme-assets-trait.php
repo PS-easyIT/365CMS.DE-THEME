@@ -203,8 +203,8 @@ trait CMS_Phinit_Theme_Assets_Trait
     {
         return $path === '/'
             || $path === '/blog'
-            || str_starts_with($path, '/kategorie/')
-            || str_starts_with($path, '/tag/')
+            || (function_exists('cms_is_archive_request_path') && cms_is_archive_request_path($path, 'category'))
+            || (function_exists('cms_is_archive_request_path') && cms_is_archive_request_path($path, 'tag'))
             || str_starts_with($path, '/author/');
     }
 
@@ -230,7 +230,23 @@ trait CMS_Phinit_Theme_Assets_Trait
 
     private function isSpecialPageRequest(string $path): bool
     {
-        return in_array($path, ['/sitemap', '/autoren', '/authors'], true);
+        if (in_array($path, ['/sitemap', '/autoren', '/authors'], true)) {
+            return true;
+        }
+
+        if (!function_exists('cms_parse_archive_request_path')) {
+            return false;
+        }
+
+        $archiveRequest = cms_parse_archive_request_path($path);
+        if (!is_array($archiveRequest)) {
+            return false;
+        }
+
+        $archiveType = (string) ($archiveRequest['type'] ?? '');
+        $archiveTail = trim((string) ($archiveRequest['tail'] ?? ''));
+
+        return in_array($archiveType, ['category', 'tag'], true) && $archiveTail === '';
     }
 
     private function isKnowledgebaseRequest(string $path): bool

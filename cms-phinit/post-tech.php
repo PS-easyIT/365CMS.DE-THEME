@@ -256,7 +256,7 @@ try {
             <ul class="toc-list" role="list">
                 <?php foreach ($catRows as $cat): ?>
                 <li>
-                    <a href="<?php echo htmlspecialchars(SITE_URL . '/kategorie/' . ($cat['slug'] ?? ''), ENT_QUOTES); ?>">
+                    <a href="<?php echo htmlspecialchars(function_exists('cms_get_archive_url') ? cms_get_archive_url('category', (string) ($cat['slug'] ?? ''), function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de') : SITE_URL . '/kategorie/' . ($cat['slug'] ?? ''), ENT_QUOTES); ?>">
                         <?php echo htmlspecialchars((string) ($cat['name'] ?? ''), ENT_QUOTES); ?>
                         <span class="toc-muted-count">(<?php echo (int) ($cat['cnt'] ?? 0); ?>)</span>
                     </a>

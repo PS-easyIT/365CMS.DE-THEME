@@ -61,6 +61,22 @@ if ($permalink === '') {
     $permalink = $siteUrl . '/blog/' . $displaySlug;
 }
 
+$categoryLabel = trim((string) ($card['category_name'] ?? ''));
+$categorySlug = trim((string) ($card['category_slug'] ?? ''));
+if ($categorySlug === '' && $categoryLabel !== '') {
+    $categorySlug = function_exists('phinit_display_text')
+        ? phinit_display_text($categoryLabel)
+        : $categoryLabel;
+}
+$categoryUrl = '';
+if ($categorySlug !== '') {
+    $categoryUrl = function_exists('cms_get_archive_url')
+        ? (string) cms_get_archive_url('category', $categorySlug, $currentLocale)
+        : (function_exists('phinit_localized_href')
+            ? (string) phinit_localized_href('/kategorie/' . rawurlencode($categorySlug), $currentLocale, $siteUrl)
+            : rtrim($siteUrl, '/') . '/kategorie/' . rawurlencode($categorySlug));
+}
+
 $displayTitle = trim((string) ($card['title'] ?? ''));
 if ($displayTitle === '') {
     $displayTitle = trim((string) ($card['title_en'] ?? ''));
@@ -109,8 +125,10 @@ if ($show_rt && $show_meta) {
         <?php else: ?>
         <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
         <?php endif; ?>
-        <?php if (!empty($card['category_name'])): ?>
-        <span class="thumb-badge badge-teal"><?php echo phinit_escape_text($card['category_name'] ?? ''); ?></span>
+        <?php if ($categoryLabel !== '' && $categoryUrl !== ''): ?>
+        <a class="thumb-badge badge-teal" href="<?php echo htmlspecialchars($categoryUrl, ENT_QUOTES); ?>"><?php echo phinit_escape_text($categoryLabel); ?></a>
+        <?php elseif ($categoryLabel !== ''): ?>
+        <span class="thumb-badge badge-teal"><?php echo phinit_escape_text($categoryLabel); ?></span>
         <?php endif; ?>
     </div>
 
@@ -139,11 +157,9 @@ if ($show_rt && $show_meta) {
             <?php endif; ?>
         </div>
         <div class="article-footer">
-            <?php if ($show_cat && !empty($card['category_name'])): ?>
-            <span class="cat"><?php echo phinit_escape_text($card['category_name'] ?? ''); ?></span>
-            <?php endif; ?>
             <a class="article-meta__more"
-               href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>">
+               href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>"
+               aria-label="<?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>">
                 <?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?>
             </a>
         </div>

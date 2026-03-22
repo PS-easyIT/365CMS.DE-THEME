@@ -146,7 +146,7 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                 $postImage = trim((string) ($post['featured_image'] ?? ''));
             ?>
             <article class="article-card">
-                <a class="article-thumb" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars($postTitle, ENT_QUOTES); ?> öffnen">
+                <a class="article-thumb" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars($postTitle, ENT_QUOTES); ?>">
                     <?php if ($postImage !== ''): ?>
                     <img src="<?php echo htmlspecialchars($postImage, ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($postTitle, ENT_QUOTES); ?>"
@@ -165,7 +165,7 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                         <?php if ($postTimestamp !== false): ?>
                         <time datetime="<?php echo htmlspecialchars(date(DATE_ATOM, $postTimestamp), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_format_date(date(DATE_ATOM, $postTimestamp), 'long', $currentLocale), ENT_QUOTES); ?></time>
                         <?php endif; ?>
-                        <a class="article-meta__more" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_article', [], $currentLocale), ENT_QUOTES); ?></a>
+                        <a class="article-meta__more" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars($postTitle, ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_article', [], $currentLocale), ENT_QUOTES); ?></a>
                     </div>
                 </div>
             </article>

@@ -418,11 +418,14 @@ if (!function_exists('phinit_localized_path')) {
     function phinit_localized_path(string $path, ?string $locale = null): string
     {
         $resolvedLocale = trim((string) ($locale ?? phinit_get_current_locale()));
+        $resolvedPath = function_exists('cms_rewrite_archive_path')
+            ? cms_rewrite_archive_path($path, $resolvedLocale)
+            : $path;
 
         try {
-            return \CMS\Services\ContentLocalizationService::getInstance()->buildLocalizedPath($path, $resolvedLocale);
+            return \CMS\Services\ContentLocalizationService::getInstance()->buildLocalizedPath($resolvedPath, $resolvedLocale);
         } catch (\Throwable) {
-            return $path;
+            return $resolvedPath;
         }
     }
 }
@@ -440,13 +443,16 @@ if (!function_exists('phinit_localized_href')) {
 
         try {
             $localization = \CMS\Services\ContentLocalizationService::getInstance();
+            $archiveAwareUrl = function_exists('cms_rewrite_archive_path')
+                ? cms_rewrite_archive_path($trimmedUrl, $resolvedLocale)
+                : $trimmedUrl;
 
             if (preg_match('#^https?://#i', $trimmedUrl) === 1) {
                 if ($siteBase === '' || !str_starts_with($trimmedUrl, $siteBase)) {
                     return $trimmedUrl;
                 }
 
-                $path = (string) (parse_url($trimmedUrl, PHP_URL_PATH) ?? '/');
+                $path = (string) (parse_url($archiveAwareUrl, PHP_URL_PATH) ?? '/');
                 $query = (string) (parse_url($trimmedUrl, PHP_URL_QUERY) ?? '');
 
                 return $siteBase . $localization->buildLocalizedPath($path, $resolvedLocale) . ($query !== '' ? '?' . $query : '');
@@ -456,7 +462,7 @@ if (!function_exists('phinit_localized_href')) {
                 return $trimmedUrl;
             }
 
-            return $siteBase . $localization->buildLocalizedPath($trimmedUrl, $resolvedLocale);
+            return $siteBase . $localization->buildLocalizedPath($archiveAwareUrl, $resolvedLocale);
         } catch (\Throwable) {
             if (str_starts_with($trimmedUrl, '/') && $siteBase !== '') {
                 return $siteBase . $trimmedUrl;

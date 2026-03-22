@@ -31,6 +31,10 @@ try {
 }
 
 $_localizedPath = static function (string $path, ?string $locale = null) use ($_contentLocalization, $_currentLocale): string {
+    if (function_exists('phinit_localized_path')) {
+        return phinit_localized_path($path, $locale ?? $_currentLocale);
+    }
+
     if ($_contentLocalization === null) {
         return $path;
     }
@@ -39,6 +43,10 @@ $_localizedPath = static function (string $path, ?string $locale = null) use ($_
 };
 
 $_localizedHref = static function (string $url, ?string $locale = null) use ($_contentLocalization, $_currentLocale, $siteUrl): string {
+    if (function_exists('phinit_localized_href')) {
+        return phinit_localized_href($url, $locale ?? $_currentLocale, (string) $siteUrl);
+    }
+
     $locale = $locale ?? $_currentLocale;
     $trimmedUrl = trim($url);
     if ($trimmedUrl === '' || $trimmedUrl === '#') {
@@ -69,6 +77,9 @@ $_localizedHref = static function (string $url, ?string $locale = null) use ($_c
 };
 
 $_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_currentLocale);
+$_baseRequestUri = (string) ($_requestContext['base_uri'] ?? $_requestPath);
+$_isHomePage = $_baseRequestUri === '/' || $_baseRequestUri === '';
+$_siteTitleTag = $_isHomePage ? 'h1' : 'span';
 $_themeInitScriptUrl = '';
 
 if (defined('CMS_PHINIT_THEME_DIR') && defined('CMS_PHINIT_THEME_URL')) {
@@ -318,17 +329,17 @@ if ($_showLanguageSwitch) {
                 <?php if (!empty($_logoUrl)): ?>
                     <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" <?php echo phinit_image_loading_attributes(true); ?>>
                     <?php if ($_showLogoText): ?>
-                    <span class="logo-text logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></span>
+                    <<?php echo $_siteTitleTag; ?> class="logo-text logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></<?php echo $_siteTitleTag; ?>>
                     <?php endif; ?>
                 <?php else: ?>
-                    <span class="logo-text"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></span>
+                    <<?php echo $_siteTitleTag; ?> class="logo-text"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></<?php echo $_siteTitleTag; ?>>
                 <?php endif; ?>
             </a>
 
             <?php
             // Exakter Active-Nav-Abgleich: "/" nur auf Startseite, andere URLs prefix-basiert
             $_navUri = $_requestPath;
-            $navIsActive = static function (string $url) use ($_navUri, $_contentLocalization, $_currentLocale, $siteUrl): bool {
+            $navIsActive = static function (string $url) use ($_navUri, $_localizedPath, $siteUrl): bool {
                 if ($url === '' || $url === '#') { return false; }
 
                 $candidate = trim($url);
@@ -341,8 +352,8 @@ if ($_showLanguageSwitch) {
                     $candidate = (string) (parse_url($candidate, PHP_URL_PATH) ?? '/');
                 }
 
-                if ($_contentLocalization !== null && str_starts_with($candidate, '/')) {
-                    $candidate = $_contentLocalization->buildLocalizedPath($candidate, $_currentLocale);
+                if (str_starts_with($candidate, '/')) {
+                    $candidate = $_localizedPath($candidate, $_currentLocale);
                 }
 
                 if ($candidate === '/') { return $_navUri === '/'; }

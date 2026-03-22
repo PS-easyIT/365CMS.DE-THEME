@@ -60,6 +60,21 @@ if (empty($_showTileGrid) || $gridPosts === []) {
         if ($displaySlug === '') {
             $displaySlug = trim((string) ($post['slug_en'] ?? ''));
         }
+        $categoryLabel = trim((string) ($post['category_name'] ?? ''));
+        $categorySlug = trim((string) ($post['category_slug'] ?? ''));
+        if ($categorySlug === '' && $categoryLabel !== '') {
+            $categorySlug = function_exists('phinit_display_text')
+                ? phinit_display_text($categoryLabel)
+                : $categoryLabel;
+        }
+        $categoryUrl = '';
+        if ($categorySlug !== '') {
+            $categoryUrl = function_exists('cms_get_archive_url')
+                ? (string) cms_get_archive_url('category', $categorySlug, $currentLocale)
+                : (function_exists('phinit_localized_href')
+                    ? (string) phinit_localized_href('/kategorie/' . rawurlencode($categorySlug), $currentLocale, $siteUrl)
+                    : rtrim($siteUrl, '/') . '/kategorie/' . rawurlencode($categorySlug));
+        }
         ?>
         <article class="post-card" data-anim data-anim-delay="<?php echo min((int) $i + 1, 4); ?>">
             <?php
@@ -74,9 +89,6 @@ if (empty($_showTileGrid) || $gridPosts === []) {
 
             <?php if (!empty($post['featured_image'])): ?>
             <div class="post-card-thumb">
-                <?php if (!empty($_showTileCat) && !empty($post['category_name'])): ?>
-                <span class="post-card-badge"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
-                <?php endif; ?>
                 <img src="<?php echo htmlspecialchars((string) $post['featured_image'], ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($displayTitle, ENT_QUOTES); ?>"
                      <?php echo phinit_image_loading_attributes(); ?>
@@ -84,9 +96,6 @@ if (empty($_showTileGrid) || $gridPosts === []) {
             </div>
             <?php else: ?>
             <div class="post-card-thumb post-card-thumb--placeholder">
-                <?php if (!empty($_showTileCat) && !empty($post['category_name'])): ?>
-                <span class="post-card-badge"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
-                <?php endif; ?>
                 <span class="post-card-thumb__icon">📄</span>
             </div>
             <?php endif; ?>
@@ -123,12 +132,15 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 <?php endif; ?>
                 <div class="post-card-meta">
                     <div class="post-card-meta__left">
-                    <?php if (!empty($_showTileCat) && !empty($post['category_name'])): ?>
-                    <span class="cat"><?php echo phinit_escape_text($post['category_name'] ?? ''); ?></span>
-                    <?php endif; ?>
+                        <?php if (!empty($_showTileCat) && $categoryLabel !== '' && $categoryUrl !== ''): ?>
+                        <a class="cat" href="<?php echo htmlspecialchars($categoryUrl, ENT_QUOTES); ?>"><?php echo phinit_escape_text($categoryLabel); ?></a>
+                        <?php elseif (!empty($_showTileCat) && $categoryLabel !== ''): ?>
+                        <span class="cat"><?php echo phinit_escape_text($categoryLabel); ?></span>
+                        <?php endif; ?>
                     </div>
                     <a class="post-card-meta__more"
-                       href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . $displaySlug)), ENT_QUOTES); ?>">
+                              href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? ($siteUrl . '/blog/' . $displaySlug)), ENT_QUOTES); ?>"
+                              aria-label="<?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>">
                         <span class="post-card-meta__more-label post-card-meta__more-label--desktop"><?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?></span>
                         <span class="post-card-meta__more-label post-card-meta__more-label--mobile">Weiter</span>
                     </a>
