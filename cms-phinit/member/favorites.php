@@ -54,17 +54,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_favorite'])) {
 }
 
 $csrfToken = \CMS\Security::instance()->generateToken('member_favorites');
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 $postFavorites = array_map(
-    static function ($row) use ($siteUrl): array {
+    static function ($row) use ($siteUrl, $currentLocale): array {
         $favorite = (array) $row;
+
+        $postData = [
+            'slug' => (string) ($favorite['post_slug'] ?? ''),
+            'slug_en' => (string) ($favorite['post_slug_en'] ?? ''),
+            'published_at' => (string) ($favorite['post_published_at'] ?? ''),
+            'created_at' => (string) ($favorite['post_created_at'] ?? ''),
+        ];
 
         return [
             'storage' => 'post',
             'id' => (int) ($favorite['id'] ?? 0),
             'content_id' => (int) ($favorite['post_id'] ?? 0),
             'title' => (string) ($favorite['post_title'] ?? 'Unbekannter Beitrag'),
-            'url' => $siteUrl . '/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? '')),
+            'url' => function_exists('phinit_build_post_url') ? phinit_build_post_url($postData, $currentLocale) : ($siteUrl . '/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? ''))),
             'excerpt' => trim((string) ($favorite['excerpt'] ?? '')),
             'featured_image' => (string) ($favorite['featured_image'] ?? ''),
             'badge' => (string) ($favorite['category_name'] ?? 'Beitrag'),
@@ -74,8 +82,8 @@ $postFavorites = array_map(
         ];
     },
     $db->get_results(
-        "SELECT f.*, p.title AS post_title, p.slug AS post_slug, p.excerpt, p.featured_image,
-                p.created_at AS post_date, c.name AS category_name
+        "SELECT f.*, p.title AS post_title, p.slug AS post_slug, p.slug_en AS post_slug_en, p.excerpt, p.featured_image,
+            p.published_at AS post_published_at, p.created_at AS post_created_at, c.name AS category_name
          FROM {$prefix}favorites f
          LEFT JOIN {$prefix}posts p ON f.post_id = p.id
          LEFT JOIN {$prefix}post_categories c ON p.category_id = c.id

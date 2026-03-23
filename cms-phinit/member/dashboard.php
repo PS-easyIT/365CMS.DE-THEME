@@ -27,6 +27,7 @@ $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'dashboard';
 $themeCustomizer = ThemeCustomizer::instance();
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 $getMemberToggle = static function (string $key, bool $default = true) use ($themeCustomizer): bool {
     return filter_var($themeCustomizer->get('memberdashboard', $key, $default), FILTER_VALIDATE_BOOLEAN);
@@ -147,7 +148,7 @@ $postCount = 0;
 if ($_hasPosts) {
     try {
         $postCount = (int)$db->get_var(
-            "SELECT COUNT(*) FROM {$prefix}posts WHERE author_id = ? AND status = 'published'",
+            "SELECT COUNT(*) FROM {$prefix}posts WHERE author_id = ? AND " . phinit_post_publication_where(),
             [(int)$currentUser->id]
         ) ?: 0;
     } catch (\Throwable $e) {}
@@ -182,7 +183,7 @@ $recentFavorites = [];
 if ($_hasFavorites && $_hasPosts) {
     try {
         $recentFavorites = $db->get_results(
-            "SELECT f.*, p.title AS post_title, p.slug AS post_slug
+            "SELECT f.*, p.title AS post_title, p.slug AS post_slug, p.slug_en AS post_slug_en, p.published_at AS post_published_at, p.created_at AS post_created_at
              FROM {$prefix}favorites f
              LEFT JOIN {$prefix}posts p ON f.post_id = p.id
              WHERE f.user_id = ?
@@ -195,11 +196,20 @@ if ($_hasFavorites && $_hasPosts) {
 }
 
 $recentFavorites = array_merge(
-    array_map(static fn(array $favorite): array => [
-        'title' => (string) ($favorite['post_title'] ?? 'Beitrag'),
-        'url' => '/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? '')),
-        'created_at' => (string) ($favorite['created_at'] ?? ''),
-    ], $recentFavorites),
+    array_map(static function (array $favorite) use ($currentLocale): array {
+        $postData = [
+            'slug' => (string) ($favorite['post_slug'] ?? ''),
+            'slug_en' => (string) ($favorite['post_slug_en'] ?? ''),
+            'published_at' => (string) ($favorite['post_published_at'] ?? ''),
+            'created_at' => (string) ($favorite['post_created_at'] ?? ''),
+        ];
+
+        return [
+            'title' => (string) ($favorite['post_title'] ?? 'Beitrag'),
+            'url' => function_exists('phinit_build_post_url') ? phinit_build_post_url($postData, $currentLocale) : ('/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? ''))),
+            'created_at' => (string) ($favorite['created_at'] ?? ''),
+        ];
+    }, $recentFavorites),
     array_map(static fn(array $favorite): array => [
         'title' => (string) ($favorite['title'] ?? 'Seite'),
         'url' => (string) ($favorite['url'] ?? '#'),

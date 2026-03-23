@@ -58,7 +58,9 @@ if ($displaySlug === '') {
     $displaySlug = trim((string) ($card['slug_en'] ?? ''));
 }
 if ($permalink === '') {
-    $permalink = $siteUrl . '/blog/' . $displaySlug;
+    $permalink = function_exists('phinit_build_post_url')
+        ? phinit_build_post_url($card, $currentLocale)
+        : ($siteUrl . '/blog/' . $displaySlug);
 }
 
 $categoryLabel = trim((string) ($card['category_name'] ?? ''));

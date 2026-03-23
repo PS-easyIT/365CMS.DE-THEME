@@ -177,7 +177,7 @@ if (empty($_showList) || $featuredPosts === []) {
                 }
                 $_fpIndex = (int) $_fpIndex;
                 $_fpIsActive = $_fpIndex === 0;
-                $_fpHref = htmlspecialchars((string) ($_fp['permalink'] ?? ($siteUrl . '/blog/' . ($_fp['slug'] ?? ''))), ENT_QUOTES);
+                $_fpHref = htmlspecialchars((string) ($_fp['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($_fp, $currentLocale) : ($siteUrl . '/blog/' . ($_fp['slug'] ?? '')))), ENT_QUOTES);
                 $_fpTitle = htmlspecialchars((string) ($_fp['title'] ?? ''), ENT_QUOTES);
                 $_fpDateRaw = $_fp['published_at'] ?? ($_fp['created_at'] ?? '');
                 $_fpDate = !empty($_fpDateRaw) ? date('j. M Y', strtotime((string) $_fpDateRaw)) : '';

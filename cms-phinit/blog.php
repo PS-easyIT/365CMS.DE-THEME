@@ -30,7 +30,7 @@ try {
         ? phinit_build_homepage_post_locale_condition($currentLocale)
         : '';
 
-    $_bWhere = "p.status = 'published'{$_bLocaleCondition}";
+    $_bWhere = phinit_post_publication_where('p') . "{$_bLocaleCondition}";
     $_bBind  = [];
     if ($_bQuery !== '') {
         if ($currentLocale === 'en') {
@@ -57,7 +57,7 @@ try {
          FROM {$_bPfx}posts p
          LEFT JOIN {$_bPfx}post_categories c ON c.id = p.category_id
          WHERE {$_bWhere}
-         ORDER BY p.published_at DESC
+            ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
          LIMIT ? OFFSET ?"
     );
     $_stmtRows->execute(array_merge($_bBind, [$_blogPer, $_bOffset]));

@@ -140,7 +140,7 @@ $pendingComments = 0;
 $trackedPageViews = 0;
 
 try {
-    $postsPublished = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts WHERE status = 'published'") ?: 0);
+    $postsPublished = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts WHERE " . phinit_post_publication_where()) ?: 0);
 } catch (\Throwable) {
     $postsPublished = 0;
 }

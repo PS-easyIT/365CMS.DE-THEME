@@ -91,7 +91,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                 $_db = \CMS\Database::instance();
                 $postRows = array_map(
                     static fn($row) => (array) $row,
-                    $_db->get_results("SELECT id, title FROM {$_db->getPrefix()}posts WHERE status = 'published' ORDER BY published_at DESC LIMIT 300") ?: []
+                    $_db->get_results("SELECT id, title FROM {$_db->getPrefix()}posts WHERE " . phinit_post_publication_where() . " ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT 300") ?: []
                 );
             } catch (\Throwable $_e) {
                 $postRows = [];

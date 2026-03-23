@@ -32,7 +32,9 @@ if ($rSlug === '') {
 }
 
 if ($rType === 'post') {
-    $rUrl = $siteUrl . '/blog/' . $rSlug;
+    $rUrl = function_exists('phinit_build_post_url')
+        ? phinit_build_post_url($r, function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de')
+        : ($siteUrl . '/blog/' . $rSlug);
 } elseif ($rSlug !== '') {
     $rUrl = $siteUrl . '/' . $rSlug;
 } else {

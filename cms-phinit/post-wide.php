@@ -65,7 +65,7 @@ if (isset($post) && !empty($post)) {
              FROM {$pfx}posts p
              LEFT JOIN {$pfx}users u ON u.id = p.author_id
              LEFT JOIN {$pfx}post_categories c ON c.id = p.category_id
-             WHERE p.slug = ? AND p.status = 'published'",
+             WHERE p.slug = ? AND " . phinit_post_publication_where('p'),
             [$slug]
         );
         $post = $postObj ? (array)$postObj : null;
@@ -74,8 +74,8 @@ if (isset($post) && !empty($post)) {
 if (!$post) { http_response_code(404); get_theme_part('404'); exit; }
 try { $db->execute("UPDATE {$pfx}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]); } catch (\Throwable) {}
 try {
-    $prevOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE status='published' AND published_at < ? AND id != ? ORDER BY published_at DESC LIMIT 1", [$post['published_at'] ?? '9999-12-31', (int)($post['id'] ?? 0)]);
-    $nextOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE status='published' AND published_at > ? AND id != ? ORDER BY published_at ASC LIMIT 1",  [$post['published_at'] ?? '0001-01-01', (int)($post['id'] ?? 0)]);
+    $prevOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) < ? AND id != ? ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT 1", [$post['published_at'] ?? ($post['created_at'] ?? '9999-12-31'), (int)($post['id'] ?? 0)]);
+    $nextOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) > ? AND id != ? ORDER BY COALESCE(published_at, created_at) ASC, id ASC LIMIT 1",  [$post['published_at'] ?? ($post['created_at'] ?? '0001-01-01'), (int)($post['id'] ?? 0)]);
     $prevPost = $prevOb ? (array)$prevOb : null;
     $nextPost = $nextOb ? (array)$nextOb : null;
 } catch (\Throwable) { $prevPost = null; $nextPost = null; }
@@ -110,7 +110,7 @@ $readingTime = $readTime;
 $commentLinkTarget = '#comments';
 $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
     'title' => (string) ($post['title'] ?? 'Beitrag'),
-    'url' => '/blog/' . rawurlencode((string) ($post['slug'] ?? '')),
+    'url' => (string) (parse_url(function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ('/blog/' . rawurlencode((string) ($post['slug'] ?? ''))), PHP_URL_PATH) ?: '/'),
     'excerpt' => trim((string) ($post['excerpt'] ?? '')),
     'featured_image' => (string) ($post['featured_image'] ?? ''),
     'badge' => (string) ($post['category_name'] ?? 'Beitrag'),

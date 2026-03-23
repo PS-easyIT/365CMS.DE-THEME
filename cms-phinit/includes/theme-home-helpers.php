@@ -397,7 +397,9 @@ function phinit_prepare_homepage_posts(array $posts, string $locale): array
                     ? phinit_normalize_public_media_url((string) $post['custom_sidebar_image'], true)
                     : (string) $post['custom_sidebar_image'];
             }
-            $post['permalink'] = rtrim((string) SITE_URL, '/') . '/blog/' . (string) ($post['slug'] ?? '');
+            $post['permalink'] = function_exists('phinit_build_post_url')
+                ? phinit_build_post_url($post, $locale)
+                : (rtrim((string) SITE_URL, '/') . '/blog/' . (string) ($post['slug'] ?? ''));
             $prepared[] = $post;
         }
 
@@ -442,7 +444,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                     c.slug AS category_slug
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                 WHERE p.status = 'published'
+                 WHERE " . phinit_post_publication_where('p') . "
                  {$localeCondition}
                  ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
                  LIMIT " . (int) $_listCount
@@ -451,7 +453,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             $featuredPosts = phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $featuredRows), $contentLocale);
 
         $currentPage = max(1, (int) ($_GET['page'] ?? 1));
-            $totalPosts = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts p WHERE p.status = 'published'{$localeCondition}") ?: 0);
+            $totalPosts = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts p WHERE " . phinit_post_publication_where('p') . "{$localeCondition}") ?: 0);
         $_gridAvail = max(0, $totalPosts - $_listCount);
         $totalPages = max(1, (int) ceil($_gridAvail / $_tileCount));
         $_gridOffset = $_listCount + (($currentPage - 1) * $_tileCount);
@@ -464,7 +466,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                         c.slug AS category_slug
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                 WHERE p.status = 'published'
+                 WHERE " . phinit_post_publication_where('p') . "
                  {$localeCondition}
                  ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
                  LIMIT " . (int) $_tileCount . " OFFSET " . (int) $_gridOffset
@@ -496,7 +498,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                             c.slug AS category_slug
                      FROM {$prefix}posts p
                      LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                     WHERE p.id IN ({$_fpIn}) AND p.status = 'published'{$localeCondition}"
+                     WHERE p.id IN ({$_fpIn}) AND " . phinit_post_publication_where('p') . "{$localeCondition}"
                 ) ?: [];
 
                 $_fpMap = [];

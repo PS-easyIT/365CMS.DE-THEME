@@ -54,7 +54,7 @@ if (!function_exists('phinit_get_public_authors_overview')) {
                         COUNT(*) AS post_count,
                         MAX(COALESCE(p.published_at, p.created_at)) AS latest_post_at
                  FROM {$db->getPrefix()}posts p
-                 WHERE p.status = 'published' AND p.author_id IS NOT NULL AND p.author_id > 0
+                  WHERE " . phinit_post_publication_where('p') . " AND p.author_id IS NOT NULL AND p.author_id > 0
                  GROUP BY p.author_id
                  ORDER BY post_count DESC, latest_post_at DESC"
             ) ?: [];
@@ -137,7 +137,7 @@ if (!function_exists('phinit_build_html_sitemap_view_model')) {
             "SELECT c.name, c.slug,
                     COUNT(p.id) AS post_count
              FROM {$prefix}post_categories c
-             INNER JOIN {$prefix}posts p ON p.category_id = c.id AND p.status = 'published'
+               INNER JOIN {$prefix}posts p ON p.category_id = c.id AND " . phinit_post_publication_where('p') . "
              GROUP BY c.id, c.name, c.slug
              ORDER BY c.name ASC"
         ) ?: [];
@@ -156,7 +156,7 @@ if (!function_exists('phinit_build_html_sitemap_view_model')) {
         $tagRows = $db->get_results(
             "SELECT tags
              FROM {$prefix}posts
-             WHERE status = 'published' AND tags IS NOT NULL AND tags != ''"
+               WHERE " . phinit_post_publication_where() . " AND tags IS NOT NULL AND tags != ''"
         ) ?: [];
 
         foreach ($tagRows as $row) {
@@ -186,7 +186,7 @@ if (!function_exists('phinit_build_html_sitemap_view_model')) {
                     COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}users u ON u.id = p.author_id
-             WHERE p.status = 'published'
+               WHERE " . phinit_post_publication_where('p') . "
              ORDER BY COALESCE(p.published_at, p.created_at) DESC
              LIMIT 14"
         ) ?: [];

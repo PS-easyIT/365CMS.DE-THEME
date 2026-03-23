@@ -108,7 +108,7 @@ if (isset($post) && !empty($post)) {
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}users u ON u.id = p.author_id
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-             WHERE p.slug = ? AND p.status = 'published'",
+             WHERE p.slug = ? AND " . phinit_post_publication_where('p'),
             [$slug]
         );
         $post = $postObj ? (array)$postObj : null;
@@ -159,15 +159,15 @@ if ($showToc) {
 try {
     $prevPostObj = $db->get_row(
         "SELECT id, title, slug FROM {$prefix}posts
-         WHERE status = 'published' AND published_at < ? AND id != ?
-         ORDER BY published_at DESC LIMIT 1",
-        [$post['published_at'] ?? '9999-12-31', (int)($post['id'] ?? 0)]
+         WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) < ? AND id != ?
+         ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT 1",
+        [$post['published_at'] ?? ($post['created_at'] ?? '9999-12-31'), (int)($post['id'] ?? 0)]
     );
     $nextPostObj = $db->get_row(
         "SELECT id, title, slug FROM {$prefix}posts
-         WHERE status = 'published' AND published_at > ? AND id != ?
-         ORDER BY published_at ASC LIMIT 1",
-        [$post['published_at'] ?? '0001-01-01', (int)($post['id'] ?? 0)]
+         WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) > ? AND id != ?
+         ORDER BY COALESCE(published_at, created_at) ASC, id ASC LIMIT 1",
+        [$post['published_at'] ?? ($post['created_at'] ?? '0001-01-01'), (int)($post['id'] ?? 0)]
     );
     $prevPost = $prevPostObj ? (array)$prevPostObj : null;
     $nextPost = $nextPostObj ? (array)$nextPostObj : null;
@@ -185,15 +185,15 @@ if ($showSidebarRelated) {
         if ($catId > 0) {
             $relRows = $db->get_results(
                 "SELECT id, title, slug, published_at FROM {$prefix}posts
-                 WHERE status = 'published' AND category_id = ? AND id != ?
-                 ORDER BY published_at DESC LIMIT ?",
+                 WHERE " . phinit_post_publication_where() . " AND category_id = ? AND id != ?
+                 ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT ?",
                 [$catId, $postId, $relatedCount]
             ) ?: [];
         } else {
             $relRows = $db->get_results(
                 "SELECT id, title, slug, published_at FROM {$prefix}posts
-                 WHERE status = 'published' AND id != ?
-                 ORDER BY published_at DESC LIMIT ?",
+                 WHERE " . phinit_post_publication_where() . " AND id != ?
+                 ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT ?",
                 [$postId, $relatedCount]
             ) ?: [];
         }
@@ -221,7 +221,7 @@ if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
 
 $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
     'title' => (string) ($post['title'] ?? 'Beitrag'),
-    'url' => '/blog/' . rawurlencode((string) ($post['slug'] ?? '')),
+    'url' => (string) (parse_url(function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ('/blog/' . rawurlencode((string) ($post['slug'] ?? ''))), PHP_URL_PATH) ?: '/'),
     'excerpt' => trim((string) ($post['excerpt'] ?? '')),
     'featured_image' => (string) ($post['featured_image'] ?? ''),
     'badge' => (string) ($post['category_name'] ?? 'Beitrag'),

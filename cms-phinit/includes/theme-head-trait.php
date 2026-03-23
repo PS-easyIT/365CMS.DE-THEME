@@ -156,7 +156,7 @@ trait CMS_Phinit_Theme_Head_Trait
                         COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}users u ON u.id = p.author_id
-                 WHERE p.slug = ? AND p.status = 'published' LIMIT 1",
+                 WHERE p.slug = ? AND " . phinit_post_publication_where('p') . " LIMIT 1",
                 [$postSlug]
             );
 
@@ -396,7 +396,9 @@ trait CMS_Phinit_Theme_Head_Trait
                 '@type' => 'BlogPosting',
                 'headline' => $currentPost['title'] ?? '',
                 'description' => mb_substr(strip_tags((string) ($currentPost['excerpt'] ?? '')), 0, 200),
-                'url' => $siteUrl . '/blog/' . (string) ($currentPost['slug'] ?? ''),
+                'url' => function_exists('phinit_build_post_url')
+                    ? phinit_build_post_url($currentPost, function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de')
+                    : ($siteUrl . '/blog/' . (string) ($currentPost['slug'] ?? '')),
                 'datePublished' => (string) ($currentPost['published_at'] ?? ''),
                 'dateModified' => !empty($currentPost['updated_at']) ? (string) $currentPost['updated_at'] : (string) ($currentPost['published_at'] ?? ''),
                 'publisher' => $publisher,

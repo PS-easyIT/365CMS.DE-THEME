@@ -162,6 +162,54 @@ if (!function_exists('phinit_normalize_public_media_url')) {
     }
 }
 
+if (!function_exists('phinit_build_post_url')) {
+    /**
+     * Erzeugt die kanonische Beitrags-URL anhand der aktiven Permalink-Struktur.
+     *
+     * @param array<string, mixed>|object $post
+     */
+    function phinit_build_post_url(array|object $post, ?string $locale = null): string
+    {
+        $resolvedLocale = trim((string) ($locale ?? ''));
+        if ($resolvedLocale === '' && function_exists('phinit_get_current_locale')) {
+            $resolvedLocale = (string) phinit_get_current_locale();
+        }
+        if ($resolvedLocale === '') {
+            $resolvedLocale = 'de';
+        }
+
+        try {
+            if (class_exists('CMS\\Services\\PermalinkService')) {
+                return \CMS\Services\PermalinkService::getInstance()->buildPostUrl($post, $resolvedLocale);
+            }
+        } catch (\Throwable) {
+        }
+
+        $readField = static function (array|object $value, string $field): string {
+            if (is_array($value)) {
+                return trim((string) ($value[$field] ?? ''));
+            }
+
+            return trim((string) ($value->{$field} ?? ''));
+        };
+
+        $slug = '';
+        if ($resolvedLocale !== 'de') {
+            $slug = $readField($post, 'slug_' . $resolvedLocale);
+        }
+        if ($slug === '') {
+            $slug = $readField($post, 'slug');
+        }
+        if ($slug === '') {
+            $slug = $readField($post, 'slug_en');
+        }
+
+        $siteUrl = rtrim((string) (defined('SITE_URL') ? SITE_URL : ''), '/');
+
+        return $siteUrl . '/blog/' . rawurlencode(trim($slug, '/'));
+    }
+}
+
 if (!function_exists('phinit_image_loading_attributes')) {
     /**
      * Prüft, ob browserbasiertes Image-Lazy-Loading per Customizer aktiv ist.
@@ -404,6 +452,20 @@ if (!function_exists('phinit_get_current_locale')) {
         }
 
         return $locale;
+    }
+}
+
+if (!function_exists('phinit_post_publication_where')) {
+    function phinit_post_publication_where(string $alias = ''): string
+    {
+        if (function_exists('cms_post_publication_where')) {
+            return cms_post_publication_where($alias);
+        }
+
+        $prefix = $alias !== '' ? rtrim($alias, '.') . '.' : '';
+
+        return $prefix . "status = 'published'"
+            . ' AND (' . $prefix . 'published_at IS NULL OR ' . $prefix . 'published_at <= NOW())';
     }
 }
 
@@ -758,7 +820,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
             if ($postSlug !== null && $postSlug !== '') {
                 $db = \CMS\Database::instance();
                 $postId = (int) ($db->get_var(
-                    "SELECT id FROM {$db->getPrefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                    "SELECT id FROM {$db->getPrefix()}posts WHERE slug = ? AND " . phinit_post_publication_where() . " LIMIT 1",
                     [$postSlug]
                 ) ?: 0);
 

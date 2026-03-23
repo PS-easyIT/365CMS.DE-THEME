@@ -85,7 +85,7 @@ if (isset($post) && !empty($post)) {
              FROM {$prefix}posts p
              LEFT JOIN {$prefix}users u ON u.id = p.author_id
              LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-             WHERE p.slug = ? AND p.status = 'published'",
+             WHERE p.slug = ? AND " . phinit_post_publication_where('p'),
             [$slug]
         );
         $post = $postObj ? (array) $postObj : null;
@@ -107,12 +107,12 @@ try {
 
 try {
     $prevOb = $db->get_row(
-        "SELECT id, title, slug FROM {$prefix}posts WHERE status = 'published' AND published_at < ? AND id != ? ORDER BY published_at DESC LIMIT 1",
-        [$post['published_at'] ?? '9999-12-31', (int) ($post['id'] ?? 0)]
+        "SELECT id, title, slug FROM {$prefix}posts WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) < ? AND id != ? ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT 1",
+        [$post['published_at'] ?? ($post['created_at'] ?? '9999-12-31'), (int) ($post['id'] ?? 0)]
     );
     $nextOb = $db->get_row(
-        "SELECT id, title, slug FROM {$prefix}posts WHERE status = 'published' AND published_at > ? AND id != ? ORDER BY published_at ASC LIMIT 1",
-        [$post['published_at'] ?? '0001-01-01', (int) ($post['id'] ?? 0)]
+        "SELECT id, title, slug FROM {$prefix}posts WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) > ? AND id != ? ORDER BY COALESCE(published_at, created_at) ASC, id ASC LIMIT 1",
+        [$post['published_at'] ?? ($post['created_at'] ?? '0001-01-01'), (int) ($post['id'] ?? 0)]
     );
     $prevPost = $prevOb ? (array) $prevOb : null;
     $nextPost = $nextOb ? (array) $nextOb : null;
@@ -182,7 +182,7 @@ $readTime = function_exists('phinit_reading_time')
 $readingTime = $readTime;
 $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
     'title' => (string) ($post['title'] ?? 'Beitrag'),
-    'url' => '/blog/' . rawurlencode((string) ($post['slug'] ?? '')),
+    'url' => (string) (parse_url(function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ('/blog/' . rawurlencode((string) ($post['slug'] ?? ''))), PHP_URL_PATH) ?: '/'),
     'excerpt' => trim((string) ($post['excerpt'] ?? '')),
     'featured_image' => (string) ($post['featured_image'] ?? ''),
     'badge' => (string) ($post['category_name'] ?? 'Beitrag'),
@@ -230,7 +230,8 @@ try {
                 <div class="post-share">
                     <span>Teilen:</span>
                     <?php
-                    $postUrl = htmlspecialchars(urlencode($siteUrl . '/blog/' . ($post['slug'] ?? '')), ENT_QUOTES);
+                    $shareUrl = function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ($siteUrl . '/blog/' . ($post['slug'] ?? ''));
+                    $postUrl = htmlspecialchars(urlencode($shareUrl), ENT_QUOTES);
                     $postTitle = htmlspecialchars(urlencode($post['title'] ?? ''), ENT_QUOTES);
                     ?>
                     <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer">in LinkedIn</a>

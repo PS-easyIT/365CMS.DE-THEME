@@ -21,8 +21,8 @@ try {
         "SELECT p.title, p.slug, p.featured_image, p.published_at, c.name AS category_name
          FROM {$prefix}posts p
          LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-         WHERE p.status = 'published'
-         ORDER BY p.published_at DESC
+            WHERE " . phinit_post_publication_where('p') . "
+            ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
          LIMIT 3"
     );
     $recentPosts = $rows ? array_map(fn($r) => (array)$r, $rows) : [];
@@ -73,9 +73,10 @@ try {
         </div>
         <div class="posts-grid posts-grid--cols-3 error-suggestions__grid">
             <?php foreach ($recentPosts as $p): ?>
+            <?php $postUrl = function_exists('phinit_build_post_url') ? phinit_build_post_url($p) : ($siteUrl . '/blog/' . ($p['slug'] ?? '')); ?>
             <article class="post-card">
                 <?php if (!empty($p['featured_image'])): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>" class="post-card-thumb">
+                <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" class="post-card-thumb">
                     <img src="<?php echo htmlspecialchars($p['featured_image'], ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($p['title'] ?? '', ENT_QUOTES); ?>"
                         <?php echo phinit_image_loading_attributes(); ?>
@@ -91,7 +92,7 @@ try {
                 <?php endif; ?>
                 <div class="post-card-body">
                     <h3 class="post-card-title">
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>">
+                        <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>">
                             <?php echo phinit_escape_text($p['title'] ?? ''); ?>
                         </a>
                     </h3>
@@ -100,12 +101,12 @@ try {
                         <div class="post-card-meta__left">
                             <span>📅 <?php echo htmlspecialchars(date('j. M Y', strtotime($p['published_at'])), ENT_QUOTES); ?></span>
                         </div>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>" class="post-card-meta__more">Weiter lesen →</a>
+                        <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" class="post-card-meta__more">Weiter lesen →</a>
                     </div>
                     <?php else: ?>
                     <div class="post-card-meta">
                         <span class="post-card-meta__left">Neue Empfehlung</span>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/blog/' . ($p['slug'] ?? ''), ENT_QUOTES); ?>" class="post-card-meta__more">Weiter lesen →</a>
+                        <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" class="post-card-meta__more">Weiter lesen →</a>
                     </div>
                     <?php endif; ?>
                 </div>

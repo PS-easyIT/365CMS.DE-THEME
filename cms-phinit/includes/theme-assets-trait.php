@@ -105,7 +105,7 @@ trait CMS_Phinit_Theme_Assets_Trait
                 try {
                     $db = \CMS\Database::instance();
                     $row = $db->get_row(
-                        "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND status = 'published' LIMIT 1",
+                        "SELECT id FROM {$db->prefix()}posts WHERE slug = ? AND " . phinit_post_publication_where() . " LIMIT 1",
                         [$postSlug]
                     );
                     $isPost = $row !== null;
@@ -1078,7 +1078,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             $row = $db->get_row(
                 "SELECT featured_image
                  FROM {$prefix}posts
-                 WHERE status = 'published'
+                                 WHERE " . phinit_post_publication_where() . "
                    AND featured_image IS NOT NULL
                    AND featured_image != ''
                    {$localeCondition}

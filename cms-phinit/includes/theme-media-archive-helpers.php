@@ -80,8 +80,8 @@ if (!function_exists('phinit_build_image_archive_view_model')) {
                         c.name AS category_name
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                 WHERE p.status = 'published'
-                 ORDER BY p.published_at DESC, p.id DESC"
+                  WHERE " . phinit_post_publication_where('p') . "
+                  ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC"
             ) ?: [];
 
             $usedArticles = [];
@@ -94,7 +94,9 @@ if (!function_exists('phinit_build_image_archive_view_model')) {
                     continue;
                 }
 
-                $permalink = rtrim((string) SITE_URL, '/') . '/blog/' . rawurlencode((string) ($post['slug'] ?? ''));
+                $permalink = function_exists('phinit_build_post_url')
+                    ? phinit_build_post_url($post, function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de')
+                    : (rtrim((string) SITE_URL, '/') . '/blog/' . rawurlencode((string) ($post['slug'] ?? '')));
                 $postTitle = trim((string) ($post['title'] ?? 'Artikel'));
                 $publishedAt = trim((string) ($post['published_at'] ?? $post['created_at'] ?? ''));
                 $categoryName = trim((string) ($post['category_name'] ?? ''));
