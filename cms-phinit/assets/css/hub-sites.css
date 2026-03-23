@@ -654,7 +654,7 @@
     border-bottom: 1px solid color-mix(in srgb, var(--cms-hub-accent) 24%, var(--border-color));
     background:
         linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0)),
-        linear-gradient(135deg, color-mix(in srgb, var(--cms-hub-accent) 82%, #0f172a 18%), color-mix(in srgb, var(--cms-hub-accent) 40%, #ffffff 60%));
+    linear-gradient(135deg, var(--cms-hub-table-head-start), var(--cms-hub-table-head-end));
 }
 
 .cms-hub-site__card-title--table {
@@ -688,7 +688,7 @@
     margin: .2rem 0 0;
     border: 1px solid color-mix(in srgb, var(--cms-hub-accent) 18%, var(--border-color));
     border-radius: 14px;
-    background: var(--bg-primary);
+    background: var(--cms-hub-card-bg);
     box-shadow: 0 8px 22px rgba(15, 23, 42, .06);
     overflow: hidden;
 }
@@ -708,7 +708,7 @@
     border-bottom: 1px solid color-mix(in srgb, var(--cms-hub-accent) 22%, var(--border-color));
     background:
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
-        linear-gradient(135deg, color-mix(in srgb, var(--cms-hub-accent) 74%, #0f172a 26%), color-mix(in srgb, var(--cms-hub-accent) 28%, #ffffff 72%));
+    linear-gradient(135deg, var(--cms-hub-table-head-start), var(--cms-hub-table-head-end));
 }
 
 .cms-hub-site .cms-site-table-title,
@@ -766,8 +766,8 @@
 }
 
 .cms-hub-site .cms-site-table thead th {
-    background: color-mix(in srgb, var(--bg-secondary) 86%, white);
-    color: var(--text-primary);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 88%, var(--cms-hub-card-text) 12%);
+    color: var(--cms-hub-card-text);
     font-size: .8rem;
     font-weight: 800;
     letter-spacing: .01em;
@@ -778,23 +778,27 @@
 .cms-hub-site .cms-site-table th,
 .cms-hub-site .cms-site-table td {
     padding: .82rem .95rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--cms-hub-card-text) 10%, white 90%);
     text-align: left !important;
+}
+
+.cms-hub-site .cms-site-table td {
+    color: color-mix(in srgb, var(--cms-hub-card-text) 88%, white 12%);
+    background: transparent;
 }
 
 .cms-hub-site .cms-site-table tbody tr:hover td,
 .cms-hub-site .cms-site-table--hover tbody tr:hover td {
-    background: color-mix(in srgb, var(--cms-hub-accent) 8%, white);
+    background: color-mix(in srgb, var(--cms-hub-accent) 12%, var(--cms-hub-card-bg) 88%);
 }
 
-.cms-hub-site__card--table .cms-site-table tbody tr:nth-child(even) td,
-.cms-hub-site__card-summary .cms-site-table tbody tr:nth-child(even) td,
-.cms-hub-site__card--table .cms-site-table--stripe tbody tr:nth-child(even) td,
-.cms-hub-site__card-summary .cms-site-table--stripe tbody tr:nth-child(even) td {
-    background: color-mix(in srgb, var(--bg-secondary) 72%, #e2e8f0 28%);
+.cms-hub-site .cms-site-table tbody tr:nth-child(even) td,
+.cms-hub-site .cms-site-table--stripe tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 90%, var(--cms-hub-card-text) 10%);
 }
 
-.cms-hub-site__card--table .cms-site-table tbody tr:nth-child(odd) td,
-.cms-hub-site__card-summary .cms-site-table tbody tr:nth-child(odd) td {
+.cms-hub-site .cms-site-table tbody tr:nth-child(odd) td,
+.cms-hub-site .cms-site-table--stripe tbody tr:nth-child(odd) td {
     background: transparent;
 }
 
@@ -854,13 +858,6 @@
     color: #2563eb;
 }
 
-.cms-hub-site--microsoft-365 .cms-site-table-meta,
-.cms-hub-site--m365-table .cms-site-table-meta {
-    background:
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
-        linear-gradient(135deg, rgba(15, 76, 129, .96), rgba(37, 99, 235, .90));
-}
-
 .cms-hub-site--datenschutz .cms-hub-site__hero-inner::after {
     content: '';
     position: absolute;
@@ -910,12 +907,6 @@
     color: #0f766e;
 }
 
-.cms-hub-site--datenschutz .cms-site-table-meta {
-    background:
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
-        linear-gradient(135deg, rgba(15,118,110,.96), rgba(17,94,89,.92));
-}
-
 .cms-hub-site--compliance .cms-hub-site__section-card {
     background: linear-gradient(180deg, var(--cms-hub-surface), var(--cms-hub-section-bg));
 }
@@ -923,12 +914,6 @@
 .cms-hub-site--compliance .cms-hub-site__card-badge {
     background: rgba(109,40,217,.12);
     color: #6d28d9;
-}
-
-.cms-hub-site--compliance .cms-site-table-meta {
-    background:
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
-        linear-gradient(135deg, rgba(76,29,149,.96), rgba(109,40,217,.90));
 }
 
 .cms-hub-site--linux .cms-hub-site__hero-inner::before {
@@ -1059,7 +1044,7 @@
     border-bottom-color: #4b5563;
     background:
         linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)),
-        linear-gradient(135deg, rgba(245,158,11,.88), rgba(17,24,39,.96));
+    linear-gradient(135deg, var(--cms-hub-table-head-start), var(--cms-hub-table-head-end));
 }
 
 .cms-hub-site--linux .cms-hub-site__card-badge--table,
@@ -1080,27 +1065,27 @@
 
 .cms-hub-site--linux .cms-site-table thead th,
 .cms-hub-site--linux-table .cms-site-table thead th {
-    background: #0f172a;
-    color: #f3f4f6;
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 84%, var(--cms-hub-card-text) 16%);
+    color: var(--cms-hub-card-text);
 }
 
 .cms-hub-site--linux .cms-site-table th,
 .cms-hub-site--linux .cms-site-table td,
 .cms-hub-site--linux-table .cms-site-table th,
 .cms-hub-site--linux-table .cms-site-table td {
-    color: #f3f4f6;
+    color: var(--cms-hub-card-text);
     border-bottom-color: #374151;
 }
 
 .cms-hub-site--linux .cms-site-table tbody tr:nth-child(even) td,
 .cms-hub-site--linux-table .cms-site-table tbody tr:nth-child(even) td {
-    background: rgba(255,255,255,.04);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 92%, var(--cms-hub-card-text) 8%);
 }
 
 .cms-hub-site--linux .cms-hub-site__card--table .cms-site-table tbody tr:nth-child(even) td,
 .cms-hub-site--linux .cms-hub-site__card-summary .cms-site-table tbody tr:nth-child(even) td,
 .cms-hub-site--linux-table .cms-site-table tbody tr:nth-child(even) td {
-    background: rgba(255,255,255,.05);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 90%, var(--cms-hub-card-text) 10%);
 }
 
 .cms-hub-site--linux .cms-hub-site__card--table .cms-site-table tbody tr:nth-child(odd) td,
@@ -1197,18 +1182,18 @@ body.dark-mode .cms-hub-site .cms-site-table-meta {
 }
 
 body.dark-mode .cms-hub-site .cms-site-table thead th {
-    background: rgba(15,23,42,.88);
-    color: var(--text-primary);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 84%, var(--cms-hub-card-text) 16%);
+    color: var(--cms-hub-card-text);
 }
 
 body.dark-mode .cms-hub-site .cms-site-table th,
 body.dark-mode .cms-hub-site .cms-site-table td {
     border-bottom-color: var(--border-dark);
-    color: var(--text-secondary);
+    color: var(--cms-hub-card-text);
 }
 
 body.dark-mode .cms-hub-site .cms-site-table td {
-    background: color-mix(in srgb, var(--bg-dark-2) 72%, transparent 28%);
+    background: transparent;
 }
 
 body.dark-mode .cms-hub-site .cms-site-table-title {
@@ -1226,18 +1211,16 @@ body.dark-mode .cms-hub-site .cms-site-table-actions a {
 
 body.dark-mode .cms-hub-site .cms-site-table tbody tr:hover td,
 body.dark-mode .cms-hub-site .cms-site-table--hover tbody tr:hover td {
-    background: color-mix(in srgb, var(--cms-hub-accent) 14%, var(--bg-dark-3));
+    background: color-mix(in srgb, var(--cms-hub-accent) 14%, var(--cms-hub-card-bg) 86%);
 }
 
-body.dark-mode .cms-hub-site__card--table .cms-site-table tbody tr:nth-child(even) td,
-body.dark-mode .cms-hub-site__card-summary .cms-site-table tbody tr:nth-child(even) td,
-body.dark-mode .cms-hub-site__card--table .cms-site-table--stripe tbody tr:nth-child(even) td,
-body.dark-mode .cms-hub-site__card-summary .cms-site-table--stripe tbody tr:nth-child(even) td {
-    background: rgba(255,255,255,.04);
+body.dark-mode .cms-hub-site .cms-site-table tbody tr:nth-child(even) td,
+body.dark-mode .cms-hub-site .cms-site-table--stripe tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 90%, var(--cms-hub-card-text) 10%);
 }
 
-body.dark-mode .cms-hub-site__card--table .cms-site-table tbody tr:nth-child(odd) td,
-body.dark-mode .cms-hub-site__card-summary .cms-site-table tbody tr:nth-child(odd) td {
+body.dark-mode .cms-hub-site .cms-site-table tbody tr:nth-child(odd) td,
+body.dark-mode .cms-hub-site .cms-site-table--stripe tbody tr:nth-child(odd) td {
     background: transparent;
 }
 
