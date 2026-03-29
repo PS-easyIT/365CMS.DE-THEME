@@ -374,8 +374,9 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php endif; ?>
 
         <?php if (!empty(trim((string) $_listSidebarContent))): ?>
+        <?php $_safeListSidebarContent = phinit_sanitize_renderable_content((string) $_listSidebarContent, 'default'); ?>
         <div class="sb-widget">
-            <?php echo strip_tags((string) $_listSidebarContent, '<p><a><strong><em><ul><ol><li><h3><h4><h5><br><hr><span><div><blockquote><code><pre>'); ?>
+            <?php echo $_safeListSidebarContent; ?>
         </div>
         <?php endif; ?>
 

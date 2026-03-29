@@ -207,7 +207,7 @@ trait CMS_Phinit_Theme_Head_Trait
             $row = $db->get_row(
                 "SELECT slug, title, excerpt, content, featured_image, updated_at
                  FROM {$prefix}pages
-                 WHERE slug = ? AND status = 'published' LIMIT 1",
+                 WHERE slug = ? AND " . phinit_page_visibility_where() . " LIMIT 1",
                 [$slug]
             );
 

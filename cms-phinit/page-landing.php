@@ -56,8 +56,10 @@ $landingContent = (string)($page['content'] ?? '');
 if (!$pageProvidedByRouter) {
     $landingContent = phinit_prepare_renderable_content($landingContent, 'page', (int)($page['id'] ?? 0));
 }
+$landingContent = phinit_sanitize_renderable_content($landingContent, 'default');
 $landingHeadingData = phinit_with_heading_ids($landingContent, [2, 3, 4, 5, 6]);
 $landingContent = phinit_enhance_content_images($landingHeadingData['html']);
+$safeLandingContent = (string) sanitize_html($landingContent, 'default');
 
 // Meta-Daten auslesen
 $meta       = is_array($page['meta'] ?? null) ? $page['meta'] : [];
@@ -159,7 +161,7 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
 <section class="landing-content">
     <div class="container">
         <div class="page-content page-content--wide" data-anim>
-            <?php echo $landingContent; ?>
+            <?php echo $safeLandingContent; ?>
         </div>
     </div>
 </section>

@@ -38,7 +38,7 @@
 }
 
 .toc {
-    background: var(--bg-primary);
+    background: color-mix(in srgb, var(--bg-primary) 72%, var(--bg-secondary) 28%);
     border: 1px solid var(--border-color);
     border-left: 3px solid var(--accent-teal);
     border-radius: var(--radius);
@@ -209,7 +209,7 @@
 
 body.dark-mode .toc,
 html.dark-mode body .toc {
-    background: var(--bg-dark-3);
+    background: color-mix(in srgb, var(--bg-dark-3) 82%, var(--bg-dark-2) 18%);
     border-color: var(--border-dark);
 }
 

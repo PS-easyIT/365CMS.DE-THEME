@@ -6,6 +6,72 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Liefert die auswählbaren Beitragsoptionen für Post-Picker im Theme-Customizer.
+ *
+ * @return list<array{id:int,title:string,status_label:string}>
+ */
+function phinit_get_customizer_post_picker_rows(): array
+{
+    static $postRows = null;
+
+    if (is_array($postRows)) {
+        return $postRows;
+    }
+
+    $postRows = [];
+
+    try {
+        $db = \CMS\Database::instance();
+        $currentDateTime = date('Y-m-d H:i:s');
+        $rows = $db->get_results(
+            "SELECT id, title, status, published_at, created_at
+             FROM {$db->getPrefix()}posts
+             WHERE status IN ('published', 'private', 'draft')
+             ORDER BY
+                 CASE status
+                     WHEN 'published' THEN 0
+                     WHEN 'private' THEN 1
+                     WHEN 'draft' THEN 2
+                     ELSE 9
+                 END ASC,
+                 COALESCE(published_at, created_at) DESC,
+                 id DESC
+             LIMIT 500"
+        ) ?: [];
+
+        foreach ($rows as $row) {
+            $post = (array) $row;
+            $status = (string) ($post['status'] ?? 'draft');
+            $publishedAt = trim((string) ($post['published_at'] ?? ''));
+            $statusLabel = 'Entwurf';
+
+            if ($status === 'private') {
+                $statusLabel = 'Privat';
+            } elseif ($status === 'published') {
+                $statusLabel = ($publishedAt !== '' && $publishedAt > $currentDateTime)
+                    ? 'Geplant'
+                    : 'Veröffentlicht';
+            }
+
+            $title = trim((string) ($post['title'] ?? ''));
+            if ($title === '') {
+                $title = 'Beitrag #' . (int) ($post['id'] ?? 0);
+            }
+
+            $postRows[] = [
+                'id' => (int) ($post['id'] ?? 0),
+                'title' => $title,
+                'status_label' => $statusLabel,
+            ];
+        }
+    } catch (\Throwable) {
+        $postRows = [];
+    }
+
+    return $postRows;
+}
+
+/**
  * Rendert ein einzelnes Formularfeld mit Tabler-CSS-Klassen.
  *
  * @param array<string, mixed> $field
@@ -85,24 +151,14 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
 
         <?php elseif (($field['type'] ?? 'text') === 'post_picker'): ?>
             <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <?php
-            $postRows = [];
-            try {
-                $_db = \CMS\Database::instance();
-                $postRows = array_map(
-                    static fn($row) => (array) $row,
-                    $_db->get_results("SELECT id, title FROM {$_db->getPrefix()}posts WHERE " . phinit_post_publication_where() . " ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT 300") ?: []
-                );
-            } catch (\Throwable $_e) {
-                $postRows = [];
-            }
-            ?>
+            <?php $postRows = phinit_get_customizer_post_picker_rows(); ?>
             <select id="<?php echo $id; ?>" name="<?php echo $name; ?>" class="form-select">
                 <option value="">— Kein Beitrag —</option>
                 <?php foreach ($postRows as $postRow): ?>
                 <option value="<?php echo (int) ($postRow['id'] ?? 0); ?>"
                     <?php echo $currentValue === (string) ($postRow['id'] ?? '') ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars((string) ($postRow['title'] ?? ''), ENT_QUOTES); ?>
+                    <?php echo htmlspecialchars(' [' . (string) ($postRow['status_label'] ?? '') . ']', ENT_QUOTES); ?>
                 </option>
                 <?php endforeach; ?>
             </select>

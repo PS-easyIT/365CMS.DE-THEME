@@ -13,4 +13,5 @@ if (!defined('ABSPATH')) {
 ?>
 <input type="hidden" name="action" value="save_theme_options">
 <input type="hidden" name="active_section" id="active_section_input" value="<?php echo htmlspecialchars($activeTab); ?>">
+<input type="hidden" name="storage_section" value="<?php echo htmlspecialchars((string) ($config[$activeTab]['storageTab'] ?? $activeTab)); ?>">
 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">

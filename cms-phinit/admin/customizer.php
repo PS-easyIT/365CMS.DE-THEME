@@ -74,6 +74,7 @@ $tabGroups = $schema['tabGroups'] ?? [];
 
 foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
     $viewSections = [];
+    $viewStorageTabs = [];
 
     foreach (($viewConfig['fields'] ?? []) as $fieldRef) {
         if (!is_array($fieldRef)) {
@@ -89,6 +90,7 @@ foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
         $fieldConfig = $baseConfig[$sourceTab]['sections'][$fieldKey];
         $fieldConfig['storageTab'] = $sourceTab;
         $viewSections[$fieldKey] = $fieldConfig;
+        $viewStorageTabs[$sourceTab] = true;
     }
 
     if ($viewSections === []) {
@@ -98,6 +100,7 @@ foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
     $config[$viewKey] = [
         'title' => (string) ($viewConfig['title'] ?? $viewKey),
         'sections' => $viewSections,
+        'storageTab' => count($viewStorageTabs) === 1 ? (string) array_key_first($viewStorageTabs) : $viewKey,
     ];
     $tabGroups[$viewKey] = $viewConfig['groups'] ?? [];
 }
@@ -114,8 +117,8 @@ $alertMsg = $postResult['alertMsg'];
 $alertType = $postResult['alertType'];
 $activeTab = $postResult['activeTab'];
 
-// CSRF-Token nach POST-Handling generieren (verhindert Token-Überschreibung)
-$csrfToken = Security::instance()->generateToken('phinit_customizer');
+// CSRF-Token nach POST-Handling generieren (muss mit /admin/theme-editor Section-Shell synchron bleiben)
+$csrfToken = Security::instance()->generateToken('admin_theme_editor');
 
 // Nav-Gruppen für die Sidebar
 $navGroups = $schema['navGroups'] ?? [];

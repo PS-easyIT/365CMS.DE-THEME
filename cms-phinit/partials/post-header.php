@@ -98,15 +98,6 @@ $categoryUrl = !empty($post['category_name'])
             <span class="post-meta__item post-meta__item--extra"><?php echo htmlspecialchars($extraMetaText, ENT_QUOTES); ?></span>
             <?php endif; ?>
             <?php endforeach; ?>
-            <?php if ($updatedAt !== '' && $updatedAt !== $publishedAt): ?>
-            <span class="post-meta__item post-meta__item--updated">
-                <span class="post-meta__icon" aria-hidden="true">🔄</span>
-                <span class="post-meta__label"><?php echo htmlspecialchars(phinit_t('updated_label', [], $currentLocale), ENT_QUOTES); ?></span>
-                <time datetime="<?php echo htmlspecialchars($updatedAt, ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars(phinit_format_date($updatedAt, 'numeric', $currentLocale), ENT_QUOTES); ?>
-                </time>
-            </span>
-            <?php endif; ?>
         </div>
         <?php endif; ?>
     </div>

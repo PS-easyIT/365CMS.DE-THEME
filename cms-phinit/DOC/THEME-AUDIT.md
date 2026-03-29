@@ -1,8 +1,26 @@
 # CMS Phinit – Customizer-, Sicherheits- und Performance-Audit
 
-Stand: 2026-03-17  
+Stand: 2026-03-29  
 Scope: statischer Code-Audit des Themes `cms-phinit` in `365CMS.DE-THEME` inklusive Dateiinventar.  
 Nicht enthalten: echte Lighthouse-/WebPageTest-Messläufe, Lasttests, Browser-Matrix-Tests, visuelle Regressionstests.
+
+## Nachtrag vom 29.03.2026 – Save-Fix, konservative Härtung, bekannte Scanner-False-Positives
+
+Seit dem letzten Audit-Stand wurden drei zusätzliche Punkte umgesetzt bzw. abgesichert:
+
+- ✅ **CUS-05 / Core-Persistenz**: Der Save-Pfad des Theme-Customizers wurde gegen NULL-basierte Duplikate in `cms_theme_customizations` gehärtet. Hintergrund: Der Unique-Key `(theme_slug, setting_category, setting_key, user_id)` schützt in MySQL/MariaDB globale Datensätze mit `user_id IS NULL` nicht zuverlässig vor Mehrfacheinträgen. `ThemeCustomizer` bereinigt doppelte globale Rows jetzt pro Setting deterministisch und lädt Werte in stabiler Reihenfolge (`updated_at DESC, id DESC`), sodass neue Saves nicht mehr von älteren NULL-Zeilen überstimmt werden.
+- ✅ **SEC-05 / konservative Theme-Härtung**: Freitext-/HTML-Inhalte der Startseiten-Sidebar sowie der Tech-Post-Variante laufen jetzt ebenfalls über den zentralen Theme-/Core-Sanitizer statt über inkonsistente Restpfade.
+- ✅ **UX-05 / Beitragskonsistenz**: Standard-, Wide- und Tech-Post-Templates behandeln die "Aktualisiert"-Metaanzeige jetzt konsistent unterhalb des Contents statt verteilt über unterschiedliche Header-/Body-Stellen.
+
+### Bekannte Scanner-Fehlalarme (Stand 29.03.2026)
+
+Die folgenden Warnungen bleiben nach den Härtungen bewusst als dokumentierte **False Positives** bestehen:
+
+1. **Customizer-Import / Upload-Datei (`cms-phinit/admin/customizer-request-handler.php`)**  
+   Statische Scanner markieren den defensiv validierten Upload-Pfad weiter als Path-Traversal/SSRF, obwohl der Flow bereits Upload-Herkunft, Dateiendung, MIME-Typ, Dateigröße, Root-Struktur und ein separates Staging innerhalb des System-Temp-Verzeichnisses prüft. Der Restbefund ist analyzerbedingt und aktuell kein belastbarer Runtime-Nachweis.
+
+2. **ThemeCustomizer → `theme.json`-Laden (`CMS/core/Services/ThemeCustomizer.php`)**  
+   Scanner neigen dazu, das Laden der Theme-Konfig aus dem aktiven Theme-Slug als Traversal zu markieren. Die Runtime validiert den Slug inzwischen per Regex, löst den Themes-Basisordner via `realpath()` auf und akzeptiert nur `theme.json`-Dateien innerhalb dieses verifizierten Basisverzeichnisses. Auch hier bleibt der Hinweis als dokumentierter Analyzer-Restbefund bestehen, solange keine präzisere Taint-Modellierung verfügbar ist.
 
 ## Live-/Testsite-Nachtrag vom 17.03.2026
 

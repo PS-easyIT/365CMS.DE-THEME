@@ -100,6 +100,10 @@ if (!$post) {
     exit;
 }
 
+if (!empty($post['content'])) {
+    $post['content'] = phinit_prepare_renderable_content((string) $post['content'], 'post', (int) ($post['id'] ?? 0));
+}
+
 try {
     $db->execute("UPDATE {$prefix}posts SET views = views + 1 WHERE id = ?", [(int) ($post['id'] ?? 0)]);
 } catch (\Throwable) {
@@ -170,6 +174,11 @@ if ((int) ($_GET['commented'] ?? 0) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$publishedAt = (string) ($post['published_at'] ?? '');
+$updatedAt = (string) ($post['updated_at'] ?? '');
+$showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
+
 try {
     $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0));
 } catch (\Throwable) {
@@ -225,6 +234,18 @@ try {
 
             <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
                 <?php echo $content; ?>
+
+                <?php if ($showUpdatedBadge): ?>
+                <div class="post-footer-meta" aria-label="Beitragsmetadaten">
+                    <span class="post-footer-badge post-footer-badge--updated">
+                        <span class="post-footer-badge__icon" aria-hidden="true">🔄</span>
+                        <span class="post-footer-badge__label"><?php echo htmlspecialchars(phinit_t('updated_label', [], $currentLocale), ENT_QUOTES); ?></span>
+                        <time datetime="<?php echo htmlspecialchars($updatedAt, ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars(phinit_format_date($updatedAt, 'numeric', $currentLocale), ENT_QUOTES); ?>
+                        </time>
+                    </span>
+                </div>
+                <?php endif; ?>
 
                 <?php if ($showShareButtons): ?>
                 <div class="post-share">

@@ -53,8 +53,10 @@ $isImageArchivePage = is_array($page) && phinit_is_image_archive_page($page);
 if (!$pageProvidedByRouter) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
 }
+$pageContent = phinit_sanitize_renderable_content($pageContent, 'default');
 $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
 $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
+$safePageContent = (string) sanitize_html($pageContent, 'default');
 $isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
 $favoriteControl = !$isHubSitePage
     ? phinit_get_favorite_control('page', (int) ($page['id'] ?? 0), [
@@ -101,7 +103,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     </div>
 <?php elseif ($isHubSitePage): ?>
     <div class="page-content page-content--hub" data-anim>
-        <?php echo $pageContent; ?>
+        <?php echo $safePageContent; ?>
     </div>
 <?php elseif ($isImageArchivePage): ?>
     <?php $imageArchive = phinit_build_image_archive_view_model($page); ?>
@@ -124,7 +126,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
             <?php $pageTocClass = ''; ?>
             <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
             <?php endif; ?>
-            <div class="page-content"><?php echo $pageContent; ?></div>
+            <div class="page-content"><?php echo $safePageContent; ?></div>
             <?php echo $_pg_updatedPill; ?>
         </div>
 
@@ -144,7 +146,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
     <?php endif; ?>
     <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
-        <?php echo $pageContent; ?>
+        <?php echo $safePageContent; ?>
     </div>
     <?php echo $_pg_updatedPill; ?>
     <?php endif; ?>

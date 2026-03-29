@@ -42,8 +42,10 @@ $pageContent = (string)($page['content'] ?? '');
 if (!$pageProvidedByRouter) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', (int)($page['id'] ?? 0));
 }
+$pageContent = phinit_sanitize_renderable_content($pageContent, 'default');
 $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
 $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
+$safePageContent = (string) sanitize_html($pageContent, 'default');
 ?>
 
 <div class="container page-shell page-shell--wide">
@@ -65,7 +67,7 @@ $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
 
     <!-- Seiteninhalt volle Breite -->
     <div class="page-content page-content--full" data-anim data-anim-delay="1">
-        <?php echo $pageContent; ?>
+        <?php echo $safePageContent; ?>
     </div>
 
 </div><!-- /.container -->

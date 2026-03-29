@@ -455,6 +455,19 @@ if (!function_exists('phinit_get_current_locale')) {
     }
 }
 
+if (!function_exists('phinit_page_visibility_where')) {
+    function phinit_page_visibility_where(string $alias = ''): string
+    {
+        $prefix = $alias !== '' ? rtrim($alias, '.') . '.' : '';
+
+        if (function_exists('theme_is_logged_in') && theme_is_logged_in()) {
+            return "({$prefix}status = 'published' OR {$prefix}status = 'private')";
+        }
+
+        return $prefix . "status = 'published'";
+    }
+}
+
 if (!function_exists('phinit_post_publication_where')) {
     function phinit_post_publication_where(string $alias = ''): string
     {
@@ -859,7 +872,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
         try {
             $db = \CMS\Database::instance();
             $pageRow = $db->get_row(
-                "SELECT id FROM {$db->getPrefix()}pages WHERE slug = ? AND status = 'published' LIMIT 1",
+                "SELECT id FROM {$db->getPrefix()}pages WHERE slug = ? AND " . phinit_page_visibility_where() . " LIMIT 1",
                 [$slug]
             );
             $pageId = (int) ($pageRow->id ?? 0);

@@ -211,12 +211,10 @@
 
 .post-body {
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
     border-radius: var(--radius);
     padding: 28px 32px;
     box-shadow: var(--shadow-sm);
     font-size: 1.01rem;
-    line-height: 1.8;
     color: var(--text-secondary);
 }
 
@@ -413,6 +411,40 @@
     border-collapse: collapse;
     margin: 1.5em 0;
     font-size: var(--fs-sm);
+}
+
+.post-footer-meta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.75rem;
+    padding-top: 1rem;
+}
+
+.post-footer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    min-height: 34px;
+    padding: .45rem .8rem;
+    border: 1px solid rgba(30, 58, 95, .14);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(248, 250, 252, .98) 0%, rgba(241, 245, 249, .96) 100%);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+}
+
+.post-footer-badge__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.post-footer-badge__label {
+    color: var(--text-secondary);
 }
 
 .post-body th,
@@ -1192,6 +1224,21 @@ body.dark-mode .share-btn {
     border-color: var(--border-dark);
 }
 
+body.dark-mode .post-footer-meta {
+    border-top-color: color-mix(in srgb, var(--border-dark) 86%, transparent 14%);
+}
+
+body.dark-mode .post-footer-badge {
+    background: linear-gradient(180deg, rgba(30, 41, 59, .92) 0%, rgba(15, 23, 42, .94) 100%);
+    border-color: rgba(148, 163, 184, .18);
+    color: var(--text-secondary);
+    box-shadow: none;
+}
+
+body.dark-mode .post-footer-badge__label {
+    color: var(--text-primary);
+}
+
 body.dark-mode .post-nav .direction {
     color: var(--text-muted);
 }
@@ -1345,6 +1392,10 @@ body.dark-mode .comment-submit-btn {
         padding: 22px 18px;
         line-height: 1.75;
         overflow-wrap: anywhere;
+    }
+
+    .post-footer-meta {
+        justify-content: flex-start;
     }
 
     .post-body h2 {

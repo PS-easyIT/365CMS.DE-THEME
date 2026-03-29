@@ -5,6 +5,37 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!function_exists('phinit_sanitize_renderable_content')) {
+    /**
+     * Sanitisiert bereits gerendertes HTML mit dem zentralen Core-Purifier.
+     * Heading-IDs und Performance-Attribute werden bewusst erst danach ergänzt.
+     */
+    function phinit_sanitize_renderable_content(string $html, string $profile = 'default'): string
+    {
+        $html = trim($html);
+        if ($html === '') {
+            return '';
+        }
+
+        try {
+            if (class_exists('\\CMS\\Services\\PurifierService')) {
+                return (string) \CMS\Services\PurifierService::getInstance()->purify($html, $profile);
+            }
+        } catch (\Throwable) {
+            // Fällt bewusst auf die WordPress-Kompat-Sanitizer zurück.
+        }
+
+        if (function_exists('wp_kses_post')) {
+            return (string) wp_kses_post($html);
+        }
+
+        return strip_tags(
+            $html,
+            '<p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
+        );
+    }
+}
+
 if (!function_exists('phinit_prepare_renderable_content')) {
     /**
      * Bereitet gespeicherten Seiten-/Beitragsinhalt für das Frontend auf.

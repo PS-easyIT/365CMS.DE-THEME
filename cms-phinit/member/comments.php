@@ -25,7 +25,11 @@ $siteUrl     = SITE_URL;
 $activePage  = 'comments';
 
 // Filter
-$filter = $_GET['filter'] ?? 'all'; // all, approved, pending
+$filter = (string) ($_GET['filter'] ?? 'all'); // all, approved, pending
+$allowedFilters = ['all', 'approved', 'pending'];
+if (!in_array($filter, $allowedFilters, true)) {
+    $filter = 'all';
+}
 $filterSQL = '';
 if ($filter === 'approved') {
     $filterSQL = "AND c.status = 'approved'";
@@ -37,6 +41,12 @@ if ($filter === 'approved') {
 $page    = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 15;
 $offset  = ($page - 1) * $perPage;
+$commentsBasePath = (string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ($siteUrl . '/member/comments'));
+$buildCommentsUrl = static function (array $params) use ($commentsBasePath): string {
+    $query = http_build_query($params);
+
+    return $query !== '' ? $commentsBasePath . '?' . $query : $commentsBasePath;
+};
 
 $total = (int)$db->get_var(
     "SELECT COUNT(*) FROM {$prefix}comments c WHERE c.user_id = ? {$filterSQL}",
@@ -112,11 +122,11 @@ include $themeDir . 'header.php';
         <?php if ($pages > 1): ?>
         <div class="member-pagination">
             <?php if ($page > 1): ?>
-            <a href="?filter=<?php echo $filter; ?>&page=<?php echo $page - 1; ?>" class="btn btn-sm btn-secondary">← Zurück</a>
+            <a href="<?php echo htmlspecialchars($buildCommentsUrl(['filter' => $filter, 'page' => $page - 1]), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-sm btn-secondary">← Zurück</a>
             <?php endif; ?>
             <span>Seite <?php echo $page; ?> von <?php echo $pages; ?></span>
             <?php if ($page < $pages): ?>
-            <a href="?filter=<?php echo $filter; ?>&page=<?php echo $page + 1; ?>" class="btn btn-sm btn-secondary">Weiter →</a>
+            <a href="<?php echo htmlspecialchars($buildCommentsUrl(['filter' => $filter, 'page' => $page + 1]), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-sm btn-secondary">Weiter →</a>
             <?php endif; ?>
         </div>
         <?php endif; ?>

@@ -84,6 +84,10 @@ try {
     $comments     = array_map(fn($c) => (array)$c, $commentRows);
     $commentCount = count($comments);
 } catch (\Throwable) { $comments = []; $commentCount = 0; }
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$publishedAt = (string) ($post['published_at'] ?? '');
+$updatedAt = (string) ($post['updated_at'] ?? '');
+$showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
 
 // ── Auto-ID-Injection + TOC ────────────────────────────────────────────
 $content = (string) ($post['content'] ?? '');
@@ -134,6 +138,18 @@ if ($showPostTags) {
     <!-- ── Artikel-Body ──────────────────────────────────────────────── -->
     <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
         <?php echo $content; ?>
+
+        <?php if ($showUpdatedBadge): ?>
+        <div class="post-footer-meta" aria-label="Beitragsmetadaten">
+            <span class="post-footer-badge post-footer-badge--updated">
+                <span class="post-footer-badge__icon" aria-hidden="true">🔄</span>
+                <span class="post-footer-badge__label"><?php echo htmlspecialchars(phinit_t('updated_label', [], $currentLocale), ENT_QUOTES); ?></span>
+                <time datetime="<?php echo htmlspecialchars($updatedAt, ENT_QUOTES); ?>">
+                    <?php echo htmlspecialchars(phinit_format_date($updatedAt, 'numeric', $currentLocale), ENT_QUOTES); ?>
+                </time>
+            </span>
+        </div>
+        <?php endif; ?>
 
         <!-- Share-Buttons -->
         <?php if ($showShareButtons): ?>

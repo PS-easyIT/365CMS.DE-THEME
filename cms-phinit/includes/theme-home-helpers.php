@@ -359,6 +359,40 @@ function phinit_build_homepage_post_locale_condition(string $locale, ?\CMS\Servi
 }
 
 /**
+ * Prüft, ob der aktuelle Nutzer private Beitrags-Teaser im Theme sehen darf.
+ */
+function phinit_can_view_private_featured_posts(): bool
+{
+    if (!class_exists('\\CMS\\Auth')) {
+        return false;
+    }
+
+    try {
+        return \CMS\Auth::instance()->isLoggedIn();
+    } catch (\Throwable $_e) {
+        return false;
+    }
+}
+
+/**
+ * Liefert die Sichtbarkeitsbedingung für manuell ausgewählte Sidebar-Featured-Posts.
+ */
+function phinit_featured_sidebar_post_where(string $alias = 'p'): string
+{
+    $publicWhere = phinit_post_publication_where($alias);
+    if (!phinit_can_view_private_featured_posts()) {
+        return $publicWhere;
+    }
+
+    $normalizedAlias = trim($alias);
+    if ($normalizedAlias !== '') {
+        $normalizedAlias = rtrim($normalizedAlias, '.') . '.';
+    }
+
+    return '(' . $publicWhere . " OR {$normalizedAlias}status = 'private')";
+}
+
+/**
  * Lokalisiert Home-Posts und ergänzt den kanonischen Permalink der aktuellen Content-Locale.
  *
  * @param list<array<string, mixed>> $posts
@@ -498,7 +532,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                             c.slug AS category_slug
                      FROM {$prefix}posts p
                      LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                     WHERE p.id IN ({$_fpIn}) AND " . phinit_post_publication_where('p') . "{$localeCondition}"
+                     WHERE p.id IN ({$_fpIn}) AND " . phinit_featured_sidebar_post_where('p') . "{$localeCondition}"
                 ) ?: [];
 
                 $_fpMap = [];

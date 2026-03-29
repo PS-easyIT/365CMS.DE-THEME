@@ -219,6 +219,8 @@ if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+
 $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
     'title' => (string) ($post['title'] ?? 'Beitrag'),
     'url' => (string) (parse_url(function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ('/blog/' . rawurlencode((string) ($post['slug'] ?? ''))), PHP_URL_PATH) ?: '/'),
@@ -229,7 +231,9 @@ $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0),
 
 $commentError = $commentError ?? '';
 $commentSuccess = $commentSuccess ?? '';
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$publishedAt = (string) ($post['published_at'] ?? '');
+$updatedAt = (string) ($post['updated_at'] ?? '');
+$showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
 
 $authorId = (int) ($post['author_id'] ?? 0);
 $authorBoxName = trim((string) ($post['author_name'] ?? ''));
@@ -283,13 +287,15 @@ if ($sidebarPosition === 'left') {
             <div class="post-body" itemprop="articleBody" data-photoswipe>
                 <?php echo $content; ?>
 
-                <!-- Tags -->
-                <?php if ($showPostTags && !empty($postTags)): ?>
-                <div class="post-tags">
-                    <?php foreach ($postTags as $tag): ?>
-                    <?php $tagUrl = function_exists('phinit_localized_href') ? phinit_localized_href('/tag/' . rawurlencode((string) ($tag['slug'] ?? '')), $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/tag/' . rawurlencode((string) ($tag['slug'] ?? '')); ?>
-                    <a href="<?php echo htmlspecialchars($tagUrl, ENT_QUOTES); ?>" class="post-tag">#<?php echo phinit_escape_text($tag['name'] ?? ''); ?></a>
-                    <?php endforeach; ?>
+                <?php if ($showUpdatedBadge): ?>
+                <div class="post-footer-meta" aria-label="Beitragsmetadaten">
+                    <span class="post-footer-badge post-footer-badge--updated">
+                        <span class="post-footer-badge__icon" aria-hidden="true">🔄</span>
+                        <span class="post-footer-badge__label"><?php echo htmlspecialchars(phinit_t('updated_label', [], $currentLocale), ENT_QUOTES); ?></span>
+                        <time datetime="<?php echo htmlspecialchars($updatedAt, ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars(phinit_format_date($updatedAt, 'numeric', $currentLocale), ENT_QUOTES); ?>
+                        </time>
+                    </span>
                 </div>
                 <?php endif; ?>
 
