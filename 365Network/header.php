@@ -88,6 +88,9 @@ $_hasEvents    = $_pluginMgr->isPluginActive('cms-events');
 $_hasSpeakers  = $_pluginMgr->isPluginActive('cms-speakers');
 $_hasJobs      = $_pluginMgr->isPluginActive('cms-jobprofile-generator');
 $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
+$siteHomeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$headerLogoUrl = theme_safe_url((string) $_headerLogoUrl, '');
+$searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -105,7 +108,9 @@ $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
 
     <header id="masthead" class="site-header" role="banner">
         <?php if ($_showNetworkAnim) : ?>
-            <canvas class="network-canvas" id="networkCanvas" aria-hidden="true"></canvas>
+            <canvas class="network-canvas" id="networkCanvas" aria-hidden="true"
+                    data-node-count="<?php echo (int) $_animNodeCount; ?>"
+                    data-speed="<?php echo htmlspecialchars($_animSpeed, ENT_QUOTES, 'UTF-8'); ?>"></canvas>
         <?php endif; ?>
         <div class="header-container">
             <div class="header-inner">
@@ -113,13 +118,13 @@ $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
                 <!-- Branding -->
                 <div class="site-branding">
                     <div class="site-logo">
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>">
-                            <?php if (!empty($_headerLogoUrl)) : ?>
-                                <img src="<?php echo htmlspecialchars($_headerLogoUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                        <a href="<?php echo htmlspecialchars($siteHomeUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php if ($headerLogoUrl !== '') : ?>
+                                <img src="<?php echo htmlspecialchars($headerLogoUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                      alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>"
                                      loading="eager"
                                      width="120" height="40"
-                                     style="max-height:var(--logo-max-height,40px);height:auto;display:block;">
+                                     class="site-logo-image">
                             <?php else : ?>
                                 <svg class="network-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <circle cx="30" cy="30" r="6" fill="currentColor"/>
@@ -137,7 +142,7 @@ $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
                     </div>
                     <div class="site-identity">
                         <h1 class="site-title">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/" rel="home">
+                            <a href="<?php echo htmlspecialchars($siteHomeUrl, ENT_QUOTES, 'UTF-8'); ?>" rel="home">
                                 <?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>
                             </a>
                         </h1>
@@ -176,7 +181,7 @@ $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
                                     <span class="profile-dropdown-avatar"><?php echo htmlspecialchars($userInitials, ENT_QUOTES, 'UTF-8'); ?></span>
                                     <div>
                                         <div class="profile-dropdown-name"><?php echo htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?></div>
-                                        <div class="profile-dropdown-role"><?php echo $isAdmin ? 'Administrator' : 'Mitglied'; ?></div>
+                                        <div class="profile-dropdown-role"><?php echo htmlspecialchars($isAdmin ? 'Administrator' : 'Mitglied', ENT_QUOTES, 'UTF-8'); ?></div>
                                     </div>
                                 </div>
                                 <div class="profile-dropdown-divider"></div>
@@ -310,7 +315,7 @@ $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
     <div class="search-overlay" id="searchOverlay" role="dialog" aria-label="Schnellsuche" aria-hidden="true">
         <button class="search-overlay-close" id="searchOverlayClose" aria-label="Suche schließen" type="button">&times;</button>
         <div class="search-overlay-inner">
-            <form class="search-overlay-form" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search" method="GET">
+            <form class="search-overlay-form" action="<?php echo htmlspecialchars($searchUrl, ENT_QUOTES, 'UTF-8'); ?>" method="GET">
                 <input class="search-overlay-input" type="search" name="q" placeholder="Suche nach Experten, Firmen, Events…"
                        autocomplete="off" spellcheck="false" aria-label="Suchbegriff eingeben">
                 <button type="submit" class="search-overlay-submit">Suchen</button>
@@ -319,103 +324,3 @@ $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
     </div>
 
     <div id="content" class="site-content">
-
-<?php if ($_showNetworkAnim) : ?>
-<script>
-/**
- * 365Network – Dezente Header-Netzwerk-Animation
- * Canvas-basierte Partikel mit Verbindungslinien.
- * Respektiert prefers-reduced-motion und ist per Customizer steuerbar.
- */
-(function() {
-    'use strict';
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var canvas = document.getElementById('networkCanvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var nodes = [];
-    var nodeCount = <?php echo (int)$_animNodeCount; ?>;
-    var speedMap = { slow: 0.15, normal: 0.35, fast: 0.6 };
-    var baseSpeed = speedMap[<?php echo json_encode($_animSpeed); ?>] || 0.15;
-    var maxDist = 120;
-    var raf;
-
-    function resize() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-    }
-
-    function init() {
-        resize();
-        nodes = [];
-        for (var i = 0; i < nodeCount; i++) {
-            nodes.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * baseSpeed,
-                vy: (Math.random() - 0.5) * baseSpeed,
-                r: Math.random() * 1.5 + 0.8
-            });
-        }
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        var w = canvas.width, h = canvas.height;
-
-        // Verbindungslinien
-        for (var i = 0; i < nodes.length; i++) {
-            for (var j = i + 1; j < nodes.length; j++) {
-                var dx = nodes[i].x - nodes[j].x;
-                var dy = nodes[i].y - nodes[j].y;
-                var dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < maxDist) {
-                    var alpha = 1 - dist / maxDist;
-                    ctx.strokeStyle = 'rgba(200, 149, 46, ' + (alpha * 0.35) + ')';
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(nodes[i].x, nodes[i].y);
-                    ctx.lineTo(nodes[j].x, nodes[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-
-        // Knoten
-        for (var k = 0; k < nodes.length; k++) {
-            var n = nodes[k];
-            ctx.fillStyle = 'rgba(200, 149, 46, 0.6)';
-            ctx.beginPath();
-            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Bewegen
-            n.x += n.vx;
-            n.y += n.vy;
-            if (n.x < 0 || n.x > w) n.vx *= -1;
-            if (n.y < 0 || n.y > h) n.vy *= -1;
-        }
-
-        raf = requestAnimationFrame(draw);
-    }
-
-    window.addEventListener('resize', function() {
-        resize();
-    });
-
-    // Nur animieren wenn Header sichtbar ist
-    var observer = new IntersectionObserver(function(entries) {
-        if (entries[0].isIntersecting) {
-            if (!raf) raf = requestAnimationFrame(draw);
-        } else {
-            if (raf) { cancelAnimationFrame(raf); raf = null; }
-        }
-    }, { threshold: 0.1 });
-    observer.observe(canvas);
-
-    init();
-    raf = requestAnimationFrame(draw);
-})();
-</script>
-<?php endif; ?>

@@ -14,6 +14,34 @@
 
 ---
 
+## v3.4.4 — März 2026
+
+### Zweite Audit-Welle: Auth/Search bereinigt, Header-Script ausgelagert, Audit-Doku ergänzt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Security/Auth | `login.php` und `register.php` laufen jetzt mit `declare(strict_types=1)`, sicheren Ziel-URLs und ausgelagerten CSS-Klassen statt verstreuten Inline-Styles; externe Rechtstexte im Register-Formular öffnen mit `rel="noopener noreferrer"`. |
+| 🔴 fix | Security/Header/Footer | `header.php` normalisiert Header-Logo- und Such-URLs fail-closed, `footer.php` validiert Social-Links jetzt explizit via `theme_safe_external_url()` und rendert lokale Footer-Ziele konsistent über sichere Theme-URLs. |
+| 🟡 refactor | JS/Performance | Die Canvas-Netzwerk-Animation wurde aus dem Inline-`<script>` in `header.php` nach `js/theme.js` verschoben und per `data-*` konfigurierbar gemacht; der Scroll-to-Top-Button nutzt jetzt CSS-Klassen statt Laufzeit-`style.cssText`. |
+| 🟡 refactor | Templates/Search | `search.php` kapselt Badge-Farben, Formular-Layout und leere Zustände jetzt in `style.css`, escaped Suchtreffer-URLs strikter und vermeidet dynamische Inline-Farb-Styles im Markup. |
+| 🔵 docs | Audit | Neues Dokument `DOC/365Network/THEME-AUDIT.md` ergänzt Audit-Scorecard, Prüfumfang, abgearbeitete Maßnahmen, Validierungsstand und offene Restpunkte für die nächsten Batches. |
+
+---
+
+## v3.4.3 — März 2026
+
+### Security-Hardening, sichere Query-Links und robuster Customizer
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Security/Theme | Neue Theme-Helper härten URL- und Query-Generierung (`theme_safe_url()`, `theme_safe_external_url()`, `theme_build_query_url()`) und werden jetzt in `booking.php`, `companies.php`, `events.php`, `feeds.php` sowie Sidebar-Widgets genutzt, statt rohe `$_GET`-Merges oder unvalidierte Fremd-URLs zu rendern. |
+| 🔴 fix | Security/Content | `blog-single.php` sanitisiert Artikelinhalt jetzt explizit über den Core-HTML-Sanitizer und escaped relative Zeitangaben/Related-Links konsistent, wodurch die gemeldeten XSS-Hotspots aus DB-Inhalten geschlossen wurden. |
+| 🔴 fix | Security/Customizer | `admin/customizer.php` validiert Tab-/Feldnamen strikter, escaped dynamische Formular-Attribute konsequent und prüft Logo-Uploads zusätzlich auf echten Upload-Status, MIME-Type und 2-MB-Limit. |
+| 🟡 refactor | Customizer/Content | Sidebar-Custom-HTML wird jetzt vor der Ausgabe über den Core-Sanitizer gefiltert; der Header-Logo-Upload erlaubt aus Sicherheitsgründen nur noch JPG/PNG/GIF/WebP statt SVG-Uploads. |
+| 🟡 refactor | JS/UX | `js/theme.js` nutzt jetzt den projektweiten Dark-Mode-Storage-Key `cms365-theme` (mit Legacy-Migration von `cms_dark_mode`) und der Sort-Select in `booking.php` submitet ohne Inline-`onchange`. |
+
+---
+
 ## v3.4.2 — März 2026
 
 ### Customizer-Admin ohne Inline-CSS/-JS

@@ -1,7 +1,7 @@
 # 365Network Theme – Dokumentation
 
 > **Theme-Slug:** `365Network`  
-> **Version:** 3.0.0  
+> **Version:** 3.4.4  
 > **Design:** Deep Navy (#0c1526) + Gold (#c8952e)  
 > **Typ:** Dashboard-orientiertes IT-Experten-Netzwerk-Theme
 
@@ -16,12 +16,21 @@
 | [CUSTOMIZER.md](CUSTOMIZER.md) | Alle Customizer-Kategorien & Settings |
 | [PLUGIN-INTEGRATION.md](PLUGIN-INTEGRATION.md) | Plugin-Anbindung mit Code-Beispielen |
 | [DEVELOPMENT.md](DEVELOPMENT.md) | Entwickler-Leitfaden & Architektur |
+| [THEME-AUDIT.md](THEME-AUDIT.md) | Laufende Audit-Dokumentation mit Scorecard, Findings und erledigten Maßnahmen |
 
 ---
 
 ## 1. Theme-Überblick
 
 Das 365Network-Theme ist ein **Dashboard-Style-Theme** für die 365CMS-Plattform. Es kombiniert ein dunkles Navy-Design mit goldenen Akzenten und bietet eine vollständig hook-basierte Homepage-Architektur, die es Plugins ermöglicht, eigene Inhalte zu injizieren.
+
+### Aktueller Audit-Stand (März 2026)
+
+- Security-Hotspots in Blog, Booking, Events, Feeds, Companies und Customizer wurden in `v3.4.3` gehärtet.
+- Query-Link-Generierung läuft jetzt zentralisiert und fail-closed über Theme-Helper statt rohe `$_GET`-Merges zu rendern.
+- Der Customizer escaped dynamische Feldattribute explizit und prüft Uploads zusätzlich auf MIME-Type und Größenlimit.
+- Zweite Audit-Welle in `v3.4.4`: Auth-/Search-Templates bereinigt, Header-Canvas-Script in `js/theme.js` verlagert, Footer-/Logo-/Social-URLs fail-closed gehärtet.
+- Aktuelle manuelle Audit-Scorecard: **Security 94/100 · Best Practice 92/100 · Performance 89/100 · Maintainability 91/100**.
 
 ### Design-Philosophie
 

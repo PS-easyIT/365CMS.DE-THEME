@@ -1,7 +1,7 @@
 {
   "name": "365Network",
   "slug": "365network",
-  "version": "3.4.2",
+  "version": "3.4.4",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "IT-Networking-Dashboard – Deep Navy & Gold, modulares Kachel-Layout für Experten, Firmen, Events, Speaker, Jobs, Feeds & Buchung.",
   "tags": ["professional", "editorial", "responsive", "cms", "network", "dark-mode", "directory", "booking"],
@@ -250,7 +250,7 @@
           "label": "Header Logo",
           "type": "image",
           "default": "",
-          "description": "Logo-Bild im Header (JPG, PNG, WebP, SVG – max. 2 MB). Leer = Netzwerk-Icon."
+          "description": "Logo-Bild im Header (JPG, PNG, GIF oder WebP – max. 2 MB). Leer = Netzwerk-Icon."
         },
         "header_bg_color": {
           "label": "Header-Hintergrund",

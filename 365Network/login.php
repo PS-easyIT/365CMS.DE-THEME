@@ -7,26 +7,31 @@
  * @package IT_Expert_Network_Theme
  */
 
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$siteUrl   = SITE_URL;
+$siteUrl      = SITE_URL;
 $themeManager = \CMS\ThemeManager::instance();
-$siteTitle = $themeManager->getSiteTitle();
-$error     = theme_get_flash('error');
-$success   = theme_get_flash('success');
+$siteTitle    = $themeManager->getSiteTitle();
+$error        = theme_get_flash('error');
+$success      = theme_get_flash('success');
+$loginUrl     = theme_safe_url($siteUrl . '/login', $siteUrl . '/login');
+$registerUrl  = theme_safe_url($siteUrl . '/register', $siteUrl . '/register');
+$homeUrl      = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 ?>
 
-<main id="main" role="main" style="background:linear-gradient(135deg,#e3f2fd 0%,#f5f9fc 100%);min-height:calc(100vh - 200px);display:flex;align-items:center;padding:var(--spacing-lg);">
-    <div style="width:100%;max-width:440px;margin:0 auto;">
+<main id="main" class="auth-shell" role="main">
+    <div class="auth-shell__inner">
 
         <!-- Auth Card -->
         <div class="auth-card">
 
             <!-- Logo -->
             <div class="auth-logo">
-                <svg class="network-icon" style="width:56px;height:56px;color:var(--primary-color);margin:0 auto 0.75rem;display:block;"
+                <svg class="network-icon auth-logo-icon"
                      viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <circle cx="30" cy="30" r="6" fill="currentColor"/>
                     <circle cx="15" cy="15" r="5" fill="currentColor"/>
@@ -56,7 +61,7 @@ $success   = theme_get_flash('success');
             <?php endif; ?>
 
             <!-- Login Form -->
-            <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login" novalidate>
+            <form method="POST" action="<?php echo htmlspecialchars($loginUrl, ENT_QUOTES, 'UTF-8'); ?>" novalidate>
                 <?php theme_csrf_field('login'); ?>
 
                 <div class="form-group">
@@ -81,7 +86,7 @@ $success   = theme_get_flash('success');
                            required>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%;margin-top:var(--spacing-md);">
+                <button type="submit" class="btn btn-primary auth-submit">
                     Anmelden
                 </button>
             </form>
@@ -89,10 +94,10 @@ $success   = theme_get_flash('success');
             <!-- Footer Links -->
             <div class="auth-footer">
                 <p>Noch kein Konto?
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register">Jetzt registrieren</a>
+                    <a href="<?php echo htmlspecialchars($registerUrl, ENT_QUOTES, 'UTF-8'); ?>">Jetzt registrieren</a>
                 </p>
-                <p style="margin-top:0.5rem;">
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/">← Zurück zur Startseite</a>
+                <p class="auth-footer-note">
+                    <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">← Zurück zur Startseite</a>
                 </p>
             </div>
 

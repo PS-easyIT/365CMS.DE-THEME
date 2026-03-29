@@ -1,4 +1,5 @@
 ﻿<?php
+
 /**
  * Footer Template
  *
@@ -14,18 +15,19 @@ $customizer   = \CMS\Services\ThemeCustomizer::instance();
 $siteTitle    = $themeManager->getSiteTitle();
 $isLoggedIn   = theme_is_logged_in();
 $siteUrl      = SITE_URL;
+$homeUrl      = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 
 // Customizer Settings
-$footerText        = $customizer->get('footer', 'footer_text', 'Die IT-Networking-Plattform für Experten, Unternehmen und Events. Vernetze dich mit der IT-Community.');
-$showNetworkWidgets = $customizer->get('footer', 'show_network_widgets', true);
-$copyrightTemplate = $customizer->get('footer', 'copyright_text', '&copy; {year} {site_title}. Alle Rechte vorbehalten.');
+$footerText         = (string) $customizer->get('footer', 'footer_text', 'Die IT-Networking-Plattform für Experten, Unternehmen und Events. Vernetze dich mit der IT-Community.');
+$showNetworkWidgets = filter_var($customizer->get('footer', 'show_network_widgets', true), FILTER_VALIDATE_BOOLEAN);
+$copyrightTemplate  = (string) $customizer->get('footer', 'copyright_text', '&copy; {year} {site_title}. Alle Rechte vorbehalten.');
 
 // Social Media Links
 $socialLinks = [
-    'twitter'   => ['url' => (string) $customizer->get('footer', 'social_twitter', ''),   'label' => 'Twitter / X',  'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733-16zM4 20l6.768-6.768M13.232 10.232L20 4"/></svg>'],
-    'instagram' => ['url' => (string) $customizer->get('footer', 'social_instagram', ''), 'label' => 'Instagram',    'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>'],
-    'linkedin'  => ['url' => (string) $customizer->get('footer', 'social_linkedin', ''),  'label' => 'LinkedIn',     'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>'],
-    'youtube'   => ['url' => (string) $customizer->get('footer', 'social_youtube', ''),   'label' => 'YouTube',      'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96c1.71.46 8.59.46 8.59.46s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>'],
+    'twitter'   => ['url' => theme_safe_external_url((string) $customizer->get('footer', 'social_twitter', '')),   'label' => 'Twitter / X',  'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733-16zM4 20l6.768-6.768M13.232 10.232L20 4"/></svg>'],
+    'instagram' => ['url' => theme_safe_external_url((string) $customizer->get('footer', 'social_instagram', '')), 'label' => 'Instagram',    'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>'],
+    'linkedin'  => ['url' => theme_safe_external_url((string) $customizer->get('footer', 'social_linkedin', '')),  'label' => 'LinkedIn',     'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>'],
+    'youtube'   => ['url' => theme_safe_external_url((string) $customizer->get('footer', 'social_youtube', '')),   'label' => 'YouTube',      'svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96c1.71.46 8.59.46 8.59.46s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>'],
 ];
 $activeSocials = array_filter($socialLinks, fn($s) => !empty($s['url']));
 
@@ -35,6 +37,7 @@ $copyrightText = str_replace(
     [gmdate('Y'), htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8')],
     $copyrightTemplate
 );
+$copyrightText = theme_sanitize_html($copyrightText, 'default');
 ?>
     </div><!-- #content .site-content -->
 
@@ -53,38 +56,38 @@ $copyrightText = str_replace(
                     <!-- Verzeichnisse -->
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Verzeichnisse</h3>
-                        <ul style="list-style:none;padding:0;margin:0;">
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/experts">👤 Experten</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies">🏢 Firmen</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events">📅 Events</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers">🎤 Speaker</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs">💼 Stellenmarkt</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/feeds">📰 Feed-Aggregator</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/booking">📆 Buchungsportal</a></li>
+                        <ul class="footer-link-list">
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/experts', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">👤 Experten</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/companies', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">🏢 Firmen</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/events', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">📅 Events</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/speakers', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">🎤 Speaker</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/jobs', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">💼 Stellenmarkt</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/feeds', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">📰 Feed-Aggregator</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/booking', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">📆 Buchungsportal</a></li>
                         </ul>
                     </div>
                     <!-- Ressourcen -->
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Ressourcen</h3>
-                        <ul style="list-style:none;padding:0;margin:0;">
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/whitepapers">Whitepapers</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/webinare">Webinare</a></li>
+                        <ul class="footer-link-list">
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/whitepapers', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Whitepapers</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/webinare', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Webinare</a></li>
                             <?php if ($isLoggedIn) : ?>
-                                <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member">Mein Dashboard</a></li>
+                                <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/member', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Mein Dashboard</a></li>
                             <?php else : ?>
-                                <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login">Anmelden</a></li>
+                                <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/login', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Anmelden</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>
                     <!-- Rechtliches -->
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Rechtliches</h3>
-                        <ul style="list-style:none;padding:0;margin:0;">
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/kontakt">Kontakt</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/impressum">Impressum</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/datenschutz">Datenschutz</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/agb">AGB</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/sitemap">Sitemap</a></li>
+                        <ul class="footer-link-list">
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/kontakt', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Kontakt</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/impressum', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Impressum</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/datenschutz', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Datenschutz</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/agb', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">AGB</a></li>
+                            <li><a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/sitemap', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Sitemap</a></li>
                         </ul>
                     </div>
                 </div>
@@ -108,18 +111,18 @@ $copyrightText = str_replace(
                     <p><?php echo $copyrightText; ?></p>
 
                     <nav class="footer-legal-nav" aria-label="Rechtliche Links">
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/impressum">Impressum</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/datenschutz">Datenschutz</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/agb">AGB</a>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/kontakt">Kontakt</a>
+                        <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/impressum', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Impressum</a>
+                        <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/datenschutz', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Datenschutz</a>
+                        <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/agb', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">AGB</a>
+                        <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/kontakt', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>">Kontakt</a>
                     </nav>
 
                     <?php if ($isLoggedIn) : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member" class="footer-dashboard-btn">
+                        <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/member', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>" class="footer-dashboard-btn">
                             Zum Dashboard
                         </a>
                     <?php else : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login" class="footer-login-btn">
+                        <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/login', $homeUrl), ENT_QUOTES, 'UTF-8'); ?>" class="footer-login-btn">
                             Login
                         </a>
                     <?php endif; ?>

@@ -17,6 +17,69 @@ use CMS\Services\ThemeCustomizer;
 use CMS\Auth;
 use CMS\Security;
 
+function theme_customizer_normalize_color(mixed $value, string $fallback = '#000000'): string
+{
+    $candidate = trim((string) $value);
+    return preg_match('/^#[0-9a-f]{6}$/i', $candidate) === 1 ? strtolower($candidate) : $fallback;
+}
+
+function theme_customizer_normalize_number(mixed $value, int|float $default = 0, ?float $min = null, ?float $max = null): string
+{
+    $number = is_numeric($value) ? (float) $value : (float) $default;
+    if ($min !== null) {
+        $number = max($min, $number);
+    }
+    if ($max !== null) {
+        $number = min($max, $number);
+    }
+
+    if (abs($number - round($number)) < 0.0001) {
+        return (string) (int) round($number);
+    }
+
+    return rtrim(rtrim(number_format($number, 4, '.', ''), '0'), '.');
+}
+
+function theme_customizer_normalize_url(mixed $value, bool $allowRelative = true): string
+{
+    $candidate = trim((string) $value);
+    if ($candidate === '') {
+        return '';
+    }
+
+    if ($allowRelative && str_starts_with($candidate, '/')) {
+        return $candidate;
+    }
+
+    return function_exists('esc_url_raw') ? esc_url_raw($candidate) : (filter_var($candidate, FILTER_SANITIZE_URL) ?: '');
+}
+
+function theme_customizer_normalize_value(string $tab, string $fieldKey, array $fieldConfig, mixed $value): string
+{
+    $type = $fieldConfig['type'] ?? 'text';
+    $default = $fieldConfig['default'] ?? '';
+
+    return match ($type) {
+        'checkbox' => !empty($value) ? '1' : '0',
+        'color' => theme_customizer_normalize_color($value, is_string($default) ? $default : '#000000'),
+        'number' => theme_customizer_normalize_number($value, is_numeric($default) ? (float) $default : 0.0),
+        'select' => array_key_exists((string) $value, $fieldConfig['options'] ?? []) ? (string) $value : (string) $default,
+        'textarea' => match (true) {
+            $tab === 'sidebar' && $fieldKey === 'sidebar_custom_html' => theme_sanitize_html((string) $value, 'default'),
+            $tab === 'advanced' && $fieldKey === 'custom_css' => trim((string) preg_replace('/<\/?style[^>]*>/i', '', (string) $value)),
+            $tab === 'advanced' && in_array($fieldKey, ['custom_head_code', 'custom_footer_code'], true) => (string) $value,
+            default => sanitize_textarea_field((string) $value),
+        },
+        'image_upload' => theme_customizer_normalize_url($value),
+        default => match (true) {
+            $fieldKey === 'logo_url',
+            str_ends_with($fieldKey, '_url'),
+            str_starts_with($fieldKey, 'social_') => theme_customizer_normalize_url($value),
+            default => sanitize_text_field((string) $value),
+        },
+    };
+}
+
 if (!Auth::instance()->isAdmin()) {
     header('Location: ' . SITE_URL);
     exit;
@@ -270,7 +333,7 @@ $config = [
         'sections' => [
             'logo_url' => [
                 'label'       => 'Header Logo',
-                'description' => 'Logo-Bild im Header (JPG, PNG, WebP, SVG – max. 2 MB). Leer = Netzwerk-Icon.',
+                'description' => 'Logo-Bild im Header (JPG, PNG, GIF oder WebP – max. 2 MB). Leer = Netzwerk-Icon.',
                 'type'        => 'image_upload',
                 'default'     => '',
             ],
@@ -1160,7 +1223,7 @@ if (class_exists('\CMS\ThemeManager')) {
     $customizer->setTheme(\CMS\ThemeManager::instance()->getActiveThemeSlug());
 }
 
-$activeTab = $_GET['tab'] ?? 'colors';
+$activeTab = sanitize_key((string)($_GET['tab'] ?? 'colors'));
 if (!isset($config[$activeTab])) {
     $activeTab = 'colors';
 }
@@ -1173,7 +1236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'theme_customizer')) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
-        $resetTab   = $_POST['active_section'] ?? $activeTab;
+        $resetTab   = sanitize_key((string)($_POST['active_section'] ?? $activeTab));
         if (!isset($config[$resetTab])) {
             $resetTab = $activeTab;
         }
@@ -1201,9 +1264,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     } else {
         // Logo-Datei-Upload verarbeiten
         if (!empty($_FILES['logo_upload_file']['tmp_name'])) {
-            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
-            $fileExt     = strtolower(pathinfo($_FILES['logo_upload_file']['name'], PATHINFO_EXTENSION));
+            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $allowedMimes = [
+                'jpg' => ['image/jpeg'],
+                'jpeg' => ['image/jpeg'],
+                'png' => ['image/png'],
+                'gif' => ['image/gif'],
+                'webp' => ['image/webp'],
+            ];
+            $fileExt     = strtolower(pathinfo((string)$_FILES['logo_upload_file']['name'], PATHINFO_EXTENSION));
             if (in_array($fileExt, $allowedExts, true)) {
+                if (!is_uploaded_file((string)$_FILES['logo_upload_file']['tmp_name'])) {
+                    $error = 'Ungültiger Upload erkannt.';
+                } elseif (((int)($_FILES['logo_upload_file']['size'] ?? 0)) > (2 * 1024 * 1024)) {
+                    $error = 'Logo-Datei ist zu groß. Maximal 2 MB erlaubt.';
+                }
+
+                if (!$error) {
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mime = $finfo !== false ? (string)finfo_file($finfo, (string)$_FILES['logo_upload_file']['tmp_name']) : '';
+                    if ($finfo !== false) {
+                        finfo_close($finfo);
+                    }
+
+                    if (!in_array($mime, $allowedMimes[$fileExt] ?? [], true)) {
+                        $error = 'Ungültiger Dateityp erkannt. Bitte ein JPG, PNG, GIF oder WebP hochladen.';
+                    }
+                }
+
+                if (!$error) {
                 $uploadDir = UPLOAD_PATH . 'theme-logos';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
@@ -1215,13 +1304,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 } else {
                     $error = 'Logo-Upload fehlgeschlagen. Bitte prüfen Sie die Schreibrechte auf uploads/theme-logos/';
                 }
+                }
             } else {
-                $error = 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, SVG, WebP';
+                $error = 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, WebP';
             }
         }
 
         if (!$error) {
-            $saveTab = $_POST['active_section'] ?? $activeTab;
+            $saveTab = sanitize_key((string)($_POST['active_section'] ?? $activeTab));
             if (!isset($config[$saveTab])) {
                 $saveTab = $activeTab;
             }
@@ -1232,7 +1322,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 if ($saveTab === 'header' && $fieldKey === 'logo_url') {
                     $postVal = $_POST[$inputName] ?? '';
                     if ($postVal !== '') {
-                        if (!$customizer->set($saveTab, $fieldKey, $postVal)) {
+                        if (!$customizer->set($saveTab, $fieldKey, theme_customizer_normalize_value($saveTab, $fieldKey, $fieldConfig, $postVal))) {
                             $saveFailed = true;
                         }
                     }
@@ -1246,7 +1336,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 } else {
                     $value = $_POST[$inputName] ?? '';
                 }
-                if (!$customizer->set($saveTab, $fieldKey, $value)) {
+                $normalizedValue = theme_customizer_normalize_value($saveTab, $fieldKey, $fieldConfig, $value);
+                if (!$customizer->set($saveTab, $fieldKey, $normalizedValue)) {
                     $saveFailed = true;
                 }
             }
@@ -1291,7 +1382,7 @@ $customizerJsUrl = is_file($customizerJsFile)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theme Customizer – <?php echo defined('SITE_NAME') ? htmlspecialchars(SITE_NAME) : '365Network'; ?></title>
+    <title>Theme Customizer – <?php echo defined('SITE_NAME') ? htmlspecialchars(SITE_NAME, ENT_QUOTES, 'UTF-8') : '365Network'; ?></title>
     <link rel="stylesheet" href="<?php echo htmlspecialchars($coreMainCssUrl, ENT_QUOTES); ?>">
     <link rel="stylesheet" href="<?php echo htmlspecialchars($coreAdminCssUrl, ENT_QUOTES); ?>">
     <?php if ($customizerCssUrl !== ''): ?>
@@ -1311,7 +1402,7 @@ $customizerJsUrl = is_file($customizerJsFile)
                 <p>Passe das Aussehen des 365Network-Themes an.</p>
             </div>
             <div class="header-actions">
-                <a href="<?php echo SITE_URL; ?>/" target="_blank" class="btn btn-secondary">🌐 Seite ansehen</a>
+                <a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES, 'UTF-8'); ?>/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">🌐 Seite ansehen</a>
             </div>
         </div>
 
@@ -1322,17 +1413,17 @@ $customizerJsUrl = is_file($customizerJsFile)
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form id="customizer-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" enctype="multipart/form-data">
+        <form id="customizer-form" method="POST" action="?tab=<?php echo rawurlencode((string)$activeTab); ?>" enctype="multipart/form-data">
             <input type="hidden" name="action" value="save_theme_options">
-            <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
-            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+            <input type="hidden" name="active_section" value="<?php echo esc_attr((string)$activeTab); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo esc_attr($csrfToken); ?>">
 
             <div class="customizer-layout">
 
                 <!-- Sidebar-Navigation -->
                 <nav class="customizer-nav">
                     <?php foreach ($config as $key => $tab): ?>
-                        <a href="?tab=<?php echo $key; ?>"
+                        <a href="?tab=<?php echo rawurlencode((string)$key); ?>"
                            class="<?php echo $activeTab === $key ? 'active' : ''; ?>">
                             <?php echo htmlspecialchars($tab['title']); ?>
                         </a>
@@ -1365,19 +1456,19 @@ $customizerJsUrl = is_file($customizerJsFile)
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
-                                    <label for="<?php echo $inputId; ?>" class="form-label">
+                                     <label for="<?php echo esc_attr($inputId); ?>" class="form-label">
                                         <?php echo htmlspecialchars($field['label']); ?>
                                     </label>
                                     <div class="customizer-control-row">
-                                        <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                         <input type="color" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
                                                class="customizer-color-picker"
                                                data-customizer-color-picker
-                                               data-sync-text="<?php echo $textInputId; ?>">
-                                        <input type="text" id="<?php echo $textInputId; ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                             data-sync-text="<?php echo esc_attr($textInputId); ?>">
+                                         <input type="text" id="<?php echo esc_attr($textInputId); ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
                                                class="form-control customizer-color-text"
                                                data-customizer-color-text
-                                               data-sync-picker="<?php echo $inputId; ?>">
+                                             data-sync-picker="<?php echo esc_attr($inputId); ?>">
                                     </div>
                                     <?php if (!empty($field['description'])): ?>
                                         <small class="form-text"><?php echo $field['description']; ?></small>
@@ -1415,20 +1506,20 @@ $customizerJsUrl = is_file($customizerJsFile)
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
-                                    <label for="<?php echo $inputId; ?>" class="form-label">
+                                    <label for="<?php echo esc_attr($inputId); ?>" class="form-label">
                                         <?php echo htmlspecialchars($field['label']); ?>
                                     </label>
 
                                     <?php if ($field['type'] === 'checkbox'): ?>
                                         <div class="customizer-checkbox-row">
-                                            <input type="checkbox" id="<?php echo $inputId; ?>"
-                                                   name="<?php echo $inputName; ?>" value="1"
+                                              <input type="checkbox" id="<?php echo esc_attr($inputId); ?>"
+                                                  name="<?php echo esc_attr($inputName); ?>" value="1"
                                                    <?php echo $val ? 'checked' : ''; ?>>
-                                            <label for="<?php echo $inputId; ?>" class="customizer-checkbox-label">Aktivieren</label>
+                                              <label for="<?php echo esc_attr($inputId); ?>" class="customizer-checkbox-label">Aktivieren</label>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'select'): ?>
-                                        <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <select id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                 class="form-control">
                                             <?php foreach ($field['options'] as $optVal => $optLabel): ?>
                                             <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
@@ -1439,13 +1530,13 @@ $customizerJsUrl = is_file($customizerJsFile)
                                         </select>
 
                                     <?php elseif ($field['type'] === 'number'): ?>
-                                        <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                                                                <input type="number" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
                                                  class="form-control customizer-number-input" min="1" max="12">
 
                                     <?php else: ?>
                                         <input type="<?php echo htmlspecialchars($field['type']); ?>"
-                                               id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
                                                class="form-control">
                                     <?php endif; ?>
@@ -1507,7 +1598,7 @@ $customizerJsUrl = is_file($customizerJsFile)
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
-                                    <label for="<?php echo $inputId; ?>" class="form-label">
+                                    <label for="<?php echo esc_attr($inputId); ?>" class="form-label">
                                         <?php echo htmlspecialchars($field['label']); ?>
                                     </label>
 
@@ -1530,39 +1621,39 @@ $customizerJsUrl = is_file($customizerJsFile)
                                                 </label>
                                                 <span class="customizer-upload-hint">oder URL eingeben:</span>
                                             </div>
-                                            <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                                   value="<?php echo $previewUrl; ?>" class="form-control"
+                                              <input type="text" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
+                                                  value="<?php echo esc_attr($previewUrl); ?>" class="form-control"
                                                    placeholder="https://..." data-customizer-logo-url>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'color'): ?>
                                         <div class="customizer-control-row">
-                                            <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                              <input type="color" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                    value="<?php echo htmlspecialchars((string)$val); ?>"
                                                    class="customizer-color-picker"
                                                    data-customizer-color-picker
-                                                   data-sync-text="<?php echo $textInputId; ?>">
-                                            <input type="text" id="<?php echo $textInputId; ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                                  data-sync-text="<?php echo esc_attr($textInputId); ?>">
+                                              <input type="text" id="<?php echo esc_attr($textInputId); ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
                                                    class="form-control customizer-color-text"
                                                    data-customizer-color-text
-                                                   data-sync-picker="<?php echo $inputId; ?>">
+                                                  data-sync-picker="<?php echo esc_attr($inputId); ?>">
                                         </div>
 
                                     <?php elseif ($field['type'] === 'checkbox'): ?>
                                         <div class="customizer-checkbox-row">
-                                            <input type="checkbox" id="<?php echo $inputId; ?>"
-                                                   name="<?php echo $inputName; ?>" value="1"
+                                              <input type="checkbox" id="<?php echo esc_attr($inputId); ?>"
+                                                  name="<?php echo esc_attr($inputName); ?>" value="1"
                                                    <?php echo $val ? 'checked' : ''; ?>>
-                                            <label for="<?php echo $inputId; ?>" class="customizer-checkbox-label">Aktivieren</label>
+                                              <label for="<?php echo esc_attr($inputId); ?>" class="customizer-checkbox-label">Aktivieren</label>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'textarea'): ?>
-                                        <textarea id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <textarea id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                   class="form-control" rows="3"
                                         ><?php echo htmlspecialchars((string)$val); ?></textarea>
 
                                     <?php elseif ($field['type'] === 'select'): ?>
-                                        <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <select id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                 class="form-control">
                                             <?php foreach ($field['options'] as $optVal => $optLabel): ?>
                                             <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
@@ -1573,13 +1664,13 @@ $customizerJsUrl = is_file($customizerJsFile)
                                         </select>
 
                                     <?php elseif ($field['type'] === 'number'): ?>
-                                        <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                             <input type="number" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
                                                class="form-control customizer-number-input">
 
                                     <?php else: ?>
                                         <input type="<?php echo htmlspecialchars($field['type']); ?>"
-                                               id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                               id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                                value="<?php echo htmlspecialchars((string)$val); ?>"
                                                class="form-control">
                                     <?php endif; ?>
@@ -1606,25 +1697,25 @@ $customizerJsUrl = is_file($customizerJsFile)
                             $inputName = "{$activeTab}_{$fieldKey}";
                         ?>
                         <div class="form-group">
-                            <label for="<?php echo $inputId; ?>" class="form-label">
+                            <label for="<?php echo esc_attr($inputId); ?>" class="form-label">
                                 <?php echo htmlspecialchars($field['label']); ?>
                             </label>
 
                             <?php if ($field['type'] === 'textarea'): ?>
-                                <textarea id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                <textarea id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                           class="form-control" rows="4"
                                 ><?php echo htmlspecialchars((string)$val); ?></textarea>
 
                             <?php elseif ($field['type'] === 'checkbox'): ?>
                                 <div class="customizer-checkbox-row">
-                                    <input type="checkbox" id="<?php echo $inputId; ?>"
-                                           name="<?php echo $inputName; ?>" value="1"
+                                     <input type="checkbox" id="<?php echo esc_attr($inputId); ?>"
+                                         name="<?php echo esc_attr($inputName); ?>" value="1"
                                            <?php echo $val ? 'checked' : ''; ?>>
-                                    <label for="<?php echo $inputId; ?>" class="customizer-checkbox-label">Aktivieren</label>
+                                     <label for="<?php echo esc_attr($inputId); ?>" class="customizer-checkbox-label">Aktivieren</label>
                                 </div>
 
                             <?php elseif ($field['type'] === 'select'): ?>
-                                <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                <select id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                         class="form-control">
                                     <?php foreach ($field['options'] as $optVal => $optLabel): ?>
                                     <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
@@ -1653,27 +1744,27 @@ $customizerJsUrl = is_file($customizerJsFile)
                                         </label>
                                         <span class="customizer-upload-hint">oder URL eingeben:</span>
                                     </div>
-                                    <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                           value="<?php echo $previewUrl; ?>" class="form-control"
+                                     <input type="text" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
+                                         value="<?php echo esc_attr($previewUrl); ?>" class="form-control"
                                            placeholder="https://..." data-customizer-logo-url>
                                 </div>
 
                             <?php elseif ($field['type'] === 'color'): ?>
                                 <div class="customizer-control-row">
-                                    <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                     <input type="color" id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                            value="<?php echo htmlspecialchars((string)$val); ?>"
                                            class="customizer-color-picker"
                                            data-customizer-color-picker
-                                           data-sync-text="<?php echo $textInputId; ?>">
-                                    <input type="text" id="<?php echo $textInputId; ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                         data-sync-text="<?php echo esc_attr($textInputId); ?>">
+                                     <input type="text" id="<?php echo esc_attr($textInputId); ?>" value="<?php echo htmlspecialchars((string)$val); ?>"
                                            class="form-control customizer-color-text"
                                            data-customizer-color-text
-                                           data-sync-picker="<?php echo $inputId; ?>">
+                                         data-sync-picker="<?php echo esc_attr($inputId); ?>">
                                 </div>
 
                             <?php else: ?>
                                 <input type="<?php echo htmlspecialchars($field['type']); ?>"
-                                       id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                       id="<?php echo esc_attr($inputId); ?>" name="<?php echo esc_attr($inputName); ?>"
                                        value="<?php echo htmlspecialchars((string)$val); ?>"
                                        class="form-control">
                             <?php endif; ?>
@@ -1705,10 +1796,10 @@ $customizerJsUrl = is_file($customizerJsFile)
 
     <!-- Verstecktes Reset-Formular (außerhalb des Haupt-Forms, verschachtelte Forms sind invalid HTML) -->
     <?php if (isset($config[$activeTab])): ?>
-    <form id="reset-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" class="customizer-hidden">
+    <form id="reset-form" method="POST" action="?tab=<?php echo rawurlencode((string)$activeTab); ?>" class="customizer-hidden">
         <input type="hidden" name="action" value="reset_theme_tab">
-        <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
-        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+        <input type="hidden" name="active_section" value="<?php echo esc_attr((string)$activeTab); ?>">
+        <input type="hidden" name="csrf_token" value="<?php echo esc_attr($csrfToken); ?>">
     </form>
     <?php endif; ?>
 

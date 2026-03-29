@@ -39,6 +39,13 @@ $sources    = [];
 $totalCount = 0;
 $totalPages = 1;
 
+$feedsQuery = [
+    'q' => $search,
+    'source' => $source > 0 ? (string)$source : '',
+    'cat' => $cat,
+    'sort' => $sort,
+];
+
 if ($hasPlugin) {
     try {
         $where  = ['fi.is_hidden = 0'];
@@ -140,12 +147,12 @@ require_once __DIR__ . '/header.php';
             <div class="filter-panel">
                 <h3 class="filter-panel-title">📡 Quellen</h3>
                 <div class="filter-link-list">
-                    <a href="?<?php echo $search ? 'q=' . urlencode($search) : ''; ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/feeds', $feedsQuery, ['source' => '']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="feed-source-link <?php echo $source === 0 ? 'is-active' : ''; ?>">
                         Alle Quellen
                     </a>
                     <?php foreach ($sources as $src) : ?>
-                        <a href="?source=<?php echo $src['id']; ?><?php echo $search ? '&q=' . urlencode($search) : ''; ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/feeds', $feedsQuery, ['source' => (string)((int)$src['id']), 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="feed-source-link <?php echo $source === $src['id'] ? 'is-active' : ''; ?>">
                             <?php echo htmlspecialchars($src['name'], ENT_QUOTES); ?>
                         </a>
@@ -185,14 +192,14 @@ require_once __DIR__ . '/header.php';
             <div class="feeds-grid">
                 <?php foreach ($items as $item) :
                     $iTitle   = htmlspecialchars(is_array($item) ? ($item['title'] ?? '') : ($item->title ?? ''), ENT_QUOTES, 'UTF-8');
-                    $iLink    = htmlspecialchars(is_array($item) ? ($item['link'] ?? '#') : ($item->link ?? '#'), ENT_QUOTES, 'UTF-8');
+                    $iLink    = htmlspecialchars(theme_safe_external_url((string)(is_array($item) ? ($item['link'] ?? '#') : ($item->link ?? '#'))) ?: '#', ENT_QUOTES, 'UTF-8');
                     $iDesc    = strip_tags(is_array($item) ? ($item['description'] ?? '') : ($item->description ?? ''));
-                    $iImage   = is_array($item) ? ($item['image_url'] ?? '') : ($item->image_url ?? '');
+                    $iImage   = theme_safe_url((string)(is_array($item) ? ($item['image_url'] ?? '') : ($item->image_url ?? '')));
                     $iAuthor  = htmlspecialchars(is_array($item) ? ($item['author'] ?? '') : ($item->author ?? ''), ENT_QUOTES, 'UTF-8');
                     $iDate    = is_array($item) ? ($item['pub_date'] ?? '') : ($item->pub_date ?? '');
                     $iDateF   = $iDate ? date('d.m.Y', strtotime($iDate)) : '';
                     $iFeed    = htmlspecialchars(is_array($item) ? ($item['feed_name'] ?? '') : ($item->feed_name ?? ''), ENT_QUOTES, 'UTF-8');
-                    $iFavicon = is_array($item) ? ($item['feed_icon'] ?? '') : ($item->feed_icon ?? '');
+                    $iFavicon = theme_safe_url((string)(is_array($item) ? ($item['feed_icon'] ?? '') : ($item->feed_icon ?? '')));
                     $iCat     = htmlspecialchars(is_array($item) ? ($item['category'] ?? '') : ($item->category ?? ''), ENT_QUOTES, 'UTF-8');
                 ?>
                 <article class="feed-dir-card">
@@ -246,16 +253,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1) : ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1) : ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/feeds', $feedsQuery, ['page' => (string)($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1,$page-2); $i <= min($totalPages,$page+2); $i++) : ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/feeds', $feedsQuery, ['page' => (string)$i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages) : ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/feeds', $feedsQuery, ['page' => (string)($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

@@ -11,6 +11,8 @@
  * @var string $query
  */
 
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -22,47 +24,48 @@ $location = $location ?? '';
 $filter   = $filter ?? '';
 $siteUrl  = SITE_URL;
 $count    = count($results);
+$homeUrl  = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$searchUrl = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
 
 // Typ-Badge-Mapping
 $typeBadges = [
-    'page'    => ['label' => 'Seite',   'bg' => '#dbeafe', 'color' => '#1e40af'],
-    'expert'  => ['label' => 'Experte', 'bg' => '#d1fae5', 'color' => '#065f46'],
-    'company' => ['label' => 'Firma',   'bg' => '#fef3c7', 'color' => '#92400e'],
-    'speaker' => ['label' => 'Speaker', 'bg' => '#ede9fe', 'color' => '#5b21b6'],
-    'event'   => ['label' => 'Event',   'bg' => '#fce7f3', 'color' => '#9d174d'],
+    'page'    => ['label' => 'Seite',   'class' => 'search-result-badge--page'],
+    'expert'  => ['label' => 'Experte', 'class' => 'search-result-badge--expert'],
+    'company' => ['label' => 'Firma',   'class' => 'search-result-badge--company'],
+    'speaker' => ['label' => 'Speaker', 'class' => 'search-result-badge--speaker'],
+    'event'   => ['label' => 'Event',   'class' => 'search-result-badge--event'],
 ];
 ?>
 
 <main id="main" class="site-main" role="main">
     <div class="container">
-        <div class="content-area" style="padding:var(--spacing-lg) 0;">
+        <div class="content-area content-area--spaced">
 
             <!-- Suchkopf -->
             <header class="search-results-header">
                 <h1>
                     <?php if ($query && trim($query) !== '') : ?>
-                        Suchergebnisse für: <em style="color:var(--primary-color);">„<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>"</em>
+                        Suchergebnisse für: <em class="search-query-highlight">„<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>“</em>
                     <?php else : ?>
                         Suche
                     <?php endif; ?>
                 </h1>
                 <?php if ($query && trim($query) !== '') : ?>
-                    <p style="color:#666;font-size:0.95rem;margin-top:0.5rem;">
+                    <p class="search-results-count">
                         <?php echo $count; ?> Ergebnis<?php echo $count !== 1 ? 'se' : ''; ?> gefunden
                     </p>
                 <?php endif; ?>
             </header>
 
             <!-- Suchformular -->
-            <form action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search" method="GET"
-                  style="display:flex;gap:0.75rem;margin-bottom:var(--spacing-lg);">
+            <form action="<?php echo htmlspecialchars($searchUrl, ENT_QUOTES, 'UTF-8'); ?>" method="GET" class="search-form">
                 <input class="form-control"
                        type="search"
                        name="q"
                        placeholder="Suche nach Seiten, Themen…"
                        value="<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>"
                        aria-label="Suchbegriff"
-                       style="max-width:500px;">
+                       class="search-form__input">
                 <button type="submit" class="btn btn-primary">Suchen</button>
             </form>
 
@@ -73,8 +76,10 @@ $typeBadges = [
                         $resultTitle   = is_array($result) ? ($result['title'] ?? '') : ($result->title ?? '');
                         $resultSlug    = is_array($result) ? ($result['slug'] ?? '') : ($result->slug ?? '');
                         $resultExcerpt = is_array($result) ? ($result['meta_description'] ?? $result['content'] ?? '') : ($result->meta_description ?? $result->content ?? '');
-                        $resultType    = is_array($result) ? ($result['_type'] ?? 'page') : ($result->_type ?? 'page');
-                        $resultUrl     = htmlspecialchars($siteUrl . '/' . $resultSlug, ENT_QUOTES, 'UTF-8');
+                        $resultType    = sanitize_key((string) (is_array($result) ? ($result['_type'] ?? 'page') : ($result->_type ?? 'page')));
+                        $resultSlug    = trim((string) $resultSlug, '/');
+                        $resultSlug    = implode('/', array_map('rawurlencode', array_filter(explode('/', $resultSlug), static fn(string $segment): bool => $segment !== '')));
+                        $resultUrl     = theme_safe_url($siteUrl . ($resultSlug !== '' ? '/' . $resultSlug : ''), $homeUrl);
                         $badge         = $typeBadges[$resultType] ?? $typeBadges['page'];
 
                         // Excerpt kürzen
@@ -86,11 +91,11 @@ $typeBadges = [
                     ?>
                         <article class="search-result-item">
                             <h2 class="search-result-title">
-                                <a href="<?php echo $resultUrl; ?>">
+                                <a href="<?php echo htmlspecialchars($resultUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                     <?php echo htmlspecialchars($resultTitle, ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
-                                <span style="display:inline-block;font-size:.7rem;font-weight:600;padding:.15rem .5rem;border-radius:4px;background:<?php echo $badge['bg']; ?>;color:<?php echo $badge['color']; ?>;vertical-align:middle;margin-left:.5rem;">
-                                    <?php echo htmlspecialchars($badge['label']); ?>
+                                <span class="search-result-badge <?php echo htmlspecialchars($badge['class'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    <?php echo htmlspecialchars($badge['label'], ENT_QUOTES, 'UTF-8'); ?>
                                 </span>
                             </h2>
                             <?php if ($resultExcerpt && trim($resultExcerpt) !== '') : ?>
@@ -99,8 +104,8 @@ $typeBadges = [
                                 </p>
                             <?php endif; ?>
                             <p class="search-result-meta">
-                                <a href="<?php echo $resultUrl; ?>" style="color:var(--primary-color);">
-                                    <?php echo $resultUrl; ?>
+                                <a href="<?php echo htmlspecialchars($resultUrl, ENT_QUOTES, 'UTF-8'); ?>" class="search-result-link">
+                                    <?php echo htmlspecialchars($resultUrl, ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
                             </p>
                         </article>
@@ -114,13 +119,13 @@ $typeBadges = [
                         <line x1="8" y1="11" x2="14" y2="11"/>
                     </svg>
                     <?php if ($query && trim($query) !== '') : ?>
-                        <p>Keine Ergebnisse für „<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>" gefunden.</p>
-                        <p style="font-size:0.9rem;">Versuche andere Suchbegriffe oder weniger Wörter.</p>
+                        <p>Keine Ergebnisse für „<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>“ gefunden.</p>
+                        <p class="search-no-results-note">Versuche andere Suchbegriffe oder weniger Wörter.</p>
                     <?php else : ?>
                         <p>Gib einen Suchbegriff ein, um loszulegen.</p>
                     <?php endif; ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/"
-                       class="btn btn-outline" style="margin-top:var(--spacing-md);">
+                    <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                       class="btn btn-outline search-no-results-action">
                         Zur Startseite
                     </a>
                 </div>

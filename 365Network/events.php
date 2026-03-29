@@ -45,6 +45,16 @@ $locations  = [];
 $totalCount = 0;
 $totalPages = 1;
 
+$eventsQuery = [
+    'q' => $search,
+    'type' => $type,
+    'location' => $location,
+    'month' => $month,
+    'past' => $past ? '1' : '',
+    'sort' => $sort,
+    'view' => $view,
+];
+
 if ($hasPlugin) {
     try {
         $where  = ["e.status = 'published'"];
@@ -162,9 +172,9 @@ require_once __DIR__ . '/header.php';
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">⏱️ Zeitraum</h3>
                     <div class="filter-link-list">
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['past' => '', 'page' => 1])); ?>"
+                                <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['past' => '', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="filter-link <?php echo !$past ? 'is-active' : ''; ?>">📅 Kommende</a>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['past' => '1', 'page' => 1])); ?>"
+                                <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['past' => '1', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="filter-link <?php echo $past ? 'is-active' : ''; ?>">📂 Vergangene</a>
                     </div>
                 </div>
@@ -225,9 +235,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'grid'])); ?>"
+                          <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'list'])); ?>"
+                          <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -242,7 +252,7 @@ require_once __DIR__ . '/header.php';
                     $evTime  = is_array($ev) ? ($ev['event_time']  ?? '') : ($ev->event_time  ?? '');
                     $city    = htmlspecialchars(is_array($ev) ? ($ev['city']    ?? '') : ($ev->city    ?? ''), ENT_QUOTES, 'UTF-8');
                     $cat     = htmlspecialchars(is_array($ev) ? ($ev['category']?? '') : ($ev->category?? ''), ENT_QUOTES, 'UTF-8');
-                    $image   = is_array($ev) ? ($ev['image_url']   ?? '') : ($ev->image_url   ?? '');
+                    $image   = theme_safe_url((string)(is_array($ev) ? ($ev['image_url']   ?? '') : ($ev->image_url   ?? '')));
                     $online  = (bool)(is_array($ev) ? ($ev['is_online'] ?? false) : ($ev->is_online ?? false));
                     $featd   = (bool)(is_array($ev) ? ($ev['is_featured'] ?? false) : ($ev->is_featured ?? false));
                     $price   = is_array($ev) ? ($ev['price_type']  ?? 'free') : ($ev->price_type  ?? 'free');
@@ -256,6 +266,10 @@ require_once __DIR__ . '/header.php';
                         $evDay   = date('d', $ts);
                         $evMonth = $monthsDE[(int)date('n', $ts)] ?? '';
                         $evDateFormatted = date('d.m.Y', $ts);
+                    }
+                    $evTimeLabel = '';
+                    if (is_string($evTime) && preg_match('/^\d{2}:\d{2}/', $evTime) === 1) {
+                        $evTimeLabel = htmlspecialchars(mb_substr($evTime, 0, 5) . ' Uhr', ENT_QUOTES, 'UTF-8');
                     }
                 ?>
                 <article class="directory-card event-card<?php echo $featd ? ' event-card--featured' : ''; ?>">
@@ -282,7 +296,7 @@ require_once __DIR__ . '/header.php';
                             </a>
                         </h2>
                         <div class="event-card-meta">
-                            <?php if ($evDateFormatted): ?><span>📅 <?php echo $evDateFormatted; ?><?php echo $evTime ? ' · ' . mb_substr($evTime, 0, 5) . ' Uhr' : ''; ?></span><?php endif; ?>
+                            <?php if ($evDateFormatted): ?><span>📅 <?php echo htmlspecialchars($evDateFormatted, ENT_QUOTES, 'UTF-8'); ?><?php echo $evTimeLabel ? ' · ' . $evTimeLabel : ''; ?></span><?php endif; ?>
                             <?php if ($city): ?><span>📍 <?php echo $city; ?></span><?php endif; ?>
                             <?php if ($cat): ?><span class="event-cat-badge"><?php echo $cat; ?></span><?php endif; ?>
                         </div>
@@ -319,16 +333,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['page' => (string)($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['page' => (string)$i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', $eventsQuery, ['page' => (string)($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

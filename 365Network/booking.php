@@ -57,6 +57,16 @@ $bookingTypeLabels = [
     'request'      => '📋 Anfrage',
 ];
 
+$bookingQuery = [
+    'q' => $search,
+    'type' => $typeFilter,
+    'sort' => $sort,
+    'view' => $view,
+    'expert' => $preExpert > 0 ? (string)$preExpert : '',
+    'service' => $preService > 0 ? (string)$preService : '',
+    'date' => $preDate,
+];
+
 if ($hasPlugin) {
     try {
         $where  = ["bp.status = 'active'"];
@@ -175,10 +185,10 @@ require_once __DIR__ . '/header.php';
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗓️ Leistungsart</h3>
                     <div style="display:flex;flex-direction:column;gap:.375rem;">
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['type' => '', 'page' => 1])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['type' => '', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="filter-link <?php echo $typeFilter === '' ? 'is-active' : ''; ?>">Alle</a>
                         <?php foreach ($locationTypeLabels as $val => $lbl): ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['type' => $val, 'page' => 1])); ?>"
+                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['type' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                                class="filter-link <?php echo $typeFilter === $val ? 'is-active' : ''; ?>"><?php echo $lbl; ?></a>
                         <?php endforeach; ?>
                     </div>
@@ -186,7 +196,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗂️ Sortierung</h3>
-                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <select name="sort" class="filter-select" data-auto-submit-filter>
                         <option value="name"   <?php echo $sort === 'name'   ? 'selected' : ''; ?>>🔤 Name A–Z</option>
                         <option value="price"  <?php echo $sort === 'price'  ? 'selected' : ''; ?>>💰 Günstigste zuerst</option>
                         <option value="latest" <?php echo $sort === 'latest' ? 'selected' : ''; ?>>🕐 Neueste zuerst</option>
@@ -210,9 +220,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'grid'])); ?>"
+                          <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'list'])); ?>"
+                          <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -223,7 +233,7 @@ require_once __DIR__ . '/header.php';
                     $pid      = (int)(is_array($prov) ? ($prov['id']           ?? 0)  : ($prov->id           ?? 0));
                     $pName    = htmlspecialchars(is_array($prov) ? ($prov['display_name'] ?? '') : ($prov->display_name ?? ''), ENT_QUOTES, 'UTF-8');
                     $pSlug    = is_array($prov) ? ($prov['slug']       ?? '')  : ($prov->slug       ?? '');
-                    $pAvatar  = is_array($prov) ? ($prov['avatar_url'] ?? '')  : ($prov->avatar_url ?? '');
+                    $pAvatar  = theme_safe_url((string)(is_array($prov) ? ($prov['avatar_url'] ?? '')  : ($prov->avatar_url ?? '')));
                     $pBio     = htmlspecialchars(strip_tags(is_array($prov) ? ($prov['bio'] ?? '') : ($prov->bio ?? '')), ENT_QUOTES, 'UTF-8');
                     $pCurr    = htmlspecialchars(is_array($prov) ? ($prov['currency'] ?? 'EUR') : ($prov->currency ?? 'EUR'), ENT_QUOTES, 'UTF-8');
                     $provServices = $services[$pid] ?? [];
@@ -253,9 +263,12 @@ require_once __DIR__ . '/header.php';
                             $svcPriceCts = (int)(is_array($svc) ? ($svc['price_cents']   ?? 0)  : ($svc->price_cents   ?? 0));
                             $svcLocType  = is_array($svc) ? ($svc['location_type'] ?? '') : ($svc->location_type ?? '');
                             $svcBookType = is_array($svc) ? ($svc['booking_type']  ?? '') : ($svc->booking_type  ?? '');
-                            $svcSlug     = is_array($svc) ? ($svc['slug']          ?? '')  : ($svc->slug          ?? '');
                             $svcPrice    = $svcPriceCts > 0 ? number_format($svcPriceCts / 100, 2, ',', '.') . ' ' . $pCurr : 'Kostenlos';
-                            $bookUrl     = htmlspecialchars($siteUrl . '/booking/book?provider=' . $pid . '&service=' . $svcId . ($preDate ? '&date=' . $preDate : ''), ENT_QUOTES);
+                            $bookUrl     = htmlspecialchars(theme_build_query_url('/booking/book', [
+                                'provider' => (string)$pid,
+                                'service' => (string)$svcId,
+                                'date' => $preDate,
+                            ]), ENT_QUOTES, 'UTF-8');
                             $highlight   = $preService === $svcId;
                         ?>
                         <div class="booking-service-row <?php echo $highlight ? 'is-highlighted' : ''; ?>">
@@ -302,16 +315,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['page' => (string)($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['page' => (string)$i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['page' => (string)($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

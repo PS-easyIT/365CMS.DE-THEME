@@ -44,6 +44,15 @@ $locations  = [];
 $totalCount = 0;
 $totalPages = 1;
 
+$companiesQuery = [
+    'q' => $search,
+    'sector' => $sector,
+    'size' => $size,
+    'location' => $location,
+    'sort' => $sort,
+    'view' => $view,
+];
+
 if ($hasPlugin) {
     try {
         $where  = ['c.status = ?'];
@@ -184,7 +193,7 @@ require_once __DIR__ . '/header.php';
                         <?php
                         $sizeOpts = ['' => 'Alle', '1-10' => '1–10 Mitarbeiter', '11-50' => '11–50', '51-200' => '51–200', '201-500' => '201–500', '500+' => '500+'];
                         foreach ($sizeOpts as $val => $lbl): ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['size' => $val, 'page' => 1])); ?>"
+                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/companies', $companiesQuery, ['size' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                                class="filter-link <?php echo $size === $val ? 'is-active' : ''; ?>">
                                 <?php echo $lbl; ?>
                             </a>
@@ -218,9 +227,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'grid'])); ?>"
+                          <a href="<?php echo htmlspecialchars(theme_build_query_url('/companies', $companiesQuery, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'list'])); ?>"
+                          <a href="<?php echo htmlspecialchars(theme_build_query_url('/companies', $companiesQuery, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -230,10 +239,10 @@ require_once __DIR__ . '/header.php';
                 <?php foreach ($companies as $co):
                     $id      = is_array($co) ? ($co['id']            ?? 0)  : ($co->id            ?? 0);
                     $name    = htmlspecialchars(is_array($co) ? ($co['name']          ?? '') : ($co->name          ?? ''), ENT_QUOTES, 'UTF-8');
-                    $logo    = is_array($co) ? ($co['logo_url']       ?? '') : ($co->logo_url       ?? '');
+                    $logo    = theme_safe_url((string)(is_array($co) ? ($co['logo_url']       ?? '') : ($co->logo_url       ?? '')));
                     $indust  = htmlspecialchars(is_array($co) ? ($co['industry']      ?? '') : ($co->industry      ?? ''), ENT_QUOTES, 'UTF-8');
                     $city    = htmlspecialchars(is_array($co) ? ($co['location_city'] ?? '') : ($co->location_city ?? ''), ENT_QUOTES, 'UTF-8');
-                    $web     = htmlspecialchars(is_array($co) ? ($co['website']       ?? '') : ($co->website       ?? ''), ENT_QUOTES, 'UTF-8');
+                    $web     = theme_safe_external_url((string)(is_array($co) ? ($co['website']       ?? '') : ($co->website       ?? '')));
                     $desc    = strip_tags(is_array($co) ? ($co['description'] ?? '') : ($co->description ?? ''));
                     $partner = (bool)(is_array($co) ? ($co['is_partner'] ?? false) : ($co->is_partner ?? false));
                     $top     = (bool)(is_array($co) ? ($co['is_top_partner'] ?? false) : ($co->is_top_partner ?? false));
@@ -293,16 +302,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/companies', $companiesQuery, ['page' => (string)($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/companies', $companiesQuery, ['page' => (string)$i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/companies', $companiesQuery, ['page' => (string)($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

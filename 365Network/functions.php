@@ -120,7 +120,7 @@ class IT_Expert_Network_Theme
         $text = htmlspecialchars($settings['cookie_banner_text'] ?: 'Wir verwenden Cookies.', ENT_QUOTES, 'UTF-8');
         $btnAccept = htmlspecialchars($settings['cookie_accept_text'] ?: 'Akzeptieren', ENT_QUOTES, 'UTF-8');
         $btnEssential = htmlspecialchars($settings['cookie_essential_text'] ?: 'Nur Essenzielle', ENT_QUOTES, 'UTF-8');
-        $linkPolicy = htmlspecialchars($settings['cookie_policy_url'] ?: '#', ENT_QUOTES, 'UTF-8');
+        $linkPolicy = htmlspecialchars(theme_safe_url((string)($settings['cookie_policy_url'] ?: '#'), '#'), ENT_QUOTES, 'UTF-8');
         $color = htmlspecialchars($settings['cookie_primary_color'] ?: '#3b82f6', ENT_QUOTES, 'UTF-8');
 
         // Styles
@@ -144,25 +144,32 @@ class IT_Expert_Network_Theme
         <div id="cms-cookie-banner">
             <p>{$text} <a href="{$linkPolicy}" style="color:{$color}">Mehr erfahren</a></p>
             <div id="cms-cookie-actions">
-                <button class="cms-cookie-btn cms-cookie-essential" onclick="cmsDeclineCookies()">{$btnEssential}</button>
-                <button class="cms-cookie-btn cms-cookie-accept" onclick="cmsAcceptCookies()">{$btnAccept}</button>
+                <button class="cms-cookie-btn cms-cookie-essential" type="button" data-cookie-action="essential">{$btnEssential}</button>
+                <button class="cms-cookie-btn cms-cookie-accept" type="button" data-cookie-action="all">{$btnAccept}</button>
             </div>
         </div>
         <script>
             (function() {
                 var banner = document.getElementById('cms-cookie-banner');
+                if (!banner) {
+                    return;
+                }
+
+                function setConsent(value) {
+                    localStorage.setItem('cms_cookie_consent', value);
+                    banner.style.display = 'none';
+                }
+
                 if (!localStorage.getItem('cms_cookie_consent')) {
                     banner.style.display = 'block';
                 }
-                window.cmsAcceptCookies = function() {
-                    localStorage.setItem('cms_cookie_consent', 'all');
-                    banner.style.display = 'none';
-                    // Here one could trigger loading of analytics scripts
-                };
-                window.cmsDeclineCookies = function() {
-                    localStorage.setItem('cms_cookie_consent', 'essential');
-                    banner.style.display = 'none';
-                };
+
+                banner.querySelectorAll('[data-cookie-action]').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        var action = button.getAttribute('data-cookie-action');
+                        setConsent(action === 'all' ? 'all' : 'essential');
+                    });
+                });
             })();
         </script>
 HTML;
@@ -585,7 +592,7 @@ HTML;
                 <ul class="sidebar-feed-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
                     <?php foreach ($items as $item) :
                         $iTitle = htmlspecialchars(_field($item, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
-                        $iLink  = htmlspecialchars(_field($item, 'link', '#'), ENT_QUOTES, 'UTF-8');
+                        $iLink  = htmlspecialchars(theme_safe_external_url(_field($item, 'link', '#')) ?: '#', ENT_QUOTES, 'UTF-8');
                         $iDate  = _field($item, 'pub_date', '');
                         $iDateF = $iDate ? date('d.m.Y', strtotime($iDate)) : '';
                     ?>
@@ -735,10 +742,10 @@ HTML;
                 <ul class="sidebar-blog-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
                     <?php foreach ($posts as $post) :
                         $pTitle = htmlspecialchars(_field($post, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
-                        $pSlug  = _field($post, 'slug', '');
+                        $pSlug  = rawurlencode(_field($post, 'slug', ''));
                         $pDate  = _field($post, 'published_at', '');
                         $pDateF = $pDate ? date('d.m.Y', strtotime($pDate)) : '';
-                        $pUrl   = htmlspecialchars($siteUrl . '/blog/' . $pSlug, ENT_QUOTES, 'UTF-8');
+                        $pUrl   = htmlspecialchars(theme_safe_url($siteUrl . '/blog/' . $pSlug, $siteUrl . '/blog'), ENT_QUOTES, 'UTF-8');
                     ?>
                     <li style="border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.625rem;">
                         <a href="<?php echo $pUrl; ?>"
@@ -773,7 +780,7 @@ HTML;
         }
         ?>
         <div class="sidebar-panel" data-widget="custom-html">
-            <?php echo $html; ?>
+            <?php echo theme_sanitize_html($html, 'default'); ?>
         </div>
         <?php
     }
@@ -781,6 +788,84 @@ HTML;
 
 // Theme initialisieren
 IT_Expert_Network_Theme::instance();
+
+if (!function_exists('_field')) {
+    function _field($row, string $key, string $default = ''): string
+    {
+        if (is_array($row)) {
+            return (string)($row[$key] ?? $default);
+        }
+        if (is_object($row)) {
+            return (string)($row->{$key} ?? $default);
+        }
+
+        return $default;
+    }
+}
+
+function theme_sanitize_html(string $html, string $profile = 'default'): string
+{
+    if ($html === '') {
+        return '';
+    }
+
+    if (function_exists('sanitize_html')) {
+        return (string) sanitize_html($html, $profile);
+    }
+
+    return strip_tags($html);
+}
+
+function theme_safe_url(string $url, string $fallback = ''): string
+{
+    $sanitized = function_exists('esc_url') ? esc_url($url) : (filter_var($url, FILTER_SANITIZE_URL) ?: '');
+    if ($sanitized !== '') {
+        return $sanitized;
+    }
+
+    return $fallback;
+}
+
+function theme_safe_external_url(string $url): string
+{
+    $sanitized = theme_safe_url($url);
+    if ($sanitized === '' || !preg_match('#^https?://#i', $sanitized)) {
+        return '';
+    }
+
+    return $sanitized;
+}
+
+function theme_build_query_url(string $basePath, array $params = [], array $overrides = []): string
+{
+    $path = $basePath !== '' ? $basePath : (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+    $query = array_merge($params, $overrides);
+    $normalized = [];
+
+    foreach ($query as $key => $value) {
+        $normalizedKey = function_exists('sanitize_key') ? sanitize_key((string) $key) : preg_replace('/[^a-z0-9_\-]/i', '', (string) $key);
+        if ($normalizedKey === '') {
+            continue;
+        }
+
+        if ($value === null || $value === '' || $value === false) {
+            continue;
+        }
+
+        if (is_bool($value)) {
+            $normalized[$normalizedKey] = $value ? '1' : '0';
+            continue;
+        }
+
+        if (is_scalar($value)) {
+            $normalized[$normalizedKey] = (string) $value;
+        }
+    }
+
+    $queryString = $normalized ? ('?' . http_build_query($normalized)) : '';
+
+    return theme_safe_url($path . $queryString, $path);
+}
 
 /**
  * Helper: Aktuelle URL bestimmen

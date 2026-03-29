@@ -24,9 +24,9 @@ $siteUrl = SITE_URL;
 // Variablen vorbereiten
 $pTitle   = htmlspecialchars($post->title ?? '', ENT_QUOTES, 'UTF-8');
 $pSlug    = $post->slug ?? '';
-$pContent = $post->content ?? '';
+$pContent = theme_sanitize_html((string)($post->content ?? ''), 'default');
 $pExcerpt = htmlspecialchars($post->excerpt ?? '', ENT_QUOTES, 'UTF-8');
-$pDate    = isset($post->published_at) ? time_ago($post->published_at) : '';
+$pDate    = isset($post->published_at) ? htmlspecialchars((string)time_ago($post->published_at), ENT_QUOTES, 'UTF-8') : '';
 $pDateLong = $pDate;
 $pAuthor  = htmlspecialchars($post->author_name ?? 'Redaktion', ENT_QUOTES, 'UTF-8');
 $pAuthIni = mb_strtoupper(mb_substr($pAuthor, 0, 2));
@@ -76,7 +76,7 @@ try {
             <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog">Blog</a>
             <?php if ($pCat) : ?>
                 <span class="sep">›</span>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog?category=<?php echo urlencode($pCatSlug); ?>"><?php echo $pCat; ?></a>
+                <a href="<?php echo htmlspecialchars(theme_build_query_url('/blog', ['category' => $pCatSlug]), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $pCat; ?></a>
             <?php endif; ?>
             <span class="sep">›</span>
             <span class="current"><?php echo $pTitle; ?></span>
@@ -126,7 +126,7 @@ try {
                 <span class="tags-label">🏷️ Tags:</span>
                 <div class="blog-article__tags">
                     <?php foreach ($pTags as $tag) : ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog?tag=<?php echo urlencode($tag); ?>" class="tag-pill">
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/blog', ['tag' => $tag]), ENT_QUOTES, 'UTF-8'); ?>" class="tag-pill">
                         <?php echo htmlspecialchars($tag, ENT_QUOTES, 'UTF-8'); ?>
                     </a>
                     <?php endforeach; ?>
@@ -156,11 +156,11 @@ try {
                 <?php foreach ($relatedPosts as $rp) :
                     $rArr   = (array)$rp;
                     $rTitle = htmlspecialchars($rArr['title'] ?? '', ENT_QUOTES, 'UTF-8');
-                    $rSlug  = $rArr['slug'] ?? '';
+                    $rSlug  = rawurlencode((string)($rArr['slug'] ?? ''));
                     $rCat   = htmlspecialchars($rArr['category_name'] ?? '', ENT_QUOTES, 'UTF-8');
-                    $rUrl   = htmlspecialchars($siteUrl . '/blog/' . $rSlug, ENT_QUOTES, 'UTF-8');
-                    $rImage = $rArr['featured_image'] ?? '';
-                    $rDate  = isset($rArr['published_at']) ? time_ago($rArr['published_at']) : '';
+                    $rUrl   = htmlspecialchars(theme_safe_url($siteUrl . '/blog/' . $rSlug, $siteUrl . '/blog'), ENT_QUOTES, 'UTF-8');
+                    $rImage = theme_safe_url((string)($rArr['featured_image'] ?? ''));
+                    $rDate  = isset($rArr['published_at']) ? htmlspecialchars((string)time_ago($rArr['published_at']), ENT_QUOTES, 'UTF-8') : '';
                 ?>
                 <a href="<?php echo $rUrl; ?>" class="blog-related__card">
                     <?php if ($rImage) : ?>

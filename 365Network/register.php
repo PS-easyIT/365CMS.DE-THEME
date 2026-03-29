@@ -5,6 +5,8 @@
  * @package IT_Expert_Network_Theme
  */
 
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -12,19 +14,24 @@ if (!defined('ABSPATH')) {
 $siteUrl      = SITE_URL;
 $themeManager = \CMS\ThemeManager::instance();
 $siteTitle    = $themeManager->getSiteTitle();
-$logoUrl      = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
+$logoUrl      = theme_safe_url((string) \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', ''), '');
 $error        = theme_get_flash('error');
 $success      = theme_get_flash('success');
+$registerUrl  = theme_safe_url($siteUrl . '/register', $siteUrl . '/register');
+$loginUrl     = theme_safe_url($siteUrl . '/login', $siteUrl . '/login');
+$homeUrl      = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$privacyUrl   = theme_safe_url($siteUrl . '/datenschutz', $siteUrl . '/datenschutz');
+$termsUrl     = theme_safe_url($siteUrl . '/agb', $siteUrl . '/agb');
 
 // Felder aus fehlgeschlagenem Submit wiederherstellen
 $savedUsername = htmlspecialchars($_POST['username'] ?? '', ENT_QUOTES, 'UTF-8');
 $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
 ?>
 
-<main id="main" role="main" style="background:linear-gradient(135deg,#e3f2fd 0%,#f5f9fc 100%);min-height:calc(100vh - 200px);display:flex;align-items:center;padding:var(--spacing-lg);">
-    <div style="width:100%;max-width:480px;margin:0 auto;">
+<main id="main" class="auth-shell" role="main">
+    <div class="auth-shell__inner auth-shell__inner--wide">
 
-        <div class="auth-card">
+        <div class="auth-card auth-card--wide">
 
             <!-- Logo -->
             <div class="auth-logo">
@@ -32,9 +39,9 @@ $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
                     <img src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
                          alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>"
                          loading="eager"
-                         style="max-height:60px;height:auto;margin:0 auto 0.75rem;display:block;">
+                         class="auth-logo-image">
                 <?php else : ?>
-                    <svg class="network-icon" style="width:56px;height:56px;color:var(--primary-color);margin:0 auto 0.75rem;display:block;"
+                    <svg class="network-icon auth-logo-icon"
                          viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <circle cx="30" cy="30" r="6" fill="currentColor"/>
                         <circle cx="15" cy="15" r="5" fill="currentColor"/>
@@ -65,7 +72,7 @@ $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
             <?php endif; ?>
 
             <!-- Register Form -->
-            <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register" novalidate>
+            <form method="POST" action="<?php echo htmlspecialchars($registerUrl, ENT_QUOTES, 'UTF-8'); ?>" novalidate>
                 <?php theme_csrf_field('register'); ?>
 
                 <div class="form-group">
@@ -118,28 +125,27 @@ $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
                 </div>
 
                 <!-- Datenschutz Checkbox -->
-                <div class="form-group" style="display:flex;gap:0.75rem;align-items:flex-start;">
-                    <input type="checkbox" id="privacy" name="privacy" required
-                           style="margin-top:0.25rem;flex-shrink:0;width:18px;height:18px;">
-                    <label for="privacy" style="font-size:0.875rem;line-height:1.5;cursor:pointer;">
+                <div class="form-group auth-consent">
+                    <input type="checkbox" id="privacy" name="privacy" required class="auth-consent__checkbox">
+                    <label for="privacy" class="auth-consent__label">
                         Ich stimme der
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/datenschutz" target="_blank">Datenschutzerklärung</a>
+                        <a href="<?php echo htmlspecialchars($privacyUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>
                         zu und akzeptiere die
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/agb" target="_blank">AGB</a>.
+                        <a href="<?php echo htmlspecialchars($termsUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">AGB</a>.
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%;margin-top:var(--spacing-sm);">
+                <button type="submit" class="btn btn-primary auth-submit auth-submit--compact">
                     Konto erstellen
                 </button>
             </form>
 
             <div class="auth-footer">
                 <p>Bereits registriert?
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login">Jetzt anmelden</a>
+                    <a href="<?php echo htmlspecialchars($loginUrl, ENT_QUOTES, 'UTF-8'); ?>">Jetzt anmelden</a>
                 </p>
-                <p style="margin-top:0.5rem;">
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/">← Zurück zur Startseite</a>
+                <p class="auth-footer-note">
+                    <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">← Zurück zur Startseite</a>
                 </p>
             </div>
 
