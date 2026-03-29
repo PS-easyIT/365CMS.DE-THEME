@@ -9,6 +9,8 @@
  * @var array $page
  */
 
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -23,6 +25,8 @@ $pageTitle   = $page['title'] ?? '';
 $pageContent = $page['content'] ?? '';
 $pageSlug    = $page['slug'] ?? '';
 $updatedAt   = $page['updated_at'] ?? '';
+$updatedTimestamp = $updatedAt ? strtotime((string) $updatedAt) : false;
+$safePageContent = theme_sanitize_html((string) $pageContent, 'default');
 
 // SEO: Seitentitel im <head> aktualisieren (über Output-Buffer nicht möglich nach Header-Output)
 // → Seitentitel wird über ThemeManager::getSiteTitle() in header.php ausgegeben.
@@ -31,7 +35,7 @@ $updatedAt   = $page['updated_at'] ?? '';
 
 <main id="main" class="site-main" role="main">
     <div class="container">
-        <article class="content-area" style="padding:var(--spacing-lg) 0;">
+        <article class="content-area content-area--page">
 
             <?php if ($pageTitle && trim($pageTitle) !== '') : ?>
                 <header class="entry-header">
@@ -39,31 +43,20 @@ $updatedAt   = $page['updated_at'] ?? '';
                 </header>
             <?php endif; ?>
 
-            <?php if ($pageContent && trim($pageContent) !== '') : ?>
+            <?php if ($safePageContent !== '') : ?>
                 <div class="page-content entry-content">
-                    <?php
-                    // Inhalt mit erlaubten Tags ausgeben (kB safe HTML)
-                    $allowedTagsStr = '<p><br><strong><b><em><i><u><s>'
-                        . '<h1><h2><h3><h4><h5><h6>'
-                        . '<ul><ol><li>'
-                        . '<a><img>'
-                        . '<blockquote><pre><code>'
-                        . '<table><thead><tbody><tr><th><td>'
-                        . '<div><span><section><article><aside>'
-                        . '<hr><figure><figcaption>';
-                    echo strip_tags($pageContent, $allowedTagsStr);
-                    ?>
+                    <?php echo $safePageContent; ?>
                 </div>
             <?php else : ?>
-                <div class="page-content" style="color:#666;font-style:italic;">
+                <div class="page-content page-content--empty">
                     <p>Diese Seite enthält noch keinen Inhalt.</p>
                 </div>
             <?php endif; ?>
 
-            <?php if ($updatedAt && trim($updatedAt) !== '') : ?>
-                <footer class="entry-footer" style="margin-top:var(--spacing-lg);padding-top:var(--spacing-md);border-top:1px solid var(--border-color);">
-                    <span class="entry-meta" style="font-size:0.8rem;color:#888;">
-                        Zuletzt aktualisiert: <?php echo htmlspecialchars(date('d.m.Y', strtotime($updatedAt)), ENT_QUOTES, 'UTF-8'); ?>
+            <?php if ($updatedTimestamp) : ?>
+                <footer class="entry-footer entry-footer--page">
+                    <span class="entry-meta entry-meta--subtle">
+                        Zuletzt aktualisiert: <?php echo htmlspecialchars(date('d.m.Y', $updatedTimestamp), ENT_QUOTES, 'UTF-8'); ?>
                     </span>
                 </footer>
             <?php endif; ?>

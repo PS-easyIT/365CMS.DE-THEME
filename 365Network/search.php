@@ -59,13 +59,12 @@ $typeBadges = [
 
             <!-- Suchformular -->
             <form action="<?php echo htmlspecialchars($searchUrl, ENT_QUOTES, 'UTF-8'); ?>" method="GET" class="search-form">
-                <input class="form-control"
-                       type="search"
+                  <input type="search"
                        name="q"
                        placeholder="Suche nach Seiten, Themen…"
                        value="<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>"
                        aria-label="Suchbegriff"
-                       class="search-form__input">
+                      class="form-control search-form__input">
                 <button type="submit" class="btn btn-primary">Suchen</button>
             </form>
 

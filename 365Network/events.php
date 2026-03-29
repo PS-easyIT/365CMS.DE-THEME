@@ -27,6 +27,8 @@ $prefix    = $db->prefix();
 $pluginMgr = \CMS\PluginManager::instance();
 $siteUrl   = SITE_URL;
 $hasPlugin = $pluginMgr->isPluginActive('cms-events');
+$homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$eventsBaseUrl = theme_safe_url($siteUrl . '/events', $siteUrl . '/events');
 
 // ── Parameter ──
 $search   = trim(strip_tags($_GET['q'] ?? ''));
@@ -155,7 +157,7 @@ require_once __DIR__ . '/header.php';
 
     <nav class="breadcrumb-bar" aria-label="Pfadnavigation">
         <div class="container">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">Startseite</a>
             <span class="breadcrumb-sep">›</span>
             <span aria-current="page">Events</span>
         </div>
@@ -220,7 +222,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $type || $location || $month): ?>
                     <div class="filter-panel">
-                        <a href="/events<?php echo $past ? '?past=1' : ''; ?>" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', [], ['past' => $past ? '1' : '']), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -256,6 +258,7 @@ require_once __DIR__ . '/header.php';
                     $online  = (bool)(is_array($ev) ? ($ev['is_online'] ?? false) : ($ev->is_online ?? false));
                     $featd   = (bool)(is_array($ev) ? ($ev['is_featured'] ?? false) : ($ev->is_featured ?? false));
                     $price   = is_array($ev) ? ($ev['price_type']  ?? 'free') : ($ev->price_type  ?? 'free');
+                    $detailUrl = theme_safe_url($siteUrl . '/events/' . (int) $id, $eventsBaseUrl);
 
                     // Datum formatieren
                     $evDateFormatted = '';
@@ -277,7 +280,7 @@ require_once __DIR__ . '/header.php';
                     <?php if ($online): ?><span class="event-badge event-badge--online">🖥️ Online</span><?php endif; ?>
                     <?php if ($image): ?>
                         <div class="event-card-image">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/events/<?php echo (int)$id; ?>">
+                            <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                 <img src="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>"
                                      alt="<?php echo $title; ?>" loading="lazy" width="400" height="200">
                             </a>
@@ -291,7 +294,7 @@ require_once __DIR__ . '/header.php';
                         </div>
                         <?php endif; ?>
                         <h2 class="event-card-title">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/events/<?php echo (int)$id; ?>">
+                            <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo $title; ?>
                             </a>
                         </h2>
@@ -305,7 +308,7 @@ require_once __DIR__ . '/header.php';
                             <?php
                             $priceLabel = match ($price) { 'free' => '🆓 Kostenlos', 'paid' => '💳 Kostenpflichtig', 'donation' => '💝 Spende', default => '' };
                             if ($priceLabel): ?><span class="event-price-badge"><?php echo $priceLabel; ?></span><?php endif; ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/events/<?php echo (int)$id; ?>"
+                            <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                class="btn btn-primary btn-sm">Details</a>
                         </div>
                     </div>
@@ -318,7 +321,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">📅</div>
                 <h3>Keine Events gefunden</h3>
                 <p><?php echo $past ? 'Keine vergangenen Events mit diesen Filtern.' : 'Aktuell keine kommenden Events geplant.'; ?></p>
-                <a href="/events" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
+                <a href="<?php echo htmlspecialchars(theme_build_query_url('/events', [], ['past' => $past ? '1' : '']), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>

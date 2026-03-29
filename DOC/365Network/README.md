@@ -1,7 +1,7 @@
 # 365Network Theme – Dokumentation
 
 > **Theme-Slug:** `365Network`  
-> **Version:** 3.4.4  
+> **Version:** 3.4.5  
 > **Design:** Deep Navy (#0c1526) + Gold (#c8952e)  
 > **Typ:** Dashboard-orientiertes IT-Experten-Netzwerk-Theme
 
@@ -30,7 +30,11 @@ Das 365Network-Theme ist ein **Dashboard-Style-Theme** für die 365CMS-Plattform
 - Query-Link-Generierung läuft jetzt zentralisiert und fail-closed über Theme-Helper statt rohe `$_GET`-Merges zu rendern.
 - Der Customizer escaped dynamische Feldattribute explizit und prüft Uploads zusätzlich auf MIME-Type und Größenlimit.
 - Zweite Audit-Welle in `v3.4.4`: Auth-/Search-Templates bereinigt, Header-Canvas-Script in `js/theme.js` verlagert, Footer-/Logo-/Social-URLs fail-closed gehärtet.
-- Aktuelle manuelle Audit-Scorecard: **Security 94/100 · Best Practice 92/100 · Performance 89/100 · Maintainability 91/100**.
+- Dritte bis fünfte Audit-Welle in `v3.4.5`: `page.php`, `blog.php`, `blog-single.php`, `home.php`, `index.php`, `feeds.php`, `error.php` sowie die Directory-Templates und Sidebar-Widgets wurden weiter von Inline-Stilen, rohen Linkpfaden und unvollständigen Filterzuständen bereinigt.
+- Feinschliff-Batch in `v3.4.5`: `theme_route_path()` / `theme_route_url()` etablieren eine gemeinsame interne Link-Factory; Search-Overlay und Mobile-Drawer wurden bei Fokusführung/ARIA geschärft, und das Cookie-Banner bzw. die Header-Canvas-Animation laufen ressourcenschonender.
+- Der eingebettete Theme-Customizer respektiert jetzt den bereits durch die Admin-Shell geprüften `theme_customizer`-Token und blockiert legitime Speichervorgänge nicht mehr mit einem doppelten CSRF-Check.
+- In den Theme-PHP-Templates verbleiben nach aktuellem Audit keine eingebetteten `<style>`-Blöcke mehr; Frontend-Styling sitzt jetzt konsistenter in `style.css`.
+- Aktuelle manuelle Audit-Scorecard: **Security 97/100 · Best Practice 96/100 · Performance 94/100 · Maintainability 97/100**.
 
 ### Design-Philosophie
 

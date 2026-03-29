@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('THEME_VERSION', '3.4.2');
+define('THEME_VERSION', '3.4.5');
 define('THEME_DIR', THEME_PATH . '365Network/');
 define('THEME_URL_BASE', \CMS\ThemeManager::instance()->getThemeUrl());
 
@@ -116,62 +116,24 @@ class IT_Expert_Network_Theme
         }
 
         // Defaults
-        $pos = $settings['cookie_banner_position'] ?: 'bottom';
+        $pos = $settings['cookie_banner_position'] === 'modal' ? 'modal' : 'bottom';
         $text = htmlspecialchars($settings['cookie_banner_text'] ?: 'Wir verwenden Cookies.', ENT_QUOTES, 'UTF-8');
         $btnAccept = htmlspecialchars($settings['cookie_accept_text'] ?: 'Akzeptieren', ENT_QUOTES, 'UTF-8');
         $btnEssential = htmlspecialchars($settings['cookie_essential_text'] ?: 'Nur Essenzielle', ENT_QUOTES, 'UTF-8');
         $linkPolicy = htmlspecialchars(theme_safe_url((string)($settings['cookie_policy_url'] ?: '#'), '#'), ENT_QUOTES, 'UTF-8');
         $color = htmlspecialchars($settings['cookie_primary_color'] ?: '#3b82f6', ENT_QUOTES, 'UTF-8');
 
-        // Styles
-        $style = 'background:white; color:#333; box-shadow:0 0 10px rgba(0,0,0,0.1); padding:1rem; z-index:9999; display:none;';
-        if ($pos === 'bottom') {
-            $style .= 'position:fixed; bottom:0; left:0; width:100%; border-top:1px solid #eee;';
-        } else {
-            $style .= 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:500px; border-radius:8px;';
-        }
-
-        // HTML & Logic
         echo <<<HTML
-        <style>
-            #cms-cookie-banner { {$style} font-family:sans-serif; font-size:14px; line-height:1.5; }
-            #cms-cookie-banner p { margin:0 0 1rem 0; }
-            #cms-cookie-actions { display:flex; gap:10px; justify-content:flex-end; }
-            .cms-cookie-btn { border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:bold; }
-            .cms-cookie-accept { background:{$color}; color:white; }
-            .cms-cookie-essential { background:#eee; color:#333; }
-        </style>
-        <div id="cms-cookie-banner">
-            <p>{$text} <a href="{$linkPolicy}" style="color:{$color}">Mehr erfahren</a></p>
-            <div id="cms-cookie-actions">
-                <button class="cms-cookie-btn cms-cookie-essential" type="button" data-cookie-action="essential">{$btnEssential}</button>
-                <button class="cms-cookie-btn cms-cookie-accept" type="button" data-cookie-action="all">{$btnAccept}</button>
+        <div id="cms-cookie-banner"
+             class="cms-cookie-banner cms-cookie-banner--{$pos}"
+             data-cookie-banner
+             data-cookie-accent="{$color}">
+            <p class="cms-cookie-banner__text">{$text} <a href="{$linkPolicy}" class="cms-cookie-banner__link">Mehr erfahren</a></p>
+            <div class="cms-cookie-banner__actions">
+                <button class="cms-cookie-btn cms-cookie-btn--secondary" type="button" data-cookie-action="essential">{$btnEssential}</button>
+                <button class="cms-cookie-btn cms-cookie-btn--primary" type="button" data-cookie-action="all">{$btnAccept}</button>
             </div>
         </div>
-        <script>
-            (function() {
-                var banner = document.getElementById('cms-cookie-banner');
-                if (!banner) {
-                    return;
-                }
-
-                function setConsent(value) {
-                    localStorage.setItem('cms_cookie_consent', value);
-                    banner.style.display = 'none';
-                }
-
-                if (!localStorage.getItem('cms_cookie_consent')) {
-                    banner.style.display = 'block';
-                }
-
-                banner.querySelectorAll('[data-cookie-action]').forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        var action = button.getAttribute('data-cookie-action');
-                        setConsent(action === 'all' ? 'all' : 'essential');
-                    });
-                });
-            })();
-        </script>
 HTML;
     }
 
@@ -589,20 +551,20 @@ HTML;
         <div class="sidebar-panel" data-widget="feed">
             <h3><?php echo $title; ?></h3>
             <?php if (!empty($items)) : ?>
-                <ul class="sidebar-feed-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
+                <ul class="sidebar-feed-list">
                     <?php foreach ($items as $item) :
                         $iTitle = htmlspecialchars(_field($item, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
                         $iLink  = htmlspecialchars(theme_safe_external_url(_field($item, 'link', '#')) ?: '#', ENT_QUOTES, 'UTF-8');
                         $iDate  = _field($item, 'pub_date', '');
                         $iDateF = $iDate ? date('d.m.Y', strtotime($iDate)) : '';
                     ?>
-                    <li style="border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.625rem;">
+                    <li class="sidebar-feed-list__item">
                         <a href="<?php echo $iLink; ?>" target="_blank" rel="noopener noreferrer"
-                           style="color:var(--sidebar-title-color, #1e293b);text-decoration:none;font-size:.85rem;font-weight:500;display:block;">
+                           class="sidebar-feed-list__link">
                             <?php echo $iTitle; ?>
                         </a>
                         <?php if ($iDateF) : ?>
-                            <span style="font-size:.75rem;color:var(--muted-color, #94a3b8);">📅 <?php echo $iDateF; ?></span>
+                            <span class="sidebar-feed-list__meta">📅 <?php echo $iDateF; ?></span>
                         <?php endif; ?>
                     </li>
                     <?php endforeach; ?>
@@ -644,40 +606,41 @@ HTML;
         if (!$hasSpeakers && empty($items)) {
             return; // Kein Widget wenn Plugin nicht aktiv
         }
-        $siteUrl = SITE_URL;
+        $speakersUrl = theme_route_url('speakers');
         ?>
         <div class="sidebar-panel" data-widget="speakers">
             <h3>🎤 Featured Speaker</h3>
             <?php if (!empty($items)) : ?>
-                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.625rem;">
+                <ul class="sidebar-speaker-list">
                     <?php foreach ($items as $sp) :
                         $spName   = htmlspecialchars(_field($sp, 'name', 'Speaker'), ENT_QUOTES, 'UTF-8');
                         $spTopics = _field($sp, 'topics', '');
                         $spFirst  = $spTopics ? htmlspecialchars(explode(',', $spTopics)[0], ENT_QUOTES, 'UTF-8') : '';
                         $spEvents = (int)_field($sp, 'total_events', 0);
                         $spId     = (int)_field($sp, 'id', 0);
+                        $spUrl    = htmlspecialchars(theme_route_url('speaker', ['id' => (string) $spId], [], $speakersUrl), ENT_QUOTES, 'UTF-8');
                     ?>
-                    <li style="display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.5rem;">
-                        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-color,#c8952e);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0;">
+                    <li class="sidebar-speaker-list__item">
+                        <div class="sidebar-speaker-list__avatar">
                             <?php echo mb_strtoupper(mb_substr($spName, 0, 1)); ?>
                         </div>
-                        <div style="flex:1;min-width:0;">
-                            <a href="<?php echo htmlspecialchars($siteUrl . '/speakers/' . $spId, ENT_QUOTES, 'UTF-8'); ?>"
-                               style="color:var(--sidebar-title-color,#1e293b);text-decoration:none;font-size:.83rem;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        <div class="sidebar-speaker-list__content">
+                            <a href="<?php echo $spUrl; ?>"
+                               class="sidebar-speaker-list__link">
                                 <?php echo $spName; ?>
                             </a>
                             <?php if ($spFirst) : ?>
-                                <span style="font-size:.72rem;color:var(--muted-color,#94a3b8);"><?php echo $spFirst; ?></span>
+                                <span class="sidebar-speaker-list__topic"><?php echo $spFirst; ?></span>
                             <?php endif; ?>
                         </div>
                         <?php if ($spEvents > 0) : ?>
-                            <span style="font-size:.72rem;color:var(--accent-color,#c8952e);white-space:nowrap;"><?php echo $spEvents; ?> Events</span>
+                            <span class="sidebar-speaker-list__count"><?php echo $spEvents; ?> Events</span>
                         <?php endif; ?>
                     </li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers"
-                   style="display:inline-block;margin-top:.75rem;font-size:.8rem;color:var(--accent-color);text-decoration:none;font-weight:600;">
+                <a href="<?php echo htmlspecialchars($speakersUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                   class="sidebar-panel__footer-link">
                     Alle Speaker →
                 </a>
             <?php endif; ?>
@@ -734,36 +697,36 @@ HTML;
             $posts = $stmt->fetchAll() ?: [];
         } catch (\Throwable $e) { /* posts-Tabelle ggf. nicht vorhanden */ }
 
-        $siteUrl = SITE_URL;
+        $blogUrl = theme_route_url('blog');
         ?>
         <div class="sidebar-panel" data-widget="blog">
             <h3><?php echo $title; ?></h3>
             <?php if (!empty($posts)) : ?>
-                <ul class="sidebar-blog-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.75rem;">
+                <ul class="sidebar-blog-list">
                     <?php foreach ($posts as $post) :
                         $pTitle = htmlspecialchars(_field($post, 'title', 'Beitrag'), ENT_QUOTES, 'UTF-8');
                         $pSlug  = rawurlencode(_field($post, 'slug', ''));
                         $pDate  = _field($post, 'published_at', '');
                         $pDateF = $pDate ? date('d.m.Y', strtotime($pDate)) : '';
-                        $pUrl   = htmlspecialchars(theme_safe_url($siteUrl . '/blog/' . $pSlug, $siteUrl . '/blog'), ENT_QUOTES, 'UTF-8');
+                        $pUrl   = htmlspecialchars(theme_route_url('blog-post', ['slug' => $pSlug], [], $blogUrl), ENT_QUOTES, 'UTF-8');
                     ?>
-                    <li style="border-bottom:1px solid var(--sidebar-widget-border, #e2e8f0);padding-bottom:.625rem;">
+                    <li class="sidebar-blog-list__item">
                         <a href="<?php echo $pUrl; ?>"
-                           style="color:var(--sidebar-title-color, #1e293b);text-decoration:none;font-size:.85rem;font-weight:500;display:block;">
+                           class="sidebar-blog-list__link">
                             <?php echo $pTitle; ?>
                         </a>
                         <?php if ($pDateF) : ?>
-                            <span style="font-size:.75rem;color:var(--muted-color, #94a3b8);">📅 <?php echo $pDateF; ?></span>
+                            <span class="sidebar-blog-list__meta">📅 <?php echo $pDateF; ?></span>
                         <?php endif; ?>
                     </li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog"
-                   style="display:inline-block;margin-top:.75rem;font-size:.8rem;color:var(--accent-color);text-decoration:none;font-weight:600;">
+                <a href="<?php echo htmlspecialchars($blogUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                   class="sidebar-panel__footer-link">
                     Alle Beiträge →
                 </a>
             <?php else : ?>
-                <p style="font-size:.85rem;color:var(--muted-color, #94a3b8);">Noch keine Beiträge vorhanden.</p>
+                <p class="sidebar-panel__empty-text">Noch keine Beiträge vorhanden.</p>
             <?php endif; ?>
         </div>
         <?php
@@ -816,14 +779,48 @@ function theme_sanitize_html(string $html, string $profile = 'default'): string
     return strip_tags($html);
 }
 
+function theme_has_relative_reference_prefix(string $value): bool
+{
+    return str_starts_with($value, '/')
+        || str_starts_with($value, './')
+        || str_starts_with($value, '../')
+        || str_starts_with($value, '?')
+        || str_starts_with($value, '#');
+}
+
 function theme_safe_url(string $url, string $fallback = ''): string
 {
-    $sanitized = function_exists('esc_url') ? esc_url($url) : (filter_var($url, FILTER_SANITIZE_URL) ?: '');
-    if ($sanitized !== '') {
+    $candidate = trim($url);
+    if ($candidate === '') {
+        return $fallback !== '' ? theme_safe_url($fallback) : '';
+    }
+
+    if (preg_match('/[\x00-\x1F\x7F]/', $candidate) === 1) {
+        return $fallback !== '' ? theme_safe_url($fallback) : '';
+    }
+
+    if (theme_has_relative_reference_prefix($candidate)) {
+        return $candidate;
+    }
+
+    if (str_starts_with($candidate, '//')) {
+        return $fallback !== '' ? theme_safe_url($fallback) : '';
+    }
+
+    $scheme = parse_url($candidate, PHP_URL_SCHEME);
+    if ($scheme !== null && $scheme !== false) {
+        $normalizedScheme = strtolower((string) $scheme);
+        if (!in_array($normalizedScheme, ['http', 'https'], true)) {
+            return $fallback !== '' ? theme_safe_url($fallback) : '';
+        }
+    }
+
+    $sanitized = function_exists('esc_url') ? esc_url($candidate) : (filter_var($candidate, FILTER_VALIDATE_URL) ?: '');
+    if (is_string($sanitized) && $sanitized !== '') {
         return $sanitized;
     }
 
-    return $fallback;
+    return $fallback !== '' ? theme_safe_url($fallback) : '';
 }
 
 function theme_safe_external_url(string $url): string
@@ -839,6 +836,7 @@ function theme_safe_external_url(string $url): string
 function theme_build_query_url(string $basePath, array $params = [], array $overrides = []): string
 {
     $path = $basePath !== '' ? $basePath : (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+    $path = theme_has_relative_reference_prefix($path) ? $path : '/' . ltrim($path, '/');
     $query = array_merge($params, $overrides);
     $normalized = [];
 
@@ -865,6 +863,76 @@ function theme_build_query_url(string $basePath, array $params = [], array $over
     $queryString = $normalized ? ('?' . http_build_query($normalized)) : '';
 
     return theme_safe_url($path . $queryString, $path);
+}
+
+function theme_route_path(string $route, array $params = []): string
+{
+    $routes = [
+        'home' => '/',
+        'search' => '/search',
+        'login' => '/login',
+        'register' => '/register',
+        'logout' => '/logout',
+        'blog' => '/blog',
+        'blog-post' => '/blog/{slug}',
+        'experts' => '/experts',
+        'expert' => '/experts/{id}',
+        'companies' => '/companies',
+        'company' => '/companies/{id}',
+        'events' => '/events',
+        'event' => '/events/{id}',
+        'speakers' => '/speakers',
+        'speaker' => '/speakers/{id}',
+        'jobs' => '/jobs',
+        'job' => '/jobs/{id}',
+        'booking' => '/booking',
+        'member-dashboard' => '/{area}',
+        'member-notifications' => '/member/notifications',
+        'member-expert-profile' => '/member/expert-profile',
+        'member-companies' => '/member/companies',
+        'member-events' => '/member/events',
+        'member-speaker-profile' => '/member/speaker-profile',
+        'member-settings' => '/member/settings',
+    ];
+
+    $template = $routes[$route] ?? $route;
+    $path = theme_has_relative_reference_prefix($template) ? $template : '/' . ltrim($template, '/');
+
+    $resolved = preg_replace_callback('/\{([a-z0-9_]+)\}/i', static function (array $matches) use ($params): string {
+        $key = $matches[1];
+        if (!array_key_exists($key, $params) || !is_scalar($params[$key])) {
+            return '';
+        }
+
+        $value = trim(strip_tags((string) $params[$key]));
+        if ($value === '') {
+            return '';
+        }
+
+        $segments = array_filter(
+            explode('/', str_replace('\\', '/', $value)),
+            static fn(string $segment): bool => $segment !== ''
+        );
+
+        if ($segments === []) {
+            return '';
+        }
+
+        return implode('/', array_map('rawurlencode', $segments));
+    }, $path);
+
+    $normalized = preg_replace('#/+#', '/', $resolved ?? '/') ?? '/';
+
+    return $normalized !== '' ? $normalized : '/';
+}
+
+function theme_route_url(string $route, array $params = [], array $query = [], string $fallback = ''): string
+{
+    $path = theme_route_path($route, $params);
+    $relativeUrl = $query !== [] ? theme_build_query_url($path, $query) : $path;
+    $absoluteUrl = rtrim(SITE_URL, '/') . ($relativeUrl === '/' ? '/' : $relativeUrl);
+
+    return theme_safe_url($absoluteUrl, $fallback !== '' ? $fallback : (rtrim(SITE_URL, '/') . '/'));
 }
 
 /**
@@ -964,13 +1032,14 @@ function theme_nav_menu(string $location = 'primary'): void
         return; 
     }
 
-    echo '<ul class="nav-menu" style="list-style:none;padding:0;margin:0;">' . "\n";
+    echo '<ul class="nav-menu">' . "\n";
     foreach ($menuItems as $item) {
-        $isActive = theme_is_active_url($item['url'] ?? '');
+        $safeUrl = theme_safe_url((string)($item['url'] ?? ''), '#');
+        $isActive = $safeUrl !== '#' && theme_is_active_url($safeUrl);
         $class    = $isActive ? ' class="active"' : '';
         $target   = !empty($item['target']) && $item['target'] === '_blank'
             ? ' target="_blank" rel="noopener noreferrer"' : '';
-        $url   = htmlspecialchars($item['url'] ?? '#',   ENT_QUOTES, 'UTF-8');
+        $url   = htmlspecialchars($safeUrl, ENT_QUOTES, 'UTF-8');
         $label = htmlspecialchars($item['label'] ?? '', ENT_QUOTES, 'UTF-8');
         echo '<li' . $class . '><a href="' . $url . '"' . $target . '>' . $label . '</a></li>' . "\n";
     }

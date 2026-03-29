@@ -17,6 +17,8 @@ use CMS\Services\ThemeCustomizer;
 use CMS\Auth;
 use CMS\Security;
 
+$embedInAdminLayout = !empty($embedInAdminLayout);
+
 function theme_customizer_normalize_color(mixed $value, string $fallback = '#000000'): string
 {
     $candidate = trim((string) $value);
@@ -83,6 +85,17 @@ function theme_customizer_normalize_value(string $tab, string $fieldKey, array $
 if (!Auth::instance()->isAdmin()) {
     header('Location: ' . SITE_URL);
     exit;
+}
+
+function theme_customizer_verify_request_csrf(string $token, string $action = 'theme_customizer'): bool
+{
+    if (function_exists('cms_admin_section_shell_was_csrf_verified')
+        && cms_admin_section_shell_was_csrf_verified($action)
+    ) {
+        return true;
+    }
+
+    return Security::instance()->verifyToken($token, $action);
 }
 
 // Helper für Sidebar laden
@@ -1233,7 +1246,7 @@ $success = null;
 $error   = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'reset_theme_tab') {
-    if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'theme_customizer')) {
+    if (!theme_customizer_verify_request_csrf((string) ($_POST['csrf_token'] ?? ''), 'theme_customizer')) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
         $resetTab   = sanitize_key((string)($_POST['active_section'] ?? $activeTab));
@@ -1259,7 +1272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_theme_options') {
-    if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'theme_customizer')) {
+    if (!theme_customizer_verify_request_csrf((string) ($_POST['csrf_token'] ?? ''), 'theme_customizer')) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
         // Logo-Datei-Upload verarbeiten
@@ -1376,6 +1389,8 @@ $customizerCssUrl  = is_file($customizerCssFile)
 $customizerJsUrl = is_file($customizerJsFile)
     ? $themeUrl . '/js/customizer-admin.js?v=' . rawurlencode((string) filemtime($customizerJsFile))
     : '';
+
+if (!$embedInAdminLayout):
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -1393,6 +1408,12 @@ $customizerJsUrl = is_file($customizerJsFile)
 <body class="admin-body">
 
     <?php renderAdminSidebar('theme-customizer'); ?>
+
+<?php else: ?>
+    <?php if ($customizerCssUrl !== ''): ?>
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($customizerCssUrl, ENT_QUOTES); ?>">
+    <?php endif; ?>
+<?php endif; ?>
 
     <div class="admin-content">
 
@@ -1823,9 +1844,13 @@ $customizerJsUrl = is_file($customizerJsFile)
         </div>
     </div>
 
-    <script src="<?php echo htmlspecialchars($coreAdminJsUrl, ENT_QUOTES); ?>"></script>
+    <?php if (!$embedInAdminLayout): ?>
+        <script src="<?php echo htmlspecialchars($coreAdminJsUrl, ENT_QUOTES); ?>"></script>
+    <?php endif; ?>
     <?php if ($customizerJsUrl !== ''): ?>
         <script src="<?php echo htmlspecialchars($customizerJsUrl, ENT_QUOTES); ?>"></script>
     <?php endif; ?>
+<?php if (!$embedInAdminLayout): ?>
 </body>
 </html>
+<?php endif; ?>

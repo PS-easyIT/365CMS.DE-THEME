@@ -25,6 +25,8 @@ $prefix    = $db->prefix();
 $pluginMgr = \CMS\PluginManager::instance();
 $siteUrl   = SITE_URL;
 $hasPlugin = $pluginMgr->isPluginActive('cms-feed');
+$feedsBaseUrl = theme_safe_url($siteUrl . '/feeds', $siteUrl . '/feeds');
+$homeUrl = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 
 // ── Parameter ──
 $search = trim(strip_tags($_GET['q'] ?? ''));
@@ -36,6 +38,7 @@ $perPage = 18;
 
 $items      = [];
 $sources    = [];
+$categories = [];
 $totalCount = 0;
 $totalPages = 1;
 
@@ -95,6 +98,39 @@ if ($hasPlugin) {
             'name' => is_array($r) ? ($r['name'] ?? '') : ($r->name ?? ''),
         ], $srcRows);
 
+        $categoryWhere = ['fi.is_hidden = 0', "fi.category != ''"];
+        $categoryParams = [];
+
+        if ($source > 0) {
+            $categoryWhere[] = 'fi.feed_id = ?';
+            $categoryParams[] = $source;
+        }
+
+        $categoryRows = $db->execute(
+            "SELECT fi.category
+             FROM {$prefix}feed_items fi
+             WHERE " . implode(' AND ', $categoryWhere) . "
+             ORDER BY fi.category ASC",
+            $categoryParams
+        )->fetchAll() ?: [];
+
+        foreach ($categoryRows as $row) {
+            $categoryValue = is_array($row) ? ($row['category'] ?? '') : ($row->category ?? '');
+            foreach (preg_split('/[,;]+/', (string)$categoryValue) ?: [] as $rawCategory) {
+                $categoryName = trim(strip_tags((string)$rawCategory));
+                if ($categoryName === '') {
+                    continue;
+                }
+
+                $categories[mb_strtolower($categoryName)] = $categoryName;
+            }
+        }
+
+        if (!empty($categories)) {
+            natcasesort($categories);
+            $categories = array_values($categories);
+        }
+
     } catch (\Throwable $e) { /* */ }
 }
 
@@ -119,13 +155,15 @@ require_once __DIR__ . '/header.php';
                     ?>
                 </p>
             </div>
-            <form class="directory-search-form" method="GET" action="">
+            <form class="directory-search-form" method="GET" action="<?php echo htmlspecialchars($feedsBaseUrl, ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="directory-search-row">
                     <input type="search" name="q"
                            value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"
                            placeholder="Beitragsthema, Autor …"
                            class="directory-search-input">
                     <?php if ($source) : ?><input type="hidden" name="source" value="<?php echo $source; ?>"><?php endif; ?>
+                    <?php if ($cat !== '') : ?><input type="hidden" name="cat" value="<?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
+                    <?php if ($sort !== 'latest') : ?><input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
                     <button type="submit" class="btn btn-primary directory-search-btn">🔍 Suchen</button>
                 </div>
             </form>
@@ -134,7 +172,7 @@ require_once __DIR__ . '/header.php';
 
     <nav class="breadcrumb-bar" aria-label="Pfadnavigation">
         <div class="container">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">Startseite</a>
             <span class="breadcrumb-sep">›</span>
             <span aria-current="page">Feeds</span>
         </div>
@@ -165,8 +203,20 @@ require_once __DIR__ . '/header.php';
 
             <div class="filter-panel">
                 <h3 class="filter-panel-title">🗂️ Optionen</h3>
-                <form method="GET" action="">
+                <form method="GET" action="<?php echo htmlspecialchars($feedsBaseUrl, ENT_QUOTES, 'UTF-8'); ?>">
+                    <?php if ($search !== '') : ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
                     <?php if ($source) : ?><input type="hidden" name="source" value="<?php echo $source; ?>"><?php endif; ?>
+                    <div class="filter-group">
+                        <label class="filter-label" for="f-cat">Kategorie</label>
+                        <select name="cat" id="f-cat" class="filter-select" data-auto-submit-filter>
+                            <option value="">Alle Kategorien</option>
+                            <?php foreach ($categories as $categoryOption) : ?>
+                                <option value="<?php echo htmlspecialchars($categoryOption, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $cat === $categoryOption ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($categoryOption, ENT_QUOTES, 'UTF-8'); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="filter-group">
                         <label class="filter-label" for="f-sort">Sortierung</label>
                         <select name="sort" id="f-sort" class="filter-select" data-auto-submit-filter>
@@ -174,6 +224,9 @@ require_once __DIR__ . '/header.php';
                             <option value="title"  <?php echo $sort === 'title' ? 'selected' : ''; ?>>🔤 Titel A–Z</option>
                         </select>
                     </div>
+                    <?php if ($search !== '' || $source > 0 || $cat !== '' || $sort !== 'latest') : ?>
+                        <a href="<?php echo htmlspecialchars($feedsBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="filter-reset-btn">Filter zurücksetzen</a>
+                    <?php endif; ?>
                 </form>
             </div>
         </aside>
@@ -188,6 +241,28 @@ require_once __DIR__ . '/header.php';
                 </div>
             </div>
 
+            <?php if ($search !== '' || $source > 0 || $cat !== '' || $sort !== 'latest') : ?>
+            <div class="active-filters-strip" aria-label="Aktive Feed-Filter">
+                <span class="active-filters-strip-label">Aktive Filter:</span>
+                <?php if ($search !== '') : ?>
+                    <span class="active-filter-chip">Suche: <?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?></span>
+                <?php endif; ?>
+                <?php if ($source > 0) : ?>
+                    <?php foreach ($sources as $src) : ?>
+                        <?php if ($source === (int)$src['id']) : ?>
+                            <span class="active-filter-chip">Quelle: <?php echo htmlspecialchars($src['name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if ($cat !== '') : ?>
+                    <span class="active-filter-chip">Kategorie: <?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?></span>
+                <?php endif; ?>
+                <?php if ($sort === 'title') : ?>
+                    <span class="active-filter-chip">Sortierung: Titel A–Z</span>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
             <?php if (!empty($items)) : ?>
             <div class="feeds-grid">
                 <?php foreach ($items as $item) :
@@ -197,7 +272,8 @@ require_once __DIR__ . '/header.php';
                     $iImage   = theme_safe_url((string)(is_array($item) ? ($item['image_url'] ?? '') : ($item->image_url ?? '')));
                     $iAuthor  = htmlspecialchars(is_array($item) ? ($item['author'] ?? '') : ($item->author ?? ''), ENT_QUOTES, 'UTF-8');
                     $iDate    = is_array($item) ? ($item['pub_date'] ?? '') : ($item->pub_date ?? '');
-                    $iDateF   = $iDate ? date('d.m.Y', strtotime($iDate)) : '';
+                    $iDateTs  = $iDate ? strtotime((string)$iDate) : false;
+                    $iDateF   = $iDateTs ? date('d.m.Y', $iDateTs) : '';
                     $iFeed    = htmlspecialchars(is_array($item) ? ($item['feed_name'] ?? '') : ($item->feed_name ?? ''), ENT_QUOTES, 'UTF-8');
                     $iFavicon = theme_safe_url((string)(is_array($item) ? ($item['feed_icon'] ?? '') : ($item->feed_icon ?? '')));
                     $iCat     = htmlspecialchars(is_array($item) ? ($item['category'] ?? '') : ($item->category ?? ''), ENT_QUOTES, 'UTF-8');

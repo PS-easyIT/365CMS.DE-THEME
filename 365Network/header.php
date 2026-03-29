@@ -17,7 +17,6 @@ $themeUrl     = $themeManager->getThemeUrl();
 $isLoggedIn   = theme_is_logged_in();
 $isAdmin      = false;
 $currentUser  = null;
-$siteUrl      = SITE_URL;
 
 try {
     $auth = \CMS\Auth::instance();
@@ -88,9 +87,21 @@ $_hasEvents    = $_pluginMgr->isPluginActive('cms-events');
 $_hasSpeakers  = $_pluginMgr->isPluginActive('cms-speakers');
 $_hasJobs      = $_pluginMgr->isPluginActive('cms-jobprofile-generator');
 $_hasBooking   = $_pluginMgr->isPluginActive('cms-booking');
-$siteHomeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$siteHomeUrl   = theme_route_url('home');
 $headerLogoUrl = theme_safe_url((string) $_headerLogoUrl, '');
-$searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
+$searchUrl     = theme_route_url('search');
+$dashboardUrl  = theme_route_url('member-dashboard', ['area' => $isAdmin ? 'admin' : 'member']);
+$notificationsUrl = theme_route_url('member-notifications');
+$expertProfileUrl = theme_route_url('member-expert-profile');
+$memberCompaniesUrl = theme_route_url('member-companies');
+$memberEventsUrl = theme_route_url('member-events');
+$speakerProfileUrl = theme_route_url('member-speaker-profile');
+$jobsUrl = theme_route_url('jobs');
+$bookingUrl = theme_route_url('booking');
+$memberSettingsUrl = theme_route_url('member-settings');
+$logoutUrl = theme_route_url('logout');
+$loginUrl = theme_route_url('login');
+$registerUrl = theme_route_url('register');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -158,7 +169,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                 <div class="header-actions">
                     <?php if ($isLoggedIn) : ?>
                         <!-- Quick Notifications -->
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/notifications"
+                                <a href="<?php echo htmlspecialchars($notificationsUrl, ENT_QUOTES, 'UTF-8'); ?>"
                            class="quick-notifications" aria-label="Quick-Notificationen">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -187,7 +198,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <div class="profile-dropdown-divider"></div>
 
                                 <?php if ($_profileShowDashboard) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/<?php echo $isAdmin ? 'admin' : 'member'; ?>"
+                                          <a href="<?php echo htmlspecialchars($dashboardUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">📊</span>
                                     Dashboard
@@ -195,7 +206,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <?php if ($_profileShowExpert && $_hasExperts) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/expert-profile"
+                                          <a href="<?php echo htmlspecialchars($expertProfileUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">👤</span>
                                     Experten-Profil
@@ -203,7 +214,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <?php if ($_profileShowCompany && $_hasCompanies) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/companies"
+                                          <a href="<?php echo htmlspecialchars($memberCompaniesUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">🏢</span>
                                     Firmenprofil
@@ -211,7 +222,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <?php if ($_profileShowEvents && $_hasEvents) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/events"
+                                          <a href="<?php echo htmlspecialchars($memberEventsUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">📅</span>
                                     Meine Events
@@ -219,7 +230,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <?php if ($_profileShowSpeaker && $_hasSpeakers) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/speaker-profile"
+                                          <a href="<?php echo htmlspecialchars($speakerProfileUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">🎤</span>
                                     Speaker-Profil
@@ -227,7 +238,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <?php if ($_profileShowJobs && $_hasJobs) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs"
+                                          <a href="<?php echo htmlspecialchars($jobsUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">💼</span>
                                     Stellenmarkt
@@ -235,7 +246,7 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <?php if ($_profileShowBooking && $_hasBooking) : ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/booking"
+                                          <a href="<?php echo htmlspecialchars($bookingUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">📅</span>
                                     Meine Buchungen
@@ -243,12 +254,12 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                                 <?php endif; ?>
 
                                 <div class="profile-dropdown-divider"></div>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/member/settings"
+                                          <a href="<?php echo htmlspecialchars($memberSettingsUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item" role="menuitem">
                                     <span class="profile-dropdown-icon">⚙️</span>
                                     Einstellungen
                                 </a>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/logout"
+                                          <a href="<?php echo htmlspecialchars($logoutUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="profile-dropdown-item profile-dropdown-item--danger" role="menuitem">
                                     <span class="profile-dropdown-icon">🚪</span>
                                     Abmelden
@@ -257,14 +268,14 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
                         </div>
                     <?php else : ?>
                         <?php if ($_showLoginBtn) : ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login"
+                                     <a href="<?php echo htmlspecialchars($loginUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                class="btn btn-sm btn-outline-light<?php echo $_loginIconOnly ? ' btn-icon-only' : ''; ?>"
                                <?php echo $_loginIconOnly ? 'aria-label="Anmelden" title="Anmelden"' : ''; ?>>
                                 🔑<?php if (!$_loginIconOnly) : ?> Anmelden<?php endif; ?>
                             </a>
                         <?php endif; ?>
                         <?php if ($_showRegisterBtn) : ?>
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register"
+                                     <a href="<?php echo htmlspecialchars($registerUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                class="btn btn-sm btn-accent<?php echo $_registerIconOnly ? ' btn-icon-only' : ''; ?>"
                                <?php echo $_registerIconOnly ? 'aria-label="Registrieren" title="Registrieren"' : ''; ?>>
                                 ✏️<?php if (!$_registerIconOnly) : ?> Registrieren<?php endif; ?>
@@ -307,14 +318,15 @@ $searchUrl     = theme_safe_url($siteUrl . '/search', $siteUrl . '/search');
     <div class="mobile-menu-overlay" id="mobileMenuOverlay" role="presentation"></div>
 
     <!-- Mobile Menu Drawer -->
-    <nav id="mobileMenuDrawer" class="mobile-menu-drawer" aria-label="Mobile Navigation" aria-hidden="true">
+    <nav id="mobileMenuDrawer" class="mobile-menu-drawer" aria-label="Mobile Navigation" aria-hidden="true" tabindex="-1">
         <?php theme_nav_menu('mobile'); ?>
     </nav>
 
     <!-- Search Overlay -->
-    <div class="search-overlay" id="searchOverlay" role="dialog" aria-label="Schnellsuche" aria-hidden="true">
+    <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-labelledby="searchOverlayTitle" aria-hidden="true" tabindex="-1">
         <button class="search-overlay-close" id="searchOverlayClose" aria-label="Suche schließen" type="button">&times;</button>
         <div class="search-overlay-inner">
+            <h2 id="searchOverlayTitle" class="screen-reader-text">Schnellsuche</h2>
             <form class="search-overlay-form" action="<?php echo htmlspecialchars($searchUrl, ENT_QUOTES, 'UTF-8'); ?>" method="GET">
                 <input class="search-overlay-input" type="search" name="q" placeholder="Suche nach Experten, Firmen, Events…"
                        autocomplete="off" spellcheck="false" aria-label="Suchbegriff eingeben">

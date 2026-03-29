@@ -344,9 +344,9 @@ $layoutClass = match ($homepageLayout) {
 
             <?php if ($showHeroSearch) : ?>
             <!-- Übergreifende Suche: Experten, Firmen, Speaker, Events (Customizer: homepage.show_hero_search) -->
-            <form class="hero-search" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search" method="GET">
+            <form class="hero-search" action="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/search', $siteUrl . '/search'), ENT_QUOTES, 'UTF-8'); ?>" method="GET">
                 <div class="hero-search-row">
-                    <div class="hero-search-field" style="flex:2;">
+                    <div class="hero-search-field hero-search-field--wide">
                         <label for="hero-q">Suchbegriff</label>
                         <input type="search" id="hero-q" name="q" placeholder="Experten, Firmen, Speaker, Events …" autocomplete="off">
                     </div>
@@ -659,11 +659,15 @@ $layoutClass = match ($homepageLayout) {
                         $topicArr  = $spTopics ? array_slice(array_map('trim', explode(',', $spTopics)), 0, 2) : [];
                         $initials  = mb_strtoupper(mb_substr($spName, 0, 2));
                     ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/speakers/' . $spId, ENT_QUOTES, 'UTF-8'); ?>" class="speaker-hp-card">
-                        <?php if ($spPhoto) : ?>
-                            <img class="speaker-hp-avatar" src="<?php echo htmlspecialchars($spPhoto, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo $spName; ?>" loading="lazy" width="64" height="64">
+                    <?php
+                        $speakerUrl = theme_safe_url($siteUrl . '/speakers/' . $spId, $siteUrl . '/speakers');
+                        $speakerPhoto = theme_safe_url((string) $spPhoto);
+                    ?>
+                    <a href="<?php echo htmlspecialchars($speakerUrl, ENT_QUOTES, 'UTF-8'); ?>" class="speaker-hp-card">
+                        <?php if ($speakerPhoto) : ?>
+                            <img class="speaker-hp-avatar" src="<?php echo htmlspecialchars($speakerPhoto, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo $spName; ?>" loading="lazy" width="64" height="64">
                         <?php else : ?>
-                            <div class="speaker-dir-avatar-placeholder" style="width:64px;height:64px;font-size:1.1rem;"><?php echo $initials; ?></div>
+                            <div class="speaker-dir-avatar-placeholder speaker-dir-avatar-placeholder--home"><?php echo $initials; ?></div>
                         <?php endif; ?>
                         <div class="speaker-hp-info">
                             <strong><?php echo $spName; ?></strong>
@@ -678,13 +682,13 @@ $layoutClass = match ($homepageLayout) {
                 </div>
 
                 <?php elseif ($hasSpeakers) : ?>
-                <div class="empty-state" style="padding:2rem;">
+                <div class="empty-state empty-state--compact">
                     <div class="empty-state-icon">🎤</div>
                     <p>Noch keine Speaker im Verzeichnis.</p>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers" class="btn btn-secondary btn-sm">Verzeichnis öffnen</a>
+                    <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/speakers', $siteUrl . '/speakers'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary btn-sm">Verzeichnis öffnen</a>
                 </div>
                 <?php else : ?>
-                <p style="color:var(--secondary-color);font-size:.9rem;">Das <strong>cms-speakers</strong> Plugin aktivieren, um Speaker anzuzeigen. <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers" style="color:var(--accent-color);">Mehr erfahren →</a></p>
+                <p class="plugin-hint">Das <strong>cms-speakers</strong> Plugin aktivieren, um Speaker anzuzeigen. <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/speakers', $siteUrl . '/speakers'), ENT_QUOTES, 'UTF-8'); ?>" class="plugin-hint__link">Mehr erfahren →</a></p>
                 <?php endif; ?>
             </section>
 
@@ -712,7 +716,8 @@ $layoutClass = match ($homepageLayout) {
                         $jobTypeLabels = ['fulltime' => '👔 Vollzeit', 'parttime' => '⏰ Teilzeit', 'freelance' => '🧑‍💻 Freelance', 'internship' => '🎓 Praktikum', 'remote' => '🏠 Remote'];
                         $jTypeLabel = $jobTypeLabels[$jType] ?? '';
                     ?>
-                    <a href="<?php echo htmlspecialchars($siteUrl . '/jobs/' . $jId, ENT_QUOTES, 'UTF-8'); ?>" class="job-hp-card">
+                    <?php $jobUrl = theme_safe_url($siteUrl . '/jobs/' . $jId, $siteUrl . '/jobs'); ?>
+                    <a href="<?php echo htmlspecialchars($jobUrl, ENT_QUOTES, 'UTF-8'); ?>" class="job-hp-card">
                         <div class="job-hp-info">
                             <strong><?php echo $jTitle; ?></strong>
                             <div class="job-hp-meta">
@@ -726,12 +731,12 @@ $layoutClass = match ($homepageLayout) {
                 </div>
 
                 <?php elseif ($hasJobs) : ?>
-                <div class="empty-state" style="padding:2rem;">
+                <div class="empty-state empty-state--compact">
                     <div class="empty-state-icon">💼</div>
                     <p>Keine offenen Stellen derzeit.</p>
                 </div>
                 <?php else : ?>
-                <p style="color:var(--secondary-color);font-size:.9rem;">Das <strong>cms-jobprofile-generator</strong> Plugin aktivieren, um Stellen anzuzeigen. <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs" style="color:var(--accent-color);">Zum Stellenmarkt →</a></p>
+                <p class="plugin-hint">Das <strong>cms-jobprofile-generator</strong> Plugin aktivieren, um Stellen anzuzeigen. <a href="<?php echo htmlspecialchars(theme_safe_url($siteUrl . '/jobs', $siteUrl . '/jobs'), ENT_QUOTES, 'UTF-8'); ?>" class="plugin-hint__link">Zum Stellenmarkt →</a></p>
                 <?php endif; ?>
             </section>
 
@@ -770,27 +775,30 @@ $layoutClass = match ($homepageLayout) {
                         $pSlug = _field($post, 'slug', '');
                         $pLink = _field($post, 'link', '');
                         if ($pSlug) {
-                            $pUrl = htmlspecialchars($siteUrl . '/blog/' . $pSlug, ENT_QUOTES, 'UTF-8');
+                            $pSlugPath = implode('/', array_map('rawurlencode', array_filter(explode('/', trim((string) $pSlug, '/')), static fn(string $segment): bool => $segment !== '')));
+                            $pUrl = htmlspecialchars(theme_safe_url($siteUrl . '/blog/' . $pSlugPath, $siteUrl . '/blog'), ENT_QUOTES, 'UTF-8');
                             $pTarget = '';
                         } elseif ($pLink) {
-                            $pUrl = htmlspecialchars($pLink, ENT_QUOTES, 'UTF-8');
-                            $pTarget = ' target="_blank" rel="noopener noreferrer"';
+                            $pSafeExternal = theme_safe_external_url((string) $pLink);
+                            $pUrl = htmlspecialchars($pSafeExternal !== '' ? $pSafeExternal : '#', ENT_QUOTES, 'UTF-8');
+                            $pTarget = $pSafeExternal !== '' ? ' target="_blank" rel="noopener noreferrer"' : '';
                         } else {
                             $pUrl = '#';
                             $pTarget = '';
                         }
+                        $pImageUrl = theme_safe_url((string) $pImage);
                     ?>
                         <article class="feed-card">
-                            <?php if ($pImage) : ?>
+                            <?php if ($pImageUrl) : ?>
                                 <div class="feed-card-image">
-                                    <img src="<?php echo htmlspecialchars($pImage, ENT_QUOTES, 'UTF-8'); ?>"
+                                    <img src="<?php echo htmlspecialchars($pImageUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                          alt="<?php echo $pTitle; ?>"
                                          loading="lazy" width="400" height="200">
                                 </div>
                             <?php endif; ?>
                             <div class="feed-card-body">
                                 <h3 class="feed-card-title">
-                                    <a href="<?php echo $pUrl; ?>"<?php echo $pTarget; ?> style="color:inherit;text-decoration:none;">
+                                    <a href="<?php echo $pUrl; ?>"<?php echo $pTarget; ?> class="feed-card-link">
                                         <?php echo $pTitle; ?>
                                     </a>
                                 </h3>
@@ -947,7 +955,7 @@ $layoutClass = match ($homepageLayout) {
     <!-- Events Footer Strip (Customizer: homepage.show_events_strip) -->
     <section class="events-strip" data-section="events-strip">
         <div class="events-strip-inner">
-            <div style="flex-shrink:0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-color);">
+            <div class="events-strip-label">
                 Kommende Events & Konferenzen
             </div>
             <?php foreach (array_slice($events, 0, 3) as $ev) :
@@ -959,15 +967,15 @@ $layoutClass = match ($homepageLayout) {
             ?>
                 <div class="events-strip-card">
                     <?php if ($evDay) : ?>
-                        <div class="event-date-block" style="padding:0.375rem 0.5rem;">
-                            <div class="event-date-day" style="font-size:1rem;"><?php echo $evDay; ?></div>
+                        <div class="event-date-block event-date-block--compact">
+                            <div class="event-date-day event-date-day--compact"><?php echo $evDay; ?></div>
                             <div class="event-date-month"><?php echo $evMon; ?></div>
                         </div>
                     <?php endif; ?>
                     <div>
-                        <div style="font-size:0.8125rem;font-weight:600;color:var(--text-light);"><?php echo $evTitle; ?></div>
+                        <div class="events-strip-title"><?php echo $evTitle; ?></div>
                         <?php if ($evLoc) : ?>
-                            <div style="font-size:0.6875rem;color:var(--muted-color);">📍 <?php echo $evLoc; ?></div>
+                            <div class="events-strip-location">📍 <?php echo $evLoc; ?></div>
                         <?php endif; ?>
                     </div>
                 </div>

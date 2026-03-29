@@ -14,9 +14,36 @@
 
 ---
 
+## v3.4.5 — März 2026
+
+### Dritte Audit-Welle: fail-closed URL-Härtung, Cookie-Banner ohne Inline-Script, sichere Seiten-/Blog-Ausgabe
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Security/Helpers | `functions.php` schärft `theme_safe_url()` jetzt fail-closed nach: Nur relative Ziele sowie `http`/`https` bleiben erlaubt; protokollfremde oder doppelschrägige Ziele fallen konsequent auf sichere Fallbacks zurück. `theme_nav_menu()` rendert gespeicherte Menü-URLs nicht mehr roh. |
+| 🔴 fix | Security/Page | `page.php` nutzt für Seiteninhalte jetzt den Core-HTML-Sanitizer statt einer nackten `strip_tags()`-Allowlist. Dadurch werden erlaubte Inhalte weiter gerendert, aber riskante Attribut-/URL-Konstellationen nicht mehr direkt aus DB-Content durchgereicht. |
+| 🔴 fix | Security/Blog | `blog.php` normalisiert Post-URLs, Bilder, Filter- und Pagination-Links jetzt über sichere Theme-Helper, trennt rohe Filterwerte von escaped Anzeige-Werten und vermeidet damit inkonsistente aktive Zustände und unvalidierte Linkziele. |
+| 🔴 fix | Security/Directories | `experts.php`, `jobs.php`, `speakers.php`, `events.php`, `companies.php` und `booking.php` bauen Breadcrumb-, Reset-, Detail-, View- und Pagination-Links jetzt konsistent fail-closed über `theme_safe_url()` bzw. `theme_build_query_url()` statt rohe Pfadverkettungen oder direkte `$_GET`-Merges zu rendern. |
+| 🔴 fix | Security/Feeds | `feeds.php` nutzt jetzt sichere Basis-URLs in Breadcrumbs/Formularen, formatiert Datumswerte fail-closed und vervollständigt den bereits vorhandenen Kategorien-Parameter durch eine echte Filter-UI samt sauber erhaltenem Query-State. |
+| 🟡 refactor | JS/Cookie | Das Cookie-Banner läuft nun ohne eingebettetes Inline-`<script>` direkt aus `functions.php`; die Consent-Logik sitzt in `js/theme.js`, nutzt robuste `localStorage`-Wrapper und respektiert weiterhin fail-closed Sichtbarkeit. |
+| 🟡 refactor | Templates/CSS | `page.php`, `blog.php`, `blog-single.php`, `home.php`, `index.php`, `booking.php`, `error.php` und die Sidebar-Widgets in `functions.php` bauen mehrere Rest-Inline-Stile ab; damit verbleiben in den Theme-PHP-Templates keine eingebetteten `<style>`-Blöcke mehr. `style.css`, `theme.json`, `update.json` und `THEME_VERSION` wurden auf `3.4.5` synchronisiert. |
+| 🟡 refactor | JS/Robustheit | `js/navigation.js` ersetzt direkte `body.style.overflow`-Manipulationen durch eine zentrale Scroll-Lock-Klasse und nutzt für Media-Query-Listener einen Legacy-Fallback; `js/theme.js` verhindert doppelte Scroll-to-top-Buttons. |
+
+---
+
 ## v3.4.4 — März 2026
 
-### Zweite Audit-Welle: Auth/Search bereinigt, Header-Script ausgelagert, Audit-Doku ergänzt
+### Feinschliff-Nachtrag: gemeinsame Route-Helper, Fokusführung und leichtere Overlay-Interaktionen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Customizer/Admin | `admin/customizer.php` erkennt jetzt, wenn der eingebettete Admin-Section-Shell den `theme_customizer`-Token bereits verifiziert hat, und vermeidet dadurch den doppelten CSRF-Check, der zuvor beim Speichern fälschlich „Sicherheitscheck fehlgeschlagen“ auslöste. |
+| 🟡 refactor | Routing/Helpers | `functions.php` ergänzt mit `theme_route_path()` und `theme_route_url()` eine gemeinsame interne Link-Factory für wiederkehrende Frontend-Routen. Erste Hotspots wie Header-Dropdown, 404-Fallbacks sowie Sidebar-Blog-/Speaker-Widgets nutzen diese Helfer bereits statt mehrfacher `SITE_URL`-Verkettungen. |
+| 🔴 fix | Accessibility/Header | `header.php` schärft Search-Overlay und Mobile-Drawer mit `aria-modal`, `aria-labelledby` und fokussierbaren Container-Fallbacks nach, damit seltene Fokuspfade in Dialog-/Offcanvas-Zuständen robuster bleiben. |
+| 🔴 fix | Accessibility/JS | `js/navigation.js` kapselt Fokusfalle, Fokus-Rückgabe und zentrales Scroll-Locking jetzt sauber für Mobile-Menü und Search-Overlay; ESC- und Tab-Navigation verhalten sich damit konsistenter in Randpfaden. |
+| 🟡 refactor | Performance/JS | `js/theme.js` entfernt das Cookie-Banner nach vorhandenem Consent sofort aus dem DOM, blendet es nach Auswahl kontrolliert aus und pausiert die Header-Canvas-Animation außerhalb des Viewports bzw. bei verstecktem Tab. |
+
+### Dritte Audit-Welle: fail-closed URL-Härtung, Cookie-Banner ohne Inline-Script, sichere Seiten-/Blog-Ausgabe
 
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
@@ -39,6 +66,7 @@
 | 🔴 fix | Security/Customizer | `admin/customizer.php` validiert Tab-/Feldnamen strikter, escaped dynamische Formular-Attribute konsequent und prüft Logo-Uploads zusätzlich auf echten Upload-Status, MIME-Type und 2-MB-Limit. |
 | 🟡 refactor | Customizer/Content | Sidebar-Custom-HTML wird jetzt vor der Ausgabe über den Core-Sanitizer gefiltert; der Header-Logo-Upload erlaubt aus Sicherheitsgründen nur noch JPG/PNG/GIF/WebP statt SVG-Uploads. |
 | 🟡 refactor | JS/UX | `js/theme.js` nutzt jetzt den projektweiten Dark-Mode-Storage-Key `cms365-theme` (mit Legacy-Migration von `cms_dark_mode`) und der Sort-Select in `booking.php` submitet ohne Inline-`onchange`. |
+| 🔴 fix | Admin/Customizer | `admin/customizer.php` unterstützt jetzt den eingebetteten Admin-Modus (`embedInAdminLayout`) des Core-Theme-Editors und lädt dabei nur noch die theme-spezifischen Assets nach; damit kollidiert der 365Network-Customizer nach dem Deployment nicht mehr mit der umgebenden Admin-Shell. |
 
 ---
 

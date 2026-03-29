@@ -26,6 +26,8 @@ $prefix    = $db->prefix();
 $pluginMgr = \CMS\PluginManager::instance();
 $siteUrl   = SITE_URL;
 $hasPlugin = $pluginMgr->isPluginActive('cms-jobprofile-generator');
+$homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$jobsBaseUrl = theme_safe_url($siteUrl . '/jobs', $siteUrl . '/jobs');
 
 // ── Gültige Enum-Werte ──
 $validTypes  = ['fulltime', 'parttime', 'freelance', 'internship', 'mini'];
@@ -153,7 +155,7 @@ require_once __DIR__ . '/header.php';
 
     <nav class="breadcrumb-bar" aria-label="Pfadnavigation">
         <div class="container">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">Startseite</a>
             <span class="breadcrumb-sep">›</span>
             <span aria-current="page">Jobprofile</span>
         </div>
@@ -188,10 +190,10 @@ require_once __DIR__ . '/header.php';
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🌐 Remote-Option</h3>
                     <div class="filter-link-list">
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['remote' => '', 'page' => 1])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['remote' => '', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="filter-link <?php echo $remote === '' ? 'is-active' : ''; ?>">Alle</a>
                         <?php foreach ($remoteLabels as $val => $lbl): ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['remote' => $val, 'page' => 1])); ?>"
+                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['remote' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                                class="filter-link <?php echo $remote === $val ? 'is-active' : ''; ?>"><?php echo $lbl; ?></a>
                         <?php endforeach; ?>
                     </div>
@@ -208,7 +210,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $type || $level || $remote): ?>
                     <div class="filter-panel">
-                        <a href="/jobs" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
+                        <a href="<?php echo htmlspecialchars($jobsBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -223,9 +225,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'grid'])); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'list'])); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -245,9 +247,11 @@ require_once __DIR__ . '/header.php';
                     $currency = htmlspecialchars(is_array($job) ? ($job['salary_currency'] ?? 'EUR') : ($job->salary_currency ?? 'EUR'), ENT_QUOTES, 'UTF-8');
                     $summary  = htmlspecialchars(strip_tags(is_array($job) ? ($job['summary'] ?? '') : ($job->summary ?? '')), ENT_QUOTES, 'UTF-8');
                     $pubDate  = is_array($job) ? ($job['published_at'] ?? '') : ($job->published_at ?? '');
-                    $href     = $slug
-                        ? htmlspecialchars($siteUrl . '/jobs/' . $slug, ENT_QUOTES)
-                        : htmlspecialchars($siteUrl . '/jobs/' . (int)$id, ENT_QUOTES);
+                    $slugPath = implode('/', array_map('rawurlencode', array_filter(explode('/', trim((string) $slug, '/')), static fn(string $segment): bool => $segment !== '')));
+                    $hrefRaw  = $slugPath !== ''
+                        ? theme_safe_url($siteUrl . '/jobs/' . $slugPath, $jobsBaseUrl)
+                        : theme_safe_url($siteUrl . '/jobs/' . (int) $id, $jobsBaseUrl);
+                    $href     = htmlspecialchars($hrefRaw, ENT_QUOTES, 'UTF-8');
                 ?>
                 <article class="directory-card job-card">
                     <div class="job-card-header">
@@ -298,7 +302,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">💼</div>
                 <h3>Keine Stellenprofile gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/jobs" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
+                <a href="<?php echo htmlspecialchars($jobsBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>
@@ -313,16 +317,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['page' => (string) ($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['page' => (string) $i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['page' => (string) ($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

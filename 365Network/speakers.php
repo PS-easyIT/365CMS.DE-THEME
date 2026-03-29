@@ -27,6 +27,8 @@ $prefix    = $db->prefix();
 $pluginMgr = \CMS\PluginManager::instance();
 $siteUrl   = SITE_URL;
 $hasPlugin = $pluginMgr->isPluginActive('cms-speakers');
+$homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$speakersBaseUrl = theme_safe_url($siteUrl . '/speakers', $siteUrl . '/speakers');
 
 // ── Parameter ──
 $search = trim(strip_tags($_GET['q'] ?? ''));
@@ -131,7 +133,7 @@ require_once __DIR__ . '/header.php';
 
     <nav class="breadcrumb-bar" aria-label="Pfadnavigation">
         <div class="container">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">Startseite</a>
             <span class="breadcrumb-sep">›</span>
             <span aria-current="page">Speaker</span>
         </div>
@@ -165,7 +167,7 @@ require_once __DIR__ . '/header.php';
                         <?php
                         $availOpts = ['' => 'Alle', 'available' => '✅ Verfügbar', 'limited' => '🟡 Eingeschränkt', 'booked' => '🔴 Gebucht'];
                         foreach ($availOpts as $val => $lbl): ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['avail' => $val, 'page' => 1])); ?>"
+                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/speakers', $_GET, ['avail' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                                class="filter-link <?php echo $avail === $val ? 'is-active' : ''; ?>">
                                 <?php echo $lbl; ?>
                             </a>
@@ -184,7 +186,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $topic || $avail): ?>
                     <div class="filter-panel">
-                        <a href="/speakers" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
+                        <a href="<?php echo htmlspecialchars($speakersBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -199,9 +201,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'grid'])); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/speakers', $_GET, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['view' => 'list'])); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/speakers', $_GET, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -224,12 +226,14 @@ require_once __DIR__ . '/header.php';
                     $avlblClass = match ($avlbl) { 'available' => 'badge-available', 'limited' => 'badge-limited', default => 'badge-booked' };
                     $avlblLabel = match ($avlbl) { 'available' => '✅ Verfügbar', 'limited' => '🟡 Eingeschränkt', default => '🔴 Gebucht' };
                     $displayTitle = $title ? $title . ' ' . strip_tags($name) : strip_tags($name);
+                    $photoUrl   = theme_safe_url((string) $photo);
+                    $detailUrl  = theme_safe_url($siteUrl . '/speakers/' . (int) $id, $speakersBaseUrl);
                 ?>
                 <article class="directory-card speaker-card<?php echo $featured ? ' speaker-card--featured' : ''; ?>">
                     <?php if ($featured): ?><span class="speaker-badge speaker-badge--featured">⭐ Featured</span><?php endif; ?>
                     <div class="speaker-card-photo">
-                        <?php if ($photo): ?>
-                            <img src="<?php echo htmlspecialchars($photo, ENT_QUOTES, 'UTF-8'); ?>"
+                        <?php if ($photoUrl): ?>
+                            <img src="<?php echo htmlspecialchars($photoUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                  alt="<?php echo $name; ?>" loading="lazy" width="80" height="80">
                         <?php else: ?>
                             <div class="speaker-card-avatar">🎤</div>
@@ -238,7 +242,7 @@ require_once __DIR__ . '/header.php';
                     </div>
                     <div class="speaker-card-body">
                         <h2 class="speaker-card-name">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/speakers/<?php echo (int)$id; ?>">
+                            <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo htmlspecialchars($displayTitle, ENT_QUOTES, 'UTF-8'); ?>
                             </a>
                         </h2>
@@ -256,7 +260,7 @@ require_once __DIR__ . '/header.php';
                         <?php endif; ?>
                     </div>
                     <div class="speaker-card-footer">
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/speakers/<?php echo (int)$id; ?>"
+                        <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>"
                            class="btn btn-primary btn-sm">Profil ansehen</a>
                     </div>
                 </article>
@@ -268,7 +272,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">🎤</div>
                 <h3>Keine Speaker gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/speakers" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
+                <a href="<?php echo htmlspecialchars($speakersBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>
@@ -283,16 +287,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/speakers', $_GET, ['page' => (string) ($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/speakers', $_GET, ['page' => (string) $i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/speakers', $_GET, ['page' => (string) ($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

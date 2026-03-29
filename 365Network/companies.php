@@ -27,6 +27,8 @@ $prefix    = $db->prefix();
 $pluginMgr = \CMS\PluginManager::instance();
 $siteUrl   = SITE_URL;
 $hasPlugin = $pluginMgr->isPluginActive('cms-companies');
+$homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$companiesBaseUrl = theme_safe_url($siteUrl . '/companies', $siteUrl . '/companies');
 
 // ── Parameter ──
 $search   = trim(strip_tags($_GET['q'] ?? ''));
@@ -144,7 +146,7 @@ require_once __DIR__ . '/header.php';
 
     <nav class="breadcrumb-bar" aria-label="Pfadnavigation">
         <div class="container">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">Startseite</a>
             <span class="breadcrumb-sep">›</span>
             <span aria-current="page">Firmen</span>
         </div>
@@ -212,7 +214,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $sector || $size || $location): ?>
                     <div class="filter-panel">
-                        <a href="/companies" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
+                        <a href="<?php echo htmlspecialchars($companiesBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary filter-reset-btn">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -247,6 +249,7 @@ require_once __DIR__ . '/header.php';
                     $partner = (bool)(is_array($co) ? ($co['is_partner'] ?? false) : ($co->is_partner ?? false));
                     $top     = (bool)(is_array($co) ? ($co['is_top_partner'] ?? false) : ($co->is_top_partner ?? false));
                     $empCnt  = (int)(is_array($co) ? ($co['employee_count'] ?? 0) : ($co->employee_count ?? 0));
+                    $detailUrl = theme_safe_url($siteUrl . '/companies/' . (int) $id, $companiesBaseUrl);
                 ?>
                 <article class="directory-card company-card<?php echo $top ? ' company-card--top-partner' : ''; ?>">
                     <?php if ($top): ?><span class="partner-badge">⭐ Top Partner</span>
@@ -261,7 +264,7 @@ require_once __DIR__ . '/header.php';
                     </div>
                     <div class="company-card-body">
                         <h2 class="company-card-name">
-                            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/companies/<?php echo (int)$id; ?>">
+                            <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo $name; ?>
                             </a>
                         </h2>
@@ -271,7 +274,7 @@ require_once __DIR__ . '/header.php';
                         <?php if ($desc):   ?><p class="company-card-desc"><?php echo htmlspecialchars(mb_strimwidth($desc, 0, 140, '…'), ENT_QUOTES, 'UTF-8'); ?></p><?php endif; ?>
                     </div>
                     <div class="company-card-footer">
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/companies/<?php echo (int)$id; ?>"
+                        <a href="<?php echo htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8'); ?>"
                            class="btn btn-primary btn-sm">Profil ansehen</a>
                         <?php if ($web): ?>
                             <a href="<?php echo $web; ?>" target="_blank" rel="noopener noreferrer"
@@ -287,7 +290,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">🏢</div>
                 <h3>Keine Unternehmen gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/companies" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
+                <a href="<?php echo htmlspecialchars($companiesBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary empty-state-reset-btn">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>

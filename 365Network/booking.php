@@ -27,6 +27,8 @@ $prefix    = $db->prefix();
 $pluginMgr = \CMS\PluginManager::instance();
 $siteUrl   = SITE_URL;
 $hasPlugin = $pluginMgr->isPluginActive('cms-booking');
+$homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
+$bookingBaseUrl = theme_safe_url($siteUrl . '/booking', $siteUrl . '/booking');
 
 // ── Parameter ──
 $search    = trim(strip_tags($_GET['q']      ?? ''));
@@ -160,7 +162,7 @@ require_once __DIR__ . '/header.php';
 
     <nav class="breadcrumb-bar" aria-label="Pfadnavigation">
         <div class="container">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/">Startseite</a>
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8'); ?>">Startseite</a>
             <span class="breadcrumb-sep">›</span>
             <span aria-current="page">Terminbuchung</span>
         </div>
@@ -168,10 +170,10 @@ require_once __DIR__ . '/header.php';
 
     <?php if ($preExpert > 0 && !empty($providers)): ?>
     <!-- Vorauswahl-Banner -->
-    <div class="container" style="margin-top:1rem;">
+    <div class="container booking-preselect-shell">
         <div class="booking-preselect-banner">
             <span>🔖 Vorauswahl aktiv – Anbieter #<?php echo $preExpert; ?></span>
-            <a href="/booking" class="btn btn-secondary btn-sm" style="margin-left:auto;">✖ Aufheben</a>
+            <a href="<?php echo htmlspecialchars($bookingBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary btn-sm booking-preselect-clear">✖ Aufheben</a>
         </div>
     </div>
     <?php endif; ?>
@@ -184,7 +186,7 @@ require_once __DIR__ . '/header.php';
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗓️ Leistungsart</h3>
-                    <div style="display:flex;flex-direction:column;gap:.375rem;">
+                    <div class="booking-filter-link-list">
                         <a href="<?php echo htmlspecialchars(theme_build_query_url('/booking', $bookingQuery, ['type' => '', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="filter-link <?php echo $typeFilter === '' ? 'is-active' : ''; ?>">Alle</a>
                         <?php foreach ($locationTypeLabels as $val => $lbl): ?>
@@ -205,7 +207,7 @@ require_once __DIR__ . '/header.php';
 
                 <?php if ($search || $typeFilter || $preExpert): ?>
                     <div class="filter-panel">
-                        <a href="/booking" class="btn btn-secondary" style="width:100%;text-align:center;">✖ Filter zurücksetzen</a>
+                        <a href="<?php echo htmlspecialchars($bookingBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary booking-filter-reset">✖ Filter zurücksetzen</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -301,7 +303,7 @@ require_once __DIR__ . '/header.php';
                 <div class="empty-state-icon">📅</div>
                 <h3>Keine Anbieter gefunden</h3>
                 <p>Versuche andere Suchbegriffe oder setze die Filter zurück.</p>
-                <a href="/booking" class="btn btn-secondary" style="margin-top:1rem;">✖ Filter zurücksetzen</a>
+                <a href="<?php echo htmlspecialchars($bookingBaseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-secondary booking-empty-reset">✖ Filter zurücksetzen</a>
             </div>
 
             <?php else: ?>
