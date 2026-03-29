@@ -23,6 +23,7 @@ $userMeta = $memberService->getUserMeta($controller->getUserId());
 $profileCompletion = $controller->getProfileCompletion();
 $memberDisplayName = trim((string) ($currentUser->display_name ?? ''));
 $flash = $controller->consumeFlash();
+$memberAvatarPreviewUrl = phinit_normalize_public_media_url((string) ($userMeta['avatar'] ?? ''), true, $siteUrl);
 
 include $themeDir . 'header.php';
 ?>
@@ -89,8 +90,8 @@ include $themeDir . 'header.php';
                     <div class="member-card-header"><h3>🖼️ Profilbild & Preview</h3></div>
                     <div class="member-profile-summary">
                         <div class="member-avatar member-avatar--xl">
-                            <?php if (!empty($userMeta['avatar'])): ?>
-                            <img src="<?php echo htmlspecialchars((string) $userMeta['avatar'], ENT_QUOTES); ?>"
+                                                        <?php if ($memberAvatarPreviewUrl !== ''): ?>
+                                                        <img src="<?php echo htmlspecialchars($memberAvatarPreviewUrl, ENT_QUOTES); ?>"
                                  alt="<?php echo htmlspecialchars($controller->getDisplayName(), ENT_QUOTES); ?>"
                                  class="member-avatar__image"
                                    <?php echo phinit_image_loading_attributes(true, false); ?>

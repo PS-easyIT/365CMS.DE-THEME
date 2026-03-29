@@ -930,8 +930,9 @@ if (!function_exists('phinit_get_page_favorites_for_user')) {
 
             $contentId = (int) ($item['content_id'] ?? 0);
             $contentType = (string) ($item['content_type'] ?? 'page');
-            $url = trim((string) ($item['url'] ?? ''));
+            $url = phinit_safe_public_url((string) ($item['url'] ?? ''), defined('SITE_URL') ? (string) SITE_URL : null, ['http', 'https']);
             $title = trim((string) ($item['title'] ?? ''));
+            $featuredImage = phinit_normalize_public_media_url((string) ($item['featured_image'] ?? ''), true, defined('SITE_URL') ? (string) SITE_URL : null);
 
             if ($contentId <= 0 || $contentType !== 'page' || $url === '' || $title === '') {
                 continue;
@@ -943,7 +944,7 @@ if (!function_exists('phinit_get_page_favorites_for_user')) {
                 'title' => $title,
                 'url' => $url,
                 'excerpt' => trim((string) ($item['excerpt'] ?? '')),
-                'featured_image' => trim((string) ($item['featured_image'] ?? '')),
+                'featured_image' => $featuredImage,
                 'badge' => trim((string) ($item['badge'] ?? 'Seite')),
                 'created_at' => trim((string) ($item['created_at'] ?? '')),
             ];
@@ -963,18 +964,32 @@ if (!function_exists('phinit_store_page_favorites_for_user')) {
             return;
         }
 
-        $payload = array_values(array_map(static function (array $favorite): array {
-            return [
+        $payload = [];
+
+        foreach ($favorites as $favorite) {
+            if (!is_array($favorite)) {
+                continue;
+            }
+
+            $contentId = (int) ($favorite['content_id'] ?? 0);
+            $title = trim((string) ($favorite['title'] ?? ''));
+            $url = phinit_safe_public_url((string) ($favorite['url'] ?? ''), defined('SITE_URL') ? (string) SITE_URL : null, ['http', 'https']);
+
+            if ($contentId <= 0 || $title === '' || $url === '') {
+                continue;
+            }
+
+            $payload[] = [
                 'content_type' => 'page',
-                'content_id' => (int) ($favorite['content_id'] ?? 0),
-                'title' => trim((string) ($favorite['title'] ?? '')),
-                'url' => trim((string) ($favorite['url'] ?? '')),
+                'content_id' => $contentId,
+                'title' => $title,
+                'url' => $url,
                 'excerpt' => trim((string) ($favorite['excerpt'] ?? '')),
-                'featured_image' => trim((string) ($favorite['featured_image'] ?? '')),
+                'featured_image' => phinit_normalize_public_media_url((string) ($favorite['featured_image'] ?? ''), true, defined('SITE_URL') ? (string) SITE_URL : null),
                 'badge' => trim((string) ($favorite['badge'] ?? 'Seite')),
                 'created_at' => trim((string) ($favorite['created_at'] ?? '')),
             ];
-        }, $favorites));
+        }
 
         try {
             $db = \CMS\Database::instance();
@@ -1050,20 +1065,22 @@ if (!function_exists('phinit_handle_favorite_toggle_request')) {
             } else {
                 $requestPath = phinit_current_request_path();
                 $pageFavorites = phinit_get_page_favorites_for_user($userId);
+                $existingCount = count($pageFavorites);
                 $pageFavorites = array_values(array_filter(
                     $pageFavorites,
                     static fn(array $favorite): bool => (int) ($favorite['content_id'] ?? 0) !== $contentId
                 ));
 
-                $exists = count($pageFavorites) !== count(phinit_get_page_favorites_for_user($userId));
+                $exists = count($pageFavorites) !== $existingCount;
                 if (!$exists) {
+                    $favoriteUrl = phinit_safe_public_url($requestPath !== '' ? $requestPath : '/', defined('SITE_URL') ? (string) SITE_URL : null, ['http', 'https']);
                     $pageFavorites[] = [
                         'content_type' => 'page',
                         'content_id' => $contentId,
                         'title' => trim((string) ($_POST['favorite_title'] ?? 'Seite')),
-                        'url' => $requestPath !== '' ? $requestPath : '/',
+                        'url' => $favoriteUrl !== '' ? $favoriteUrl : '/',
                         'excerpt' => trim((string) ($_POST['favorite_excerpt'] ?? '')),
-                        'featured_image' => trim((string) ($_POST['favorite_featured_image'] ?? '')),
+                        'featured_image' => phinit_normalize_public_media_url((string) ($_POST['favorite_featured_image'] ?? ''), true, defined('SITE_URL') ? (string) SITE_URL : null),
                         'badge' => trim((string) ($_POST['favorite_badge'] ?? 'Seite')),
                         'created_at' => date('c'),
                     ];

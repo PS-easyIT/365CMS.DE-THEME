@@ -12,6 +12,12 @@ Seit dem letzten Audit-Stand wurden drei zusätzliche Punkte umgesetzt bzw. abge
 - ✅ **SEC-05 / konservative Theme-Härtung**: Freitext-/HTML-Inhalte der Startseiten-Sidebar sowie der Tech-Post-Variante laufen jetzt ebenfalls über den zentralen Theme-/Core-Sanitizer statt über inkonsistente Restpfade.
 - ✅ **UX-05 / Beitragskonsistenz**: Standard-, Wide- und Tech-Post-Templates behandeln die "Aktualisiert"-Metaanzeige jetzt konsistent unterhalb des Contents statt verteilt über unterschiedliche Header-/Body-Stellen.
 - ✅ **SEC-06 / öffentliche Link-Allowlist**: Footer-, Sidebar- und Homepage-Widget-Links aus dem Theme-Customizer laufen jetzt konsistent über `phinit_safe_public_url()`, sodass ungültige oder schemenfremde Werte (`javascript:`, `data:`, defekte Protokolle) nicht mehr als anklickbare öffentliche Links gerendert werden.
+- ✅ **SEC-07 / Output-Kontexte & Share-URLs**: Customizer-Alerts rendern Statusmeldungen jetzt nur noch textescaped, Pagination-/Archiv-Zähler werden explizit typisiert ausgegeben, und die Share-Buttons der Post-Templates erzeugen ihre externen Ziel-URLs konsistent über RFC3986-konforme Query-Strings statt über verstreute manuelle Parameter-Escapes.
+- ✅ **SEC-08 / Member-Favoriten & Avatar-Renderpfade**: Page-Favorites werden beim Lesen und Persistieren jetzt auf erlaubte URLs/Medienpfade normalisiert; die Favoritenverwaltung typisiert Storage-/ID-POSTs strenger und Member-Avatar-Previews rendern nur noch über den zentralen Public-Media-Normalizer statt rohe Meta-URLs direkt in `img src` zu schreiben.
+
+## Offener Folge-Hotspot außerhalb des Theme-Repos
+
+- ⚠️ **Member-Profil-URL-Speicherung im Core**: `CMS/member/includes/class-member-controller.php` schreibt `website`, `social` und `avatar` aktuell weiterhin weitgehend roh in die User-Meta. Das Theme rendert diese Werte jetzt defensiver, die serverseitige Save-Härtung liegt aber im Core-Repository und sollte als nächster repoübergreifender Audit-Schritt folgen.
 
 ### Bekannte Scanner-Fehlalarme (Stand 29.03.2026)
 
@@ -141,7 +147,7 @@ Die **ursprünglichen Audit-Befunde** lagen vor allem in drei Clustern:
 | Bereich | Einschätzung | Kurzbegründung |
 |---|---|---|
 | Customizer | A- | Schema, UI und Save-/Import-Flow sind weitgehend konsolidiert; relevante Drift-Befunde wurden bereinigt |
-| Sicherheit | A- | die kritischen Theme-Befunde zu URL-Allowlist, Import-Härtung und privilegiertem Raw-Code-Flow sind abgearbeitet |
+| Sicherheit | A | die kritischen Theme-Befunde zu URL-Allowlist, Import-Härtung, Output-Kontexten und privilegiertem Raw-Code-Flow sind abgearbeitet |
 | Performance | B+ | Head-/Asset-Pfad und JS-/Bildstrategie wurden deutlich entschlackt; reale Metriken fehlen weiterhin ohne Testziel |
 | Wartbarkeit | B+ | Legacy-Spuren wie `extract()`-Pfade und parallele Klassifizierungslogik wurden reduziert, das Theme bleibt aber modular verteilt |
 

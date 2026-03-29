@@ -252,13 +252,24 @@ try {
                     <span>Teilen:</span>
                     <?php
                     $shareUrl = function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ($siteUrl . '/blog/' . ($post['slug'] ?? ''));
-                    $postUrl = htmlspecialchars(urlencode($shareUrl), ENT_QUOTES);
-                    $postTitle = htmlspecialchars(urlencode($post['title'] ?? ''), ENT_QUOTES);
+                    $shareTitle = trim((string) ($post['title'] ?? ''));
+                    $linkedinShareHref = 'https://www.linkedin.com/shareArticle?' . http_build_query([
+                        'url' => $shareUrl,
+                        'title' => $shareTitle,
+                    ], '', '&', PHP_QUERY_RFC3986);
+                    $twitterShareHref = 'https://twitter.com/intent/tweet?' . http_build_query([
+                        'url' => $shareUrl,
+                        'text' => $shareTitle,
+                    ], '', '&', PHP_QUERY_RFC3986);
+                    $emailShareHref = 'mailto:?' . http_build_query([
+                        'subject' => $shareTitle,
+                        'body' => $shareUrl,
+                    ], '', '&', PHP_QUERY_RFC3986);
                     ?>
-                    <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer">in LinkedIn</a>
-                    <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer">𝕏 Twitter</a>
-                    <a href="mailto:?subject=<?php echo $postTitle; ?>&body=<?php echo $postUrl; ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
-                    <button class="share-btn cp" aria-label="Link kopieren">📋 Link kopieren</button>
+                    <a href="<?php echo htmlspecialchars($linkedinShareHref, ENT_QUOTES); ?>" class="share-btn li" target="_blank" rel="noopener noreferrer">in LinkedIn</a>
+                    <a href="<?php echo htmlspecialchars($twitterShareHref, ENT_QUOTES); ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer">𝕏 Twitter</a>
+                    <a href="<?php echo htmlspecialchars($emailShareHref, ENT_QUOTES); ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
+                    <button type="button" class="share-btn cp" aria-label="Link kopieren">📋 Link kopieren</button>
                 </div>
                 <?php endif; ?>
             </div>

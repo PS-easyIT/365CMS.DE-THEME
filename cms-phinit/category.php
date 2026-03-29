@@ -44,11 +44,11 @@ $archiveSummary = $isOverview
         </div>
         <div class="phinit-special-hero__stats" aria-label="Kategorien Sitemap Statistik">
             <div class="phinit-special-stat">
-                <span class="phinit-special-stat__value"><?php echo $total; ?></span>
+                <span class="phinit-special-stat__value"><?php echo (int) $total; ?></span>
                 <span class="phinit-special-stat__label">Bereiche</span>
             </div>
             <div class="phinit-special-stat">
-                <span class="phinit-special-stat__value"><?php echo $currentPage; ?>/<?php echo max(1, $totalPages); ?></span>
+                <span class="phinit-special-stat__value"><?php echo (int) $currentPage; ?>/<?php echo max(1, (int) $totalPages); ?></span>
                 <span class="phinit-special-stat__label">Seite</span>
             </div>
         </div>
@@ -71,7 +71,7 @@ $archiveSummary = $isOverview
         <article class="phinit-sitemap-card">
             <header class="phinit-sitemap-card__header">
                 <h2>Alle Kategorien</h2>
-                <span class="phinit-sitemap-card__count"><?php echo $total; ?></span>
+                <span class="phinit-sitemap-card__count"><?php echo (int) $total; ?></span>
             </header>
 
             <?php if (!empty($overviewItems)): ?>
@@ -85,7 +85,7 @@ $archiveSummary = $isOverview
                     ?>
                 <li class="phinit-sitemap-list__item">
                     <a href="<?php echo htmlspecialchars($itemUrl !== '' ? $itemUrl : '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($itemTitle, ENT_QUOTES); ?></a>
-                    <span class="phinit-sitemap-list__meta"><?php echo $itemCount; ?> Beiträge<?php echo $itemDescription !== '' ? ' • ' . htmlspecialchars($itemDescription, ENT_QUOTES) : ''; ?></span>
+                    <span class="phinit-sitemap-list__meta"><?php echo (int) $itemCount; ?> Beiträge<?php echo $itemDescription !== '' ? ' • ' . htmlspecialchars($itemDescription, ENT_QUOTES) : ''; ?></span>
                 </li>
                 <?php endforeach; ?>
             </ul>
@@ -110,7 +110,7 @@ $archiveSummary = $isOverview
     <h1 class="visually-hidden"><?php echo htmlspecialchars('Kategorie: ' . $categoryName, ENT_QUOTES); ?></h1>
     <p class="blog-search-hint" data-anim>
         Kategorie <strong><?php echo htmlspecialchars($categoryName, ENT_QUOTES); ?></strong>
-        &mdash; <?php echo $total; ?> Beiträge
+        &mdash; <?php echo (int) $total; ?> Beiträge
         &mdash; <?php echo htmlspecialchars($archiveSummary, ENT_QUOTES); ?>
     </p>
 

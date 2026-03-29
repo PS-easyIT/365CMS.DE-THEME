@@ -157,21 +157,31 @@ if ($showPostTags) {
             <span>Teilen:</span>
             <?php
             $postUrlRaw = rtrim($siteUrl, '/') . phinit_current_request_path();
-            $postUrl = htmlspecialchars(rawurlencode($postUrlRaw), ENT_QUOTES);
             $postTitleRaw = (string) ($post['title'] ?? '');
-            $postTitle = htmlspecialchars(rawurlencode($postTitleRaw), ENT_QUOTES);
+            $linkedinShareHref = 'https://www.linkedin.com/shareArticle?' . http_build_query([
+                'url' => $postUrlRaw,
+                'title' => $postTitleRaw,
+            ], '', '&', PHP_QUERY_RFC3986);
+            $twitterShareHref = 'https://twitter.com/intent/tweet?' . http_build_query([
+                'url' => $postUrlRaw,
+                'text' => $postTitleRaw,
+            ], '', '&', PHP_QUERY_RFC3986);
+            $emailShareHref = 'mailto:?' . http_build_query([
+                'subject' => $postTitleRaw,
+                'body' => $postUrlRaw,
+            ], '', '&', PHP_QUERY_RFC3986);
             ?>
             <?php if ($showShareLinkedin): ?>
-            <a href="https://www.linkedin.com/shareArticle?url=<?php echo $postUrl; ?>&title=<?php echo $postTitle; ?>" class="share-btn li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in LinkedIn</a>
+            <a href="<?php echo htmlspecialchars($linkedinShareHref, ENT_QUOTES); ?>" class="share-btn li" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in LinkedIn</a>
             <?php endif; ?>
             <?php if ($showShareTwitter): ?>
-            <a href="https://twitter.com/intent/tweet?url=<?php echo $postUrl; ?>&text=<?php echo $postTitle; ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏 Twitter</a>
+            <a href="<?php echo htmlspecialchars($twitterShareHref, ENT_QUOTES); ?>" class="share-btn tw" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X">𝕏 Twitter</a>
             <?php endif; ?>
             <?php if ($showShareMastodon): ?>
             <a href="<?php echo htmlspecialchars(phinit_get_mastodon_share_url($postUrlRaw, $postTitleRaw, (string) $czGet('social', 'social_mastodon', '')), ENT_QUOTES); ?>" class="share-btn ma" target="_blank" rel="noopener noreferrer" aria-label="Mastodon">🦣 Mastodon</a>
             <?php endif; ?>
             <?php if ($showShareEmail): ?>
-            <a href="mailto:?subject=<?php echo $postTitle; ?>&body=<?php echo $postUrl; ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
+            <a href="<?php echo htmlspecialchars($emailShareHref, ENT_QUOTES); ?>" class="share-btn em" aria-label="Per E-Mail senden">✉ E-Mail</a>
             <?php endif; ?>
             <?php if ($showShareCopy): ?>
             <button type="button" class="share-btn cp" data-share-copy="1" aria-label="Link kopieren">📋 Link kopieren</button>

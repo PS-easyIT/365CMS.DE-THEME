@@ -44,7 +44,7 @@ try {
     if (!empty($currentUser->display_name)) {
         $memberDisplayName = trim((string) $currentUser->display_name);
     }
-    $memberAvatarUrl = trim((string) ($memberMeta['avatar'] ?? ''));
+    $memberAvatarUrl = phinit_normalize_public_media_url((string) ($memberMeta['avatar'] ?? ''), true, $siteUrl);
 } catch (\Throwable $e) {}
 
 $isAdmin = false;

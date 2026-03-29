@@ -28,10 +28,16 @@ $favoriteSections = [
     'other' => ['label' => 'Sonstiges', 'icon' => '🗂️', 'items' => []],
 ];
 
+$allowedFavoriteStorage = ['post', 'page'];
+
 // Favorit entfernen
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_favorite'])) {
     if (\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'member_favorites')) {
         $favoriteStorage = trim((string) ($_POST['favorite_storage'] ?? 'post'));
+        if (!in_array($favoriteStorage, $allowedFavoriteStorage, true)) {
+            $favoriteStorage = 'post';
+        }
+
         $favId = (int)($_POST['favorite_id'] ?? 0);
         if ($favoriteStorage === 'page') {
             $pageFavoriteId = (int) ($_POST['favorite_content_id'] ?? 0);
@@ -59,6 +65,7 @@ $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_curre
 $postFavorites = array_map(
     static function ($row) use ($siteUrl, $currentLocale): array {
         $favorite = (array) $row;
+        $featuredImage = phinit_normalize_public_media_url((string) ($favorite['featured_image'] ?? ''), true, $siteUrl);
 
         $postData = [
             'slug' => (string) ($favorite['post_slug'] ?? ''),
@@ -74,7 +81,7 @@ $postFavorites = array_map(
             'title' => (string) ($favorite['post_title'] ?? 'Unbekannter Beitrag'),
             'url' => function_exists('phinit_build_post_url') ? phinit_build_post_url($postData, $currentLocale) : ($siteUrl . '/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? ''))),
             'excerpt' => trim((string) ($favorite['excerpt'] ?? '')),
-            'featured_image' => (string) ($favorite['featured_image'] ?? ''),
+            'featured_image' => $featuredImage,
             'badge' => (string) ($favorite['category_name'] ?? 'Beitrag'),
             'created_at' => (string) ($favorite['created_at'] ?? ''),
             'section' => 'posts',
@@ -99,9 +106,9 @@ $pageFavorites = array_map(
         'id' => 0,
         'content_id' => (int) ($favorite['content_id'] ?? 0),
         'title' => (string) ($favorite['title'] ?? 'Seite'),
-        'url' => (string) ($favorite['url'] ?? '#'),
+        'url' => phinit_safe_public_url((string) ($favorite['url'] ?? ''), $siteUrl, ['http', 'https']) ?: '#',
         'excerpt' => (string) ($favorite['excerpt'] ?? ''),
-        'featured_image' => (string) ($favorite['featured_image'] ?? ''),
+        'featured_image' => phinit_normalize_public_media_url((string) ($favorite['featured_image'] ?? ''), true, $siteUrl),
         'badge' => (string) ($favorite['badge'] ?? 'Seite'),
         'created_at' => (string) ($favorite['created_at'] ?? ''),
         'section' => 'pages',
@@ -137,7 +144,7 @@ include $themeDir . 'header.php';
 
         <div class="member-page-title" data-anim>
             <h1>⭐ Favoriten</h1>
-            <p><?php echo $total; ?> gespeicherte Einträge – aufgeteilt in Beiträge, Seiten und sonstige Merkliste.</p>
+            <p><?php echo (int) $total; ?> gespeicherte Einträge – aufgeteilt in Beiträge, Seiten und sonstige Merkliste.</p>
         </div>
 
         <div class="member-dashboard-overview member-dashboard-overview--analytics" data-anim data-anim-delay=".5">
@@ -189,7 +196,8 @@ include $themeDir . 'header.php';
                             <p>Gespeichert, damit du später blitzschnell wieder hier landest.</p>
                             <?php endif; ?>
                             <div class="member-fav-meta">
-                                <span><?php echo htmlspecialchars(date('d.m.Y', strtotime((string) ($fav['created_at'] ?? 'now'))), ENT_QUOTES); ?></span>
+                                <?php $favoriteTimestamp = strtotime((string) ($fav['created_at'] ?? '')); ?>
+                                <span><?php echo htmlspecialchars($favoriteTimestamp !== false ? date('d.m.Y', $favoriteTimestamp) : '—', ENT_QUOTES); ?></span>
                                 <a href="<?php echo htmlspecialchars((string) ($fav['url'] ?? '#'), ENT_QUOTES); ?>" class="member-fav-open-link">Öffnen →</a>
                                 <form method="post" class="member-fav-remove" onsubmit="return confirm('Favorit wirklich entfernen?');">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">

@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.9",
+  "version": "1.5.11",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.8.1",
   "release_date": "2026-03-29",
@@ -9,9 +9,19 @@
   "details_url": "https://phinit.de",
   "changelog": [
     {
-      "version": "1.5.9",
+      "version": "1.5.11",
       "date": "2026-03-29",
       "changes": [
+        "includes/theme-template-helpers.php: Page-Favorites werden beim Lesen und Persistieren jetzt gegen die Public-URL-/Media-Allowlist normalisiert; die Toggle-Logik vermeidet zusätzlich einen redundanten zweiten Meta-Read",
+        "member/favorites.php: Entfernen-POSTs validieren `favorite_storage` jetzt gegen eine Whitelist, normalisieren Favoritenbilder/-URLs defensiv und zeigen ungültige Favoriten-Datumswerte nicht länger implizit als `now` an",
+        "member/profile.php + member/partials/member-nav.php: Avatar-Previews rendern nur noch über `phinit_normalize_public_media_url()`, sodass rohe Meta-URLs nicht direkt in `img src` landen",
+        "DOC/THEME-AUDIT.md: SEC-08 für Member-Favoriten- und Avatar-Härtung dokumentiert; verbleibende serverseitige Profil-URL-Speicherung im Core als Folge-Hotspot markiert",
+        "theme.json + functions.php + update.json: Theme-Metadaten auf Version 1.5.11 aktualisiert",
+        "admin/customizer-alert.php: Alert-Meldungen werden jetzt explizit textescaped und leere Status-Strings nicht mehr gerendert, wodurch ein verbleibender HTML-/XSS-Restpfad im Theme-Customizer entfällt",
+        "author.php + category.php: Pagination- und Archiv-Statistikwerte werden jetzt explizit als Ganzzahlen ausgegeben; Autorenprofile hängen den `page`-Parameter robust mit passendem Query-Separator an",
+        "post.php + post-wide.php + post-tech.php: LinkedIn-, Twitter/X- und Mail-Share-Links werden konsistent über RFC3986-konforme Query-Strings aufgebaut statt über verteilte manuelle URL-Parameter-Escapes",
+        "DOC/THEME-AUDIT.md: SEC-07 für Output-Kontexte und Share-Link-Härtung dokumentiert; statische Sicherheitsbewertung auf A angehoben",
+        "theme.json + functions.php + update.json: Theme-Metadaten auf Version 1.5.10 aktualisiert",
         "page.php: Hub-Site-Markup aus dem Core-Renderer wird im cms-phinit-Page-Template nicht mehr durch eine zweite Default-Sanitizer-Runde seiner `cms-hub-site*`-Klassen beraubt; öffentliche HubSites greifen dadurch wieder vollständig auf ihr Layout/CSS zu",
         "includes/theme-home-helpers.php + footer.php + partials/sidebar.php + partials/home-article-list.php + partials/home-info-grid.php + partials/home-repo-card.php: öffentliche Customizer-Links in Footer, Sidebar und Homepage-Widgets laufen jetzt konsistent über `phinit_safe_public_url()`, damit schemenfremde oder defekte URLs nicht mehr als klickbare Frontend-Links erscheinen",
         "DOC/THEME-AUDIT.md: SEC-06 für die nachgezogene Public-Link-Allowlist im Frontend dokumentiert",
