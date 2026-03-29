@@ -10,6 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$formatSecurityDate = static function (?string $value, string $format = 'd.m.Y H:i'): string {
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false ? date($format, $timestamp) : '–';
+};
+
 require_once ABSPATH . 'member/includes/bootstrap.php';
 
 $controller->handleSecurityRequest();
@@ -113,7 +119,7 @@ include $themeDir . 'header.php';
                     <strong>Hinweis:</strong>
                     <p><?php echo htmlspecialchars((string) ($security['score_message'] ?? 'Wenn dir ein Gerät unbekannt vorkommt, ändere sofort dein Passwort und überprüfe offene Browser-Sitzungen.'), ENT_QUOTES); ?></p>
                     <?php if ($lastActivity !== ''): ?>
-                    <p class="member-security-note__meta">Letzte registrierte Aktivität: <?php echo htmlspecialchars(date('d.m.Y H:i', strtotime($lastActivity)), ENT_QUOTES); ?></p>
+                    <p class="member-security-note__meta">Letzte registrierte Aktivität: <?php echo htmlspecialchars($formatSecurityDate($lastActivity), ENT_QUOTES); ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -249,8 +255,8 @@ include $themeDir . 'header.php';
                         <span><?php echo htmlspecialchars((string) ($session['ip_address'] ?? '–'), ENT_QUOTES); ?></span>
                     </div>
                     <div class="member-session-item__meta">
-                        <span>Erstellt: <?php echo htmlspecialchars(!empty($session['created_at']) ? date('d.m.Y H:i', strtotime((string) $session['created_at'])) : '–', ENT_QUOTES); ?></span>
-                        <span>Zuletzt aktiv: <?php echo htmlspecialchars(!empty($session['last_activity']) ? date('d.m.Y H:i', strtotime((string) $session['last_activity'])) : '–', ENT_QUOTES); ?></span>
+                        <span>Erstellt: <?php echo htmlspecialchars(!empty($session['created_at']) ? $formatSecurityDate((string) $session['created_at']) : '–', ENT_QUOTES); ?></span>
+                        <span>Zuletzt aktiv: <?php echo htmlspecialchars(!empty($session['last_activity']) ? $formatSecurityDate((string) $session['last_activity']) : '–', ENT_QUOTES); ?></span>
                     </div>
                 </article>
                 <?php endforeach; ?>

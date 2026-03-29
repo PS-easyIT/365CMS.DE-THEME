@@ -108,10 +108,12 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
         <div class="sb-widget sb-widget--identity">
-            <?php $_idLink = !empty($_sbIdentityLinkUrl) ? $_sbIdentityLinkUrl : '/'; ?>
-            <a href="<?php echo htmlspecialchars($_idLink, ENT_QUOTES); ?>" class="sb-identity">
-                <?php if (!empty($_sbIdentityLogoUrl)): ?>
-                <img src="<?php echo htmlspecialchars($_sbIdentityLogoUrl, ENT_QUOTES); ?>"
+            <?php $_idLink = !empty($_sbIdentityLinkUrl) ? (string) $_sbIdentityLinkUrl : '/'; ?>
+            <?php $_idHref = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($_idLink, $siteUrl, ['http', 'https']) ?: '/') : $_idLink; ?>
+            <?php $_sbIdentityLogoSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url((string) $_sbIdentityLogoUrl, false, $siteUrl) : (string) $_sbIdentityLogoUrl; ?>
+            <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity">
+                <?php if ($_sbIdentityLogoSrc !== ''): ?>
+                <img src="<?php echo htmlspecialchars($_sbIdentityLogoSrc, ENT_QUOTES); ?>"
                      alt="Site Logo" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes((string) $_sbIdentityLogoUrl); ?>>
                 <?php endif; ?>
                 <?php if (!empty($_sbIdentityTagline)): ?>
@@ -129,19 +131,28 @@ if (empty($_showList) || $featuredPosts === []) {
                 if (empty($pName) || empty($pUrl)) {
                     continue;
                 }
+                $_pHref = function_exists('phinit_safe_public_url')
+                    ? phinit_safe_public_url((string) $pUrl, $siteUrl, ['http', 'https'])
+                    : (string) $pUrl;
+                if ($_pHref === '') {
+                    continue;
+                }
+                $_pLogoSrc = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) $pLogo, false, $siteUrl)
+                    : (string) $pLogo;
                 $_pInitials = mb_strtoupper(mb_substr(preg_replace('/[^a-z0-9]/iu', '', strip_tags((string) $pName)), 0, 2));
-                $_pCardClass = !empty($pLogo)
-                    ? ($pLogo === $_sbProj1LogoUrl ? ' sb-project-card--project1' : ($pLogo === $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
+                $_pCardClass = $_pLogoSrc !== ''
+                    ? ((string) $pLogo === (string) $_sbProj1LogoUrl ? ' sb-project-card--project1' : ((string) $pLogo === (string) $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
                     : '';
-                $_pCardStyle = !empty($pLogo)
-                    ? '--sb-project-card-image: url(\'' . htmlspecialchars((string) $pLogo, ENT_QUOTES) . '\');'
+                $_pCardStyle = $_pLogoSrc !== ''
+                    ? '--sb-project-card-image: url(\'' . htmlspecialchars($_pLogoSrc, ENT_QUOTES) . '\');'
                     : '';
             ?>
-            <a href="<?php echo htmlspecialchars((string) $pUrl, ENT_QUOTES); ?>"
+            <a href="<?php echo htmlspecialchars($_pHref, ENT_QUOTES); ?>"
                class="sb-project-card<?php echo $_pCardClass; ?>"
                <?php if ($_pCardStyle !== ''): ?>style="<?php echo $_pCardStyle; ?>"<?php endif; ?>
                target="_blank" rel="noopener noreferrer">
-                <?php if (empty($pLogo)): ?>
+                <?php if ($_pLogoSrc === ''): ?>
                 <div class="sb-project-placeholder-bg"
                      data-initials="<?php echo htmlspecialchars($_pInitials ?: '?', ENT_QUOTES); ?>"
                      aria-hidden="true"></div>
@@ -177,25 +188,36 @@ if (empty($_showList) || $featuredPosts === []) {
                 }
                 $_fpIndex = (int) $_fpIndex;
                 $_fpIsActive = $_fpIndex === 0;
-                $_fpHref = htmlspecialchars((string) ($_fp['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($_fp, $currentLocale) : ($siteUrl . '/blog/' . ($_fp['slug'] ?? '')))), ENT_QUOTES);
+                $_fpHrefRaw = (string) ($_fp['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($_fp, $currentLocale) : ($siteUrl . '/blog/' . ($_fp['slug'] ?? ''))));
+                $_fpHref = function_exists('phinit_safe_public_url')
+                    ? (phinit_safe_public_url($_fpHrefRaw, $siteUrl, ['http', 'https']) ?: '#')
+                    : $_fpHrefRaw;
                 $_fpTitle = htmlspecialchars((string) ($_fp['title'] ?? ''), ENT_QUOTES);
                 $_fpDateRaw = $_fp['published_at'] ?? ($_fp['created_at'] ?? '');
                 $_fpDate = !empty($_fpDateRaw) ? date('j. M Y', strtotime((string) $_fpDateRaw)) : '';
                 $_fpDateIso = !empty($_fpDateRaw) ? date('c', strtotime((string) $_fpDateRaw)) : '';
                 $_fpCat = htmlspecialchars((string) ($_fp['category_name'] ?? ''), ENT_QUOTES);
-                $_fpCustomThumb = !empty($_fp['custom_sidebar_image']) ? htmlspecialchars((string) $_fp['custom_sidebar_image'], ENT_QUOTES) : '';
+                $_fpCustomThumb = !empty($_fp['custom_sidebar_image'])
+                    ? (function_exists('phinit_normalize_public_media_url')
+                        ? phinit_normalize_public_media_url((string) $_fp['custom_sidebar_image'], false, $siteUrl)
+                        : (string) $_fp['custom_sidebar_image'])
+                    : '';
                 $_fpHasCustomThumb = $_fpCustomThumb !== '' || (string) ($_fp['sidebar_image_source'] ?? '') === 'custom';
                 $_fpThumb = $_fpHasCustomThumb
                     ? $_fpCustomThumb
-                    : (!empty($_fp['featured_image']) ? htmlspecialchars((string) $_fp['featured_image'], ENT_QUOTES) : '');
+                    : (!empty($_fp['featured_image'])
+                        ? (function_exists('phinit_normalize_public_media_url')
+                            ? phinit_normalize_public_media_url((string) $_fp['featured_image'], false, $siteUrl)
+                            : (string) $_fp['featured_image'])
+                        : '');
                 $_fpThumbWidth = 64;
                 $_fpThumbHeight = 48;
             ?>
-            <a href="<?php echo $_fpHref; ?>"
+            <a href="<?php echo htmlspecialchars($_fpHref, ENT_QUOTES); ?>"
                class="sb-featured-post<?php echo $_sbEnableFeaturedRotation ? ' sb-featured-post--slide' : ''; ?><?php echo $_fpIsActive ? ' is-active' : ''; ?>"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-slide data-slide-index="<?php echo $_fpIndex; ?>" aria-hidden="<?php echo $_fpIsActive ? 'false' : 'true'; ?>" tabindex="<?php echo $_fpIsActive ? '0' : '-1'; ?>"<?php endif; ?>>
                 <?php if ($_fpThumb !== ''): ?>
-                <img src="<?php echo $_fpThumb; ?>" alt="<?php echo $_fpTitle; ?>"
+                <img src="<?php echo htmlspecialchars($_fpThumb, ENT_QUOTES); ?>" alt="<?php echo $_fpTitle; ?>"
                      class="sb-featured-thumb<?php echo $_fpHasCustomThumb ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes(); ?> width="<?php echo (int) $_fpThumbWidth; ?>" height="<?php echo (int) $_fpThumbHeight; ?>">
                 <?php else: ?>
                 <div class="sb-featured-thumb sb-featured-thumb--placeholder" aria-hidden="true">
@@ -238,19 +260,28 @@ if (empty($_showList) || $featuredPosts === []) {
                 if (empty($pName) || empty($pUrl)) {
                     continue;
                 }
+                $_pHref = function_exists('phinit_safe_public_url')
+                    ? phinit_safe_public_url((string) $pUrl, $siteUrl, ['http', 'https'])
+                    : (string) $pUrl;
+                if ($_pHref === '') {
+                    continue;
+                }
+                $_pLogoSrc = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) $pLogo, false, $siteUrl)
+                    : (string) $pLogo;
                 $_pInitials = mb_strtoupper(mb_substr(preg_replace('/[^a-z0-9]/iu', '', strip_tags((string) $pName)), 0, 2));
-                $_pCardClass = !empty($pLogo)
-                    ? ($pLogo === $_sbProj1LogoUrl ? ' sb-project-card--project1' : ($pLogo === $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
+                $_pCardClass = $_pLogoSrc !== ''
+                    ? ((string) $pLogo === (string) $_sbProj1LogoUrl ? ' sb-project-card--project1' : ((string) $pLogo === (string) $_sbProj2LogoUrl ? ' sb-project-card--project2' : ''))
                     : '';
-                $_pCardStyle = !empty($pLogo)
-                    ? '--sb-project-card-image: url(\'' . htmlspecialchars((string) $pLogo, ENT_QUOTES) . '\');'
+                $_pCardStyle = $_pLogoSrc !== ''
+                    ? '--sb-project-card-image: url(\'' . htmlspecialchars($_pLogoSrc, ENT_QUOTES) . '\');'
                     : '';
             ?>
-            <a href="<?php echo htmlspecialchars((string) $pUrl, ENT_QUOTES); ?>"
+            <a href="<?php echo htmlspecialchars($_pHref, ENT_QUOTES); ?>"
                class="sb-project-card<?php echo $_pCardClass; ?>"
                <?php if ($_pCardStyle !== ''): ?>style="<?php echo $_pCardStyle; ?>"<?php endif; ?>
                target="_blank" rel="noopener noreferrer">
-                <?php if (empty($pLogo)): ?>
+                <?php if ($_pLogoSrc === ''): ?>
                 <div class="sb-project-placeholder-bg"
                      data-initials="<?php echo htmlspecialchars($_pInitials ?: '?', ENT_QUOTES); ?>"
                      aria-hidden="true"></div>
@@ -280,10 +311,16 @@ if (empty($_showList) || $featuredPosts === []) {
                 }
                 $_svcName = trim($_svcParts[0]);
                 $_svcUrl = trim($_svcParts[1] ?? '#');
+                $_svcSafeUrl = function_exists('phinit_safe_public_url')
+                    ? phinit_safe_public_url($_svcUrl, $siteUrl, ['http', 'https'])
+                    : $_svcUrl;
+                if ($_svcSafeUrl === '') {
+                    continue;
+                }
                 $_svcShort = mb_strtoupper(mb_substr(trim($_svcParts[2] ?? $_svcParts[0]), 0, 4));
             ?>
             <li class="sb-status-row">
-                <a href="<?php echo htmlspecialchars($_svcUrl, ENT_QUOTES); ?>"
+                <a href="<?php echo htmlspecialchars($_svcSafeUrl, ENT_QUOTES); ?>"
                    target="_blank" rel="noopener noreferrer"
                    class="sb-status-service-link" title="<?php echo htmlspecialchars($_svcName, ENT_QUOTES); ?> Status">
                     <span class="sb-status-icon"><?php echo htmlspecialchars($_svcShort, ENT_QUOTES); ?></span>
@@ -381,9 +418,12 @@ if (empty($_showList) || $featuredPosts === []) {
                 <p class="sb-notice-text"><?php echo htmlspecialchars((string) $_sbNoticeText, ENT_QUOTES); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($_sbNoticeUrl) && !empty($_sbNoticeUrlText)): ?>
-                <a href="<?php echo htmlspecialchars((string) $_sbNoticeUrl, ENT_QUOTES); ?>" class="sb-notice-link">
+                <?php $_sbNoticeHref = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $_sbNoticeUrl, $siteUrl, ['http', 'https']) : (string) $_sbNoticeUrl; ?>
+                <?php if ($_sbNoticeHref !== ''): ?>
+                <a href="<?php echo htmlspecialchars($_sbNoticeHref, ENT_QUOTES); ?>" class="sb-notice-link">
                     <?php echo htmlspecialchars((string) $_sbNoticeUrlText, ENT_QUOTES); ?>
                 </a>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>

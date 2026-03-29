@@ -220,15 +220,24 @@ if ($hasFeedPlugin && $feedDb !== null) {
 }
 $selectedChannels = [];
 
+$formatFeedDate = static function (?string $value, string $format = 'd.m.Y H:i', string $suffix = ' Uhr'): string {
+    $timestamp = strtotime((string) $value);
+    if ($timestamp === false) {
+        return 'Noch kein Versand erfolgt';
+    }
+
+    return date($format, $timestamp) . $suffix;
+};
+
 foreach ($selectedChannelIds as $selectedChannelId) {
     if (isset($channelIndex[$selectedChannelId])) {
         $selectedChannels[] = $channelIndex[$selectedChannelId];
     }
 }
 
-$selectedCount = count($selectedChannels);
-$availableCount = count($channels);
-$categoryCount = count(array_filter($renderCategories, static fn (array $category): bool => !empty($channelsByCategory[(int) ($category['id'] ?? 0)])));
+$selectedCount = (int) count($selectedChannels);
+$availableCount = (int) count($channels);
+$categoryCount = (int) count(array_filter($renderCategories, static fn (array $category): bool => !empty($channelsByCategory[(int) ($category['id'] ?? 0)])));
 $scheduleLabel = 'Noch kein Zeitplan definiert';
 if ($hasFeedPlugin && $mailer !== null) {
     try {
@@ -239,7 +248,7 @@ if ($hasFeedPlugin && $mailer !== null) {
     }
 }
 $lastSentLabel = !empty($subscription['last_sent_at'])
-    ? date('d.m.Y H:i', strtotime((string) $subscription['last_sent_at'])) . ' Uhr'
+    ? $formatFeedDate((string) $subscription['last_sent_at'])
     : 'Noch kein Versand erfolgt';
 $isActiveSubscription = !empty($subscription['is_active']);
 
@@ -301,7 +310,7 @@ include $themeDir . 'header.php';
                     </div>
                     <div>
                         <dt>Ausgewählte Feeds</dt>
-                        <dd><?php echo $selectedCount; ?> von <?php echo $availableCount; ?></dd>
+                        <dd><?php echo (int) $selectedCount; ?> von <?php echo (int) $availableCount; ?></dd>
                     </div>
                     <div>
                         <dt>Zeitplan</dt>
@@ -324,7 +333,7 @@ include $themeDir . 'header.php';
 
                 <div class="member-card-header">
                     <h3>⚙️ Feed-Abo konfigurieren</h3>
-                    <span class="member-badge-soft"><?php echo $selectedCount; ?> Feed<?php echo $selectedCount === 1 ? '' : 's'; ?> aktiv gewählt</span>
+                    <span class="member-badge-soft"><?php echo (int) $selectedCount; ?> Feed<?php echo $selectedCount === 1 ? '' : 's'; ?> aktiv gewählt</span>
                 </div>
 
                 <div class="member-form-group">
@@ -389,7 +398,7 @@ include $themeDir . 'header.php';
             <section class="member-card member-card--notification-feed">
                 <div class="member-card-header">
                     <h3>🧾 Abo-Zusammenfassung</h3>
-                    <span class="member-badge-soft"><?php echo $categoryCount; ?> Bereich<?php echo $categoryCount === 1 ? '' : 'e'; ?></span>
+                    <span class="member-badge-soft"><?php echo (int) $categoryCount; ?> Bereich<?php echo $categoryCount === 1 ? '' : 'e'; ?></span>
                 </div>
 
                 <div class="member-notification-feed">
@@ -413,8 +422,8 @@ include $themeDir . 'header.php';
                         <div class="member-notification-item__icon">📡</div>
                         <div class="member-notification-item__content">
                             <strong>Feed-Auswahl</strong>
-                            <p><?php echo $selectedCount; ?> Feed<?php echo $selectedCount === 1 ? '' : 's'; ?> ausgewählt</p>
-                            <span><?php echo $availableCount; ?> aktive Quellen insgesamt verfügbar</span>
+                            <p><?php echo (int) $selectedCount; ?> Feed<?php echo $selectedCount === 1 ? '' : 's'; ?> ausgewählt</p>
+                            <span><?php echo (int) $availableCount; ?> aktive Quellen insgesamt verfügbar</span>
                         </div>
                     </article>
                 </div>
@@ -439,7 +448,7 @@ include $themeDir . 'header.php';
                     <?php endforeach; ?>
                 </div>
                 <?php if ($selectedCount > 6): ?>
-                <p class="member-form-hint">+<?php echo $selectedCount - 6; ?> weitere Feeds sind zusätzlich ausgewählt.</p>
+                <p class="member-form-hint">+<?php echo (int) ($selectedCount - 6); ?> weitere Feeds sind zusätzlich ausgewählt.</p>
                 <?php endif; ?>
                 <?php endif; ?>
             </section>
@@ -458,7 +467,7 @@ include $themeDir . 'header.php';
 
             <div class="member-card-header">
                 <h3>📰 Verfügbare Feeds auswählen</h3>
-                <span class="member-badge-soft"><?php echo $availableCount; ?> aktive Feeds</span>
+                <span class="member-badge-soft"><?php echo (int) $availableCount; ?> aktive Feeds</span>
             </div>
 
                 <?php foreach ($renderCategories as $category): ?>
@@ -470,7 +479,8 @@ include $themeDir . 'header.php';
                 <div class="member-form-group">
                     <div class="member-card-header">
                         <h3><?php echo htmlspecialchars((string) ($category['icon'] ?? '📰'), ENT_QUOTES); ?> <?php echo htmlspecialchars((string) ($category['name'] ?? 'Bereich'), ENT_QUOTES); ?></h3>
-                        <span class="member-badge-soft"><?php echo count($categoryChannels); ?> Feed<?php echo count($categoryChannels) === 1 ? '' : 's'; ?></span>
+                        <?php $categoryChannelCount = (int) count($categoryChannels); ?>
+                        <span class="member-badge-soft"><?php echo $categoryChannelCount; ?> Feed<?php echo $categoryChannelCount === 1 ? '' : 's'; ?></span>
                     </div>
 
                     <?php if (!empty($category['description'])): ?>
@@ -487,7 +497,10 @@ include $themeDir . 'header.php';
                                 <small>
                                     <?php echo htmlspecialchars((string) ($channel['description'] ?? 'Aktiver Feed-Kanal für dein persönliches Mail-Abo.'), ENT_QUOTES); ?>
                                     <?php if (!empty($channel['last_fetched_at'])): ?>
-                                     · Letzter Abruf: <?php echo htmlspecialchars(date('d.m.Y H:i', strtotime((string) $channel['last_fetched_at'])), ENT_QUOTES); ?> Uhr
+                                     <?php $lastFetchedLabel = $formatFeedDate((string) $channel['last_fetched_at']); ?>
+                                     <?php if ($lastFetchedLabel !== 'Noch kein Versand erfolgt'): ?>
+                                     · Letzter Abruf: <?php echo htmlspecialchars($lastFetchedLabel, ENT_QUOTES); ?>
+                                     <?php endif; ?>
                                     <?php endif; ?>
                                 </small>
                             </span>

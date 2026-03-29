@@ -10,6 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$formatProfileDate = static function (?string $value, string $format = 'd.m.Y'): string {
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false ? date($format, $timestamp) : '—';
+};
+
 require_once ABSPATH . 'member/includes/bootstrap.php';
 
 $controller->handleProfileRequest();
@@ -156,7 +162,7 @@ include $themeDir . 'header.php';
                                   rows="5" placeholder="Kurze Beschreibung …"><?php echo htmlspecialchars($userMeta['bio'] ?? '', ENT_QUOTES); ?></textarea>
                     </div>
                     <div class="member-form-info">
-                        <p>📅 Mitglied seit: <strong><?php echo date('d.m.Y', strtotime($currentUser->created_at ?? 'now')); ?></strong></p>
+                        <p>📅 Mitglied seit: <strong><?php echo htmlspecialchars($formatProfileDate((string) ($currentUser->created_at ?? '')), ENT_QUOTES); ?></strong></p>
                         <p>🔑 Rolle: <strong><?php echo htmlspecialchars(ucfirst($currentUser->role ?? 'member')); ?></strong></p>
                         <p>📊 Profil vollständig: <strong><?php echo (int) ($profileCompletion['percentage'] ?? 0); ?>%</strong></p>
                     </div>

@@ -62,6 +62,9 @@ if ($permalink === '') {
         ? phinit_build_post_url($card, $currentLocale)
         : ($siteUrl . '/blog/' . $displaySlug);
 }
+$permalink = function_exists('phinit_safe_public_url')
+    ? (phinit_safe_public_url($permalink, $siteUrl, ['http', 'https']) ?: '#')
+    : $permalink;
 
 $categoryLabel = trim((string) ($card['category_name'] ?? ''));
 $categorySlug = trim((string) ($card['category_slug'] ?? ''));
@@ -93,6 +96,9 @@ $displayContentSource = trim((string) ($card['content'] ?? ''));
 if ($displayContentSource === '') {
     $displayContentSource = trim((string) ($card['content_en'] ?? ''));
 }
+$cardImage = function_exists('phinit_normalize_public_media_url')
+    ? phinit_normalize_public_media_url((string) ($card['featured_image'] ?? ''), false, $siteUrl)
+    : (string) ($card['featured_image'] ?? '');
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
@@ -119,11 +125,11 @@ if ($show_rt && $show_meta) {
 <article class="article-card">
 
     <div class="article-thumb">
-        <?php if (!empty($card['featured_image'])): ?>
-        <img src="<?php echo htmlspecialchars($card['featured_image'], ENT_QUOTES); ?>"
+        <?php if ($cardImage !== ''): ?>
+        <img src="<?php echo htmlspecialchars($cardImage, ENT_QUOTES); ?>"
                alt="<?php echo phinit_escape_text($displayTitle); ?>"
                             <?php echo phinit_image_loading_attributes($above_the_fold_image, $image_high_priority); ?>
-                             <?php echo phinit_image_dimension_attributes((string) ($card['featured_image'] ?? ''), 162, 215); ?>>
+                             <?php echo phinit_image_dimension_attributes($cardImage, 162, 215); ?>>
         <?php else: ?>
         <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
         <?php endif; ?>

@@ -388,7 +388,7 @@ include $themeDir . 'header.php';
             <div class="member-card member-post-submissions">
                 <div class="member-card-header">
                     <h3>📚 Meine Einreichungen</h3>
-                    <span class="member-card-link"><?php echo count($postRows); ?> Einträge</span>
+                    <span class="member-card-link"><?php echo (int) count($postRows); ?> Einträge</span>
                 </div>
 
                 <?php if (!empty($postRows)): ?>
@@ -401,8 +401,12 @@ include $themeDir . 'header.php';
                         $statusLabel = $isPublished ? 'Veröffentlicht' : 'In Prüfung';
                         $statusClass = $isPublished ? 'member-post-status--published' : 'member-post-status--draft';
                         $postUrl = $siteUrl . $permalinkService->buildPostPath((array) $row);
+                        if (function_exists('phinit_safe_public_url')) {
+                            $postUrl = phinit_safe_public_url($postUrl, $siteUrl, ['http', 'https']) ?: '#';
+                        }
                         $editUrl = $siteUrl . '/member/posts?edit=' . $rowId;
                         $dateValue = (string) ($row->updated_at ?? $row->created_at ?? '');
+                        $dateTimestamp = strtotime($dateValue);
                     ?>
                     <article class="member-post-item">
                         <div class="member-post-item__main">
@@ -411,7 +415,7 @@ include $themeDir . 'header.php';
                                 <span class="member-post-status <?php echo htmlspecialchars($statusClass, ENT_QUOTES); ?>"><?php echo htmlspecialchars($statusLabel, ENT_QUOTES); ?></span>
                             </div>
                             <div class="member-post-meta">
-                                <span>Zuletzt geändert: <?php echo htmlspecialchars(date('d.m.Y H:i', strtotime($dateValue !== '' ? $dateValue : 'now')), ENT_QUOTES); ?></span>
+                                <span>Zuletzt geändert: <?php echo htmlspecialchars($dateTimestamp !== false ? date('d.m.Y H:i', $dateTimestamp) : '—', ENT_QUOTES); ?></span>
                                 <?php if (!empty($row->category_name)): ?>
                                 <span>Kategorie: <?php echo htmlspecialchars((string) $row->category_name, ENT_QUOTES); ?></span>
                                 <?php endif; ?>

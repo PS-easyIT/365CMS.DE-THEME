@@ -18,6 +18,12 @@ if (!defined('ABSPATH')) {
 
 $siteUrl = SITE_URL;
 
+$formatPageWideDate = static function (?string $value, string $format = 'j. F Y'): string {
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false ? date($format, $timestamp) : '—';
+};
+
 $pageProvidedByRouter = isset($page) && !empty($page);
 
 if ($pageProvidedByRouter) {
@@ -60,7 +66,7 @@ $safePageContent = (string) sanitize_html($pageContent, 'default');
         <h1><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></h1>
         <?php if (!empty($page['updated_at'])): ?>
         <p class="page-last-updated">
-            Zuletzt aktualisiert: <?php echo htmlspecialchars(date('j. F Y', strtotime($page['updated_at'])), ENT_QUOTES); ?>
+            Zuletzt aktualisiert: <?php echo htmlspecialchars($formatPageWideDate((string) ($page['updated_at'] ?? '')), ENT_QUOTES); ?>
         </p>
         <?php endif; ?>
     </div>

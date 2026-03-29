@@ -49,6 +49,11 @@ $commentCount = count($comments);
 $commentCountLabel = $commentCount === 1 ? '1 Kommentar' : $commentCount . ' Kommentare';
 $commentAnonymousChecked = !empty($_POST['comment_anonymous']);
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$formatCommentDate = static function (?string $value, string $format = 'j. F Y'): string {
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false ? date($format, $timestamp) : '—';
+};
 
 if (!$showComments) {
     return;
@@ -88,7 +93,7 @@ if (!$showComments) {
                     <?php else: ?>
                     <span class="comment-author"><?php echo htmlspecialchars((string) ($comment['author'] ?? ''), ENT_QUOTES); ?></span>
                     <?php endif; ?>
-                    <span class="comment-date"><?php echo htmlspecialchars(date('j. F Y', strtotime((string) ($comment['post_date'] ?? 'now'))), ENT_QUOTES); ?></span>
+                    <span class="comment-date"><?php echo htmlspecialchars($formatCommentDate((string) ($comment['post_date'] ?? '')), ENT_QUOTES); ?></span>
                 </div>
                 <p class="comment-text"><?php echo htmlspecialchars((string) ($comment['content'] ?? ''), ENT_QUOTES); ?></p>
             </div>

@@ -73,6 +73,18 @@ $ctaTitle   = (string)($meta['cta_title']        ?? '');
 $ctaText    = (string)($meta['cta_text']         ?? '');
 $ctaBtn     = (string)($meta['cta_button_label'] ?? '');
 $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
+$heroImage  = function_exists('phinit_normalize_public_media_url')
+    ? phinit_normalize_public_media_url((string) ($page['thumbnail'] ?? ''), false, $siteUrl)
+    : (string) ($page['thumbnail'] ?? '');
+$heroCta1Href = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url($heroCta1Url, $siteUrl, ['http', 'https'])
+    : $heroCta1Url;
+$heroCta2Href = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url($heroCta2Url, $siteUrl, ['http', 'https'])
+    : $heroCta2Url;
+$ctaBtnHref = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url($ctaBtnUrl, $siteUrl, ['http', 'https'])
+    : $ctaBtnUrl;
 ?>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -81,9 +93,9 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
 <section class="landing-hero" aria-labelledby="landing-hero-title">
     <div class="container landing-hero__inner">
 
-        <?php if (!empty($page['thumbnail'])): ?>
+        <?php if ($heroImage !== ''): ?>
         <div class="landing-hero__media">
-            <img src="<?php echo htmlspecialchars($page['thumbnail'], ENT_QUOTES); ?>"
+            <img src="<?php echo htmlspecialchars($heroImage, ENT_QUOTES); ?>"
                  alt="<?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?>"
                  class="landing-hero__img"
                   <?php echo phinit_image_loading_attributes(true); ?>>
@@ -101,15 +113,15 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
             </p>
             <?php endif; ?>
 
-            <?php if ($heroCta1 || $heroCta2): ?>
+            <?php if (($heroCta1 !== '' && $heroCta1Href !== '') || ($heroCta2 !== '' && $heroCta2Href !== '')): ?>
             <div class="landing-hero__ctas" data-anim data-anim-delay="2">
-                <?php if ($heroCta1): ?>
-                <a href="<?php echo htmlspecialchars($heroCta1Url, ENT_QUOTES); ?>" class="btn btn--landing-primary">
+                <?php if ($heroCta1 !== '' && $heroCta1Href !== ''): ?>
+                <a href="<?php echo htmlspecialchars($heroCta1Href, ENT_QUOTES); ?>" class="btn btn--landing-primary">
                     <?php echo htmlspecialchars($heroCta1, ENT_QUOTES); ?>
                 </a>
                 <?php endif; ?>
-                <?php if ($heroCta2): ?>
-                <a href="<?php echo htmlspecialchars($heroCta2Url, ENT_QUOTES); ?>" class="btn btn--landing-outline">
+                <?php if ($heroCta2 !== '' && $heroCta2Href !== ''): ?>
+                <a href="<?php echo htmlspecialchars($heroCta2Href, ENT_QUOTES); ?>" class="btn btn--landing-outline">
                     <?php echo htmlspecialchars($heroCta2, ENT_QUOTES); ?>
                 </a>
                 <?php endif; ?>
@@ -129,6 +141,7 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
         <div class="landing-features__grid">
             <?php foreach ($features as $i => $feature): ?>
             <div class="landing-feature-card" data-anim data-anim-delay="<?php echo min((int)$i, 5); ?>">
+                <?php $featureHref = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) ($feature['url'] ?? ''), $siteUrl, ['http', 'https']) : (string) ($feature['url'] ?? ''); ?>
                 <?php if (!empty($feature['icon'])): ?>
                 <div class="landing-feature-card__icon" aria-hidden="true">
                     <?php echo htmlspecialchars((string)$feature['icon'], ENT_QUOTES); ?>
@@ -142,8 +155,8 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
                     <?php echo htmlspecialchars((string)$feature['text'], ENT_QUOTES); ?>
                 </p>
                 <?php endif; ?>
-                <?php if (!empty($feature['url'])): ?>
-                <a href="<?php echo htmlspecialchars((string)$feature['url'], ENT_QUOTES); ?>" class="landing-feature-card__link">
+                <?php if ($featureHref !== ''): ?>
+                <a href="<?php echo htmlspecialchars($featureHref, ENT_QUOTES); ?>" class="landing-feature-card__link">
                     Mehr erfahren →
                 </a>
                 <?php endif; ?>
@@ -183,8 +196,8 @@ $ctaBtnUrl  = (string)($meta['cta_button_url']   ?? '#');
             <?php echo htmlspecialchars($ctaText, ENT_QUOTES); ?>
         </p>
         <?php endif; ?>
-        <?php if ($ctaBtn): ?>
-        <a href="<?php echo htmlspecialchars($ctaBtnUrl, ENT_QUOTES); ?>" class="btn btn--landing-primary" data-anim data-anim-delay="2">
+        <?php if ($ctaBtn !== '' && $ctaBtnHref !== ''): ?>
+        <a href="<?php echo htmlspecialchars($ctaBtnHref, ENT_QUOTES); ?>" class="btn btn--landing-primary" data-anim data-anim-delay="2">
             <?php echo htmlspecialchars($ctaBtn, ENT_QUOTES); ?>
         </a>
         <?php endif; ?>

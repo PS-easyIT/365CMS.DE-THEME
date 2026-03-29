@@ -12,6 +12,12 @@ if (!defined('ABSPATH')) {
 
 $siteUrl = SITE_URL;
 
+$formatSuggestionDate = static function (?string $value, string $format = 'j. M Y'): string {
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false ? date($format, $timestamp) : '—';
+};
+
 // Aktuelle Beiträge als Vorschlag laden
 $recentPosts = [];
 try {
@@ -73,14 +79,16 @@ try {
         </div>
         <div class="posts-grid posts-grid--cols-3 error-suggestions__grid">
             <?php foreach ($recentPosts as $p): ?>
-            <?php $postUrl = function_exists('phinit_build_post_url') ? phinit_build_post_url($p) : ($siteUrl . '/blog/' . ($p['slug'] ?? '')); ?>
+            <?php $postUrlRaw = function_exists('phinit_build_post_url') ? phinit_build_post_url($p) : ($siteUrl . '/blog/' . ($p['slug'] ?? '')); ?>
+            <?php $postUrl = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($postUrlRaw, $siteUrl, ['http', 'https']) ?: '#') : $postUrlRaw; ?>
+            <?php $postImage = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url((string) ($p['featured_image'] ?? ''), false, $siteUrl) : (string) ($p['featured_image'] ?? ''); ?>
             <article class="post-card">
-                <?php if (!empty($p['featured_image'])): ?>
+                <?php if ($postImage !== ''): ?>
                 <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" class="post-card-thumb">
-                    <img src="<?php echo htmlspecialchars($p['featured_image'], ENT_QUOTES); ?>"
+                    <img src="<?php echo htmlspecialchars($postImage, ENT_QUOTES); ?>"
                          alt="<?php echo htmlspecialchars($p['title'] ?? '', ENT_QUOTES); ?>"
                         <?php echo phinit_image_loading_attributes(); ?>
-                        <?php echo phinit_image_dimension_attributes((string) ($p['featured_image'] ?? ''), 640, 360); ?>>
+                        <?php echo phinit_image_dimension_attributes($postImage, 640, 360); ?>>
                     <?php if (!empty($p['category_name'])): ?>
                     <span class="post-card-badge"><?php echo phinit_escape_text($p['category_name'] ?? ''); ?></span>
                     <?php endif; ?>
@@ -99,7 +107,7 @@ try {
                     <?php if (!empty($p['published_at'])): ?>
                     <div class="post-card-meta">
                         <div class="post-card-meta__left">
-                            <span>📅 <?php echo htmlspecialchars(date('j. M Y', strtotime($p['published_at'])), ENT_QUOTES); ?></span>
+                            <span>📅 <?php echo htmlspecialchars($formatSuggestionDate((string) ($p['published_at'] ?? '')), ENT_QUOTES); ?></span>
                         </div>
                         <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" class="post-card-meta__more">Weiter lesen →</a>
                     </div>

@@ -14,6 +14,7 @@ $techVersion = isset($techVersion) ? (string) $techVersion : '';
 $techTested = isset($techTested) ? (string) $techTested : '';
 $readTime = isset($readTime) ? (int) $readTime : 0;
 $techPrereqs = isset($techPrereqs) && is_array($techPrereqs) ? $techPrereqs : [];
+$techTestedTimestamp = strtotime($techTested);
 
 if (!$showTechCard || !$hasTechData) {
     return;
@@ -45,13 +46,13 @@ if (!$showTechCard || !$hasTechData) {
         <?php if ($techTested !== ''): ?>
         <div class="tech-card__item">
             <dt>Zuletzt getestet</dt>
-            <dd><?php echo htmlspecialchars(date('F Y', strtotime($techTested)), ENT_QUOTES); ?></dd>
+            <dd><?php echo htmlspecialchars($techTestedTimestamp !== false ? date('F Y', $techTestedTimestamp) : '—', ENT_QUOTES); ?></dd>
         </div>
         <?php endif; ?>
         <?php if ($readTime > 0): ?>
         <div class="tech-card__item">
             <dt>Lesezeit</dt>
-            <dd><?php echo $readTime; ?> Min.</dd>
+            <dd><?php echo (int) $readTime; ?> Min.</dd>
         </div>
         <?php endif; ?>
     </dl>

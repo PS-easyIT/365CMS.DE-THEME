@@ -24,6 +24,18 @@ $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'forum';
 
+$formatForumDate = static function (?string $value, string $fallbackValue = ''): string {
+    $timestamp = strtotime((string) ($value !== null && $value !== '' ? $value : $fallbackValue));
+
+    return $timestamp !== false ? date('d.m.Y', $timestamp) : '—';
+};
+
+$buildForumUrl = static function (int $threadId) use ($siteUrl): string {
+    $url = $siteUrl . '/member/plugin/cms-forum/thread/' . $threadId;
+
+    return function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($url, $siteUrl, ['http', 'https']) ?: '#') : $url;
+};
+
 // Forum-Plugin prüfen
 $hasForumPlugin = \CMS\PluginManager::instance()->isPluginActive('cms-forum');
 
@@ -90,7 +102,7 @@ include $themeDir . 'header.php';
         <div class="member-stats member-stats--compact" data-anim data-anim-delay="1">
             <div class="member-stat-card">
                 <div class="member-stat-icon">📝</div>
-                <div class="member-stat-value"><?php echo count($myThreads); ?></div>
+                <div class="member-stat-value"><?php echo (int) count($myThreads); ?></div>
                 <div class="member-stat-label">Eigene Threads</div>
             </div>
             <div class="member-stat-card">
@@ -113,14 +125,14 @@ include $themeDir . 'header.php';
         <?php if (!empty($displayThreads)): ?>
         <div class="member-forum-list" data-anim data-anim-delay="3">
             <?php foreach ($displayThreads as $t): ?>
-            <a href="<?php echo htmlspecialchars($siteUrl . '/member/plugin/cms-forum/thread/' . (int)$t['id'], ENT_QUOTES); ?>" class="member-forum-thread">
+            <a href="<?php echo htmlspecialchars($buildForumUrl((int) ($t['id'] ?? 0)), ENT_QUOTES); ?>" class="member-forum-thread">
                 <div class="member-forum-thread-main">
                     <h3><?php echo htmlspecialchars($t['title'] ?? '', ENT_QUOTES); ?></h3>
                     <div class="member-forum-thread-meta">
                         <?php if ($tab === 'all' && !empty($t['author_name'])): ?>
                         <span>von <?php echo htmlspecialchars($t['author_name']); ?></span>
                         <?php endif; ?>
-                        <span><?php echo date('d.m.Y', strtotime($t['updated_at'] ?? $t['created_at'])); ?></span>
+                        <span><?php echo htmlspecialchars($formatForumDate((string) ($t['updated_at'] ?? ''), (string) ($t['created_at'] ?? '')), ENT_QUOTES); ?></span>
                     </div>
                 </div>
                 <div class="member-forum-thread-replies">

@@ -28,7 +28,7 @@
 
 ---
 
-## v3.4.0 — Juni 2026
+## v3.4.0 — März 2026
 
 ### Design-Overhaul: Mobiler Filter-Drawer, 4-Breakpoint-System, Card-Polish
 
@@ -45,7 +45,7 @@
 | 🟢 feat | Homepage | Speaker-HP-Karte mit Avatar-Placeholder (Initialen-Basis), Job-HP-Karte mit `border-left: 3px solid transparent` Hover-Accent. |
 | 🟢 feat | Styling | `.active-filters-strip` und `.active-filter-chip` als wiederverwendbare Komponenten für aktive Filter-Anzeige. |
 
-## v3.3.0 — Juni 2026
+## v3.3.0 — März 2026
 
 ### Vollständige Verzeichnis-Plattform: Jobs, Feeds, Buchung, Speaker-Widget
 
@@ -70,7 +70,7 @@
 
 ---
 
-## v3.2.0 — 15. Juni 2026
+## v3.2.0 — 15. März 2026
 
 ### Profil-Dropdown, Blog/Feed-Fallback, Customizer-Verbesserungen
 
@@ -88,7 +88,7 @@
 
 ---
 
-## v3.1.0 — Juni 2026
+## v3.1.0 — März 2026
 
 ### Hook-basierte Homepage-Architektur
 
@@ -101,7 +101,7 @@
 
 ---
 
-## v3.0.0 — 07. Juni 2026
+## v3.0.0 — 07. März 2026
 
 ### Dashboard-Redesign: Deep Navy & Gold
 

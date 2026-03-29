@@ -47,7 +47,9 @@ foreach ($authors as $authorEntry) {
         <?php
             $authorName = trim((string) ($author['display_name'] ?? 'Autor'));
             $authorBio = trim((string) ($author['bio'] ?? ''));
-            $authorAvatar = trim((string) ($author['avatar_url'] ?? ''));
+            $authorAvatar = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url((string) ($author['avatar_url'] ?? ''), false, $siteUrl)
+                : trim((string) ($author['avatar_url'] ?? ''));
             $authorDetails = is_array($author['details'] ?? null) ? array_values(array_filter(array_slice($author['details'], 0, 3), static fn($detail): bool => is_array($detail))) : [];
             $authorUrl = function_exists('phinit_localized_href')
                 ? phinit_localized_href((string) ($author['profile_url'] ?? '/author/user-' . (int) ($author['id'] ?? 0)), $currentLocale, $siteUrl)

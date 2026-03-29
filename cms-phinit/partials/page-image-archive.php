@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 /** @var array<string, mixed> $imageArchive */
 
 $imageArchive = isset($imageArchive) && is_array($imageArchive) ? $imageArchive : phinit_build_image_archive_view_model($page ?? []);
+$siteUrl = defined('SITE_URL') ? SITE_URL : '';
 $pageTitle = trim((string) ($page['title'] ?? 'Bilder-Archiv'));
 $pageContent = trim((string) ($page['content'] ?? ''));
 $pageDescription = $pageContent !== '' ? phinit_prepare_renderable_content($pageContent, 'page', (int) ($page['id'] ?? 0)) : '';
@@ -94,16 +95,25 @@ $emptyMessage = trim((string) ($imageArchive['empty_message'] ?? ''));
                             $usageTypes = array_map('strval', is_array($item['usage_types'] ?? null) ? $item['usage_types'] : []);
                             $posts = is_array($item['posts'] ?? null) ? $item['posts'] : [];
                             $alt = trim((string) ($item['alt'] ?? $item['file_name'] ?? 'Archivbild'));
+                            $imageUrl = function_exists('phinit_normalize_public_media_url')
+                                ? phinit_normalize_public_media_url((string) ($item['image_url'] ?? ''), false, $siteUrl)
+                                : (string) ($item['image_url'] ?? '');
+                            $downloadUrl = function_exists('phinit_safe_public_url')
+                                ? phinit_safe_public_url((string) ($item['download_url'] ?? ''), $siteUrl, ['http', 'https'])
+                                : (string) ($item['download_url'] ?? '');
+                            $imageHref = $downloadUrl !== '' ? $downloadUrl : ($imageUrl !== '' ? $imageUrl : '#');
                             ?>
                             <article class="phinit-image-archive__card">
-                                <a class="phinit-image-archive__image-link" href="<?php echo htmlspecialchars((string) ($item['download_url'] ?? $item['image_url'] ?? '#'), ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer" aria-label="Bild <?php echo htmlspecialchars((string) ($item['file_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?> im neuen Tab öffnen">
+                                <a class="phinit-image-archive__image-link" href="<?php echo htmlspecialchars($imageHref, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer" aria-label="Bild <?php echo htmlspecialchars((string) ($item['file_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?> im neuen Tab öffnen">
+                                    <?php if ($imageUrl !== ''): ?>
                                     <img
-                                        src="<?php echo htmlspecialchars((string) ($item['image_url'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
+                                        src="<?php echo htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                         alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>"
                                         loading="lazy"
                                         decoding="async"
-                                        <?php echo phinit_image_dimension_attributes((string) ($item['image_url'] ?? '')); ?>
+                                        <?php echo phinit_image_dimension_attributes($imageUrl); ?>
                                     >
+                                    <?php endif; ?>
                                 </a>
 
                                 <div class="phinit-image-archive__card-body">
@@ -126,8 +136,9 @@ $emptyMessage = trim((string) ($imageArchive['empty_message'] ?? ''));
                                             <ul>
                                                 <?php foreach ($posts as $post): ?>
                                                     <?php if (!is_array($post)): continue; endif; ?>
+                                                    <?php $postUrl = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url((string) ($post['url'] ?? ''), $siteUrl, ['http', 'https']) ?: '#') : (string) ($post['url'] ?? '#'); ?>
                                                     <li>
-                                                        <a href="<?php echo htmlspecialchars((string) ($post['url'] ?? '#'), ENT_QUOTES, 'UTF-8'); ?>">
+                                                        <a href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                                             <?php echo htmlspecialchars((string) ($post['title'] ?? 'Artikel'), ENT_QUOTES, 'UTF-8'); ?>
                                                         </a>
                                                         <?php if (trim((string) ($post['category_name'] ?? '')) !== ''): ?>

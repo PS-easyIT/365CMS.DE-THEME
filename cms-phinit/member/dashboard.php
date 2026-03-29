@@ -29,6 +29,22 @@ $activePage  = 'dashboard';
 $themeCustomizer = ThemeCustomizer::instance();
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
+$coreMemberSettings = [];
+try {
+    if (!class_exists('CMS\\MemberArea\\MemberController')) {
+        $memberControllerFile = ABSPATH . 'member/includes/class-member-controller.php';
+        if (file_exists($memberControllerFile)) {
+            require_once $memberControllerFile;
+        }
+    }
+
+    if (class_exists('CMS\\MemberArea\\MemberController')) {
+        $coreMemberSettings = \CMS\MemberArea\MemberController::instance()->getSettings();
+    }
+} catch (\Throwable $e) {
+    $coreMemberSettings = [];
+}
+
 $getMemberToggle = static function (string $key, bool $default = true) use ($themeCustomizer): bool {
     return filter_var($themeCustomizer->get('memberdashboard', $key, $default), FILTER_VALIDATE_BOOLEAN);
 };
@@ -66,6 +82,33 @@ $normalizeMemberLink = static function (string $url) use ($siteUrl): string {
 
 $sanitizeColor = static function (string $value, string $fallback): string {
     return preg_match('/^#[0-9a-f]{6}$/i', $value) ? $value : $fallback;
+};
+
+$sanitizeMemberText = static function (string $value, int $maxLength = 255, string $fallback = ''): string {
+    $text = trim(strip_tags($value));
+    if ($text === '') {
+        return $fallback;
+    }
+
+    return function_exists('mb_substr') ? mb_substr($text, 0, $maxLength) : substr($text, 0, $maxLength);
+};
+
+$formatMemberDate = static function (?string $value, string $format = 'd.m.Y'): string {
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false ? date($format, $timestamp) : '—';
+};
+
+$buildMemberPostUrl = static function (array $postData) use ($currentLocale, $siteUrl): string {
+    $url = function_exists('phinit_build_post_url')
+        ? phinit_build_post_url($postData, $currentLocale)
+        : ('/blog/' . rawurlencode((string) ($postData['slug'] ?? '')));
+
+    if (function_exists('phinit_safe_public_url')) {
+        return phinit_safe_public_url($url, $siteUrl, ['http', 'https']) ?: '#';
+    }
+
+    return $url !== '' ? $url : '#';
 };
 
 $hexToRgba = static function (string $hexColor, float $alpha, string $fallback): string {
@@ -166,7 +209,7 @@ $recentComments = [];
 if ($_hasComments && $_hasPosts) {
     try {
         $recentComments = $db->get_results(
-            "SELECT c.*, p.title AS post_title, p.slug AS post_slug
+            "SELECT c.*, p.title AS post_title, p.slug AS post_slug, p.slug_en AS post_slug_en, p.published_at AS post_published_at, p.created_at AS post_created_at
              FROM {$prefix}comments c
              LEFT JOIN {$prefix}posts p ON c.post_id = p.id
              WHERE c.user_id = ?
@@ -206,13 +249,13 @@ $recentFavorites = array_merge(
 
         return [
             'title' => (string) ($favorite['post_title'] ?? 'Beitrag'),
-            'url' => function_exists('phinit_build_post_url') ? phinit_build_post_url($postData, $currentLocale) : ('/blog/' . rawurlencode((string) ($favorite['post_slug'] ?? ''))),
+            'url' => $buildMemberPostUrl($postData),
             'created_at' => (string) ($favorite['created_at'] ?? ''),
         ];
     }, $recentFavorites),
     array_map(static fn(array $favorite): array => [
         'title' => (string) ($favorite['title'] ?? 'Seite'),
-        'url' => (string) ($favorite['url'] ?? '#'),
+        'url' => function_exists('phinit_safe_public_url') ? (phinit_safe_public_url((string) ($favorite['url'] ?? ''), $siteUrl, ['http', 'https']) ?: '#') : (string) ($favorite['url'] ?? '#'),
         'created_at' => (string) ($favorite['created_at'] ?? ''),
     ], $pageFavorites)
 );
@@ -275,6 +318,15 @@ $canSubmitPosts = !empty($memberPermissions['can_post']);
 
 $isAdmin    = $auth->isAdmin();
 
+$coreShowWelcomeSetting = filter_var($coreMemberSettings['show_welcome'] ?? true, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+$coreShowWelcome = is_bool($coreShowWelcomeSetting) ? $coreShowWelcomeSetting : true;
+$coreDashboardGreeting = $sanitizeMemberText((string) ($coreMemberSettings['dashboard_greeting'] ?? ''), 160);
+$coreDashboardWelcomeText = $sanitizeMemberText((string) ($coreMemberSettings['dashboard_welcome_text'] ?? ''), 400);
+$dashboardLogoUrl = function_exists('phinit_normalize_public_media_url')
+    ? phinit_normalize_public_media_url((string) ($coreMemberSettings['dashboard_logo'] ?? ''), true, $siteUrl)
+    : '';
+$dashboardLogoAlt = $sanitizeMemberText((string) ($coreMemberSettings['dashboard_greeting'] ?? 'Member Dashboard'), 120, 'Member Dashboard');
+
 $showAdminNotice = $getMemberToggle('show_admin_notice', false);
 $adminNoticeRoles = $getMemberList('admin_notice_roles', 'all');
 $adminNoticeVariant = strtolower($getMemberText('admin_notice_variant', 'info'));
@@ -309,10 +361,10 @@ $adminNoticeStyle = implode(' ', [
 ]);
 $hasAdminNotice = $showAdminNotice && $adminNoticeRoleAllowed && ($adminNoticeTitle !== '' || $adminNoticeText !== '');
 
-$showWelcome = $getMemberToggle('show_welcome', true);
+$showWelcome = $getMemberToggle('show_welcome', $coreShowWelcome);
 $welcomeEyebrow = $getMemberText('welcome_eyebrow', '🏠 Member Home');
-$welcomeTitleTemplate = $getMemberText('welcome_title', '{greeting}, {name}! 👋');
-$welcomeText = $getMemberText('welcome_text', 'Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.');
+$welcomeTitleTemplate = $getMemberText('welcome_title', $coreDashboardGreeting !== '' ? $coreDashboardGreeting : '{greeting}, {name}! 👋');
+$welcomeText = $getMemberText('welcome_text', $coreDashboardWelcomeText !== '' ? $coreDashboardWelcomeText : 'Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.');
 $heroPanelTitle = $getMemberText('hero_panel_title', 'Kontostatus');
 $showHeroFavorites = $getMemberToggle('show_hero_favorites', true);
 $showHeroProfile = $getMemberToggle('show_hero_profile', true);
@@ -409,6 +461,16 @@ include $themeDir . 'header.php';
         <?php if ($showWelcome): ?>
         <section class="member-dashboard-hero" data-anim>
             <div class="member-dashboard-hero__content">
+                <?php if ($dashboardLogoUrl !== ''): ?>
+                <div class="member-dashboard-hero__brand">
+                    <img src="<?php echo htmlspecialchars($dashboardLogoUrl, ENT_QUOTES); ?>"
+                         alt="<?php echo htmlspecialchars($dashboardLogoAlt, ENT_QUOTES); ?>"
+                         class="member-dashboard-hero__brand-image"
+                         <?php echo phinit_image_loading_attributes(true, true); ?>
+                         width="160"
+                         height="48">
+                </div>
+                <?php endif; ?>
                 <span class="member-dashboard-hero__eyebrow"><?php echo htmlspecialchars($welcomeEyebrow !== '' ? $welcomeEyebrow : '🏠 Member Home', ENT_QUOTES); ?></span>
                 <h1><?php echo htmlspecialchars($welcomeTitle !== '' ? $welcomeTitle : ($greeting . ', ' . $memberName . '! 👋'), ENT_QUOTES); ?></h1>
                 <p><?php echo htmlspecialchars($welcomeText !== '' ? $welcomeText : 'Dein persönlicher Startbereich mit den wichtigsten Inhalten, Sicherheitsinfos und schnellen Sprüngen zu deinen häufigsten Aufgaben.', ENT_QUOTES); ?></p>
@@ -443,7 +505,7 @@ include $themeDir . 'header.php';
                 <dl class="member-dashboard-hero__facts">
                     <div>
                         <dt>Mitglied seit</dt>
-                        <dd><?php echo htmlspecialchars(date('d.m.Y', strtotime((string) ($currentUser->created_at ?? 'now'))), ENT_QUOTES); ?></dd>
+                        <dd><?php echo htmlspecialchars($formatMemberDate((string) ($currentUser->created_at ?? '')), ENT_QUOTES); ?></dd>
                     </div>
                     <div>
                         <dt>Rolle</dt>
@@ -502,9 +564,15 @@ include $themeDir . 'header.php';
                 <?php if (!empty($recentComments)): ?>
                 <ul class="member-activity-list">
                     <?php foreach ($recentComments as $c): ?>
+                    <?php $commentPostUrl = $buildMemberPostUrl([
+                        'slug' => (string) ($c['post_slug'] ?? ''),
+                        'slug_en' => (string) ($c['post_slug_en'] ?? ''),
+                        'published_at' => (string) ($c['post_published_at'] ?? ''),
+                        'created_at' => (string) ($c['post_created_at'] ?? ''),
+                    ]); ?>
                     <li>
-                        <a href="<?php echo htmlspecialchars($siteUrl . '/' . ($c['post_slug'] ?? ''), ENT_QUOTES); ?>"><?php echo htmlspecialchars($c['post_title'] ?? 'Beitrag', ENT_QUOTES); ?></a>
-                        <span class="member-activity-date"><?php echo date('d.m.Y', strtotime($c['post_date'] ?? '')); ?></span>
+                        <a href="<?php echo htmlspecialchars($commentPostUrl, ENT_QUOTES); ?>"><?php echo htmlspecialchars($c['post_title'] ?? 'Beitrag', ENT_QUOTES); ?></a>
+                        <span class="member-activity-date"><?php echo htmlspecialchars($formatMemberDate((string) ($c['post_date'] ?? '')), ENT_QUOTES); ?></span>
                     </li>
                     <?php endforeach; ?>
                 </ul>
@@ -527,8 +595,8 @@ include $themeDir . 'header.php';
                 <ul class="member-activity-list">
                     <?php foreach ($recentFavorites as $f): ?>
                     <li>
-                        <a href="<?php echo htmlspecialchars(str_starts_with((string) ($f['url'] ?? '#'), 'http') ? (string) ($f['url'] ?? '#') : ($siteUrl . (string) ($f['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($f['title'] ?? 'Favorit', ENT_QUOTES); ?></a>
-                        <span class="member-activity-date"><?php echo date('d.m.Y', strtotime((string) ($f['created_at'] ?? 'now'))); ?></span>
+                        <a href="<?php echo htmlspecialchars((string) ($f['url'] ?? '#'), ENT_QUOTES); ?>"><?php echo htmlspecialchars($f['title'] ?? 'Favorit', ENT_QUOTES); ?></a>
+                        <span class="member-activity-date"><?php echo htmlspecialchars($formatMemberDate((string) ($f['created_at'] ?? '')), ENT_QUOTES); ?></span>
                     </li>
                     <?php endforeach; ?>
                 </ul>

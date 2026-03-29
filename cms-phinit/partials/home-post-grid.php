@@ -75,6 +75,13 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                     ? (string) phinit_localized_href('/kategorie/' . rawurlencode($categorySlug), $currentLocale, $siteUrl)
                     : rtrim($siteUrl, '/') . '/kategorie/' . rawurlencode($categorySlug));
         }
+        $postPermalinkRaw = (string) ($post['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ($siteUrl . '/blog/' . $displaySlug)));
+        $postPermalink = function_exists('phinit_safe_public_url')
+            ? (phinit_safe_public_url($postPermalinkRaw, $siteUrl, ['http', 'https']) ?: '#')
+            : $postPermalinkRaw;
+        $postFeaturedImage = function_exists('phinit_normalize_public_media_url')
+            ? phinit_normalize_public_media_url((string) ($post['featured_image'] ?? ''), false, $siteUrl)
+            : (string) ($post['featured_image'] ?? '');
         ?>
         <article class="post-card" data-anim data-anim-delay="<?php echo min((int) $i + 1, 4); ?>">
             <?php
@@ -87,12 +94,12 @@ if (empty($_showTileGrid) || $gridPosts === []) {
             }
             ?>
 
-            <?php if (!empty($post['featured_image'])): ?>
+            <?php if ($postFeaturedImage !== ''): ?>
             <div class="post-card-thumb">
-                <img src="<?php echo htmlspecialchars((string) $post['featured_image'], ENT_QUOTES); ?>"
+                <img src="<?php echo htmlspecialchars($postFeaturedImage, ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($displayTitle, ENT_QUOTES); ?>"
                      <?php echo phinit_image_loading_attributes(); ?>
-                     <?php echo phinit_image_dimension_attributes((string) ($post['featured_image'] ?? ''), 108, 81); ?>>
+                     <?php echo phinit_image_dimension_attributes($postFeaturedImage, 108, 81); ?>>
             </div>
             <?php else: ?>
             <div class="post-card-thumb post-card-thumb--placeholder">
@@ -102,7 +109,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
 
             <div class="post-card-body">
                 <h3 class="post-card-title">
-                    <a href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ($siteUrl . '/blog/' . $displaySlug))), ENT_QUOTES); ?>">
+                    <a href="<?php echo htmlspecialchars($postPermalink, ENT_QUOTES); ?>">
                         <?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>
                     </a>
                 </h3>
@@ -139,7 +146,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                         <?php endif; ?>
                     </div>
                     <a class="post-card-meta__more"
-                            href="<?php echo htmlspecialchars((string) ($post['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ($siteUrl . '/blog/' . $displaySlug))), ENT_QUOTES); ?>"
+                            href="<?php echo htmlspecialchars($postPermalink, ENT_QUOTES); ?>"
                               aria-label="<?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>">
                         <span class="post-card-meta__more-label post-card-meta__more-label--desktop"><?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?></span>
                         <span class="post-card-meta__more-label post-card-meta__more-label--mobile">Weiter</span>

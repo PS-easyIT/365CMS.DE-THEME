@@ -14,7 +14,9 @@ $totalPages = isset($totalPages) ? (int) $totalPages : 1;
 
 $authorName = trim((string) ($author['display_name'] ?? 'Autor'));
 $authorBio = trim((string) ($author['bio'] ?? ''));
-$authorAvatar = trim((string) ($author['avatar_url'] ?? ''));
+$authorAvatar = function_exists('phinit_normalize_public_media_url')
+    ? phinit_normalize_public_media_url((string) ($author['avatar_url'] ?? ''), false, $siteUrl)
+    : trim((string) ($author['avatar_url'] ?? ''));
 $authorDetails = isset($author['details']) && is_array($author['details']) ? $author['details'] : [];
 $authorSlug = trim((string) ($author['slug'] ?? ''));
 $showActivity = !empty($author['show_activity']);
@@ -144,7 +146,9 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                 $postUrl = $siteUrl . $postPath;
                 $postDate = trim((string) ($post['published_at'] ?? $post['created_at'] ?? ''));
                 $postTimestamp = $postDate !== '' ? strtotime($postDate) : false;
-                $postImage = trim((string) ($post['featured_image'] ?? ''));
+                $postImage = function_exists('phinit_normalize_public_media_url')
+                    ? phinit_normalize_public_media_url((string) ($post['featured_image'] ?? ''), false, $siteUrl)
+                    : trim((string) ($post['featured_image'] ?? ''));
             ?>
             <article class="article-card">
                 <a class="article-thumb" href="<?php echo htmlspecialchars($postUrl, ENT_QUOTES); ?>" aria-label="<?php echo htmlspecialchars($postTitle, ENT_QUOTES); ?>">

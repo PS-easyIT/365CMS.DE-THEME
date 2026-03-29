@@ -41,15 +41,20 @@ if ($rType === 'post') {
     $rUrl = '#';
 }
 
+if (function_exists('phinit_safe_public_url')) {
+    $rUrl = $rUrl !== '#' ? (phinit_safe_public_url($rUrl, $siteUrl, ['http', 'https']) ?: '#') : '#';
+}
+
 $rPath = $rUrl !== '#' ? (string) (parse_url($rUrl, PHP_URL_PATH) ?: '/') : 'Nicht verlinkt';
+$searchResultTimestamp = !empty($r['published_at']) ? strtotime((string) $r['published_at']) : false;
 ?>
 <article class="search-result-row search-result-row--<?php echo htmlspecialchars($rType, ENT_QUOTES); ?>">
     <div class="search-result-row__icon" aria-hidden="true"><?php echo htmlspecialchars($rTypeIcon, ENT_QUOTES); ?></div>
     <div class="search-result-body">
         <div class="search-result-topline">
             <span class="search-result-type search-result-type--<?php echo htmlspecialchars($rType, ENT_QUOTES); ?>"><?php echo htmlspecialchars($rTypeLabel, ENT_QUOTES); ?></span>
-            <?php if (!empty($r['published_at'])): ?>
-            <time class="search-result-date" datetime="<?php echo htmlspecialchars((string) $r['published_at'], ENT_QUOTES); ?>"><?php echo htmlspecialchars(date('d.m.Y', strtotime((string) $r['published_at'])), ENT_QUOTES); ?></time>
+            <?php if ($searchResultTimestamp !== false): ?>
+            <time class="search-result-date" datetime="<?php echo htmlspecialchars(date(DATE_ATOM, $searchResultTimestamp), ENT_QUOTES); ?>"><?php echo htmlspecialchars(date('d.m.Y', $searchResultTimestamp), ENT_QUOTES); ?></time>
             <?php endif; ?>
         </div>
 

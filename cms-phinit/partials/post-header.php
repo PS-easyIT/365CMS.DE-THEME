@@ -24,18 +24,22 @@ $authorUrl = $authorId > 0 ? (function_exists('phinit_localized_href') ? phinit_
 $categoryUrl = !empty($post['category_name'])
     ? (function_exists('phinit_localized_href') ? phinit_localized_href('/kategorie/' . $categorySlug, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/kategorie/' . $categorySlug)
     : '';
+$postHeroImage = function_exists('phinit_normalize_public_media_url')
+    ? phinit_normalize_public_media_url((string) ($post['featured_image'] ?? ''), false, $siteUrl)
+    : (string) ($post['featured_image'] ?? '');
+$publishedTimestamp = $publishedAt !== '' ? strtotime($publishedAt) : false;
 ?>
 <header class="post-header" data-anim>
 
     <?php echo phinit_render_favorite_button($favoriteControl); ?>
 
-    <?php if ($showPostHero && !empty($post['featured_image'])): ?>
+    <?php if ($showPostHero && $postHeroImage !== ''): ?>
     <div class="post-hero-media">
         <img class="post-hero-img"
-             src="<?php echo htmlspecialchars((string) $post['featured_image'], ENT_QUOTES); ?>"
+             src="<?php echo htmlspecialchars($postHeroImage, ENT_QUOTES); ?>"
              alt="<?php echo htmlspecialchars((string) ($post['title'] ?? ''), ENT_QUOTES); ?>"
                              <?php echo phinit_image_loading_attributes(true); ?>
-                             <?php echo phinit_image_dimension_attributes((string) ($post['featured_image'] ?? '')); ?>
+                             <?php echo phinit_image_dimension_attributes($postHeroImage); ?>
              itemprop="image">
         <?php if ($showReadingTime && $readingTime > 0): ?>
         <span class="post-hero-reading-badge" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>">
@@ -55,9 +59,13 @@ $categoryUrl = !empty($post['category_name'])
             <span class="post-meta__item post-meta__item--date">
                 <span class="post-meta__icon" aria-hidden="true">📅</span>
                 <strong itemprop="datePublished">
+                <?php if ($publishedTimestamp !== false): ?>
                 <time datetime="<?php echo htmlspecialchars($publishedAt, ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars(phinit_format_date($publishedAt !== '' ? $publishedAt : 'now', 'numeric', $currentLocale), ENT_QUOTES); ?>
+                    <?php echo htmlspecialchars(phinit_format_date($publishedAt, 'numeric', $currentLocale), ENT_QUOTES); ?>
                 </time>
+                <?php else: ?>
+                —
+                <?php endif; ?>
                 </strong>
             </span>
             <?php if (!empty($post['category_name'])): ?>
@@ -78,7 +86,7 @@ $categoryUrl = !empty($post['category_name'])
                 </strong>
             </span>
             <?php endif; ?>
-            <?php if ($showReadingTime && $readingTime > 0 && (!$showPostHero || empty($post['featured_image']))): ?>
+            <?php if ($showReadingTime && $readingTime > 0 && (!$showPostHero || $postHeroImage === '')): ?>
             <span class="post-meta__item reading-time-badge">
                 <?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>
             </span>
