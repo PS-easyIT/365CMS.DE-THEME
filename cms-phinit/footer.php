@@ -43,13 +43,13 @@ try {
     $_showSocial     = filter_var($c->get('footer', 'show_footer_social', true), FILTER_VALIDATE_BOOLEAN);
 
     // Social URLs
-    $_liUrl   = $c->get('social', 'social_linkedin', '');
-    $_ghUrl   = $c->get('social', 'social_github', '');
-    $_twUrl   = $c->get('social', 'social_twitter', '');
-    $_maUrl   = $c->get('social', 'social_mastodon', '');
-    $_ytUrl   = $c->get('social', 'social_youtube', '');
-    $_xiUrl   = $c->get('social', 'social_xing', '');
-    $_rssUrl  = $c->get('social', 'social_rss', $siteUrl . '/feed');
+    $_liUrl   = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $c->get('social', 'social_linkedin', ''), $siteUrl, ['http', 'https']) : (string) $c->get('social', 'social_linkedin', '');
+    $_ghUrl   = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $c->get('social', 'social_github', ''), $siteUrl, ['http', 'https']) : (string) $c->get('social', 'social_github', '');
+    $_twUrl   = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $c->get('social', 'social_twitter', ''), $siteUrl, ['http', 'https']) : (string) $c->get('social', 'social_twitter', '');
+    $_maUrl   = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $c->get('social', 'social_mastodon', ''), $siteUrl, ['http', 'https']) : (string) $c->get('social', 'social_mastodon', '');
+    $_ytUrl   = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $c->get('social', 'social_youtube', ''), $siteUrl, ['http', 'https']) : (string) $c->get('social', 'social_youtube', '');
+    $_xiUrl   = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $c->get('social', 'social_xing', ''), $siteUrl, ['http', 'https']) : (string) $c->get('social', 'social_xing', '');
+    $_rssUrl  = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url((string) $c->get('social', 'social_rss', $siteUrl . '/feed'), $siteUrl, ['http', 'https']) ?: ($siteUrl . '/feed')) : (string) $c->get('social', 'social_rss', $siteUrl . '/feed');
 
     // Social Labels
     $_liLabel  = $c->get('social', 'social_label_linkedin', 'LinkedIn');
@@ -61,8 +61,11 @@ try {
     for ($i = 1; $i <= 5; $i++) {
         $label = $c->get('footer', 'network_bar_link' . $i . '_label', '');
         $url   = $c->get('footer', 'network_bar_link' . $i . '_url', '');
-        if (!empty($label) && !empty($url)) {
-            $_networkLinks[] = ['label' => $label, 'url' => $url];
+        $safeUrl = function_exists('phinit_safe_public_url')
+            ? phinit_safe_public_url((string) $url, $siteUrl, ['http', 'https'])
+            : (string) $url;
+        if (!empty($label) && $safeUrl !== '') {
+            $_networkLinks[] = ['label' => $label, 'url' => $safeUrl];
         }
     }
 } catch (\Throwable $e) {

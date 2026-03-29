@@ -312,8 +312,14 @@ if (empty($_showList) || $featuredPosts === []) {
                     continue;
                 }
                 [$_dlTitle, $_dlUrl] = $_dlParts;
+                $_dlSafeUrl = function_exists('phinit_safe_public_url')
+                    ? phinit_safe_public_url(trim((string) $_dlUrl), $siteUrl, ['http', 'https'])
+                    : trim((string) $_dlUrl);
+                if ($_dlSafeUrl === '') {
+                    continue;
+                }
             ?>
-            <li><a href="<?php echo htmlspecialchars(trim($_dlUrl), ENT_QUOTES); ?>"
+            <li><a href="<?php echo htmlspecialchars($_dlSafeUrl, ENT_QUOTES); ?>"
                    target="_blank" rel="noopener noreferrer">📄 <?php echo htmlspecialchars(trim($_dlTitle), ENT_QUOTES); ?></a></li>
             <?php endforeach; ?>
             </ul>
@@ -341,6 +347,16 @@ if (empty($_showList) || $featuredPosts === []) {
             'xing' => ['url' => $_sbSocialXing, 'label' => 'XING'],
             'rss' => ['url' => $_sbSocialRss, 'label' => $_sbLabelRss],
         ], static fn($s) => !empty(trim((string) $s['url'])));
+        $_sbSocialList = array_filter(array_map(
+            static function (array $socialItem) use ($siteUrl): array {
+                $socialItem['url'] = function_exists('phinit_safe_public_url')
+                    ? phinit_safe_public_url((string) ($socialItem['url'] ?? ''), $siteUrl, ['http', 'https'])
+                    : (string) ($socialItem['url'] ?? '');
+
+                return $socialItem;
+            },
+            $_sbSocialList
+        ), static fn(array $socialItem): bool => $socialItem['url'] !== '');
         if ($_sbShowSocial && !empty($_sbSocialList)): ?>
         <div class="sb-widget sb-widget--social">
             <?php echo $_renderSidebarWidgetTitle((string) $_sbSocialLabel, '👥'); ?>

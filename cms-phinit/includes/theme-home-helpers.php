@@ -170,7 +170,9 @@ function phinit_get_homepage_view_model(): array
             '_repoDesc' => $customizer->get('homepage', 'repo_card_description', ''),
             '_repoBadge' => $customizer->get('homepage', 'repo_card_badge', '25+ Repos'),
             '_repoBtnText' => $customizer->get('homepage', 'repo_card_btn_text', 'Zum GitHub →'),
-            '_repoBtnUrl' => $customizer->get('homepage', 'repo_card_btn_url', 'https://github.com/'),
+            '_repoBtnUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'repo_card_btn_url', 'https://github.com/'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'repo_card_btn_url', 'https://github.com/'),
             '_showList' => filter_var($customizer->get('homepage', 'show_article_list', true), FILTER_VALIDATE_BOOLEAN),
             '_listLabel' => (string) $featuredSectionTitle,
             '_listCount' => max(1, (int) $featuredPostsCount),
@@ -207,14 +209,30 @@ function phinit_get_homepage_view_model(): array
             '_sbDownloadsItems' => $customizer->get('homepage', 'sidebar_downloads_items', ''),
             '_sbShowSocial' => filter_var($customizer->get('homepage', 'sidebar_show_social', true), FILTER_VALIDATE_BOOLEAN),
             '_sbSocialLabel' => $customizer->get('homepage', 'sidebar_social_label', 'Folge uns'),
-            '_sbSocialLinkedin' => $customizer->get('social', 'social_linkedin', ''),
-            '_sbSocialGithub' => $customizer->get('social', 'social_github', ''),
-            '_sbSocialGitlab' => $customizer->get('social', 'social_gitlab', ''),
-            '_sbSocialTwitter' => $customizer->get('social', 'social_twitter', ''),
-            '_sbSocialMastodon' => $customizer->get('social', 'social_mastodon', ''),
-            '_sbSocialRss' => $customizer->get('social', 'social_rss', ''),
-            '_sbSocialYoutube' => $customizer->get('social', 'social_youtube', ''),
-            '_sbSocialXing' => $customizer->get('social', 'social_xing', ''),
+            '_sbSocialLinkedin' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_linkedin', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_linkedin', ''),
+            '_sbSocialGithub' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_github', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_github', ''),
+            '_sbSocialGitlab' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_gitlab', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_gitlab', ''),
+            '_sbSocialTwitter' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_twitter', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_twitter', ''),
+            '_sbSocialMastodon' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_mastodon', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_mastodon', ''),
+            '_sbSocialRss' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_rss', $siteUrl . '/feed'), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_rss', $siteUrl . '/feed'),
+            '_sbSocialYoutube' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_youtube', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_youtube', ''),
+            '_sbSocialXing' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('social', 'social_xing', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('social', 'social_xing', ''),
             '_sbLabelLinkedin' => $customizer->get('social', 'social_label_linkedin', 'LinkedIn'),
             '_sbLabelGithub' => $customizer->get('social', 'social_label_github', 'GitHub'),
             '_sbLabelGitlab' => $customizer->get('social', 'social_label_gitlab', 'GitLab'),
@@ -241,7 +259,9 @@ function phinit_get_homepage_view_model(): array
             '_sbShowNotice' => filter_var($customizer->get('homepage', 'sidebar_show_notice', false), FILTER_VALIDATE_BOOLEAN),
             '_sbNoticeTitle' => $customizer->get('homepage', 'sidebar_notice_title', '💡 Aktueller Hinweis'),
             '_sbNoticeText' => $customizer->get('homepage', 'sidebar_notice_text', ''),
-            '_sbNoticeUrl' => $customizer->get('homepage', 'sidebar_notice_url', ''),
+            '_sbNoticeUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_notice_url', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'sidebar_notice_url', ''),
             '_sbNoticeUrlText' => $customizer->get('homepage', 'sidebar_notice_url_text', 'Mehr erfahren →'),
             '_sbShowFeaturedPosts' => filter_var($customizer->get('homepage', 'sidebar_show_featured_posts', false), FILTER_VALIDATE_BOOLEAN),
             '_sbFeaturedPostsLabel' => $customizer->get('homepage', 'sidebar_featured_posts_label', '📌 Empfohlene Artikel'),
@@ -266,22 +286,32 @@ function phinit_get_homepage_view_model(): array
             '_c1Title' => $customizer->get('homepage', 'info_card1_title', '🖥️ Admin Anleitungen'),
             '_c1Text' => $customizer->get('homepage', 'info_card1_text', 'Schritt-für-Schritt-Tutorials für Microsoft 365 Administration.'),
             '_c1LinkText' => $customizer->get('homepage', 'info_card1_link_text', 'Alle Anleitungen ansehen →'),
-            '_c1LinkUrl' => $customizer->get('homepage', 'info_card1_link_url', '/kategorie/anleitungen'),
+            '_c1LinkUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'info_card1_link_url', '/kategorie/anleitungen'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'info_card1_link_url', '/kategorie/anleitungen'),
             '_c1Style' => $customizer->get('homepage', 'info_card1_style', 'default'),
             '_c2Title' => $customizer->get('homepage', 'info_card2_title', '🔒 DSGVO & Compliance'),
             '_c2Text' => $customizer->get('homepage', 'info_card2_text', 'Konfigurationsanleitungen und Best Practices für Microsoft Purview.'),
             '_c2LinkText' => $customizer->get('homepage', 'info_card2_link_text', 'Compliance-Center →'),
-            '_c2LinkUrl' => $customizer->get('homepage', 'info_card2_link_url', '/kategorie/compliance'),
+            '_c2LinkUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'info_card2_link_url', '/kategorie/compliance'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'info_card2_link_url', '/kategorie/compliance'),
             '_c2Style' => $customizer->get('homepage', 'info_card2_style', 'gold'),
             '_showCard3' => filter_var($customizer->get('homepage', 'show_info_card3', false), FILTER_VALIDATE_BOOLEAN),
             '_c3Title' => $customizer->get('homepage', 'info_card3_title', '🚀 Projekte'),
             '_c3Text' => $customizer->get('homepage', 'info_card3_text', 'Wichtige Plattformen, Repositories und Tools im Schnellzugriff.'),
             '_c3LinkText' => $customizer->get('homepage', 'info_card3_link_text', '365CMS.DE'),
-            '_c3LinkUrl' => $customizer->get('homepage', 'info_card3_link_url', 'https://365cms.de'),
+            '_c3LinkUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'info_card3_link_url', 'https://365cms.de'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'info_card3_link_url', 'https://365cms.de'),
             '_c3LinkText2' => $customizer->get('homepage', 'info_card3_link_text_2', '365NETWORK.DE'),
-            '_c3LinkUrl2' => $customizer->get('homepage', 'info_card3_link_url_2', 'https://365network.de'),
+            '_c3LinkUrl2' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'info_card3_link_url_2', 'https://365network.de'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'info_card3_link_url_2', 'https://365network.de'),
             '_c3LinkText3' => $customizer->get('homepage', 'info_card3_link_text_3', 'GitHub'),
-            '_c3LinkUrl3' => $customizer->get('homepage', 'info_card3_link_url_3', 'https://github.com/'),
+            '_c3LinkUrl3' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'info_card3_link_url_3', 'https://github.com/'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'info_card3_link_url_3', 'https://github.com/'),
             '_c3Badge' => $customizer->get('homepage', 'info_card3_badge', 'Projekte'),
             '_c3Style' => $customizer->get('homepage', 'info_card3_style', 'repo'),
             '_showTileGrid' => filter_var($customizer->get('homepage', 'show_tile_grid', true), FILTER_VALIDATE_BOOLEAN),
@@ -292,7 +322,9 @@ function phinit_get_homepage_view_model(): array
             '_showTileCat' => filter_var($customizer->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN),
             '_showTileDate' => filter_var($customizer->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN),
             '_tileImageH' => max(161, min(300, (int) $customizer->get('homepage', 'tile_grid_image_height', 161))),
-            '_tileLinkUrl' => $customizer->get('homepage', 'tile_grid_link_url', '/archiv'),
+            '_tileLinkUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'tile_grid_link_url', '/archiv'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'tile_grid_link_url', '/archiv'),
             '_spRepo' => max(0, (int) $customizer->get('homepage', 'spacing_repo_card', 32)),
             '_spList' => max(0, (int) $customizer->get('homepage', 'spacing_article_list', 32)),
             '_spInfo' => max(0, (int) $customizer->get('homepage', 'spacing_info_cards', 32)),

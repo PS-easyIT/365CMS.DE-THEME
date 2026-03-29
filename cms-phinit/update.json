@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.6",
+  "version": "1.5.9",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.8.1",
   "release_date": "2026-03-29",
@@ -9,16 +9,20 @@
   "details_url": "https://phinit.de",
   "changelog": [
     {
-      "version": "1.5.6",
+      "version": "1.5.9",
       "date": "2026-03-29",
       "changes": [
+        "page.php: Hub-Site-Markup aus dem Core-Renderer wird im cms-phinit-Page-Template nicht mehr durch eine zweite Default-Sanitizer-Runde seiner `cms-hub-site*`-Klassen beraubt; öffentliche HubSites greifen dadurch wieder vollständig auf ihr Layout/CSS zu",
+        "includes/theme-home-helpers.php + footer.php + partials/sidebar.php + partials/home-article-list.php + partials/home-info-grid.php + partials/home-repo-card.php: öffentliche Customizer-Links in Footer, Sidebar und Homepage-Widgets laufen jetzt konsistent über `phinit_safe_public_url()`, damit schemenfremde oder defekte URLs nicht mehr als klickbare Frontend-Links erscheinen",
+        "DOC/THEME-AUDIT.md: SEC-06 für die nachgezogene Public-Link-Allowlist im Frontend dokumentiert",
+        "CMS/admin/partials/section-page-shell.php + cms-phinit/admin/customizer-request-handler.php: erfolgreicher Section-Shell-CSRF-Check markiert Theme-Editor-POSTs jetzt requestweit, damit der eingebettete cms-phinit-Customizer denselben Einmal-Token nicht ein zweites Mal verbraucht und Saves/Resets nicht mehr am doppelten CSRF-Check scheitern",
         "CMS/admin/theme-editor.php + cms-phinit/admin/customizer.php + cms-phinit/admin/customizer-request-handler.php: Theme-Editor-POSTs laufen jetzt inline durch die Section-Shell und verwenden denselben CSRF-Kontext, sodass Speichern/Reset/Import des CMS-Phinit-Customizers nicht mehr vorzeitig von /admin/theme-editor abgefangen werden",
         "CMS/core/Services/ThemeCustomizer.php: globale Theme-Customizer-Werte werden jetzt NULL-sicher dedupliziert und in stabiler Reihenfolge geladen, damit alte cms_theme_customizations-Zeilen neue Saves nicht mehr überstimmen",
         "partials/home-article-list.php + post-tech.php: verbleibende Homepage-/Tech-Content-Ausgaben konservativ über den zentralen Theme-Sanitizer gehärtet und die Aktualisiert-Metainfo im Tech-Template an das neue Post-Layout angeglichen",
         "DOC/THEME-AUDIT.md: bekannte Scanner-Meldungen für den validierten Customizer-Importpfad und das verifizierte theme.json-Laden als False Positives dokumentiert",
         "admin/customizer-field-renderer.php: Featured-Post-Picker listet CMS-Beiträge jetzt robust mit Status-Hinweisen für veröffentlicht, privat, geplant und Entwurf auf statt nur streng öffentlich sichtbare Posts zu zeigen",
         "includes/theme-home-helpers.php: manuell ausgewählte Sidebar-Artikel respektieren jetzt die V2.8.1-Privatlogik, sodass private Beiträge für eingeloggte Nutzer im Widget sichtbar bleiben",
-        "theme.json + functions.php + update.json: Theme-Metadaten auf Version 1.5.6 aktualisiert und als bis 365CMS 2.8.1 getestet markiert"
+        "theme.json + functions.php + update.json: Theme-Metadaten auf Version 1.5.9 aktualisiert und als bis 365CMS 2.8.1 getestet markiert"
       ]
     },
     {

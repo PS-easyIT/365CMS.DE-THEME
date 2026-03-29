@@ -11,6 +11,7 @@ Seit dem letzten Audit-Stand wurden drei zusätzliche Punkte umgesetzt bzw. abge
 - ✅ **CUS-05 / Core-Persistenz**: Der Save-Pfad des Theme-Customizers wurde gegen NULL-basierte Duplikate in `cms_theme_customizations` gehärtet. Hintergrund: Der Unique-Key `(theme_slug, setting_category, setting_key, user_id)` schützt in MySQL/MariaDB globale Datensätze mit `user_id IS NULL` nicht zuverlässig vor Mehrfacheinträgen. `ThemeCustomizer` bereinigt doppelte globale Rows jetzt pro Setting deterministisch und lädt Werte in stabiler Reihenfolge (`updated_at DESC, id DESC`), sodass neue Saves nicht mehr von älteren NULL-Zeilen überstimmt werden.
 - ✅ **SEC-05 / konservative Theme-Härtung**: Freitext-/HTML-Inhalte der Startseiten-Sidebar sowie der Tech-Post-Variante laufen jetzt ebenfalls über den zentralen Theme-/Core-Sanitizer statt über inkonsistente Restpfade.
 - ✅ **UX-05 / Beitragskonsistenz**: Standard-, Wide- und Tech-Post-Templates behandeln die "Aktualisiert"-Metaanzeige jetzt konsistent unterhalb des Contents statt verteilt über unterschiedliche Header-/Body-Stellen.
+- ✅ **SEC-06 / öffentliche Link-Allowlist**: Footer-, Sidebar- und Homepage-Widget-Links aus dem Theme-Customizer laufen jetzt konsistent über `phinit_safe_public_url()`, sodass ungültige oder schemenfremde Werte (`javascript:`, `data:`, defekte Protokolle) nicht mehr als anklickbare öffentliche Links gerendert werden.
 
 ### Bekannte Scanner-Fehlalarme (Stand 29.03.2026)
 
@@ -24,7 +25,7 @@ Die folgenden Warnungen bleiben nach den Härtungen bewusst als dokumentierte **
 
 ## Live-/Testsite-Nachtrag vom 17.03.2026
 
-Zusätzlich zum statischen Theme-Audit wurde die öffentliche PhinIT-Site live gegen `https://phinit.de` und nach Deployment gegen `https://phinit.365cms.de` geprüft.
+Zusätzlich zum statischen Theme-Audit wurde die öffentliche PhinIT-Site live gegen `https://phinit.de` geprüft.
 
 Auf der Testsite inzwischen sichtbar verifiziert:
 

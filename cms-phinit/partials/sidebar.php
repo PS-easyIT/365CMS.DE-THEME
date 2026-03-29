@@ -52,6 +52,14 @@ $post_tags      = $post_tags      ?? [];
 $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
 $toc_tree       = function_exists('phinit_build_toc_tree') ? phinit_build_toc_tree(is_array($toc_items) ? $toc_items : []) : [];
 
+$social_linkedin = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_linkedin, $site_url, ['http', 'https']) : (string) $social_linkedin;
+$social_github = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_github, $site_url, ['http', 'https']) : (string) $social_github;
+$social_twitter = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_twitter, $site_url, ['http', 'https']) : (string) $social_twitter;
+$social_mastodon = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_mastodon, $site_url, ['http', 'https']) : (string) $social_mastodon;
+$social_youtube = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_youtube, $site_url, ['http', 'https']) : (string) $social_youtube;
+$social_xing = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_xing, $site_url, ['http', 'https']) : (string) $social_xing;
+$social_rss = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_rss, $site_url, ['http', 'https']) : (string) $social_rss;
+
 $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use (&$renderSidebarTocTree): void {
     if ($nodes === []) {
         return;

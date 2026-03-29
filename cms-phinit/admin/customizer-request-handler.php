@@ -732,9 +732,18 @@ function phinit_verify_customizer_csrf_token(mixed $token): bool
         return false;
     }
 
+    if (function_exists('cms_admin_section_shell_was_csrf_verified')
+        && cms_admin_section_shell_was_csrf_verified('admin_theme_editor')) {
+        return true;
+    }
+
     $security = Security::instance();
 
-    return $security->verifyToken($token, 'admin_theme_editor')
+    if ($security->verifyPersistentToken($token, 'admin_theme_editor')) {
+        return true;
+    }
+
+    return $security->verifyPersistentToken($token, 'phinit_customizer')
         || $security->verifyToken($token, 'phinit_customizer');
 }
 

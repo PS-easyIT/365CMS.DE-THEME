@@ -48,16 +48,26 @@ if (is_object($page)) {
 
 $pageId = (int)($page['id'] ?? 0);
 $pageContent = (string)($page['content'] ?? '');
+$isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
 $isCookieConsentPage = (($page['content_type'] ?? '') === 'cookie_consent') || (($page['slug'] ?? '') === 'cookie-einstellungen');
 $isImageArchivePage = is_array($page) && phinit_is_image_archive_page($page);
-if (!$pageProvidedByRouter) {
+if (!$pageProvidedByRouter && !$isHubSitePage) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
 }
-$pageContent = phinit_sanitize_renderable_content($pageContent, 'default');
-$pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
-$pageContent = phinit_enhance_content_images($pageHeadingData['html']);
-$safePageContent = (string) sanitize_html($pageContent, 'default');
-$isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
+
+if ($isHubSitePage) {
+    // Hub-Markup stammt bereits aus dem Core-Renderer und muss seine Struktur/
+    // Klassen auf section/article/nav/details behalten. Eine zweite Default-
+    // Sanitizer-Runde würde genau diese Selektoren wieder entfernen.
+    $pageHeadingData = ['html' => $pageContent, 'toc' => []];
+    $safePageContent = $pageContent;
+} else {
+    $pageContent = phinit_sanitize_renderable_content($pageContent, 'default');
+    $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
+    $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
+    $safePageContent = (string) sanitize_html($pageContent, 'default');
+}
+
 $favoriteControl = !$isHubSitePage
     ? phinit_get_favorite_control('page', (int) ($page['id'] ?? 0), [
         'title' => (string) ($page['title'] ?? 'Seite'),

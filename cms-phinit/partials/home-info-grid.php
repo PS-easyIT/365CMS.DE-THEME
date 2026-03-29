@@ -11,8 +11,12 @@ if (empty($_showInfoGrid)) {
     return;
 }
 
-$_c1Href = !empty($_c1LinkUrl) ? (str_starts_with((string) $_c1LinkUrl, 'http') ? (string) $_c1LinkUrl : $siteUrl . (string) $_c1LinkUrl) : '';
-$_c2Href = !empty($_c2LinkUrl) ? (str_starts_with((string) $_c2LinkUrl, 'http') ? (string) $_c2LinkUrl : $siteUrl . (string) $_c2LinkUrl) : '';
+$_c1Href = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url((string) ($_c1LinkUrl ?? ''), $siteUrl, ['http', 'https'])
+    : (!empty($_c1LinkUrl) ? (str_starts_with((string) $_c1LinkUrl, 'http') ? (string) $_c1LinkUrl : $siteUrl . (string) $_c1LinkUrl) : '');
+$_c2Href = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url((string) ($_c2LinkUrl ?? ''), $siteUrl, ['http', 'https'])
+    : (!empty($_c2LinkUrl) ? (str_starts_with((string) $_c2LinkUrl, 'http') ? (string) $_c2LinkUrl : $siteUrl . (string) $_c2LinkUrl) : '');
 $_c3Style = (string) ($_c3Style ?? '');
 $_c3IsProjects = $_c3Style === 'repo' || $_c3Style === 'projects';
 $_c3IsGold = (string) ($_c3Style ?? '') === 'gold';
@@ -23,6 +27,10 @@ $_resolveCardUrl = static function (string $url) use ($siteUrl): string {
 
     if ($url === '') {
         return '';
+    }
+
+    if (function_exists('phinit_safe_public_url')) {
+        return phinit_safe_public_url($url, $siteUrl, ['http', 'https']);
     }
 
     return str_starts_with($url, 'http') ? $url : $siteUrl . $url;
@@ -44,7 +52,7 @@ foreach ([
     $_c3ProjectLinks[] = [
         'label' => $_label,
         'url' => $_url,
-        'external' => str_starts_with((string) ($_c3ProjectLink['url'] ?? ''), 'http'),
+        'external' => preg_match('#^https?://#i', (string) ($_c3ProjectLink['url'] ?? '')) === 1,
     ];
 }
 ?>

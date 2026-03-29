@@ -8,6 +8,10 @@ if (!defined('ABSPATH')) {
 if (empty($_showRepo) || empty($_repoTitle)) {
     return;
 }
+
+$_repoSafeUrl = function_exists('phinit_safe_public_url')
+    ? phinit_safe_public_url((string) ($_repoBtnUrl ?? ''), defined('SITE_URL') ? SITE_URL : '', ['http', 'https'])
+    : (string) ($_repoBtnUrl ?? '');
 ?>
 <section class="content-section home-section home-section--repo">
     <div class="repo-card">
@@ -24,8 +28,8 @@ if (empty($_showRepo) || empty($_repoTitle)) {
             <?php if (!empty($_repoBadge)): ?>
             <span class="repo-badge"><?php echo htmlspecialchars((string) $_repoBadge, ENT_QUOTES); ?></span>
             <?php endif; ?>
-            <?php if (!empty($_repoBtnText) && !empty($_repoBtnUrl)): ?>
-            <a href="<?php echo htmlspecialchars((string) $_repoBtnUrl, ENT_QUOTES); ?>"
+            <?php if (!empty($_repoBtnText) && $_repoSafeUrl !== ''): ?>
+            <a href="<?php echo htmlspecialchars($_repoSafeUrl, ENT_QUOTES); ?>"
                class="btn btn-accent btn-sm" target="_blank" rel="noopener noreferrer">
                 <?php echo htmlspecialchars((string) $_repoBtnText, ENT_QUOTES); ?> →
             </a>
