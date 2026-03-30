@@ -45,6 +45,13 @@ $isLoggedIn = theme_is_logged_in();
 $db         = \CMS\Database::instance();
 $prefix     = $db->prefix();
 $pluginMgr  = \CMS\PluginManager::instance();
+$expertsPageUrl   = theme_safe_url($siteUrl . '/experts', $siteUrl . '/experts');
+$eventsPageUrl    = theme_safe_url($siteUrl . '/events', $siteUrl . '/events');
+$companiesPageUrl = theme_safe_url($siteUrl . '/companies', $siteUrl . '/companies');
+$speakersPageUrl  = theme_safe_url($siteUrl . '/speakers', $siteUrl . '/speakers');
+$jobsPageUrl      = theme_safe_url($siteUrl . '/jobs', $siteUrl . '/jobs');
+$feedsPageUrl     = theme_safe_url($siteUrl . '/feeds', $siteUrl . '/feeds');
+$blogPageUrl      = theme_safe_url($siteUrl . '/blog', $siteUrl . '/blog');
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 2. CUSTOMIZER-EINSTELLUNGEN LADEN (Kategorie: homepage)
@@ -451,7 +458,7 @@ $layoutClass = match ($homepageLayout) {
                 <div class="section-header">
                     <h2><?php echo htmlspecialchars($expertsTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
                     <?php if ($hasExperts) : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/experts" class="section-link">Alle anzeigen →</a>
+                        <a href="<?php echo htmlspecialchars($expertsPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle anzeigen →</a>
                     <?php endif; ?>
                 </div>
 
@@ -460,13 +467,14 @@ $layoutClass = match ($homepageLayout) {
                         <?php foreach ($experts as $expert) :
                             $eName  = htmlspecialchars(trim(_field($expert, 'display_name', trim(_field($expert, 'first_name', '') . ' ' . _field($expert, 'last_name', '')))) ?: 'Unbekannt', ENT_QUOTES, 'UTF-8');
                             $eTitle = htmlspecialchars(_field($expert, 'position', ''), ENT_QUOTES, 'UTF-8');
-                            $ePhoto = _field($expert, 'photo_url', '');
+                            $ePhoto = theme_safe_url((string) _field($expert, 'photo_url', ''));
                             $eId    = (int)_field($expert, 'id', '0');
                             $eSkills = _field($expert, 'skills', '');
                             $eYears  = _field($expert, 'experience_years', '');
                             $eAvail  = _field($expert, 'availability', _field($expert, 'location_city', ''));
                             $skillTags = $eSkills ? array_slice(array_map('trim', explode(',', $eSkills)), 0, 3) : [];
                             $initials = mb_strtoupper(mb_substr($eName, 0, 2));
+                            $expertUrl = theme_safe_url($siteUrl . '/experts/' . $eId, $expertsPageUrl);
                         ?>
                             <article class="expert-card">
                                 <div class="expert-card-header">
@@ -504,7 +512,7 @@ $layoutClass = match ($homepageLayout) {
                                 </div>
 
                                 <div class="expert-card-footer">
-                                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/experts/<?php echo $eId; ?>" class="btn btn-sm btn-primary">
+                                    <a href="<?php echo htmlspecialchars($expertUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-sm btn-primary">
                                         Profil ansehen
                                     </a>
                                 </div>
@@ -532,7 +540,7 @@ $layoutClass = match ($homepageLayout) {
                 <div class="section-header">
                     <h2><?php echo htmlspecialchars($eventsTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
                     <?php if ($hasEvents) : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/events" class="section-link">Alle anzeigen →</a>
+                        <a href="<?php echo htmlspecialchars($eventsPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle anzeigen →</a>
                     <?php endif; ?>
                 </div>
 
@@ -547,10 +555,10 @@ $layoutClass = match ($homepageLayout) {
                             $evDay   = $evDate ? date('d', strtotime($evDate)) : '--';
                             $evMonth = $evDate ? ($monthsDE[(int)date('n', strtotime($evDate))] ?? '') : '';
                             $evYear  = $evDate ? date('Y', strtotime($evDate)) : '';
-                            $evUrl   = htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8') . '/events/' . $evId;
+                            $evUrl   = theme_safe_url($siteUrl . '/events/' . $evId, $eventsPageUrl);
                             $evDateLabel = $evDate ? $evDay . '. ' . $evMonth . ' ' . $evYear : '';
                         ?>
-                            <a href="<?php echo $evUrl; ?>" class="event-card">
+                            <a href="<?php echo htmlspecialchars($evUrl, ENT_QUOTES, 'UTF-8'); ?>" class="event-card">
                                 <?php if ($evDateLabel) : ?>
                                     <span class="event-date-pill">📅 <?php echo htmlspecialchars($evDateLabel, ENT_QUOTES, 'UTF-8'); ?></span>
                                 <?php endif; ?>
@@ -592,7 +600,7 @@ $layoutClass = match ($homepageLayout) {
                 <div class="section-header">
                     <h2><?php echo htmlspecialchars($companiesTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
                     <?php if ($hasCompanies) : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies" class="section-link">Alle anzeigen →</a>
+                        <a href="<?php echo htmlspecialchars($companiesPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle anzeigen →</a>
                     <?php endif; ?>
                 </div>
 
@@ -600,9 +608,10 @@ $layoutClass = match ($homepageLayout) {
                     <div class="companies-grid">
                         <?php foreach ($companies as $company) :
                             $cName = htmlspecialchars(_field($company, 'name', 'Unbekannt'), ENT_QUOTES, 'UTF-8');
-                            $cLogo = _field($company, 'logo_url', '');
+                            $cLogo = theme_safe_url((string) _field($company, 'logo_url', ''));
                             $cDesc = htmlspecialchars(mb_substr(strip_tags(_field($company, 'description', '')), 0, 150), ENT_QUOTES, 'UTF-8');
                             $cId   = (int)_field($company, 'id', '0');
+                            $companyUrl = theme_safe_url($siteUrl . '/companies/' . $cId, $companiesPageUrl);
                         ?>
                             <article class="company-card">
                                 <?php if ($cLogo) : ?>
@@ -617,7 +626,7 @@ $layoutClass = match ($homepageLayout) {
                                 <?php if ($cDesc) : ?>
                                     <p class="company-desc"><?php echo $cDesc; ?></p>
                                 <?php endif; ?>
-                                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/companies/<?php echo $cId; ?>"
+                                <a href="<?php echo htmlspecialchars($companyUrl, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="btn btn-sm btn-secondary">
                                     Kontakt anfragen
                                 </a>
@@ -644,7 +653,7 @@ $layoutClass = match ($homepageLayout) {
             <section class="dashboard-section" data-section="speakers" id="home-speakers">
                 <div class="section-header">
                     <h2>🎤 <?php echo htmlspecialchars($speakersTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/speakers" class="section-link">Alle Speaker →</a>
+                    <a href="<?php echo htmlspecialchars($speakersPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle Speaker →</a>
                 </div>
 
                 <?php if ($hasSpeakers && !empty($speakers)) : ?>
@@ -702,7 +711,7 @@ $layoutClass = match ($homepageLayout) {
             <section class="dashboard-section" data-section="jobs" id="home-jobs">
                 <div class="section-header">
                     <h2>💼 <?php echo htmlspecialchars($jobsTitle, ENT_QUOTES, 'UTF-8'); ?></h2>
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/jobs" class="section-link">Alle Stellen →</a>
+                    <a href="<?php echo htmlspecialchars($jobsPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle Stellen →</a>
                 </div>
 
                 <?php if ($hasJobs && !empty($jobs)) : ?>
@@ -751,9 +760,9 @@ $layoutClass = match ($homepageLayout) {
                 <div class="section-header">
                     <h2>📰 Aktuelle Beiträge</h2>
                     <?php if ($hasFeed) : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/feeds" class="section-link">Alle anzeigen →</a>
+                        <a href="<?php echo htmlspecialchars($feedsPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle anzeigen →</a>
                     <?php else : ?>
-                        <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog" class="section-link">Alle anzeigen →</a>
+                        <a href="<?php echo htmlspecialchars($blogPageUrl, ENT_QUOTES, 'UTF-8'); ?>" class="section-link">Alle anzeigen →</a>
                     <?php endif; ?>
                 </div>
 
@@ -902,20 +911,12 @@ $layoutClass = match ($homepageLayout) {
         $ctaTitle       = (string)($_cta['cta_title'] ?? 'Bereit, Teil unseres Netzwerks zu werden?');
         $ctaText        = (string)($_cta['cta_text'] ?? '');
         $ctaBtnText     = (string)($_cta['cta_button_text'] ?? 'Jetzt registrieren');
-        $ctaBtnUrl      = (string)($_cta['cta_button_url'] ?? '/register');
+        $ctaBtnUrl      = theme_safe_url((string)($_cta['cta_button_url'] ?? '/register'), $siteUrl . '/register');
         $ctaBtn2Text    = (string)($_cta['cta_button_secondary_text'] ?? '');
-        $ctaBtn2Url     = (string)($_cta['cta_button_secondary_url'] ?? '');
+        $ctaBtn2Url     = theme_safe_url((string)($_cta['cta_button_secondary_url'] ?? ''));
         $ctaStyle       = (string)($_cta['cta_style'] ?? 'dark');
         $ctaAlignment   = (string)($_cta['cta_alignment'] ?? 'center');
         $ctaSize        = (string)($_cta['cta_size'] ?? 'normal');
-
-        // URL-Auflösung (relative URLs → absolut)
-        if ($ctaBtnUrl && $ctaBtnUrl[0] === '/') {
-            $ctaBtnUrl = $siteUrl . $ctaBtnUrl;
-        }
-        if ($ctaBtn2Url && $ctaBtn2Url[0] === '/') {
-            $ctaBtn2Url = $siteUrl . $ctaBtn2Url;
-        }
 
         $ctaClasses = 'homepage-cta';
         $ctaClasses .= ' homepage-cta--' . htmlspecialchars($ctaStyle, ENT_QUOTES, 'UTF-8');

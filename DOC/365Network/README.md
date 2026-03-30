@@ -1,7 +1,7 @@
 # 365Network Theme – Dokumentation
 
 > **Theme-Slug:** `365Network`  
-> **Version:** 3.4.5  
+> **Version:** 3.4.11  
 > **Design:** Deep Navy (#0c1526) + Gold (#c8952e)  
 > **Typ:** Dashboard-orientiertes IT-Experten-Netzwerk-Theme
 
@@ -32,9 +32,12 @@ Das 365Network-Theme ist ein **Dashboard-Style-Theme** für die 365CMS-Plattform
 - Zweite Audit-Welle in `v3.4.4`: Auth-/Search-Templates bereinigt, Header-Canvas-Script in `js/theme.js` verlagert, Footer-/Logo-/Social-URLs fail-closed gehärtet.
 - Dritte bis fünfte Audit-Welle in `v3.4.5`: `page.php`, `blog.php`, `blog-single.php`, `home.php`, `index.php`, `feeds.php`, `error.php` sowie die Directory-Templates und Sidebar-Widgets wurden weiter von Inline-Stilen, rohen Linkpfaden und unvollständigen Filterzuständen bereinigt.
 - Feinschliff-Batch in `v3.4.5`: `theme_route_path()` / `theme_route_url()` etablieren eine gemeinsame interne Link-Factory; Search-Overlay und Mobile-Drawer wurden bei Fokusführung/ARIA geschärft, und das Cookie-Banner bzw. die Header-Canvas-Animation laufen ressourcenschonender.
-- Der eingebettete Theme-Customizer respektiert jetzt den bereits durch die Admin-Shell geprüften `theme_customizer`-Token und blockiert legitime Speichervorgänge nicht mehr mit einem doppelten CSRF-Check.
+- Die Hotfixes `v3.4.7` und `v3.4.8` härten den eingebetteten Theme-Customizer und die Homepage weiter nach: `admin/customizer.php` fällt bei früher Bootstrap-Reihenfolge sicher auf Core-Sanitizer zurück, und `home.php` normalisiert Bereichs-, Detail- und CTA-Links sowie Firmen-/Experten-Medienpfade jetzt konsequent fail-closed.
+- `v3.4.9` vereinheitlicht schließlich auch die Ausgabe der statischen Theme-Assets in `functions.php`, sodass `style.css`, `js/navigation.js` und `js/theme.js` denselben Attribut-Escaping-Standard wie die übrigen Frontend-URLs einhalten.
+- `v3.4.10` zieht Footer-, Fallback- und Head-Details nach: `footer.php` bündelt seine Safe-URL-Ziele zentral, `index.php` läuft nun ebenfalls mit `declare(strict_types=1)`, und `functions.php` normalisiert `og:url` sowie die Preconnect-Hints konsequent über denselben Attribut-Ausgabepfad.
+- `v3.4.11` schließt eine Admin-Lücke im Menüeditor: `theme.json` deklariert die 365Network-Menüpositionen jetzt explizit, damit Header-, Mobile-, Footer- und Speaker-Menüs auch ohne voll geladenes Theme im Admin korrekt erkannt und gespeichert werden.
 - In den Theme-PHP-Templates verbleiben nach aktuellem Audit keine eingebetteten `<style>`-Blöcke mehr; Frontend-Styling sitzt jetzt konsistenter in `style.css`.
-- Aktuelle manuelle Audit-Scorecard: **Security 97/100 · Best Practice 96/100 · Performance 94/100 · Maintainability 97/100**.
+- Aktuelle manuelle Audit-Scorecard: **Security 98/100 · Best Practice 97/100 · Performance 94/100 · Maintainability 98/100**.
 
 ### Design-Philosophie
 

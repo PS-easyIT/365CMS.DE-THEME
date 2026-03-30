@@ -12,7 +12,64 @@
 
 ---
 
+## v3.4.10 — März 2026
 ---
+
+## v3.4.11 — März 2026
+
+### Menüeditor erkennt 365Network-Menüpositionen jetzt auch im Admin korrekt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Menüeditor/Admin | `theme.json` deklariert die 365Network-Menüpositionen `primary`, `mobile`, `footer` und `speaker` jetzt explizit. Dadurch kann der Core-Menüeditor die Slots auch im Admin-Modus erkennen, obwohl dort `functions.php` des aktiven Themes nicht vollständig gebootet wird. |
+| 🟡 refactor | Theme-Metadaten | Theme-Versionen in `theme.json`, `functions.php`, `style.css` und `update.json` auf `3.4.11` synchronisiert, damit der Menüeditor-Fix konsistent ausgerollt wird. |
+
+## v3.4.10 — März 2026
+
+### Footer- und Fallback-Konsistenz nachgeschärft
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟡 refactor | Footer | `footer.php` bündelt Verzeichnis-, Ressourcen-, Dashboard- und Legal-Links jetzt in vorab normalisierten Safe-URL-Variablen statt dieselben `theme_safe_url()`-Aufrufe mehrfach inline zu wiederholen. |
+| 🔴 fix | Security/Head | `functions.php` normalisiert `og:url` jetzt explizit über `theme_safe_external_url()` und escaped die Google-Preconnect-Hints konsistent als HTML-Attribute. |
+| 🟡 refactor | Templates | `index.php` folgt jetzt ebenfalls dem `declare(strict_types=1)`-Standard des Repositories; `footer.php` bündelt seine Safe-URL-Ziele zentral statt sie mehrfach inline zusammenzusetzen. |
+
+## v3.4.9 — März 2026
+
+### Konsistentes Attribut-Escaping für Theme-Assets
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Security/Assets | `functions.php` escaped die statischen Theme-Asset-URLs für `style.css`, `js/navigation.js` und `js/theme.js` jetzt explizit vor der Ausgabe in `href`/`src`-Attributen. |
+| 🟡 refactor | Output-Consistency | Die Head-/Footer-Asset-Ausgabe folgt damit demselben Attribut-Escaping-Standard wie Meta-Tags, Route-Links und die übrigen fail-closed URL-Pfade im Theme. |
+
+## v3.4.8 — März 2026
+
+### Homepage-Links und Medien fail-closed gehärtet
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Security/Homepage | `home.php` baut Startseiten-Links zu Experten, Events, Firmen, Speakern, Jobs, Feed und Blog jetzt konsistent über `theme_safe_url()` statt über rohe `SITE_URL`-Verkettungen auf. |
+| 🔴 fix | Security/Homepage | Expertenfotos und Firmenlogos werden im Homepage-Listing vor der Ausgabe normalisiert; Detail-Buttons für Experten, Events und Firmen fallen bei ungültigen Zielen sauber auf sichere Bereichs-URLs zurück. |
+| 🔴 fix | Security/Homepage CTA | Die CTA-Sektion normalisiert primäre und sekundäre Button-Ziele jetzt ebenfalls über `theme_safe_url()`, statt relative Werte manuell zu absoluten URLs zu verketten. |
+
+## v3.4.7 — März 2026
+
+### Hotfix für den Theme-Editor
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Customizer/Bootstrap | `admin/customizer.php` ruft beim Speichern von `sidebar_custom_html` nicht mehr ungeschützt `theme_sanitize_html()` auf. Stattdessen greift jetzt ein lokaler Fallback, der zuerst `theme_sanitize_html()`, dann `sanitize_html()` und zuletzt eine restriktive `strip_tags()`-Allowlist verwendet. |
+| 🟢 ops | Release | Theme-Version auf **3.4.7** angehoben und `update.json` für den Hotfix synchronisiert. |
+
+## v3.4.6 — März 2026
+
+### Header-Branding im Theme-Editor steuerbar
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Customizer/Header | Im 365Network-Customizer gibt es jetzt das Feld **„Header-Sitetitel“**. Darüber lässt sich der im Header gerenderte Branding-Titel direkt im Theme-Editor pflegen, ohne den globalen CMS-Sitetitel ändern zu müssen. |
+| 🔴 fix | Header/Branding | `header.php` nutzt für Logo-Alt, Branding-Link und sichtbaren Header-Titel jetzt zuerst den Customizer-Wert `header.site_title_text` und fällt nur bei leerem Wert auf den CMS-Sitetitel zurück. |
 
 ## v3.4.5 — März 2026
 

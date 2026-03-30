@@ -56,6 +56,19 @@ function theme_customizer_normalize_url(mixed $value, bool $allowRelative = true
     return function_exists('esc_url_raw') ? esc_url_raw($candidate) : (filter_var($candidate, FILTER_SANITIZE_URL) ?: '');
 }
 
+function theme_customizer_sanitize_html(string $html, string $profile = 'default'): string
+{
+    if (function_exists('theme_sanitize_html')) {
+        return theme_sanitize_html($html, $profile);
+    }
+
+    if (function_exists('sanitize_html')) {
+        return (string) sanitize_html($html, $profile);
+    }
+
+    return strip_tags($html, '<p><a><strong><em><ul><ol><li><br><h2><h3><h4><span>');
+}
+
 function theme_customizer_normalize_value(string $tab, string $fieldKey, array $fieldConfig, mixed $value): string
 {
     $type = $fieldConfig['type'] ?? 'text';
@@ -67,7 +80,7 @@ function theme_customizer_normalize_value(string $tab, string $fieldKey, array $
         'number' => theme_customizer_normalize_number($value, is_numeric($default) ? (float) $default : 0.0),
         'select' => array_key_exists((string) $value, $fieldConfig['options'] ?? []) ? (string) $value : (string) $default,
         'textarea' => match (true) {
-            $tab === 'sidebar' && $fieldKey === 'sidebar_custom_html' => theme_sanitize_html((string) $value, 'default'),
+            $tab === 'sidebar' && $fieldKey === 'sidebar_custom_html' => theme_customizer_sanitize_html((string) $value, 'default'),
             $tab === 'advanced' && $fieldKey === 'custom_css' => trim((string) preg_replace('/<\/?style[^>]*>/i', '', (string) $value)),
             $tab === 'advanced' && in_array($fieldKey, ['custom_head_code', 'custom_footer_code'], true) => (string) $value,
             default => sanitize_textarea_field((string) $value),
@@ -348,6 +361,12 @@ $config = [
                 'label'       => 'Header Logo',
                 'description' => 'Logo-Bild im Header (JPG, PNG, GIF oder WebP – max. 2 MB). Leer = Netzwerk-Icon.',
                 'type'        => 'image_upload',
+                'default'     => '',
+            ],
+            'site_title_text' => [
+                'label'       => 'Header-Sitetitel',
+                'description' => 'Optionaler Branding-Titel im Header. Leer = CMS-Sitetitel verwenden.',
+                'type'        => 'text',
                 'default'     => '',
             ],
             'header_bg_color' => [
@@ -1576,7 +1595,7 @@ if (!$embedInAdminLayout):
                         // ── Header / Footer / Buttons: 2-Spalten-Karten-Layout ──────
                         $tabCardGroups = [
                             'header' => [
-                                '🖼️ Logo' => ['logo_url', 'logo_max_height'],
+                                '🖼️ Logo & Branding' => ['logo_url', 'site_title_text', 'logo_max_height'],
                                 '🎨 Header-Farben' => ['header_bg_color', 'header_text_color', 'header_accent_color'],
                                 '📐 Header-Layout' => ['header_height', 'show_header_shadow'],
                                 '🔍 Header-Buttons' => ['show_search_btn', 'show_login_btn', 'login_btn_icon_only', 'show_register_btn', 'register_btn_icon_only'],

@@ -9,12 +9,12 @@
 
 | Bereich | Score | Status | Kurzfazit |
 |---|---:|---|---|
-| Security | 97 / 100 | sehr gut | Die großen Directory-Templates rendern interne Ziele jetzt weitgehend fail-closed; verbleibende Frontend-Linkflächen wurden nochmals deutlich reduziert. |
-| Best Practice | 96 / 100 | sehr gut | Die letzten Template-`<style>`-Blöcke sind aus `blog.php`, `blog-single.php` und `error.php` verschwunden; Formular-, Filter- und JS-Verhalten sind konsistenter zentralisiert. |
+| Security | 98 / 100 | sehr gut | Neben den Directory-Templates laufen nun auch Homepage-Bereichs-, Detail- und CTA-Ziele sowie Firmen-/Experten-Medienpfade konsistent fail-closed; der eingebettete Theme-Editor bricht bei früher Bootstrap-Reihenfolge nicht mehr über einen undefinierten Sanitizer weg. |
+| Best Practice | 97 / 100 | sehr gut | Frontend- und Editor-Hotspots folgen stärker demselben Helper-/Fallback-Muster; `home.php` und `admin/customizer.php` vermeiden rohe Pfadverkettungen bzw. unguardete Theme-Helper-Aufrufe. |
 | Performance | 94 / 100 | sehr gut | Cookie-Banner und Header-Canvas arbeiten sparsamer: gespeicherter Consent räumt DOM früh auf und die Netzwerk-Animation pausiert außerhalb des Viewports bzw. in versteckten Tabs. |
-| Maintainability | 97 / 100 | sehr gut | Wiederkehrende interne Frontend-Routen laufen jetzt über eine gemeinsame Link-Factory; Overlay-, Fokus- und Scroll-Lock-Verhalten folgt einem klareren Muster statt punktueller Speziallogik. |
+| Maintainability | 98 / 100 | sehr gut | Wiederkehrende interne Frontend-Routen laufen jetzt auch auf der Startseite über gemeinsame URL-Helper; Bootstrap-sensitive Sanitizer-Logik ist lokal gekapselt statt implizit an `functions.php` zu hängen. |
 
-**Gesamtstatus:** 96.00 / 100  
+**Gesamtstatus:** 96.75 / 100  
 **Ampel:** 🟢 Produktionsreif mit kleinen Restpunkten niedriger Priorität.
 
 ---
@@ -202,6 +202,10 @@
 | 29.03.2026 | Welle 4 | Directory-Templates (`experts`, `jobs`, `speakers`, `events`, `companies`, `booking`) auf sichere interne Link-Helper vereinheitlicht und Sidebar-Widgets von Inline-Stilen bereinigt |
 | 29.03.2026 | Welle 5 | `feeds.php` funktional vervollständigt, `blog.php`/`blog-single.php`/`error.php` von Template-CSS befreit und JS-Scroll-/Media-Query-Robustheit nachgeschärft |
 | 29.03.2026 | Welle 6 | Gemeinsame interne Route-Factory ergänzt, Header-/404-Fallbacks sowie Widgets migriert und Overlay-/Cookie-/Canvas-Interaktionen in JS a11y- und performance-seitig verfeinert |
+| 29.03.2026 | Welle 7 | `admin/customizer.php` gegen Bootstrap-Reihenfolge-Fatals abgesichert und `home.php` bei Bereichs-/Detail-/CTA-Links sowie Firmen-/Experten-Medienpfaden auf fail-closed URL-Helper vereinheitlicht |
+| 29.03.2026 | Welle 8 | `functions.php` escaped statische Theme-Asset-URLs für CSS/JS jetzt explizit im HTML-Ausgabepfad und schließt damit die letzte kleine Attribut-Escaping-Lücke im Head/Footer-Asset-Rendering |
+| 29.03.2026 | Welle 9 | `footer.php` auf zentrale Safe-URL-Ziele umgestellt, `index.php` an den aktuellen Template-Standard angeglichen und `functions.php` bei `og:url` sowie den Preconnect-Hints auf denselben sicheren Attributpfad vereinheitlicht |
+| 29.03.2026 | Welle 10 | `theme.json` ergänzt die 365Network-Menüpositionen jetzt explizit, damit der Core-Menüeditor `primary`, `mobile`, `footer` und `speaker` auch im Admin ohne geladenes Theme erkennt und Theme-Menüs nicht mehr an fehlenden Location-Metadaten scheitern |
 
 ---
 

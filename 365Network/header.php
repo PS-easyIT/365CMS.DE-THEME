@@ -29,6 +29,7 @@ try {
 }
 
 try {
+    $_headerSiteTitle   = trim((string) \CMS\Services\ThemeCustomizer::instance()->get('header', 'site_title_text', ''));
     $_headerLogoUrl     = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
     $_showSearchBtn     = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_search_btn', true), FILTER_VALIDATE_BOOLEAN);
     $_showLoginBtn      = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'show_login_btn', true), FILTER_VALIDATE_BOOLEAN);
@@ -48,6 +49,7 @@ try {
     $_profileShowJobs      = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_jobs', true), FILTER_VALIDATE_BOOLEAN);
     $_profileShowBooking   = filter_var(\CMS\Services\ThemeCustomizer::instance()->get('header', 'profile_show_booking', true), FILTER_VALIDATE_BOOLEAN);
 } catch (\Throwable $e) {
+    $_headerSiteTitle = '';
     $_headerLogoUrl   = '';
     $_showSearchBtn   = true;
     $_showLoginBtn    = true;
@@ -65,6 +67,8 @@ try {
     $_profileShowJobs      = true;
     $_profileShowBooking   = true;
 }
+
+$brandTitle = $_headerSiteTitle !== '' ? $_headerSiteTitle : (string) $siteTitle;
 
 // User-Initialen für Avatar
 $userInitials = 'U';
@@ -129,10 +133,10 @@ $registerUrl = theme_route_url('register');
                 <!-- Branding -->
                 <div class="site-branding">
                     <div class="site-logo">
-                        <a href="<?php echo htmlspecialchars($siteHomeUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>">
+                        <a href="<?php echo htmlspecialchars($siteHomeUrl, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars($brandTitle, ENT_QUOTES, 'UTF-8'); ?>">
                             <?php if ($headerLogoUrl !== '') : ?>
                                 <img src="<?php echo htmlspecialchars($headerLogoUrl, ENT_QUOTES, 'UTF-8'); ?>"
-                                     alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>"
+                                     alt="<?php echo htmlspecialchars($brandTitle, ENT_QUOTES, 'UTF-8'); ?>"
                                      loading="eager"
                                      width="120" height="40"
                                      class="site-logo-image">
@@ -154,7 +158,7 @@ $registerUrl = theme_route_url('register');
                     <div class="site-identity">
                         <h1 class="site-title">
                             <a href="<?php echo htmlspecialchars($siteHomeUrl, ENT_QUOTES, 'UTF-8'); ?>" rel="home">
-                                <?php echo htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8'); ?>
+                                <?php echo htmlspecialchars($brandTitle, ENT_QUOTES, 'UTF-8'); ?>
                             </a>
                         </h1>
                     </div>

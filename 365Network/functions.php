@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('THEME_VERSION', '3.4.5');
+define('THEME_VERSION', '3.4.11');
 define('THEME_DIR', THEME_PATH . '365Network/');
 define('THEME_URL_BASE', \CMS\ThemeManager::instance()->getThemeUrl());
 
@@ -197,7 +197,8 @@ HTML;
     public function enqueueStyles(): void
     {
         $v = THEME_VERSION;
-        echo '<link rel="stylesheet" href="' . THEME_URL_BASE . '/style.css?v=' . $v . '">' . "\n";
+        $styleUrl = htmlspecialchars((string) (THEME_URL_BASE . '/style.css?v=' . $v), ENT_QUOTES, 'UTF-8');
+        echo '<link rel="stylesheet" href="' . $styleUrl . '">' . "\n";
     }
 
     /**
@@ -207,8 +208,10 @@ HTML;
     {
         $v = THEME_VERSION;
         // Kein defer: Scripts stehen bereits am Ende des Body
-        echo '<script src="' . THEME_URL_BASE . '/js/navigation.js?v=' . $v . '"></script>' . "\n";
-        echo '<script src="' . THEME_URL_BASE . '/js/theme.js?v=' . $v . '"></script>' . "\n";
+        $navigationScriptUrl = htmlspecialchars((string) (THEME_URL_BASE . '/js/navigation.js?v=' . $v), ENT_QUOTES, 'UTF-8');
+        $themeScriptUrl = htmlspecialchars((string) (THEME_URL_BASE . '/js/theme.js?v=' . $v), ENT_QUOTES, 'UTF-8');
+        echo '<script src="' . $navigationScriptUrl . '"></script>' . "\n";
+        echo '<script src="' . $themeScriptUrl . '"></script>' . "\n";
     }
 
     /**
@@ -219,7 +222,7 @@ HTML;
         $themeManager = \CMS\ThemeManager::instance();
         $siteDesc = htmlspecialchars($themeManager->getSiteDescription(), ENT_QUOTES, 'UTF-8');
         $siteTitle = htmlspecialchars($themeManager->getSiteTitle(), ENT_QUOTES, 'UTF-8');
-        $siteUrl = htmlspecialchars(SITE_URL, ENT_QUOTES, 'UTF-8');
+        $siteUrl = htmlspecialchars(theme_safe_external_url((string) SITE_URL) ?: rtrim((string) SITE_URL, '/') . '/', ENT_QUOTES, 'UTF-8');
 
         echo '<meta name="description" content="' . $siteDesc . '">' . "\n";
         echo '<meta property="og:site_name" content="' . $siteTitle . '">' . "\n";
@@ -240,8 +243,8 @@ HTML;
             return;
         }
 
-        echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
-        echo '<link rel="dns-prefetch" href="//fonts.googleapis.com">' . "\n";
+        echo '<link rel="preconnect" href="' . htmlspecialchars('https://fonts.googleapis.com', ENT_QUOTES, 'UTF-8') . '">' . "\n";
+        echo '<link rel="dns-prefetch" href="' . htmlspecialchars('//fonts.googleapis.com', ENT_QUOTES, 'UTF-8') . '">' . "\n";
     }
 
     /**
