@@ -17,6 +17,7 @@ defined('CMS_PHINIT_THEME_URL') || define('CMS_PHINIT_THEME_URL', rtrim(\CMS\The
 
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-template-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-content-helpers.php';
+require_once CMS_PHINIT_THEME_DIR . 'includes/theme-home-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-media-archive-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-special-pages-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-assets-trait.php';
