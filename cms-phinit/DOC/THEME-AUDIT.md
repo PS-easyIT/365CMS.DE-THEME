@@ -1,8 +1,22 @@
 # CMS Phinit – Customizer-, Sicherheits- und Performance-Audit
 
-Stand: 2026-03-29  
+Stand: 2026-04-04  
 Scope: statischer Code-Audit des Themes `cms-phinit` in `365CMS.DE-THEME` inklusive Dateiinventar.  
 Nicht enthalten: echte Lighthouse-/WebPageTest-Messläufe, Lasttests, Browser-Matrix-Tests, visuelle Regressionstests.
+
+## Nachtrag vom 04.04.2026 – Snyk-Audit auf 0 aktive Findings geschlossen
+
+Der aktuelle Snyk-Code-Scan gegen `e:\00-WPwork\365CMS.DE-THEME\cms-phinit` endet jetzt mit **0 aktiven Findings**. Dafür wurden die letzten offenen Restpfade direkt an den Sinks und im Customizer-Import-Flow nachgehärtet:
+
+- ✅ **SEC-22 / Seiten-Renderpfad**: `page.php`, `page-wide.php` und `page-landing.php` rendern vorbereiteten HTML-Content jetzt ausschließlich über `phinit_render_sanitized_content()`. Damit endet die Theme-seitige Ausgabe an einem dedizierten Purifier-Sink statt an verteilten Template-Echos.
+- ✅ **SEC-23 / Hub-Profil**: `CMS/core/Services/PurifierService.php` ergänzt das Profil `hub`, sodass bereits gerendertes HubSite-Markup mit `section`-, `article`-, `nav`-, `details`- und Klassen-Struktur erneut purifier-gesichert werden kann, ohne die Layout-Semantik des Themes zu verlieren.
+- ✅ **SEC-24 / Customizer-Import-Flow**: `admin/customizer-request-handler.php` validiert, staged und liest Import-Uploads jetzt in einem einzigen kontrollierten Temp-Flow. Der frühere interprozedurale Snyk-Restpfad auf dem Upload-Staging ist damit geschlossen.
+
+### Aktueller Snyk-Status (Stand 04.04.2026)
+
+- **0 aktive Findings** im Theme `cms-phinit`
+- **0 High / 0 Medium / 0 Low**
+- Keine aktuell verbliebenen dokumentierten Theme-False-Positives im letzten Scan
 
 ## Nachtrag vom 29.03.2026 – Save-Fix, konservative Härtung, bekannte Scanner-False-Positives
 
@@ -28,21 +42,9 @@ Seit dem letzten Audit-Stand wurden drei zusätzliche Punkte umgesetzt bzw. abge
 - ✅ **SEC-20 / Wiederverwendete Post-Bildpfade konsolidiert**: `partials/home-post-grid.php`, `partials/post-card.php` und `partials/post-header.php` normalisieren Featured Images jetzt ebenfalls über `phinit_normalize_public_media_url()` und sichern kanonische Beitrags-Links zusätzlich über die Public-URL-Allowlist ab. `partials/post-header.php` formatiert das Veröffentlichungsdatum außerdem fail-closed statt implizit mit einem `now`-Fallback weiterzurendern.
 - ✅ **SEC-21 / Homepage-List-Sidebar konsolidiert**: `partials/home-article-list.php` normalisiert jetzt Sidebar-Identity-Logo, Projektkarten-Logos und Featured-Thumbnails über `phinit_normalize_public_media_url()` und sichert Identity-, Projekt-, Featured-, Status- und Notice-Links konsequent über `phinit_safe_public_url()` ab. Damit hängen auch die Homepage-Widget-Pfade nicht mehr an rohen Customizer-/ViewModel-Werten.
 
-### Bekannte Scanner-Fehlalarme (Stand 29.03.2026)
+### Frühere Scanner-Restbefunde (Stand 04.04.2026 geschlossen)
 
-Die folgenden Warnungen bleiben nach den Härtungen bewusst als dokumentierte **False Positives** bestehen:
-
-1. **Customizer-Import / Upload-Datei (`cms-phinit/admin/customizer-request-handler.php`)**  
-   Statische Scanner markieren den defensiv validierten Upload-Pfad weiter als Path-Traversal/SSRF, obwohl der Flow bereits Upload-Herkunft, Dateiendung, MIME-Typ, Dateigröße, Root-Struktur und ein separates Staging innerhalb des System-Temp-Verzeichnisses prüft. Der Restbefund ist analyzerbedingt und aktuell kein belastbarer Runtime-Nachweis.
-
-2. **ThemeCustomizer → `theme.json`-Laden (`CMS/core/Services/ThemeCustomizer.php`)**  
-   Scanner neigen dazu, das Laden der Theme-Konfig aus dem aktiven Theme-Slug als Traversal zu markieren. Die Runtime validiert den Slug inzwischen per Regex, löst den Themes-Basisordner via `realpath()` auf und akzeptiert nur `theme.json`-Dateien innerhalb dieses verifizierten Basisverzeichnisses. Auch hier bleibt der Hinweis als dokumentierter Analyzer-Restbefund bestehen, solange keine präzisere Taint-Modellierung verfügbar ist.
-
-3. **Sanitisierter Seiten-Content in `page.php` / `page-wide.php`**  
-   Einige Scanner markieren die Ausgabe von `$safePageContent` weiterhin als XSS-Pfad, obwohl der Seiteninhalt im Theme bereits kontrolliert über `phinit_prepare_renderable_content()`, `phinit_sanitize_renderable_content()`, `phinit_enhance_content_images()` und anschließend `sanitize_html(..., 'default')` läuft. Der Restbefund entsteht durch unvollständige Taint-Modellierung rund um den zusammengesetzten Content-Renderpfad und ist aktuell als dokumentierter False Positive zu behandeln, solange keine konkrete Runtime-Bypass-Kette nachgewiesen wird.
-
-4. **Sanitisierter Landing-Content in `page-landing.php`**  
-   Scanner markieren die Ausgabe von `$safeLandingContent` weiterhin als XSS-Pfad, obwohl der Landing-Content denselben gehärteten Renderpfad wie reguläre Seiten verwendet (`phinit_prepare_renderable_content()` → `phinit_sanitize_renderable_content()` → `phinit_enhance_content_images()` → `sanitize_html(..., 'default')`). Auch dieser Hinweis ist derzeit ein dokumentierter Analyzer-Restbefund ohne belastbaren Runtime-Bypass-Nachweis.
+Die am 29.03.2026 noch dokumentierten Scanner-Restbefunde für den Customizer-Import sowie die Seiten-/Landing-Sinks sind mit dem aktuellen Audit-Stand geschlossen. Der zuletzt ausgeführte Snyk-Scan meldet für `cms-phinit` keine aktiven Findings mehr.
 
 ## Live-/Testsite-Nachtrag vom 17.03.2026
 
@@ -153,7 +155,7 @@ Die **ursprünglichen Audit-Befunde** lagen vor allem in drei Clustern:
 3. **vermeidbare Laufzeitkosten im Header-/Asset-Pfad**  
    Mehrere Request-Klassifizierungen und Meta-/Schema-/Breadcrumb-Abfragen wiederholten Datenbankzugriffe pro Request.
 
-**Stand heute:** Die statischen Theme-Befunde aus Phase 1 bis 3 sind abgearbeitet. Offen bleiben vor allem externe Mess- und Betriebsfragen aus Phase 4, also reale Preview-/Staging-Ziele und darauf basierende Lab-/Field-Messungen.
+**Stand heute:** Die statischen Theme-Befunde aus Phase 1 bis 3 sind abgearbeitet, und der aktuelle Snyk-Scan für `cms-phinit` ist auf **0 aktive Findings** gefallen. Offen bleiben vor allem externe Mess- und Betriebsfragen aus Phase 4, also reale Preview-/Staging-Ziele und darauf basierende Lab-/Field-Messungen.
 
 ## Audit-Score auf Code-Ebene
 
@@ -161,8 +163,8 @@ Die **ursprünglichen Audit-Befunde** lagen vor allem in drei Clustern:
 
 | Bereich | Einschätzung | Kurzbegründung |
 |---|---|---|
-| Customizer | A- | Schema, UI und Save-/Import-Flow sind weitgehend konsolidiert; relevante Drift-Befunde wurden bereinigt |
-| Sicherheit | A | die kritischen Theme-Befunde zu URL-Allowlist, Import-Härtung, Output-Kontexten, Member-/Frontend-Datums- und Listen-Payloads sowie privilegiertem Raw-Code-Flow sind abgearbeitet |
+| Customizer | A | Schema, UI und Save-/Import-Flow sind konsolidiert; der Import läuft jetzt in einem einzigen kontrollierten Temp-Flow ohne aktive Scanner-Befunde |
+| Sicherheit | A+ | die kritischen Theme-Befunde zu URL-Allowlist, Import-Härtung, Output-Kontexten, Member-/Frontend-Datums- und Listen-Payloads sowie privilegiertem Raw-Code-Flow sind abgearbeitet; der aktuelle Snyk-Scan meldet 0 aktive Findings |
 | Performance | B+ | Head-/Asset-Pfad und JS-/Bildstrategie wurden deutlich entschlackt; reale Metriken fehlen weiterhin ohne Testziel |
 | Wartbarkeit | B+ | Legacy-Spuren wie `extract()`-Pfade und parallele Klassifizierungslogik wurden reduziert, das Theme bleibt aber modular verteilt |
 

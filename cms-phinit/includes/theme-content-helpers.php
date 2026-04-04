@@ -295,6 +295,16 @@ if (!function_exists('phinit_has_visible_content')) {
     }
 }
 
+if (!function_exists('phinit_render_sanitized_content')) {
+    /**
+     * Rendert HTML-Inhalte ausschließlich über den zentralen Purifier-Vertrag.
+     */
+    function phinit_render_sanitized_content(string $html, string $profile = 'default'): void
+    {
+        echo sanitize_html($html, $profile);
+    }
+}
+
 if (!function_exists('phinit_reading_time')) {
     /**
      * Lesezeit in Minuten schätzen

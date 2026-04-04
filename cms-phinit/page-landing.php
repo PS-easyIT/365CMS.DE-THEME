@@ -174,7 +174,7 @@ $ctaBtnHref = function_exists('phinit_safe_public_url')
 <section class="landing-content">
     <div class="container">
         <div class="page-content page-content--wide" data-anim>
-            <?php echo $safeLandingContent; ?>
+            <?php phinit_render_sanitized_content($safeLandingContent, 'default'); ?>
         </div>
     </div>
 </section>

@@ -475,7 +475,7 @@ function phinit_log_customizer_import_rejection(ThemeCustomizer $customizer, str
 
 /**
  * @param mixed $file
- * @return array{ok: bool, message: string, tmpName?: string, originalName?: string, mime?: string}
+ * @return array{ok: bool, message: string, raw?: string, originalName?: string, mime?: string}
  */
 function phinit_validate_customizer_import_upload(mixed $file): array
 {
@@ -536,89 +536,108 @@ function phinit_validate_customizer_import_upload(mixed $file): array
         ];
     }
 
-    return [
-        'ok' => true,
-        'message' => '',
-        'tmpName' => $tmpName,
-        'originalName' => $originalName,
-        'mime' => $mime,
-    ];
-}
-
-/**
- * Liest eine validierte Import-Datei defensiv ein.
- *
- * @return array{ok: bool, message: string, raw?: string}
- */
-function phinit_read_customizer_import_file(string $tmpName): array
-{
-    $tmpName = trim($tmpName);
-    if ($tmpName === '' || !is_file($tmpName) || !is_readable($tmpName)) {
-        return [
-            'ok' => false,
-            'message' => 'Import fehlgeschlagen – die hochgeladene Datei ist nicht lesbar.',
-        ];
-    }
-
     $realPath = realpath($tmpName);
     if ($realPath === false || !is_file($realPath) || !is_readable($realPath)) {
         return [
             'ok' => false,
             'message' => 'Import fehlgeschlagen – die Upload-Datei konnte nicht verifiziert werden.',
-        ];
-    }
-
-    $size = filesize($realPath);
-    if (!is_int($size) && !is_float($size)) {
-        return [
-            'ok' => false,
-            'message' => 'Import fehlgeschlagen – die Dateigröße konnte nicht ermittelt werden.',
-        ];
-    }
-
-    $bytes = (int) $size;
-    if ($bytes <= 0 || $bytes >= 524288) {
-        return [
-            'ok' => false,
-            'message' => 'Import fehlgeschlagen – die JSON-Datei ist leer oder zu groß.',
+            'mime' => $mime,
         ];
     }
 
     $stagingDir = rtrim(sys_get_temp_dir(), '\\/');
-    $stagedPath = $stagingDir . DIRECTORY_SEPARATOR . 'cms-phinit-customizer-' . bin2hex(random_bytes(16)) . '.json';
-    $sourcePath = PHP_SAPI !== 'cli' ? $tmpName : $realPath;
+    $stagingRoot = realpath($stagingDir);
+    if ($stagingRoot === false || !is_dir($stagingRoot) || !is_writable($stagingRoot)) {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – das sichere Staging-Verzeichnis ist nicht verfügbar.',
+            'mime' => $mime,
+        ];
+    }
 
-    $readHandle = @fopen($sourcePath, 'rb');
-    $writeHandle = $readHandle !== false ? @fopen($stagedPath, 'wb') : false;
-    $copied = false;
+    $tempPath = tempnam($stagingRoot, 'cms-phinit-customizer-');
+    if (!is_string($tempPath) || $tempPath === '') {
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Upload-Datei konnte nicht sicher zwischengespeichert werden.',
+            'mime' => $mime,
+        ];
+    }
 
-    try {
-        if ($readHandle !== false && $writeHandle !== false) {
-            $copiedBytes = stream_copy_to_stream($readHandle, $writeHandle, $bytes);
-            $copied = is_int($copiedBytes) && $copiedBytes > 0;
+    $stagedPath = $tempPath . '.json';
+    if (!@rename($tempPath, $stagedPath)) {
+        @unlink($tempPath);
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Upload-Datei konnte nicht sicher vorbereitet werden.',
+            'mime' => $mime,
+        ];
+    }
+
+    $copied = PHP_SAPI !== 'cli'
+        ? @move_uploaded_file($tmpName, $stagedPath)
+        : @copy($realPath, $stagedPath);
+
+    if (!$copied) {
+        @unlink($stagedPath);
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Upload-Datei konnte nicht sicher übernommen werden.',
+            'mime' => $mime,
+        ];
+    }
+
+    $stagedRealPath = realpath($stagedPath);
+    $normalizedStagingRoot = phinit_normalize_filesystem_path_for_compare($stagingRoot);
+    $normalizedStagedPath = $stagedRealPath !== false
+        ? phinit_normalize_filesystem_path_for_compare($stagedRealPath)
+        : '';
+
+    if ($normalizedStagedPath === '' || !str_starts_with($normalizedStagedPath, $normalizedStagingRoot . '/')) {
+        if (is_file($stagedPath)) {
+            @unlink($stagedPath);
         }
+
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Staging-Datei liegt außerhalb des erlaubten Temp-Bereichs.',
+            'mime' => $mime,
+        ];
+    }
+
+    $stagedSize = filesize($stagedRealPath);
+    if (!is_int($stagedSize) && !is_float($stagedSize)) {
+        if (is_file($stagedPath)) {
+            @unlink($stagedPath);
+        }
+
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die Dateigröße konnte nicht ermittelt werden.',
+            'mime' => $mime,
+        ];
+    }
+
+    $bytes = (int) $stagedSize;
+    if ($bytes <= 0 || $bytes >= 524288) {
+        if (is_file($stagedPath)) {
+            @unlink($stagedPath);
+        }
+
+        return [
+            'ok' => false,
+            'message' => 'Import fehlgeschlagen – die JSON-Datei ist leer oder zu groß.',
+            'mime' => $mime,
+        ];
+    }
+
+    $readHandle = @fopen($stagedRealPath, 'rb');
+    try {
+        $raw = is_resource($readHandle) ? stream_get_contents($readHandle, $bytes + 1) : false;
     } finally {
         if (is_resource($readHandle)) {
             fclose($readHandle);
         }
-        if (is_resource($writeHandle)) {
-            fclose($writeHandle);
-        }
-    }
-
-    if (!$copied || !is_file($stagedPath) || !is_readable($stagedPath)) {
-        if (is_file($stagedPath)) {
-            @unlink($stagedPath);
-        }
-        return [
-            'ok' => false,
-            'message' => 'Import fehlgeschlagen – die Upload-Datei konnte nicht sicher übernommen werden.',
-        ];
-    }
-
-    try {
-        $raw = file_get_contents($stagedPath);
-    } finally {
         if (is_file($stagedPath)) {
             @unlink($stagedPath);
         }
@@ -628,6 +647,7 @@ function phinit_read_customizer_import_file(string $tmpName): array
         return [
             'ok' => false,
             'message' => 'Import fehlgeschlagen – die Upload-Datei konnte nicht sicher gelesen werden.',
+            'mime' => $mime,
         ];
     }
 
@@ -635,7 +655,21 @@ function phinit_read_customizer_import_file(string $tmpName): array
         'ok' => true,
         'message' => '',
         'raw' => $raw,
+        'originalName' => $originalName,
+        'mime' => $mime,
     ];
+}
+
+function phinit_normalize_filesystem_path_for_compare(string $path): string
+{
+    $normalized = str_replace('\\', '/', trim($path));
+    $normalized = rtrim($normalized, '/');
+
+    if (DIRECTORY_SEPARATOR === '\\') {
+        $normalized = strtolower($normalized);
+    }
+
+    return $normalized;
 }
 
 /**
@@ -942,22 +976,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             ];
         }
 
-        $tmpName = (string) ($uploadValidation['tmpName'] ?? '');
-        $importRead = phinit_read_customizer_import_file($tmpName);
-        if (!($importRead['ok'] ?? false)) {
-            phinit_log_customizer_import_rejection($customizer, 'unreadable_upload', [
-                'mime' => (string) ($uploadValidation['mime'] ?? ''),
-                'filename' => (string) ($uploadValidation['originalName'] ?? ''),
-            ]);
-
-            return [
-                'alertMsg' => (string) ($importRead['message'] ?? 'Import fehlgeschlagen.'),
-                'alertType' => 'danger',
-                'activeTab' => $activeTab,
-            ];
-        }
-
-        $decodedImport = phinit_decode_customizer_import_payload((string) ($importRead['raw'] ?? ''), $customizer);
+        $decodedImport = phinit_decode_customizer_import_payload((string) ($uploadValidation['raw'] ?? ''), $customizer);
         if (!($decodedImport['ok'] ?? false)) {
             phinit_log_customizer_import_rejection($customizer, 'invalid_payload', [
                 'mime' => (string) ($uploadValidation['mime'] ?? ''),

@@ -73,7 +73,7 @@ $safePageContent = (string) sanitize_html($pageContent, 'default');
 
     <!-- Seiteninhalt volle Breite -->
     <div class="page-content page-content--full" data-anim data-anim-delay="1">
-        <?php echo $safePageContent; ?>
+        <?php phinit_render_sanitized_content($safePageContent, 'default'); ?>
     </div>
 
 </div><!-- /.container -->

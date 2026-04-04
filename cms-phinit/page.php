@@ -114,7 +114,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     </div>
 <?php elseif ($isHubSitePage): ?>
     <div class="page-content page-content--hub" data-anim>
-        <?php echo $safePageContent; ?>
+        <?php phinit_render_sanitized_content($safePageContent, 'hub'); ?>
     </div>
 <?php elseif ($isImageArchivePage): ?>
     <?php $imageArchive = phinit_build_image_archive_view_model($page); ?>
@@ -137,7 +137,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
             <?php $pageTocClass = ''; ?>
             <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
             <?php endif; ?>
-            <div class="page-content"><?php echo $safePageContent; ?></div>
+            <div class="page-content"><?php phinit_render_sanitized_content($safePageContent, 'default'); ?></div>
             <?php echo $_pg_updatedPill; ?>
         </div>
 
@@ -157,7 +157,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
     <?php endif; ?>
     <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
-        <?php echo $safePageContent; ?>
+        <?php phinit_render_sanitized_content($safePageContent, 'default'); ?>
     </div>
     <?php echo $_pg_updatedPill; ?>
     <?php endif; ?>
