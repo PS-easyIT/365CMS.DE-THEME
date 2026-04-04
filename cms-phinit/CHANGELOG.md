@@ -13,6 +13,20 @@
 
 ---
 
+## Unreleased
+
+### Mobile Detail-Header fokussieren Titel statt Vorschaubild
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Post/Page Detail | `assets/css/post-detail.css` und `assets/css/page-detail.css` blenden das Headerbild auf Beitrags- und Seitendetailseiten bei `≤ 768px` aus, damit der mobile Content-Header kompakter startet und Titel/Meta sofort sichtbar bleiben. |
+| 🎨 style | Mobile Header/Home | `assets/css/header-navigation.css` zeigt das Theme-Logo im mobilen Header wieder links an und begrenzt Bildlogos auf maximal `30px` Höhe; `style.css` reduziert den Abstand zwischen Header und dem ersten Homepage-Band („Aktuelle Beiträge“) mobil auf `10px`. |
+| 🎨 style | Post Detail / Share | `assets/css/post-detail.css` ordnet die Teilen-Buttons auf Beitragsdetailseiten in der Mobileansicht jetzt immer in einem festen 3er-Raster an, sodass sechs Share-Aktionen als zwei Reihen mit je drei Buttons erscheinen. |
+| 🎨 style | Post Sidebar / Social | `partials/sidebar.php` und `assets/css/post-sidebar.css` verteilen die aktiv konfigurierten Social-Buttons in der Desktop-Sidebar jetzt über die volle Widget-Breite; die Spaltenzahl richtet sich dynamisch nach der Anzahl der eingerichteten Netzwerke. |
+| 🎨 style | Post Sidebar / Tags | `assets/css/post-sidebar.css` rendert das Tags-Widget in der Desktop-Sidebar jetzt als zweispaltiges Grid mit dezenten, eckigen Badge-Links; die Tag-Namen bleiben einzeilig ohne Umbruch und werden vor dem rechten Rand zuverlässig per Ellipsis (`...`) gekürzt. |
+
+---
+
 ## v1.5.20 — 29. März 2026
 
 ### Homepage-Widget-Pfade und Sidebar-Medien weiter konsolidiert

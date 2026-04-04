@@ -99,9 +99,19 @@ $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use
                        || !empty($social_mastodon)  || !empty($social_youtube) || !empty($social_xing)
                        || !empty($social_rss); ?>
     <?php if ($_sb_hasSocial): ?>
+    <?php $_sb_socialCount = count(array_filter([
+        $social_linkedin,
+        $social_github,
+        $social_twitter,
+        $social_mastodon,
+        $social_youtube,
+        $social_xing,
+        $social_rss,
+    ], static fn (string $url): bool => trim($url) !== '')); ?>
+    <?php $_sb_socialColumns = $_sb_socialCount <= 4 ? max(1, $_sb_socialCount) : ($_sb_socialCount <= 6 ? 3 : 4); ?>
     <div class="social-widget">
         <div class="social-widget-title"><?php echo htmlspecialchars($social_header, ENT_QUOTES); ?></div>
-        <div class="social-icons">
+        <div class="social-icons" style="--sidebar-social-columns: <?php echo (int) $_sb_socialColumns; ?>;">
             <?php if (!empty($social_linkedin)): ?>
             <a href="<?php echo htmlspecialchars($social_linkedin, ENT_QUOTES); ?>" class="li"
                target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>

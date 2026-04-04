@@ -844,8 +844,26 @@ body.dark-mode .quicklinks-tool:hover {
     .member-bar__nav { display: none; }
     .member-bar__greeting { font-size: .72rem; }
     .hdr-tools__toggles { display: none; }
-    .site-logo { display: none; }
-    .hdr-bar-main .hdr-inner { justify-content: flex-end; }
+    .site-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: auto;
+        min-width: 0;
+        font-size: 1.1rem;
+    }
+    .site-logo img {
+        max-height: 30px;
+        width: auto;
+    }
+    .site-logo .logo-text-beside {
+        display: none;
+    }
+    .site-logo .logo-text {
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+    .hdr-bar-main .hdr-inner { justify-content: space-between; }
     .burger-btn { display: flex; }
 }
 

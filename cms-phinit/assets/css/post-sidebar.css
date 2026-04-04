@@ -141,10 +141,9 @@
 
 .toc-link {
     display: block;
-    padding: 4px 6px;
+    padding: 4px 4px;
     font-size: var(--fs-xs);
     color: var(--text-muted);
-    border-radius: 3px;
     transition: var(--transition-fast);
     text-decoration: none;
     white-space: nowrap;
@@ -181,6 +180,57 @@
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 10px;
+}
+
+@media (min-width: 769px) {
+    .sidebar .social-widget .social-icons {
+        display: grid;
+        grid-template-columns: repeat(var(--sidebar-social-columns, 3), minmax(0, 1fr));
+        width: 100%;
+        gap: 8px;
+    }
+
+    .sidebar .social-widget .social-icons a {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .sidebar .toc--primary .toc-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .sidebar .toc--primary .toc-item {
+        min-width: 0;
+    }
+
+    .sidebar .toc--primary .toc-link {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        min-height: 30px;
+        padding: 4px 10px;
+        border: 1px solid color-mix(in srgb, var(--border-color) 88%, var(--primary-color) 12%);
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--bg-primary) 78%, var(--bg-secondary) 22%);
+        color: var(--text-secondary);
+        font-size: .78rem;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .sidebar .toc--primary .toc-link:hover,
+    .sidebar .toc--primary .toc-link:focus-visible,
+    .sidebar .toc--primary .toc-link.active {
+        background: color-mix(in srgb, var(--accent-teal) 8%, var(--bg-primary) 92%);
+        border-color: color-mix(in srgb, var(--accent-teal) 22%, var(--border-color) 78%);
+        color: var(--text-primary);
+    }
 }
 
 .toc-list--plain {
@@ -241,6 +291,23 @@ body.dark-mode .toc--collapsible .toc-panel {
 
 body.dark-mode .social-widget-title {
     color: var(--text-primary);
+}
+
+@media (min-width: 769px) {
+    body.dark-mode .sidebar .toc--primary .toc-link {
+        background: color-mix(in srgb, var(--bg-dark-3) 84%, var(--bg-dark-2) 16%);
+        border-color: color-mix(in srgb, var(--border-dark) 84%, rgba(148, 163, 184, .18) 16%);
+        color: var(--text-secondary);
+        box-shadow: none;
+    }
+
+    body.dark-mode .sidebar .toc--primary .toc-link:hover,
+    body.dark-mode .sidebar .toc--primary .toc-link:focus-visible,
+    body.dark-mode .sidebar .toc--primary .toc-link.active {
+        background: color-mix(in srgb, var(--accent-teal) 14%, var(--bg-dark-3) 86%);
+        border-color: color-mix(in srgb, var(--accent-teal) 28%, var(--border-dark) 72%);
+        color: var(--text-primary);
+    }
 }
 
 @media (max-width: 768px) {
