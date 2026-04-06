@@ -77,6 +77,28 @@ if (!function_exists('theme_get_flash')) {
     }
 }
 
+if (!function_exists('theme_logged_in_redirect_path')) {
+    function theme_logged_in_redirect_path(): string
+    {
+        try {
+            return \CMS\Auth::instance()->isAdmin() ? '/admin' : '/member';
+        } catch (\Throwable) {
+            return '/member';
+        }
+    }
+}
+
+if (!function_exists('theme_account_path')) {
+    function theme_account_path(): string
+    {
+        try {
+            return \CMS\Auth::instance()->isAdmin() ? '/admin' : '/member/dashboard';
+        } catch (\Throwable) {
+            return '/member/dashboard';
+        }
+    }
+}
+
 if (!function_exists('phinit_display_text')) {
     function phinit_display_text(?string $text): string
     {

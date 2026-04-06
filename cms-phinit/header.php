@@ -117,6 +117,9 @@ $isLoggedIn   = function_exists('theme_is_logged_in') ? theme_is_logged_in() : f
 $currentUser  = null;
 $isAdminUser  = false;
 $memberEditLink = ['show' => false, 'url' => '', 'label' => ''];
+$accountPath = $isLoggedIn && function_exists('theme_account_path')
+    ? theme_account_path()
+    : '/member/dashboard';
 
 try {
     $auth = \CMS\Auth::instance();
@@ -301,7 +304,7 @@ if ($_showLanguageSwitch) {
                     <span class="member-bar__icon">✏️</span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? phinit_t('edit', [], $_currentLocale)), ENT_QUOTES); ?>
                 </a>
                 <?php endif; ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member" class="member-bar__link">
+                <a href="<?php echo htmlspecialchars(rtrim($siteUrl, '/'), ENT_QUOTES) . htmlspecialchars($accountPath, ENT_QUOTES); ?>" class="member-bar__link">
                     <span class="member-bar__icon">📊</span> <?php echo htmlspecialchars(phinit_t('dashboard', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-bar__link">
@@ -522,7 +525,7 @@ if ($_showLanguageSwitch) {
                 </form>
                 <?php endif; ?>
 
-                <a href="<?php echo htmlspecialchars($isLoggedIn ? $siteUrl . '/member/dashboard' : $siteUrl . '/login', ENT_QUOTES); ?>"
+                     <a href="<?php echo htmlspecialchars($isLoggedIn ? rtrim($siteUrl, '/') . $accountPath : $siteUrl . '/login', ENT_QUOTES); ?>"
                    class="util-link util-login-link"
                    aria-label="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"
                    title="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>">

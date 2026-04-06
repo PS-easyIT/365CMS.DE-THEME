@@ -87,7 +87,10 @@ try {
     $_networkLinks = [];
 }
 
-$_footerAccountUrl = $isLoggedIn ? $siteUrl . '/member/dashboard' : $siteUrl . '/login';
+$_footerAccountPath = $isLoggedIn && function_exists('theme_account_path')
+    ? theme_account_path()
+    : '/member/dashboard';
+$_footerAccountUrl = $isLoggedIn ? rtrim($siteUrl, '/') . $_footerAccountPath : $siteUrl . '/login';
 $_footerAccountLabel = $isLoggedIn
     ? phinit_t('account', [], $currentLocale)
     : phinit_t('login', [], $currentLocale);

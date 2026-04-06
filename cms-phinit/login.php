@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 
 // Bereits eingeloggt → weiterleiten
 if (function_exists('theme_is_logged_in') && theme_is_logged_in()) {
-    header('Location: /member');
+    header('Location: ' . (function_exists('theme_logged_in_redirect_path') ? theme_logged_in_redirect_path() : '/member'));
     exit;
 }
 
