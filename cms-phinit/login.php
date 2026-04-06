@@ -15,14 +15,13 @@ if (!defined('ABSPATH')) {
 
 // Bereits eingeloggt → weiterleiten
 if (function_exists('theme_is_logged_in') && theme_is_logged_in()) {
-    header('Location: ' . SITE_URL . '/member');
+    header('Location: /member');
     exit;
 }
 
 // Flash-Messages
-$_flash       = function_exists('theme_get_flash') ? theme_get_flash() : null;
-$loginError   = ($_flash && ($_flash['type'] ?? '') === 'error')   ? $_flash['message'] : ($_SESSION['error']   ?? '');
-$loginSuccess = ($_flash && ($_flash['type'] ?? '') === 'success') ? $_flash['message'] : ($_SESSION['success'] ?? '');
+$loginError = trim((string)($_SESSION['error'] ?? ''));
+$loginSuccess = trim((string)($_SESSION['success'] ?? ''));
 unset($_SESSION['error'], $_SESSION['success']);
 
 $csrfToken = '';
@@ -33,12 +32,20 @@ try {
 $siteUrl   = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$homeUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/', $currentLocale, '')
+    : '/';
+$loginAction = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/login', $currentLocale, '')
+    : '/login';
 $forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/forgot-password';
+    ? phinit_localized_href('/forgot-password', $currentLocale, '')
+    : '/forgot-password';
 $registerUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/register', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/register';
+    ? phinit_localized_href('/register', $currentLocale, '')
+    : '/register';
+$loginRedirect = trim((string) ($login_redirect ?? ''));
+$loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
 ?>
 
 <div class="auth-wrapper">
@@ -46,7 +53,7 @@ $registerUrl = function_exists('phinit_localized_href')
 
         <!-- Logo -->
         <div class="auth-header">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="auth-logo-link">
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES); ?>" class="auth-logo-link">
                 <span class="logo-icon" aria-hidden="true">P</span>
                 <span class="auth-site-name"><?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?></span>
             </a>
@@ -67,14 +74,18 @@ $registerUrl = function_exists('phinit_localized_href')
         <?php endif; ?>
 
         <!-- Login Form -->
-        <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" novalidate class="auth-form">
+        <form method="POST" action="<?php echo htmlspecialchars($loginAction, ENT_QUOTES); ?>" novalidate class="auth-form">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+            <?php if ($loginRedirect !== ''): ?>
+            <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($loginRedirect, ENT_QUOTES); ?>">
+            <?php endif; ?>
 
             <div class="auth-form-group">
-                <label for="loginEmail" class="auth-label">E-Mail-Adresse</label>
-                <input type="email" id="loginEmail" name="email" class="auth-input"
-                       autocomplete="email" required autofocus
-                       placeholder="deine@email.de">
+                <label for="loginUsername" class="auth-label">Benutzername oder E-Mail-Adresse</label>
+                <input type="text" id="loginUsername" name="username" class="auth-input"
+                       autocomplete="username" required autofocus
+                       value="<?php echo htmlspecialchars($loginValue, ENT_QUOTES); ?>"
+                       placeholder="deinname oder deine@email.de">
             </div>
 
             <div class="auth-form-group">
@@ -83,7 +94,7 @@ $registerUrl = function_exists('phinit_localized_href')
                     <a href="<?php echo htmlspecialchars($forgotPasswordUrl, ENT_QUOTES); ?>" class="auth-forgot-link">Vergessen?</a>
                 </label>
                 <input type="password" id="loginPassword" name="password" class="auth-input"
-                       autocomplete="current-password" required minlength="8"
+                       autocomplete="current-password" required
                        placeholder="••••••••">
             </div>
 

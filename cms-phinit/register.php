@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 
 // Bereits eingeloggt → weiterleiten
 if (function_exists('theme_is_logged_in') && theme_is_logged_in()) {
-    header('Location: ' . SITE_URL . '/member');
+    header('Location: /member');
     exit;
 }
 
@@ -31,12 +31,18 @@ try {
 $siteUrl   = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$homeUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/', $currentLocale, '')
+    : '/';
+$registerAction = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/register', $currentLocale, '')
+    : '/register';
 $privacyUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/datenschutz', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/datenschutz';
+    ? phinit_localized_href('/datenschutz', $currentLocale, '')
+    : '/datenschutz';
 $loginUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/login';
+    ? phinit_localized_href('/login', $currentLocale, '')
+    : '/login';
 ?>
 
 <div class="auth-wrapper">
@@ -44,7 +50,7 @@ $loginUrl = function_exists('phinit_localized_href')
 
         <!-- Logo -->
         <div class="auth-header">
-            <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="auth-logo-link">
+            <a href="<?php echo htmlspecialchars($homeUrl, ENT_QUOTES); ?>" class="auth-logo-link">
                 <span class="logo-icon" aria-hidden="true">P</span>
                 <span class="auth-site-name"><?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?></span>
             </a>
@@ -65,7 +71,7 @@ $loginUrl = function_exists('phinit_localized_href')
         <?php endif; ?>
 
         <!-- Registrierungsformular -->
-        <form method="POST" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/register" novalidate class="auth-form">
+        <form method="POST" action="<?php echo htmlspecialchars($registerAction, ENT_QUOTES); ?>" novalidate class="auth-form">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
 
             <div class="auth-form-group">

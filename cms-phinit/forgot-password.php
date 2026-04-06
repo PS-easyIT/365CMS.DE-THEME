@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (function_exists('theme_is_logged_in') && theme_is_logged_in()) {
-    header('Location: ' . SITE_URL . '/member');
+    header('Location: /member');
     exit;
 }
 
@@ -20,14 +20,14 @@ $isEnglish = function_exists('phinit_is_english_locale') ? phinit_is_english_loc
 $siteUrl = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $loginUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/login';
+    ? phinit_localized_href('/login', $currentLocale, '')
+    : '/login';
 $forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/forgot-password';
+    ? phinit_localized_href('/forgot-password', $currentLocale, '')
+    : '/forgot-password';
 $homeUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/', $currentLocale, $siteUrl)
-    : rtrim($siteUrl, '/') . '/';
+    ? phinit_localized_href('/', $currentLocale, '')
+    : '/';
 
 $step = (($_GET['step'] ?? 'request') === 'reset') ? 'reset' : 'request';
 $resetToken = trim((string) ($_GET['token'] ?? ''));
