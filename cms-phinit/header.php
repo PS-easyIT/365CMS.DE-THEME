@@ -88,6 +88,18 @@ if (defined('CMS_PHINIT_THEME_DIR') && defined('CMS_PHINIT_THEME_URL')) {
         $_themeInitScriptUrl = CMS_PHINIT_THEME_URL . 'assets/js/theme-init.js?v=' . rawurlencode((string) filemtime($_themeInitScriptFile));
     }
 }
+
+if (isset($page) && (is_array($page) || is_object($page))) {
+    $GLOBALS['page'] = is_object($page) ? (array) $page : $page;
+} else {
+    unset($GLOBALS['page']);
+}
+
+if (isset($post) && (is_array($post) || is_object($post))) {
+    $GLOBALS['post'] = is_object($post) ? (array) $post : $post;
+} else {
+    unset($GLOBALS['post']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($_currentLocale, ENT_QUOTES, 'UTF-8'); ?>">

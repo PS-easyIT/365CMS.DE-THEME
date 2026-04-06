@@ -9,6 +9,33 @@ trait CMS_Phinit_Theme_Assets_Trait
 {
     private ?string $homepageLeadImageCache = null;
 
+    private function getCurrentTemplatePagePayload(): ?array
+    {
+        $page = $GLOBALS['page'] ?? null;
+
+        if (is_object($page)) {
+            $page = (array) $page;
+        }
+
+        return is_array($page) ? $page : null;
+    }
+
+    private function isHubPagePayload(?array $page): bool
+    {
+        if (!is_array($page)) {
+            return false;
+        }
+
+        $contentType = strtolower(trim((string) ($page['content_type'] ?? '')));
+        if ($contentType === 'hub') {
+            return true;
+        }
+
+        $content = (string) ($page['content'] ?? '');
+
+        return $content !== '' && str_contains($content, 'cms-hub-site');
+    }
+
     private function getCustomizerSettingWithFallback(string $category, string $key, mixed $default = null, array $legacyKeys = []): mixed
     {
         try {
@@ -115,24 +142,27 @@ trait CMS_Phinit_Theme_Assets_Trait
             }
         }
 
-        $isHubSite = false;
+        $currentTemplatePage = $this->getCurrentTemplatePagePayload();
+        $isHubSite = $this->isHubPagePayload($currentTemplatePage);
         if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras) {
-            try {
-                $siteTableService = \CMS\Services\SiteTableService::getInstance();
-                if ($path === '/') {
-                    $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
-                    if ($host !== '') {
-                        $isHubSite = $siteTableService->getHubPageByDomain($host, 'de') !== null
-                            || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+            if (!$isHubSite) {
+                try {
+                    $siteTableService = \CMS\Services\SiteTableService::getInstance();
+                    if ($path === '/') {
+                        $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
+                        if ($host !== '') {
+                            $isHubSite = $siteTableService->getHubPageByDomain($host, 'de') !== null
+                                || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+                        }
+                    } else {
+                        $slug = trim($path, '/');
+                        if ($slug !== '' && !str_contains($slug, '/')) {
+                            $isHubSite = $siteTableService->hubExistsBySlug($slug);
+                        }
                     }
-                } else {
-                    $slug = trim($path, '/');
-                    if ($slug !== '' && !str_contains($slug, '/')) {
-                        $isHubSite = $siteTableService->hubExistsBySlug($slug);
-                    }
+                } catch (\Throwable) {
+                    $isHubSite = false;
                 }
-            } catch (\Throwable) {
-                $isHubSite = false;
             }
         }
 

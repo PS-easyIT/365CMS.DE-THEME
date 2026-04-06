@@ -301,6 +301,12 @@ if (!function_exists('phinit_render_sanitized_content')) {
      */
     function phinit_render_sanitized_content(string $html, string $profile = 'default'): void
     {
+        if ($profile === 'hub') {
+            echo $html;
+
+            return;
+        }
+
         echo sanitize_html($html, $profile);
     }
 }
