@@ -20,30 +20,34 @@ if (function_exists('theme_is_logged_in') && theme_is_logged_in()) {
 }
 
 // Flash-Messages
-$loginError = trim((string)($_SESSION['error'] ?? ''));
-$loginSuccess = trim((string)($_SESSION['success'] ?? ''));
-unset($_SESSION['error'], $_SESSION['success']);
+$themeGetFlashAvailable = function_exists('theme_get_flash');
+$loginError = $themeGetFlashAvailable
+    ? trim((string) theme_get_flash('error'))
+    : trim((string) ($_SESSION['error'] ?? ''));
+$loginSuccess = $themeGetFlashAvailable
+    ? trim((string) theme_get_flash('success'))
+    : trim((string) ($_SESSION['success'] ?? ''));
 
-$csrfToken = '';
-try {
-    $csrfToken = \CMS\Security::instance()->generateToken('login');
-} catch (\Throwable $e) {}
+if (!$themeGetFlashAvailable) {
+    unset($_SESSION['error'], $_SESSION['success']);
+}
 
 $siteUrl   = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$siteBase = rtrim((string) $siteUrl, '/');
 $homeUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/', $currentLocale, '')
-    : '/';
+    ? phinit_localized_href('/', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/' : '/');
 $loginAction = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, '')
-    : '/login';
+    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/login' : '/login');
 $forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, '')
-    : '/forgot-password';
+    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/forgot-password' : '/forgot-password');
 $registerUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/register', $currentLocale, '')
-    : '/register';
+    ? phinit_localized_href('/register', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/register' : '/register');
 $loginRedirect = trim((string) ($login_redirect ?? ''));
 $loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
 ?>
@@ -75,10 +79,7 @@ $loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
 
         <!-- Login Form -->
         <form method="POST" action="<?php echo htmlspecialchars($loginAction, ENT_QUOTES); ?>" novalidate class="auth-form">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
-            <?php if ($loginRedirect !== ''): ?>
-            <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($loginRedirect, ENT_QUOTES); ?>">
-            <?php endif; ?>
+            <?php theme_csrf_field('login'); ?>
 
             <div class="auth-form-group">
                 <label for="loginUsername" class="auth-label">Benutzername oder E-Mail-Adresse</label>
@@ -98,14 +99,7 @@ $loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
                        placeholder="••••••••">
             </div>
 
-            <div class="auth-remember">
-                <label class="auth-checkbox-label">
-                    <input type="checkbox" name="remember" value="1">
-                    <span>Angemeldet bleiben</span>
-                </label>
-            </div>
-
-            <button type="submit" class="btn btn-primary auth-submit">🔑 Anmelden</button>
+            <button type="submit" class="btn btn-primary auth-submit">Anmelden</button>
         </form>
 
         <!-- Footer -->

@@ -47,6 +47,36 @@ if (!function_exists('theme_is_logged_in')) {
     }
 }
 
+if (!function_exists('theme_csrf_token')) {
+    function theme_csrf_token(string $action = 'form'): string
+    {
+        try {
+            return \CMS\Security::instance()->generateToken($action);
+        } catch (\Throwable) {
+            return '';
+        }
+    }
+}
+
+if (!function_exists('theme_csrf_field')) {
+    function theme_csrf_field(string $action = 'form'): void
+    {
+        $token = theme_csrf_token($action);
+        echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+    }
+}
+
+if (!function_exists('theme_get_flash')) {
+    function theme_get_flash(string $type = 'error'): string
+    {
+        $key = $type === 'success' ? 'success' : 'error';
+        $message = trim((string) ($_SESSION[$key] ?? ''));
+        unset($_SESSION[$key]);
+
+        return $message;
+    }
+}
+
 if (!function_exists('phinit_display_text')) {
     function phinit_display_text(?string $text): string
     {

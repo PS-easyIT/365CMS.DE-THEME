@@ -19,15 +19,16 @@ $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_curre
 $isEnglish = function_exists('phinit_is_english_locale') ? phinit_is_english_locale($currentLocale) : false;
 $siteUrl = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
+$siteBase = rtrim((string) $siteUrl, '/');
 $loginUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, '')
-    : '/login';
+    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/login' : '/login');
 $forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, '')
-    : '/forgot-password';
+    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/forgot-password' : '/forgot-password');
 $homeUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/', $currentLocale, '')
-    : '/';
+    ? phinit_localized_href('/', $currentLocale, $siteUrl)
+    : ($siteBase !== '' ? $siteBase . '/' : '/');
 
 $step = (($_GET['step'] ?? 'request') === 'reset') ? 'reset' : 'request';
 $resetToken = trim((string) ($_GET['token'] ?? ''));
