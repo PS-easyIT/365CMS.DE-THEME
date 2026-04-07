@@ -174,7 +174,7 @@ HTML;
                 ['label' => 'Speaker',     'url' => '/speakers',  'target' => '_self'],
                 ['label' => 'Jobs',        'url' => '/jobs',      'target' => '_self'],
                 ['label' => 'Feeds',       'url' => '/feeds',     'target' => '_self'],
-                ['label' => 'Login',       'url' => '/login',     'target' => '_self'],
+                ['label' => 'Login',       'url' => theme_auth_path('login'), 'target' => '_self'],
             ],
             'footer'  => [
                 ['label' => 'Impressum',   'url' => '/impressum',   'target' => '_self'],
@@ -868,13 +868,42 @@ function theme_build_query_url(string $basePath, array $params = [], array $over
     return theme_safe_url($path . $queryString, $path);
 }
 
+function theme_auth_path(string $page = 'login'): string
+{
+    try {
+        if (class_exists('\CMS\Services\CmsAuthPageService')) {
+            return \CMS\Services\CmsAuthPageService::getInstance()->getPublicPath($page);
+        }
+    } catch (\Throwable) {
+    }
+
+    return match (strtolower(trim($page))) {
+        'register' => '/cms-register',
+        'forgot-password' => '/cms-password-forgot',
+        default => '/cms-login',
+    };
+}
+
+function theme_auth_url(string $page = 'login', array $query = []): string
+{
+    $siteUrl = rtrim((string) SITE_URL, '/');
+    $path = theme_auth_path($page);
+
+    if ($query !== []) {
+        $path .= '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    return theme_safe_url($siteUrl . $path, $siteUrl . '/');
+}
+
 function theme_route_path(string $route, array $params = []): string
 {
     $routes = [
         'home' => '/',
         'search' => '/search',
-        'login' => '/login',
-        'register' => '/register',
+        'login' => theme_auth_path('login'),
+        'register' => theme_auth_path('register'),
+        'forgot-password' => theme_auth_path('forgot-password'),
         'logout' => '/logout',
         'blog' => '/blog',
         'blog-post' => '/blog/{slug}',

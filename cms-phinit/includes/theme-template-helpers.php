@@ -99,21 +99,54 @@ if (!function_exists('theme_account_path')) {
     }
 }
 
-if (!function_exists('theme_login_url')) {
-    function theme_login_url(?string $redirect = null, ?string $locale = null): string
+if (!function_exists('theme_auth_url')) {
+    function theme_auth_url(string $page = 'login', array $query = [], ?string $locale = null): string
     {
-        $url = function_exists('phinit_localized_href')
-            ? phinit_localized_href('/login', $locale ?? phinit_get_current_locale(), '')
-            : '/login';
+        $resolvedLocale = $locale ?? (function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de');
 
-        $redirect = trim((string) $redirect);
-        if ($redirect === '') {
+        try {
+            if (class_exists('\CMS\Services\CmsAuthPageService')) {
+                return \CMS\Services\CmsAuthPageService::getInstance()->getPublicUrl($page, $resolvedLocale, $query);
+            }
+        } catch (\Throwable) {
+        }
+
+        $fallbackPath = match (strtolower(trim($page))) {
+            'register' => '/cms-register',
+            'forgot-password' => '/cms-password-forgot',
+            default => '/cms-login',
+        };
+        $url = function_exists('phinit_localized_href')
+            ? phinit_localized_href($fallbackPath, $resolvedLocale, (string) SITE_URL)
+            : rtrim((string) SITE_URL, '/') . $fallbackPath;
+
+        if ($query === []) {
             return $url;
         }
 
-        $separator = str_contains($url, '?') ? '&' : '?';
+        return $url . (str_contains($url, '?') ? '&' : '?') . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+    }
+}
 
-        return $url . $separator . 'redirect=' . rawurlencode($redirect);
+if (!function_exists('theme_login_url')) {
+    function theme_login_url(?string $redirect = null, ?string $locale = null): string
+    {
+        $redirect = trim((string) $redirect);
+        return theme_auth_url('login', $redirect !== '' ? ['redirect' => $redirect] : [], $locale);
+    }
+}
+
+if (!function_exists('theme_register_url')) {
+    function theme_register_url(?string $locale = null): string
+    {
+        return theme_auth_url('register', [], $locale);
+    }
+}
+
+if (!function_exists('theme_forgot_password_url')) {
+    function theme_forgot_password_url(?string $locale = null, array $query = []): string
+    {
+        return theme_auth_url('forgot-password', $query, $locale);
     }
 }
 
@@ -1209,7 +1242,7 @@ if (!function_exists('phinit_get_favorite_control')) {
         $contentType = in_array($contentType, ['post', 'page'], true) ? $contentType : 'post';
         $requestUri = phinit_current_request_uri();
         $requestPath = phinit_current_request_path();
-        $loginUrl = rtrim((string) SITE_URL, '/') . '/login?redirect=' . urlencode($requestUri);
+        $loginUrl = theme_login_url($requestUri);
         $title = trim((string) ($payload['title'] ?? 'Eintrag'));
         $url = trim((string) ($payload['url'] ?? ($requestPath !== '' ? $requestPath : '/')));
         $excerpt = trim((string) ($payload['excerpt'] ?? ''));

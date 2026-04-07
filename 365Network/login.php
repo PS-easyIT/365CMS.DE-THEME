@@ -18,8 +18,8 @@ $themeManager = \CMS\ThemeManager::instance();
 $siteTitle    = $themeManager->getSiteTitle();
 $error        = theme_get_flash('error');
 $success      = theme_get_flash('success');
-$loginUrl     = theme_safe_url($siteUrl . '/login', $siteUrl . '/login');
-$registerUrl  = theme_safe_url($siteUrl . '/register', $siteUrl . '/register');
+$loginUrl     = theme_auth_url('login');
+$registerUrl  = theme_auth_url('register');
 $homeUrl      = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 ?>
 

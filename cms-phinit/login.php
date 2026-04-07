@@ -35,19 +35,18 @@ if (!$themeGetFlashAvailable) {
 $siteUrl   = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
-$siteBase = rtrim((string) $siteUrl, '/');
 $homeUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/', $currentLocale, '')
-    : ($siteBase !== '' ? $siteBase . '/' : '/');
-$loginAction = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, '')
-    : ($siteBase !== '' ? $siteBase . '/login' : '/login');
-$forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, '')
-    : ($siteBase !== '' ? $siteBase . '/forgot-password' : '/forgot-password');
-$registerUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/register', $currentLocale, '')
-    : ($siteBase !== '' ? $siteBase . '/register' : '/register');
+    : (rtrim((string) $siteUrl, '/') . '/');
+$loginAction = function_exists('theme_login_url')
+    ? theme_login_url(null, $currentLocale)
+    : (rtrim((string) $siteUrl, '/') . '/cms-login');
+$forgotPasswordUrl = function_exists('theme_forgot_password_url')
+    ? theme_forgot_password_url($currentLocale)
+    : (rtrim((string) $siteUrl, '/') . '/cms-password-forgot');
+$registerUrl = function_exists('theme_register_url')
+    ? theme_register_url($currentLocale)
+    : (rtrim((string) $siteUrl, '/') . '/cms-register');
 $loginRedirect = trim((string) ($login_redirect ?? ''));
 $loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
 ?>

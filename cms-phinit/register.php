@@ -33,16 +33,16 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $homeUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/', $currentLocale, '')
-    : '/';
-$registerAction = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/register', $currentLocale, '')
-    : '/register';
+    : (rtrim((string) $siteUrl, '/') . '/');
+$registerAction = function_exists('theme_register_url')
+    ? theme_register_url($currentLocale)
+    : (rtrim((string) $siteUrl, '/') . '/cms-register');
 $privacyUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/datenschutz', $currentLocale, '')
     : '/datenschutz';
-$loginUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, '')
-    : '/login';
+$loginUrl = function_exists('theme_login_url')
+    ? theme_login_url(null, $currentLocale)
+    : (rtrim((string) $siteUrl, '/') . '/cms-login');
 ?>
 
 <div class="auth-wrapper">

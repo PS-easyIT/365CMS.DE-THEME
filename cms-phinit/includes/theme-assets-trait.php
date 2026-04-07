@@ -224,7 +224,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
     private function isAuthOrMemberRequest(string $path): bool
     {
-        return in_array($path, ['/login', '/register'], true)
+        return in_array($path, ['/login', '/register', '/forgot-password', '/cms-login', '/cms-register', '/cms-password-forgot'], true)
             || str_starts_with($path, '/member')
             || str_starts_with($path, '/dashboard');
     }
