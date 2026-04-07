@@ -525,7 +525,7 @@ if ($_showLanguageSwitch) {
                 </form>
                 <?php endif; ?>
 
-                     <a href="<?php echo htmlspecialchars($isLoggedIn ? rtrim($siteUrl, '/') . $accountPath : $siteUrl . '/login', ENT_QUOTES); ?>"
+                                         <a href="<?php echo htmlspecialchars($isLoggedIn ? rtrim($siteUrl, '/') . $accountPath : theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>"
                    class="util-link util-login-link"
                    aria-label="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"
                    title="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>">
@@ -559,7 +559,7 @@ if ($_showLanguageSwitch) {
                 <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>">Datenschutz</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>">News</a>
                 <?php if (!$isLoggedIn): ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/login" class="mobile-menu__login">🔑 <?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
+                <a href="<?php echo htmlspecialchars(theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>" class="mobile-menu__login">🔑 <?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
             <?php endif; ?>
             <?php \CMS\Hooks::doAction('main_nav', 'mobile'); ?>

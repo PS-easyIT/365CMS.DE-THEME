@@ -99,6 +99,24 @@ if (!function_exists('theme_account_path')) {
     }
 }
 
+if (!function_exists('theme_login_url')) {
+    function theme_login_url(?string $redirect = null, ?string $locale = null): string
+    {
+        $url = function_exists('phinit_localized_href')
+            ? phinit_localized_href('/login', $locale ?? phinit_get_current_locale(), '')
+            : '/login';
+
+        $redirect = trim((string) $redirect);
+        if ($redirect === '') {
+            return $url;
+        }
+
+        $separator = str_contains($url, '?') ? '&' : '?';
+
+        return $url . $separator . 'redirect=' . rawurlencode($redirect);
+    }
+}
+
 if (!function_exists('phinit_display_text')) {
     function phinit_display_text(?string $text): string
     {

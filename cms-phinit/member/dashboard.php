@@ -17,7 +17,7 @@ use CMS\Services\ThemeCustomizer;
 
 $auth = \CMS\Auth::instance();
 if (!$auth->isLoggedIn()) {
-    header('Location: ' . SITE_URL . '/login');
+    header('Location: ' . theme_login_url());
     exit;
 }
 

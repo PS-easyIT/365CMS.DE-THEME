@@ -90,7 +90,7 @@ try {
 $_footerAccountPath = $isLoggedIn && function_exists('theme_account_path')
     ? theme_account_path()
     : '/member/dashboard';
-$_footerAccountUrl = $isLoggedIn ? rtrim($siteUrl, '/') . $_footerAccountPath : $siteUrl . '/login';
+$_footerAccountUrl = $isLoggedIn ? rtrim($siteUrl, '/') . $_footerAccountPath : theme_login_url(null, $currentLocale);
 $_footerAccountLabel = $isLoggedIn
     ? phinit_t('account', [], $currentLocale)
     : phinit_t('login', [], $currentLocale);
