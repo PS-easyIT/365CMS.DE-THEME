@@ -37,16 +37,16 @@ $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $siteBase = rtrim((string) $siteUrl, '/');
 $homeUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/' : '/');
 $loginAction = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/login', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/login' : '/login');
 $forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/forgot-password', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/forgot-password' : '/forgot-password');
 $registerUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/register', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/register', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/register' : '/register');
 $loginRedirect = trim((string) ($login_redirect ?? ''));
 $loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
@@ -80,6 +80,9 @@ $loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
         <!-- Login Form -->
         <form method="POST" action="<?php echo htmlspecialchars($loginAction, ENT_QUOTES); ?>" novalidate class="auth-form">
             <?php theme_csrf_field('login'); ?>
+            <?php if ($loginRedirect !== ''): ?>
+            <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($loginRedirect, ENT_QUOTES); ?>">
+            <?php endif; ?>
 
             <div class="auth-form-group">
                 <label for="loginUsername" class="auth-label">Benutzername oder E-Mail-Adresse</label>

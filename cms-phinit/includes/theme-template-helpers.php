@@ -574,6 +574,16 @@ if (!function_exists('phinit_localized_href')) {
                 ? cms_rewrite_archive_path($trimmedUrl, $resolvedLocale)
                 : $trimmedUrl;
 
+            $currentHost = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? '')));
+            if ($currentHost !== '' && str_contains($currentHost, ':')) {
+                $currentHost = explode(':', $currentHost, 2)[0];
+            }
+
+            $siteHost = strtolower(trim((string) (parse_url($siteBase, PHP_URL_HOST) ?? '')));
+            $preferRelativeInternalUrls = $currentHost !== ''
+                && $siteHost !== ''
+                && $currentHost !== $siteHost;
+
             if (preg_match('#^https?://#i', $trimmedUrl) === 1) {
                 if ($siteBase === '' || !str_starts_with($trimmedUrl, $siteBase)) {
                     return $trimmedUrl;
@@ -581,18 +591,39 @@ if (!function_exists('phinit_localized_href')) {
 
                 $path = (string) (parse_url($archiveAwareUrl, PHP_URL_PATH) ?? '/');
                 $query = (string) (parse_url($trimmedUrl, PHP_URL_QUERY) ?? '');
+                $localizedPath = $localization->buildLocalizedPath($path, $resolvedLocale) . ($query !== '' ? '?' . $query : '');
 
-                return $siteBase . $localization->buildLocalizedPath($path, $resolvedLocale) . ($query !== '' ? '?' . $query : '');
+                if ($preferRelativeInternalUrls || $siteBase === '') {
+                    return $localizedPath;
+                }
+
+                return $siteBase . $localizedPath;
             }
 
             if (!str_starts_with($trimmedUrl, '/')) {
                 return $trimmedUrl;
             }
 
-            return $siteBase . $localization->buildLocalizedPath($archiveAwareUrl, $resolvedLocale);
+            $localizedPath = $localization->buildLocalizedPath($archiveAwareUrl, $resolvedLocale);
+
+            if ($preferRelativeInternalUrls || $siteBase === '') {
+                return $localizedPath;
+            }
+
+            return $siteBase . $localizedPath;
         } catch (\Throwable) {
-            if (str_starts_with($trimmedUrl, '/') && $siteBase !== '') {
-                return $siteBase . $trimmedUrl;
+            if (str_starts_with($trimmedUrl, '/')) {
+                $currentHost = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? '')));
+                if ($currentHost !== '' && str_contains($currentHost, ':')) {
+                    $currentHost = explode(':', $currentHost, 2)[0];
+                }
+
+                $siteHost = strtolower(trim((string) (parse_url($siteBase, PHP_URL_HOST) ?? '')));
+                if ($siteBase !== '' && ($currentHost === '' || $siteHost === '' || $currentHost === $siteHost)) {
+                    return $siteBase . $trimmedUrl;
+                }
+
+                return $trimmedUrl;
             }
 
             return $trimmedUrl;

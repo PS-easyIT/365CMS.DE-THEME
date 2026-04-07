@@ -21,13 +21,13 @@ $siteUrl = SITE_URL;
 $siteTitle = defined('SITE_NAME') ? SITE_NAME : '365CMS';
 $siteBase = rtrim((string) $siteUrl, '/');
 $loginUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/login', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/login', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/login' : '/login');
 $forgotPasswordUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/forgot-password', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/forgot-password', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/forgot-password' : '/forgot-password');
 $homeUrl = function_exists('phinit_localized_href')
-    ? phinit_localized_href('/', $currentLocale, $siteUrl)
+    ? phinit_localized_href('/', $currentLocale, '')
     : ($siteBase !== '' ? $siteBase . '/' : '/');
 
 $step = (($_GET['step'] ?? 'request') === 'reset') ? 'reset' : 'request';
