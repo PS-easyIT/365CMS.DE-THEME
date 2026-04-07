@@ -493,6 +493,11 @@
           "type": "checkbox",
           "default": true
         },
+        "show_login_button": {
+          "label": "Login-Button für Gäste anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
         "show_member_bar": {
           "label": "Member-Bar anzeigen (für eingeloggte User)",
           "type": "checkbox",

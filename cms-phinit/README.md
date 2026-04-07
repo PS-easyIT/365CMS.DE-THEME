@@ -14,6 +14,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Seiten-Templates inkl. `page.php`, `page-wide.php`, `page-landing.php`
 - Post-Templates inkl. Standard-, Wide- und Tech-Variante
 - Theme-Customizer mit Import/Export und Preview-Drawer
+- Header-Optionen für Suche, Quicklinks, Member-Bar und ausblendbaren Gast-Login-Button
 - Member-Bereich mit Dashboard, Profil, Favoriten, Sicherheit und Feeds
 
 ## Sicherheit & Audit

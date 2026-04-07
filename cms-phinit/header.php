@@ -164,6 +164,7 @@ try {
     $_searchPH      = $customizer->get('header', 'search_placeholder', 'Suchen …');
     $_showDarkMode  = filter_var($customizer->get('layout', 'enable_dark_mode_toggle', true), FILTER_VALIDATE_BOOLEAN);
     $_showRss       = filter_var($customizer->get('header', 'show_rss_link', true), FILTER_VALIDATE_BOOLEAN);
+    $_showLoginButton = filter_var($customizer->get('header', 'show_login_button', true), FILTER_VALIDATE_BOOLEAN);
     $_showMemberBar = filter_var($customizer->get('header', 'show_member_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_showQuicklinks = filter_var($customizer->get('header', 'show_quicklinks', true), FILTER_VALIDATE_BOOLEAN);
     $_showLanguageSwitch = filter_var($customizer->get('header', 'show_language_switcher', false), FILTER_VALIDATE_BOOLEAN);
@@ -185,7 +186,7 @@ try {
     $_logoUrl = ''; $_logoPart1 = 'PHIN'; $_logoPart2 = 'IT'; $_logoSuffix = '.DE';
     $_showLogoText = false; $_logoMaxH = 28;
     $_showSearch = true; $_searchPH = 'Suchen …'; $_showDarkMode = true;
-    $_showRss = true; $_showMemberBar = true; $_showQuicklinks = true;
+    $_showRss = true; $_showLoginButton = true; $_showMemberBar = true; $_showQuicklinks = true;
     $_showLanguageSwitch = false; $_languageMode = 'text'; $_languageLabel = 'EN'; $_languageSlug = '/en'; $_languageFlag = 'gb'; $_languageAriaLabel = 'Zur englischen Version wechseln';
     $_enableStickyHeader = true; $_enableProgressBar = true;
     $_enableBackToTop = true; $_enableScrollAnimations = true;
@@ -525,12 +526,14 @@ if ($_showLanguageSwitch) {
                 </form>
                 <?php endif; ?>
 
-                                         <a href="<?php echo htmlspecialchars($isLoggedIn ? rtrim($siteUrl, '/') . $accountPath : theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>"
+                <?php if ($isLoggedIn || $_showLoginButton): ?>
+                <a href="<?php echo htmlspecialchars($isLoggedIn ? rtrim($siteUrl, '/') . $accountPath : theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>"
                    class="util-link util-login-link"
                    aria-label="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"
                    title="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>">
                     <span aria-hidden="true"><?php echo $isLoggedIn ? '👤' : '🔑'; ?></span>
                 </a>
+                <?php endif; ?>
 
                 <button class="burger-btn" id="burger-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('menu_open', [], $_currentLocale), ENT_QUOTES); ?>" aria-expanded="false" aria-controls="mobile-menu">
                     <span></span>
@@ -558,7 +561,7 @@ if ($_showLanguageSwitch) {
                 <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>">Microsoft 365</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>">Datenschutz</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>">News</a>
-                <?php if (!$isLoggedIn): ?>
+                <?php if (!$isLoggedIn && $_showLoginButton): ?>
                 <a href="<?php echo htmlspecialchars(theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>" class="mobile-menu__login">🔑 <?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
             <?php endif; ?>
