@@ -494,7 +494,7 @@
           "default": true
         },
         "show_login_button": {
-          "label": "Login-Button für Gäste anzeigen",
+          "label": "Login-/Account-Button im Header anzeigen",
           "type": "checkbox",
           "default": true
         },

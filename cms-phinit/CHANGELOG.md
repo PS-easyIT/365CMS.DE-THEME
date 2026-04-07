@@ -19,7 +19,7 @@
 
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
-| 🟢 feat | Theme Editor / Header | `admin/customizer-schema.php`, `theme.json` und `header.php` ergänzen die neue Header-Option `show_login_button`, mit der sich der Gast-Login-Button im Desktop-Header und im mobilen Menü gezielt ausblenden lässt, ohne den Account-Zugang für eingeloggte Nutzer zu entfernen. |
+| 🟢 feat | Theme Editor / Header | `admin/customizer-schema.php`, `theme.json` und `header.php` ergänzen die neue Header-Option `show_login_button`, mit der sich der komplette Login-/Account-Button im Desktop-Header sowie der mobile Login-Link gezielt ausblenden lassen. |
 
 ### Mobile Detail-Header fokussieren Titel statt Vorschaubild
 

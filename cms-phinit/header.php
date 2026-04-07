@@ -526,7 +526,7 @@ if ($_showLanguageSwitch) {
                 </form>
                 <?php endif; ?>
 
-                <?php if ($isLoggedIn || $_showLoginButton): ?>
+                <?php if ($_showLoginButton): ?>
                 <a href="<?php echo htmlspecialchars($isLoggedIn ? rtrim($siteUrl, '/') . $accountPath : theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>"
                    class="util-link util-login-link"
                    aria-label="<?php echo htmlspecialchars($isLoggedIn ? phinit_t('account', [], $_currentLocale) : phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?>"

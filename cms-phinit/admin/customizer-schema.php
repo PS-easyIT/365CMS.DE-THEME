@@ -122,7 +122,7 @@ return [
                 'show_search_bar'           => ['label' => 'Suchleiste anzeigen',     'type' => 'checkbox', 'default' => true],
                 'search_placeholder'        => ['label' => 'Suche Platzhalter',       'type' => 'text',     'default' => 'Suchen…'],
                 'show_rss_link'             => ['label' => 'RSS-Link anzeigen',       'type' => 'checkbox', 'default' => true],
-                'show_login_button'         => ['label' => 'Login-Button für Gäste anzeigen', 'type' => 'checkbox', 'default' => true],
+                'show_login_button'         => ['label' => 'Login-/Account-Button im Header anzeigen', 'type' => 'checkbox', 'default' => true],
                 'show_quicklinks'           => ['label' => 'Quicklinks-Bar anzeigen', 'type' => 'checkbox', 'default' => true],
                 'sub_bar_height'            => ['label' => 'Quicklinks-Bar Höhe (px)','type' => 'number',   'default' => '30'],
                 'quicklinks_font_size'      => ['label' => 'Quicklinks Schriftgröße (px)', 'type' => 'number', 'default' => '12', 'min' => 10, 'max' => 20, 'step' => 0.25],
