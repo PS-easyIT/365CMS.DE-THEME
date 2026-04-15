@@ -99,6 +99,14 @@ if ($displayContentSource === '') {
 $cardImage = function_exists('phinit_normalize_public_media_url')
     ? phinit_normalize_public_media_url((string) ($card['featured_image'] ?? ''), false, $siteUrl)
     : (string) ($card['featured_image'] ?? '');
+$cardImageSources = function_exists('phinit_get_picture_sources')
+    ? phinit_get_picture_sources($cardImage, $siteUrl, 162, 215)
+    : [
+        'url' => $cardImage,
+        'webp_url' => '',
+        'width' => 162,
+        'height' => 215,
+    ];
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
@@ -126,10 +134,15 @@ if ($show_rt && $show_meta) {
 
     <div class="article-thumb">
         <?php if ($cardImage !== ''): ?>
-        <img src="<?php echo htmlspecialchars($cardImage, ENT_QUOTES); ?>"
-               alt="<?php echo phinit_escape_text($displayTitle); ?>"
-                            <?php echo phinit_image_loading_attributes($above_the_fold_image, $image_high_priority); ?>
-                             <?php echo phinit_image_dimension_attributes($cardImage, 162, 215); ?>>
+        <picture>
+            <?php if (($cardImageSources['webp_url'] ?? '') !== ''): ?>
+            <source srcset="<?php echo htmlspecialchars((string) ($cardImageSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
+            <?php endif; ?>
+            <img src="<?php echo htmlspecialchars((string) ($cardImageSources['url'] ?? $cardImage), ENT_QUOTES); ?>"
+                   alt="<?php echo phinit_escape_text($displayTitle); ?>"
+                                <?php echo phinit_image_loading_attributes($above_the_fold_image, $image_high_priority); ?>
+                                 <?php echo phinit_image_dimension_attributes($cardImage, 162, 215); ?>>
+        </picture>
         <?php else: ?>
         <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
         <?php endif; ?>

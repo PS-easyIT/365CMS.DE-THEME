@@ -7,6 +7,129 @@ if (!defined('ABSPATH')) {
 
 trait CMS_Phinit_Theme_Head_Trait
 {
+    private function getBreadcrumbLocale(): string
+    {
+        $path = $this->getHeadRequestPath();
+
+        if (function_exists('phinit_resolve_request_context')) {
+            $context = phinit_resolve_request_context($path);
+            $locale = strtolower(trim((string) ($context['locale'] ?? 'de')));
+
+            if ($locale !== '') {
+                return $locale;
+            }
+        }
+
+        return function_exists('phinit_get_current_locale')
+            ? (string) phinit_get_current_locale()
+            : 'de';
+    }
+
+    private function buildAbsoluteLocalizedUrl(string $path, string $locale): string
+    {
+        $siteUrl = rtrim((string) (defined('SITE_URL') ? SITE_URL : ''), '/');
+        $localizedPath = function_exists('phinit_localized_path')
+            ? phinit_localized_path($path, $locale)
+            : $path;
+
+        $localizedPath = trim($localizedPath) !== '' ? $localizedPath : '/';
+
+        if ($siteUrl === '') {
+            return $localizedPath;
+        }
+
+        return $siteUrl . $localizedPath;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function buildBreadcrumbSchemaData(): ?array
+    {
+        $settings = $this->getHeadCustomizerSettings();
+        if (!$settings['breadcrumb_schema']) {
+            return null;
+        }
+
+        $locale = $this->getBreadcrumbLocale();
+        $homeLabel = function_exists('phinit_t') ? phinit_t('home', [], $locale) : ($locale === 'en' ? 'Home' : 'Startseite');
+        $homeUrl = $this->buildAbsoluteLocalizedUrl('/', $locale);
+        $currentPost = $this->getCurrentHeadPost();
+
+        if (is_array($currentPost)) {
+            if (!$settings['breadcrumb_on_posts']) {
+                return null;
+            }
+
+            $postTitle = phinit_display_text((string) ($currentPost['title'] ?? ''));
+            if ($postTitle === '') {
+                return null;
+            }
+
+            return [
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => [
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 1,
+                        'name' => $homeLabel,
+                        'item' => $homeUrl,
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 2,
+                        'name' => 'Blog',
+                        'item' => $this->buildAbsoluteLocalizedUrl('/blog', $locale),
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 3,
+                        'name' => $postTitle,
+                    ],
+                ],
+            ];
+        }
+
+        $currentPage = $this->getCurrentHeadPage();
+        if (!is_array($currentPage) || !$settings['breadcrumb_on_pages']) {
+            return null;
+        }
+
+        $pageTitle = phinit_display_text((string) ($currentPage['title'] ?? ''));
+        if ($pageTitle === '') {
+            return null;
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                [
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => $homeLabel,
+                    'item' => $homeUrl,
+                ],
+                [
+                    '@type' => 'ListItem',
+                    'position' => 2,
+                    'name' => $pageTitle,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $schema
+     */
+    private function outputJsonLd(array $schema): void
+    {
+        echo '<script type="application/ld+json">'
+            . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            . '</script>' . "\n";
+    }
+
     private function getHeadRequestPath(): string
     {
         if (method_exists($this, 'getRequestContext')) {
@@ -343,6 +466,7 @@ trait CMS_Phinit_Theme_Head_Trait
         $siteTitle = $tm->getSiteTitle() ?? '';
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
         $uri = $this->getHeadRequestPath();
+        $breadcrumbSchema = $this->buildBreadcrumbSchemaData();
 
         $currentPage = $this->getCurrentHeadPage();
         $webSite = [
@@ -388,6 +512,9 @@ trait CMS_Phinit_Theme_Head_Trait
             }
 
             echo '<script type="application/ld+json">' . json_encode($pageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+            if (is_array($breadcrumbSchema)) {
+                $this->outputJsonLd($breadcrumbSchema);
+            }
             return;
         }
 
@@ -423,6 +550,9 @@ trait CMS_Phinit_Theme_Head_Trait
                     : (string) $currentPost['featured_image'];
             }
             echo '<script type="application/ld+json">' . json_encode($bp, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+            if (is_array($breadcrumbSchema)) {
+                $this->outputJsonLd($breadcrumbSchema);
+            }
         } catch (\Throwable) {
         }
     }
@@ -434,6 +564,11 @@ trait CMS_Phinit_Theme_Head_Trait
         }
 
         $settings = $this->getHeadCustomizerSettings();
+        if (is_array($this->getCurrentHeadPost()) || is_array($this->getCurrentHeadPage())) {
+            $this->breadcrumbOutput = true;
+            return;
+        }
+
         if (!$settings['show_breadcrumb']) {
             return;
         }

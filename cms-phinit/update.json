@@ -1,13 +1,40 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.22",
+  "version": "1.5.25",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.8.1",
   "release_date": "2026-04-15",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.25",
+      "date": "2026-04-15",
+      "changes": [
+        "header.php: die Desktop-Navigationsprüfung übernimmt `$_currentLocale` jetzt korrekt in die Locale-aware Active-State-Closure, wodurch der Public-Warning `Undefined variable $_currentLocale` im Header verschwindet",
+        "theme.json + functions.php + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.25 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.24",
+      "date": "2026-04-15",
+      "changes": [
+        "header.php: der frühe Theme-Init für Dark Mode wird wieder direkt inline im Head ausgegeben, sodass der zusätzliche blockierende Request auf assets/js/theme-init.js vor dem ersten Paint entfällt",
+        "header.php: Bildlogos im Header erhalten jetzt echte intrinsic width/height-Attribute über phinit_image_dimension_attributes(), wodurch Lighthouse keine fehlenden Größen mehr für das Hauptlogo melden sollte",
+        "includes/theme-assets-trait.php: ui-chrome.css und content-cards.css laufen auf Home-/Blog-Listing-Routen nun nicht länger im kritischen CSS-Pfad, sondern werden asynchron nachgeladen",
+        "theme.json + functions.php + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.24 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.23",
+      "date": "2026-04-15",
+      "changes": [
+        "includes/theme-head-trait.php: Artikel- und Seitenaufrufe geben BreadcrumbList jetzt zusätzlich als JSON-LD für Suchmaschinen aus, ohne die Breadcrumb-Navigation im Public-Frontend sichtbar zu rendern",
+        "includes/theme-head-trait.php: strukturierte Breadcrumb-Daten folgen für Beiträge dem Pfad Home > Blog > Artikel und für Seiten dem Pfad Home > Seite; das letzte Element bleibt dabei schema-konform ohne eigenes item",
+        "theme.json + functions.php + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.23 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.22",
       "date": "2026-04-15",

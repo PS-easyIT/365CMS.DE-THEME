@@ -496,6 +496,124 @@ if (!function_exists('phinit_get_image_dimensions')) {
     }
 }
 
+if (!function_exists('phinit_local_path_to_public_url')) {
+    /**
+     * Übersetzt einen lokalen Dateipfad zurück in eine öffentliche URL, wenn die Datei
+     * innerhalb von Uploads, Theme-Verzeichnis oder CMS-Root liegt.
+     */
+    function phinit_local_path_to_public_url(?string $path): string
+    {
+        $resolvedPath = realpath(trim((string) $path));
+        if ($resolvedPath === false || $resolvedPath === '') {
+            return '';
+        }
+
+        $normalizedPath = str_replace('\\', '/', $resolvedPath);
+        $roots = [
+            [realpath((string) UPLOAD_PATH) ?: '', rtrim((string) UPLOAD_URL, '/')],
+            [realpath((string) CMS_PHINIT_THEME_DIR) ?: '', rtrim((string) CMS_PHINIT_THEME_URL, '/')],
+            [realpath((string) ABSPATH) ?: '', rtrim((string) SITE_URL, '/')],
+        ];
+
+        foreach ($roots as [$rootPath, $baseUrl]) {
+            $normalizedRoot = str_replace('\\', '/', (string) $rootPath);
+            if ($normalizedRoot === '' || $baseUrl === '') {
+                continue;
+            }
+
+            if ($normalizedPath !== $normalizedRoot && !str_starts_with($normalizedPath, $normalizedRoot . '/')) {
+                continue;
+            }
+
+            $relativePath = ltrim(substr($normalizedPath, strlen($normalizedRoot)), '/');
+            if ($relativePath === '') {
+                return $baseUrl;
+            }
+
+            $segments = array_map(static fn(string $segment): string => rawurlencode($segment), explode('/', $relativePath));
+
+            return $baseUrl . '/' . implode('/', $segments);
+        }
+
+        return '';
+    }
+}
+
+if (!function_exists('phinit_get_picture_sources')) {
+    /**
+     * Liefert bevorzugte Bildquellen inkl. optionalem lokal generiertem WebP-Fallback.
+     * Bestehende JPG/PNG-Dateien bleiben dabei als Fallback erhalten.
+     *
+     * @return array{url:string,webp_url:string,width:int,height:int}
+     */
+    function phinit_get_picture_sources(?string $reference, ?string $siteUrl = null, int $fallbackWidth = 0, int $fallbackHeight = 0): array
+    {
+        $normalizedUrl = phinit_normalize_public_media_url($reference, false, $siteUrl);
+        $dimensions = phinit_get_image_dimensions($reference);
+
+        $result = [
+            'url' => $normalizedUrl,
+            'webp_url' => '',
+            'width' => max(0, (int) ($dimensions['width'] ?? $fallbackWidth)),
+            'height' => max(0, (int) ($dimensions['height'] ?? $fallbackHeight)),
+        ];
+
+        if ($normalizedUrl === '') {
+            return $result;
+        }
+
+        $sourcePath = phinit_get_local_image_path($reference);
+        if ($sourcePath === '' || !is_file($sourcePath)) {
+            return $result;
+        }
+
+        $extension = strtolower((string) pathinfo($sourcePath, PATHINFO_EXTENSION));
+        if (!in_array($extension, ['jpg', 'jpeg', 'png'], true) || !class_exists('\CMS\Services\ImageService')) {
+            return $result;
+        }
+
+        try {
+            $imageService = \CMS\Services\ImageService::getInstance();
+            $imageInfo = $imageService->getInfo();
+
+            if (!$imageService->isAvailable() || empty($imageInfo['webp_support'])) {
+                return $result;
+            }
+
+            $webpPath = preg_replace('/\.[a-z0-9]+$/i', '.webp', $sourcePath);
+            if (!is_string($webpPath) || $webpPath === '' || $webpPath === $sourcePath) {
+                return $result;
+            }
+
+            if (!is_file($webpPath)) {
+                $generatedPath = $imageService->convertToWebP($sourcePath, 78, false);
+                if (!is_string($generatedPath) || !is_file($generatedPath)) {
+                    return $result;
+                }
+
+                $webpPath = $generatedPath;
+            }
+
+            $sourceSize = (int) (filesize($sourcePath) ?: 0);
+            $webpSize = (int) (filesize($webpPath) ?: 0);
+            if ($sourceSize > 0 && $webpSize > 0 && $webpSize >= $sourceSize) {
+                return $result;
+            }
+
+            $webpUrl = phinit_local_path_to_public_url($webpPath);
+            if ($webpUrl === '') {
+                return $result;
+            }
+
+            $result['webp_url'] = phinit_safe_public_media_url($webpUrl, $siteUrl);
+        } catch (\Throwable) {
+            return $result;
+        }
+
+        return $result;
+    }
+}
+
 if (!function_exists('phinit_image_dimension_attributes')) {
     /**
      * Liefert width-/height-Attribute für Bilder. Nutzt lokale Dateimaße oder optionale Fallbacks.

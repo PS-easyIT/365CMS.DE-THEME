@@ -80,12 +80,15 @@ $_localizedCurrentHomeUrl = rtrim($siteUrl, '/') . $_localizedPath('/', $_curren
 $_baseRequestUri = (string) ($_requestContext['base_uri'] ?? $_requestPath);
 $_isHomePage = $_baseRequestUri === '/' || $_baseRequestUri === '';
 $_siteTitleTag = $_isHomePage ? 'h1' : 'span';
-$_themeInitScriptUrl = '';
+$_themeInitInlineScript = '';
 
 if (defined('CMS_PHINIT_THEME_DIR') && defined('CMS_PHINIT_THEME_URL')) {
     $_themeInitScriptFile = CMS_PHINIT_THEME_DIR . 'assets/js/theme-init.js';
     if (is_file($_themeInitScriptFile)) {
-        $_themeInitScriptUrl = CMS_PHINIT_THEME_URL . 'assets/js/theme-init.js?v=' . rawurlencode((string) filemtime($_themeInitScriptFile));
+        $_themeInitInlineScript = trim((string) file_get_contents($_themeInitScriptFile));
+        if ($_themeInitInlineScript !== '') {
+            $_themeInitInlineScript = str_replace('</script', '<\\/script', $_themeInitInlineScript);
+        }
     }
 }
 
@@ -107,8 +110,8 @@ if (isset($post) && (is_array($post) || is_object($post))) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars(\CMS\Hooks::applyFilters('page_title', $siteTitle), ENT_QUOTES, 'UTF-8'); ?></title>
-    <?php if ($_themeInitScriptUrl !== ''): ?>
-    <script src="<?php echo htmlspecialchars($_themeInitScriptUrl, ENT_QUOTES, 'UTF-8'); ?>"></script>
+    <?php if ($_themeInitInlineScript !== ''): ?>
+    <script id="cms-phinit-theme-init"><?php echo $_themeInitInlineScript; ?></script>
     <?php endif; ?>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
@@ -343,7 +346,7 @@ if ($_showLanguageSwitch) {
             <!-- Logo (jetzt in Bar 2, immer sichtbar) -->
             <a href="<?php echo htmlspecialchars($_localizedCurrentHomeUrl, ENT_QUOTES); ?>" class="site-logo" aria-label="<?php echo htmlspecialchars(phinit_t('site_home_aria', ['site' => $siteTitle], $_currentLocale), ENT_QUOTES); ?>">
                 <?php if (!empty($_logoUrl)): ?>
-                    <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" height="<?php echo $_logoMaxH; ?>" <?php echo phinit_image_loading_attributes(true); ?>>
+                    <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" <?php echo phinit_image_loading_attributes(true); ?> <?php echo phinit_image_dimension_attributes($_logoUrl); ?>>
                     <?php if ($_showLogoText): ?>
                     <<?php echo $_siteTitleTag; ?> class="logo-text logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></<?php echo $_siteTitleTag; ?>>
                     <?php endif; ?>
@@ -355,7 +358,7 @@ if ($_showLanguageSwitch) {
             <?php
             // Exakter Active-Nav-Abgleich: "/" nur auf Startseite, andere URLs prefix-basiert
             $_navUri = $_requestPath;
-            $navIsActive = static function (string $url) use ($_navUri, $_localizedPath, $siteUrl): bool {
+            $navIsActive = static function (string $url) use ($_navUri, $_localizedPath, $_currentLocale, $siteUrl): bool {
                 if ($url === '' || $url === '#') { return false; }
 
                 $candidate = trim($url);

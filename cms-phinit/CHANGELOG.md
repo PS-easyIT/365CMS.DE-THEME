@@ -33,6 +33,42 @@
 
 ---
 
+## v1.5.25 — 15. April 2026
+
+### Header-Warning für locale-aware Navigation beseitigt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Header / Locale-Aktivzustand | `header.php` übernimmt `$_currentLocale` jetzt explizit in die Closure zur Desktop-Navigationsprüfung, sodass der Active-State lokalisierte Pfade weiter korrekt bewertet, aber der Public-Warning `Undefined variable $_currentLocale` nicht mehr ausgelöst wird. |
+| 🔵 docs | Release | `functions.php`, `theme.json`, `update.json` und `README.md` wurden auf Version `1.5.25` synchronisiert. |
+
+---
+
+## v1.5.24 — 15. April 2026
+
+### Mobile-Performance im Head- und Header-Pfad nachgeschärft
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Performance / Head | `header.php` gibt den kleinen Theme-Init für den Dark-Mode jetzt wieder direkt inline im `<head>` aus. Dadurch entfällt der zusätzliche blockierende Request auf `assets/js/theme-init.js` vor dem ersten Paint. |
+| 🔴 fix | Performance / CSS | `includes/theme-assets-trait.php` lädt `assets/css/ui-chrome.css` und `assets/css/content-cards.css` auf Home-/Blog-Listing-Routen nun asynchron nach, statt beide Bundles im kritischen Render-Pfad mitzuschleppen. |
+| 🔴 fix | Header / CLS | `header.php` ergänzt für Bildlogos im Header jetzt echte intrinsische Bildmaße über `phinit_image_dimension_attributes()`, damit das Logo stabiler reserviert wird und Lighthouse keine fehlenden `width`/`height`-Attribute mehr moniert. |
+| 🔵 docs | Release | `functions.php`, `theme.json`, `update.json` und `README.md` wurden auf Version `1.5.24` synchronisiert. |
+
+---
+
+## v1.5.23 — 15. April 2026
+
+### BreadcrumbList für Suchmaschinen, aber unsichtbar im Public-Frontend
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | SEO / Structured Data | `includes/theme-head-trait.php` gibt für Artikel und Seiten jetzt eine zusätzliche `BreadcrumbList` als JSON-LD aus, damit Google einen sauberen Navigationspfad lesen kann, ohne dass dafür sichtbare Breadcrumbs auf der Seite erscheinen. |
+| 🔴 fix | Frontend / Breadcrumb Output | Für Beitrags- und Seiten-Detailseiten unterdrückt dasselbe Trait die bisherige sichtbare Breadcrumb-Leiste nach dem Header; im Public-Frontend bleibt der Pfad damit unsichtbar und nur die strukturierte Suchmaschinen-Version erhalten. |
+| 🔵 docs | Release | `functions.php`, `theme.json`, `update.json` und `README.md` wurden auf Version `1.5.23` synchronisiert. |
+
+---
+
 ## v1.5.22 — 15. April 2026
 
 ### EN-Custom-Slugs im Public Theme wieder vollständig stylesicher auflösen

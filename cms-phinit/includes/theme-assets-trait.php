@@ -377,7 +377,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             $this->emitStylesheet($this->themeAssetUrl('assets/css/header-navigation.css', $headerNavigationVersion));
         }
 
-        $uiChromeIsCritical = $loadHomepageBlogCss || $loadPageDetailCss || $loadPostDetailCss || $isHubSiteRequest;
+        $uiChromeIsCritical = $loadPageDetailCss || $loadPostDetailCss || $isHubSiteRequest;
         if (file_exists($uiChromeCssFile)) {
             $uiChromeVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($uiChromeCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion), !$uiChromeIsCritical);
@@ -388,7 +388,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             $this->emitStylesheet($this->themeAssetUrl('assets/css/templates.css', $templateVersion));
         }
 
-        $contentCardsIsCritical = $loadHomepageBlogCss;
+        $contentCardsIsCritical = $loadPageExtrasCss;
         if ($loadContentCardsCss && file_exists($contentCardsCssFile)) {
             $contentCardsVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($contentCardsCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion), !$contentCardsIsCritical);
