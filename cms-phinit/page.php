@@ -34,8 +34,9 @@ $pageProvidedByRouter = isset($page) && !empty($page);
 // Falls nicht vorhanden (direkter Zugriff), Slug aus URL extrahieren
 if (!$pageProvidedByRouter) {
     try {
-        $slug = trim((string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ''), '/ ');
-        $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
+        $page = function_exists('phinit_get_page_by_request_path')
+            ? phinit_get_page_by_request_path((string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '/'))
+            : null;
     } catch (\Throwable $e) {
         $page = null;
     }

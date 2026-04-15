@@ -30,8 +30,9 @@ if ($pageProvidedByRouter) {
     $page = is_object($page) ? (array)$page : (array)$page;
 } else {
     try {
-        $slug = trim((string)($_GET['slug'] ?? (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '')), '/ ');
-        $page = $slug !== '' ? \CMS\PageManager::instance()->getPageBySlug($slug) : null;
+        $page = function_exists('phinit_get_page_by_request_path')
+            ? phinit_get_page_by_request_path((string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '/'))
+            : null;
         if (!$page) {
             http_response_code(404);
             get_theme_part('404');

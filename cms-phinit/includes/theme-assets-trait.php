@@ -20,6 +20,27 @@ trait CMS_Phinit_Theme_Assets_Trait
         return is_array($page) ? $page : null;
     }
 
+    private function getResolvedCurrentPagePayload(string $path): ?array
+    {
+        $page = $this->getCurrentTemplatePagePayload();
+        if (is_array($page)) {
+            return $page;
+        }
+
+        if (!function_exists('phinit_get_page_by_request_path')) {
+            return null;
+        }
+
+        $slug = trim($path, '/');
+        if ($slug === '' || str_contains($slug, '/')) {
+            return null;
+        }
+
+        $resolvedPage = phinit_get_page_by_request_path($path);
+
+        return is_array($resolvedPage) ? $resolvedPage : null;
+    }
+
     private function isHubPagePayload(?array $page): bool
     {
         if (!is_array($page)) {
@@ -142,7 +163,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             }
         }
 
-        $currentTemplatePage = $this->getCurrentTemplatePagePayload();
+        $currentTemplatePage = $this->getResolvedCurrentPagePayload($path);
         $isHubSite = $this->isHubPagePayload($currentTemplatePage);
         if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras) {
             if (!$isHubSite) {
@@ -246,13 +267,30 @@ trait CMS_Phinit_Theme_Assets_Trait
             || http_response_code() === 404;
     }
 
-    private function isCookieConsentPageRequest(string $path): bool
+    private function isCookieConsentPageRequest(string $path, ?array $page = null): bool
     {
-        return $path === '/cookie-einstellungen';
+        if (is_array($page)) {
+            $contentType = strtolower(trim((string) ($page['content_type'] ?? '')));
+            $slug = strtolower(trim((string) ($page['slug'] ?? '')));
+
+            if ($contentType === 'cookie_consent') {
+                return true;
+            }
+
+            if (in_array($slug, ['cookie-einstellungen', 'cookie-settings'], true)) {
+                return true;
+            }
+        }
+
+        return in_array($path, ['/cookie-einstellungen', '/cookie-settings'], true);
     }
 
-    private function isImageArchiveRequest(string $path): bool
+    private function isImageArchiveRequest(string $path, ?array $page = null): bool
     {
+        if (is_array($page) && function_exists('phinit_is_image_archive_page') && phinit_is_image_archive_page($page)) {
+            return true;
+        }
+
         $slug = trim($path, '/');
 
         return $slug !== '' && in_array($slug, phinit_image_archive_page_slugs(), true);
@@ -290,14 +328,15 @@ trait CMS_Phinit_Theme_Assets_Trait
     {
         $requestContext = $this->getRequestContext();
         $requestPath = $requestContext['path'];
+        $currentPage = $this->getResolvedCurrentPagePayload((string) $requestPath);
         $isHubSiteRequest = $requestContext['isHubSite'];
         $loadHomepageBlogCss = $requestContext['isBlogListing'];
         $loadMemberAuthCss = $requestContext['isAuthOrMember'];
         $loadPostDetailCss = $requestContext['isPost'];
         $loadPostSidebarCss = $requestContext['isPost'];
         $loadPageDetailCss = $requestContext['isPageDetail'];
-        $loadCookieConsentCss = $this->isCookieConsentPageRequest($requestPath);
-        $loadImageArchiveCss = $this->isImageArchiveRequest($requestPath);
+        $loadCookieConsentCss = $this->isCookieConsentPageRequest($requestPath, $currentPage);
+        $loadImageArchiveCss = $this->isImageArchiveRequest($requestPath, $currentPage);
         $loadSpecialPagesCss = $this->isSpecialPageRequest($requestPath);
         $loadPageExtrasCss = $requestContext['isPageExtras'];
         $loadRichContentCss = $requestContext['isRichContent'];

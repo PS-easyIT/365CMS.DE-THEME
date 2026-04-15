@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.21",
+  "version": "1.5.22",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.8.1",
-  "release_date": "2026-04-04",
+  "release_date": "2026-04-15",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.22",
+      "date": "2026-04-15",
+      "changes": [
+        "includes/theme-template-helpers.php + page.php + page-wide.php + page-landing.php: Seiten-Fallbacks lösen Request-Pfade jetzt locale-aware über slug/slug_en auf, sodass EN-Seiten mit eigenem Slug wieder konsistent im cms-phinit-Template landen",
+        "includes/theme-assets-trait.php: special-page CSS-Erkennung nutzt nun die tatsächlich aufgelöste Seiten-Payload statt starre DE-Pfade, damit Cookie-/Archiv-/Page-Styles auch bei lokalisierten oder benutzerdefinierten EN-Slugs laden",
+        "includes/theme-head-trait.php: Head-Metadaten und Seitentitel lesen Seiten jetzt ebenfalls locale-aware, wodurch EN-Custom-Slugs keine DE-only Seitenerkennung mehr triggern",
+        "theme.json + functions.php + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.22 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.21",
       "date": "2026-04-04",

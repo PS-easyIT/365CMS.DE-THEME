@@ -33,6 +33,19 @@
 
 ---
 
+## v1.5.22 — 15. April 2026
+
+### EN-Custom-Slugs im Public Theme wieder vollständig stylesicher auflösen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Locale/Page Resolution | `includes/theme-template-helpers.php`, `page.php`, `page-wide.php` und `page-landing.php` lösen Seiten-Fallbacks jetzt locale-aware über `slug`/`slug_en` auf, damit EN-Seiten mit eigenem Slug wieder zuverlässig die richtige Page-Payload und das korrekte Template erhalten. |
+| 🔴 fix | Theme Assets | `includes/theme-assets-trait.php` erkennt Cookie-/Bildarchiv-/Detailseiten nun über die tatsächlich aufgelöste Seiten-Payload statt ausschließlich über starre DE-Pfade; dadurch laden die zugehörigen CSS-Bundles auch bei lokalisierten oder benutzerdefinierten EN-Slugs wieder konsistent. |
+| 🔴 fix | Head / Meta | `includes/theme-head-trait.php` liest aktuelle Seiten für Titel/Meta ebenfalls locale-aware, sodass EN-Custom-Slugs nicht mehr in die alte DE-only Seitenerkennung fallen. |
+| 🔵 docs | Release | `functions.php`, `theme.json`, `update.json` und `README.md` wurden auf Version `1.5.22` synchronisiert. |
+
+---
+
 ## v1.5.21 — 4. April 2026
 
 ### Snyk-Restbefunde im Seiten- und Customizer-Flow vollständig geschlossen

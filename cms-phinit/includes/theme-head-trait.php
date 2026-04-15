@@ -180,38 +180,46 @@ trait CMS_Phinit_Theme_Head_Trait
         $resolved = true;
         $cache = null;
 
-        $slug = '';
+        $resolvedLocale = 'de';
+        $basePath = '/';
         if (method_exists($this, 'getRequestContext')) {
             $context = $this->getRequestContext();
             if (empty($context['isPageDetail']) || !empty($context['isPost'])) {
                 return null;
             }
 
-            $slug = trim((string) ($context['path'] ?? ''), '/');
+            $basePath = trim((string) ($context['path'] ?? '/'));
+            if (function_exists('phinit_resolve_request_context')) {
+                $localizedContext = phinit_resolve_request_context($basePath);
+                $basePath = trim((string) ($localizedContext['base_uri'] ?? $basePath));
+                $resolvedLocale = strtolower(trim((string) ($localizedContext['locale'] ?? 'de')));
+            }
         } else {
-            $slug = trim($this->getHeadRequestPath(), '/');
+            $headPath = $this->getHeadRequestPath();
+            if (function_exists('phinit_resolve_request_context')) {
+                $localizedContext = phinit_resolve_request_context($headPath);
+                $basePath = trim((string) ($localizedContext['base_uri'] ?? $headPath));
+                $resolvedLocale = strtolower(trim((string) ($localizedContext['locale'] ?? 'de')));
+            } else {
+                $basePath = trim($headPath);
+            }
         }
+
+        $slug = trim($basePath, '/');
 
         if ($slug === '' || str_contains($slug, '/')) {
             return null;
         }
-
-        $skipRoutes = ['blog', 'login', 'register', 'logout', 'search', 'feed', 'member', 'sitemap', 'autoren', 'authors'];
-        if (in_array($slug, $skipRoutes, true)) {
-            return null;
-        }
-
         try {
-            $db = \CMS\Database::instance();
-            $prefix = $db->prefix();
-            $row = $db->get_row(
-                "SELECT slug, title, excerpt, content, featured_image, updated_at
-                 FROM {$prefix}pages
-                 WHERE slug = ? AND " . phinit_page_visibility_where() . " LIMIT 1",
-                [$slug]
-            );
+            $page = function_exists('phinit_get_page_by_request_path')
+                ? phinit_get_page_by_request_path($basePath, $resolvedLocale)
+                : \CMS\PageManager::instance()->getPageBySlug($slug, $resolvedLocale);
 
-            $cache = $row ? (array) $row : null;
+            if (is_object($page)) {
+                $page = (array) $page;
+            }
+
+            $cache = is_array($page) ? $page : null;
         } catch (\Throwable) {
             $cache = null;
         }

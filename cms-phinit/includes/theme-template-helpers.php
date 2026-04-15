@@ -534,6 +534,117 @@ if (!function_exists('phinit_current_request_path')) {
     }
 }
 
+if (!function_exists('phinit_resolve_request_context')) {
+    /**
+     * @return array{base_uri:string,locale:string,is_localized:bool}
+     */
+    function phinit_resolve_request_context(?string $requestPath = null): array
+    {
+        $path = trim((string) ($requestPath ?? phinit_current_request_path()));
+        $path = $path !== '' ? $path : '/';
+
+        $fallback = [
+            'base_uri' => $path,
+            'locale' => 'de',
+            'is_localized' => false,
+        ];
+
+        try {
+            $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($path);
+            $baseUri = trim((string) ($context['base_uri'] ?? $path));
+            $locale = strtolower(trim((string) ($context['locale'] ?? 'de')));
+
+            return [
+                'base_uri' => $baseUri !== '' ? $baseUri : '/',
+                'locale' => $locale !== '' ? $locale : 'de',
+                'is_localized' => !empty($context['is_localized']),
+            ];
+        } catch (\Throwable) {
+            return $fallback;
+        }
+    }
+}
+
+if (!function_exists('phinit_get_request_base_path')) {
+    function phinit_get_request_base_path(?string $requestPath = null): string
+    {
+        $context = phinit_resolve_request_context($requestPath);
+        $basePath = trim((string) ($context['base_uri'] ?? '/'));
+
+        return $basePath !== '' ? $basePath : '/';
+    }
+}
+
+if (!function_exists('phinit_localize_page_payload')) {
+    /**
+     * @param array<string, mixed> $page
+     * @return array<string, mixed>
+     */
+    function phinit_localize_page_payload(array $page, string $locale): array
+    {
+        $resolvedLocale = strtolower(trim($locale));
+        if ($resolvedLocale === '') {
+            $resolvedLocale = 'de';
+        }
+
+        try {
+            if (class_exists('CMS\\Services\\ContentLocalizationService')) {
+                return \CMS\Services\ContentLocalizationService::getInstance()->localizePage($page, $resolvedLocale);
+            }
+        } catch (\Throwable) {
+        }
+
+        if ($resolvedLocale !== 'de') {
+            $localizedSlug = trim((string) ($page['slug_' . $resolvedLocale] ?? ''));
+            if ($localizedSlug !== '') {
+                $page['slug'] = $localizedSlug;
+            }
+
+            foreach (['title', 'content', 'excerpt'] as $field) {
+                $localizedValue = trim((string) ($page[$field . '_' . $resolvedLocale] ?? ''));
+                if ($localizedValue !== '') {
+                    $page[$field] = $localizedValue;
+                }
+            }
+        }
+
+        return $page;
+    }
+}
+
+if (!function_exists('phinit_get_page_by_request_path')) {
+    /**
+     * @return array<string, mixed>|null
+     */
+    function phinit_get_page_by_request_path(?string $requestPath = null, ?string $locale = null, bool $localize = true): ?array
+    {
+        $context = phinit_resolve_request_context($requestPath);
+        $resolvedLocale = strtolower(trim((string) ($locale ?? ($context['locale'] ?? 'de'))));
+        $resolvedLocale = $resolvedLocale !== '' ? $resolvedLocale : 'de';
+        $slug = trim((string) ($context['base_uri'] ?? '/'), '/');
+
+        if ($slug === '' || str_contains($slug, '/')) {
+            return null;
+        }
+
+        try {
+            $page = \CMS\PageManager::instance()->getPageBySlug($slug, $resolvedLocale);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (is_object($page)) {
+            $page = (array) $page;
+        }
+
+        if (!is_array($page) || $page === []) {
+            return null;
+        }
+
+        return $localize ? phinit_localize_page_payload($page, $resolvedLocale) : $page;
+    }
+}
+
 if (!function_exists('phinit_get_current_locale')) {
     function phinit_get_current_locale(): string
     {
@@ -546,7 +657,7 @@ if (!function_exists('phinit_get_current_locale')) {
         $locale = 'de';
 
         try {
-            $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext(phinit_current_request_path());
+            $context = phinit_resolve_request_context(phinit_current_request_path());
             $resolvedLocale = strtolower(trim((string) ($context['locale'] ?? 'de')));
             if ($resolvedLocale !== '') {
                 $locale = $resolvedLocale;
