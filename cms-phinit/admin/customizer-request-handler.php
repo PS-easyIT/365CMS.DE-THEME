@@ -247,12 +247,17 @@ function phinit_log_advanced_code_event(string $action, ThemeCustomizer $customi
  */
 function phinit_normalize_customizer_post_value(string $fieldType, mixed $rawValue, array $fieldConfig): string
 {
+    $default = $fieldConfig['default'] ?? '';
+
     if ($fieldType === 'checkbox') {
         return !empty($rawValue) ? '1' : '0';
     }
 
+    if (is_array($rawValue) || is_object($rawValue)) {
+        return (string) $default;
+    }
+
     $value = is_string($rawValue) ? trim($rawValue) : trim((string) $rawValue);
-    $default = $fieldConfig['default'] ?? '';
 
     switch ($fieldType) {
         case 'color':
@@ -749,11 +754,15 @@ function phinit_get_customizer_posted_field_value(string $postedSection, string 
     }
 
     if (array_key_exists($postedFieldName, $_POST)) {
-        return $_POST[$postedFieldName];
+        $postedValue = $_POST[$postedFieldName];
+
+        return is_scalar($postedValue) ? $postedValue : '';
     }
 
     if ($storageFieldName !== $postedFieldName && array_key_exists($storageFieldName, $_POST)) {
-        return $_POST[$storageFieldName];
+        $storageValue = $_POST[$storageFieldName];
+
+        return is_scalar($storageValue) ? $storageValue : '';
     }
 
     return '';

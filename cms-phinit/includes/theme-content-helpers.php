@@ -29,10 +29,15 @@ if (!function_exists('phinit_sanitize_renderable_content')) {
             return (string) wp_kses_post($html);
         }
 
-        return strip_tags(
+        $sanitized = strip_tags(
             $html,
             '<p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
         );
+
+        $sanitized = preg_replace('/\s+on[a-z0-9_-]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $sanitized) ?? $sanitized;
+        $sanitized = preg_replace('/\s+(href|src|xlink:href)\s*=\s*(["\'])\s*(?:javascript|data:text\/html)\s*:[^"\']*\2/i', ' $1="#"', $sanitized) ?? $sanitized;
+
+        return $sanitized;
     }
 }
 

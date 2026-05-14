@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.27",
+  "version": "1.5.28",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.28",
+      "date": "2026-05-14",
+      "changes": [
+        "admin/customizer-field-renderer.php: alle generierten id-/name-Attribute werden jetzt vor der Ausgabe explizit escaped, sodass auch schema-basierte Feldnamen keine Raw-Attribut-Sinks mehr bilden",
+        "admin/customizer-request-handler.php: Customizer-POST-Werte werden defensiv auf skalare Werte begrenzt, bevor die feldtypspezifische Normalisierung greift",
+        "includes/theme-special-pages-helpers.php: die öffentliche Autorenübersicht baut Profile jetzt aus einer aggregierten Batch-Abfrage statt per getPublicAuthorProfile()-N+1-Schleife auf",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.28 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.27",
       "date": "2026-05-14",

@@ -19,12 +19,16 @@ Noch keine unveröffentlichten Änderungen.
 
 ---
 
-## v1.5.27 — 14. Mai 2026
+## v1.5.28 — 14. Mai 2026
 
-### PHP-8.4-Audit-Fixes, sichere Content-Sinks und Header-Shrink
+### Audit-Restpunkte im Customizer und in Spezialseiten geschlossen
 
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
+| 🛡️ security | Theme Customizer | `admin/customizer-field-renderer.php` escaped generierte `id`-/`name`-Attribute jetzt direkt vor der Ausgabe, sodass auch schema-basierte Feldnamen keinen Raw-Attribut-Sink mehr bilden. |
+| 🛡️ security | Theme Customizer | `admin/customizer-request-handler.php` begrenzt gepostete Customizer-Feldwerte defensiv auf skalare Werte, bevor die feldtypspezifische Normalisierung greift. |
+| 🟡 refactor | Spezialseiten / Autoren | `includes/theme-special-pages-helpers.php` ersetzt die N+1-Schleife über `getPublicAuthorProfile()` durch eine aggregierte Batch-Abfrage für Autorenübersichten. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.28` synchronisiert. |
 | 🛡️ security | Content Rendering | `includes/theme-content-helpers.php`, `post.php`, `post-wide.php` und `post-tech.php` rendern Post- und Hub-Content jetzt ausschließlich über den zentralen Purifier-Renderpfad; direkte Raw-HTML-Sinks wurden entfernt. |
 | 🛡️ security | Request Handling | `includes/theme-template-helpers.php` ergänzt arraysichere Input-Helper; öffentliche Archive, Auth-/Member-Formulare, Favoriten und Customizer-Steuerfelder nutzen diese Helper für Query- und POST-Werte. |
 | 🔴 fix | Post Templates | `post-wide.php` und `post-tech.php` übernehmen den Router-/Fallback-Flow des Standard-Templates: keine doppelte Content-Aufbereitung und keine doppelte View-Zählung bei router-geladenen Beiträgen. |
@@ -32,28 +36,9 @@ Noch keine unveröffentlichten Änderungen.
 | 🟡 refactor | Head / Performance | `includes/theme-head-trait.php` nutzt vorhandene `$GLOBALS['post']`-/`$GLOBALS['page']`-Payloads als Cache-Quelle und vermeidet redundante Head-DB-Abfragen. |
 | 🎨 style | Header / Logo | `assets/css/header-navigation.css`, `assets/js/navigation.js` und `includes/theme-assets-trait.php` binden die Logo-Höhe konsequent an `header.logo_max_height`; beim Scrollen schrumpft der Logo-/Suchbereich auf 75% der normalen Höhe. |
 | 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.27` synchronisiert. |
-
----
-
-## v1.5.26 — 14. Mai 2026
-
-### Homepage-Lead-Image-SQL ohne Alias-Mix
-
-| Typ | Bereich | Beschreibung |
-|-----|---------|-------------|
 | 🔴 fix | Theme Assets / Homepage | `includes/theme-assets-trait.php` deklariert die Homepage-Lead-Image-Abfrage jetzt mit `FROM posts p` und nutzt `phinit_post_publication_where('p')`, sodass der locale-aware Filter aus `phinit_build_homepage_post_locale_condition()` nicht mehr mit `Unknown column 'p.content'` im PHP Error-Log scheitert. |
 | 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json` und `README.md` wurden auf Version `1.5.26` synchronisiert. |
-
-### Header-Login im Theme-Editor schaltbar machen
-
-| Typ | Bereich | Beschreibung |
-|-----|---------|-------------|
 | 🟢 feat | Theme Editor / Header | `admin/customizer-schema.php`, `theme.json` und `header.php` ergänzen die neue Header-Option `show_login_button`, mit der sich der komplette Login-/Account-Button im Desktop-Header sowie der mobile Login-Link gezielt ausblenden lassen. |
-
-### Mobile Detail-Header fokussieren Titel statt Vorschaubild
-
-| Typ | Bereich | Beschreibung |
-|-----|---------|-------------|
 | 🎨 style | Post/Page Detail | `assets/css/post-detail.css` und `assets/css/page-detail.css` blenden das Headerbild auf Beitrags- und Seitendetailseiten bei `≤ 768px` aus, damit der mobile Content-Header kompakter startet und Titel/Meta sofort sichtbar bleiben. |
 | 🎨 style | Mobile Header/Home | `assets/css/header-navigation.css` zeigt das Theme-Logo im mobilen Header wieder links an und begrenzt Bildlogos auf maximal `30px` Höhe; `style.css` reduziert den Abstand zwischen Header und dem ersten Homepage-Band („Aktuelle Beiträge“) mobil auf `10px`. |
 | 🎨 style | Post Detail / Share | `assets/css/post-detail.css` ordnet die Teilen-Buttons auf Beitragsdetailseiten in der Mobileansicht jetzt immer in einem festen 3er-Raster an, sodass sechs Share-Aktionen als zwei Reihen mit je drei Buttons erscheinen. |

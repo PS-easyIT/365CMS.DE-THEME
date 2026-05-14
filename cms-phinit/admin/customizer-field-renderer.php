@@ -80,6 +80,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
 {
     $id = 'f_' . $tab . '_' . $fieldKey;
     $name = $tab . '_' . $fieldKey;
+    $idAttr = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
+    $nameAttr = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
     $currentValue = (string) $value;
     $description = (string) ($field['description'] ?? '');
     ?>
@@ -87,9 +89,9 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
         <?php if (($field['type'] ?? 'text') === 'checkbox'): ?>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       id="<?php echo $id; ?>" name="<?php echo $name; ?>" value="1"
+                       id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>" value="1"
                        <?php echo ($currentValue !== '' && $currentValue !== '0') ? 'checked' : ''; ?>>
-                <label class="form-check-label" for="<?php echo $id; ?>">
+                <label class="form-check-label" for="<?php echo $idAttr; ?>">
                     <?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?>
                 </label>
             </div>
@@ -98,27 +100,27 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             <label class="form-label"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
             <div class="input-group phinit-customizer__color-group">
                 <input type="color"
-                       id="<?php echo $id; ?>"
+                      id="<?php echo $idAttr; ?>"
                        value="<?php echo htmlspecialchars($currentValue ?: '#000000', ENT_QUOTES); ?>"
                        class="form-control form-control-color phinit-customizer__color-input"
                       data-color-picker
                       data-sync-target-text="<?php echo htmlspecialchars($id . '_txt', ENT_QUOTES); ?>"
                       data-sync-target-hidden="<?php echo htmlspecialchars($name, ENT_QUOTES); ?>">
                 <input type="text"
-                       id="<?php echo $id; ?>_txt"
+                      id="<?php echo htmlspecialchars($id . '_txt', ENT_QUOTES, 'UTF-8'); ?>"
                        value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                        class="form-control font-monospace phinit-customizer__color-text"
                       data-color-text
                       data-sync-target-picker="<?php echo htmlspecialchars($id, ENT_QUOTES); ?>"
                       data-sync-target-hidden="<?php echo htmlspecialchars($name, ENT_QUOTES); ?>">
-                <input type="hidden" name="<?php echo $name; ?>"
-                       id="<?php echo $name; ?>"
+                  <input type="hidden" name="<?php echo $nameAttr; ?>"
+                      id="<?php echo $nameAttr; ?>"
                        value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>">
             </div>
 
         <?php elseif (($field['type'] ?? 'text') === 'select'): ?>
-            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <select id="<?php echo $id; ?>" name="<?php echo $name; ?>" class="form-select">
+                 <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+                 <select id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>" class="form-select">
                 <?php foreach (($field['options'] ?? []) as $optionValue => $optionLabel): ?>
                 <option value="<?php echo htmlspecialchars((string) $optionValue, ENT_QUOTES); ?>"
                     <?php echo $currentValue === (string) $optionValue ? 'selected' : ''; ?>>
@@ -128,21 +130,21 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             </select>
 
         <?php elseif (($field['type'] ?? 'text') === 'textarea'): ?>
-            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <textarea id="<?php echo $id; ?>" name="<?php echo $name; ?>"
+            <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <textarea id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                       class="form-control" rows="<?php echo (int) ($field['rows'] ?? 3); ?>"><?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?></textarea>
 
         <?php elseif (($field['type'] ?? 'text') === 'url'): ?>
-            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <input type="url" id="<?php echo $id; ?>" name="<?php echo $name; ?>"
+            <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <input type="url" id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                    value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                    class="form-control"
                    inputmode="url"
                    placeholder="https://example.com/ oder /interner-pfad">
 
         <?php elseif (($field['type'] ?? 'text') === 'number'): ?>
-            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <input type="number" id="<?php echo $id; ?>" name="<?php echo $name; ?>"
+            <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <input type="number" id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                    value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                    class="form-control phinit-customizer__number-input"
                    step="<?php echo htmlspecialchars((string) ($field['step'] ?? 'any'), ENT_QUOTES); ?>"
@@ -150,9 +152,9 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                    <?php echo isset($field['max']) ? 'max="' . htmlspecialchars((string) $field['max'], ENT_QUOTES) . '"' : ''; ?>>
 
         <?php elseif (($field['type'] ?? 'text') === 'post_picker'): ?>
-            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
             <?php $postRows = phinit_get_customizer_post_picker_rows(); ?>
-            <select id="<?php echo $id; ?>" name="<?php echo $name; ?>" class="form-select">
+            <select id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>" class="form-select">
                 <option value="">— Kein Beitrag —</option>
                 <?php foreach ($postRows as $postRow): ?>
                 <option value="<?php echo (int) ($postRow['id'] ?? 0); ?>"
@@ -164,8 +166,8 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             </select>
 
         <?php else: ?>
-            <label class="form-label" for="<?php echo $id; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <input type="text" id="<?php echo $id; ?>" name="<?php echo $name; ?>"
+            <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <input type="text" id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                    value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>" class="form-control">
         <?php endif; ?>
 

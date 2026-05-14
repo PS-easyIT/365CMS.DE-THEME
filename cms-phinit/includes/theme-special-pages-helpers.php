@@ -47,16 +47,30 @@ if (!function_exists('phinit_get_public_authors_overview')) {
     {
         try {
             $db = \CMS\Database::instance();
-            $memberService = \CMS\Services\MemberService::getInstance();
-            $viewerIsLoggedIn = \CMS\Auth::instance()->isLoggedIn();
+            $prefix = $db->getPrefix();
             $rows = $db->get_results(
-                "SELECT p.author_id,
-                        COUNT(*) AS post_count,
-                        MAX(COALESCE(p.published_at, p.created_at)) AS latest_post_at
-                 FROM {$db->getPrefix()}posts p
-                  WHERE " . phinit_post_publication_where('p') . " AND p.author_id IS NOT NULL AND p.author_id > 0
-                 GROUP BY p.author_id
-                 ORDER BY post_count DESC, latest_post_at DESC"
+                "SELECT stats.author_id,
+                        stats.post_count,
+                        stats.latest_post_at,
+                        COALESCE(NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS display_name,
+                        u.username,
+                        MAX(CASE WHEN um.meta_key = 'bio' THEN um.meta_value ELSE NULL END) AS bio,
+                        MAX(CASE WHEN um.meta_key IN ('avatar_url', 'avatar', 'profile_avatar') THEN um.meta_value ELSE NULL END) AS avatar_url,
+                        MAX(CASE WHEN um.meta_key = 'website' THEN um.meta_value ELSE NULL END) AS website,
+                        MAX(CASE WHEN um.meta_key = 'location' THEN um.meta_value ELSE NULL END) AS location
+                 FROM (
+                    SELECT p.author_id,
+                           COUNT(*) AS post_count,
+                           MAX(COALESCE(p.published_at, p.created_at)) AS latest_post_at
+                    FROM {$prefix}posts p
+                    WHERE " . phinit_post_publication_where('p') . " AND p.author_id IS NOT NULL AND p.author_id > 0
+                    GROUP BY p.author_id
+                 ) stats
+                 LEFT JOIN {$prefix}users u ON u.id = stats.author_id
+                 LEFT JOIN {$prefix}user_meta um ON um.user_id = stats.author_id
+                    AND um.meta_key IN ('bio', 'avatar_url', 'avatar', 'profile_avatar', 'website', 'location')
+                 GROUP BY stats.author_id, stats.post_count, stats.latest_post_at, u.display_name, u.username
+                 ORDER BY stats.post_count DESC, stats.latest_post_at DESC"
             ) ?: [];
         } catch (\Throwable) {
             return [];
@@ -65,24 +79,33 @@ if (!function_exists('phinit_get_public_authors_overview')) {
         $authors = [];
 
         foreach ($rows as $row) {
-            $authorId = (int) ($row->author_id ?? 0);
+            $author = (array) $row;
+            $authorId = (int) ($author['author_id'] ?? 0);
             if ($authorId <= 0) {
                 continue;
             }
 
-            try {
-                $profile = $memberService->getPublicAuthorProfile('user-' . $authorId, $viewerIsLoggedIn);
-            } catch (\Throwable) {
-                $profile = null;
+            $details = [];
+            $location = trim((string) ($author['location'] ?? ''));
+            if ($location !== '') {
+                $details[] = ['label' => 'Standort', 'value' => $location, 'type' => 'text'];
+            }
+            $website = trim((string) ($author['website'] ?? ''));
+            if ($website !== '') {
+                $details[] = ['label' => 'Website', 'value' => $website, 'type' => 'url'];
             }
 
-            if (!is_array($profile)) {
-                continue;
-            }
-
-            $profile['post_count'] = (int) ($row->post_count ?? 0);
-            $profile['latest_post_at'] = (string) ($row->latest_post_at ?? '');
-            $authors[] = $profile;
+            $authors[] = [
+                'id' => $authorId,
+                'display_name' => trim((string) ($author['display_name'] ?? 'Autor')),
+                'username' => trim((string) ($author['username'] ?? '')),
+                'bio' => trim((string) ($author['bio'] ?? '')),
+                'avatar_url' => trim((string) ($author['avatar_url'] ?? '')),
+                'profile_url' => '/author/user-' . $authorId,
+                'details' => $details,
+                'post_count' => (int) ($author['post_count'] ?? 0),
+                'latest_post_at' => (string) ($author['latest_post_at'] ?? ''),
+            ];
         }
 
         usort($authors, static function (array $left, array $right): int {
