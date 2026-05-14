@@ -164,6 +164,86 @@ if (!function_exists('phinit_escape_text')) {
     }
 }
 
+if (!function_exists('phinit_input_string')) {
+    /**
+     * Liest einen skalaren Request-Wert arraysicher aus und begrenzt optional die Länge.
+     *
+     * @param array<string,mixed> $source
+     */
+    function phinit_input_string(array $source, string $key, string $default = '', int $maxLength = 500): string
+    {
+        $value = $source[$key] ?? null;
+        if ($value === null || is_array($value) || is_object($value)) {
+            return $default;
+        }
+
+        $stringValue = trim((string) $value);
+        if ($maxLength > 0 && mb_strlen($stringValue, 'UTF-8') > $maxLength) {
+            return mb_substr($stringValue, 0, $maxLength, 'UTF-8');
+        }
+
+        return $stringValue;
+    }
+}
+
+if (!function_exists('phinit_input_int')) {
+    /**
+     * Liest einen Integer-Request-Wert arraysicher aus und klemmt ihn optional ein.
+     *
+     * @param array<string,mixed> $source
+     */
+    function phinit_input_int(array $source, string $key, int $default = 0, ?int $min = null, ?int $max = null): int
+    {
+        $value = $source[$key] ?? null;
+        if ($value === null || is_array($value) || is_object($value)) {
+            $number = $default;
+        } else {
+            $number = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['default' => $default]]);
+            $number = is_int($number) ? $number : $default;
+        }
+
+        if ($min !== null) {
+            $number = max($min, $number);
+        }
+
+        if ($max !== null) {
+            $number = min($max, $number);
+        }
+
+        return $number;
+    }
+}
+
+if (!function_exists('phinit_input_int_list')) {
+    /**
+     * Normalisiert einen skalaren oder Array-Request-Wert zu eindeutigen positiven Integern.
+     *
+     * @param array<string,mixed> $source
+     * @return list<int>
+     */
+    function phinit_input_int_list(array $source, string $key, int $min = 1, ?int $max = null): array
+    {
+        $value = $source[$key] ?? [];
+        $values = is_array($value) ? $value : [$value];
+        $normalized = [];
+
+        foreach ($values as $entry) {
+            if (is_array($entry) || is_object($entry)) {
+                continue;
+            }
+
+            $number = filter_var($entry, FILTER_VALIDATE_INT);
+            if (!is_int($number) || $number < $min || ($max !== null && $number > $max)) {
+                continue;
+            }
+
+            $normalized[] = $number;
+        }
+
+        return array_values(array_unique($normalized));
+    }
+}
+
 if (!function_exists('phinit_safe_public_url')) {
     /**
      * Validiert öffentliche URL-Werte für Frontend-Links mit Scheme-Allowlist.

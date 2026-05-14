@@ -17,6 +17,9 @@ if (theme_is_logged_in()) {
 $isDoctor = ($_GET['type'] ?? '') === 'doctor';
 $error    = null;
 $success  = null;
+$safe     = static fn(mixed $v): string => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$postedEmail = filter_var((string)($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+$postedUsername = trim(strip_tags((string)($_POST['username'] ?? '')));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mc_register'])) {
     try {
@@ -25,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mc_register'])) {
                 $error = 'Sicherheitscheck fehlgeschlagen. Bitte laden Sie die Seite neu.';
             } else {
                 $email    = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
-                $username = htmlspecialchars(trim($_POST['username'] ?? ''), ENT_QUOTES, 'UTF-8');
+                $username = trim(strip_tags((string)($_POST['username'] ?? '')));
                 $password = $_POST['password'] ?? '';
                 $passConf = $_POST['password_confirm'] ?? '';
                 $privacyAgreed = !empty($_POST['privacy']);
@@ -63,7 +66,6 @@ try {
 }
 
 $siteUrl  = SITE_URL;
-$safe     = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $privText = mc_get_setting('dsgvo_medical', 'privacy_form_text', 'Ihre Daten werden gemäß DSGVO und § 203 StGB vertraulich behandelt.');
 
 get_header();
@@ -100,19 +102,19 @@ get_header();
             </div>
 
             <?php if (!empty($error)) : ?>
-            <div class="mc-alert mc-alert-error" role="alert"><?php echo $safe($error); ?></div>
+            <div class="mc-alert mc-alert-error" role="alert"><?php echo htmlspecialchars((string)$error, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
             <?php if (!empty($success)) : ?>
             <div class="mc-alert mc-alert-success" role="status">
-                <?php echo $safe($success); ?><br>
-                <a href="<?php echo $safe($siteUrl); ?>/login" style="font-weight:700;">Jetzt anmelden →</a>
+                <?php echo htmlspecialchars((string)$success, ENT_QUOTES, 'UTF-8'); ?><br>
+                <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login" style="font-weight:700;">Jetzt anmelden →</a>
             </div>
             <?php endif; ?>
 
             <?php if (empty($success)) : ?>
             <form method="POST" novalidate>
                 <input type="hidden" name="mc_register" value="1">
-                <input type="hidden" name="csrf_token" value="<?php echo $safe($csrfToken); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars((string)$csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="register_type" value="<?php echo $isDoctor ? 'doctor' : 'patient'; ?>">
                 <!-- Honeypot (Spam-Schutz – darf nicht ausgefüllt werden) -->
                 <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
@@ -125,7 +127,7 @@ get_header();
                         E-Mail-Adresse <span aria-hidden="true" style="color:#ef4444;">*</span>
                     </label>
                     <input id="reg-email" type="email" name="email" class="mc-input"
-                           value="<?php echo $safe($_POST['email'] ?? ''); ?>"
+                              value="<?php echo htmlspecialchars((string)$postedEmail, ENT_QUOTES, 'UTF-8'); ?>"
                            autocomplete="email" required aria-required="true"
                            placeholder="ihre@email.de">
                 </div>
@@ -136,7 +138,7 @@ get_header();
                         <span aria-hidden="true" style="color:#ef4444;">*</span>
                     </label>
                     <input id="reg-username" type="text" name="username" class="mc-input"
-                           value="<?php echo $safe($_POST['username'] ?? ''); ?>"
+                              value="<?php echo htmlspecialchars((string)$postedUsername, ENT_QUOTES, 'UTF-8'); ?>"
                            autocomplete="name" required aria-required="true"
                            placeholder="<?php echo $isDoctor ? 'Dr. med. Mustermann' : 'max_mustermann'; ?>"
                            minlength="3">
@@ -166,7 +168,7 @@ get_header();
                            style="width:18px;height:18px;margin-top:.2rem;flex-shrink:0;accent-color:var(--primary-color);">
                     <label for="reg-privacy" style="font-size:var(--font-sm);color:var(--text-secondary);cursor:pointer;">
                         Ich habe die
-                        <a href="<?php echo $safe($siteUrl); ?>/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>
+                        <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/datenschutz" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>
                         gelesen und stimme der Verarbeitung meiner Daten zu.
                         <span aria-hidden="true" style="color:#ef4444;">*</span>
                     </label>
@@ -181,9 +183,9 @@ get_header();
 
             <hr class="mc-form-divider">
             <div class="mc-form-links">
-                <a href="<?php echo $safe($siteUrl); ?>/login">Bereits registriert? Anmelden</a>
+                <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/login">Bereits registriert? Anmelden</a>
             </div>
-            <p class="mc-dsgvo-note">🔒 <?php echo $safe($privText); ?></p>
+            <p class="mc-dsgvo-note">🔒 <?php echo htmlspecialchars((string)$privText, ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
     </div>
 </main>

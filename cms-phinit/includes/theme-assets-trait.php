@@ -963,7 +963,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $mainNavH = $c->get('header', 'main_nav_height', '');
         if (!empty($mainNavH)) {
             $css .= "    --main-nav-height: {$mainNavH}px;\n";
-            $css .= "    --header-h: {$mainNavH}px;\n";
+            $css .= "    --main-menu-h: {$mainNavH}px;\n";
         }
         $subBarH = $c->get('header', 'sub_bar_height', '');
         if (!empty($subBarH)) {
@@ -1042,7 +1042,8 @@ trait CMS_Phinit_Theme_Assets_Trait
         $css .= "}\n";
         $css .= ".container { max-width: var(--container-max, 1060px); }\n";
         $css .= ".member-bar { background: var(--bg-header1); min-height: var(--member-bar-h, 36px); }\n";
-        $css .= ".hdr-bar-main { background: var(--bg-header2); min-height: var(--main-nav-height, 48px); }\n";
+        $css .= ".hdr-bar-main { background: var(--bg-header2); min-height: var(--header-h, 56px); }\n";
+        $css .= ".main-menu-bar { background: var(--bg-header2); min-height: var(--main-menu-h, var(--main-nav-height, 51px)); }\n";
         $css .= ".quicklinks-bar { background: var(--bg-header3); min-height: var(--sub-bar-height, 30px); }\n";
         $css .= ".main-nav a { color: var(--text-nav-main, var(--text-nav, rgba(255,255,255,.82))); }\n";
         $css .= ".member-bar__link { color: var(--text-nav-member, rgba(255,255,255,.72)); }\n";
@@ -1145,13 +1146,13 @@ trait CMS_Phinit_Theme_Assets_Trait
                 ? phinit_build_homepage_post_locale_condition($contentLocale, $localization)
                 : '';
             $row = $db->get_row(
-                "SELECT featured_image
-                 FROM {$prefix}posts
-                                 WHERE " . phinit_post_publication_where() . "
-                   AND featured_image IS NOT NULL
-                   AND featured_image != ''
+                                "SELECT p.featured_image
+                                 FROM {$prefix}posts p
+                                 WHERE " . phinit_post_publication_where('p') . "
+                                     AND p.featured_image IS NOT NULL
+                                     AND p.featured_image != ''
                    {$localeCondition}
-                 ORDER BY COALESCE(published_at, created_at) DESC, id DESC
+                                 ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
                  LIMIT 1"
             );
 

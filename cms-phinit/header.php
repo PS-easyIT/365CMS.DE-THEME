@@ -339,7 +339,7 @@ if ($_showLanguageSwitch) {
     </div>
     <?php endif; ?>
 
-    <!-- Ebene 2: Logo + Hauptnavigation + Tools -->
+    <!-- Ebene 2: Logo + Header-Tools -->
     <div class="hdr-bar hdr-bar-main">
         <div class="hdr-inner">
 
@@ -472,37 +472,6 @@ if ($_showLanguageSwitch) {
                 }
             };
             ?>
-            <nav class="main-nav" aria-label="<?php echo htmlspecialchars(phinit_t('main_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
-                    <?php if (!empty($mainMenuItems)): ?>
-                        <?php $renderDesktopMenuItems($mainMenuItems); ?>
-                    <?php else: ?>
-                        <!-- Fallback-Menü -->
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Linux / BASH</a>
-                        <div class="has-dropdown" data-nav-dropdown>
-                            <div class="main-nav__item-head">
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">PowerShell</a>
-                            <button type="button"
-                                    class="main-nav__toggle"
-                                    aria-expanded="false"
-                                    aria-haspopup="true"
-                                    aria-controls="main-nav-dropdown-fallback-powershell"
-                                    aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => 'PowerShell'], $_currentLocale), ENT_QUOTES); ?>">
-                                <span aria-hidden="true">▾</span>
-                            </button>
-                            </div>
-                            <div class="dropdown" id="main-nav-dropdown-fallback-powershell">
-                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/grundlagen', $_currentLocale), ENT_QUOTES); ?>">Grundlagen</a>
-                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/glossar', $_currentLocale), ENT_QUOTES); ?>">Glossar</a>
-                            </div>
-                        </div>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Microsoft 365</a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Datenschutz</a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">News</a>
-                    <?php endif; ?>
-                    <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
-                </nav>
-
             <!-- Header-Tools (rechts, in Bar 2) -->
             <div class="hdr-tools">
                 <?php if ($_showDarkMode || ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== '')): ?>
@@ -548,6 +517,42 @@ if ($_showLanguageSwitch) {
             </div>
         </div>
 
+        <!-- Ebene 3: Hauptmenü-Band -->
+        <div class="hdr-bar main-menu-bar">
+            <div class="hdr-inner hdr-main-menu">
+                <nav class="main-nav" aria-label="<?php echo htmlspecialchars(phinit_t('main_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
+                    <?php if (!empty($mainMenuItems)): ?>
+                        <?php $renderDesktopMenuItems($mainMenuItems); ?>
+                    <?php else: ?>
+                        <!-- Fallback-Menü -->
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Linux / BASH</a>
+                        <div class="has-dropdown" data-nav-dropdown>
+                            <div class="main-nav__item-head">
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">PowerShell</a>
+                            <button type="button"
+                                    class="main-nav__toggle"
+                                    aria-expanded="false"
+                                    aria-haspopup="true"
+                                    aria-controls="main-nav-dropdown-fallback-powershell"
+                                    aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => 'PowerShell'], $_currentLocale), ENT_QUOTES); ?>">
+                                <span aria-hidden="true">▾</span>
+                            </button>
+                            </div>
+                            <div class="dropdown" id="main-nav-dropdown-fallback-powershell">
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/grundlagen', $_currentLocale), ENT_QUOTES); ?>">Grundlagen</a>
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/glossar', $_currentLocale), ENT_QUOTES); ?>">Glossar</a>
+                            </div>
+                        </div>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Microsoft 365</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Datenschutz</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">News</a>
+                    <?php endif; ?>
+                    <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
+                </nav>
+            </div>
+        </div>
+
         <!-- Mobiles Menü -->
         <nav class="mobile-menu" id="mobile-menu" aria-label="<?php echo htmlspecialchars(phinit_t('mobile_navigation', [], $_currentLocale), ENT_QUOTES); ?>" aria-hidden="true">
             <div class="mob-search">
@@ -577,7 +582,7 @@ if ($_showLanguageSwitch) {
             <?php endif; ?>
         </nav>
 
-    <!-- Ebene 3: Quicklinks -->
+    <!-- Ebene 4: Quicklinks -->
     <?php if ($_showQuicklinks): ?>
     <div class="quicklinks-bar">
         <div class="hdr-inner hdr-sub">

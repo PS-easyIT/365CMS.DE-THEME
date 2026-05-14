@@ -6,12 +6,32 @@
  *
  * @package MedCarePro
  */
+declare(strict_types=1);
 if (!defined('ABSPATH')) exit;
 get_header();
-$safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$safe    = static fn(mixed $v): string => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 $siteUrl = SITE_URL;
-$query   = $safe(trim($_GET['q'] ?? $query ?? ''));
+$rawQuery = trim((string)($_GET['q'] ?? $query ?? ''));
+$query = strip_tags($rawQuery);
+$query = function_exists('mb_substr') ? mb_substr($query, 0, 120) : substr($query, 0, 120);
+$queryEsc = htmlspecialchars((string)$query, ENT_QUOTES, 'UTF-8');
 $page    = max(1, (int)($_GET['page'] ?? $currentPage ?? 1));
+$normalizeResultUrl = static function (mixed $value, string $fallback) use ($safe): string {
+    $url = trim((string)$value);
+    if ($url === '' || preg_match('/[\x00-\x1F\x7F]/', $url) === 1 || preg_match('#^javascript:#i', $url) === 1) {
+        return htmlspecialchars((string)$fallback, ENT_QUOTES, 'UTF-8');
+    }
+
+    if (str_starts_with($url, '//')) {
+        return htmlspecialchars((string)$fallback, ENT_QUOTES, 'UTF-8');
+    }
+
+    if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $url) === 1 && filter_var($url, FILTER_VALIDATE_URL) === false) {
+        return htmlspecialchars((string)$fallback, ENT_QUOTES, 'UTF-8');
+    }
+
+    return htmlspecialchars((string)$url, ENT_QUOTES, 'UTF-8');
+};
 
 if (empty($results)) {
     try {
@@ -33,11 +53,11 @@ if (empty($results)) {
 
         <!-- Suchformular -->
         <div class="mc-card" style="padding:2rem;margin-bottom:2rem;">
-            <form role="search" method="get" action="<?php echo $safe($siteUrl); ?>/search"
+            <form role="search" method="get" action="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search"
                   style="display:flex;gap:.75rem;flex-wrap:wrap;" aria-label="Suche">
                 <label for="search-input" class="mc-visually-hidden">Suchbegriff eingeben</label>
                 <input id="search-input" type="search" name="q"
-                       value="<?php echo $query; ?>"
+                      value="<?php echo $queryEsc; ?>"
                        placeholder="Arzt, Fachgebiet, Diagnose …"
                        class="mc-input" style="flex:1;min-width:200px;"
                        autofocus>
@@ -52,10 +72,10 @@ if (empty($results)) {
         <h1 id="search-results-heading"
             style="font-family:var(--font-heading);font-size:var(--font-2xl);color:var(--secondary-color);margin-bottom:1.5rem;">
             Suchergebnisse für
-            <em style="font-style:normal;color:var(--primary-color);">&ldquo;<?php echo $query; ?>&rdquo;</em>
+            <em style="font-style:normal;color:var(--primary-color);">&ldquo;<?php echo $queryEsc; ?>&rdquo;</em>
             <?php if ($total > 0) : ?>
                 <span style="font-size:var(--font-sm);font-weight:400;color:var(--muted-color);margin-left:.5rem;">
-                    (<?php echo $total; ?> Treffer)
+                    (<?php echo (int)$total; ?> Treffer)
                 </span>
             <?php endif; ?>
         </h1>
@@ -63,16 +83,17 @@ if (empty($results)) {
         <?php if (!empty($results)) : ?>
         <div style="display:flex;flex-direction:column;gap:1rem;" aria-live="polite">
             <?php foreach ($results as $r) :
-                $url     = $safe($r->url ?? $siteUrl . '/' . ($r->slug ?? $r->id ?? ''));
-                $title   = $safe($r->title ?? '');
-                $excerpt = $safe($r->excerpt ?? '');
-                $type    = $safe($r->type ?? '');
+                $fallbackUrl = $siteUrl . '/' . rawurlencode((string)($r->slug ?? $r->id ?? ''));
+                $url     = $normalizeResultUrl($r->url ?? $fallbackUrl, $fallbackUrl);
+                $title   = htmlspecialchars((string)($r->title ?? ''), ENT_QUOTES, 'UTF-8');
+                $excerpt = htmlspecialchars((string)($r->excerpt ?? ''), ENT_QUOTES, 'UTF-8');
+                $type    = htmlspecialchars((string)($r->type ?? ''), ENT_QUOTES, 'UTF-8');
                 $date    = isset($r->created_at) ? date('d.m.Y', strtotime($r->created_at)) : '';
-                $imgUrl  = $safe($r->thumbnail_url ?? '');
+                $imgUrl  = htmlspecialchars((string)($r->thumbnail_url ?? ''), ENT_QUOTES, 'UTF-8');
             ?>
             <div class="mc-search-result">
                 <?php if (!empty($imgUrl)) : ?>
-                <img src="<?php echo $imgUrl; ?>" alt="" aria-hidden="true" class="mc-search-result__avatar">
+                <img src="<?php echo htmlspecialchars((string)$imgUrl, ENT_QUOTES, 'UTF-8'); ?>" alt="" aria-hidden="true" class="mc-search-result__avatar">
                 <?php else : ?>
                 <div class="mc-search-result__avatar" style="background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;" aria-hidden="true">
                     <?php echo ($type === 'doctor') ? '👨‍⚕️' : '📄'; ?>
@@ -80,13 +101,13 @@ if (empty($results)) {
                 <?php endif; ?>
                 <div style="flex:1;min-width:0;">
                     <h2 class="mc-search-result__name">
-                        <a href="<?php echo $url; ?>" style="color:inherit;text-decoration:none;">
-                            <?php echo $title; ?>
+                        <a href="<?php echo htmlspecialchars((string)$url, ENT_QUOTES, 'UTF-8'); ?>" style="color:inherit;text-decoration:none;">
+                            <?php echo htmlspecialchars((string)($r->title ?? ''), ENT_QUOTES, 'UTF-8'); ?>
                         </a>
                     </h2>
                     <?php if (!empty($excerpt)) : ?>
                     <p class="mc-search-result__meta" style="margin-top:.35rem;line-height:1.55;">
-                        <?php echo $excerpt; ?>
+                        <?php echo htmlspecialchars((string)($r->excerpt ?? ''), ENT_QUOTES, 'UTF-8'); ?>
                     </p>
                     <?php endif; ?>
                     <div style="display:flex;align-items:center;gap:1rem;margin-top:.5rem;flex-wrap:wrap;">
@@ -96,7 +117,7 @@ if (empty($results)) {
                         <?php if (!empty($date)) : ?>
                         <span style="font-size:var(--font-xs);color:var(--muted-color);">📅 <?php echo $date; ?></span>
                         <?php endif; ?>
-                        <a href="<?php echo $url; ?>" class="mc-btn mc-btn-outline" style="padding:.3rem .75rem;font-size:var(--font-xs);margin-left:auto;">
+                        <a href="<?php echo htmlspecialchars((string)$url, ENT_QUOTES, 'UTF-8'); ?>" class="mc-btn mc-btn-outline" style="padding:.3rem .75rem;font-size:var(--font-xs);margin-left:auto;">
                             Anzeigen →
                         </a>
                     </div>
@@ -110,9 +131,9 @@ if (empty($results)) {
             <div style="font-size:3rem;margin-bottom:.75rem;" aria-hidden="true">🔍</div>
             <h2 style="font-family:var(--font-heading);color:var(--secondary-color);margin-bottom:.5rem;">Kein Ergebnis gefunden</h2>
             <p style="color:var(--muted-color);max-width:480px;margin:0 auto 1.25rem;">
-                Zu <strong><?php echo $query; ?></strong> wurde nichts gefunden. Bitte versuchen Sie andere Suchbegriffe oder durchsuchen Sie direkt unsere Ärzteliste.
+                Zu <strong><?php echo $queryEsc; ?></strong> wurde nichts gefunden. Bitte versuchen Sie andere Suchbegriffe oder durchsuchen Sie direkt unsere Ärzteliste.
             </p>
-            <a href="<?php echo $safe($siteUrl); ?>/aerzte" class="mc-btn mc-btn-primary">Arzt suchen</a>
+            <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/aerzte" class="mc-btn mc-btn-primary">Arzt suchen</a>
         </div>
         <?php endif; ?>
 
@@ -120,13 +141,13 @@ if (empty($results)) {
         <?php if ($totalPages > 1) : ?>
         <nav aria-label="Seitennavigation" style="display:flex;gap:.5rem;justify-content:center;margin-top:2.5rem;flex-wrap:wrap;">
             <?php if ($page > 1) : ?>
-            <a href="?q=<?php echo urlencode($query); ?>&page=<?php echo $page - 1; ?>" class="mc-btn mc-btn-outline" rel="prev">← Zurück</a>
+            <a href="?q=<?php echo rawurlencode($query); ?>&page=<?php echo $page - 1; ?>" class="mc-btn mc-btn-outline" rel="prev">← Zurück</a>
             <?php endif; ?>
             <span style="padding:.5rem 1rem;font-size:var(--font-sm);color:var(--muted-color);align-self:center;">
-                Seite <?php echo $page; ?> von <?php echo $totalPages; ?>
+                Seite <?php echo (int)$page; ?> von <?php echo (int)$totalPages; ?>
             </span>
             <?php if ($page < $totalPages) : ?>
-            <a href="?q=<?php echo urlencode($query); ?>&page=<?php echo $page + 1; ?>" class="mc-btn mc-btn-outline" rel="next">Weiter →</a>
+            <a href="?q=<?php echo rawurlencode($query); ?>&page=<?php echo $page + 1; ?>" class="mc-btn mc-btn-outline" rel="next">Weiter →</a>
             <?php endif; ?>
         </nav>
         <?php endif; ?>

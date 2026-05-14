@@ -1,13 +1,26 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.25",
+  "version": "1.5.26",
   "requires_cms": "2.5.0",
-  "tested_up_to": "2.8.1",
-  "release_date": "2026-04-15",
+  "tested_up_to": "2.9.788",
+  "release_date": "2026-05-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.26",
+      "date": "2026-05-14",
+      "changes": [
+        "includes/theme-assets-trait.php: die Homepage-Lead-Image-Abfrage nutzt jetzt konsistent den Tabellenalias `p`, damit der locale-aware Beitragsfilter keine `Unknown column 'p.content'`-Fehler mehr im PHP Error-Log erzeugt",
+        "admin/customizer-schema.php + theme.json + header.php: neue Header-Option `show_login_button` ergänzt, um den Login-/Account-Button im Desktop-Header und mobilen Login-Link gezielt auszublenden",
+        "assets/css/post-detail.css + assets/css/page-detail.css: mobile Detail-Header fokussieren Titel und Meta statt Vorschaubild",
+        "assets/css/header-navigation.css + style.css: mobiles Header-Logo links stabilisiert und Homepage-Abstand mobil reduziert",
+        "assets/css/post-detail.css: Share-Buttons auf Beitragsdetailseiten mobil in einem festen 3er-Raster angeordnet",
+        "partials/sidebar.php + assets/css/post-sidebar.css: Social-Buttons und Tags-Widget in der Desktop-Sidebar kompakter und gleichmäßiger verteilt",
+        "theme.json + functions.php + style.css + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.26 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.25",
       "date": "2026-04-15",

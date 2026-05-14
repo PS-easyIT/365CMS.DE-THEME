@@ -15,6 +15,19 @@
 
 ## Unreleased
 
+Noch keine unveröffentlichten Änderungen.
+
+---
+
+## v1.5.26 — 14. Mai 2026
+
+### Homepage-Lead-Image-SQL ohne Alias-Mix
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Theme Assets / Homepage | `includes/theme-assets-trait.php` deklariert die Homepage-Lead-Image-Abfrage jetzt mit `FROM posts p` und nutzt `phinit_post_publication_where('p')`, sodass der locale-aware Filter aus `phinit_build_homepage_post_locale_condition()` nicht mehr mit `Unknown column 'p.content'` im PHP Error-Log scheitert. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json` und `README.md` wurden auf Version `1.5.26` synchronisiert. |
+
 ### Header-Login im Theme-Editor schaltbar machen
 
 | Typ | Bereich | Beschreibung |

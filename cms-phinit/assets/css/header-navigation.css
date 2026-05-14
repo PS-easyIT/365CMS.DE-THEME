@@ -48,7 +48,7 @@
 .member-bar__logout { color: rgba(239,68,68,.8); }
 .member-bar__logout:hover { background: rgba(239,68,68,.15); color: #ef4444; }
 
-.hdr-bar-main .hdr-inner { justify-content: space-between; }
+.hdr-bar-main .hdr-inner { justify-content: space-between; min-height: var(--header-h); }
 .hdr-tools {
     display: flex; align-items: center; gap: 4px; flex-shrink: 0; margin-left: auto;
 }
@@ -372,6 +372,78 @@
     transform: scaleX(1);
 }
 
+.main-menu-bar {
+    display: flex;
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+    background: var(--bg-header2, var(--primary-dark));
+    border-top: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    min-height: var(--main-menu-h, 51px);
+}
+
+.hdr-main-menu {
+    height: var(--main-menu-h, 51px);
+    align-items: stretch;
+    justify-content: center;
+}
+
+.main-menu-bar .main-nav {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    margin-left: 0;
+    min-width: 0;
+}
+
+.main-menu-bar .main-nav > a,
+.main-menu-bar .main-nav > .has-dropdown > .main-nav__item-head {
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    border: 0;
+    border-left: 1px solid rgba(255,255,255,.08);
+    background: transparent;
+    box-shadow: none;
+}
+
+.main-menu-bar .main-nav > :last-child {
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+
+.main-menu-bar .main-nav > a,
+.main-menu-bar .main-nav > .has-dropdown > .main-nav__item-head > .main-nav__link,
+.main-menu-bar .main-nav > .has-dropdown > .main-nav__item-head > .main-nav__toggle {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.main-menu-bar .main-nav > .has-dropdown + a,
+.main-menu-bar .main-nav > a + .has-dropdown,
+.main-menu-bar .main-nav > a + a,
+.main-menu-bar .main-nav > .has-dropdown + .has-dropdown {
+    margin-left: 0;
+}
+
+.main-menu-bar .main-nav > a:hover,
+.main-menu-bar .main-nav > a.active,
+.main-menu-bar .main-nav > .has-dropdown.is-open > .main-nav__item-head,
+.main-menu-bar .main-nav > .has-dropdown:hover > .main-nav__item-head,
+.main-menu-bar .main-nav > .has-dropdown:focus-within > .main-nav__item-head {
+    background: rgba(255,255,255,.07);
+    box-shadow: inset 0 -2px 0 rgba(45,212,191,.65);
+}
+
+.main-menu-bar .main-nav > a::after,
+.main-menu-bar .main-nav > .has-dropdown > .main-nav__item-head > .main-nav__link::after,
+.main-menu-bar .main-nav > .has-dropdown > .main-nav__item-head > .main-nav__toggle::after {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-teal);
+}
+
 .main-nav__item-head {
     display: flex;
     align-items: stretch;
@@ -663,6 +735,27 @@ body.dark-mode .main-nav .dropdown .has-dropdown.is-open > .main-nav__item-head 
     color: var(--text-nav-dropdown-hover, #fff);
 }
 
+body.dark-mode .main-menu-bar {
+    background: var(--bg-header2, #0d1420);
+    border-top-color: rgba(148,163,184,.14);
+    border-bottom-color: rgba(148,163,184,.14);
+}
+
+body.dark-mode .main-menu-bar .main-nav > a,
+body.dark-mode .main-menu-bar .main-nav > .has-dropdown > .main-nav__item-head {
+    border-color: rgba(148,163,184,.14);
+    background: transparent;
+}
+
+body.dark-mode .main-menu-bar .main-nav > a:hover,
+body.dark-mode .main-menu-bar .main-nav > a.active,
+body.dark-mode .main-menu-bar .main-nav > .has-dropdown.is-open > .main-nav__item-head,
+body.dark-mode .main-menu-bar .main-nav > .has-dropdown:hover > .main-nav__item-head,
+body.dark-mode .main-menu-bar .main-nav > .has-dropdown:focus-within > .main-nav__item-head {
+    background: rgba(255,255,255,.08);
+    box-shadow: inset 0 -2px 0 rgba(94,234,212,.62);
+}
+
 .quicklinks-bar {
     position: relative;
     z-index: 1;
@@ -840,7 +933,7 @@ body.dark-mode .quicklinks-tool:hover {
 .site-header.scrolled { box-shadow: 0 3px 20px rgba(0,0,0,.4); }
 
 @media (max-width: 768px) {
-    .hdr-search, .main-nav, .quicklinks-bar { display: none; }
+    .hdr-search, .main-menu-bar, .main-nav, .quicklinks-bar { display: none; }
     .member-bar__nav { display: none; }
     .member-bar__greeting { font-size: .72rem; }
     .hdr-tools__toggles { display: none; }

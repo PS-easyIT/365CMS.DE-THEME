@@ -19,6 +19,8 @@ use CMS\Auth;
 use CMS\Security;
 use CMS\Services\ThemeCustomizer;
 
+$esc = static fn(mixed $value): string => htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+
 if (!Auth::instance()->isAdmin()) {
     header('Location: ' . SITE_URL);
     exit;
@@ -2022,7 +2024,7 @@ if (class_exists('\CMS\ThemeManager')) {
     $customizer->setTheme(\CMS\ThemeManager::instance()->getActiveThemeSlug());
 }
 
-$activeTab = $_GET['tab'] ?? 'colors';
+$activeTab = preg_replace('/[^a-z0-9_-]/i', '', (string)($_GET['tab'] ?? 'colors')) ?: 'colors';
 if (!isset($config[$activeTab])) {
     $activeTab = 'colors';
 }
@@ -2053,7 +2055,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         if ($resetFailed) {
             $error = 'Einstellungen konnten nicht zurückgesetzt werden. Bitte Fehler-Log prüfen.';
         } else {
-            $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$resetTab]['title']) . '&ldquo; auf Standardwerte zurückgesetzt.';
+            $success = 'Einstellungen für „' . (string)($config[$resetTab]['title'] ?? '') . '“ auf Standardwerte zurückgesetzt.';
         }
     }
 }
@@ -2145,7 +2147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             if ($saveFailed) {
                 $error = 'Einstellungen konnten nicht gespeichert werden. Bitte Fehler-Log prüfen.';
             } else {
-                $success = 'Einstellungen für &bdquo;' . htmlspecialchars($config[$saveTab]['title']) . '&ldquo; gespeichert.';
+                $success = 'Einstellungen für „' . (string)($config[$saveTab]['title'] ?? '') . '“ gespeichert.';
             }
         }
     }
@@ -2169,9 +2171,9 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theme Customizer – <?php echo defined('SITE_NAME') ? htmlspecialchars(SITE_NAME) : 'PTC GmbH'; ?></title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars($coreMainCssUrl, ENT_QUOTES); ?>">
-    <link rel="stylesheet" href="<?php echo htmlspecialchars($coreAdminCssUrl, ENT_QUOTES); ?>">
+    <title>Theme Customizer – <?php echo defined('SITE_NAME') ? $esc(SITE_NAME) : 'PTC GmbH'; ?></title>
+    <link rel="stylesheet" href="<?php echo $esc($coreMainCssUrl); ?>">
+    <link rel="stylesheet" href="<?php echo $esc($coreAdminCssUrl); ?>">
     <?php renderAdminSidebarStyles(); ?>
     <style>
         .customizer-layout { display: flex; gap: 2rem; align-items: flex-start; }
@@ -2227,21 +2229,21 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                 <p>Passe das Aussehen des PTC Corporate-Themes an.</p>
             </div>
             <div class="header-actions">
-                <a href="<?php echo SITE_URL; ?>/" target="_blank" class="btn btn-secondary">🌐 Seite ansehen</a>
+                <a href="<?php echo $esc(SITE_URL); ?>/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">🌐 Seite ansehen</a>
             </div>
         </div>
 
         <?php if ($success): ?>
-            <div class="alert alert-success"><?php echo $success; ?></div>
+            <div class="alert alert-success"><?php echo $esc($success); ?></div>
         <?php endif; ?>
         <?php if ($error): ?>
-            <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-error"><?php echo $esc($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" enctype="multipart/form-data">
+        <form method="POST" action="?tab=<?php echo $esc($activeTab); ?>" enctype="multipart/form-data">
             <input type="hidden" name="action" value="save_theme_options">
-            <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
-            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+            <input type="hidden" name="active_section" value="<?php echo $esc($activeTab); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo $esc($csrfToken); ?>">
 
             <div class="customizer-layout">
 
@@ -2269,17 +2271,17 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                     foreach ($navStructure as $navItem):
                         if (isset($navItem['group'])):
                     ?>
-                        <span class="customizer-nav-group-label"><?php echo $navItem['group']; ?></span>
+                        <span class="customizer-nav-group-label"><?php echo $esc($navItem['group']); ?></span>
                         <?php foreach ($navItem['items'] as $subKey => $subLabel): ?>
-                            <a href="?tab=<?php echo $subKey; ?>"
+                            <a href="?tab=<?php echo $esc($subKey); ?>"
                                class="customizer-nav-sub<?php echo $activeTab === $subKey ? ' active' : ''; ?>">
-                                <?php echo htmlspecialchars($subLabel); ?>
+                                <?php echo $esc($subLabel); ?>
                             </a>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <a href="?tab=<?php echo $navItem['key']; ?>"
+                        <a href="?tab=<?php echo $esc($navItem['key']); ?>"
                            class="<?php echo $activeTab === $navItem['key'] ? 'active' : ''; ?>">
-                            <?php echo htmlspecialchars($config[$navItem['key']]['title'] ?? ''); ?>
+                            <?php echo $esc($config[$navItem['key']]['title'] ?? ''); ?>
                         </a>
                     <?php endif; endforeach; ?>
                 </nav>
@@ -2305,11 +2307,11 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                         ];
                     ?>
                     <div class="admin-card">
-                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <h3><?php echo $esc($currentSection['title']); ?></h3>
                         <div class="color-cards-grid">
                             <?php foreach ($colorGroups as $groupTitle => $groupKeys): ?>
                             <div class="color-card">
-                                <h4><?php echo $groupTitle; ?></h4>
+                                <h4><?php echo $esc($groupTitle); ?></h4>
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
@@ -2318,19 +2320,19 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
-                                    <label for="<?php echo $inputId; ?>" class="form-label">
-                                        <?php echo htmlspecialchars($field['label']); ?>
+                                    <label for="<?php echo $esc($inputId); ?>" class="form-label">
+                                        <?php echo $esc($field['label']); ?>
                                     </label>
                                     <div style="display:flex;align-items:center;gap:10px;">
-                                        <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                        <input type="color" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                               value="<?php echo $esc($val); ?>"
                                                style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
-                                        <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                        <input type="text" value="<?php echo $esc($val); ?>"
                                                class="form-control" style="width:120px;"
-                                               onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                               onchange="document.getElementById('<?php echo $esc($inputId); ?>').value = this.value; updateLivePreview();">
                                     </div>
                                     <?php if (!empty($field['description'])): ?>
-                                        <small class="form-text"><?php echo $field['description']; ?></small>
+                                        <small class="form-text"><?php echo $esc($field['description']); ?></small>
                                     <?php endif; ?>
                                 </div>
                                 <?php endforeach; ?>
@@ -2348,11 +2350,11 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                         ];
                     ?>
                     <div class="admin-card">
-                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <h3><?php echo $esc($currentSection['title']); ?></h3>
                         <div class="homepage-cards-grid">
                             <?php foreach ($homepageGroups as $groupTitle => $groupKeys): ?>
                             <div class="homepage-card">
-                                <h4><?php echo $groupTitle; ?></h4>
+                                <h4><?php echo $esc($groupTitle); ?></h4>
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
@@ -2361,36 +2363,36 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
-                                    <label for="<?php echo $inputId; ?>" class="form-label">
-                                        <?php echo htmlspecialchars($field['label']); ?>
+                                    <label for="<?php echo $esc($inputId); ?>" class="form-label">
+                                        <?php echo $esc($field['label']); ?>
                                     </label>
 
                                     <?php if ($field['type'] === 'checkbox'): ?>
                                         <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
-                                            <input type="checkbox" id="<?php echo $inputId; ?>"
-                                                   name="<?php echo $inputName; ?>" value="1"
+                                            <input type="checkbox" id="<?php echo $esc($inputId); ?>"
+                                                   name="<?php echo $esc($inputName); ?>" value="1"
                                                    <?php echo $val ? 'checked' : ''; ?>>
-                                            <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                            <label for="<?php echo $esc($inputId); ?>" style="cursor:pointer;">Aktivieren</label>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'select'): ?>
-                                        <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <select id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                 class="form-control">
                                             <?php foreach ($field['options'] as $optVal => $optLabel): ?>
-                                            <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
+                                            <option value="<?php echo $esc($optVal); ?>"
                                                 <?php echo (string)$val === (string)$optVal ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($optLabel); ?>
+                                                <?php echo $esc($optLabel); ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>
 
                                     <?php elseif ($field['type'] === 'textarea'): ?>
-                                        <textarea id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <textarea id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                   class="form-control" rows="3"
-                                        ><?php echo htmlspecialchars((string)$val); ?></textarea>
+                                        ><?php echo $esc($val); ?></textarea>
 
                                     <?php elseif ($field['type'] === 'image_upload'): ?>
-                                        <?php $previewUrl = $val ? htmlspecialchars((string)$val) : ''; ?>
+                                        <?php $previewUrl = $val ? $esc($val) : ''; ?>
                                         <div style="display:flex;flex-direction:column;gap:10px;">
                                             <div id="hero-bg-preview-wrap" style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:6px;padding:12px;display:flex;align-items:center;gap:12px;min-height:60px;">
                                                 <?php if ($previewUrl): ?>
@@ -2407,25 +2409,25 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                                 </label>
                                                 <span style="color:#64748b;font-size:.8rem;">oder URL:</span>
                                             </div>
-                                            <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                              <input type="text" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                    value="<?php echo $previewUrl; ?>" class="form-control"
                                                    placeholder="https://...">
                                         </div>
 
                                     <?php elseif ($field['type'] === 'number'): ?>
-                                        <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                             <input type="number" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                                 value="<?php echo $esc($val); ?>"
                                                class="form-control" style="width:120px;">
 
                                     <?php else: ?>
-                                        <input type="<?php echo htmlspecialchars($field['type']); ?>"
-                                               id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                             <input type="<?php echo $esc($field['type']); ?>"
+                                                 id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                                 value="<?php echo $esc($val); ?>"
                                                class="form-control">
                                     <?php endif; ?>
 
                                     <?php if (!empty($field['description'])): ?>
-                                        <small class="form-text"><?php echo $field['description']; ?></small>
+                                             <small class="form-text"><?php echo $esc($field['description']); ?></small>
                                     <?php endif; ?>
                                 </div>
                                 <?php endforeach; ?>
@@ -2508,11 +2510,11 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                         $cardGroups = $tabCardGroups[$activeTab] ?? [];
                     ?>
                     <div class="admin-card">
-                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <h3><?php echo $esc($currentSection['title']); ?></h3>
                         <div class="homepage-cards-grid">
                             <?php foreach ($cardGroups as $groupTitle => $groupKeys): ?>
                             <div class="homepage-card">
-                                <h4><?php echo $groupTitle; ?></h4>
+                                <h4><?php echo $esc($groupTitle); ?></h4>
                                 <?php foreach ($groupKeys as $fieldKey):
                                     if (!isset($currentSection['sections'][$fieldKey])) { continue; }
                                     $field     = $currentSection['sections'][$fieldKey];
@@ -2521,12 +2523,12 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                     $inputName = "{$activeTab}_{$fieldKey}";
                                 ?>
                                 <div class="form-group">
-                                    <label for="<?php echo $inputId; ?>" class="form-label">
-                                        <?php echo htmlspecialchars($field['label']); ?>
+                                    <label for="<?php echo $esc($inputId); ?>" class="form-label">
+                                        <?php echo $esc($field['label']); ?>
                                     </label>
 
                                     <?php if ($field['type'] === 'image_upload'): ?>
-                                        <?php $previewUrl = $val ? htmlspecialchars((string)$val) : ''; ?>
+                                        <?php $previewUrl = $val ? $esc($val) : ''; ?>
                                         <div style="display:flex;flex-direction:column;gap:10px;">
                                             <div id="logo-preview-wrap" style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:6px;padding:12px;display:flex;align-items:center;gap:12px;min-height:60px;">
                                                 <?php if ($previewUrl): ?>
@@ -2543,59 +2545,59 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                                 </label>
                                                 <span style="color:#64748b;font-size:.8rem;">oder URL eingeben:</span>
                                             </div>
-                                            <input type="text" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                            <input type="text" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                    value="<?php echo $previewUrl; ?>" class="form-control"
                                                    placeholder="https://..." oninput="syncLogoUrlPreview(this.value)">
                                         </div>
 
                                     <?php elseif ($field['type'] === 'color'): ?>
                                         <div style="display:flex;align-items:center;gap:10px;">
-                                            <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                                   value="<?php echo htmlspecialchars((string)$val); ?>"
+                                            <input type="color" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                                   value="<?php echo $esc($val); ?>"
                                                    style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
-                                            <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                            <input type="text" value="<?php echo $esc($val); ?>"
                                                    class="form-control" style="width:120px;"
-                                                   onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                                   onchange="document.getElementById('<?php echo $esc($inputId); ?>').value = this.value; updateLivePreview();">
                                         </div>
 
                                     <?php elseif ($field['type'] === 'checkbox'): ?>
                                         <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
-                                            <input type="checkbox" id="<?php echo $inputId; ?>"
-                                                   name="<?php echo $inputName; ?>" value="1"
+                                            <input type="checkbox" id="<?php echo $esc($inputId); ?>"
+                                                   name="<?php echo $esc($inputName); ?>" value="1"
                                                    <?php echo $val ? 'checked' : ''; ?>>
-                                            <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                            <label for="<?php echo $esc($inputId); ?>" style="cursor:pointer;">Aktivieren</label>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'textarea'): ?>
-                                        <textarea id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <textarea id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                   class="form-control" rows="3"
-                                        ><?php echo htmlspecialchars((string)$val); ?></textarea>
+                                        ><?php echo $esc($val); ?></textarea>
 
                                     <?php elseif ($field['type'] === 'select'): ?>
-                                        <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                        <select id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                 class="form-control">
                                             <?php foreach ($field['options'] as $optVal => $optLabel): ?>
-                                            <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
+                                            <option value="<?php echo $esc($optVal); ?>"
                                                 <?php echo (string)$val === (string)$optVal ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($optLabel); ?>
+                                                <?php echo $esc($optLabel); ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>
 
                                     <?php elseif ($field['type'] === 'number'): ?>
-                                        <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                        <input type="number" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                               value="<?php echo $esc($val); ?>"
                                                class="form-control" style="width:120px;">
 
                                     <?php else: ?>
-                                        <input type="<?php echo htmlspecialchars($field['type']); ?>"
-                                               id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                               value="<?php echo htmlspecialchars((string)$val); ?>"
+                                        <input type="<?php echo $esc($field['type']); ?>"
+                                               id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                               value="<?php echo $esc($val); ?>"
                                                class="form-control">
                                     <?php endif; ?>
 
                                     <?php if (!empty($field['description'])): ?>
-                                        <small class="form-text"><?php echo $field['description']; ?></small>
+                                        <small class="form-text"><?php echo $esc($field['description']); ?></small>
                                     <?php endif; ?>
                                 </div>
                                 <?php endforeach; ?>
@@ -2607,7 +2609,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                     <?php else: ?>
                     <!-- Standard-Rendering (Typografie, Layout, Erweitert) -->
                     <div class="admin-card">
-                        <h3><?php echo htmlspecialchars($currentSection['title']); ?></h3>
+                        <h3><?php echo $esc($currentSection['title']); ?></h3>
 
                         <?php foreach ($currentSection['sections'] as $fieldKey => $field):
                             $val       = $customizer->get($activeTab, $fieldKey, $field['default']);
@@ -2615,58 +2617,58 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                             $inputName = "{$activeTab}_{$fieldKey}";
                         ?>
                         <div class="form-group">
-                            <label for="<?php echo $inputId; ?>" class="form-label">
-                                <?php echo htmlspecialchars($field['label']); ?>
+                            <label for="<?php echo $esc($inputId); ?>" class="form-label">
+                                <?php echo $esc($field['label']); ?>
                             </label>
 
                             <?php if ($field['type'] === 'textarea'): ?>
-                                <textarea id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                <textarea id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                           class="form-control" rows="4"
-                                ><?php echo htmlspecialchars((string)$val); ?></textarea>
+                                ><?php echo $esc($val); ?></textarea>
 
                             <?php elseif ($field['type'] === 'checkbox'): ?>
                                 <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem;">
-                                    <input type="checkbox" id="<?php echo $inputId; ?>"
-                                           name="<?php echo $inputName; ?>" value="1"
+                                    <input type="checkbox" id="<?php echo $esc($inputId); ?>"
+                                           name="<?php echo $esc($inputName); ?>" value="1"
                                            <?php echo $val ? 'checked' : ''; ?>>
-                                    <label for="<?php echo $inputId; ?>" style="cursor:pointer;">Aktivieren</label>
+                                    <label for="<?php echo $esc($inputId); ?>" style="cursor:pointer;">Aktivieren</label>
                                 </div>
 
                             <?php elseif ($field['type'] === 'select'): ?>
-                                <select id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
+                                <select id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                         class="form-control">
                                     <?php foreach ($field['options'] as $optVal => $optLabel): ?>
-                                    <option value="<?php echo htmlspecialchars((string)$optVal); ?>"
+                                    <option value="<?php echo $esc($optVal); ?>"
                                         <?php echo (string)$val === (string)$optVal ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($optLabel); ?>
+                                        <?php echo $esc($optLabel); ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
 
                             <?php elseif ($field['type'] === 'color'): ?>
                                 <div style="display:flex;align-items:center;gap:10px;">
-                                    <input type="color" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                           value="<?php echo htmlspecialchars((string)$val); ?>"
+                                    <input type="color" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                           value="<?php echo $esc($val); ?>"
                                            style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
-                                    <input type="text" value="<?php echo htmlspecialchars((string)$val); ?>"
+                                    <input type="text" value="<?php echo $esc($val); ?>"
                                            class="form-control" style="width:120px;"
-                                           onchange="document.getElementById('<?php echo $inputId; ?>').value = this.value; updateLivePreview();">
+                                           onchange="document.getElementById('<?php echo $esc($inputId); ?>').value = this.value; updateLivePreview();">
                                 </div>
 
                             <?php elseif ($field['type'] === 'number'): ?>
-                                <input type="number" id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                       value="<?php echo htmlspecialchars((string)$val); ?>"
+                                <input type="number" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                       value="<?php echo $esc($val); ?>"
                                        class="form-control" style="width:120px;">
 
                             <?php else: ?>
-                                <input type="<?php echo htmlspecialchars($field['type']); ?>"
-                                       id="<?php echo $inputId; ?>" name="<?php echo $inputName; ?>"
-                                       value="<?php echo htmlspecialchars((string)$val); ?>"
+                                <input type="<?php echo $esc($field['type']); ?>"
+                                       id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
+                                       value="<?php echo $esc($val); ?>"
                                        class="form-control">
                             <?php endif; ?>
 
                             <?php if (!empty($field['description'])): ?>
-                                <small class="form-text"><?php echo $field['description']; ?></small>
+                                <small class="form-text"><?php echo $esc($field['description']); ?></small>
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>
@@ -2692,10 +2694,10 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 
     <!-- Reset-Formular (außerhalb des Haupt-Forms) -->
     <?php if (isset($config[$activeTab])): ?>
-    <form id="reset-form" method="POST" action="?tab=<?php echo htmlspecialchars($activeTab); ?>" style="display:none;">
+    <form id="reset-form" method="POST" action="?tab=<?php echo $esc($activeTab); ?>" style="display:none;">
         <input type="hidden" name="action" value="reset_theme_tab">
-        <input type="hidden" name="active_section" value="<?php echo htmlspecialchars($activeTab); ?>">
-        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+        <input type="hidden" name="active_section" value="<?php echo $esc($activeTab); ?>">
+        <input type="hidden" name="csrf_token" value="<?php echo $esc($csrfToken); ?>">
     </form>
     <?php endif; ?>
 
@@ -2719,7 +2721,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
         </div>
     </div>
 
-    <script src="<?php echo htmlspecialchars($coreAdminJsUrl, ENT_QUOTES); ?>"></script>
+    <script src="<?php echo $esc($coreAdminJsUrl); ?>"></script>
     <script>
     // ── Farb-Picker ↔ Text-Input + Live-Vorschau ─────────────────────────────
     (function () {

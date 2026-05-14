@@ -1,7 +1,7 @@
 /*
 Theme Name: CMS Phinit
 Description: IT-Profi Theme inspiriert von phinit.de – Deep Navy, Gold-Akzente, professionelles Editorial-Layout für technische Blogs & Wissensseiten.
-Version: 1.5.0
+Version: 1.5.26
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phinit.de
 Tags: it, tech, editorial, blog, dark-mode, responsive, professional
@@ -50,6 +50,7 @@ Tags: it, tech, editorial, blog, dark-mode, responsive, professional
     --container-max:  1200px;
     --sidebar-width:  300px;
     --header-h:       56px;
+    --main-menu-h:    51px;
     --quicklinks-h:   38px;
     --spacing-header-content: 25px;
     --spacing-content-footer: 25px;
@@ -139,13 +140,13 @@ img { max-width: 100%; display: block; object-fit: cover; }
 }
 
 .page-wrap {
-    padding-top: calc(var(--header-h) + var(--quicklinks-h) + var(--member-bar-h, 0px) + var(--spacing-header-content));
+    padding-top: calc(var(--header-h) + var(--main-menu-h) + var(--quicklinks-h) + var(--member-bar-h, 0px) + var(--spacing-header-content));
     padding-bottom: var(--spacing-content-footer);
     min-height: calc(100vh - 280px);
 }
 
 body.home .page-wrap {
-    padding-top: calc(var(--header-h) + var(--quicklinks-h) + var(--member-bar-h, 0px) + var(--home-spacing-header-content, var(--spacing-header-content)));
+    padding-top: calc(var(--header-h) + var(--main-menu-h) + var(--quicklinks-h) + var(--member-bar-h, 0px) + var(--home-spacing-header-content, var(--spacing-header-content)));
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -269,7 +270,7 @@ body.home .page-wrap {
 }
 
 @media (max-width: 768px) {
-    :root { --header-h: 52px; --quicklinks-h: 0px; }
+    :root { --header-h: 52px; --main-menu-h: 0px; --quicklinks-h: 0px; }
     .page-wrap { padding-top: var(--header-h); }
     body.home .page-wrap { padding-top: calc(var(--header-h) + var(--home-spacing-header-content, 10px)); }
 }

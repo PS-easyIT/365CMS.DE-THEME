@@ -15,6 +15,37 @@ if (theme_is_logged_in()) {
 
 $error   = null;
 $success = null;
+$safe    = static fn(mixed $v): string => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$normalizeRedirectPath = static function (mixed $value): string {
+    $candidate = trim((string)$value);
+    if ($candidate === '' || preg_match('/[\x00-\x1F\x7F]/', $candidate) === 1 || str_starts_with($candidate, '//')) {
+        return '';
+    }
+
+    $siteHost = (string)(parse_url((string)SITE_URL, PHP_URL_HOST) ?? '');
+    $parts = parse_url($candidate);
+    if (is_array($parts) && isset($parts['scheme'])) {
+        $scheme = strtolower((string)$parts['scheme']);
+        $host = (string)($parts['host'] ?? '');
+        if (!in_array($scheme, ['http', 'https'], true) || strcasecmp($host, $siteHost) !== 0) {
+            return '';
+        }
+        $candidate = (string)($parts['path'] ?? '/');
+        if (!empty($parts['query'])) {
+            $candidate .= '?' . (string)$parts['query'];
+        }
+    }
+
+    if (!str_starts_with($candidate, '/')) {
+        $candidate = '/' . ltrim($candidate, '/');
+    }
+
+    if (preg_match('#^/[A-Za-z0-9\-._~/%]*(?:\?[A-Za-z0-9\-._~%!$&()*+,;=:@/?%]*)?$#', $candidate) !== 1) {
+        return '';
+    }
+
+    return str_contains($candidate, '/../') || str_contains($candidate, '/./') ? '' : $candidate;
+};
 
 // POST-Handler
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mc_login'])) {
@@ -30,8 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mc_login'])) {
             } else {
                 $result = \CMS\Auth::instance()->login($email, $password);
                 if ($result === true) {
-                    $redirect = filter_var($_POST['redirect'] ?? '', FILTER_VALIDATE_URL) ?: SITE_URL . '/member';
-                    header('Location: ' . $redirect);
+                    header('Location: ' . SITE_URL . '/member');
                     exit;
                 } else {
                     $error = is_string($result) ? $result : 'Ungültige E-Mail-Adresse oder falsches Passwort.';
@@ -50,8 +80,7 @@ try {
 }
 
 $siteUrl = SITE_URL;
-$safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$redirect = $safe(filter_var($_GET['redirect'] ?? '', FILTER_SANITIZE_URL));
+$postedEmail = filter_var((string)($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
 
 get_header();
 ?>
@@ -67,25 +96,22 @@ get_header();
             </div>
 
             <?php if (!empty($error)) : ?>
-            <div class="mc-alert mc-alert-error" role="alert"><?php echo $safe($error); ?></div>
+            <div class="mc-alert mc-alert-error" role="alert"><?php echo htmlspecialchars((string)$error, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
             <?php if (!empty($success)) : ?>
-            <div class="mc-alert mc-alert-success" role="status"><?php echo $safe($success); ?></div>
+            <div class="mc-alert mc-alert-success" role="status"><?php echo htmlspecialchars((string)$success, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
 
             <form method="POST" novalidate>
                 <input type="hidden" name="mc_login" value="1">
-                <input type="hidden" name="csrf_token" value="<?php echo $safe($csrfToken); ?>">
-                <?php if (!empty($redirect)) : ?>
-                <input type="hidden" name="redirect" value="<?php echo $redirect; ?>">
-                <?php endif; ?>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars((string)$csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
 
                 <div class="mc-form-group">
                     <label for="login-email" class="mc-label">
                         E-Mail-Adresse <span aria-hidden="true" style="color:#ef4444;">*</span>
                     </label>
                     <input id="login-email" type="email" name="email" class="mc-input"
-                           value="<?php echo $safe($_POST['email'] ?? ''); ?>"
+                              value="<?php echo htmlspecialchars((string)$postedEmail, ENT_QUOTES, 'UTF-8'); ?>"
                            autocomplete="email" required
                            aria-required="true"
                            placeholder="ihre@email.de">
@@ -109,8 +135,8 @@ get_header();
             <hr class="mc-form-divider">
 
             <div class="mc-form-links">
-                <a href="<?php echo $safe($siteUrl); ?>/forgot-password">Passwort vergessen?</a>
-                <a href="<?php echo $safe($siteUrl); ?>/register">Jetzt registrieren</a>
+                <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/forgot-password">Passwort vergessen?</a>
+                <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/register">Jetzt registrieren</a>
             </div>
 
             <p class="mc-dsgvo-note">

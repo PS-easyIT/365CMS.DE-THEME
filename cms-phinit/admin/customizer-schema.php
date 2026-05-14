@@ -114,7 +114,7 @@ return [
                 'member_bar_height'         => ['label' => 'Member-Bar Höhe (px)',    'type' => 'number',   'default' => '36'],
                 'member_bar_font_size'      => ['label' => 'Member-Bar Schriftgröße (px)', 'type' => 'number', 'default' => '12.25', 'min' => 10, 'max' => 18, 'step' => 0.25],
                 'member_bar_item_spacing'   => ['label' => 'Member-Bar Eintragsabstand (px)', 'type' => 'number', 'default' => '2', 'min' => 0, 'max' => 24, 'step' => 1],
-                'main_nav_height'           => ['label' => 'Hauptnav Höhe (px)',      'type' => 'number',   'default' => '48'],
+                'main_nav_height'           => ['label' => 'Hauptnav Höhe (px)',      'type' => 'number',   'default' => '40'],
                 'main_nav_font_size'        => ['label' => 'Hauptnav Schriftgröße (px)', 'type' => 'number', 'default' => '14', 'min' => 11, 'max' => 24, 'step' => 0.25],
                 'main_nav_item_spacing'     => ['label' => 'Hauptnav Linkabstand X (px)', 'type' => 'number', 'default' => '16', 'min' => 6, 'max' => 40, 'step' => 1],
                 'dropdown_nav_font_size'    => ['label' => 'Dropdown Schriftgröße (px)', 'type' => 'number', 'default' => '13.25', 'min' => 11, 'max' => 22, 'step' => 0.25],
