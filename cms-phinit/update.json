@@ -16,6 +16,7 @@
         "member/dashboard.php: Dashboard-, Hero-, Plugin- und Quicklink-URLs werden als Rohwerte gehalten und erst direkt im href-Attribut escaped",
         "partials/page-image-archive.php: vorbereitete Seitenbeschreibung läuft beim Rendern zusätzlich über phinit_render_sanitized_content() statt als Raw-HTML ausgegeben zu werden",
         "partials/home-article-list.php: manuelle Boolean-Suchschleife für Custom-Featured-Images durch PHP 8.4 array_any() ersetzt",
+        "admin/customizer.php: Theme-Editor lädt benötigte Request-Helper bei Bedarf selbst nach, damit der Admin-Customizer ohne vorher geladene Theme-functions.php startet",
         "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.31 aktualisiert"
       ]
     },

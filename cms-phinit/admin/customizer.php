@@ -28,6 +28,10 @@ if (!defined('CMS_PHINIT_THEME_URL')) {
     define('CMS_PHINIT_THEME_URL', rtrim(ThemeManager::instance()->getThemeUrl(), '/') . '/');
 }
 
+if (!function_exists('phinit_input_string') || !function_exists('phinit_request_method')) {
+    require_once CMS_PHINIT_THEME_DIR . 'includes/theme-template-helpers.php';
+}
+
 if (!Auth::instance()->isAdmin()) {
     header('Location: ' . SITE_URL);
     exit;

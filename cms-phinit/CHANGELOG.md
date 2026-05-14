@@ -15,7 +15,9 @@
 
 ## Unreleased
 
-Noch keine unveröffentlichten Änderungen.
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Theme Editor / Admin Customizer | `admin/customizer.php` lädt die zentralen Request-Helper bei Bedarf selbst nach, damit der eingebettete Theme-Editor auch dann startet, wenn `functions.php` im Admin-Kontext noch nicht vollständig initialisiert wurde. |
 
 ---
 
