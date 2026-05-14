@@ -48,7 +48,7 @@ $registerUrl = function_exists('theme_register_url')
     ? theme_register_url($currentLocale)
     : (rtrim((string) $siteUrl, '/') . '/cms-register');
 $loginRedirect = trim((string) ($login_redirect ?? ''));
-$loginValue = trim((string)($_POST['username'] ?? $_POST['email'] ?? ''));
+$loginValue = phinit_input_string($_POST, 'username', phinit_input_string($_POST, 'email', '', 254), 254);
 ?>
 
 <div class="auth-wrapper">

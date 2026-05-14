@@ -17,8 +17,9 @@ $siteUrl = SITE_URL;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 // Suche + Pagination
-$_bQuery  = trim($_GET['q'] ?? '');
-$_blogPage = max(1, (int)($_GET['page'] ?? $_GET['p'] ?? (isset($currentPage) ? (int)$currentPage : 1)));
+$_bQuery  = phinit_input_string($_GET, 'q', '', 200);
+$_blogDefaultPage = isset($currentPage) ? (int) $currentPage : 1;
+$_blogPage = phinit_input_int($_GET, 'page', phinit_input_int($_GET, 'p', $_blogDefaultPage, 1), 1);
 $_blogPer  = isset($perPage) && (int)$perPage > 0 ? (int)$perPage : 10;
 
 // Eigene DB-Abfrage mit optionaler Volltextsuche (Prepared Statements)

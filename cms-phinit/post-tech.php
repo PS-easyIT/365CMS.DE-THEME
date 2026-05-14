@@ -69,7 +69,9 @@ $socialHeader      = (string) $czGet('posts', 'sidebar_social_header', 'Folge mi
 
 if (isset($post) && !empty($post)) {
     $post = is_object($post) ? (array) $post : (array) $post;
+    $postProvidedByRouter = true;
 } else {
+    $postProvidedByRouter = false;
     $rawPath = (string) preg_replace('#^/blog/#i', '', parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '');
     $slug = trim($rawPath, '/');
 
@@ -100,13 +102,15 @@ if (!$post) {
     exit;
 }
 
-if (!empty($post['content'])) {
+if (!$postProvidedByRouter && !empty($post['content'])) {
     $post['content'] = phinit_prepare_renderable_content((string) $post['content'], 'post', (int) ($post['id'] ?? 0));
 }
 
-try {
-    $db->execute("UPDATE {$prefix}posts SET views = views + 1 WHERE id = ?", [(int) ($post['id'] ?? 0)]);
-} catch (\Throwable) {
+if (!$postProvidedByRouter) {
+    try {
+        $db->execute("UPDATE {$prefix}posts SET views = views + 1 WHERE id = ?", [(int) ($post['id'] ?? 0)]);
+    } catch (\Throwable) {
+    }
 }
 
 try {
@@ -152,7 +156,7 @@ $diffLabels = [
 $diffInfo = $diffLabels[$techDiff] ?? null;
 
 $tocItems = [];
-$content = (string) ($post['content'] ?? '');
+$content = phinit_sanitize_renderable_content((string) ($post['content'] ?? ''), 'default');
 $headingData = phinit_with_heading_ids($content, [2, 3, 4, 5, 6]);
 $content = $headingData['html'];
 $post['content'] = $content;
@@ -233,7 +237,7 @@ try {
             <?php include __DIR__ . '/partials/post-tech-card.php'; ?>
 
             <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
-                <?php echo $content; ?>
+                <?php phinit_render_sanitized_content($content, 'default'); ?>
 
                 <?php if ($showUpdatedBadge): ?>
                 <div class="post-footer-meta" aria-label="Beitragsmetadaten">

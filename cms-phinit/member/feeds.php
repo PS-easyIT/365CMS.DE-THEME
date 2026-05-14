@@ -140,10 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasFeedPlugin && $feedDb !== null)
             ? (string) $_POST['weekly_time']
             : '09';
         $isActive = !empty($_POST['subscription_is_active']);
-        $selectedChannelIds = array_values(array_unique(array_filter(
-            array_map('intval', $_POST['channel_ids'] ?? []),
-            static fn (int $channelId): bool => $channelId > 0
-        )));
+        $selectedChannelIds = phinit_input_int_list($_POST, 'channel_ids', 1);
 
         if ($email === false) {
             $error = 'Bitte hinterlege eine gültige E-Mail-Adresse für dein Feed-Abo.';

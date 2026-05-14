@@ -239,7 +239,7 @@ if ($_hasFavorites && $_hasPosts) {
 }
 
 $recentFavorites = array_merge(
-    array_map(static function (array $favorite) use ($currentLocale): array {
+    array_map(static function (array $favorite) use ($buildMemberPostUrl): array {
         $postData = [
             'slug' => (string) ($favorite['post_slug'] ?? ''),
             'slug_en' => (string) ($favorite['post_slug_en'] ?? ''),

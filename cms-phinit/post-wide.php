@@ -55,7 +55,9 @@ $showPostTags     = $czBool('posts', 'show_post_tags', true);
 // ── Daten laden ────────────────────────────────────────────────────────
 if (isset($post) && !empty($post)) {
     $post = is_object($post) ? (array)$post : (array)$post;
+    $postProvidedByRouter = true;
 } else {
+    $postProvidedByRouter = false;
     $rawPath = (string)preg_replace('#^/blog/#i', '', parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '');
     $slug    = trim($rawPath, '/');
     if (empty($slug)) { http_response_code(404); get_theme_part('404'); exit; }
@@ -72,7 +74,12 @@ if (isset($post) && !empty($post)) {
     } catch (\Throwable $e) { $post = null; }
 }
 if (!$post) { http_response_code(404); get_theme_part('404'); exit; }
-try { $db->execute("UPDATE {$pfx}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]); } catch (\Throwable) {}
+if (!$postProvidedByRouter && !empty($post['content'])) {
+    $post['content'] = phinit_prepare_renderable_content((string) $post['content'], 'post', (int) ($post['id'] ?? 0));
+}
+if (!$postProvidedByRouter) {
+    try { $db->execute("UPDATE {$pfx}posts SET views = views + 1 WHERE id = ?", [(int)($post['id'] ?? 0)]); } catch (\Throwable) {}
+}
 try {
     $prevOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) < ? AND id != ? ORDER BY COALESCE(published_at, created_at) DESC, id DESC LIMIT 1", [$post['published_at'] ?? ($post['created_at'] ?? '9999-12-31'), (int)($post['id'] ?? 0)]);
     $nextOb = $db->get_row("SELECT id, title, slug FROM {$pfx}posts WHERE " . phinit_post_publication_where() . " AND COALESCE(published_at, created_at) > ? AND id != ? ORDER BY COALESCE(published_at, created_at) ASC, id ASC LIMIT 1",  [$post['published_at'] ?? ($post['created_at'] ?? '0001-01-01'), (int)($post['id'] ?? 0)]);
@@ -90,7 +97,7 @@ $updatedAt = (string) ($post['updated_at'] ?? '');
 $showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
 
 // ── Auto-ID-Injection + TOC ────────────────────────────────────────────
-$content = (string) ($post['content'] ?? '');
+$content = phinit_sanitize_renderable_content((string) ($post['content'] ?? ''), 'default');
 $headingData = phinit_with_heading_ids($content, [2, 3, 4, 5, 6]);
 $tocItems = [];
 if ($showToc) {
@@ -137,7 +144,7 @@ if ($showPostTags) {
 
     <!-- ── Artikel-Body ──────────────────────────────────────────────── -->
     <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
-        <?php echo $content; ?>
+        <?php phinit_render_sanitized_content($content, 'default'); ?>
 
         <?php if ($showUpdatedBadge): ?>
         <div class="post-footer-meta" aria-label="Beitragsmetadaten">

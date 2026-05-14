@@ -40,7 +40,10 @@ $buildForumUrl = static function (int $threadId) use ($siteUrl): string {
 $hasForumPlugin = \CMS\PluginManager::instance()->isPluginActive('cms-forum');
 
 // Tab: all (neueste) oder mine (eigene)
-$tab = $_GET['tab'] ?? 'all';
+$tab = phinit_input_string($_GET, 'tab', 'all', 20);
+if (!in_array($tab, ['all', 'mine'], true)) {
+    $tab = 'all';
+}
 
 $threads     = [];
 $myThreads   = [];

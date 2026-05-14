@@ -19,7 +19,7 @@ $posts = array_map(
     $posts
 );
 $posts = function_exists('phinit_prepare_homepage_posts') ? phinit_prepare_homepage_posts($posts, $currentLocale) : $posts;
-$blogQuery = isset($query) ? trim((string) $query) : trim((string) ($_GET['q'] ?? ''));
+$blogQuery = isset($query) ? trim((string) $query) : phinit_input_string($_GET, 'q', '', 200);
 $tagName = trim((string) ($tag['name'] ?? ($isOverview ? 'Schlagwörter' : 'Tag')));
 $tagSlug = trim((string) ($tag['slug'] ?? ''));
 $tagDescription = trim((string) ($tag['description'] ?? ''));

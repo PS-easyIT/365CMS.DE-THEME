@@ -106,7 +106,7 @@ foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
 }
 
 // Aktiver Tab
-$activeTab = $_GET['tab'] ?? 'colors';
+$activeTab = phinit_input_string($_GET, 'tab', 'colors', 80);
 if (!isset($config[$activeTab])) {
     $activeTab = 'colors';
 }

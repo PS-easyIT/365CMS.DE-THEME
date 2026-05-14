@@ -627,7 +627,7 @@ trait CMS_Phinit_Theme_Head_Trait
                     $title = 'Dashboard';
                 }
             } elseif ($uri === '/search') {
-                $q = trim($_GET['q'] ?? '');
+                $q = phinit_input_string($_GET, 'q', '', 200);
                 $title = $q ? 'Suche: ' . phinit_display_text($q) : 'Suche';
             } else {
                 $slug = ltrim($uri, '/');
@@ -723,7 +723,7 @@ trait CMS_Phinit_Theme_Head_Trait
             }
 
             if ($uri === '/search') {
-                $q = trim($_GET['q'] ?? '');
+                $q = phinit_input_string($_GET, 'q', '', 200);
                 if ($q) {
                     return 'Suche: ' . phinit_display_text($q) . ' – ' . $siteTitle;
                 }

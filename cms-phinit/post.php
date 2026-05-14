@@ -134,8 +134,8 @@ if (!$postProvidedByRouter) {
     } catch (\Throwable) {}
 }
 
-// ── Lesezeit berechnen ──────────────────────────────────────────────────────
-$content     = $post['content'] ?? '';
+// ── Inhalt final sanitizen, Lesezeit berechnen ─────────────────────────────
+$content = phinit_sanitize_renderable_content((string) ($post['content'] ?? ''), 'default');
 $readingTime = function_exists('phinit_reading_time')
     ? phinit_reading_time($content, $readingTimeWpm)
     : max(1, (int)ceil(str_word_count(strip_tags($content)) / $readingTimeWpm));
@@ -285,7 +285,7 @@ if ($sidebarPosition === 'left') {
 
             <!-- Artikel-Body -->
             <div class="post-body" itemprop="articleBody" data-photoswipe>
-                <?php echo $content; ?>
+                <?php phinit_render_sanitized_content($content, 'default'); ?>
 
                 <?php if ($showUpdatedBadge): ?>
                 <div class="post-footer-meta" aria-label="Beitragsmetadaten">

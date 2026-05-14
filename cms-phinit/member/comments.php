@@ -51,7 +51,7 @@ $buildCommentPostUrl = static function (array $comment) use ($currentLocale, $si
 };
 
 // Filter
-$filter = (string) ($_GET['filter'] ?? 'all'); // all, approved, pending
+$filter = phinit_input_string($_GET, 'filter', 'all', 20); // all, approved, pending
 $allowedFilters = ['all', 'approved', 'pending'];
 if (!in_array($filter, $allowedFilters, true)) {
     $filter = 'all';
@@ -64,7 +64,7 @@ if ($filter === 'approved') {
 }
 
 // Paginierung
-$page    = max(1, (int)($_GET['page'] ?? 1));
+$page    = phinit_input_int($_GET, 'page', 1, 1);
 $perPage = 15;
 $offset  = ($page - 1) * $perPage;
 $commentsBasePath = (string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ($siteUrl . '/member/comments'));

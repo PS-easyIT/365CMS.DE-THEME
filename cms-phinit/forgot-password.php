@@ -29,8 +29,8 @@ $homeUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/', $currentLocale, '')
     : (rtrim((string) $siteUrl, '/') . '/');
 
-$step = (($_GET['step'] ?? 'request') === 'reset') ? 'reset' : 'request';
-$resetToken = trim((string) ($_GET['token'] ?? ''));
+$step = phinit_input_string($_GET, 'step', 'request', 20) === 'reset' ? 'reset' : 'request';
+$resetToken = phinit_input_string($_GET, 'token', '', 128);
 $resetTokenEscaped = htmlspecialchars($resetToken, ENT_QUOTES);
 $fpError = '';
 $fpSuccess = '';
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fp_submit'])) {
     if (!$csrfOk) {
         $fpError = $messages['csrf_error'];
     } else {
-        $fpEmail = filter_var(trim((string) ($_POST['fp_email'] ?? '')), FILTER_VALIDATE_EMAIL) ?: '';
+        $fpEmail = filter_var(phinit_input_string($_POST, 'fp_email', '', 254), FILTER_VALIDATE_EMAIL) ?: '';
 
         if ($fpEmail === '') {
             $fpError = $messages['email_error'];
@@ -185,9 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_submit'])) {
     if (!$csrfOk) {
         $fpError = $messages['csrf_error'];
     } else {
-        $token = trim((string) ($_POST['reset_token'] ?? ''));
-        $password1 = (string) ($_POST['new_password'] ?? '');
-        $password2 = (string) ($_POST['new_password2'] ?? '');
+        $token = phinit_input_string($_POST, 'reset_token', '', 128);
+        $password1 = phinit_input_string($_POST, 'new_password', '', 4096);
+        $password2 = phinit_input_string($_POST, 'new_password2', '', 4096);
 
         if (strlen($password1) < 12) {
             $fpError = $messages['password_length_error'];
