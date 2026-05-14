@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fp_submit'])) {
     $csrfOk = true;
 
     try {
-        $csrfOk = \CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'forgot_password');
+        $csrfOk = \CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'forgot_password');
     } catch (\Throwable) {
         $csrfOk = false;
     }
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_submit'])) {
     $csrfOk = true;
 
     try {
-        $csrfOk = \CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'forgot_password');
+        $csrfOk = \CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'forgot_password');
     } catch (\Throwable) {
         $csrfOk = false;
     }

@@ -518,7 +518,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             : [];
             $featuredPosts = phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $featuredRows), $contentLocale);
 
-        $currentPage = max(1, (int) ($_GET['page'] ?? 1));
+        $currentPage = phinit_input_int($_GET, 'page', 1, 1);
             $totalPosts = (int) ($db->get_var("SELECT COUNT(*) FROM {$prefix}posts p WHERE " . phinit_post_publication_where('p') . "{$localeCondition}") ?: 0);
         $_gridAvail = max(0, $totalPosts - $_listCount);
         $totalPages = max(1, (int) ceil($_gridAvail / $_tileCount));

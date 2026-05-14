@@ -111,7 +111,7 @@ $content = phinit_enhance_content_images($headingData['html']);
 
 // ── Kommentarstatus & CSRF für /comments/post ─────────────────────────
 $commentError = $commentSuccess = '';
-if ((int) ($_GET['commented'] ?? 0) === 1) {
+if (phinit_input_int($_GET, 'commented', 0, 0, 1) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 try { $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0)); } catch (\Throwable $e) { $csrfToken = ''; }

@@ -215,7 +215,7 @@ if ($showComments) {
     } catch (\Throwable) {}
 }
 
-if ($showComments && (int)($_GET['commented'] ?? 0) === 1) {
+if ($showComments && phinit_input_int($_GET, 'commented', 0, 0, 1) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 

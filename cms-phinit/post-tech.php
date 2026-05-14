@@ -174,7 +174,7 @@ $content = phinit_enhance_content_images($content);
 $commentError = '';
 $commentSuccess = '';
 
-if ((int) ($_GET['commented'] ?? 0) === 1) {
+if (phinit_input_int($_GET, 'commented', 0, 0, 1) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
