@@ -8,6 +8,128 @@ if (!defined('ABSPATH')) {
 use CMS\Services\ThemeCustomizer;
 
 /**
+ * Immutable runtime view of the Customizer configuration.
+ *
+ * PHP 8.4 asymmetric visibility keeps templates readable while preventing
+ * accidental runtime replacement of the normalized config properties.
+ */
+final class CMS_Phinit_Customizer_Config_Snapshot
+{
+    /**
+     * @var array<string, array<string, mixed>>
+     */
+    public private(set) array $categories {
+        set => self::normalizeCategories($value);
+    }
+
+    /**
+     * @var array<string, mixed>
+     */
+    public private(set) array $tabGroups {
+        set => self::normalizeTabGroups($value);
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $categories
+     * @param array<string, mixed> $tabGroups
+     */
+    public function __construct(array $categories, array $tabGroups = [])
+    {
+        $this->categories = $categories;
+        $this->tabGroups = $tabGroups;
+    }
+
+    public function hasTab(string $tab): bool
+    {
+        return isset($this->categories[$tab]);
+    }
+
+    public function storageTab(string $tab, ?string $fallback = null): string
+    {
+        $category = $this->categories[$tab] ?? [];
+        $storageTab = $category['storageTab'] ?? null;
+
+        return is_string($storageTab) && $storageTab !== '' ? $storageTab : ($fallback ?? $tab);
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $categories
+     * @return array<string, array<string, mixed>>
+     */
+    private static function normalizeCategories(array $categories): array
+    {
+        $normalized = [];
+
+        foreach ($categories as $categoryKey => $categoryConfig) {
+            if (!is_array($categoryConfig)) {
+                continue;
+            }
+
+            $key = trim((string) $categoryKey);
+            if ($key === '') {
+                continue;
+            }
+
+            $sections = $categoryConfig['sections'] ?? [];
+            if (!is_array($sections)) {
+                $sections = [];
+            }
+
+            $normalizedSections = [];
+            foreach ($sections as $fieldKey => $fieldConfig) {
+                if (!is_array($fieldConfig)) {
+                    continue;
+                }
+
+                $normalizedSections[(string) $fieldKey] = $fieldConfig;
+            }
+
+            if ($normalizedSections === []) {
+                continue;
+            }
+
+            $category = $categoryConfig;
+            $title = trim((string) ($category['title'] ?? $key));
+            $category['title'] = $title !== '' ? $title : $key;
+            $category['sections'] = $normalizedSections;
+
+            if (isset($category['storageTab'])) {
+                $storageTab = trim((string) $category['storageTab']);
+                if ($storageTab === '') {
+                    unset($category['storageTab']);
+                } else {
+                    $category['storageTab'] = $storageTab;
+                }
+            }
+
+            $normalized[$key] = $category;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<string, mixed> $tabGroups
+     * @return array<string, mixed>
+     */
+    private static function normalizeTabGroups(array $tabGroups): array
+    {
+        $normalized = [];
+
+        foreach ($tabGroups as $tab => $groups) {
+            $tab = trim((string) $tab);
+            if ($tab === '' || !is_array($groups)) {
+                continue;
+            }
+
+            $normalized[$tab] = $groups;
+        }
+
+        return $normalized;
+    }
+}
+
+/**
  * Baut die Basis-Config des Theme-Customizers direkt aus theme.json auf.
  *
  * @return array<string, array{title: string, sections: array<string, array<string, mixed>>}>
@@ -46,7 +168,7 @@ function phinit_build_customizer_base_config(ThemeCustomizer $customizer): array
         ];
     }
 
-    return $config;
+    return (new CMS_Phinit_Customizer_Config_Snapshot($config))->categories;
 }
 
 /**
@@ -97,7 +219,7 @@ function phinit_merge_customizer_config(array $primaryConfig, array $legacyConfi
         $merged[$categoryKey]['sections'] = $mergedSections;
     }
 
-    return $merged;
+    return (new CMS_Phinit_Customizer_Config_Snapshot($merged))->categories;
 }
 
 /**

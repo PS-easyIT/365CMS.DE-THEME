@@ -642,13 +642,7 @@ trait CMS_Phinit_Theme_Assets_Trait
                 $candidates[] = self::LOCAL_FONT_SLUG_ALIASES[$slug];
             }
 
-            $available = false;
-            foreach ($candidates as $candidate) {
-                if (isset($fontMap[$candidate])) {
-                    $available = true;
-                    break;
-                }
-            }
+            $available = array_find($candidates, static fn(string $candidate): bool => isset($fontMap[$candidate])) !== null;
 
             if (!$available) {
                 return false;

@@ -105,9 +105,13 @@ foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
     $tabGroups[$viewKey] = $viewConfig['groups'] ?? [];
 }
 
+$customizerConfig = new CMS_Phinit_Customizer_Config_Snapshot($config, is_array($tabGroups) ? $tabGroups : []);
+$config = $customizerConfig->categories;
+$tabGroups = $customizerConfig->tabGroups;
+
 // Aktiver Tab
 $activeTab = phinit_input_string($_GET, 'tab', 'colors', 80);
-if (!isset($config[$activeTab])) {
+if (!$customizerConfig->hasTab($activeTab)) {
     $activeTab = 'colors';
 }
 

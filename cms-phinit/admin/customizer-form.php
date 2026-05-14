@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <form method="POST" id="customizer-form"
-      action="<?php echo htmlspecialchars(SITE_URL . '/admin/theme-editor?tab=' . $activeTab); ?>">
+    action="<?php echo htmlspecialchars(SITE_URL . '/admin/theme-editor?tab=' . rawurlencode((string) $activeTab), ENT_QUOTES, 'UTF-8'); ?>">
     <?php require CMS_PHINIT_THEME_DIR . 'admin/customizer-form-hidden-fields.php'; ?>
 
     <div class="row g-3">

@@ -651,11 +651,9 @@ trait CMS_Phinit_Theme_Head_Trait
                     '/member/feeds' => 'Feed-Abos',
                     '/member/forum' => 'Forum',
                 ];
-                foreach ($memberLabels as $route => $label) {
-                    if (str_starts_with($uri, $route)) {
-                        $title = $label;
-                        break;
-                    }
+                $memberLabel = array_find($memberLabels, static fn(string $_label, string $route): bool => str_starts_with($uri, $route));
+                if (is_string($memberLabel)) {
+                    $title = $memberLabel;
                 }
                 if (!$title && $uri !== '/member') {
                     $title = 'Dashboard';
@@ -744,10 +742,9 @@ trait CMS_Phinit_Theme_Head_Trait
                     '/member/security' => 'Sicherheit',
                     '/member/notifications' => 'Benachrichtigungen',
                 ];
-                foreach ($memberTitles as $route => $label) {
-                    if (str_starts_with($uri, $route)) {
-                        return $label . ' – ' . $siteTitle;
-                    }
+                $memberTitle = array_find($memberTitles, static fn(string $_label, string $route): bool => str_starts_with($uri, $route));
+                if (is_string($memberTitle)) {
+                    return $memberTitle . ' – ' . $siteTitle;
                 }
                 return 'Member-Bereich – ' . $siteTitle;
             }
