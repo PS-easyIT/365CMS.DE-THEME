@@ -19,6 +19,20 @@ Noch keine unveröffentlichten Änderungen.
 
 ---
 
+## v1.5.31 — 14. Mai 2026
+
+### Multi-Level-Audit-Fortsetzung: Sink-Härtung und Array-Helper
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🛡️ security | Header / Ausgabe-Sinks | `header.php` escaped Member-Greeting, Body-Class und Logo-Textfragmente jetzt konsequent mit `ENT_QUOTES`/`UTF-8` direkt am Ausgabesink. |
+| 🛡️ security | Member Dashboard | `member/dashboard.php` hält Dashboard-, Hero-, Plugin- und Quicklink-URLs wieder als Rohwerte und escaped sie erst direkt im jeweiligen `href`-Attribut. |
+| 🛡️ security | Bildarchiv | `partials/page-image-archive.php` rendert vorbereitete Seitenbeschreibung zusätzlich über `phinit_render_sanitized_content()`, statt den vorbereiteten HTML-String direkt auszugeben. |
+| 🟡 refactor | PHP 8.4 / array_any | `partials/home-article-list.php` ersetzt die manuelle Boolean-Suchschleife für Custom-Featured-Images durch `array_any()`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.31` synchronisiert. |
+
+---
+
 ## v1.5.30 — 14. Mai 2026
 
 ### Multi-Level-Audit mit PHP-8.4-Config-Härtung

@@ -270,14 +270,15 @@ $recentFavorites = array_slice($recentFavorites, 0, 5);
 $hour     = (int)date('H');
 $greeting = $hour < 12 ? 'Guten Morgen' : ($hour < 18 ? 'Guten Tag' : 'Guten Abend');
 
-$favoriteUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/favorites';
-$profileUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/profile';
-$postsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/posts';
-$securityUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/security';
-$commentsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/comments';
-$analyticsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/analytics';
-$notificationsUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/notifications';
-$m365LicenseUrl = htmlspecialchars($siteUrl, ENT_QUOTES) . '/member/plugin/m365-license';
+$memberBaseUrl = rtrim((string) $siteUrl, '/');
+$favoriteUrl = $memberBaseUrl . '/member/favorites';
+$profileUrl = $memberBaseUrl . '/member/profile';
+$postsUrl = $memberBaseUrl . '/member/posts';
+$securityUrl = $memberBaseUrl . '/member/security';
+$commentsUrl = $memberBaseUrl . '/member/comments';
+$analyticsUrl = $memberBaseUrl . '/member/analytics';
+$notificationsUrl = $memberBaseUrl . '/member/notifications';
+$m365LicenseUrl = $memberBaseUrl . '/member/plugin/m365-license';
 
 $m365Settings = [];
 if (class_exists('CMS_M365LIC_Repository')) {
@@ -477,25 +478,25 @@ include $themeDir . 'header.php';
 
                 <div class="member-dashboard-hero__actions">
                     <?php if ($canSubmitPosts): ?>
-                    <a href="<?php echo $postsUrl; ?>" class="member-hero-action">✍️ Neuen Artikel schreiben</a>
+                    <a href="<?php echo htmlspecialchars($postsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">✍️ Neuen Artikel schreiben</a>
                     <?php endif; ?>
                     <?php if ($showHeroFavorites): ?>
-                    <a href="<?php echo $favoriteUrl; ?>" class="member-hero-action">⭐ Favoriten</a>
+                    <a href="<?php echo htmlspecialchars($favoriteUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">⭐ Favoriten</a>
                     <?php endif; ?>
                     <?php if ($showHeroProfile): ?>
-                    <a href="<?php echo $profileUrl; ?>" class="member-hero-action">👤 Profil</a>
+                    <a href="<?php echo htmlspecialchars($profileUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">👤 Profil</a>
                     <?php endif; ?>
                     <?php if ($showHeroSecurity): ?>
-                    <a href="<?php echo $securityUrl; ?>" class="member-hero-action">🔒 Sicherheit</a>
+                    <a href="<?php echo htmlspecialchars($securityUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">🔒 Sicherheit</a>
                     <?php endif; ?>
                     <?php if ($showHeroNotifications): ?>
-                    <a href="<?php echo $notificationsUrl; ?>" class="member-hero-action">🔔 Benachrichtigungen</a>
+                    <a href="<?php echo htmlspecialchars($notificationsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">🔔 Benachrichtigungen</a>
                     <?php endif; ?>
                     <?php if ($showHeroComments): ?>
-                    <a href="<?php echo $commentsUrl; ?>" class="member-hero-action">💬 Kommentare</a>
+                    <a href="<?php echo htmlspecialchars($commentsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">💬 Kommentare</a>
                     <?php endif; ?>
                     <?php if ($isAdmin && $showHeroAnalytics): ?>
-                    <a href="<?php echo $analyticsUrl; ?>" class="member-hero-action">📈 Analytics</a>
+                    <a href="<?php echo htmlspecialchars($analyticsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-hero-action">📈 Analytics</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -524,7 +525,7 @@ include $themeDir . 'header.php';
         <section class="member-card member-card--spaced member-dashboard-feature-card member-dashboard-feature-card--m365" data-anim data-anim-delay="1" style="<?php echo htmlspecialchars($m365CardStyle, ENT_QUOTES); ?>">
             <div class="member-card-header">
                 <h3><?php echo htmlspecialchars(trim(($m365CardIcon !== '' ? $m365CardIcon . ' ' : '') . ($m365CardTitle !== '' ? $m365CardTitle : 'M365 Lizenzberater')), ENT_QUOTES); ?></h3>
-                <a href="<?php echo $m365LicenseUrl; ?>" class="member-card-link">Jetzt öffnen →</a>
+                <a href="<?php echo htmlspecialchars($m365LicenseUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-card-link">Jetzt öffnen →</a>
             </div>
             <p><?php echo htmlspecialchars($m365CardDescription !== '' ? $m365CardDescription : 'Prüfe passende Microsoft-365-Lizenzen direkt im geschützten Mitgliederbereich – inklusive der für Mitglieder geltenden Limits und Regeln.', ENT_QUOTES); ?></p>
         </section>
@@ -612,7 +613,7 @@ include $themeDir . 'header.php';
             <div class="member-card">
                 <div class="member-card-header">
                     <h3><?php echo htmlspecialchars(trim(($recentNotificationsIcon !== '' ? $recentNotificationsIcon . ' ' : '') . ($recentNotificationsTitle !== '' ? $recentNotificationsTitle : 'Letzte Benachrichtigungen')), ENT_QUOTES); ?></h3>
-                    <a href="<?php echo $notificationsUrl; ?>" class="member-card-link">Alle →</a>
+                    <a href="<?php echo htmlspecialchars($notificationsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-card-link">Alle →</a>
                 </div>
                 <?php if (!empty($notificationItems)): ?>
                 <ul class="member-activity-list member-activity-list--stacked">
@@ -645,7 +646,7 @@ include $themeDir . 'header.php';
             <h3><?php echo htmlspecialchars(trim(($quicklinksIcon !== '' ? $quicklinksIcon . ' ' : '') . ($quicklinksTitle !== '' ? $quicklinksTitle : 'Schnellzugriff')), ENT_QUOTES); ?></h3>
             <div class="member-quicklinks-grid">
                 <?php if ($canSubmitPosts): ?>
-                <a href="<?php echo $postsUrl; ?>" class="member-quicklink-card">
+                <a href="<?php echo htmlspecialchars($postsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-quicklink-card">
                     <span>✍️</span> Artikel schreiben
                 </a>
                 <?php endif; ?>
@@ -655,7 +656,7 @@ include $themeDir . 'header.php';
                 </a>
                 <?php endif; ?>
                 <?php if ($showQuicklinkNotifications): ?>
-                <a href="<?php echo $notificationsUrl; ?>" class="member-quicklink-card">
+                <a href="<?php echo htmlspecialchars($notificationsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="member-quicklink-card">
                     <span>🔔</span> Benachrichtigungen
                 </a>
                 <?php endif; ?>

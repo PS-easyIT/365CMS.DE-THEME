@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.30`
+- Version: `1.5.31`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -36,6 +36,8 @@ Die wichtigsten Security-Härtungen der letzten Runde:
 - Server-Request-, Host-, Cookie-Consent-, Notification- und 404-Post-Logik läuft über zentrale Theme-Helper
 - PHP-8.4-Customizer-Config-Snapshot nutzt Property Hooks und `public private(set)`, damit Runtime-Konfigurationen normalisiert lesbar, aber nicht versehentlich überschreibbar sind
 - Customizer-URLs und CSRF-Hidden-Fields nutzen explizites `ENT_QUOTES`-/`UTF-8`-Escaping plus `rawurlencode()` für Tab-Parameter
+- Dashboard-URLs, Header-Textfragmente und Bildarchiv-Beschreibungen werden direkt am Ausgabesink escaped bzw. erneut über den zentralen Sanitizer-Renderer geführt
+- zusätzliche PHP-8.4-Array-Helper-Nutzung: Homepage-Sidebar erkennt Custom-Featured-Images per `array_any()` statt manueller Boolean-Suchschleife
 
 Ausführliche Details stehen in:
 

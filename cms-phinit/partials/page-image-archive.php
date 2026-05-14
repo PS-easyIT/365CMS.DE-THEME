@@ -25,7 +25,7 @@ $emptyMessage = trim((string) ($imageArchive['empty_message'] ?? ''));
             <p class="phinit-image-archive__lead">Alle lokal verknüpften Artikelbilder und Cover aus veröffentlichten Beiträgen – sauber nach echten Medienkategorien sortiert. Quasi der Türsteher für valide Bilder. 🖼️</p>
             <?php if ($pageDescription !== ''): ?>
                 <div class="phinit-image-archive__description">
-                    <?php echo $pageDescription; ?>
+                    <?php phinit_render_sanitized_content($pageDescription, 'page'); ?>
                 </div>
             <?php endif; ?>
         </div>

@@ -260,7 +260,7 @@ if ($_showLanguageSwitch) {
 ?>
 <body<?php
     $bodyClasses = \CMS\Hooks::applyFilters('body_class', '');
-    echo $bodyClasses ? ' class="' . htmlspecialchars($bodyClasses, ENT_QUOTES) . '"' : '';
+    echo $bodyClasses ? ' class="' . htmlspecialchars($bodyClasses, ENT_QUOTES, 'UTF-8') . '"' : '';
     // Layout-Toggles als data-Attribute für JS
     echo ' data-sticky-header="' . ($_enableStickyHeader ? '1' : '0') . '"';
     echo ' data-progress-bar="' . ($_enableProgressBar ? '1' : '0') . '"';
@@ -291,7 +291,7 @@ if ($_showLanguageSwitch) {
                     } elseif (is_array($currentUser)) {
                         $displayName = $currentUser['display_name'] ?? $currentUser['username'] ?? 'User';
                     }
-                    echo htmlspecialchars($displayName);
+                    echo htmlspecialchars((string) $displayName, ENT_QUOTES, 'UTF-8');
                 ?></strong>
             </span>
 
@@ -341,10 +341,10 @@ if ($_showLanguageSwitch) {
                 <?php if (!empty($_logoUrl)): ?>
                     <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" <?php echo phinit_image_loading_attributes(true); ?> <?php echo phinit_image_dimension_attributes($_logoUrl); ?>>
                     <?php if ($_showLogoText): ?>
-                    <<?php echo $_siteTitleTag; ?> class="logo-text logo-text-beside"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></<?php echo $_siteTitleTag; ?>>
+                    <<?php echo $_siteTitleTag; ?> class="logo-text logo-text-beside"><?php echo htmlspecialchars((string) $_logoPart1, ENT_QUOTES, 'UTF-8'); ?><span class="logo-accent"><?php echo htmlspecialchars((string) $_logoPart2, ENT_QUOTES, 'UTF-8'); ?></span><span class="logo-suffix"><?php echo htmlspecialchars((string) $_logoSuffix, ENT_QUOTES, 'UTF-8'); ?></span></<?php echo $_siteTitleTag; ?>>
                     <?php endif; ?>
                 <?php else: ?>
-                    <<?php echo $_siteTitleTag; ?> class="logo-text"><?php echo htmlspecialchars($_logoPart1); ?><span class="logo-accent"><?php echo htmlspecialchars($_logoPart2); ?></span><span class="logo-suffix"><?php echo htmlspecialchars($_logoSuffix); ?></span></<?php echo $_siteTitleTag; ?>>
+                    <<?php echo $_siteTitleTag; ?> class="logo-text"><?php echo htmlspecialchars((string) $_logoPart1, ENT_QUOTES, 'UTF-8'); ?><span class="logo-accent"><?php echo htmlspecialchars((string) $_logoPart2, ENT_QUOTES, 'UTF-8'); ?></span><span class="logo-suffix"><?php echo htmlspecialchars((string) $_logoSuffix, ENT_QUOTES, 'UTF-8'); ?></span></<?php echo $_siteTitleTag; ?>>
                 <?php endif; ?>
             </a>
 

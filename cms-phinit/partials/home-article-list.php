@@ -83,13 +83,11 @@ if (empty($_showList) || $featuredPosts === []) {
         $_sbFeaturedImageLayout = in_array((string) ($_sbFeaturedImageLayout ?? 'auto'), ['auto', 'side', 'below'], true)
             ? (string) $_sbFeaturedImageLayout
             : 'auto';
-        $_sbFeaturedHasCustomImages = false;
-        foreach ($_sbFeatSlice as $_sbFeatCandidate) {
-            if (!empty(trim((string) ($_sbFeatCandidate['custom_sidebar_image'] ?? '')))) {
-                $_sbFeaturedHasCustomImages = true;
-                break;
-            }
-        }
+        $_sbFeaturedHasCustomImages = array_any(
+            $_sbFeatSlice,
+            static fn(mixed $_sbFeatCandidate): bool => is_array($_sbFeatCandidate)
+                && trim((string) ($_sbFeatCandidate['custom_sidebar_image'] ?? '')) !== ''
+        );
         $_sbResolvedFeaturedImageLayout = $_sbFeaturedImageLayout;
         if ($_sbResolvedFeaturedImageLayout === 'auto') {
             $_sbResolvedFeaturedImageLayout = ($_sbFeatProjMode || $_sbFeatSocialMode) ? 'side' : 'below';
