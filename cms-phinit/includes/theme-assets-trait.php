@@ -952,9 +952,17 @@ trait CMS_Phinit_Theme_Assets_Trait
         if (!empty($logoAccent)) {
             $css .= "    --logo-accent: {$logoAccent};\n";
         }
-        $logoHeight = $c->get('header', 'logo_max_height', '');
-        if (!empty($logoHeight)) {
+        $logoHeight = filter_var($c->get('header', 'logo_max_height', ''), FILTER_VALIDATE_INT);
+        if (is_int($logoHeight) && $logoHeight > 0) {
+            $logoHeight = max(16, min(180, $logoHeight));
+            $headerMainHeight = max(56, $logoHeight + 20);
+            $headerScrolledHeight = max(34, (int) round($headerMainHeight * 0.75));
+            $logoScrolledHeight = min($logoHeight, max(18, $headerScrolledHeight - 12));
+
             $css .= "    --logo-max-height: {$logoHeight}px;\n";
+            $css .= "    --header-h: {$headerMainHeight}px;\n";
+            $css .= "    --header-scrolled-h: {$headerScrolledHeight}px;\n";
+            $css .= "    --logo-scrolled-max-height: {$logoScrolledHeight}px;\n";
         }
         $memberBarH = $c->get('header', 'member_bar_height', '');
         if (!empty($memberBarH)) {

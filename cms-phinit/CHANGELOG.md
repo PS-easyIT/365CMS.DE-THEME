@@ -19,6 +19,22 @@ Noch keine unveröffentlichten Änderungen.
 
 ---
 
+## v1.5.27 — 14. Mai 2026
+
+### PHP-8.4-Audit-Fixes, sichere Content-Sinks und Header-Shrink
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🛡️ security | Content Rendering | `includes/theme-content-helpers.php`, `post.php`, `post-wide.php` und `post-tech.php` rendern Post- und Hub-Content jetzt ausschließlich über den zentralen Purifier-Renderpfad; direkte Raw-HTML-Sinks wurden entfernt. |
+| 🛡️ security | Request Handling | `includes/theme-template-helpers.php` ergänzt arraysichere Input-Helper; öffentliche Archive, Auth-/Member-Formulare, Favoriten und Customizer-Steuerfelder nutzen diese Helper für Query- und POST-Werte. |
+| 🔴 fix | Post Templates | `post-wide.php` und `post-tech.php` übernehmen den Router-/Fallback-Flow des Standard-Templates: keine doppelte Content-Aufbereitung und keine doppelte View-Zählung bei router-geladenen Beiträgen. |
+| 🔴 fix | Member Dashboard | `member/dashboard.php` importiert die URL-Builder-Closure korrekt in den Favoriten-Mapper, damit aktuelle Favoriten wieder kanonische Post-URLs erzeugen. |
+| 🟡 refactor | Head / Performance | `includes/theme-head-trait.php` nutzt vorhandene `$GLOBALS['post']`-/`$GLOBALS['page']`-Payloads als Cache-Quelle und vermeidet redundante Head-DB-Abfragen. |
+| 🎨 style | Header / Logo | `assets/css/header-navigation.css`, `assets/js/navigation.js` und `includes/theme-assets-trait.php` binden die Logo-Höhe konsequent an `header.logo_max_height`; beim Scrollen schrumpft der Logo-/Suchbereich auf 75% der normalen Höhe. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.27` synchronisiert. |
+
+---
+
 ## v1.5.26 — 14. Mai 2026
 
 ### Homepage-Lead-Image-SQL ohne Alias-Mix

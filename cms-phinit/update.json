@@ -1,13 +1,25 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.26",
+  "version": "1.5.27",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.27",
+      "date": "2026-05-14",
+      "changes": [
+        "includes/theme-template-helpers.php: neue arraysichere Request-Helper normalisieren Query- und Formularwerte defensiv, ohne Array-to-string-Warnings oder ungeprüfte Steuerwerte zuzulassen",
+        "includes/theme-content-helpers.php + post.php + post-wide.php + post-tech.php: Post- und Hub-Content laufen jetzt konsequent über den zentralen Purifier-Renderpfad; direkte Raw-HTML-Sinks in den Post-Templates wurden entfernt",
+        "post-wide.php + post-tech.php: Router-geladene Beiträge werden nicht mehr erneut vorbereitet oder doppelt gezählt; View-Counter und Content-Prepare-Pfad sind jetzt mit dem Standard-Template konsistent",
+        "includes/theme-head-trait.php: Head-Metadaten verwenden bereits vom Router bereitgestellte Post-/Page-Payloads als Cache-Quelle und vermeiden damit redundante DB-Abfragen",
+        "member/dashboard.php: fehlende Closure-Variable für kanonische Favoriten-Post-URLs korrigiert",
+        "assets/css/header-navigation.css + assets/js/navigation.js + includes/theme-assets-trait.php: Header-Logo-Größe folgt auf allen Seiten der Customizer-Einstellung; der Logo-/Suchbereich schrumpft beim Scrollen auf 75 Prozent der Höhe"
+      ]
+    },
     {
       "version": "1.5.26",
       "date": "2026-05-14",

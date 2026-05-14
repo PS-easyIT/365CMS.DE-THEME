@@ -177,7 +177,7 @@ function phinit_customizer_can_manage_advanced_code(): bool
 
 function phinit_customizer_has_advanced_code_acknowledgement(): bool
 {
-    return (string) ($_POST['advanced_code_acknowledged'] ?? '') === '1';
+    return phinit_input_string($_POST, 'advanced_code_acknowledged', '', 1) === '1';
 }
 
 /**
@@ -800,9 +800,9 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
         ];
     }
 
-    $postAction = (string) ($_POST['action'] ?? '');
+    $postAction = phinit_input_string($_POST, 'action', '', 60);
 
-    if (!phinit_verify_customizer_csrf_token($_POST['csrf_token'] ?? '')) {
+    if (!phinit_verify_customizer_csrf_token(phinit_input_string($_POST, 'csrf_token', '', 128))) {
         return [
             'alertMsg' => 'Sicherheitscheck fehlgeschlagen. Bitte Seite neu laden.',
             'alertType' => 'danger',
@@ -811,7 +811,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
     }
 
     if ($postAction === 'reset_theme_tab') {
-        $resetTab = (string) ($_POST['active_section'] ?? $activeTab);
+        $resetTab = phinit_input_string($_POST, 'active_section', $activeTab, 80);
         if (!isset($config[$resetTab])) {
             $resetTab = $activeTab;
         }
@@ -859,11 +859,11 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
     }
 
     if ($postAction === 'save_theme_options') {
-        $saveTab = (string) ($_POST['active_section'] ?? $activeTab);
+        $saveTab = phinit_input_string($_POST, 'active_section', $activeTab, 80);
         if (!isset($config[$saveTab])) {
             $saveTab = $activeTab;
         }
-        $saveStorageTab = (string) ($_POST['storage_section'] ?? phinit_get_customizer_storage_tab($config, $saveTab, $saveTab));
+        $saveStorageTab = phinit_input_string($_POST, 'storage_section', phinit_get_customizer_storage_tab($config, $saveTab, $saveTab), 80);
         if ($saveStorageTab === '' || !isset($config[$saveStorageTab])) {
             $saveStorageTab = phinit_get_customizer_storage_tab($config, $saveTab, $saveTab);
         }

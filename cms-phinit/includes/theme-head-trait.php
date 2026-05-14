@@ -271,6 +271,25 @@ trait CMS_Phinit_Theme_Head_Trait
             return null;
         }
 
+        $globalPost = $GLOBALS['post'] ?? null;
+        if (is_object($globalPost)) {
+            $globalPost = (array) $globalPost;
+        }
+
+        if (is_array($globalPost) && trim((string) ($globalPost['slug'] ?? '')) === $postSlug) {
+            $this->currentHeadPostCache = [
+                'slug' => (string) ($globalPost['slug'] ?? ''),
+                'title' => (string) ($globalPost['title'] ?? ''),
+                'excerpt' => (string) ($globalPost['excerpt'] ?? ''),
+                'featured_image' => (string) ($globalPost['featured_image'] ?? ''),
+                'published_at' => (string) ($globalPost['published_at'] ?? ''),
+                'updated_at' => (string) ($globalPost['updated_at'] ?? ''),
+                'author_name' => (string) ($globalPost['author_name'] ?? $globalPost['author_display_name'] ?? 'Autor'),
+            ];
+
+            return $this->currentHeadPostCache;
+        }
+
         try {
             $db = \CMS\Database::instance();
             $prefix = $db->prefix();
@@ -333,6 +352,21 @@ trait CMS_Phinit_Theme_Head_Trait
         if ($slug === '' || str_contains($slug, '/')) {
             return null;
         }
+
+        $globalPage = $GLOBALS['page'] ?? null;
+        if (is_object($globalPage)) {
+            $globalPage = (array) $globalPage;
+        }
+
+        if (is_array($globalPage)) {
+            $globalSlug = trim((string) ($globalPage['slug'] ?? ''), '/');
+            if ($globalSlug === $slug) {
+                $cache = $globalPage;
+
+                return $cache;
+            }
+        }
+
         try {
             $page = function_exists('phinit_get_page_by_request_path')
                 ? phinit_get_page_by_request_path($basePath, $resolvedLocale)

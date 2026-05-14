@@ -115,6 +115,7 @@
         if (!header) return;
         const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 60);
         window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
     }
 
     /* ── Burger Menü (Mobile) ──────────────────────────────────── */

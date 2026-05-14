@@ -4,8 +4,8 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.26`
-- Letzter Security-Stand: **Snyk Code Scan mit 0 aktiven Findings** am `04.04.2026`
+- Version: `1.5.27`
+- Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
 ## Enthaltene Kernbereiche
@@ -30,6 +30,8 @@ Die wichtigsten Security-Härtungen der letzten Runde:
 - HubSite-kompatibles Sanitizer-Profil im Core (`hub`)
 - kontrollierter Temp-Staging-Flow für Customizer-Importe
 - Public-URL-/Media-Allowlist in Frontend- und Member-Pfaden
+- Post-/Hub-Content wird ausschließlich über den zentralen Purifier-Renderpfad ausgegeben
+- arraysichere Request-Helper für Query-, Formular-, Favoriten- und Member-Pfade
 
 Ausführliche Details stehen in:
 
