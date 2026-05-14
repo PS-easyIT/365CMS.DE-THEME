@@ -1,13 +1,26 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.28",
+  "version": "1.5.29",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-14",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.29",
+      "date": "2026-05-14",
+      "changes": [
+        "includes/theme-template-helpers.php: zentrale Server-Request-Helper für URI, Pfad, Query-String, Request-Methode und Host ergänzt und defensiv normalisiert",
+        "404.php + header.php + footer.php: 404-Beitragsvorschläge, Notification-Zähler und Cookie-Consent-Status laufen jetzt über zentrale Theme-Helper statt direkter Template-DB-Logik",
+        "page.php + page-wide.php + page-landing.php + post.php + post-wide.php + post-tech.php + member/comments.php + member/partials/member-nav.php: Request-Pfade werden jetzt über phinit_current_request_path()/phinit_current_request_uri() gelesen",
+        "includes/theme-assets-trait.php + includes/theme-head-trait.php + includes/theme-home-helpers.php + member/plugin-section.php: interne Request- und Host-Erkennung nutzt die zentralen Helper statt verstreuter Server-Superglobal-Zugriffe",
+        "forgot-password.php + member/favorites.php + member/feeds.php + member/newsletter.php + member/posts.php + partials/post-comments.php: Formular-Methoden und Checkbox-Flags nutzen arraysichere Request-Helper",
+        "CHANGELOG.md: die zuvor vermischten 1.5.26- bis 1.5.28-Einträge wurden wieder in getrennte Release-Abschnitte aufgeteilt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.29 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.28",
       "date": "2026-05-14",
