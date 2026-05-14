@@ -125,19 +125,22 @@ if ($hasFeedPlugin && $feedDb !== null) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasFeedPlugin && $feedDb !== null) {
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'member_feeds')) {
+    if (!\CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'member_feeds')) {
         $error = 'Sicherheitscheck fehlgeschlagen.';
     } else {
-        $email = filter_var(trim((string) ($_POST['subscription_email'] ?? ($currentUser->email ?? ''))), FILTER_VALIDATE_EMAIL);
-        $frequency = in_array($_POST['subscription_frequency'] ?? 'daily', ['daily', 'weekly'], true)
-            ? (string) $_POST['subscription_frequency']
+        $email = filter_var(phinit_input_string($_POST, 'subscription_email', (string) ($currentUser->email ?? ''), 254), FILTER_VALIDATE_EMAIL);
+        $frequencyInput = phinit_input_string($_POST, 'subscription_frequency', 'daily', 20);
+        $frequency = in_array($frequencyInput, ['daily', 'weekly'], true)
+            ? $frequencyInput
             : 'daily';
-        $dailyMode = in_array($_POST['daily_mode'] ?? '09', array_keys($dailyModeOptions), true)
-            ? (string) $_POST['daily_mode']
+        $dailyModeInput = phinit_input_string($_POST, 'daily_mode', '09', 20);
+        $dailyMode = in_array($dailyModeInput, array_keys($dailyModeOptions), true)
+            ? $dailyModeInput
             : '09';
-        $weeklyDay = max(1, min(7, (int) ($_POST['weekly_day'] ?? 1)));
-        $weeklyTime = in_array($_POST['weekly_time'] ?? '09', array_keys($timeSlotOptions), true)
-            ? (string) $_POST['weekly_time']
+        $weeklyDay = phinit_input_int($_POST, 'weekly_day', 1, 1, 7);
+        $weeklyTimeInput = phinit_input_string($_POST, 'weekly_time', '09', 20);
+        $weeklyTime = in_array($weeklyTimeInput, array_keys($timeSlotOptions), true)
+            ? $weeklyTimeInput
             : '09';
         $isActive = !empty($_POST['subscription_is_active']);
         $selectedChannelIds = phinit_input_int_list($_POST, 'channel_ids', 1);

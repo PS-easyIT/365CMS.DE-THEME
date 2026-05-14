@@ -1455,16 +1455,16 @@ if (!function_exists('phinit_handle_favorite_toggle_request')) {
             return;
         }
 
-        if ((string) ($_POST['phinit_toggle_favorite'] ?? '') !== '1') {
+        if (phinit_input_string($_POST, 'phinit_toggle_favorite', '', 1) !== '1') {
             return;
         }
 
-        $contentType = (string) ($_POST['favorite_content_type'] ?? 'post');
+        $contentType = phinit_input_string($_POST, 'favorite_content_type', 'post', 20);
         if (!in_array($contentType, ['post', 'page'], true)) {
             return;
         }
 
-        $contentId = (int) ($_POST['favorite_content_id'] ?? 0);
+        $contentId = phinit_input_int($_POST, 'favorite_content_id', 0, 1);
         if ($contentId <= 0) {
             return;
         }
@@ -1482,7 +1482,7 @@ if (!function_exists('phinit_handle_favorite_toggle_request')) {
             }
 
             $tokenAction = 'phinit_favorite_' . $contentType . '_' . $contentId;
-            if (!\CMS\Security::instance()->verifyPersistentToken((string) ($_POST['favorite_csrf_token'] ?? ''), $tokenAction)) {
+            if (!\CMS\Security::instance()->verifyPersistentToken(phinit_input_string($_POST, 'favorite_csrf_token', '', 128), $tokenAction)) {
                 return;
             }
 
@@ -1520,11 +1520,11 @@ if (!function_exists('phinit_handle_favorite_toggle_request')) {
                     $pageFavorites[] = [
                         'content_type' => 'page',
                         'content_id' => $contentId,
-                        'title' => trim((string) ($_POST['favorite_title'] ?? 'Seite')),
+                        'title' => phinit_input_string($_POST, 'favorite_title', 'Seite', 255),
                         'url' => $favoriteUrl !== '' ? $favoriteUrl : '/',
-                        'excerpt' => trim((string) ($_POST['favorite_excerpt'] ?? '')),
-                        'featured_image' => phinit_normalize_public_media_url((string) ($_POST['favorite_featured_image'] ?? ''), true, defined('SITE_URL') ? (string) SITE_URL : null),
-                        'badge' => trim((string) ($_POST['favorite_badge'] ?? 'Seite')),
+                        'excerpt' => phinit_input_string($_POST, 'favorite_excerpt', '', 1000),
+                        'featured_image' => phinit_normalize_public_media_url(phinit_input_string($_POST, 'favorite_featured_image', '', 1024), true, defined('SITE_URL') ? (string) SITE_URL : null),
+                        'badge' => phinit_input_string($_POST, 'favorite_badge', 'Seite', 80),
                         'created_at' => date('c'),
                     ];
                 }

@@ -32,11 +32,11 @@ $hasNewsletterPlugin = \CMS\PluginManager::instance()->isPluginActive('cms-newsl
 
 // POST: An-/Abmelden
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasNewsletterPlugin) {
-    if (!\CMS\Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'member_newsletter')) {
-        $error = 'Sicherheitscheck fehlgeschlagen.';
+    if (!\CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'member_newsletter')) {
+        $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
-        $action = $_POST['newsletter_action'] ?? '';
-        $listId = (int)($_POST['list_id'] ?? 0);
+        $action = phinit_input_string($_POST, 'newsletter_action', '', 40);
+        $listId = phinit_input_int($_POST, 'list_id', 0, 0);
 
         if ($action === 'subscribe' && $listId > 0) {
             $exists = $db->get_var(

@@ -51,7 +51,7 @@ $sendNotification = static function (int $targetUserId, string $title, string $m
     }
 };
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['action'] ?? '') === 'submit_member_post') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && phinit_input_string($_POST, 'action', '', 60) === 'submit_member_post') {
     if (!$canPost) {
         $controller->flash('danger', 'Dein aktuelles Konto darf derzeit keine Artikel einreichen.');
         $controller->redirect('/member/posts');
@@ -62,15 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['action'] ?? '') =
         $controller->redirect('/member/posts');
     }
 
-    $postId = max(0, (int) ($_POST['post_id'] ?? 0));
-    $title = mb_substr(trim(strip_tags((string) ($_POST['title'] ?? ''))), 0, 255);
-    $slug = $normalizeSlug((string) ($_POST['slug'] ?? ''));
-    $excerpt = trim((string) ($_POST['excerpt'] ?? ''));
-    $featuredImage = trim((string) ($_POST['featured_image'] ?? ''));
-    $tags = trim((string) ($_POST['tags'] ?? ''));
-    $content = EditorService::getInstance()->sanitize((string) ($_POST['content'] ?? ''));
+    $postId = phinit_input_int($_POST, 'post_id', 0, 0);
+    $title = mb_substr(trim(strip_tags(phinit_input_string($_POST, 'title', '', 255))), 0, 255);
+    $slug = $normalizeSlug(phinit_input_string($_POST, 'slug', '', 255));
+    $excerpt = phinit_input_string($_POST, 'excerpt', '', 1000);
+    $featuredImage = phinit_input_string($_POST, 'featured_image', '', 1024);
+    $tags = phinit_input_string($_POST, 'tags', '', 500);
+    $content = EditorService::getInstance()->sanitize(phinit_input_string($_POST, 'content', '', 200000));
     $decodedContent = json_decode($content, true);
-    $categoryId = max(0, (int) ($_POST['category_id'] ?? 0));
+    $categoryId = phinit_input_int($_POST, 'category_id', 0, 0);
 
     if ($title === '') {
         $controller->flash('danger', 'Bitte gib einen Titel für deinen Artikel an.');
@@ -196,7 +196,7 @@ try {
     $categories = [];
 }
 
-$editId = max(0, (int) ($_GET['edit'] ?? 0));
+$editId = phinit_input_int($_GET, 'edit', 0, 0);
 $editablePost = null;
 if ($editId > 0) {
     try {
