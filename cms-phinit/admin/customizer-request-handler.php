@@ -801,7 +801,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
     $alertMsg = null;
     $alertType = 'success';
 
-    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    if (phinit_request_method() !== 'POST') {
         return [
             'alertMsg' => $alertMsg,
             'alertType' => $alertType,

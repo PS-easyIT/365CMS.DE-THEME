@@ -92,7 +92,7 @@ if (isset($post) && !empty($post)) {
     $postProvidedByRouter = true;
 } else {
     $postProvidedByRouter = false;
-    $rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
+    $rawPath = phinit_current_request_path();
     $rawPath = (string)preg_replace('#^/blog/#i', '', $rawPath);
     $slug    = trim($rawPath, '/');
 

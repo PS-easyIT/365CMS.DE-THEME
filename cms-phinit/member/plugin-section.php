@@ -46,7 +46,7 @@ include $themeDir . 'header.php';
 
             <?php \CMS\Hooks::doAction('member_plugin_section_head', $section, $user, $params ?? []); ?>
             <?php
-            $requestMethod = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+            $requestMethod = phinit_request_method();
             $pluginCallback = $requestMethod === 'POST' && is_callable($section['post_callback'] ?? null)
                 ? $section['post_callback']
                 : ($section['render_callback'] ?? null);

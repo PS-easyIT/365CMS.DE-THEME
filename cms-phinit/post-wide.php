@@ -58,7 +58,7 @@ if (isset($post) && !empty($post)) {
     $postProvidedByRouter = true;
 } else {
     $postProvidedByRouter = false;
-    $rawPath = (string)preg_replace('#^/blog/#i', '', parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '');
+    $rawPath = (string)preg_replace('#^/blog/#i', '', phinit_current_request_path());
     $slug    = trim($rawPath, '/');
     if (empty($slug)) { http_response_code(404); get_theme_part('404'); exit; }
     try {

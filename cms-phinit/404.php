@@ -19,20 +19,7 @@ $formatSuggestionDate = static function (?string $value, string $format = 'j. M 
 };
 
 // Aktuelle Beiträge als Vorschlag laden
-$recentPosts = [];
-try {
-    $db     = \CMS\Database::instance();
-    $prefix = $db->getPrefix();
-    $rows   = $db->get_results(
-        "SELECT p.title, p.slug, p.featured_image, p.published_at, c.name AS category_name
-         FROM {$prefix}posts p
-         LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-            WHERE " . phinit_post_publication_where('p') . "
-            ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
-         LIMIT 3"
-    );
-    $recentPosts = $rows ? array_map(fn($r) => (array)$r, $rows) : [];
-} catch (\Throwable $e) {}
+$recentPosts = phinit_get_recent_public_posts(3);
 ?>
 
 <div class="container error-shell">

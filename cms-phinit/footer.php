@@ -104,11 +104,7 @@ try {
     ) {
         $_showConsent = false;
     } else {
-    $_db   = \CMS\Database::instance();
-    $_stmt = $_db->prepare('SELECT option_value FROM ' . $_db->prefix() . 'settings WHERE option_name = ?');
-    $_stmt->execute(['cookie_consent_enabled']);
-    $_row  = $_stmt->fetch(\PDO::FETCH_ASSOC);
-    if ($_row !== false && ($_row['option_value'] ?? '0') === '1') {
+    if (phinit_is_cookie_consent_enabled_by_cms()) {
         // CMS aktiviert → Customizer-Toggle zusätzlich auswerten
         try {
             $_showConsent = filter_var(

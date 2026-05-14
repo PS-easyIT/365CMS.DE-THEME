@@ -47,7 +47,7 @@ if ($commentSessionError !== '' || $commentSessionSuccess !== '') {
 $commentFormAction = rtrim((string) SITE_URL, '/') . '/comments/post';
 $commentCount = count($comments);
 $commentCountLabel = $commentCount === 1 ? '1 Kommentar' : $commentCount . ' Kommentare';
-$commentAnonymousChecked = !empty($_POST['comment_anonymous']);
+$commentAnonymousChecked = phinit_input_string($_POST, 'comment_anonymous', '', 1) === '1';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $formatCommentDate = static function (?string $value, string $format = 'j. F Y'): string {
     $timestamp = strtotime((string) $value);

@@ -39,7 +39,7 @@ if ($pageProvidedByRouter) {
 } else {
     try {
         $page = function_exists('phinit_get_page_by_request_path')
-            ? phinit_get_page_by_request_path((string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '/'))
+            ? phinit_get_page_by_request_path(phinit_current_request_path())
             : null;
         if (!$page) {
             http_response_code(404);

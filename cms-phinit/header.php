@@ -17,8 +17,8 @@ $siteDesc     = $themeManager->getSiteDescription();
 $themeUrl     = $themeManager->getThemeUrl();
 $siteUrl      = SITE_URL;
 
-$_requestPath = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
-$_requestQuery = trim((string) ($_SERVER['QUERY_STRING'] ?? ''));
+$_requestPath = phinit_current_request_path();
+$_requestQuery = phinit_current_request_query();
 $_currentLocale = 'de';
 $_requestContext = ['base_uri' => $_requestPath, 'locale' => 'de', 'is_localized' => false];
 $_contentLocalization = null;
@@ -140,16 +140,9 @@ if ($isLoggedIn && $currentUser !== null && $isAdminUser && function_exists('phi
 
 $notifCount = 0;
 if ($isLoggedIn && $currentUser !== null) {
-    try {
-        $_userId = is_object($currentUser) ? (int)($currentUser->id ?? 0) : (int)($currentUser['id'] ?? 0);
-        if ($_userId > 0) {
-            $_ndb = \CMS\Database::instance();
-            $notifCount = (int)($_ndb->get_var(
-                "SELECT COUNT(*) FROM {$_ndb->prefix()}notifications WHERE user_id = ? AND is_read = 0",
-                [$_userId]
-            ) ?? 0);
-        }
-    } catch (\Throwable) {
+    $_userId = is_object($currentUser) ? (int)($currentUser->id ?? 0) : (int)($currentUser['id'] ?? 0);
+    if ($_userId > 0) {
+        $notifCount = phinit_get_unread_notification_count($_userId);
     }
 }
 

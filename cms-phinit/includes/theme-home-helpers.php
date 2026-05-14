@@ -343,7 +343,7 @@ function phinit_get_homepage_view_model(): array
 function phinit_get_request_content_locale(): string
 {
     try {
-        $requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?? '/');
+        $requestPath = phinit_current_request_path();
         $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($requestPath);
 
         return (string) ($context['locale'] ?? 'de');

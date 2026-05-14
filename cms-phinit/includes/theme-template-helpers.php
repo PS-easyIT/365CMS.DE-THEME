@@ -716,11 +716,14 @@ if (!function_exists('phinit_current_request_uri')) {
     function phinit_current_request_uri(): string
     {
         $requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
+        $requestUri = preg_replace('/[\x00-\x1F\x7F]/', '', $requestUri) ?? '/';
         if ($requestUri === '') {
             return '/';
         }
 
-        return str_starts_with($requestUri, '/') ? $requestUri : '/' . ltrim($requestUri, '/');
+        $requestUri = str_starts_with($requestUri, '/') ? $requestUri : '/' . ltrim($requestUri, '/');
+
+        return mb_substr($requestUri, 0, 4096, 'UTF-8');
     }
 }
 
@@ -729,6 +732,109 @@ if (!function_exists('phinit_current_request_path')) {
     {
         $path = (string) (parse_url(phinit_current_request_uri(), PHP_URL_PATH) ?? '/');
         return $path !== '' ? $path : '/';
+    }
+}
+
+if (!function_exists('phinit_current_request_query')) {
+    function phinit_current_request_query(): string
+    {
+        $query = (string) ($_SERVER['QUERY_STRING'] ?? '');
+        $query = preg_replace('/[\x00-\x1F\x7F]/', '', $query) ?? '';
+
+        return mb_substr(trim($query), 0, 2048, 'UTF-8');
+    }
+}
+
+if (!function_exists('phinit_request_method')) {
+    function phinit_request_method(): string
+    {
+        $method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+        $method = preg_replace('/[^A-Z]/', '', $method) ?? 'GET';
+
+        return $method !== '' ? $method : 'GET';
+    }
+}
+
+if (!function_exists('phinit_current_host')) {
+    function phinit_current_host(): string
+    {
+        $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
+        $host = preg_replace('/[^a-z0-9.:-]/', '', $host) ?? '';
+
+        return mb_substr($host, 0, 255, 'UTF-8');
+    }
+}
+
+if (!function_exists('phinit_get_recent_public_posts')) {
+    /**
+     * Liefert kompakte öffentliche Beitragsvorschläge für UI-Templates.
+     *
+     * @return list<array<string,mixed>>
+     */
+    function phinit_get_recent_public_posts(int $limit = 3): array
+    {
+        $limit = max(1, min(12, $limit));
+
+        try {
+            $db = \CMS\Database::instance();
+            $prefix = $db->getPrefix();
+            $rows = $db->get_results(
+                "SELECT p.title, p.slug, p.slug_en, p.featured_image, p.published_at, p.created_at, c.name AS category_name
+                 FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+                 WHERE " . phinit_post_publication_where('p') . "
+                 ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC
+                 LIMIT {$limit}"
+            ) ?: [];
+        } catch (\Throwable) {
+            return [];
+        }
+
+        return array_values(array_map(static fn(object|array $row): array => (array) $row, $rows));
+    }
+}
+
+if (!function_exists('phinit_get_unread_notification_count')) {
+    function phinit_get_unread_notification_count(int $userId): int
+    {
+        if ($userId <= 0) {
+            return 0;
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+
+            return (int) ($db->get_var(
+                "SELECT COUNT(*) FROM {$db->prefix()}notifications WHERE user_id = ? AND is_read = 0",
+                [$userId]
+            ) ?? 0);
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+}
+
+if (!function_exists('phinit_is_cookie_consent_enabled_by_cms')) {
+    function phinit_is_cookie_consent_enabled_by_cms(): bool
+    {
+        try {
+            if (class_exists('\\CMS\\Services\\SettingsService')) {
+                return \CMS\Services\SettingsService::getInstance()->getBool('privacy', 'cookie_consent_enabled', false);
+            }
+        } catch (\Throwable) {
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+            $value = $db->get_var(
+                "SELECT option_value FROM {$db->prefix()}settings WHERE option_name = ? LIMIT 1",
+                ['cookie_consent_enabled']
+            );
+
+            return (string) $value === '1';
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }
 
@@ -934,7 +1040,7 @@ if (!function_exists('phinit_localized_href')) {
                 ? cms_rewrite_archive_path($trimmedUrl, $resolvedLocale)
                 : $trimmedUrl;
 
-            $currentHost = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? '')));
+            $currentHost = phinit_current_host();
             if ($currentHost !== '' && str_contains($currentHost, ':')) {
                 $currentHost = explode(':', $currentHost, 2)[0];
             }
@@ -973,7 +1079,7 @@ if (!function_exists('phinit_localized_href')) {
             return $siteBase . $localizedPath;
         } catch (\Throwable) {
             if (str_starts_with($trimmedUrl, '/')) {
-                $currentHost = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? '')));
+                $currentHost = phinit_current_host();
                 if ($currentHost !== '' && str_contains($currentHost, ':')) {
                     $currentHost = explode(':', $currentHost, 2)[0];
                 }
@@ -1255,7 +1361,7 @@ if (!function_exists('phinit_get_member_edit_link')) {
         $path = $path !== '' ? $path : '/';
 
         try {
-            $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+            $host = phinit_current_host();
             if ($path === '/' && $host !== '') {
                 $hubPage = \CMS\Services\SiteTableService::getInstance()->getHubPageByDomain($host, $resolvedLocale !== '' ? $resolvedLocale : 'de');
                 if (is_array($hubPage) && (int) ($hubPage['id'] ?? 0) > 0) {
@@ -1451,7 +1557,7 @@ if (!function_exists('phinit_store_page_favorites_for_user')) {
 if (!function_exists('phinit_handle_favorite_toggle_request')) {
     function phinit_handle_favorite_toggle_request(): void
     {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+        if (phinit_request_method() !== 'POST') {
             return;
         }
 

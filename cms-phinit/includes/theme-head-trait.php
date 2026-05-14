@@ -137,7 +137,7 @@ trait CMS_Phinit_Theme_Head_Trait
             return (string) ($context['path'] ?? '/');
         }
 
-        return (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+        return phinit_current_request_path();
     }
 
     /**
@@ -772,7 +772,7 @@ trait CMS_Phinit_Theme_Head_Trait
     public function bodyClass(string $classes): string
     {
         $add = [];
-        $uri = (string) strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $uri = phinit_current_request_path();
         $baseUri = $uri;
 
         try {

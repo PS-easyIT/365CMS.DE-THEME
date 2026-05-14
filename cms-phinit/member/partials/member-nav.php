@@ -55,7 +55,7 @@ try {
 $sidebarActiveColor = $sanitizeColor($getMemberText('sidebar_active_color', '#1e3a5f'), '#1e3a5f');
 $sidebarStyle = '--member-sidebar-active-color: ' . $sidebarActiveColor . ';';
 $memberPermissions = [];
-$requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '/member/dashboard');
+$requestUri = phinit_current_request_uri();
 $currentMenuSlug = $activePage;
 $memberController = null;
 

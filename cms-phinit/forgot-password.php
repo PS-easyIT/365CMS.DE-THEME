@@ -113,7 +113,7 @@ $isStrongPassword = static function (string $password): bool {
         && preg_match('/[^A-Za-z0-9]/', $password) === 1;
 };
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fp_submit'])) {
+if (phinit_request_method() === 'POST' && phinit_input_string($_POST, 'fp_submit', '', 1) === '1') {
     $csrfOk = true;
 
     try {
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fp_submit'])) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_submit'])) {
+if (phinit_request_method() === 'POST' && phinit_input_string($_POST, 'reset_submit', '', 1) === '1') {
     $csrfOk = true;
 
     try {

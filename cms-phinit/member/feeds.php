@@ -124,7 +124,7 @@ if ($hasFeedPlugin && $feedDb !== null) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasFeedPlugin && $feedDb !== null) {
+if (phinit_request_method() === 'POST' && $hasFeedPlugin && $feedDb !== null) {
     if (!\CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'member_feeds')) {
         $error = 'Sicherheitscheck fehlgeschlagen.';
     } else {
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasFeedPlugin && $feedDb !== null)
         $weeklyTime = in_array($weeklyTimeInput, array_keys($timeSlotOptions), true)
             ? $weeklyTimeInput
             : '09';
-        $isActive = !empty($_POST['subscription_is_active']);
+        $isActive = phinit_input_string($_POST, 'subscription_is_active', '', 1) === '1';
         $selectedChannelIds = phinit_input_int_list($_POST, 'channel_ids', 1);
 
         if ($email === false) {

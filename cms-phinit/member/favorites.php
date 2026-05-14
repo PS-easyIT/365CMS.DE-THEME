@@ -31,7 +31,7 @@ $favoriteSections = [
 $allowedFavoriteStorage = ['post', 'page'];
 
 // Favorit entfernen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_favorite'])) {
+if (phinit_request_method() === 'POST' && phinit_input_string($_POST, 'remove_favorite', '', 1) === '1') {
     if (\CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'member_favorites')) {
         $favoriteStorage = phinit_input_string($_POST, 'favorite_storage', 'post', 20);
         if (!in_array($favoriteStorage, $allowedFavoriteStorage, true)) {

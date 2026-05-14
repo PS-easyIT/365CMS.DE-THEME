@@ -51,7 +51,7 @@ $sendNotification = static function (int $targetUserId, string $title, string $m
     }
 };
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && phinit_input_string($_POST, 'action', '', 60) === 'submit_member_post') {
+if (phinit_request_method() === 'POST' && phinit_input_string($_POST, 'action', '', 60) === 'submit_member_post') {
     if (!$canPost) {
         $controller->flash('danger', 'Dein aktuelles Konto darf derzeit keine Artikel einreichen.');
         $controller->redirect('/member/posts');

@@ -81,7 +81,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
     private function getRequestPath(): string
     {
-        $requestUri = (string) (strtok($_SERVER['REQUEST_URI'] ?? '/', '?') ?: '/');
+        $requestUri = phinit_current_request_path();
 
         try {
             $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($requestUri);
@@ -108,7 +108,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         if ($path === '/' && !$isAuthOrMember && !$isPageExtras) {
             try {
-                $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
+                $host = phinit_current_host();
                 if ($host !== '') {
                     $siteTableService = \CMS\Services\SiteTableService::getInstance();
                     $isRootHubDomain = $siteTableService->getHubPageByDomain($host, 'de') !== null
@@ -170,7 +170,7 @@ trait CMS_Phinit_Theme_Assets_Trait
                 try {
                     $siteTableService = \CMS\Services\SiteTableService::getInstance();
                     if ($path === '/') {
-                        $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? ''), '.'));
+                        $host = phinit_current_host();
                         if ($host !== '') {
                             $isHubSite = $siteTableService->getHubPageByDomain($host, 'de') !== null
                                 || $siteTableService->getHubPageByDomain($host, 'en') !== null;

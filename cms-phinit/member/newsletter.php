@@ -31,7 +31,7 @@ $error   = '';
 $hasNewsletterPlugin = \CMS\PluginManager::instance()->isPluginActive('cms-newsletter');
 
 // POST: An-/Abmelden
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasNewsletterPlugin) {
+if (phinit_request_method() === 'POST' && $hasNewsletterPlugin) {
     if (!\CMS\Security::instance()->verifyToken(phinit_input_string($_POST, 'csrf_token', '', 128), 'member_newsletter')) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {

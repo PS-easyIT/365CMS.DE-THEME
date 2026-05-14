@@ -67,7 +67,7 @@ if ($filter === 'approved') {
 $page    = phinit_input_int($_GET, 'page', 1, 1);
 $perPage = 15;
 $offset  = ($page - 1) * $perPage;
-$commentsBasePath = (string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ($siteUrl . '/member/comments'));
+$commentsBasePath = phinit_current_request_path();
 $buildCommentsUrl = static function (array $params) use ($commentsBasePath): string {
     $query = http_build_query($params);
 
