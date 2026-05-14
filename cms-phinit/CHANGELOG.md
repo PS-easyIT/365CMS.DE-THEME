@@ -19,6 +19,20 @@ Noch keine unveröffentlichten Änderungen.
 
 ---
 
+## v1.5.30 — 14. Mai 2026
+
+### Multi-Level-Audit mit PHP-8.4-Config-Härtung
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🛡️ security | Theme Customizer | `admin/customizer-form.php`, `admin/customizer-sidebar.php` und `admin/customizer-form-hidden-fields.php` escapen Customizer-Actions, Tab-Links und CSRF-Hidden-Fields jetzt explizit mit `ENT_QUOTES`/`UTF-8`; Tab-Parameter werden per `rawurlencode()` URL-konform kodiert. |
+| 🟡 refactor | PHP 8.4 / Config | `admin/customizer-config-builder.php` ergänzt `CMS_Phinit_Customizer_Config_Snapshot` mit Property Hooks und `public private(set)`, sodass Config-Kategorien und Tab-Gruppen normalisiert lesbar, aber nicht versehentlich von außen überschreibbar sind. |
+| 🟡 refactor | PHP 8.4 / array_find | `includes/theme-assets-trait.php` und `includes/theme-head-trait.php` ersetzen manuelle Suchschleifen für lokale Font-Kandidaten und Member-Route-Titel durch `array_find()`. |
+| 🛡️ security | Audit / Strict Types | Der Multi-Level-Audit bestätigt: alle 93 PHP-Dateien enthalten `declare(strict_types=1);`, Theme-eigene POST-Formulare führen CSRF-Token mit, und es bleiben keine wortgenauen Raw-Sinks `echo $content`, `echo $html`, `echo $id` oder `echo $name`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.30` synchronisiert. |
+
+---
+
 ## v1.5.29 — 14. Mai 2026
 
 ### Request-/Template-Logik weiter zentralisiert
