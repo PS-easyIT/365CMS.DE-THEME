@@ -483,7 +483,7 @@ if (empty($_showList) || $featuredPosts === []) {
                class="sb-featured-post<?php echo $_sbEnableFeaturedRotation ? ' sb-featured-post--slide' : ''; ?><?php echo $_fpIsActive ? ' is-active' : ''; ?>"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-slide data-slide-index="<?php echo $_fpIndex; ?>" aria-hidden="<?php echo $_fpIsActive ? 'false' : 'true'; ?>" tabindex="<?php echo $_fpIsActive ? '0' : '-1'; ?>"<?php endif; ?>>
                 <?php if ($_fpThumb !== ''): ?>
-                <img src="<?php echo htmlspecialchars($_fpThumb, ENT_QUOTES); ?>" alt="<?php echo $_fpTitle; ?>"
+                <img src="<?php echo htmlspecialchars($_fpThumb, ENT_QUOTES); ?>" alt=""
                      class="sb-featured-thumb<?php echo $_fpHasCustomThumb ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes(); ?> width="<?php echo (int) $_fpThumbWidth; ?>" height="<?php echo (int) $_fpThumbHeight; ?>">
                 <?php else: ?>
                 <div class="sb-featured-thumb sb-featured-thumb--placeholder" aria-hidden="true">

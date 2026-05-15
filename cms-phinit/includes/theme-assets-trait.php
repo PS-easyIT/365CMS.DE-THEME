@@ -164,7 +164,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
 
         $currentTemplatePage = $this->getResolvedCurrentPagePayload($path);
-        $isHubSite = $this->isHubPagePayload($currentTemplatePage);
+        $isHubSite = !$isBlogListing && $this->isHubPagePayload($currentTemplatePage);
         if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras) {
             if (!$isHubSite) {
                 try {

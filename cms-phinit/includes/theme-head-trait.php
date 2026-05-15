@@ -808,6 +808,32 @@ trait CMS_Phinit_Theme_Head_Trait
         } catch (\Throwable) {
         }
 
+        $isBlogListingRequest = $baseUri === '/'
+            || $baseUri === '/blog'
+            || (function_exists('cms_is_archive_request_path') && cms_is_archive_request_path($baseUri, 'category'))
+            || (function_exists('cms_is_archive_request_path') && cms_is_archive_request_path($baseUri, 'tag'))
+            || str_starts_with($baseUri, '/author/');
+
+        $isRootHubDomain = false;
+        if ($isBlogListingRequest && $baseUri === '/') {
+            try {
+                if (class_exists('CMS\\Services\\SiteTableService')) {
+                    $host = function_exists('phinit_current_host') ? phinit_current_host() : '';
+                    if ($host !== '') {
+                        $siteTableService = \CMS\Services\SiteTableService::getInstance();
+                        $isRootHubDomain = $siteTableService->getHubPageByDomain($host, 'de') !== null
+                            || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+                    }
+                }
+            } catch (\Throwable) {
+                $isRootHubDomain = false;
+            }
+        }
+
+        if ($isBlogListingRequest && !$isRootHubDomain) {
+            return false;
+        }
+
         $templatePage = $GLOBALS['page'] ?? null;
         if (is_object($templatePage)) {
             $templatePage = (array) $templatePage;
