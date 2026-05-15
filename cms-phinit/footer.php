@@ -157,6 +157,7 @@ $_footerContactUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/contact', $currentLocale, $siteUrl)
     : rtrim($siteUrl, '/') . '/contact';
 $_footerContactLabel = phinit_is_english_locale($currentLocale) ? 'Contact' : 'Kontakt';
+$_footerSocialNavLabel = phinit_is_english_locale($currentLocale) ? 'Contact and social media' : 'Kontakt und Social Media';
 try {
     $footerTopicsMenu = \CMS\ThemeManager::instance()->getMenu('footer-topics');
 } catch (\Throwable $e) {}
@@ -232,9 +233,8 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
                         <?php if ($_footerAboutText !== ''): ?>
                         <p class="footer-about__text"><?php echo htmlspecialchars($_footerAboutText, ENT_QUOTES); ?></p>
                         <?php endif; ?>
-                        <div class="footer-about__actions">
+                        <nav class="footer-about__social social-icons" aria-label="<?php echo htmlspecialchars($_footerSocialNavLabel, ENT_QUOTES); ?>">
                         <?php if ($_showSocial): ?>
-                        <nav class="footer-about__social social-icons" aria-label="<?php echo htmlspecialchars(phinit_is_english_locale($currentLocale) ? 'Social media' : 'Social Media', ENT_QUOTES); ?>">
                         <?php if (!empty($_liUrl)): ?>
                         <a href="<?php echo htmlspecialchars($_liUrl, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_liLabel, ENT_QUOTES); ?>">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -268,12 +268,11 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
                         <a href="<?php echo htmlspecialchars($_rssUrl, ENT_QUOTES); ?>" class="rss" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_rssLabel, ENT_QUOTES); ?>">
                             <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
                         </a>
-                        </nav>
                         <?php endif; ?>
                         <a href="<?php echo htmlspecialchars($_footerContactUrl, ENT_QUOTES); ?>" class="footer-about__contact" aria-label="<?php echo htmlspecialchars($_footerContactLabel, ENT_QUOTES); ?>">
                             <?php echo htmlspecialchars($_footerContactLabel, ENT_QUOTES); ?>
                         </a>
-                        </div>
+                        </nav>
                     </div>
                 </section>
 

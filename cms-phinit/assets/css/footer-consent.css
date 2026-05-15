@@ -98,16 +98,9 @@ body.m365lic-theme-embed:not(.is-member) .site-footer {
     overflow: hidden;
 }
 
-.footer-about__actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-}
-
 .footer-about .footer-about__social {
-    margin-top: 0;
+    margin-top: 12px;
+    align-items: center;
     flex-wrap: wrap;
 }
 
@@ -119,10 +112,12 @@ body.m365lic-theme-embed:not(.is-member) .site-footer {
     color: rgba(255,255,255,.74);
 }
 
-.footer-about .footer-about__contact {
+.footer-about .footer-about__social .footer-about__contact {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: auto;
+    min-width: 0;
     min-height: 32px;
     height: 32px;
     padding: 0 12px;
@@ -138,8 +133,12 @@ body.m365lic-theme-embed:not(.is-member) .site-footer {
     transition: var(--transition-fast);
 }
 
-.footer-about .footer-about__contact:hover,
-.footer-about .footer-about__contact:focus-visible {
+.footer-about .footer-about__social .footer-about__contact:not(:first-child) {
+    margin-left: 6px;
+}
+
+.footer-about .footer-about__social .footer-about__contact:hover,
+.footer-about .footer-about__social .footer-about__contact:focus-visible {
     background: rgba(13, 148, 136, .92);
     border-color: rgba(13, 148, 136, .92);
     color: #ffffff;
