@@ -325,6 +325,7 @@
           "default": "space-grotesk",
           "options": {
             "space-grotesk":    "Space Grotesk",
+            "sora":             "Sora",
             "barlow-condensed": "Barlow Condensed",
             "roboto-condensed": "Roboto Condensed",
             "oswald":           "Oswald",
@@ -333,7 +334,7 @@
             "barlow":           "Barlow",
             "montserrat":       "Montserrat"
           },
-          "description": "Überschriften/Display-Typografie. Space Grotesk ist für moderne Tech-Editorials voreingestellt."
+          "description": "Überschriften/Display-Typografie. Space Grotesk ist voreingestellt; Sora steht als weichere, aber professionelle Editorial-Alternative bereit."
         },
         "font_family_code": {
           "label": "Code-Schriftart",
@@ -1387,9 +1388,11 @@
         "post_title_fontsize": {
           "label": "Beitragstitel Schriftgröße (px)",
           "type": "number",
-          "default": 28,
-          "min": 18,
-          "max": 56
+          "default": 36,
+          "min": 24,
+          "max": 56,
+          "step": 1,
+          "description": "Desktop-Zielgröße für große Unterseiten-Titel; wird responsiv als deutlicher Editorial-H1 ausgegeben."
         },
         "show_post_meta": {
           "label": "Post-Meta anzeigen (Datum, Kategorie)",
@@ -1560,9 +1563,11 @@
         "page_title_fontsize": {
           "label": "Seitentitel Schriftgröße (px)",
           "type": "number",
-          "default": 28,
-          "min": 18,
-          "max": 56
+          "default": 36,
+          "min": 24,
+          "max": 56,
+          "step": 1,
+          "description": "Desktop-Zielgröße für große Unterseiten-Titel; wird responsiv als deutlicher Editorial-H1 ausgegeben."
         },
         "show_page_hero": {
           "label": "Seitenbild im Header anzeigen",

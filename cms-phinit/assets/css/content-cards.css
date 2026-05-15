@@ -7,7 +7,7 @@
     align-items: center;
     flex: 0 1 auto;
     gap: 6px;
-    font-family: var(--font-brand, 'Space Grotesk', 'Inter', sans-serif);
+    font-family: var(--font-brand, 'Space Grotesk', 'Sora', 'Inter', sans-serif);
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -212,10 +212,12 @@
 .post-card-title {
     font-size: 1rem;
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.24;
+    letter-spacing: var(--ls-display-4, -0.018em);
     margin: 0 0 8px;
     color: var(--text-primary);
     font-family: var(--font-brand);
+    text-wrap: balance;
 }
 
 .home-section--grid .post-card-title {

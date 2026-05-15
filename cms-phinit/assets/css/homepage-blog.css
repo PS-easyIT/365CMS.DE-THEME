@@ -138,11 +138,12 @@
 
 .home-featured-banner__title {
     margin: 0;
-    font-family: var(--font-brand, 'Space Grotesk', 'Inter', sans-serif);
+    font-family: var(--font-brand, 'Space Grotesk', 'Sora', 'Inter', sans-serif);
     font-size: clamp(20px, 2.1vw, 28px);
-    line-height: 1.12;
-    letter-spacing: -0.035em;
+    line-height: var(--lh-display-2, 1.08);
+    letter-spacing: var(--ls-display-2, -0.034em);
     color: var(--text-primary);
+    text-wrap: balance;
 }
 
 .home-featured-banner__title a {
@@ -241,6 +242,8 @@
     color: #fff;
     font-size: 1.05rem;
     font-weight: 700;
+    line-height: 1.16;
+    letter-spacing: var(--ls-display-4, -0.018em);
     margin: 0 0 4px;
     font-family: var(--font-brand);
 }

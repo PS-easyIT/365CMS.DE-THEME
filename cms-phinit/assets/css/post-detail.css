@@ -151,9 +151,11 @@
 .post-title {
     font-size: var(--fs-h1);
     font-weight: 800;
-    line-height: 1.25;
+    line-height: var(--lh-display-1, 1.04);
+    letter-spacing: var(--ls-display-1, -0.042em);
     color: var(--text-primary);
     margin-bottom: 10px;
+    text-wrap: balance;
 }
 
 .post-meta {

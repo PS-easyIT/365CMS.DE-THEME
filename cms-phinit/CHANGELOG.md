@@ -17,6 +17,9 @@
 
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
+| 🎨 style | Typografie / Unterseiten-Titel | `admin/customizer-schema.php`, `theme.json` und `includes/theme-assets-trait.php` erhöhen Post-/Page-Titel auf Unterseiten von starren `28px` auf größere responsive Editorial-H1-Werte mit `36px` Desktop-Default. |
+| 🎨 style | Typografie / Headline-Feinschliff | `style.css`, `assets/css/content-cards.css`, `assets/css/homepage-blog.css`, `assets/css/post-detail.css` und `assets/css/page-detail.css` verfeinern `h1–h3` sowie Card-/Featured-/Post-/Page-Titel mit engerem Letter-Spacing, kompakteren Display-Line-Heights und balancierterem Zeilenumbruch. |
+| 🎨 style | Typografie / Display-Schrift | `admin/customizer-schema.php`, `theme.json`, `includes/theme-assets-trait.php`, `assets/js/customizer-admin.js`, `style.css`, `assets/css/content-cards.css` und `assets/css/homepage-blog.css` ziehen die Display-/Heading-Typografie sauber durch: Space Grotesk bleibt Default, Sora steht als professionelle Alternative bereit und die Fallbacks/Font-Loader sind konsistent. |
 | 🎨 style | Header / Logo | `admin/customizer-schema.php`, `theme.json`, `includes/theme-assets-trait.php` und `assets/css/header-navigation.css` machen die Logo-/Site-Titel-Schriftgröße im Customizer einstellbar und setzen den Standard 4px kleiner auf `20px`. |
 | 🎨 style | Header / Logo | `header.php` und `assets/css/header-navigation.css` ergänzen unter dem Logo-Text den Desktop-Claim „IT-Blog für Microsoft 365, Exchange & PowerShell“ und blenden ihn auf Mobile aus. |
 | 🔴 fix | Startseite / Featured-Banner | `assets/js/homepage-widgets.js`, `partials/home-featured-banner.php` und `assets/css/homepage-blog.css` lassen mehrere ausgewählte Featured-Artikel automatisch alle `5s` wechseln und verhindern, dass inaktive Slides untereinander sichtbar bleiben. |

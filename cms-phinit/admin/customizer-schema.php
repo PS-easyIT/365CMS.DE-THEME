@@ -61,7 +61,7 @@ return [
             'title' => '🔤 Typografie',
             'sections' => [
                 'font_family_ui'           => ['label' => 'Body-/UI-Schrift',         'type' => 'select', 'default' => 'inter',           'options' => ['inter' => 'Inter', 'barlow' => 'Barlow', 'system' => 'System', 'roboto' => 'Roboto', 'open-sans' => 'Open Sans', 'lato' => 'Lato', 'montserrat' => 'Montserrat', 'poppins' => 'Poppins', 'source-sans' => 'Source Sans', 'nunito' => 'Nunito'], 'description' => 'Fließtext und UI-Elemente. Für Tech-Blogs ist Inter als ruhige Body-Schrift voreingestellt.'],
-                'font_family_brand'        => ['label' => 'Display-/Heading-Schrift', 'type' => 'select', 'default' => 'space-grotesk',   'options' => ['space-grotesk' => 'Space Grotesk', 'barlow-condensed' => 'Barlow Condensed', 'barlow' => 'Barlow', 'system' => 'System', 'roboto-condensed' => 'Roboto Condensed', 'oswald' => 'Oswald', 'montserrat' => 'Montserrat', 'rajdhani' => 'Rajdhani', 'exo2' => 'Exo 2'], 'description' => 'Überschriften/Display-Typografie. Space Grotesk ist für moderne Tech-Editorials voreingestellt.'],
+                'font_family_brand'        => ['label' => 'Display-/Heading-Schrift', 'type' => 'select', 'default' => 'space-grotesk',   'options' => ['space-grotesk' => 'Space Grotesk', 'sora' => 'Sora', 'barlow-condensed' => 'Barlow Condensed', 'barlow' => 'Barlow', 'system' => 'System', 'roboto-condensed' => 'Roboto Condensed', 'oswald' => 'Oswald', 'montserrat' => 'Montserrat', 'rajdhani' => 'Rajdhani', 'exo2' => 'Exo 2'], 'description' => 'Überschriften/Display-Typografie. Space Grotesk ist voreingestellt; Sora steht als weichere, aber ebenso professionelle Editorial-Alternative bereit.'],
                 'font_family_code'         => ['label' => 'Code-Schrift',             'type' => 'select', 'default' => 'jetbrains-mono',   'options' => ['jetbrains-mono' => 'JetBrains Mono', 'fira-code' => 'Fira Code', 'source-code' => 'Source Code Pro', 'cascadia' => 'Cascadia Code', 'system-mono' => 'System Mono']],
                 'font_size_base'           => ['label' => 'Basis-Schriftgröße (px)',  'type' => 'number', 'default' => '14.5'],
                 'font_size_post'           => ['label' => 'Artikel-Schriftgröße (px)','type' => 'number', 'default' => '15.5'],
@@ -343,7 +343,7 @@ return [
                 'post_hero_height'       => ['label' => 'Beitragsbild Höhe (px)',           'type' => 'number',   'default' => '215'],
                 'post_hero_width'        => ['label' => 'Beitragsbild Breite (px)',         'type' => 'number',   'default' => '162'],
                 'show_post_hero'         => ['label' => 'Beitragsbild links vom Titel',     'type' => 'checkbox', 'default' => true],
-                'post_title_fontsize'    => ['label' => 'Beitrags-Titel Schriftgröße (px)', 'type' => 'number',   'default' => '28'],
+                'post_title_fontsize'    => ['label' => 'Beitrags-Titel Schriftgröße (px)', 'type' => 'number',   'default' => '36', 'min' => 24, 'max' => 56, 'step' => 1, 'description' => 'Desktop-Zielgröße für den großen Unterseiten-Titel; wird responsiv mit größerem Editorial-H1 umgesetzt.'],
                 'show_post_meta'         => ['label' => 'Artikel-Meta anzeigen',            'type' => 'checkbox', 'default' => true],
                 'show_reading_time'      => ['label' => 'Lesezeit anzeigen',                'type' => 'checkbox', 'default' => true],
                 'reading_time_wpm'       => ['label' => 'Wörter pro Minute',                'type' => 'number',   'default' => '220'],
@@ -373,7 +373,7 @@ return [
             'title' => '📄 Seiten',
             'sections' => [
                 'show_page_title'        => ['label' => 'Seiten-Titel anzeigen',           'type' => 'checkbox', 'default' => true],
-                'page_title_fontsize'    => ['label' => 'Seiten-Titel Schriftgröße (px)',  'type' => 'number',   'default' => '28'],
+                'page_title_fontsize'    => ['label' => 'Seiten-Titel Schriftgröße (px)',  'type' => 'number',   'default' => '36', 'min' => 24, 'max' => 56, 'step' => 1, 'description' => 'Desktop-Zielgröße für den großen Unterseiten-Titel; wird responsiv mit größerem Editorial-H1 umgesetzt.'],
                 'show_page_hero'         => ['label' => 'Seiten-Bild links vom Titel',     'type' => 'checkbox', 'default' => true],
                 'page_hero_width'        => ['label' => 'Seiten-Headerbild Breite (px)',   'type' => 'number',   'default' => '162', 'min' => 80, 'max' => 420, 'step' => 1],
                 'page_hero_height'       => ['label' => 'Seiten-Headerbild Höhe (px)',     'type' => 'number',   'default' => '220', 'min' => 100, 'max' => 420, 'step' => 1],

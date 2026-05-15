@@ -12,6 +12,9 @@
       "version": "1.5.33",
       "date": "2026-05-15",
       "changes": [
+        "admin/customizer-schema.php + theme.json + includes/theme-assets-trait.php: Unterseiten-Titel für Beiträge und Seiten nutzen keine starre 28px-Ausgabe mehr, sondern größere responsive Editorial-H1-Werte mit 36px Desktop-Default",
+        "style.css + assets/css/content-cards.css + assets/css/homepage-blog.css + assets/css/post-detail.css + assets/css/page-detail.css: Editorialer Headline-Feinschliff für h1–h3 sowie Featured-, Card-, Post- und Page-Titel mit engerem Tracking, kompakteren Display-Line-Heights und balancierteren Zeilenumbrüchen",
+        "admin/customizer-schema.php + theme.json + includes/theme-assets-trait.php + assets/js/customizer-admin.js + style.css + assets/css/content-cards.css + assets/css/homepage-blog.css: Display-/Heading-Typografie ist nun sauber auf Space Grotesk als Default ausgelegt; Sora steht als professionelle Alternative bereit und Font-Loader plus CSS-Fallbacks sind konsistent verdrahtet",
         "admin/customizer-schema.php + theme.json + includes/theme-assets-trait.php + assets/css/header-navigation.css: Logo-/Site-Titel-Schriftgröße ist im Header-Customizer einstellbar und startet 4px kleiner mit 20px Standardgröße",
         "header.php + assets/css/header-navigation.css: Unter dem PHINIT.DE-Logo erscheint auf Desktop der Claim `IT-Blog für Microsoft 365, Exchange & PowerShell`; auf Mobile wird die Tagline ausgeblendet",
         "assets/js/homepage-widgets.js + partials/home-featured-banner.php + assets/css/homepage-blog.css: Mehrere ausgewählte Featured-Artikel rotieren automatisch alle 5 Sekunden; inaktive Slides bleiben zuverlässig ausgeblendet und werden nicht mehr untereinander angezeigt",
