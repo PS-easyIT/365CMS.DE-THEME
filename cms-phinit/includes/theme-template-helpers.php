@@ -325,7 +325,9 @@ if (!function_exists('phinit_safe_public_media_url')) {
 
 if (!function_exists('phinit_normalize_public_media_url')) {
     /**
-     * Konvertiert öffentliche Medienreferenzen (inkl. legacy /media-file URLs) in frontend-taugliche Direkt-URLs.
+     * Konvertiert öffentliche Medienreferenzen in frontend-taugliche Delivery-URLs.
+     * Verwaltete Uploads laufen bewusst über /media-file, damit auch ersetzte Bilder
+     * mit restriktiven Dateirechten (z. B. 0640) im Public-Frontend stabil geladen werden.
      */
     function phinit_normalize_public_media_url(?string $value, bool $preferInline = true, ?string $siteUrl = null): string
     {
@@ -336,7 +338,7 @@ if (!function_exists('phinit_normalize_public_media_url')) {
 
         try {
             if (class_exists('\\CMS\\Services\\MediaDeliveryService')) {
-                $url = \CMS\Services\MediaDeliveryService::getInstance()->normalizeUrl($url, $preferInline);
+                $url = \CMS\Services\MediaDeliveryService::getInstance()->normalizeAdminVisibleUrl($url);
             }
         } catch (\Throwable) {
         }
@@ -685,7 +687,9 @@ if (!function_exists('phinit_get_picture_sources')) {
                 return $result;
             }
 
-            $result['webp_url'] = phinit_safe_public_media_url($webpUrl, $siteUrl);
+            $result['webp_url'] = function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url($webpUrl, true, $siteUrl)
+                : phinit_safe_public_media_url($webpUrl, $siteUrl);
         } catch (\Throwable) {
             return $result;
         }

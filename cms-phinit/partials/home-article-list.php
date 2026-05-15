@@ -105,7 +105,30 @@ if (empty($_showList) || $featuredPosts === []) {
             static fn(string $item): string => strtolower(trim($item)),
             preg_split('/[\r\n,;|]+/', (string) ($_sbWidgetOrder ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: []
         ), static fn(string $item): bool => in_array($item, $_sbDefaultOrder, true)));
-        $_sbOrderTokens = array_values(array_unique(array_merge($_sbOrderTokens, $_sbDefaultOrder)));
+        $_sbOrderTokens = array_values(array_unique($_sbOrderTokens));
+        foreach ($_sbDefaultOrder as $_sbDefaultIndex => $_sbDefaultWidgetKey) {
+            if (in_array($_sbDefaultWidgetKey, $_sbOrderTokens, true)) {
+                continue;
+            }
+
+            $_sbInsertBefore = null;
+            for ($_sbNextIndex = $_sbDefaultIndex + 1, $_sbDefaultCount = count($_sbDefaultOrder); $_sbNextIndex < $_sbDefaultCount; $_sbNextIndex++) {
+                $_sbCandidateKey = $_sbDefaultOrder[$_sbNextIndex];
+                $_sbCandidatePosition = array_search($_sbCandidateKey, $_sbOrderTokens, true);
+
+                if ($_sbCandidatePosition !== false) {
+                    $_sbInsertBefore = (int) $_sbCandidatePosition;
+                    break;
+                }
+            }
+
+            if ($_sbInsertBefore === null) {
+                $_sbOrderTokens[] = $_sbDefaultWidgetKey;
+                continue;
+            }
+
+            array_splice($_sbOrderTokens, $_sbInsertBefore, 0, [$_sbDefaultWidgetKey]);
+        }
         $_sbOrderMap = array_flip($_sbOrderTokens);
         $_sbWidgetOrderStyle = static function (string $widgetKey) use ($_sbOrderMap): string {
             $order = (int) ($_sbOrderMap[$widgetKey] ?? 99);

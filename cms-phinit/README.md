@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.33`
+- Version: `1.5.34`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -22,6 +22,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - entlasteter Mobile-Head-Pfad mit inline Theme-Init, asynchronem UI-/Card-CSS auf Home-/Blog-Listings und intrinsischen Header-Logo-Dimensionen
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend
 - locale-aware Homepage-Lead-Image-Abfrage ohne Alias-Mix im SQL-Filter
+- verwaltete Uploads/Featured Images werden im Public-Frontend über die `/media-file`-Delivery-Route normalisiert, damit ersetzte Bilder nicht an direkten `/uploads`-403 scheitern
 
 ## Sicherheit & Audit
 

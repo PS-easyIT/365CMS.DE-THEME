@@ -72,6 +72,49 @@ function phinit_get_customizer_post_picker_rows(): array
 }
 
 /**
+ * Führt eine gespeicherte Widget-Reihenfolge mit der Standardreihenfolge zusammen,
+ * ohne neu eingeführte Widgets stumpf ans Ende zu hängen.
+ *
+ * @param list<string> $configuredOrder
+ * @param list<string> $defaultOrder
+ * @return list<string>
+ */
+function phinit_merge_widget_order(array $configuredOrder, array $defaultOrder): array
+{
+    $normalizedOrder = array_values(array_unique(array_filter(array_map(
+        static fn(mixed $item): string => is_string($item) ? strtolower(trim($item)) : '',
+        $configuredOrder
+    ), static fn(string $item): bool => $item !== '' && in_array($item, $defaultOrder, true))));
+
+    foreach ($defaultOrder as $index => $widgetKey) {
+        if (in_array($widgetKey, $normalizedOrder, true)) {
+            continue;
+        }
+
+        $insertBefore = null;
+
+        for ($nextIndex = $index + 1, $defaultCount = count($defaultOrder); $nextIndex < $defaultCount; $nextIndex++) {
+            $candidateKey = $defaultOrder[$nextIndex];
+            $candidatePosition = array_search($candidateKey, $normalizedOrder, true);
+
+            if ($candidatePosition !== false) {
+                $insertBefore = (int) $candidatePosition;
+                break;
+            }
+        }
+
+        if ($insertBefore === null) {
+            $normalizedOrder[] = $widgetKey;
+            continue;
+        }
+
+        array_splice($normalizedOrder, $insertBefore, 0, [$widgetKey]);
+    }
+
+    return $normalizedOrder;
+}
+
+/**
  * Rendert ein einzelnes Formularfeld mit Tabler-CSS-Klassen.
  *
  * @param array<string, mixed> $field
@@ -147,7 +190,14 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                 static fn(string $item): string => strtolower(trim($item)),
                 preg_split('/[\r\n,;|]+/', $currentValue, -1, PREG_SPLIT_NO_EMPTY) ?: []
             ), static fn(string $item): bool => array_key_exists($item, $widgetOptions)));
-            $configuredOrder = array_values(array_unique(array_merge($configuredOrder, array_keys($widgetOptions))));
+            $defaultOrder = array_values(array_filter(array_map(
+                static fn(string $item): string => strtolower(trim($item)),
+                preg_split('/[\r\n,;|]+/', (string) ($field['default'] ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: []
+            ), static fn(string $item): bool => array_key_exists($item, $widgetOptions)));
+            if ($defaultOrder === []) {
+                $defaultOrder = array_keys($widgetOptions);
+            }
+            $configuredOrder = phinit_merge_widget_order($configuredOrder, $defaultOrder);
             $currentValue = implode("\n", $configuredOrder);
             ?>
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>

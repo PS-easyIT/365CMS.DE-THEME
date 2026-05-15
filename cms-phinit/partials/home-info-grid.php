@@ -36,7 +36,7 @@ $_resolveCardUrl = static function (string $url) use ($siteUrl): string {
     return str_starts_with($url, 'http') ? $url : $siteUrl . $url;
 };
 
-$_c3ProjectLinks = [];
+$_c3ActionLinks = [];
 foreach ([
     ['text' => (string) ($_c3LinkText ?? ''), 'url' => (string) ($_c3LinkUrl ?? '')],
     ['text' => (string) ($_c3LinkText2 ?? ''), 'url' => (string) ($_c3LinkUrl2 ?? '')],
@@ -49,12 +49,17 @@ foreach ([
         continue;
     }
 
-    $_c3ProjectLinks[] = [
+    $_c3ActionLinks[] = [
         'label' => $_label,
         'url' => $_url,
         'external' => preg_match('#^https?://#i', (string) ($_c3ProjectLink['url'] ?? '')) === 1,
     ];
 }
+
+$_c3ActionCount = count($_c3ActionLinks);
+$_c3ActionClass = $_c3ActionCount > 0
+    ? 'info-card-actions info-card-actions--count-' . min(3, max(1, $_c3ActionCount))
+    : 'info-card-actions';
 ?>
 <section class="content-section home-section home-section--info">
     <div class="section-header">
@@ -94,29 +99,37 @@ foreach ([
             <?php if (!empty($_c3Text)): ?>
             <p><?php echo htmlspecialchars((string) $_c3Text, ENT_QUOTES); ?></p>
             <?php endif; ?>
-            <?php if ($_c3IsProjects && $_c3ProjectLinks !== []): ?>
+            <?php if ($_c3IsProjects && (!empty($_c3Badge) || $_c3ActionLinks !== [])): ?>
             <div class="info-card-projects-footer">
                 <?php if (!empty($_c3Badge)): ?>
                 <span class="info-card-projects-badge"><?php echo htmlspecialchars((string) $_c3Badge, ENT_QUOTES); ?></span>
                 <?php endif; ?>
-                <div class="info-card-project-links">
-                    <?php foreach ($_c3ProjectLinks as $_c3ProjectLink): ?>
-                    <a href="<?php echo htmlspecialchars((string) $_c3ProjectLink['url'], ENT_QUOTES); ?>"
-                       class="info-card-project-link"
-                       <?php echo !empty($_c3ProjectLink['external']) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo htmlspecialchars((string) $_c3ProjectLink['label'], ENT_QUOTES); ?></a>
+                <?php if ($_c3ActionLinks !== []): ?>
+                <div class="<?php echo htmlspecialchars($_c3ActionClass, ENT_QUOTES); ?>">
+                    <?php foreach ($_c3ActionLinks as $_c3ActionLink): ?>
+                    <a href="<?php echo htmlspecialchars((string) $_c3ActionLink['url'], ENT_QUOTES); ?>"
+                       class="btn btn-outline btn-sm info-card-cta info-card-action-link"
+                       <?php echo !empty($_c3ActionLink['external']) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo htmlspecialchars((string) $_c3ActionLink['label'], ENT_QUOTES); ?></a>
                     <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
             </div>
             <?php else: ?>
-            <?php if (!empty($_c3Badge)): ?>
-            <span class="<?php echo $_c3IsProjects ? 'info-card-projects-badge' : 'repo-badge repo-badge--inline'; ?>"><?php echo htmlspecialchars((string) $_c3Badge, ENT_QUOTES); ?></span>
-            <?php endif; ?>
-            <?php if (!$_c3IsProjects && !empty($_c3LinkText) && !empty($_c3LinkUrl)): ?>
-            <a href="<?php echo htmlspecialchars($_resolveCardUrl((string) $_c3LinkUrl), ENT_QUOTES); ?>"
-               class="btn btn-sm info-card-cta btn-outline"
-               <?php echo str_starts_with((string) $_c3LinkUrl, 'http') ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
-                <?php echo htmlspecialchars((string) $_c3LinkText, ENT_QUOTES); ?>
-            </a>
+            <?php if (!empty($_c3Badge) || $_c3ActionLinks !== []): ?>
+            <div class="info-card-card3-footer">
+                <?php if (!empty($_c3Badge)): ?>
+                <span class="repo-badge repo-badge--inline"><?php echo htmlspecialchars((string) $_c3Badge, ENT_QUOTES); ?></span>
+                <?php endif; ?>
+                <?php if ($_c3ActionLinks !== []): ?>
+                <div class="<?php echo htmlspecialchars($_c3ActionClass, ENT_QUOTES); ?>">
+                    <?php foreach ($_c3ActionLinks as $_c3ActionLink): ?>
+                    <a href="<?php echo htmlspecialchars((string) $_c3ActionLink['url'], ENT_QUOTES); ?>"
+                       class="btn btn-sm info-card-cta btn-outline info-card-action-link"
+                       <?php echo !empty($_c3ActionLink['external']) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo htmlspecialchars((string) $_c3ActionLink['label'], ENT_QUOTES); ?></a>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
             <?php endif; ?>
             <?php endif; ?>
         </div>

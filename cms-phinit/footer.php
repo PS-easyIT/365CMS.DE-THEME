@@ -24,6 +24,24 @@ try {
     // Brand
     $_brandName     = $c->get('footer', 'footer_brand_name', 'PHINIT.DE');
     $_footerDesc    = $c->get('footer', 'footer_tagline', phinit_is_english_locale($currentLocale) ? 'IT pro blog for Microsoft 365, PowerShell, Linux, and modern IT administration. Practical, well-founded, and concise.' : 'IT-Profi-Blog für Microsoft 365, PowerShell, Linux und moderne IT-Administration. Praxisnah, fundiert, auf Deutsch.');
+    $_footerAboutTitle = trim((string) $c->get('homepage', 'sidebar_about_title', phinit_is_english_locale($currentLocale) ? 'About Me' : 'Über mich'));
+    $_footerAboutName = trim((string) $c->get('homepage', 'sidebar_about_name', ''));
+    $_footerAboutText = trim((string) $c->get('homepage', 'sidebar_about_text', ''));
+    $_footerAboutImageUrl = function_exists('phinit_normalize_public_media_url')
+        ? phinit_normalize_public_media_url((string) $c->get('homepage', 'sidebar_about_image_url', ''), true, $siteUrl)
+        : (function_exists('phinit_safe_public_media_url')
+            ? phinit_safe_public_media_url((string) $c->get('homepage', 'sidebar_about_image_url', ''), $siteUrl)
+            : (string) $c->get('homepage', 'sidebar_about_image_url', ''));
+
+    if ($_footerAboutTitle === '') {
+        $_footerAboutTitle = phinit_is_english_locale($currentLocale) ? 'About Me' : 'Über mich';
+    }
+
+    if ($_footerAboutText === '') {
+        $_footerAboutText = (string) $_footerDesc;
+    }
+
+    $_footerAboutText = trim((string) (preg_replace('/\s+/u', ' ', (string) $_footerAboutText) ?? $_footerAboutText));
 
     // Spaltentitel
     $_col2Title     = $c->get('footer', 'footer_col2_title', phinit_is_english_locale($currentLocale) ? 'Topics' : 'Themen');
@@ -71,6 +89,10 @@ try {
 } catch (\Throwable $e) {
     $_brandName     = 'PHINIT.DE';
     $_footerDesc    = phinit_is_english_locale($currentLocale) ? 'IT pro blog for Microsoft 365, PowerShell & Linux.' : 'IT-Profi-Blog für Microsoft 365, PowerShell & Linux.';
+    $_footerAboutTitle = phinit_is_english_locale($currentLocale) ? 'About Me' : 'Über mich';
+    $_footerAboutName = '';
+    $_footerAboutText = $_footerDesc;
+    $_footerAboutImageUrl = '';
     $_col2Title     = phinit_is_english_locale($currentLocale) ? 'Topics' : 'Themen';
     $_col3Title     = phinit_is_english_locale($currentLocale) ? 'Pages' : 'Seiten';
     $_col4Title     = phinit_is_english_locale($currentLocale) ? 'Legal' : 'Rechtliches';
@@ -131,6 +153,10 @@ $imprintUrl = function_exists('phinit_localized_href')
 $termsUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href('/agb', $currentLocale, $siteUrl)
     : rtrim($siteUrl, '/') . '/agb';
+$_footerContactUrl = function_exists('phinit_localized_href')
+    ? phinit_localized_href('/contact', $currentLocale, $siteUrl)
+    : rtrim($siteUrl, '/') . '/contact';
+$_footerContactLabel = phinit_is_english_locale($currentLocale) ? 'Contact' : 'Kontakt';
 try {
     $footerTopicsMenu = \CMS\ThemeManager::instance()->getMenu('footer-topics');
 } catch (\Throwable $e) {}
@@ -186,14 +212,29 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
             <div class="footer-main">
 
                 <!-- Marken-Spalte -->
-                <div class="footer-brand">
-                    <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/" class="logo">
-                        <?php echo htmlspecialchars($_brandName, ENT_QUOTES); ?>
-                    </a>
-                    <p><?php echo htmlspecialchars($_footerDesc, ENT_QUOTES); ?></p>
-                    <div class="footer-brand__actions">
+                <section class="footer-brand footer-about<?php echo $_footerAboutImageUrl === '' ? ' footer-about--no-image' : ''; ?>" aria-labelledby="footer-about-title">
+                    <?php if ($_footerAboutImageUrl !== ''): ?>
+                    <div class="footer-about__media">
+                        <img src="<?php echo htmlspecialchars($_footerAboutImageUrl, ENT_QUOTES); ?>"
+                             alt="<?php echo htmlspecialchars($_footerAboutName !== '' ? $_footerAboutName : $_footerAboutTitle, ENT_QUOTES); ?>"
+                             class="footer-about__avatar"
+                             <?php echo phinit_image_loading_attributes(false, false); ?>
+                             <?php echo phinit_image_dimension_attributes($_footerAboutImageUrl, 56, 56); ?>>
+                    </div>
+                    <?php endif; ?>
+                    <div class="footer-about__content">
+                        <div class="footer-about__heading">
+                            <h4 id="footer-about-title" class="footer-about__title"><?php echo htmlspecialchars($_footerAboutTitle, ENT_QUOTES); ?></h4>
+                            <?php if ($_footerAboutName !== ''): ?>
+                            <p class="footer-about__name"><?php echo htmlspecialchars($_footerAboutName, ENT_QUOTES); ?></p>
+                            <?php endif; ?>
+                        </div>
+                        <?php if ($_footerAboutText !== ''): ?>
+                        <p class="footer-about__text"><?php echo htmlspecialchars($_footerAboutText, ENT_QUOTES); ?></p>
+                        <?php endif; ?>
+                        <div class="footer-about__actions">
                         <?php if ($_showSocial): ?>
-                        <div class="social-icons">
+                        <nav class="footer-about__social social-icons" aria-label="<?php echo htmlspecialchars(phinit_is_english_locale($currentLocale) ? 'Social media' : 'Social Media', ENT_QUOTES); ?>">
                         <?php if (!empty($_liUrl)): ?>
                         <a href="<?php echo htmlspecialchars($_liUrl, ENT_QUOTES); ?>" class="li" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_liLabel, ENT_QUOTES); ?>">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -227,10 +268,14 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
                         <a href="<?php echo htmlspecialchars($_rssUrl, ENT_QUOTES); ?>" class="rss" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars($_rssLabel, ENT_QUOTES); ?>">
                             <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
                         </a>
-                        </div>
+                        </nav>
                         <?php endif; ?>
+                        <a href="<?php echo htmlspecialchars($_footerContactUrl, ENT_QUOTES); ?>" class="footer-about__contact" aria-label="<?php echo htmlspecialchars($_footerContactLabel, ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars($_footerContactLabel, ENT_QUOTES); ?>
+                        </a>
+                        </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Navigation 1 (aus Menü-Editor: footer-topics) -->
                 <div class="footer-nav">

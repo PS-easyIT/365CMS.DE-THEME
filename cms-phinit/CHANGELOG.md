@@ -56,6 +56,17 @@
 
 ---
 
+## v1.5.34 — 15. Mai 2026
+
+### Öffentliche Medienauslieferung für ersetzte Bilder stabilisiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Medien / Featured Images | `includes/theme-template-helpers.php` stellt `phinit_normalize_public_media_url()` für verwaltete Uploads konsequent auf die `/media-file`-Delivery-Route um. Dadurch bleiben ersetzte Featured Images, Logos und Avatare im Public-Frontend sichtbar, auch wenn der Server direkte `/uploads`-Zugriffe wegen restriktiver Dateirechte mit `403 Forbidden` blockiert. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.34` synchronisiert. |
+
+---
+
 ## v1.5.33 — 15. Mai 2026
 
 ### Kompakter Seitenstart nach dem Header
