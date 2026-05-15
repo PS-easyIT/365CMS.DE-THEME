@@ -827,6 +827,27 @@ trait CMS_Phinit_Theme_Assets_Trait
         $c = \CMS\Services\ThemeCustomizer::instance();
         $css = "/* CMS Phinit – Customizer CSS */\n:root {\n";
 
+        $formatNumber = static function (float|int|string $value): string {
+            $number = (float) $value;
+            if (abs($number - round($number)) < 0.001) {
+                return (string) (int) round($number);
+            }
+
+            return rtrim(rtrim(number_format($number, 2, '.', ''), '0'), '.');
+        };
+
+        $buildClamp = static function (float $max, float $minRatio, string $vw, ?float $minFloor = null) use ($formatNumber): string {
+            $min = $max * $minRatio;
+            if ($minFloor !== null) {
+                $min = max($minFloor, $min);
+            }
+            if ($min > $max) {
+                $min = $max;
+            }
+
+            return 'clamp(' . $formatNumber($min) . 'px, ' . $vw . ', ' . $formatNumber($max) . 'px)';
+        };
+
         $colorMap = [
             'primary_color' => '--primary-color',
             'primary_dark' => '--primary-dark',
@@ -929,6 +950,46 @@ trait CMS_Phinit_Theme_Assets_Trait
                 $css .= "    {$info[0]}: {$val}{$info[1]};\n";
             }
         }
+
+        $typoDirectVarMap = [
+            'font_size_small' => '--fs-sm',
+            'font_size_xsmall' => '--fs-xs',
+            'section_label_fontsize' => '--fs-section-label',
+            'hero_subtitle_fontsize' => '--hero-subtitle-size',
+            'widget_title_fontsize' => '--fs-widget-title',
+            'widget_body_fontsize' => '--fs-widget-body',
+            'widget_link_fontsize' => '--fs-widget-link',
+            'widget_meta_fontsize' => '--fs-widget-meta',
+        ];
+        foreach ($typoDirectVarMap as $key => $varName) {
+            $val = $c->get('typography', $key, '');
+            if ($val !== '' && $val !== null && is_numeric((string) $val)) {
+                $css .= "    {$varName}: " . $formatNumber((float) $val) . "px;\n";
+            }
+        }
+
+        $headingScaleMap = [
+            'heading_h1_fontsize' => ['--fs-h1', 28.0, 72.0, 0.64, '4vw', 28.0],
+            'heading_h2_fontsize' => ['--fs-h2', 22.0, 56.0, 0.70, '3vw', 22.0],
+            'heading_h3_fontsize' => ['--fs-h3', 18.0, 40.0, 0.76, '2.5vw', 18.0],
+            'heading_h4_fontsize' => ['--fs-h4', 14.0, 30.0, 0.88, '1.8vw', 14.0],
+        ];
+        foreach ($headingScaleMap as $key => [$varName, $min, $max, $minRatio, $vw, $minFloor]) {
+            $val = $c->get('typography', $key, '');
+            if ($val === '' || $val === null || !is_numeric((string) $val)) {
+                continue;
+            }
+
+            $value = max($min, min($max, (float) $val));
+            $css .= "    {$varName}: " . $buildClamp($value, $minRatio, $vw, $minFloor) . ";\n";
+        }
+
+        $heroTitleVal = $c->get('typography', 'hero_title_fontsize', '');
+        if ($heroTitleVal !== '' && $heroTitleVal !== null && is_numeric((string) $heroTitleVal)) {
+            $heroTitle = max(20.0, min(44.0, (float) $heroTitleVal));
+            $css .= "    --hero-title-size: " . $buildClamp($heroTitle, 0.72, '2.1vw', 20.0) . ";\n";
+        }
+
         $fwHead = $c->get('typography', 'font_weight_heading', '');
         if (!empty($fwHead)) {
             $css .= "    --fw-heading: {$fwHead};\n";
@@ -1113,15 +1174,15 @@ trait CMS_Phinit_Theme_Assets_Trait
         $tileTitleFs = (int) ($c->get('typography', 'tile_title_fontsize', 15) ?: 15);
         $css .= ".post-card-title { font-size: {$tileTitleFs}px !important; }\n";
 
-        $postTitleFs = (int) ($c->get('posts', 'post_title_fontsize', 28) ?: 28);
-        $postTitleFs = max(20, min(28, $postTitleFs));
-        $postTitleMinFs = max(20, min($postTitleFs - 4, (int) round($postTitleFs * 0.72)));
-        $css .= ".post-title { font-size: clamp({$postTitleMinFs}px, 2.1vw, {$postTitleFs}px) !important; }\n";
+        $postTitleFs = (float) ($c->get('posts', 'post_title_fontsize', 28) ?: 28);
+        $postTitleFs = max(20.0, min(44.0, $postTitleFs));
+        $postTitleMinFs = max(20.0, min($postTitleFs - 4.0, round($postTitleFs * 0.72, 1)));
+        $css .= ".post-title { font-size: clamp(" . $formatNumber($postTitleMinFs) . "px, 2.1vw, " . $formatNumber($postTitleFs) . "px) !important; }\n";
 
-        $pageTitleFs = (int) ($c->get('pages', 'page_title_fontsize', 28) ?: 28);
-        $pageTitleFs = max(20, min(28, $pageTitleFs));
-        $pageTitleMinFs = max(20, min($pageTitleFs - 4, (int) round($pageTitleFs * 0.72)));
-        $css .= ".page-header-block h1 { font-size: clamp({$pageTitleMinFs}px, 2.1vw, {$pageTitleFs}px) !important; }\n";
+        $pageTitleFs = (float) ($c->get('pages', 'page_title_fontsize', 28) ?: 28);
+        $pageTitleFs = max(20.0, min(44.0, $pageTitleFs));
+        $pageTitleMinFs = max(20.0, min($pageTitleFs - 4.0, round($pageTitleFs * 0.72, 1)));
+        $css .= ".page-header-block h1 { font-size: clamp(" . $formatNumber($pageTitleMinFs) . "px, 2.1vw, " . $formatNumber($pageTitleFs) . "px) !important; }\n";
 
         if (!empty($pageHeroW)) {
             $pageWidth = max(80, (int) $pageHeroW);
@@ -1132,10 +1193,12 @@ trait CMS_Phinit_Theme_Assets_Trait
             $css .= ".page-hero-img { height: {$pageHeight}px !important; min-height: {$pageHeight}px !important; max-height: {$pageHeight}px !important; }\n";
         }
 
-        $excerptFs = (int) ($c->get('typography', 'article_excerpt_fontsize', 13) ?: 13);
+        $excerptFs = (float) ($c->get('typography', 'article_excerpt_fontsize', 13) ?: 13);
+        $excerptTabletFs = max(10.5, $excerptFs - 0.5);
+        $excerptMobileFs = max(10.0, $excerptFs - 1.0);
         $css .= ".article-body p { font-size: {$excerptFs}px !important; display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important; }\n";
-        $css .= "@media (max-width: 768px) { .article-body p { display: -webkit-box !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 3 !important; line-clamp: 3 !important; overflow: hidden !important; font-size: var(--fs-sm) !important; line-height: 1.6 !important; } }\n";
-        $css .= "@media (max-width: 480px) { .article-body p { font-size: .82rem !important; line-height: 1.55 !important; } }\n";
+        $css .= "@media (max-width: 768px) { .article-body p { display: -webkit-box !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 3 !important; line-clamp: 3 !important; overflow: hidden !important; font-size: " . $formatNumber($excerptTabletFs) . "px !important; line-height: 1.6 !important; } }\n";
+        $css .= "@media (max-width: 480px) { .article-body p { font-size: " . $formatNumber($excerptMobileFs) . "px !important; line-height: 1.55 !important; } }\n";
 
         $tileExcFs = (int) ($c->get('typography', 'tile_excerpt_fontsize', 12) ?: 12);
         $css .= ".post-card-excerpt { font-size: {$tileExcFs}px !important; }\n";

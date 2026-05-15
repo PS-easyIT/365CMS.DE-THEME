@@ -12,6 +12,8 @@
       "version": "1.5.33",
       "date": "2026-05-15",
       "changes": [
+        "assets/css/content-cards.css + assets/css/homepage-blog.css: Gridcard-Titel stehen auf der Startseite wieder über der Meta-Zeile; der Hover-Effekt der Artikel-Liste ist dort deaktiviert und Kontakt-Button plus Projektkarten in der Sidebar wirken dezenter und weniger kräftig blau",
+        "admin/customizer-schema.php + theme.json + includes/theme-assets-trait.php + style.css + assets/css/content-cards.css + assets/css/homepage-blog.css: Theme-Customizer steuert jetzt auch globale H1-H4-, Small-/Meta-, Hero-/Label- sowie Sidebar-/Widget-Schriftgrößen; damit lassen sich besonders die Widget-Bereiche gezielt kleiner abstimmen",
         "style.css + includes/theme-assets-trait.php + assets/css/homepage-blog.css + assets/css/post-detail.css + assets/css/page-detail.css + assets/css/page-special-pages.css: Unterseiten-Header verwenden für Titel und Untertitel jetzt denselben Größenmaßstab wie der Startseiten-Header",
         "admin/customizer-schema.php + theme.json + includes/theme-assets-trait.php: Beitrags- und Seitentitel orientieren sich im Customizer wieder an der Startseiten-Headergröße und werden responsiv im gleichen Maßstab ausgegeben",
         "style.css + assets/css/content-cards.css + assets/css/homepage-blog.css + assets/css/post-detail.css + assets/css/page-detail.css: Editorialer Headline-Feinschliff für h1–h3 sowie Featured-, Card-, Post- und Page-Titel mit engerem Tracking, kompakteren Display-Line-Heights und balancierteren Zeilenumbrüchen",

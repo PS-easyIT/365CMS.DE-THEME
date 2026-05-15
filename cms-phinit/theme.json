@@ -361,6 +361,56 @@
           "min": 12,
           "max": 22
         },
+        "heading_h1_fontsize": {
+          "label": "H1 / Hauptüberschrift (px)",
+          "type": "number",
+          "default": 44,
+          "min": 28,
+          "max": 72,
+          "step": 0.5
+        },
+        "heading_h2_fontsize": {
+          "label": "H2 / Zwischenüberschrift (px)",
+          "type": "number",
+          "default": 32,
+          "min": 22,
+          "max": 56,
+          "step": 0.5
+        },
+        "heading_h3_fontsize": {
+          "label": "H3 / Unterüberschrift (px)",
+          "type": "number",
+          "default": 24,
+          "min": 18,
+          "max": 40,
+          "step": 0.5
+        },
+        "heading_h4_fontsize": {
+          "label": "H4 / kleine Überschrift (px)",
+          "type": "number",
+          "default": 18.5,
+          "min": 14,
+          "max": 30,
+          "step": 0.5
+        },
+        "font_size_small": {
+          "label": "Kleine UI-Texte (px)",
+          "type": "number",
+          "default": 14,
+          "min": 10,
+          "max": 20,
+          "step": 0.25,
+          "description": "Für kleinere Navigationen, Footer-Texte, Hinweise, Pagination und weitere UI-Elemente auf Basis von --fs-sm."
+        },
+        "font_size_xsmall": {
+          "label": "Meta-/Mikrotexte (px)",
+          "type": "number",
+          "default": 12.5,
+          "min": 9,
+          "max": 18,
+          "step": 0.25,
+          "description": "Für Badges, Metadaten, kleine Labels und sonstige Mikrotypografie auf Basis von --fs-xs."
+        },
         "line_height_base": {
           "label": "Zeilenhöhe Fließtext",
           "type": "number",
@@ -398,6 +448,64 @@
             "600": "Semi-Bold (600)",
             "700": "Bold (700)"
           }
+        },
+        "hero_title_fontsize": {
+          "label": "Hero-/Startseiten-Header Titel (px)",
+          "type": "number",
+          "default": 28,
+          "min": 20,
+          "max": 44,
+          "step": 1,
+          "description": "Gemeinsamer Titelmaßstab für Startseiten-Banner, Blog-, Autoren- und Archiv-Header."
+        },
+        "hero_subtitle_fontsize": {
+          "label": "Hero-/Header Untertitel (px)",
+          "type": "number",
+          "default": 14.5,
+          "min": 12,
+          "max": 22,
+          "step": 0.25,
+          "description": "Gemeinsame Größe für Untertitel, Leads, Breadcrumb-/Meta-Zeilen und ähnliche Header-Nebentexte."
+        },
+        "section_label_fontsize": {
+          "label": "Sektion-Labels / Overlines (px)",
+          "type": "number",
+          "default": 11,
+          "min": 9,
+          "max": 18,
+          "step": 0.25
+        },
+        "widget_title_fontsize": {
+          "label": "Widget-Titel / Sidebar-Header (px)",
+          "type": "number",
+          "default": 10,
+          "min": 8,
+          "max": 18,
+          "step": 0.25
+        },
+        "widget_body_fontsize": {
+          "label": "Widget-Fließtext (px)",
+          "type": "number",
+          "default": 12,
+          "min": 10,
+          "max": 20,
+          "step": 0.25
+        },
+        "widget_link_fontsize": {
+          "label": "Widget-Links / Aktionslabels (px)",
+          "type": "number",
+          "default": 12,
+          "min": 10,
+          "max": 20,
+          "step": 0.25
+        },
+        "widget_meta_fontsize": {
+          "label": "Widget-Meta / kleine Labels (px)",
+          "type": "number",
+          "default": 11,
+          "min": 8,
+          "max": 18,
+          "step": 0.25
         },
         "article_title_fontsize": {
           "label": "Artikelkarten-Titelgröße (px)",
@@ -1390,9 +1498,9 @@
           "type": "number",
           "default": 28,
           "min": 20,
-          "max": 28,
+          "max": 44,
           "step": 1,
-          "description": "Entspricht standardmäßig der Titelgröße des Startseiten-Headers und bleibt auf Unterseiten responsiv daran angelehnt."
+          "description": "Startet auf dem Maßstab des Startseiten-Headers, kann für Unterseiten jetzt aber bewusst separat angepasst werden."
         },
         "show_post_meta": {
           "label": "Post-Meta anzeigen (Datum, Kategorie)",
@@ -1565,9 +1673,9 @@
           "type": "number",
           "default": 28,
           "min": 20,
-          "max": 28,
+          "max": 44,
           "step": 1,
-          "description": "Entspricht standardmäßig der Titelgröße des Startseiten-Headers und bleibt auf Unterseiten responsiv daran angelehnt."
+          "description": "Startet auf dem Maßstab des Startseiten-Headers, kann für Unterseiten jetzt aber bewusst separat angepasst werden."
         },
         "show_page_hero": {
           "label": "Seitenbild im Header anzeigen",

@@ -8,7 +8,7 @@
     flex: 0 1 auto;
     gap: 6px;
     font-family: var(--font-brand, 'Space Grotesk', 'Sora', 'Inter', sans-serif);
-    font-size: 11px;
+    font-size: var(--fs-section-label, 11px);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .08em;
@@ -99,8 +99,8 @@
     display: grid;
     grid-template-columns: 108px minmax(0, 1fr);
     grid-template-areas:
-        'thumb topmeta'
         'thumb title'
+        'thumb topmeta'
         'excerpt excerpt'
         'footer footer';
     column-gap: 16px;
@@ -222,8 +222,8 @@
 
 .home-section--grid .post-card-title {
     grid-area: title;
-    align-self: end;
-    margin: 0 0 6px;
+    align-self: start;
+    margin: 0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -242,7 +242,8 @@
     gap: 8px;
     font-size: var(--fs-xs);
     color: #475569;
-    margin: 0;
+    margin: -1px 0 0;
+    line-height: 1.18;
 }
 
 .home-section--grid .post-card-top-meta__read {
@@ -565,7 +566,7 @@ body.dark-mode .page-link.dots {
     .post-card-title,
     .home-section--grid .post-card-title {
         order: 1;
-        margin-bottom: 5px;
+        margin-bottom: 2px;
         font-size: .98rem;
     }
 
@@ -575,7 +576,7 @@ body.dark-mode .page-link.dots {
         justify-content: flex-start;
         flex-wrap: wrap;
         gap: 5px 9px;
-        margin-top: 0;
+        margin-top: -1px;
         margin-bottom: 0;
         padding-top: 0;
         font-size: var(--fs-xs);
