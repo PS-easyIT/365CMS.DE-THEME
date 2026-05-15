@@ -47,6 +47,8 @@
     };
     const prefersReducedMotion = () =>
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasDesktopNavigation = () =>
+        window.matchMedia('(min-width: 769px) and (hover: hover) and (pointer: fine)').matches;
 
     /* ── DOMContentLoaded ──────────────────────────────────────── */
     document.addEventListener('DOMContentLoaded', () => {
@@ -145,7 +147,7 @@
         if (!header) return;
 
         let isTicking = false;
-        let lastScrolledState = null;
+        let lastScrolledState = false;
 
         const updateHeaderState = () => {
             isTicking = false;
@@ -168,7 +170,6 @@
         };
 
         window.addEventListener('scroll', onScroll, { passive: true });
-        updateHeaderState();
     }
 
     /* ── Burger Menü (Mobile) ──────────────────────────────────── */
@@ -218,6 +219,8 @@
 
     /* ── Hauptnavigation: Desktop-Dropdowns ───────────────────── */
     function initDesktopDropdowns() {
+        if (!hasDesktopNavigation()) return;
+
         const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
         if (!dropdowns.length) return;
         const pendingAlignmentFrames = new WeakMap();

@@ -108,6 +108,57 @@ $cardImageSources = function_exists('phinit_get_picture_sources')
         'width' => 162,
         'height' => 215,
     ];
+$cardImageDesktopSources = (!$above_the_fold_image && function_exists('phinit_get_thumbnail_picture_sources'))
+    ? phinit_get_thumbnail_picture_sources($cardImage, $siteUrl, 108, 81, 'crop')
+    : [
+        'url' => '',
+        'avif_url' => '',
+        'webp_url' => '',
+        'width' => 0,
+        'height' => 0,
+    ];
+$_pcBuildImageSrcset = static function (array $candidates): string {
+    $srcset = [];
+    $seen = [];
+
+    foreach ($candidates as $candidate) {
+        if (!is_array($candidate)) {
+            continue;
+        }
+
+        $url = trim((string) ($candidate['url'] ?? ''));
+        $width = (int) ($candidate['width'] ?? 0);
+        if ($url === '' || $width < 1 || isset($seen[$url])) {
+            continue;
+        }
+
+        $seen[$url] = true;
+        $srcset[] = htmlspecialchars($url, ENT_QUOTES) . ' ' . $width . 'w';
+    }
+
+    return implode(', ', $srcset);
+};
+$_pcImageSizes = $above_the_fold_image
+    ? '(max-width: 768px) calc(100vw - 28px), 162px'
+    : '(max-width: 768px) calc(100vw - 28px), 108px';
+$_pcAvifSrcset = $_pcBuildImageSrcset([
+    ['url' => (string) ($cardImageDesktopSources['avif_url'] ?? ''), 'width' => (int) ($cardImageDesktopSources['width'] ?? 0)],
+    ['url' => (string) ($cardImageSources['avif_url'] ?? ''), 'width' => (int) ($cardImageSources['width'] ?? 0)],
+]);
+$_pcWebpSrcset = $_pcBuildImageSrcset([
+    ['url' => (string) ($cardImageDesktopSources['webp_url'] ?? ''), 'width' => (int) ($cardImageDesktopSources['width'] ?? 0)],
+    ['url' => (string) ($cardImageSources['webp_url'] ?? ''), 'width' => (int) ($cardImageSources['width'] ?? 0)],
+]);
+$_pcFallbackSrcset = $_pcBuildImageSrcset([
+    ['url' => (string) ($cardImageDesktopSources['url'] ?? ''), 'width' => (int) ($cardImageDesktopSources['width'] ?? 0)],
+    ['url' => (string) ($cardImageSources['url'] ?? $cardImage), 'width' => (int) ($cardImageSources['width'] ?? 0)],
+]);
+$_pcImageSrc = trim((string) ($cardImageDesktopSources['url'] ?? ''));
+if ($_pcImageSrc === '') {
+    $_pcImageSrc = (string) ($cardImageSources['url'] ?? $cardImage);
+}
+$_pcImageWidth = max(1, (int) (($cardImageDesktopSources['width'] ?? 0) ?: ($cardImageSources['width'] ?? 162)));
+$_pcImageHeight = max(1, (int) (($cardImageDesktopSources['height'] ?? 0) ?: ($cardImageSources['height'] ?? 215)));
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
@@ -136,16 +187,17 @@ if ($show_rt && $show_meta) {
     <div class="article-thumb">
         <?php if ($cardImage !== ''): ?>
         <picture>
-            <?php if (($cardImageSources['avif_url'] ?? '') !== ''): ?>
-            <source srcset="<?php echo htmlspecialchars((string) ($cardImageSources['avif_url'] ?? ''), ENT_QUOTES); ?>" type="image/avif">
+             <?php if ($_pcAvifSrcset !== ''): ?>
+             <source srcset="<?php echo $_pcAvifSrcset; ?>" sizes="<?php echo htmlspecialchars($_pcImageSizes, ENT_QUOTES); ?>" type="image/avif">
             <?php endif; ?>
-            <?php if (($cardImageSources['webp_url'] ?? '') !== ''): ?>
-            <source srcset="<?php echo htmlspecialchars((string) ($cardImageSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
+             <?php if ($_pcWebpSrcset !== ''): ?>
+             <source srcset="<?php echo $_pcWebpSrcset; ?>" sizes="<?php echo htmlspecialchars($_pcImageSizes, ENT_QUOTES); ?>" type="image/webp">
             <?php endif; ?>
-            <img src="<?php echo htmlspecialchars((string) ($cardImageSources['url'] ?? $cardImage), ENT_QUOTES); ?>"
+             <img src="<?php echo htmlspecialchars($_pcImageSrc, ENT_QUOTES); ?>"
+                 <?php if ($_pcFallbackSrcset !== ''): ?>srcset="<?php echo $_pcFallbackSrcset; ?>" sizes="<?php echo htmlspecialchars($_pcImageSizes, ENT_QUOTES); ?>"<?php endif; ?>
                    alt="<?php echo phinit_escape_text($displayTitle); ?>"
                                 <?php echo phinit_image_loading_attributes($above_the_fold_image, $image_high_priority); ?>
-                                 <?php echo phinit_image_dimension_attributes($cardImage, 162, 215); ?>>
+                         width="<?php echo (int) $_pcImageWidth; ?>" height="<?php echo (int) $_pcImageHeight; ?>">
         </picture>
         <?php else: ?>
         <div class="article-thumb-placeholder" aria-hidden="true"><span>📄</span></div>
