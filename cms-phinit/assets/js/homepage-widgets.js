@@ -11,6 +11,7 @@
     const boot = () => {
         initFeaturedSidebarTitleBadges();
         initFeaturedSidebarRotators();
+        initSidebarArticleCarousels();
     };
 
     if (document.readyState === 'loading') {
@@ -139,6 +140,120 @@
 
             rotator.addEventListener('focusout', (event) => {
                 if (event.relatedTarget instanceof Node && rotator.contains(event.relatedTarget)) {
+                    return;
+                }
+
+                paused = prefersReducedMotion();
+                startRotation();
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                paused = document.hidden || prefersReducedMotion();
+                if (paused) {
+                    stopRotation();
+                    return;
+                }
+
+                startRotation();
+            });
+
+            showSlide(currentIndex);
+            startRotation();
+        });
+    }
+
+    function initSidebarArticleCarousels() {
+        const carousels = document.querySelectorAll('[data-sidebar-carousel]');
+        if (!carousels.length) return;
+
+        carousels.forEach((carousel) => {
+            const slides = Array.from(carousel.querySelectorAll('[data-sidebar-carousel-slide]'));
+            const dots = Array.from(carousel.querySelectorAll('[data-sidebar-carousel-dot]'));
+            const prev = carousel.querySelector('[data-sidebar-carousel-prev]');
+            const next = carousel.querySelector('[data-sidebar-carousel-next]');
+            const interval = Number.parseInt(carousel.getAttribute('data-rotate-interval') || '7000', 10);
+
+            if (slides.length <= 1) {
+                return;
+            }
+
+            let currentIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains('is-active')));
+            let timerId = 0;
+            let paused = prefersReducedMotion();
+
+            const showSlide = (nextIndex) => {
+                currentIndex = ((nextIndex % slides.length) + slides.length) % slides.length;
+
+                slides.forEach((slide, index) => {
+                    const isActive = index === currentIndex;
+                    slide.classList.toggle('is-active', isActive);
+                    slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+                    const link = slide.querySelector('.sb-carousel-link');
+                    if (link instanceof HTMLElement) {
+                        link.tabIndex = isActive ? 0 : -1;
+                    }
+                });
+
+                dots.forEach((dot, index) => {
+                    const isActive = index === currentIndex;
+                    dot.classList.toggle('is-active', isActive);
+                    dot.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+            };
+
+            const stopRotation = () => {
+                if (timerId) {
+                    window.clearInterval(timerId);
+                    timerId = 0;
+                }
+            };
+
+            const startRotation = () => {
+                stopRotation();
+
+                if (paused || !Number.isFinite(interval) || interval < 3000) {
+                    return;
+                }
+
+                timerId = window.setInterval(() => {
+                    showSlide(currentIndex + 1);
+                }, interval);
+            };
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    showSlide(index);
+                    startRotation();
+                });
+            });
+
+            prev?.addEventListener('click', () => {
+                showSlide(currentIndex - 1);
+                startRotation();
+            });
+
+            next?.addEventListener('click', () => {
+                showSlide(currentIndex + 1);
+                startRotation();
+            });
+
+            carousel.addEventListener('mouseenter', () => {
+                paused = true;
+                stopRotation();
+            });
+
+            carousel.addEventListener('mouseleave', () => {
+                paused = prefersReducedMotion();
+                startRotation();
+            });
+
+            carousel.addEventListener('focusin', () => {
+                paused = true;
+                stopRotation();
+            });
+
+            carousel.addEventListener('focusout', (event) => {
+                if (event.relatedTarget instanceof Node && carousel.contains(event.relatedTarget)) {
                     return;
                 }
 

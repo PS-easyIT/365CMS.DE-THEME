@@ -350,26 +350,45 @@ if ($_showLanguageSwitch) {
 
             <?php
             // Exakter Active-Nav-Abgleich: "/" nur auf Startseite, andere URLs prefix-basiert
-            $_navUri = $_requestPath;
-            $navIsActive = static function (string $url) use ($_navUri, $_localizedPath, $_currentLocale, $siteUrl): bool {
-                if ($url === '' || $url === '#') { return false; }
-
+            $_navNormalizePath = static function (string $url, bool $localize = false) use ($_localizedPath, $_currentLocale, $siteUrl): string {
                 $candidate = trim($url);
+                if ($candidate === '' || $candidate === '#') {
+                    return '';
+                }
+
                 if (preg_match('#^https?://#i', $candidate) === 1) {
                     $siteBase = rtrim((string) $siteUrl, '/');
                     if (!str_starts_with($candidate, $siteBase)) {
-                        return false;
+                        return '';
                     }
 
                     $candidate = (string) (parse_url($candidate, PHP_URL_PATH) ?? '/');
+                } elseif (str_starts_with($candidate, '/')) {
+                    $candidate = (string) (parse_url($candidate, PHP_URL_PATH) ?? $candidate);
+                } else {
+                    return '';
                 }
 
-                if (str_starts_with($candidate, '/')) {
+                if ($localize) {
                     $candidate = $_localizedPath($candidate, $_currentLocale);
                 }
 
-                if ($candidate === '/') { return $_navUri === '/'; }
-                return $_navUri === $candidate || str_starts_with($_navUri, rtrim($candidate, '/') . '/');
+                $candidate = '/' . trim($candidate, '/');
+
+                return $candidate === '/' ? '/' : rtrim($candidate, '/');
+            };
+            $_navUri = $_navNormalizePath($_requestPath);
+            $navIsActive = static function (string $url) use ($_navUri, $_navNormalizePath): bool {
+                $candidate = $_navNormalizePath($url, true);
+                if ($candidate === '' || $_navUri === '') {
+                    return false;
+                }
+
+                if ($candidate === '/') {
+                    return $_navUri === '/';
+                }
+
+                return $_navUri === $candidate || str_starts_with($_navUri, $candidate . '/');
             };
             $navItemHasActiveBranch = static function (array $item) use ($navIsActive, &$navItemHasActiveBranch): bool {
                 if ($navIsActive((string) ($item['url'] ?? ''))) {
@@ -518,28 +537,28 @@ if ($_showLanguageSwitch) {
                         <?php $renderDesktopMenuItems($mainMenuItems); ?>
                     <?php else: ?>
                         <!-- Fallback-Menü -->
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link"><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Linux / BASH</a>
-                        <div class="has-dropdown" data-nav-dropdown>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/') ? ' active' : ''; ?>"<?php echo $navIsActive('/') ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars(phinit_t('home', [], $_currentLocale), ENT_QUOTES); ?></a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/linux') ? ' active' : ''; ?>"<?php echo $navIsActive('/linux') ? ' aria-current="page"' : ''; ?>>Linux / BASH</a>
+                        <div class="has-dropdown<?php echo $navIsActive('/powershell') ? ' is-active-branch' : ''; ?>" data-nav-dropdown>
                             <div class="main-nav__item-head">
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">PowerShell</a>
-                            <button type="button"
-                                    class="main-nav__toggle"
-                                    aria-expanded="false"
-                                    aria-haspopup="true"
-                                    aria-controls="main-nav-dropdown-fallback-powershell"
-                                    aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => 'PowerShell'], $_currentLocale), ENT_QUOTES); ?>">
-                                <span aria-hidden="true">▾</span>
-                            </button>
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/powershell') ? ' active' : ''; ?>"<?php echo $navIsActive('/powershell') ? ' aria-current="page"' : ''; ?>>PowerShell</a>
+                                <button type="button"
+                                        class="main-nav__toggle<?php echo $navIsActive('/powershell') ? ' active' : ''; ?>"
+                                        aria-expanded="false"
+                                        aria-haspopup="true"
+                                        aria-controls="main-nav-dropdown-fallback-powershell"
+                                        aria-label="<?php echo htmlspecialchars(phinit_t('submenu_open_for', ['label' => 'PowerShell'], $_currentLocale), ENT_QUOTES); ?>">
+                                    <span aria-hidden="true">▾</span>
+                                </button>
                             </div>
                             <div class="dropdown" id="main-nav-dropdown-fallback-powershell">
                                 <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/grundlagen', $_currentLocale), ENT_QUOTES); ?>">Grundlagen</a>
                                 <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/glossar', $_currentLocale), ENT_QUOTES); ?>">Glossar</a>
                             </div>
                         </div>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Microsoft 365</a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">Datenschutz</a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link">News</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/microsoft-365') ? ' active' : ''; ?>"<?php echo $navIsActive('/microsoft-365') ? ' aria-current="page"' : ''; ?>>Microsoft 365</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/datenschutz') ? ' active' : ''; ?>"<?php echo $navIsActive('/datenschutz') ? ' aria-current="page"' : ''; ?>>Datenschutz</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/news') ? ' active' : ''; ?>"<?php echo $navIsActive('/news') ? ' aria-current="page"' : ''; ?>>News</a>
                     <?php endif; ?>
                     <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
                 </nav>

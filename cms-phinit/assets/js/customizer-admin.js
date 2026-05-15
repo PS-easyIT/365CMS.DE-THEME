@@ -121,6 +121,63 @@
             });
         });
 
+        function initWidgetOrderControls() {
+            document.querySelectorAll('[data-widget-order-control]').forEach((control) => {
+                const input = control.querySelector('[data-widget-order-input]');
+                const list = control.querySelector('[data-widget-order-list]');
+
+                if (!(input instanceof HTMLInputElement) || !(list instanceof HTMLElement)) {
+                    return;
+                }
+
+                const syncOrder = () => {
+                    const items = Array.from(list.querySelectorAll('[data-widget-order-item]'));
+                    input.value = items
+                        .map((item) => item instanceof HTMLElement ? (item.dataset.widgetKey || '') : '')
+                        .filter(Boolean)
+                        .join('\n');
+
+                    items.forEach((item, index) => {
+                        const upButton = item.querySelector('[data-widget-order-action="up"]');
+                        const downButton = item.querySelector('[data-widget-order-action="down"]');
+                        if (upButton instanceof HTMLButtonElement) {
+                            upButton.disabled = index === 0;
+                        }
+                        if (downButton instanceof HTMLButtonElement) {
+                            downButton.disabled = index === items.length - 1;
+                        }
+                    });
+                };
+
+                list.addEventListener('click', (event) => {
+                    const target = event.target instanceof Element ? event.target : null;
+                    const button = target?.closest('[data-widget-order-action]');
+                    const item = button?.closest('[data-widget-order-item]');
+
+                    if (!(button instanceof HTMLElement) || !(item instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    const action = button.dataset.widgetOrderAction || '';
+                    if (action === 'up' && item.previousElementSibling) {
+                        list.insertBefore(item, item.previousElementSibling);
+                    } else if (action === 'down' && item.nextElementSibling) {
+                        list.insertBefore(item.nextElementSibling, item);
+                    } else {
+                        return;
+                    }
+
+                    syncOrder();
+                    markChanged();
+                    item.focus({preventScroll: true});
+                });
+
+                syncOrder();
+            });
+        }
+
+        initWidgetOrderControls();
+
         function closeConfirmModal() {
             if (!confirmOverlay) {
                 return;

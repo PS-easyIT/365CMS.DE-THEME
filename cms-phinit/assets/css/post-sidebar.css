@@ -33,7 +33,7 @@
 }
 
 .post-container {
-    padding-top: var(--spacing-header-content, 25px);
+    padding-top: 0;
     padding-bottom: var(--spacing-content-footer, 25px);
 }
 

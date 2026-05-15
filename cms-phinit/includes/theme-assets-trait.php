@@ -369,93 +369,100 @@ trait CMS_Phinit_Theme_Assets_Trait
         } catch (\Throwable $e) {
         }
 
-        $version = !empty(trim((string) $cbVersion)) ? $cbVersion : (file_exists($cssFile) ? filemtime($cssFile) : CMS_PHINIT_THEME_VERSION);
+        $assetVersion = static function (string $file) use ($cbVersion): string {
+            $customVersion = trim((string) $cbVersion);
+            $fileVersion = file_exists($file) ? (string) filemtime($file) : CMS_PHINIT_THEME_VERSION;
+
+            return $customVersion !== '' ? $customVersion . '-' . $fileVersion : $fileVersion;
+        };
+
+        $version = $assetVersion($cssFile);
         $this->emitStylesheet($this->themeAssetUrl('style.css', $version));
 
         if (file_exists($headerNavigationCssFile)) {
-            $headerNavigationVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($headerNavigationCssFile);
+            $headerNavigationVersion = $assetVersion($headerNavigationCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/header-navigation.css', $headerNavigationVersion));
         }
 
         $uiChromeIsCritical = $loadPageDetailCss || $loadPostDetailCss || $isHubSiteRequest;
         if (file_exists($uiChromeCssFile)) {
-            $uiChromeVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($uiChromeCssFile);
+            $uiChromeVersion = $assetVersion($uiChromeCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/ui-chrome.css', $uiChromeVersion), !$uiChromeIsCritical);
         }
 
         if ($loadTemplateCss && file_exists($templateCssFile)) {
-            $templateVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($templateCssFile);
+            $templateVersion = $assetVersion($templateCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/templates.css', $templateVersion));
         }
 
         $contentCardsIsCritical = $loadPageExtrasCss;
         if ($loadContentCardsCss && file_exists($contentCardsCssFile)) {
-            $contentCardsVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($contentCardsCssFile);
+            $contentCardsVersion = $assetVersion($contentCardsCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/content-cards.css', $contentCardsVersion), !$contentCardsIsCritical);
         }
 
         if ($loadMemberAuthCss && file_exists($memberAuthCssFile)) {
-            $memberAuthVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($memberAuthCssFile);
+            $memberAuthVersion = $assetVersion($memberAuthCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/member-auth.css', $memberAuthVersion));
         }
 
         if ($loadPostDetailCss && file_exists($postDetailCssFile)) {
-            $postDetailVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($postDetailCssFile);
+            $postDetailVersion = $assetVersion($postDetailCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/post-detail.css', $postDetailVersion));
         }
 
         if ($loadPostSidebarCss && file_exists($postSidebarCssFile)) {
-            $postSidebarVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($postSidebarCssFile);
+            $postSidebarVersion = $assetVersion($postSidebarCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/post-sidebar.css', $postSidebarVersion));
         }
 
         if ($loadPageDetailCss && file_exists($pageDetailCssFile)) {
-            $pageDetailVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageDetailCssFile);
+            $pageDetailVersion = $assetVersion($pageDetailCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-detail.css', $pageDetailVersion));
         }
 
         if ($loadCookieConsentCss && file_exists($pageCookieConsentCssFile)) {
-            $pageCookieConsentVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageCookieConsentCssFile);
+            $pageCookieConsentVersion = $assetVersion($pageCookieConsentCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-cookie-consent.css', $pageCookieConsentVersion));
         }
 
         if ($loadImageArchiveCss && file_exists($imageArchiveCssFile)) {
-            $imageArchiveVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($imageArchiveCssFile);
+            $imageArchiveVersion = $assetVersion($imageArchiveCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-image-archive.css', $imageArchiveVersion));
         }
 
         if ($loadSpecialPagesCss && file_exists($specialPagesCssFile)) {
-            $specialPagesVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($specialPagesCssFile);
+            $specialPagesVersion = $assetVersion($specialPagesCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-special-pages.css', $specialPagesVersion));
         }
 
         if ($loadPageExtrasCss && file_exists($pageExtrasCssFile)) {
-            $pageExtrasVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($pageExtrasCssFile);
+            $pageExtrasVersion = $assetVersion($pageExtrasCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-extras.css', $pageExtrasVersion));
         }
 
         if ($loadRichContentCss && file_exists($richContentCssFile)) {
-            $richContentVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($richContentCssFile);
+            $richContentVersion = $assetVersion($richContentCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/rich-content.css', $richContentVersion));
         }
 
         if ($loadHomepageBlogCss && file_exists($homepageBlogCssFile)) {
-            $homepageBlogVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($homepageBlogCssFile);
+            $homepageBlogVersion = $assetVersion($homepageBlogCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/homepage-blog.css', $homepageBlogVersion));
         }
 
         if ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
-            $hubSitesVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($hubSitesCssFile);
+            $hubSitesVersion = $assetVersion($hubSitesCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/hub-sites.css', $hubSitesVersion));
         }
 
         if ($loadKnowledgebaseCss && file_exists($knowledgebaseCssFile)) {
-            $knowledgebaseVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($knowledgebaseCssFile);
+            $knowledgebaseVersion = $assetVersion($knowledgebaseCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/page-knowledgebase.css', $knowledgebaseVersion));
         }
 
         if (file_exists($footerConsentCssFile)) {
-            $footerConsentVersion = !empty(trim((string) $cbVersion)) ? $cbVersion : filemtime($footerConsentCssFile);
+            $footerConsentVersion = $assetVersion($footerConsentCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/footer-consent.css', $footerConsentVersion), true);
         }
 
@@ -487,6 +494,20 @@ trait CMS_Phinit_Theme_Assets_Trait
         $scripts = [
             'assets/js/navigation.js',
         ];
+
+        $homeBasePath = $requestPath;
+        try {
+            if (class_exists('CMS\\Services\\ContentLocalizationService')) {
+                $localizedContext = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($requestPath);
+                $homeBasePath = (string) ($localizedContext['base_uri'] ?? $requestPath);
+            }
+        } catch (\Throwable) {
+            $homeBasePath = $requestPath;
+        }
+
+        if ($homeBasePath === '' || $homeBasePath === '/') {
+            $scripts[] = 'assets/js/homepage-widgets.js';
+        }
 
         foreach ($scripts as $scriptRelativePath) {
             $scriptFile = CMS_PHINIT_THEME_DIR . str_replace('/', DIRECTORY_SEPARATOR, $scriptRelativePath);

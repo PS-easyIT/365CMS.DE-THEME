@@ -15,6 +15,12 @@ use CMS\Services\ThemeCustomizer;
 function phinit_get_homepage_view_model(): array
 {
     $defaults = [
+        '_showFeaturedBanner' => true,
+        '_featuredBannerLabel' => 'Featured',
+        '_featuredBannerPostId' => 0,
+        '_featuredBannerTitle' => '',
+        '_featuredBannerText' => '',
+        '_featuredBannerButtonText' => 'Weiter lesen',
         '_showRepo' => true,
         '_repoTitle' => 'PS-easyIT Script-Repository',
         '_repoDesc' => '',
@@ -39,6 +45,19 @@ function phinit_get_homepage_view_model(): array
         '_listSidebarWidth' => 260,
         '_listSidebarTitle' => '',
         '_listSidebarContent' => '',
+        '_sbWidgetOrder' => "identity\ncarousel\nabout\nprojects\nfeatured\nstatus\ndownloads\nsocial\nnotice\ncustom",
+        '_sbShowArticleCarousel' => true,
+        '_sbArticleCarouselLabel' => 'Artikel-Karussell',
+        '_sbArticleCarouselCount' => 4,
+        '_sbArticleCarouselImageHeight' => 96,
+        '_sbArticleCarouselRotateSeconds' => 7,
+        '_sbShowAboutMe' => false,
+        '_sbAboutTitle' => 'About Me',
+        '_sbAboutName' => '',
+        '_sbAboutImageUrl' => '',
+        '_sbAboutText' => '',
+        '_sbAboutLinkUrl' => '',
+        '_sbAboutLinkText' => 'Mehr über mich',
         '_sbShowProjects' => true,
         '_sbProj1Name' => '365CMS.DE',
         '_sbProj1Desc' => 'Das eigene CMS – modular & flexibel',
@@ -132,7 +151,6 @@ function phinit_get_homepage_view_model(): array
         '_spInfo' => 32,
         '_spGrid' => 32,
         '_spRss' => 0,
-        '_homeHeaderSpacing' => 15,
     ];
 
     try {
@@ -165,6 +183,12 @@ function phinit_get_homepage_view_model(): array
         }
 
         return array_merge($defaults, [
+            '_showFeaturedBanner' => filter_var($customizer->get('homepage', 'show_home_featured_banner', true), FILTER_VALIDATE_BOOLEAN),
+            '_featuredBannerLabel' => $customizer->get('homepage', 'home_featured_banner_label', 'Featured'),
+            '_featuredBannerPostId' => (int) $customizer->get('homepage', 'home_featured_banner_post', 0),
+            '_featuredBannerTitle' => $customizer->get('homepage', 'home_featured_banner_title', ''),
+            '_featuredBannerText' => $customizer->get('homepage', 'home_featured_banner_text', ''),
+            '_featuredBannerButtonText' => $customizer->get('homepage', 'home_featured_banner_button_text', 'Weiter lesen'),
             '_showRepo' => filter_var($customizer->get('homepage', 'show_repo_card', true), FILTER_VALIDATE_BOOLEAN),
             '_repoTitle' => $customizer->get('homepage', 'repo_card_title', 'PS-easyIT Script-Repository'),
             '_repoDesc' => $customizer->get('homepage', 'repo_card_description', ''),
@@ -191,6 +215,23 @@ function phinit_get_homepage_view_model(): array
             '_listSidebarWidth' => max(160, (int) $customizer->get('homepage', 'list_sidebar_width', 260)),
             '_listSidebarTitle' => $customizer->get('homepage', 'list_sidebar_title', ''),
             '_listSidebarContent' => $customizer->get('homepage', 'list_sidebar_content', ''),
+            '_sbWidgetOrder' => $customizer->get('homepage', 'sidebar_widget_order', $defaults['_sbWidgetOrder']),
+            '_sbShowArticleCarousel' => filter_var($customizer->get('homepage', 'sidebar_show_article_carousel', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbArticleCarouselLabel' => $customizer->get('homepage', 'sidebar_article_carousel_label', 'Artikel-Karussell'),
+            '_sbArticleCarouselCount' => max(2, min(6, (int) $customizer->get('homepage', 'sidebar_article_carousel_count', 4))),
+            '_sbArticleCarouselImageHeight' => max(72, min(150, (int) $customizer->get('homepage', 'sidebar_article_carousel_image_height', 96))),
+            '_sbArticleCarouselRotateSeconds' => max(3, min(30, (int) $customizer->get('homepage', 'sidebar_article_carousel_rotate_seconds', 7))),
+            '_sbShowAboutMe' => filter_var($customizer->get('homepage', 'sidebar_show_about_me', false), FILTER_VALIDATE_BOOLEAN),
+            '_sbAboutTitle' => $customizer->get('homepage', 'sidebar_about_title', 'About Me'),
+            '_sbAboutName' => $customizer->get('homepage', 'sidebar_about_name', ''),
+            '_sbAboutImageUrl' => function_exists('phinit_safe_public_media_url')
+                ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_about_image_url', ''), $siteUrl)
+                : $customizer->get('homepage', 'sidebar_about_image_url', ''),
+            '_sbAboutText' => $customizer->get('homepage', 'sidebar_about_text', ''),
+            '_sbAboutLinkUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_about_link_url', ''), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'sidebar_about_link_url', ''),
+            '_sbAboutLinkText' => $customizer->get('homepage', 'sidebar_about_link_text', 'Mehr über mich'),
             '_sbShowProjects' => filter_var($customizer->get('homepage', 'sidebar_show_projects', true), FILTER_VALIDATE_BOOLEAN),
             '_sbProj1Name' => $customizer->get('homepage', 'sidebar_project1_name', '365CMS.DE'),
             '_sbProj1Desc' => $customizer->get('homepage', 'sidebar_project1_desc', 'Das eigene CMS – modular & flexibel'),
@@ -330,7 +371,6 @@ function phinit_get_homepage_view_model(): array
             '_spInfo' => max(0, (int) $customizer->get('homepage', 'spacing_info_cards', 32)),
             '_spGrid' => max(0, (int) $customizer->get('homepage', 'spacing_tile_grid', 32)),
             '_spRss' => max(0, (int) $customizer->get('homepage', 'spacing_rss_feeds', 0)),
-            '_homeHeaderSpacing' => max(0, min(30, (int) $customizer->get('homepage', 'home_header_content_spacing', 15))),
         ]);
     } catch (\Throwable $_e) {
         return $defaults;
@@ -482,6 +522,7 @@ function phinit_prepare_homepage_posts(array $posts, string $locale): array
 function phinit_get_homepage_posts_payload(array $viewModel): array
 {
     $defaults = [
+        'featuredBannerPost' => null,
         'featuredPosts' => [],
         'gridPosts' => [],
         'sbFeaturedPosts' => [],
@@ -498,9 +539,28 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
 
         $_showList = !empty($viewModel['_showList']);
         $_showTileGrid = !empty($viewModel['_showTileGrid']);
+        $_showFeaturedBanner = !empty($viewModel['_showFeaturedBanner']);
+        $_featuredBannerPostId = max(0, (int) ($viewModel['_featuredBannerPostId'] ?? 0));
         $_listCount = max(1, (int) ($viewModel['_listCount'] ?? 4));
         $_tileCount = max(1, (int) ($viewModel['_tileCount'] ?? 6));
         $_sbShowFeaturedPosts = !empty($viewModel['_sbShowFeaturedPosts']);
+
+        $featuredBannerPost = null;
+        if ($_showFeaturedBanner && $_featuredBannerPostId > 0) {
+            $_bannerRows = $db->get_results(
+                "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
+                    p.title_en, p.excerpt_en, p.content_en,
+                    c.name AS category_name,
+                    c.slug AS category_slug
+                 FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
+                 WHERE p.id = " . (int) $_featuredBannerPostId . " AND " . phinit_featured_sidebar_post_where('p') . "{$localeCondition}
+                 LIMIT 1"
+            ) ?: [];
+
+            $_bannerPrepared = phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $_bannerRows), $contentLocale);
+            $featuredBannerPost = $_bannerPrepared[0] ?? null;
+        }
 
         $featuredRows = $_showList
             ? ($db->get_results(
@@ -594,6 +654,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         }
 
         return [
+            'featuredBannerPost' => $featuredBannerPost,
             'featuredPosts' => $featuredPosts,
             'gridPosts' => $gridPosts,
             'sbFeaturedPosts' => $sbFeaturedPosts,

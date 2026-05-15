@@ -140,6 +140,29 @@ try {
 try {
     $footerLegalMenu = \CMS\ThemeManager::instance()->getMenu('footer');
 } catch (\Throwable $e) {}
+
+$_footerRepoViewModel = [];
+try {
+    $_footerRequestPath = function_exists('phinit_current_request_path') ? phinit_current_request_path() : '/';
+    $_footerBaseUri = $_footerRequestPath;
+
+    if (class_exists('CMS\\Services\\ContentLocalizationService')) {
+        $_footerRequestContext = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($_footerRequestPath);
+        $_footerBaseUri = (string) ($_footerRequestContext['base_uri'] ?? $_footerRequestPath);
+    }
+
+    if ($_footerBaseUri === '' || $_footerBaseUri === '/') {
+        require_once __DIR__ . '/includes/theme-home-helpers.php';
+
+        if (function_exists('phinit_get_homepage_view_model')) {
+            $_footerRepoViewModel = phinit_get_homepage_view_model();
+        }
+    }
+} catch (\Throwable $_footerRepoError) {
+    $_footerRepoViewModel = [];
+}
+
+$_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_footerRepoViewModel['_repoTitle']);
 ?>
 
 </main><!-- /#main-content -->
@@ -147,6 +170,14 @@ try {
 
 <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════ -->
 <?php \CMS\Hooks::doAction('before_footer'); ?>
+<?php if ($_footerShowRepoBanner): ?>
+<section class="footer-repo-banner" aria-label="<?php echo htmlspecialchars((string) ($_footerRepoViewModel['_repoTitle'] ?? 'GitHub Repository'), ENT_QUOTES); ?>">
+    <?php get_theme_part('partials/home-repo-card', array_merge($_footerRepoViewModel, [
+        '_repoWrapSection' => false,
+        '_repoFooterBanner' => true,
+    ])); ?>
+</section>
+<?php endif; ?>
 <footer class="site-footer" role="contentinfo">
 
     <!-- Haupt-Footer: 3-spaltig (Brand + 2 Nav-Spalten) -->
@@ -230,7 +261,7 @@ try {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/ueber-uns">Über mich</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/kontakt">Kontakt</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/contact', $currentLocale, $siteUrl), ENT_QUOTES); ?>">Kontakt</a></li>
                             <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $currentLocale, $siteUrl), ENT_QUOTES); ?>" target="_blank" rel="noopener">RSS-Feed</a></li>
                         <?php endif; ?>
                     </ul>

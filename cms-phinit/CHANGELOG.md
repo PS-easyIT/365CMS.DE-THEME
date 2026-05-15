@@ -18,6 +18,48 @@
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
 | 🔴 fix | Theme Editor / Admin Customizer | `admin/customizer.php` lädt die zentralen Request-Helper bei Bedarf selbst nach, damit der eingebettete Theme-Editor auch dann startet, wenn `functions.php` im Admin-Kontext noch nicht vollständig initialisiert wurde. |
+| 🔴 fix | Plugin-Seiten / Breadcrumb | `includes/theme-head-trait.php` unterdrückt den Theme-Breadcrumb-Bereich direkt unter dem Quicklinksband jetzt auch für öffentliche Plugin-Routen inklusive M365-License-Public, damit Plugins ihre eigene Inhaltsnavigation bestimmen. |
+| 🔴 fix | Header / Quicklinks | `assets/css/header-navigation.css` entfernt die unsichtbare Top-Level-Dropdown-Hoverbrücke im Hauptmenü und setzt Dropdowns bündig an die Menüleiste, damit Quicklink-Klicks nicht mehr versehentlich Hauptmenü-Dropdowns auslösen. |
+| 🎨 style | Header / Quicklinks | `assets/css/header-navigation.css` färbt die Trennlinie zwischen Hauptmenüband und Quicklinksbar in der Quicklinks-Hintergrundfarbe, damit kein heller Zwischenstreifen mehr sichtbar ist. |
+| 🎨 style | Startseite / Footer-Banner | `footer.php`, `partials/home-info-grid.php`, `partials/home-repo-card.php`, `style.css` und `assets/css/homepage-blog.css` verschieben den GitHub-Repo-Banner unter die Startseiten-Pagination direkt über den Theme-Footer, vollbreit und ohne Abstand zum Footer. |
+| 🔴 fix | Header / Hauptmenü | `header.php` und `assets/css/header-navigation.css` markieren die aktive Hauptseite im Hauptmenü inklusive Dropdown-Elternpunkt mit `active`/`aria-current`, damit die aktuelle Hauptseite sichtbar hervorgehoben ist. |
+| 🟢 feat | Startseite / Sidebar | `partials/home-article-list.php`, `includes/theme-home-helpers.php`, `includes/theme-assets-trait.php`, `assets/js/homepage-widgets.js` und `assets/css/homepage-blog.css` ergänzen ein kompaktes Artikel-Karussell mit begrenzter Vorschaubildhöhe und überarbeiten die Sidebar-Widgets zu konsistenten Karten. |
+| 🟢 feat | Theme Customizer / Sidebar | `admin/customizer-schema.php`, `admin/customizer-field-renderer.php`, `admin/customizer-request-handler.php`, `assets/js/customizer-admin.js` und `assets/css/customizer-admin.css` ersetzen die manuelle Sidebar-Reihenfolge per Schlüssel-Textarea durch eine Button-basierte Sortierliste. |
+| 🟢 feat | Startseite / Featured-Banner | `index.php`, `includes/theme-home-helpers.php`, `partials/home-featured-banner.php` und `admin/customizer-schema.php` ergänzen oben auf der Startseite einen dezent hervorgehobenen, per Customizer wählbaren Featured-Artikel-Banner. |
+| 🟢 feat | Startseite / Sidebar | `partials/home-article-list.php`, `includes/theme-home-helpers.php`, `admin/customizer-schema.php` und `assets/css/homepage-blog.css` ergänzen ein About-Me-Widget und eine Customizer-gesteuerte Reihenfolge für Sidebar-Bereiche. |
+| 🎨 style | Startseite / Cards | `partials/home-article-list.php`, `partials/home-post-grid.php`, `assets/css/homepage-blog.css` und `assets/css/content-cards.css` vereinheitlichen Abschnittstrenner im Themenbereiche-Design, begrenzen Sidebar-Artikelbilder auf maximal die Teaserhälfte und stellen „Weiter lesen“ als dezente Buttons dar. |
+
+---
+
+## v1.5.33 — 15. Mai 2026
+
+### Kompakter Seitenstart nach dem Header
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Header / Seiten / Beiträge | `assets/css/header-navigation.css`, `style.css`, `assets/css/page-detail.css` und `assets/css/post-sidebar.css` lassen den Header sticky im normalen Dokumentfluss stehen und setzen für normale Seiten und Beiträge einen echten Header-zu-Content-Abstand von `25px`, ohne die alte Headerhöhen-Reservierung wieder einzubauen. |
+| 🎨 style | HubSites / Breadcrumbs | `includes/theme-head-trait.php`, `style.css` und `assets/css/hub-sites.css` erkennen HubSites separat, lassen die HubSite-Hintergrundfläche bündig unter dem Theme-Header beginnen und richten die HubSite-Shell exakt an der normalen `.container`-/Header-/Footer-Breite aus. Der HubSite-Content-Header bekommt innen `25px` Abstand nach oben, der HubSite-Inhalt bleibt links/rechts `10px` schmaler; sichtbare Breadcrumbs unter den Quicklinks bleiben unterdrückt. |
+| 🎨 style | Startseite / Customizer-Abstand | `index.php`, `includes/theme-home-helpers.php`, `style.css` und `assets/css/homepage-blog.css` lassen auf der Startseite wieder die globale Customizer-Einstellung `spacing_header_content` (`Header zu Content Abstand`) greifen, damit der GitHub-Repo-Bereich sichtbar Abstand zum Theme-Header bekommt. |
+| 🎨 style | Knowledgebase / Header-Abstand | `style.css` reduziert den äußeren Theme-Abstand Header→Content für Knowledgebase-Seiten (`/kb`, `/glossar`) auf die Hälfte des normalen Theme-Abstands, damit der KB-Content deutlich näher am Header startet. |
+| 🎨 style | M365 License Public / Plugin-Abstände | `style.css` setzt nur für öffentliche M365-License-Seiten mit `m365lic-theme-embed` den äußeren Theme-Abstand Header→Content auf `0px`; alle übrigen Plugin-Seiten bleiben beim normalen Theme-Abstand von `25px` bzw. der globalen Customizer-Einstellung. |
+| 🎨 style | Plugin-Content / Footer-Abstand | `includes/theme-head-trait.php`, `style.css` und `assets/css/footer-consent.css` markieren öffentliche Plugin-Content-Routen mit `is-plugin-content` und setzen den äußeren Theme-Abstand Content→Footer sowie den Theme-Footer-`margin-top` für Plugin-Seiten auf `0px`, damit die Plugins ihren unteren Abschlussabstand selbst bestimmen. |
+| 🔴 fix | Layout / Horizontaler Scroll | `style.css` und `assets/css/hub-sites.css` kappen horizontalen Seiten-Overflow und begrenzen HubSite-Container auf die Viewport-Breite, damit Chrome keinen leeren rechten Scrollbereich mehr anzeigt. |
+| 🔴 fix | CSS Cache-Busting | `includes/theme-assets-trait.php` kombiniert einen optional gesetzten Customizer-Cache-Buster jetzt mit `filemtime()`, sodass geänderte Theme-CSS-Dateien auch bei festem Cache-Buster frisch ausgeliefert werden. |
+| 🎨 style | Theme Customizer | `admin/customizer-schema.php` und `theme.json` verwenden für `spacing_header_content` jetzt den Standardwert `25px`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.33` synchronisiert. |
+
+---
+
+## v1.5.32 — 15. Mai 2026
+
+### Live-Admin-Audit-Fixes
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Seiten-Rendering | `page.php` bereitet Router-geladene Editor.js-Seiten wieder vor dem Sanitizing über den zentralen Renderpfad auf, damit veröffentlichte Seiteninhalte sichtbar bleiben. |
+| 🔴 fix | Admin Customizer | `admin/customizer-schema.php` und `admin/customizer-field-renderer.php` liefern nativen Color-Pickern nur noch valide `#rrggbb`-Werte und normalisieren gespeicherte Altwerte auf den Feld-Default. |
+| 🔴 fix | Footer / Kontaktlink | `footer.php` und `includes/theme-navigation-trait.php` verweisen im Standardmenü auf die kanonische Kontaktformular-Route `/contact`, statt auf die nicht registrierte Route `/kontakt`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.32` synchronisiert. |
 
 ---
 

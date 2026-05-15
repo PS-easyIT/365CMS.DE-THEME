@@ -313,6 +313,21 @@ function phinit_normalize_customizer_post_value(string $fieldType, mixed $rawVal
         case 'post_picker':
             return ctype_digit($value) ? $value : '';
 
+        case 'widget_order':
+            $options = $fieldConfig['options'] ?? [];
+            if (!is_array($options) || $options === []) {
+                return strip_tags((string) $rawValue);
+            }
+
+            $allowedValues = array_map('strval', array_keys($options));
+            $tokens = array_values(array_filter(array_map(
+                static fn(string $item): string => strtolower(trim($item)),
+                preg_split('/[\r\n,;|]+/', (string) $rawValue, -1, PREG_SPLIT_NO_EMPTY) ?: []
+            ), static fn(string $item): bool => in_array($item, $allowedValues, true)));
+            $tokens = array_values(array_unique(array_merge($tokens, $allowedValues)));
+
+            return implode("\n", $tokens);
+
         case 'url':
             if ($value === '') {
                 return '';

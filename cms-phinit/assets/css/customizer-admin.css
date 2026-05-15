@@ -32,3 +32,10 @@
 .phinit-customizer__confirm-title { margin: 0 0 .75rem; font-size: 1.1rem; font-weight: 700; }
 .phinit-customizer__confirm-message { margin: 0 0 1rem; color: #475569; }
 .phinit-customizer__confirm-actions { display: flex; justify-content: flex-end; gap: .75rem; }
+.phinit-widget-order { max-width: 520px; }
+.phinit-widget-order__list { display: grid; gap: .5rem; }
+.phinit-widget-order__item { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: .65rem; padding: .55rem .65rem; border: 1px solid #dbe3ed; border-radius: 8px; background: #f8fafc; }
+.phinit-widget-order__handle { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: #e2e8f0; color: #475569; font-weight: 700; }
+.phinit-widget-order__label { font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phinit-widget-order__actions { display: flex; gap: .35rem; }
+.phinit-widget-order__actions .btn:disabled { opacity: .38; cursor: not-allowed; }

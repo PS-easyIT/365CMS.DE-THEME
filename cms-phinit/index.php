@@ -3,11 +3,10 @@
  * Homepage Template – CMS Phinit Theme
  *
  * Layout (alle Sektionen per Customizer konfigurierbar):
- *  1. Repo-Card (optional)
- *  2. Aktuelle Artikel-Liste (horizontal)
- *  3. Info-Cards 2-spaltig (Kategorie-Highlights)
- *  4. Kachel-Grid (paginiert)
- *  5. RSS-Feed-Sektion (cms-feed Plugin)
+ *  1. Aktuelle Artikel-Liste (horizontal)
+ *  2. Themenbereiche mit Repo-Card (optional) und Info-Cards
+ *  3. Kachel-Grid (paginiert)
+ *  4. RSS-Feed-Sektion (cms-feed Plugin)
  *
  * @package CMS_Phinit_Theme
  */
@@ -30,7 +29,6 @@ $_spGrid = (int) ($homepageViewModel['_spGrid'] ?? 32);
 $_spRss = (int) ($homepageViewModel['_spRss'] ?? 0);
 $_listSidebarWidth = (int) ($homepageViewModel['_listSidebarWidth'] ?? 260);
 $_tileImageH = (int) ($homepageViewModel['_tileImageH'] ?? 161);
-$_homeHeaderSpacing = (int) ($homepageViewModel['_homeHeaderSpacing'] ?? 15);
 $homeShellStyle = implode(' ', [
     '--home-sp-repo: ' . (int) $_spRepo . 'px;',
     '--home-sp-list: ' . (int) $_spList . 'px;',
@@ -39,12 +37,12 @@ $homeShellStyle = implode(' ', [
     '--home-sp-rss: ' . (int) $_spRss . 'px;',
     '--hp-sidebar-w: ' . (int) $_listSidebarWidth . 'px;',
     '--hp-tile-thumb-h: ' . (int) $_tileImageH . 'px;',
-    '--home-sp-top: ' . (int) $_homeHeaderSpacing . 'px;',
 ]);
 
 // ── Startseiten-Daten laden (Posts, Grid-Paginierung, Sidebar-Featured) ──────
 $homepagePostsPayload = phinit_get_homepage_posts_payload($homepageViewModel);
 $featuredPosts = is_array($homepagePostsPayload['featuredPosts'] ?? null) ? $homepagePostsPayload['featuredPosts'] : [];
+$featuredBannerPost = is_array($homepagePostsPayload['featuredBannerPost'] ?? null) ? $homepagePostsPayload['featuredBannerPost'] : null;
 $gridPosts = is_array($homepagePostsPayload['gridPosts'] ?? null) ? $homepagePostsPayload['gridPosts'] : [];
 $sbFeaturedPosts = is_array($homepagePostsPayload['sbFeaturedPosts'] ?? null) ? $homepagePostsPayload['sbFeaturedPosts'] : [];
 $currentPage = (int) ($homepagePostsPayload['currentPage'] ?? 1);
@@ -54,8 +52,11 @@ $feedSections = phinit_get_homepage_feed_sections();
 <?php \CMS\Hooks::doAction('home_content'); ?>
 <div class="container home-shell" style="<?php echo htmlspecialchars($homeShellStyle, ENT_QUOTES); ?>">
 
-    <!-- ── Repo-Card ─────────────────────────────────────────────── -->
-    <?php get_theme_part('partials/home-repo-card', $homepageViewModel); ?>
+    <!-- ── Featured-Banner ──────────────────────────────────── -->
+    <?php get_theme_part('partials/home-featured-banner', array_merge($homepageViewModel, [
+        'featuredBannerPost' => $featuredBannerPost,
+        'siteUrl' => $siteUrl,
+    ])); ?>
 
     <!-- ── Artikel-Liste ─────────────────────────────────────── -->
     <?php get_theme_part('partials/home-article-list', array_merge($homepageViewModel, [

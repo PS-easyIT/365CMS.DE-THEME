@@ -52,7 +52,8 @@ $pageContent = (string)($page['content'] ?? '');
 $isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
 $isCookieConsentPage = (($page['content_type'] ?? '') === 'cookie_consent') || (($page['slug'] ?? '') === 'cookie-einstellungen');
 $isImageArchivePage = is_array($page) && phinit_is_image_archive_page($page);
-if (!$pageProvidedByRouter && !$isHubSitePage) {
+$shouldPrepareRenderablePageContent = $pageContent !== '' && !$isHubSitePage && !$isCookieConsentPage && !$isImageArchivePage;
+if ($shouldPrepareRenderablePageContent) {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', $pageId);
 }
 

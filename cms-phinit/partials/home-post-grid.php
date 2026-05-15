@@ -23,7 +23,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
 ?>
 <section class="content-section home-section home-section--grid" data-anim data-anim-delay="2">
     <div class="section-header">
-        <span class="section-label">📰 <?php echo htmlspecialchars((string) $_tileLabel, ENT_QUOTES); ?></span>
+        <span class="section-label section-label--dark"><?php echo htmlspecialchars((string) $_tileLabel, ENT_QUOTES); ?></span>
     </div>
 
     <div class="posts-grid posts-grid--cols-<?php echo (int) $_tileCols; ?>">

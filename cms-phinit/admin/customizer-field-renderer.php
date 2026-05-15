@@ -97,11 +97,17 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             </div>
 
         <?php elseif (($field['type'] ?? 'text') === 'color'): ?>
+            <?php
+            $defaultColor = (string) ($field['default'] ?? '#000000');
+            $pickerValue = preg_match('/^#[0-9a-fA-F]{6}$/', $currentValue) === 1 ? $currentValue : $defaultColor;
+            $pickerValue = preg_match('/^#[0-9a-fA-F]{6}$/', $pickerValue) === 1 ? $pickerValue : '#000000';
+            $currentValue = preg_match('/^#[0-9a-fA-F]{6}$/', $currentValue) === 1 ? $currentValue : $pickerValue;
+            ?>
             <label class="form-label"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
             <div class="input-group phinit-customizer__color-group">
                 <input type="color"
                       id="<?php echo $idAttr; ?>"
-                       value="<?php echo htmlspecialchars($currentValue ?: '#000000', ENT_QUOTES); ?>"
+                       value="<?php echo htmlspecialchars($pickerValue, ENT_QUOTES); ?>"
                        class="form-control form-control-color phinit-customizer__color-input"
                       data-color-picker
                       data-sync-target-text="<?php echo htmlspecialchars($id . '_txt', ENT_QUOTES); ?>"
@@ -133,6 +139,37 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
             <textarea id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                       class="form-control" rows="<?php echo (int) ($field['rows'] ?? 3); ?>"><?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?></textarea>
+
+        <?php elseif (($field['type'] ?? 'text') === 'widget_order'): ?>
+            <?php
+            $widgetOptions = is_array($field['options'] ?? null) ? $field['options'] : [];
+            $configuredOrder = array_values(array_filter(array_map(
+                static fn(string $item): string => strtolower(trim($item)),
+                preg_split('/[\r\n,;|]+/', $currentValue, -1, PREG_SPLIT_NO_EMPTY) ?: []
+            ), static fn(string $item): bool => array_key_exists($item, $widgetOptions)));
+            $configuredOrder = array_values(array_unique(array_merge($configuredOrder, array_keys($widgetOptions))));
+            $currentValue = implode("\n", $configuredOrder);
+            ?>
+            <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+            <div class="phinit-widget-order" data-widget-order-control>
+                <input type="hidden"
+                       id="<?php echo $idAttr; ?>"
+                       name="<?php echo $nameAttr; ?>"
+                       value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
+                       data-widget-order-input>
+                <div class="phinit-widget-order__list" data-widget-order-list>
+                    <?php foreach ($configuredOrder as $widgetKey): ?>
+                    <div class="phinit-widget-order__item" data-widget-order-item data-widget-key="<?php echo htmlspecialchars($widgetKey, ENT_QUOTES); ?>">
+                        <span class="phinit-widget-order__handle" aria-hidden="true">↕</span>
+                        <span class="phinit-widget-order__label"><?php echo htmlspecialchars((string) ($widgetOptions[$widgetKey] ?? $widgetKey), ENT_QUOTES); ?></span>
+                        <div class="phinit-widget-order__actions" aria-label="Reihenfolge ändern">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-widget-order-action="up" aria-label="Nach oben">↑</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-widget-order-action="down" aria-label="Nach unten">↓</button>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
 
         <?php elseif (($field['type'] ?? 'text') === 'url'): ?>
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>

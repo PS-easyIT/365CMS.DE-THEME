@@ -597,6 +597,23 @@ trait CMS_Phinit_Theme_Head_Trait
             return;
         }
 
+        if ($this->isCurrentHubSiteRequest()) {
+            $this->breadcrumbOutput = true;
+            return;
+        }
+
+        $uri = $this->getHeadRequestPath();
+        $baseUri = $uri;
+        try {
+            $baseUri = (string) (\CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($uri)['base_uri'] ?? $uri);
+        } catch (\Throwable) {
+        }
+
+        if ($this->isPluginContentRequest($baseUri)) {
+            $this->breadcrumbOutput = true;
+            return;
+        }
+
         $settings = $this->getHeadCustomizerSettings();
         if (is_array($this->getCurrentHeadPost()) || is_array($this->getCurrentHeadPage())) {
             $this->breadcrumbOutput = true;
@@ -611,7 +628,6 @@ trait CMS_Phinit_Theme_Head_Trait
         $onPages = $settings['breadcrumb_on_pages'];
 
         $siteUrl = defined('SITE_URL') ? SITE_URL : '';
-        $uri = $this->getHeadRequestPath();
         if ($uri === '/' || $uri === '') {
             return;
         }
@@ -766,6 +782,125 @@ trait CMS_Phinit_Theme_Head_Trait
         return $siteTitle . ' – IT-Blog & Tutorials';
     }
 
+    private function isHeadHubPagePayload(?array $page): bool
+    {
+        if (!is_array($page)) {
+            return false;
+        }
+
+        $contentType = strtolower(trim((string) ($page['content_type'] ?? '')));
+        if ($contentType === 'hub') {
+            return true;
+        }
+
+        $content = (string) ($page['content'] ?? '');
+
+        return $content !== '' && str_contains($content, 'cms-hub-site');
+    }
+
+    private function isCurrentHubSiteRequest(): bool
+    {
+        $uri = phinit_current_request_path();
+        $baseUri = $uri;
+
+        try {
+            $baseUri = (string) (\CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($uri)['base_uri'] ?? $uri);
+        } catch (\Throwable) {
+        }
+
+        $templatePage = $GLOBALS['page'] ?? null;
+        if (is_object($templatePage)) {
+            $templatePage = (array) $templatePage;
+        }
+        if ($this->isHeadHubPagePayload(is_array($templatePage) ? $templatePage : null)) {
+            return true;
+        }
+
+        if (function_exists('phinit_get_page_by_request_path')) {
+            try {
+                $resolvedPage = phinit_get_page_by_request_path($baseUri);
+                if (is_object($resolvedPage)) {
+                    $resolvedPage = (array) $resolvedPage;
+                }
+                if ($this->isHeadHubPagePayload(is_array($resolvedPage) ? $resolvedPage : null)) {
+                    return true;
+                }
+            } catch (\Throwable) {
+            }
+        }
+
+        try {
+            if (!class_exists('CMS\\Services\\SiteTableService')) {
+                return false;
+            }
+
+            $siteTableService = \CMS\Services\SiteTableService::getInstance();
+            if ($baseUri === '/' || $baseUri === '') {
+                $host = function_exists('phinit_current_host') ? phinit_current_host() : '';
+                if ($host === '') {
+                    return false;
+                }
+
+                return $siteTableService->getHubPageByDomain($host, 'de') !== null
+                    || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+            }
+
+            $slug = trim($baseUri, '/');
+            return $slug !== '' && !str_contains($slug, '/') && $siteTableService->hubExistsBySlug($slug);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    private function isPluginContentRequest(string $baseUri): bool
+    {
+        $path = '/' . trim($baseUri, '/');
+        if ($path === '/') {
+            return false;
+        }
+
+        if (str_starts_with($path, '/admin') || str_starts_with($path, '/api') || str_starts_with($path, '/member') || str_starts_with($path, '/dashboard')) {
+            return false;
+        }
+
+        $pluginRoutePrefixes = [
+            '/booking',
+            '/career',
+            '/companies',
+            '/company',
+            '/contact',
+            '/downloads',
+            '/event',
+            '/events',
+            '/expert',
+            '/experts',
+            '/feed',
+            '/feeds',
+            '/forum',
+            '/glossar',
+            '/jobs',
+            '/kb',
+            '/kontakt',
+            '/marketplace',
+            '/marketplace-public',
+            '/marketplace-submit',
+            '/m365-lizenzberater',
+            '/newsletter',
+            '/projects',
+            '/promo',
+            '/promos',
+            '/speakers',
+        ];
+
+        foreach ($pluginRoutePrefixes as $routePrefix) {
+            if ($path === $routePrefix || str_starts_with($path, $routePrefix . '/')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function bodyClass(string $classes): string
     {
         $add = [];
@@ -787,6 +922,14 @@ trait CMS_Phinit_Theme_Head_Trait
         }
         if (str_starts_with($uri, '/member') || str_starts_with($uri, '/dashboard')) {
             $add[] = 'is-member';
+        }
+
+        if ($this->isCurrentHubSiteRequest()) {
+            $add[] = 'is-hub-site';
+        }
+
+        if ($this->isPluginContentRequest($baseUri)) {
+            $add[] = 'is-plugin-content';
         }
 
         if ($baseUri === '/kb' || str_starts_with($baseUri, '/kb/') || $baseUri === '/glossar') {

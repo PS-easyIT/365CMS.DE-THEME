@@ -3,7 +3,7 @@
 ══════════════════════════════════════════════════════════════════ */
 
 .page-shell {
-    padding-top: 28px;
+    padding-top: 0;
     padding-bottom: 40px;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .page-shell--hub {
-    padding-top: 20px;
+    padding-top: 0;
     padding-bottom: 28px;
 }
 

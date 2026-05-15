@@ -44,7 +44,7 @@ if (empty($_showList) || $featuredPosts === []) {
 ?>
 <section class="content-section home-section home-section--list">
     <div class="section-header">
-        <span class="section-label">📄 <?php echo htmlspecialchars((string) $_listLabel, ENT_QUOTES); ?></span>
+        <span class="section-label section-label--dark"><?php echo htmlspecialchars((string) $_listLabel, ENT_QUOTES); ?></span>
     </div>
     <?php if ($_showListSidebar): ?>
     <div class="homepage-list-with-sidebar">
@@ -100,12 +100,30 @@ if (empty($_showList) || $featuredPosts === []) {
             [$_sbProj1Name, $_sbProj1Desc, $_sbProj1Url, $_sbProj1LogoUrl],
             [$_sbProj2Name, $_sbProj2Desc, $_sbProj2Url, $_sbProj2LogoUrl],
         ];
+        $_sbDefaultOrder = ['identity', 'carousel', 'about', 'projects', 'featured', 'status', 'downloads', 'social', 'notice', 'custom'];
+        $_sbOrderTokens = array_values(array_filter(array_map(
+            static fn(string $item): string => strtolower(trim($item)),
+            preg_split('/[\r\n,;|]+/', (string) ($_sbWidgetOrder ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: []
+        ), static fn(string $item): bool => in_array($item, $_sbDefaultOrder, true)));
+        $_sbOrderTokens = array_values(array_unique(array_merge($_sbOrderTokens, $_sbDefaultOrder)));
+        $_sbOrderMap = array_flip($_sbOrderTokens);
+        $_sbWidgetOrderStyle = static function (string $widgetKey) use ($_sbOrderMap): string {
+            $order = (int) ($_sbOrderMap[$widgetKey] ?? 99);
+
+            return ' style="order: ' . $order . ';"';
+        };
+        $_sbCarouselPosts = !empty($_sbShowArticleCarousel)
+            ? array_slice($featuredPosts, 0, max(2, min(6, (int) ($_sbArticleCarouselCount ?? 4))))
+            : [];
+        $_sbCarouselActive = count($_sbCarouselPosts) > 0;
+        $_sbCarouselRotateInterval = max(3, min(30, (int) ($_sbArticleCarouselRotateSeconds ?? 7))) * 1000;
+        $_sbCarouselImageHeight = max(72, min(150, (int) ($_sbArticleCarouselImageHeight ?? 96)));
     ?>
     </div><!-- /.homepage-list-main -->
     <aside class="<?php echo $_sbAsideClass; ?>">
 
         <?php if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
-        <div class="sb-widget sb-widget--identity">
+        <div class="sb-widget sb-widget--identity"<?php echo $_sbWidgetOrderStyle('identity'); ?>>
             <?php $_idLink = !empty($_sbIdentityLinkUrl) ? (string) $_sbIdentityLinkUrl : '/'; ?>
             <?php $_idHref = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($_idLink, $siteUrl, ['http', 'https']) ?: '/') : $_idLink; ?>
             <?php $_sbIdentityLogoSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url((string) $_sbIdentityLogoUrl, false, $siteUrl) : (string) $_sbIdentityLogoUrl; ?>
@@ -121,8 +139,108 @@ if (empty($_showList) || $featuredPosts === []) {
         </div>
         <?php endif; ?>
 
+        <?php if ($_sbCarouselActive): ?>
+        <div class="sb-widget sb-widget--carousel"
+             style="order: <?php echo (int) ($_sbOrderMap['carousel'] ?? 99); ?>; --sb-carousel-image-h: <?php echo (int) $_sbCarouselImageHeight; ?>px;"
+             data-sidebar-carousel
+             data-rotate-interval="<?php echo (int) $_sbCarouselRotateInterval; ?>">
+            <?php echo $_renderSidebarWidgetTitle((string) ($_sbArticleCarouselLabel ?? 'Artikel-Karussell'), '📰'); ?>
+            <div class="sb-carousel-track" aria-live="polite">
+                <?php foreach ($_sbCarouselPosts as $_carouselIndex => $_carouselPost):
+                    $_carouselPost = is_array($_carouselPost) ? $_carouselPost : [];
+                    $_carouselIndex = (int) $_carouselIndex;
+                    $_carouselIsActive = $_carouselIndex === 0;
+                    $_carouselHrefRaw = (string) ($_carouselPost['permalink'] ?? (function_exists('phinit_build_post_url') ? phinit_build_post_url($_carouselPost, $currentLocale) : ($siteUrl . '/blog/' . ($_carouselPost['slug'] ?? ''))));
+                    $_carouselHref = function_exists('phinit_safe_public_url')
+                        ? (phinit_safe_public_url($_carouselHrefRaw, $siteUrl, ['http', 'https']) ?: '#')
+                        : $_carouselHrefRaw;
+                    $_carouselTitleRaw = (string) ($_carouselPost['title'] ?? '');
+                    $_carouselTitle = htmlspecialchars($_carouselTitleRaw, ENT_QUOTES);
+                    $_carouselThumb = !empty($_carouselPost['featured_image'])
+                        ? (function_exists('phinit_normalize_public_media_url')
+                            ? phinit_normalize_public_media_url((string) $_carouselPost['featured_image'], false, $siteUrl)
+                            : (string) $_carouselPost['featured_image'])
+                        : '';
+                    $_carouselCat = trim((string) ($_carouselPost['category_name'] ?? ''));
+                    $_carouselDateRaw = $_carouselPost['published_at'] ?? ($_carouselPost['created_at'] ?? '');
+                    $_carouselDate = !empty($_carouselDateRaw) ? date('j. M Y', strtotime((string) $_carouselDateRaw)) : '';
+                    $_carouselDateIso = !empty($_carouselDateRaw) ? date('c', strtotime((string) $_carouselDateRaw)) : '';
+                ?>
+                <article class="sb-carousel-slide<?php echo $_carouselIsActive ? ' is-active' : ''; ?>"
+                         data-sidebar-carousel-slide
+                         data-slide-index="<?php echo $_carouselIndex; ?>"
+                         aria-hidden="<?php echo $_carouselIsActive ? 'false' : 'true'; ?>">
+                    <a href="<?php echo htmlspecialchars($_carouselHref, ENT_QUOTES); ?>" class="sb-carousel-link" tabindex="<?php echo $_carouselIsActive ? '0' : '-1'; ?>">
+                        <?php if ($_carouselThumb !== ''): ?>
+                        <img src="<?php echo htmlspecialchars($_carouselThumb, ENT_QUOTES); ?>"
+                             alt="<?php echo $_carouselTitle; ?>"
+                             class="sb-carousel-image" <?php echo phinit_image_loading_attributes(); ?> width="260" height="<?php echo (int) $_sbCarouselImageHeight; ?>">
+                        <?php else: ?>
+                        <div class="sb-carousel-image sb-carousel-image--placeholder" aria-hidden="true">
+                            <?php echo htmlspecialchars(mb_substr(strip_tags($_carouselTitleRaw !== '' ? $_carouselTitleRaw : '?'), 0, 1), ENT_QUOTES); ?>
+                        </div>
+                        <?php endif; ?>
+                        <div class="sb-carousel-content">
+                            <?php if ($_carouselCat !== ''): ?>
+                            <span class="sb-carousel-kicker"><?php echo htmlspecialchars($_carouselCat, ENT_QUOTES); ?></span>
+                            <?php endif; ?>
+                            <h3 class="sb-carousel-title"><?php echo $_carouselTitle; ?></h3>
+                            <?php if ($_carouselDate !== ''): ?>
+                            <time class="sb-carousel-date" datetime="<?php echo htmlspecialchars($_carouselDateIso, ENT_QUOTES); ?>"><?php echo htmlspecialchars($_carouselDate, ENT_QUOTES); ?></time>
+                            <?php endif; ?>
+                        </div>
+                    </a>
+                </article>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($_sbCarouselPosts) > 1): ?>
+            <div class="sb-carousel-controls" aria-label="Artikel-Karussell steuern">
+                <button type="button" class="sb-carousel-btn" data-sidebar-carousel-prev aria-label="Vorheriger Artikel">‹</button>
+                <div class="sb-carousel-dots" aria-label="Artikel auswählen">
+                    <?php foreach ($_sbCarouselPosts as $_carouselDotIndex => $_carouselDotPost): ?>
+                    <button type="button"
+                            class="sb-carousel-dot<?php echo (int) $_carouselDotIndex === 0 ? ' is-active' : ''; ?>"
+                            data-sidebar-carousel-dot
+                            data-slide-target="<?php echo (int) $_carouselDotIndex; ?>"
+                            aria-label="Artikel <?php echo (int) $_carouselDotIndex + 1; ?> anzeigen"
+                            aria-pressed="<?php echo (int) $_carouselDotIndex === 0 ? 'true' : 'false'; ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+                <button type="button" class="sb-carousel-btn" data-sidebar-carousel-next aria-label="Nächster Artikel">›</button>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($_sbShowAboutMe) && (!empty($_sbAboutName) || !empty($_sbAboutImageUrl) || !empty($_sbAboutText))): ?>
+        <div class="sb-widget sb-widget--about"<?php echo $_sbWidgetOrderStyle('about'); ?>>
+            <?php echo $_renderSidebarWidgetTitle((string) ($_sbAboutTitle ?? 'About Me'), '👤'); ?>
+            <?php $_sbAboutImageSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url((string) $_sbAboutImageUrl, false, $siteUrl) : (string) $_sbAboutImageUrl; ?>
+            <div class="sb-about-card">
+                <?php if ($_sbAboutImageSrc !== ''): ?>
+                <img src="<?php echo htmlspecialchars($_sbAboutImageSrc, ENT_QUOTES); ?>"
+                     alt="<?php echo htmlspecialchars((string) ($_sbAboutName ?: $_sbAboutTitle ?: 'About Me'), ENT_QUOTES); ?>"
+                     class="sb-about-image" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes((string) $_sbAboutImageUrl, 72, 72); ?>>
+                <?php endif; ?>
+                <div class="sb-about-body">
+                    <?php if (!empty($_sbAboutName)): ?>
+                    <strong class="sb-about-name"><?php echo htmlspecialchars((string) $_sbAboutName, ENT_QUOTES); ?></strong>
+                    <?php endif; ?>
+                    <?php if (!empty($_sbAboutText)): ?>
+                    <p class="sb-about-text"><?php echo nl2br(htmlspecialchars((string) $_sbAboutText, ENT_QUOTES)); ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($_sbAboutLinkUrl) && !empty($_sbAboutLinkText)): ?>
+                    <a href="<?php echo htmlspecialchars((string) $_sbAboutLinkUrl, ENT_QUOTES); ?>" class="sb-about-link">
+                        <?php echo htmlspecialchars((string) $_sbAboutLinkText, ENT_QUOTES); ?>
+                    </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <?php if ($_sbFeatProjMode): ?>
-        <div class="sb-widget sb-widget--projects sb-widget--projects-top">
+        <div class="sb-widget sb-widget--projects sb-widget--projects-top"<?php echo $_sbWidgetOrderStyle('projects'); ?>>
             <?php echo $_renderSidebarWidgetTitle('Unsere Projekte', '🚀'); ?>
             <div class="sb-project-cards-grid">
             <?php foreach ($_projectCards as [$pName, $pDesc, $pUrl, $pLogo]):
@@ -169,7 +287,7 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if ($_sbShowFeaturedPosts && !empty($sbFeaturedPosts)): ?>
         <div class="sb-widget sb-widget--featured sb-widget--featured-badge-style-<?php echo htmlspecialchars($_sbFeaturedBadgeStyle, ENT_QUOTES); ?><?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?>"
-                                 style="--sb-featured-title-size: <?php echo htmlspecialchars(number_format($_sbFeaturedTitleSize, 1, '.', ''), ENT_QUOTES); ?>px; --sb-featured-badge-size: <?php echo htmlspecialchars(number_format($_sbFeaturedBadgeSize, 1, '.', ''), ENT_QUOTES); ?>px;"
+                                 style="order: <?php echo (int) ($_sbOrderMap['featured'] ?? 99); ?>; --sb-featured-title-size: <?php echo htmlspecialchars(number_format($_sbFeaturedTitleSize, 1, '.', ''), ENT_QUOTES); ?>px; --sb-featured-badge-size: <?php echo htmlspecialchars(number_format($_sbFeaturedBadgeSize, 1, '.', ''), ENT_QUOTES); ?>px;"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-rotator data-rotate-interval="<?php echo (int) $_sbFeaturedRotateInterval; ?>"<?php endif; ?>>
             <?php echo $_renderSidebarWidgetTitle((string) $_sbFeaturedPostsLabel, '📌'); ?>
             <?php if ($_sbEnableFeaturedRotation): ?>
@@ -251,7 +369,7 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php endif; ?>
 
         <?php if (!$_sbShowFeaturedPosts && $_sbShowProjects): ?>
-        <div class="sb-widget sb-widget--projects">
+        <div class="sb-widget sb-widget--projects"<?php echo $_sbWidgetOrderStyle('projects'); ?>>
             <?php echo $_renderSidebarWidgetTitle('Unsere Projekte', '🚀'); ?>
             <div class="sb-project-cards-grid">
             <?php foreach ($_projectCards as [$pName, $pDesc, $pUrl, $pLogo]):
@@ -296,8 +414,8 @@ if (empty($_showList) || $featuredPosts === []) {
         </div>
         <?php endif; ?>
 
-        <?php if (!$_sbShowFeaturedPosts && $_sbShowStatus): ?>
-        <div class="sb-widget sb-widget--status">
+        <?php if ($_sbShowStatus): ?>
+        <div class="sb-widget sb-widget--status"<?php echo $_sbWidgetOrderStyle('status'); ?>>
             <?php echo $_renderSidebarWidgetTitle((string) $_sbStatusLabel, '🟢'); ?>
             <?php $_sbSvcLines = array_filter(array_map('trim', explode("\n", (string) $_sbStatusServices))); ?>
             <?php if (!empty($_sbSvcLines)): ?>
@@ -337,8 +455,8 @@ if (empty($_showList) || $featuredPosts === []) {
         </div>
         <?php endif; ?>
 
-        <?php if (!$_sbShowFeaturedPosts && $_sbShowDownloads && !empty(trim((string) $_sbDownloadsItems))): ?>
-        <div class="sb-widget sb-widget--downloads">
+        <?php if ($_sbShowDownloads && !empty(trim((string) $_sbDownloadsItems))): ?>
+        <div class="sb-widget sb-widget--downloads"<?php echo $_sbWidgetOrderStyle('downloads'); ?>>
             <?php echo $_renderSidebarWidgetTitle((string) $_sbDownloadsLabel, '📥'); ?>
             <ul class="sb-download-list">
             <?php foreach (array_filter(array_map('trim', explode("\n", (string) $_sbDownloadsItems))) as $_dl):
@@ -393,7 +511,7 @@ if (empty($_showList) || $featuredPosts === []) {
             $_sbSocialList
         ), static fn(array $socialItem): bool => $socialItem['url'] !== '');
         if ($_sbShowSocial && !empty($_sbSocialList)): ?>
-        <div class="sb-widget sb-widget--social">
+        <div class="sb-widget sb-widget--social"<?php echo $_sbWidgetOrderStyle('social'); ?>>
             <?php echo $_renderSidebarWidgetTitle((string) $_sbSocialLabel, '👥'); ?>
             <div class="sb-social-links">
                 <?php foreach ($_sbSocialList as $_sbKey => $_sbS): ?>
@@ -408,8 +526,8 @@ if (empty($_showList) || $featuredPosts === []) {
         </div>
         <?php endif; ?>
 
-        <?php if (!$_sbFeaturedActive && $_sbShowNotice && !empty($_sbNoticeTitle)): ?>
-        <div class="sb-widget sb-widget--notice">
+        <?php if ($_sbShowNotice && !empty($_sbNoticeTitle)): ?>
+        <div class="sb-widget sb-widget--notice"<?php echo $_sbWidgetOrderStyle('notice'); ?>>
             <div class="sb-notice-body">
                 <?php echo str_replace('class="sb-widget-title"', 'class="sb-widget-title sb-widget-title--spaced"', $_renderSidebarWidgetTitle((string) $_sbNoticeTitle)); ?>
                 <?php if (!empty($_sbNoticeText)): ?>
@@ -429,7 +547,7 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if (!empty(trim((string) $_listSidebarContent))): ?>
         <?php $_safeListSidebarContent = phinit_sanitize_renderable_content((string) $_listSidebarContent, 'default'); ?>
-        <div class="sb-widget">
+        <div class="sb-widget"<?php echo $_sbWidgetOrderStyle('custom'); ?>>
             <?php echo $_safeListSidebarContent; ?>
         </div>
         <?php endif; ?>

@@ -67,7 +67,7 @@ trait CMS_Phinit_Theme_Navigation_Trait
             if (empty($tm->getMenu('footer-pages'))) {
                 $tm->saveMenu('footer-pages', [
                     ['label' => 'Über mich', 'url' => '/ueber-uns'],
-                    ['label' => 'Kontakt',   'url' => '/kontakt'],
+                    ['label' => 'Kontakt',   'url' => '/contact'],
                     ['label' => 'RSS-Feed',  'url' => '/feed'],
                 ]);
             }

@@ -7,6 +7,11 @@
     margin-top: 48px;
 }
 
+body.is-plugin-content .site-footer,
+body.m365lic-theme-embed:not(.is-member) .site-footer {
+    margin-top: 0;
+}
+
 .footer-main-wrap {
     border-bottom: 1px solid var(--footer-border, rgba(255,255,255,.06));
 }

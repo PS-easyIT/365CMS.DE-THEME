@@ -1,13 +1,49 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.31",
+  "version": "1.5.33",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
-  "release_date": "2026-05-14",
+  "release_date": "2026-05-15",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.33",
+      "date": "2026-05-15",
+      "changes": [
+        "assets/css/header-navigation.css + style.css + assets/css/page-detail.css + assets/css/post-sidebar.css: Header bleibt sticky im normalen Dokumentfluss; normale Seiten und Beitragscontainer erhalten einen echten Header-zu-Content-Abstand von 25px ohne alte Headerhöhen-Reservierung",
+        "includes/theme-head-trait.php + style.css + assets/css/hub-sites.css: HubSites erhalten eine eigene Body-Class, die Hintergrundfläche beginnt bündig unter dem Theme-Header, die HubSite-Shell ist exakt an der normalen Container-/Header-/Footer-Breite ausgerichtet, der HubSite-Content-Header bekommt innen 25px Abstand nach oben und der HubSite-Inhalt bleibt links/rechts 10px schmaler; sichtbare Breadcrumbs unter den Quicklinks bleiben unterdrückt",
+        "index.php + includes/theme-home-helpers.php + assets/css/homepage-blog.css + style.css: Auf der Startseite greift wieder die globale Customizer-Einstellung `spacing_header_content` (`Header zu Content Abstand`), damit der GitHub-Repo-Bereich sichtbar Abstand zum Theme-Header bekommt",
+        "style.css: Knowledgebase-Seiten (`/kb`, `/glossar`) verwenden für den äußeren Theme-Abstand Header→Content nur noch die Hälfte des normalen Theme-Abstands, damit der KB-Content kompakter unter dem Header startet",
+        "style.css: Nur öffentliche M365-License-Seiten mit `m365lic-theme-embed` setzen den äußeren Theme-Abstand Header→Content auf 0px; alle übrigen Plugin-Seiten bleiben beim normalen Theme-Abstand von 25px bzw. der globalen Customizer-Einstellung",
+        "includes/theme-head-trait.php + style.css + assets/css/footer-consent.css: Öffentliche Plugin-Content-Routen erhalten die Body-Class `is-plugin-content` und setzen den äußeren Theme-Abstand Content→Footer sowie den Theme-Footer-margin-top auf 0px, damit Plugin-Templates ihren unteren Abschlussabstand selbst bestimmen",
+        "includes/theme-head-trait.php: Öffentliche Plugin-Routen inklusive M365-License-Public unterdrücken den Theme-Breadcrumb-Bereich direkt unter dem Quicklinksband, damit Plugins ihre eigene Inhaltsnavigation bestimmen",
+        "assets/css/header-navigation.css: Top-Level-Dropdowns im Hauptmenü besitzen keine unsichtbare Hoverbrücke mehr in den Quicklinksbereich und öffnen bündig unter der Menüleiste, damit Quicklink-Klicks nicht versehentlich das Hauptmenü auslösen",
+        "assets/css/header-navigation.css: Die Trennlinie zwischen Hauptmenüband und Quicklinksbar nutzt jetzt die Quicklinks-Hintergrundfarbe, damit kein heller Zwischenstreifen mehr sichtbar ist",
+        "footer.php + partials/home-info-grid.php + partials/home-repo-card.php + style.css + assets/css/homepage-blog.css: Der GitHub-Repo-Banner sitzt auf der Startseite jetzt unter der Pagination direkt über dem Theme-Footer, läuft vollbreit wie der Footer und hat keinen Abstand zum Footer",
+        "header.php + assets/css/header-navigation.css: Die aktive Hauptseite im Hauptmenü wird inklusive Dropdown-Elternpunkt mit `active`/`aria-current` sichtbar hervorgehoben",
+        "partials/home-article-list.php + includes/theme-home-helpers.php + includes/theme-assets-trait.php + assets/js/homepage-widgets.js + assets/css/homepage-blog.css: Die Startseiten-Sidebar erhält ein kompaktes Artikel-Karussell mit Beitragsvorschaubildern, begrenzter Bildhöhe und konsistenterem Karten-Design für die Sidebar-Widgets; das Widget-Script wird auf der Startseite ausgeliefert",
+        "admin/customizer-schema.php + admin/customizer-field-renderer.php + admin/customizer-request-handler.php + assets/js/customizer-admin.js + assets/css/customizer-admin.css: Die Sidebar-Widget-Reihenfolge wird im Theme-Customizer jetzt per Pfeil-Buttons sortiert statt über interne Schlüssel in einer Textarea",
+        "index.php + includes/theme-home-helpers.php + partials/home-featured-banner.php + admin/customizer-schema.php + assets/css/homepage-blog.css: Neuer dezenter Featured-Artikel-Banner an der bisherigen oberen Bannerposition; der Beitrag ist im Theme-Customizer auswählbar",
+        "partials/home-article-list.php + includes/theme-home-helpers.php + admin/customizer-schema.php + assets/css/homepage-blog.css: Neues About-Me-Widget für die Startseiten-Sidebar sowie Customizer-Feld zur Reihenfolge der Sidebar-Bereiche",
+        "partials/home-article-list.php + partials/home-post-grid.php + assets/css/homepage-blog.css + assets/css/content-cards.css: Abschnittstrenner verwenden einheitlich das Themenbereiche-Design, Sidebar-Artikel-Teaserbilder sind auf maximal die Hälfte begrenzt und Weiterlesen-Links erscheinen als dezente Buttons",
+        "style.css + assets/css/hub-sites.css: Horizontaler Seiten-Overflow wird gekappt und HubSite-Container bleiben innerhalb der Viewport-Breite, damit Chrome keinen leeren rechten Scrollbereich mehr anzeigt",
+        "includes/theme-assets-trait.php: CSS-Asset-Versionen kombinieren einen optionalen Customizer-Cache-Buster jetzt mit filemtime(), sodass geänderte Theme-CSS-Dateien auch bei gesetztem Cache-Buster frisch ausgeliefert werden",
+        "admin/customizer-schema.php + theme.json: Standardwert für `spacing_header_content` auf 25px gesetzt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.33 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.32",
+      "date": "2026-05-15",
+      "changes": [
+        "page.php: Router-geladene Editor.js-Seiten werden wieder konsequent vor dem Sanitizing gerendert, damit veröffentlichte Seiteninhalte sichtbar bleiben",
+        "admin/customizer-schema.php + admin/customizer-field-renderer.php: native Color-Picker erhalten nur valide #rrggbb-Werte und fallen bei gespeicherten Altwerten sicher auf den Default zurück",
+        "footer.php + includes/theme-navigation-trait.php: Standard-Kontaktlinks zeigen auf die vom Kontakt-Plugin registrierte Route /contact statt auf die tote Route /kontakt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.32 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.31",
       "date": "2026-05-14",

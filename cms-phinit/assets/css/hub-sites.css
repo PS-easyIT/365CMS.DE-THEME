@@ -1,13 +1,22 @@
 /* CMS Phinit – Hub-Sites */
 
 .page-shell--hub {
-    max-width: min(1380px, calc(100% - 32px));
-    padding-top: .35rem;
+    width: 100%;
+    max-width: var(--container-max, 1200px);
+    margin: 0 auto;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 0;
     padding-bottom: 1.5rem;
+    overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+    .page-shell--hub { overflow-x: hidden; }
 }
 
 .page-shell--hub.page-shell--compact {
-    max-width: min(1380px, calc(100% - 32px));
+    max-width: var(--container-max, 1200px);
 }
 
 .page-content--hub {
@@ -15,8 +24,15 @@
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    padding: 0;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+    padding: 25px 10px 0;
     color: inherit;
+}
+
+@supports not (overflow: clip) {
+    .page-content--hub { overflow-x: hidden; }
 }
 
 .page-content--hub[data-anim],
@@ -34,7 +50,7 @@
 .page-shell--hub .page-content--hub::before {
     content: '';
     position: absolute;
-    inset: -1.1rem -1rem auto;
+    inset: 0 calc(50% - 50vw) auto;
     height: 18rem;
     border-radius: 0 0 24px 24px;
     background:
@@ -64,7 +80,11 @@
     --cms-hub-frame: rgba(15, 34, 64, 0.08);
     display: grid;
     gap: 1.35rem;
+    width: 100%;
     margin: 0 auto;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .cms-hub-site,
@@ -1401,11 +1421,12 @@ body.dark-mode .cms-hub-site .cms-site-table--stripe tbody tr:nth-child(odd) td 
 
 @media (max-width: 720px) {
     .page-shell--hub {
-        max-width: calc(100% - 20px);
+        width: 100%;
+        max-width: var(--container-max, 1200px);
     }
 
     .page-shell--hub .page-content--hub::before {
-        inset: -.85rem -.5rem auto;
+        inset: 0 calc(50% - 50vw) auto;
         height: 12rem;
     }
 
@@ -1466,5 +1487,12 @@ body.dark-mode .cms-hub-site .cms-site-table--stripe tbody tr:nth-child(odd) td 
     .cms-hub-site--linux .cms-hub-site__hero-inner::before {
         position: static;
         margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-shell--hub {
+        padding-right: 14px;
+        padding-left: 14px;
     }
 }
