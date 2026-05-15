@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.38",
+  "version": "1.5.39",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-15",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.39",
+      "date": "2026-05-15",
+      "changes": [
+        "includes/theme-assets-trait.php + includes/theme-head-trait.php: Normale Blog-Listings und die Startseite werden nicht mehr fälschlich als HubSite behandelt; dadurch entfällt unnötiges hub-sites.css im render-blocking Pfad der Homepage",
+        "partials/home-article-list.php: Die Thumbnails im Widget 'Empfohlene Artikel' werden als dekorativ mit leerem alt-Attribut ausgegeben, damit Screenreader den Beitragstitel im selben Link nicht doppelt vorlesen",
+        "assets/css/homepage-blog.css: Der Featured-Rotator verzichtet auf visibility-Timing und box-shadow-Animationen in den zentralen Slide-/Arrow-Transitions, um unnötige Non-composited-Animation-Warnungen zu reduzieren",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.39 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.38",
       "date": "2026-05-15",

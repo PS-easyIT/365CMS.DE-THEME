@@ -456,13 +456,11 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    visibility: hidden;
     pointer-events: none;
 }
 
 .sb-carousel-slide.is-active {
     opacity: 1;
-    visibility: visible;
     pointer-events: auto;
 }
 

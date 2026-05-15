@@ -626,7 +626,7 @@ if (!function_exists('phinit_get_picture_sources')) {
      * Liefert bevorzugte Bildquellen inkl. optionalem lokal generiertem WebP-Fallback.
      * Bestehende JPG/PNG-Dateien bleiben dabei als Fallback erhalten.
      *
-     * @return array{url:string,webp_url:string,width:int,height:int}
+     * @return array{url:string,avif_url:string,webp_url:string,width:int,height:int}
      */
     function phinit_get_picture_sources(?string $reference, ?string $siteUrl = null, int $fallbackWidth = 0, int $fallbackHeight = 0): array
     {
@@ -635,6 +635,7 @@ if (!function_exists('phinit_get_picture_sources')) {
 
         $result = [
             'url' => $normalizedUrl,
+            'avif_url' => '',
             'webp_url' => '',
             'width' => max(0, (int) ($dimensions['width'] ?? $fallbackWidth)),
             'height' => max(0, (int) ($dimensions['height'] ?? $fallbackHeight)),
@@ -650,7 +651,12 @@ if (!function_exists('phinit_get_picture_sources')) {
         }
 
         $extension = strtolower((string) pathinfo($sourcePath, PATHINFO_EXTENSION));
-        if (!in_array($extension, ['jpg', 'jpeg', 'png'], true) || !class_exists('\CMS\Services\ImageService')) {
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'avif'], true) || !class_exists('\CMS\Services\ImageService')) {
+            return $result;
+        }
+
+        if ($extension === 'avif') {
+            $result['avif_url'] = $normalizedUrl;
             return $result;
         }
 
@@ -658,7 +664,37 @@ if (!function_exists('phinit_get_picture_sources')) {
             $imageService = \CMS\Services\ImageService::getInstance();
             $imageInfo = $imageService->getInfo();
 
-            if (!$imageService->isAvailable() || empty($imageInfo['webp_support'])) {
+            if (!$imageService->isAvailable()) {
+                return $result;
+            }
+
+            $sourceSize = (int) (filesize($sourcePath) ?: 0);
+
+            if (!empty($imageInfo['avif_support'])) {
+                $avifPath = preg_replace('/\.[a-z0-9]+$/i', '.avif', $sourcePath);
+                if (is_string($avifPath) && $avifPath !== '' && $avifPath !== $sourcePath) {
+                    if (!is_file($avifPath)) {
+                        $generatedAvifPath = $imageService->convertToAvif($sourcePath, 62, 6);
+                        if (is_string($generatedAvifPath) && is_file($generatedAvifPath)) {
+                            $avifPath = $generatedAvifPath;
+                        }
+                    }
+
+                    if (is_file($avifPath)) {
+                        $avifSize = (int) (filesize($avifPath) ?: 0);
+                        if ($avifSize > 0 && ($sourceSize === 0 || $avifSize < $sourceSize)) {
+                            $avifUrl = phinit_local_path_to_public_url($avifPath);
+                            if ($avifUrl !== '') {
+                                $result['avif_url'] = function_exists('phinit_normalize_public_media_url')
+                                    ? phinit_normalize_public_media_url($avifUrl, true, $siteUrl)
+                                    : phinit_safe_public_media_url($avifUrl, $siteUrl);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (empty($imageInfo['webp_support']) || !in_array($extension, ['jpg', 'jpeg', 'png'], true)) {
                 return $result;
             }
 
@@ -676,7 +712,6 @@ if (!function_exists('phinit_get_picture_sources')) {
                 $webpPath = $generatedPath;
             }
 
-            $sourceSize = (int) (filesize($sourcePath) ?: 0);
             $webpSize = (int) (filesize($webpPath) ?: 0);
             if ($sourceSize > 0 && $webpSize > 0 && $webpSize >= $sourceSize) {
                 return $result;
@@ -695,6 +730,96 @@ if (!function_exists('phinit_get_picture_sources')) {
         }
 
         return $result;
+    }
+}
+
+if (!function_exists('phinit_get_thumbnail_picture_sources')) {
+    /**
+     * Liefert für kleine UI-Bilder bevorzugt eine lokal generierte Thumbnail-Variante
+     * und fällt bei Problemen sauber auf die Standard-Bildquellen zurück.
+     *
+     * @return array{url:string,avif_url:string,webp_url:string,width:int,height:int}
+     */
+    function phinit_get_thumbnail_picture_sources(
+        ?string $reference,
+        ?string $siteUrl = null,
+        int $width = 0,
+        int $height = 0,
+        string $mode = 'crop'
+    ): array {
+        $width = max(0, $width);
+        $height = max(0, $height);
+        $resolvedMode = in_array($mode, ['crop', 'contain'], true) ? $mode : 'crop';
+        $fallback = phinit_get_picture_sources($reference, $siteUrl, $width, $height);
+
+        if ($width < 1 || $height < 1 || !class_exists('\CMS\Services\ImageService')) {
+            return $fallback;
+        }
+
+        $sourcePath = phinit_get_local_image_path($reference);
+        if ($sourcePath === '' || !is_file($sourcePath)) {
+            return $fallback;
+        }
+
+        $sourceDimensions = phinit_get_image_dimensions($reference);
+        if (
+            is_array($sourceDimensions)
+            && (int) ($sourceDimensions['width'] ?? 0) > 0
+            && (int) ($sourceDimensions['height'] ?? 0) > 0
+            && (int) ($sourceDimensions['width'] ?? 0) <= $width
+            && (int) ($sourceDimensions['height'] ?? 0) <= $height
+        ) {
+            return $fallback;
+        }
+
+        try {
+            $imageService = \CMS\Services\ImageService::getInstance();
+            if (!$imageService->isAvailable()) {
+                return $fallback;
+            }
+
+            $pathInfo = pathinfo($sourcePath);
+            $extension = strtolower((string) ($pathInfo['extension'] ?? ''));
+            if ($extension === '') {
+                return $fallback;
+            }
+
+            $variantPath = (string) ($pathInfo['dirname'] ?? '');
+            $variantPath .= '/';
+            $variantPath .= (string) ($pathInfo['filename'] ?? 'image');
+            $variantPath .= '-' . $resolvedMode . '-' . $width . 'x' . $height . '.' . $extension;
+
+            if (!is_file($variantPath)) {
+                $generatedPath = $resolvedMode === 'contain'
+                    ? $imageService->resize($sourcePath, $width, $height, $variantPath, 80)
+                    : $imageService->createThumbnail($sourcePath, $width, $height, $variantPath, 80);
+
+                if (!is_string($generatedPath) || !is_file($generatedPath)) {
+                    return $fallback;
+                }
+
+                $variantPath = $generatedPath;
+            }
+
+            $sourceSize = (int) (filesize($sourcePath) ?: 0);
+            $variantSize = (int) (filesize($variantPath) ?: 0);
+            if ($sourceSize > 0 && $variantSize > 0 && $variantSize >= $sourceSize) {
+                return $fallback;
+            }
+
+            $variantUrl = phinit_local_path_to_public_url($variantPath);
+            if ($variantUrl === '') {
+                return $fallback;
+            }
+
+            $variantSources = phinit_get_picture_sources($variantUrl, $siteUrl, $width, $height);
+            $variantSources['width'] = $width;
+            $variantSources['height'] = $height;
+
+            return $variantSources;
+        } catch (\Throwable) {
+            return $fallback;
+        }
     }
 }
 

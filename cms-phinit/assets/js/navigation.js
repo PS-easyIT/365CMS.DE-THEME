@@ -26,6 +26,18 @@
 
         window.setTimeout(callback, 1);
     };
+    const scheduleNextFrame = (callback) => {
+        if (typeof callback !== 'function') {
+            return;
+        }
+
+        if (typeof window.requestAnimationFrame === 'function') {
+            window.requestAnimationFrame(() => callback());
+            return;
+        }
+
+        window.setTimeout(callback, 16);
+    };
 
     /* ── Helpers: Data-Attribute Toggles vom Body lesen ──────── */
     const bodyData = () => document.body.dataset;
@@ -48,8 +60,21 @@
         initFlashMessages();
         if (isEnabled('backToTop'))     initBackToTop();
         initConsentBanner();
-        loadDeferredFeatureModules();
+        deferFeatureModules();
     });
+
+    function deferFeatureModules() {
+        const triggerDeferredModules = () => {
+            scheduleBackgroundTask(loadDeferredFeatureModules);
+        };
+
+        if (document.readyState === 'complete') {
+            triggerDeferredModules();
+            return;
+        }
+
+        window.addEventListener('load', triggerDeferredModules, { once: true });
+    }
 
     function loadDeferredFeatureModules() {
         const moduleQueue = [];
@@ -118,9 +143,32 @@
     function initStickyHeader() {
         const header = document.querySelector('.site-header');
         if (!header) return;
-        const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 60);
+
+        let isTicking = false;
+        let lastScrolledState = null;
+
+        const updateHeaderState = () => {
+            isTicking = false;
+            const nextScrolledState = window.scrollY > 60;
+            if (nextScrolledState === lastScrolledState) {
+                return;
+            }
+
+            lastScrolledState = nextScrolledState;
+            header.classList.toggle('scrolled', nextScrolledState);
+        };
+
+        const onScroll = () => {
+            if (isTicking) {
+                return;
+            }
+
+            isTicking = true;
+            scheduleNextFrame(updateHeaderState);
+        };
+
         window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
+        updateHeaderState();
     }
 
     /* ── Burger Menü (Mobile) ──────────────────────────────────── */
@@ -172,6 +220,7 @@
     function initDesktopDropdowns() {
         const dropdowns = Array.from(document.querySelectorAll('[data-nav-dropdown]'));
         if (!dropdowns.length) return;
+        const pendingAlignmentFrames = new WeakMap();
 
         const getImmediateDropdownPanel = (dropdown) => {
             return Array.from(dropdown.children).find((child) => child.classList && child.classList.contains('dropdown')) || null;
@@ -195,26 +244,44 @@
                 return;
             }
 
-            dropdown.classList.remove('is-align-left', 'is-align-end');
-
             const dropdownDepth = Number.parseInt(dropdown.dataset.navDepth || '0', 10);
             const dropdownRect = dropdown.getBoundingClientRect();
             const panelRect = panel.getBoundingClientRect();
-            const panelWidth = panelRect.width || panel.offsetWidth || 240;
+            const panelWidth = Math.max(panelRect.width, panel.scrollWidth, 240);
+            let nextAlignment = '';
 
             if (dropdownDepth <= 0) {
                 if (dropdownRect.left + panelWidth > window.innerWidth - 16) {
-                    dropdown.classList.add('is-align-end');
+                    nextAlignment = 'end';
                 }
+            } else {
+                const spaceRight = window.innerWidth - dropdownRect.right;
+                const spaceLeft = dropdownRect.left;
+                if (spaceRight < panelWidth && spaceLeft > spaceRight) {
+                    nextAlignment = 'left';
+                }
+            }
 
+            dropdown.classList.toggle('is-align-left', nextAlignment === 'left');
+            dropdown.classList.toggle('is-align-end', nextAlignment === 'end');
+        };
+
+        const scheduleDropdownAlignment = (dropdown) => {
+            const pendingFrame = pendingAlignmentFrames.get(dropdown);
+            if (pendingFrame && typeof window.cancelAnimationFrame === 'function') {
+                window.cancelAnimationFrame(pendingFrame);
+            }
+
+            if (typeof window.requestAnimationFrame === 'function') {
+                const frameId = window.requestAnimationFrame(() => {
+                    pendingAlignmentFrames.delete(dropdown);
+                    updateDropdownAlignment(dropdown);
+                });
+                pendingAlignmentFrames.set(dropdown, frameId);
                 return;
             }
 
-            const spaceRight = window.innerWidth - dropdownRect.right;
-            const spaceLeft = dropdownRect.left;
-            if (spaceRight < panelWidth && spaceLeft > spaceRight) {
-                dropdown.classList.add('is-align-left');
-            }
+            window.setTimeout(() => updateDropdownAlignment(dropdown), 16);
         };
 
         const closeAll = (exceptions = []) => {
@@ -238,11 +305,11 @@
             if (!toggle) return;
 
             dropdown.addEventListener('mouseenter', () => {
-                updateDropdownAlignment(dropdown);
+                scheduleDropdownAlignment(dropdown);
             });
 
             dropdown.addEventListener('focusin', () => {
-                updateDropdownAlignment(dropdown);
+                scheduleDropdownAlignment(dropdown);
             });
 
             toggle.addEventListener('click', (event) => {
@@ -251,7 +318,7 @@
 
                 const willOpen = !dropdown.classList.contains('is-open');
                 const keepOpen = willOpen ? getAncestorPath(dropdown) : getAncestorPath(dropdown).slice(1);
-                updateDropdownAlignment(dropdown);
+                scheduleDropdownAlignment(dropdown);
                 closeAll(keepOpen);
                 dropdown.classList.toggle('is-open', willOpen);
                 toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
@@ -260,7 +327,7 @@
 
         window.addEventListener('resize', () => {
             dropdowns.forEach((dropdown) => {
-                updateDropdownAlignment(dropdown);
+                scheduleDropdownAlignment(dropdown);
             });
         }, { passive: true });
 
@@ -331,12 +398,25 @@
     function initScrollProgress() {
         const bar = document.getElementById('scroll-progress');
         if (!bar) return;
+
+        let isTicking = false;
         const update = () => {
+            isTicking = false;
             const total    = document.documentElement.scrollHeight - window.innerHeight;
             const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
             bar.style.width = Math.min(progress, 100) + '%';
         };
-        window.addEventListener('scroll', update, { passive: true });
+
+        const onScroll = () => {
+            if (isTicking) {
+                return;
+            }
+
+            isTicking = true;
+            scheduleNextFrame(update);
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
         update();
     }
 
@@ -399,9 +479,23 @@
     function initBackToTop() {
         const btn = document.getElementById('back-to-top');
         if (!btn) return;
-        window.addEventListener('scroll', () => {
+
+        let isTicking = false;
+        const updateVisibility = () => {
+            isTicking = false;
             btn.classList.toggle('visible', window.scrollY > 400);
+        };
+
+        window.addEventListener('scroll', () => {
+            if (isTicking) {
+                return;
+            }
+
+            isTicking = true;
+            scheduleNextFrame(updateVisibility);
         }, { passive: true });
+
+        updateVisibility();
         btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
 

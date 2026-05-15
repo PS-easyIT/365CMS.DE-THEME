@@ -814,31 +814,17 @@ trait CMS_Phinit_Theme_Head_Trait
             || (function_exists('cms_is_archive_request_path') && cms_is_archive_request_path($baseUri, 'tag'))
             || str_starts_with($baseUri, '/author/');
 
-        $isRootHubDomain = false;
-        if ($isBlogListingRequest && $baseUri === '/') {
-            try {
-                if (class_exists('CMS\\Services\\SiteTableService')) {
-                    $host = function_exists('phinit_current_host') ? phinit_current_host() : '';
-                    if ($host !== '') {
-                        $siteTableService = \CMS\Services\SiteTableService::getInstance();
-                        $isRootHubDomain = $siteTableService->getHubPageByDomain($host, 'de') !== null
-                            || $siteTableService->getHubPageByDomain($host, 'en') !== null;
-                    }
-                }
-            } catch (\Throwable) {
-                $isRootHubDomain = false;
-            }
-        }
-
-        if ($isBlogListingRequest && !$isRootHubDomain) {
-            return false;
-        }
-
         $templatePage = $GLOBALS['page'] ?? null;
         if (is_object($templatePage)) {
             $templatePage = (array) $templatePage;
         }
-        if ($this->isHeadHubPagePayload(is_array($templatePage) ? $templatePage : null)) {
+        $templatePage = is_array($templatePage) ? $templatePage : null;
+
+        if ($isBlogListingRequest && !$this->isHeadHubPagePayload($templatePage)) {
+            return false;
+        }
+
+        if ($this->isHeadHubPagePayload($templatePage)) {
             return true;
         }
 
@@ -862,13 +848,7 @@ trait CMS_Phinit_Theme_Head_Trait
 
             $siteTableService = \CMS\Services\SiteTableService::getInstance();
             if ($baseUri === '/' || $baseUri === '') {
-                $host = function_exists('phinit_current_host') ? phinit_current_host() : '';
-                if ($host === '') {
-                    return false;
-                }
-
-                return $siteTableService->getHubPageByDomain($host, 'de') !== null
-                    || $siteTableService->getHubPageByDomain($host, 'en') !== null;
+                return false;
             }
 
             $slug = trim($baseUri, '/');

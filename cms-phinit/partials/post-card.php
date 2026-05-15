@@ -103,6 +103,7 @@ $cardImageSources = function_exists('phinit_get_picture_sources')
     ? phinit_get_picture_sources($cardImage, $siteUrl, 162, 215)
     : [
         'url' => $cardImage,
+        'avif_url' => '',
         'webp_url' => '',
         'width' => 162,
         'height' => 215,
@@ -135,6 +136,9 @@ if ($show_rt && $show_meta) {
     <div class="article-thumb">
         <?php if ($cardImage !== ''): ?>
         <picture>
+            <?php if (($cardImageSources['avif_url'] ?? '') !== ''): ?>
+            <source srcset="<?php echo htmlspecialchars((string) ($cardImageSources['avif_url'] ?? ''), ENT_QUOTES); ?>" type="image/avif">
+            <?php endif; ?>
             <?php if (($cardImageSources['webp_url'] ?? '') !== ''): ?>
             <source srcset="<?php echo htmlspecialchars((string) ($cardImageSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
             <?php endif; ?>

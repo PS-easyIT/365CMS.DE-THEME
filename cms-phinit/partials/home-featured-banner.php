@@ -67,6 +67,7 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
             ? phinit_get_picture_sources($bannerImageReference !== '' ? $bannerImageReference : $bannerImage, $siteUrl, 320, 200)
             : [
                 'url' => $bannerImage,
+                'avif_url' => '',
                 'webp_url' => '',
                 'width' => 320,
                 'height' => 200,
@@ -80,6 +81,9 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
         <?php if ($bannerImage !== ''): ?>
         <a href="<?php echo htmlspecialchars($bannerHref, ENT_QUOTES); ?>" class="home-featured-banner__media" aria-label="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>">
             <picture>
+                <?php if (($bannerImageSources['avif_url'] ?? '') !== ''): ?>
+                <source srcset="<?php echo htmlspecialchars((string) ($bannerImageSources['avif_url'] ?? ''), ENT_QUOTES); ?>" type="image/avif">
+                <?php endif; ?>
                 <?php if (($bannerImageSources['webp_url'] ?? '') !== ''): ?>
                 <source srcset="<?php echo htmlspecialchars((string) ($bannerImageSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
                 <?php endif; ?>

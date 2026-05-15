@@ -104,20 +104,11 @@ trait CMS_Phinit_Theme_Assets_Trait
         $path = $this->getRequestPath();
         $isAuthOrMember = $this->isAuthOrMemberRequest($path);
         $isPageExtras = $this->isPageExtrasRequest($path);
-        $isRootHubDomain = false;
-
-        if ($path === '/' && !$isAuthOrMember && !$isPageExtras) {
-            try {
-                $host = phinit_current_host();
-                if ($host !== '') {
-                    $siteTableService = \CMS\Services\SiteTableService::getInstance();
-                    $isRootHubDomain = $siteTableService->getHubPageByDomain($host, 'de') !== null
-                        || $siteTableService->getHubPageByDomain($host, 'en') !== null;
-                }
-            } catch (\Throwable) {
-                $isRootHubDomain = false;
-            }
-        }
+        $currentTemplatePage = $this->getResolvedCurrentPagePayload($path);
+        $isRootHubDomain = $path === '/'
+            && !$isAuthOrMember
+            && !$isPageExtras
+            && $this->isHubPagePayload($currentTemplatePage);
 
         $isBlogListing = !$isRootHubDomain && $this->isBlogListingRequest($path);
         $postSlug = null;
@@ -163,19 +154,12 @@ trait CMS_Phinit_Theme_Assets_Trait
             }
         }
 
-        $currentTemplatePage = $this->getResolvedCurrentPagePayload($path);
         $isHubSite = !$isBlogListing && $this->isHubPagePayload($currentTemplatePage);
         if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras) {
             if (!$isHubSite) {
                 try {
                     $siteTableService = \CMS\Services\SiteTableService::getInstance();
-                    if ($path === '/') {
-                        $host = phinit_current_host();
-                        if ($host !== '') {
-                            $isHubSite = $siteTableService->getHubPageByDomain($host, 'de') !== null
-                                || $siteTableService->getHubPageByDomain($host, 'en') !== null;
-                        }
-                    } else {
+                    if ($path !== '/') {
                         $slug = trim($path, '/');
                         if ($slug !== '' && !str_contains($slug, '/')) {
                             $isHubSite = $siteTableService->hubExistsBySlug($slug);

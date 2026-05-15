@@ -718,15 +718,13 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     position: absolute;
     inset: 0;
     opacity: 0;
-    visibility: hidden;
     pointer-events: none;
     transform: translateX(10px);
-    transition: opacity .28s ease, transform .28s ease, visibility 0s linear .28s;
+    transition: opacity .28s ease, transform .28s ease;
 }
 
 .sb-carousel-slide.is-active {
     opacity: 1;
-    visibility: visible;
     pointer-events: auto;
     transform: translateX(0);
     transition: opacity .28s ease, transform .28s ease;
@@ -934,7 +932,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     background-repeat: no-repeat;
     background-position: center 38%;
     border: 1px solid color-mix(in srgb, var(--border-color) 86%, var(--accent-teal) 14%);
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    transition: transform .2s ease;
 }
 
 .sb-project-card:hover {
@@ -1140,7 +1138,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     background: var(--bg-secondary);
     color: var(--text-secondary);
     text-decoration: none;
-    transition: border-color .15s, color .15s, background .15s, transform .12s;
+    transition: transform .12s ease;
 }
 
 .sb-quicklink--m365 {
@@ -1216,7 +1214,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     font-weight: 700;
     line-height: 1.25;
     text-decoration: none;
-    transition: background .15s, border-color .15s, color .15s, transform .12s;
+    transition: transform .12s ease;
 }
 
 .sb-widget-button:hover,
@@ -1271,7 +1269,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     background: var(--bg-secondary);
     color: var(--text-secondary);
     text-decoration: none;
-    transition: background .15s, border-color .15s, color .15s, transform .1s;
+    transition: transform .1s ease;
     flex-shrink: 0;
 }
 
@@ -1576,7 +1574,6 @@ body.dark-mode .sb-notice-body p {
     z-index: 1;
     border-bottom: none;
     opacity: 0;
-    visibility: hidden;
     pointer-events: none;
     transform: scale(1.02);
     transition: opacity .45s ease, transform .45s ease;
@@ -1585,7 +1582,6 @@ body.dark-mode .sb-notice-body p {
 .homepage-list-sidebar--feat .sb-widget--featured-rotating .sb-featured-post.is-active {
     z-index: 2;
     opacity: 1;
-    visibility: visible;
     pointer-events: auto;
     transform: scale(1);
     transition: opacity .45s ease, transform .45s ease;
@@ -1710,18 +1706,15 @@ body.dark-mode .sb-notice-body p {
     color: var(--sb-featured-title-badge-color);
     font-weight: 700;
     letter-spacing: .01em;
-    box-shadow: var(--sb-featured-title-badge-shadow);
+    box-shadow: none;
     min-height: 48px;
     max-height: 48px;
     overflow: hidden;
-    transform: scale(1);
-    transform-origin: center top;
-    transition: transform .18s ease;
     z-index: 2;
 }
 
 .homepage-list-sidebar--feat .sb-featured-post:hover .sb-featured-title-badge {
-    transform: scale(1.025);
+    transform: none;
 }
 
 .homepage-list-sidebar--feat .sb-widget--featured-rotating .sb-featured-title-badge__text {
@@ -1984,12 +1977,12 @@ body.dark-mode .sb-notice-body p {
     border: 1px solid rgba(226, 232, 240, .24);
     border-radius: 999px;
     background: rgba(15, 23, 42, .68);
-    box-shadow: 0 10px 22px rgba(2, 6, 23, .22);
+    box-shadow: none;
     color: rgba(248, 250, 252, .96);
     cursor: pointer;
     pointer-events: auto;
     transform: translateY(-50%);
-    transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+    transition: none;
 }
 
 .homepage-list-sidebar--feat .sb-featured-rotator-arrow--prev {
@@ -2010,10 +2003,9 @@ body.dark-mode .sb-notice-body p {
 .homepage-list-sidebar--feat .sb-featured-rotator-arrow:focus-visible {
     border-color: rgba(94, 234, 212, .78);
     background: rgba(13, 148, 136, .92);
-    box-shadow: 0 12px 26px rgba(13, 148, 136, .28);
     color: #fff;
     outline: none;
-    transform: translateY(-50%) scale(1.04);
+    transform: translateY(-50%);
 }
 
 @media (prefers-reduced-motion: reduce) {

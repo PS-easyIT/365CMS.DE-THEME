@@ -56,6 +56,19 @@
 
 ---
 
+## v1.5.39 — 15. Mai 2026
+
+### Homepage: PSI-Nacharbeit für Home-CSS, Sidebar-A11y und Rotator
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Critical CSS | `includes/theme-assets-trait.php` und `includes/theme-head-trait.php` behandeln normale Blog-Listings nicht länger fälschlich als HubSites; dadurch entfällt `assets/css/hub-sites.css` auf der Homepage aus dem kritischen Renderpfad. |
+| 🔴 fix | Startseite / Sidebar / A11y | `partials/home-article-list.php` rendert die Thumbnails im Widget `Empfohlene Artikel` mit leerem `alt=""`, weil der Beitragstitel im selben Link bereits sichtbar und zugänglich vorhanden ist. |
+| 🟡 refactor | Startseite / Sidebar-Rotator | `assets/css/homepage-blog.css` entfernt `visibility`-Timing und überflüssige `box-shadow`-Transitions aus den zentralen Featured-Rotator-Animationen, um unnötige PSI-Warnungen zu reduzieren. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.39` synchronisiert. |
+
+---
+
 ## v1.5.38 — 15. Mai 2026
 
 ### Sidebar: Empfohlene Artikel höher und Pfeile robuster

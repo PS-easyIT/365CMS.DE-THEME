@@ -478,12 +478,37 @@ if (empty($_showList) || $featuredPosts === []) {
                         : '');
                 $_fpThumbWidth = 64;
                 $_fpThumbHeight = 48;
+                $_fpThumbReference = $_fpHasCustomThumb
+                    ? (string) ($_fp['custom_sidebar_image'] ?? '')
+                    : (string) ($_fp['featured_image'] ?? '');
+                $_fpThumbSources = function_exists('phinit_get_thumbnail_picture_sources')
+                    ? phinit_get_thumbnail_picture_sources(
+                        $_fpThumbReference !== '' ? $_fpThumbReference : $_fpThumb,
+                        $siteUrl,
+                        $_fpThumbWidth,
+                        $_fpThumbHeight,
+                        'crop'
+                    )
+                    : [
+                        'url' => $_fpThumb,
+                        'avif_url' => '',
+                        'webp_url' => '',
+                        'width' => $_fpThumbWidth,
+                        'height' => $_fpThumbHeight,
+                    ];
+                $_fpThumbPreferredUrl = trim((string) ($_fpThumbSources['avif_url'] ?? ''));
+                if ($_fpThumbPreferredUrl === '') {
+                    $_fpThumbPreferredUrl = trim((string) ($_fpThumbSources['webp_url'] ?? ''));
+                }
+                if ($_fpThumbPreferredUrl === '') {
+                    $_fpThumbPreferredUrl = trim((string) ($_fpThumbSources['url'] ?? $_fpThumb));
+                }
             ?>
             <a href="<?php echo htmlspecialchars($_fpHref, ENT_QUOTES); ?>"
                class="sb-featured-post<?php echo $_sbEnableFeaturedRotation ? ' sb-featured-post--slide' : ''; ?><?php echo $_fpIsActive ? ' is-active' : ''; ?>"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-slide data-slide-index="<?php echo $_fpIndex; ?>" aria-hidden="<?php echo $_fpIsActive ? 'false' : 'true'; ?>" tabindex="<?php echo $_fpIsActive ? '0' : '-1'; ?>"<?php endif; ?>>
                 <?php if ($_fpThumb !== ''): ?>
-                <img src="<?php echo htmlspecialchars($_fpThumb, ENT_QUOTES); ?>" alt=""
+                <img src="<?php echo htmlspecialchars($_fpThumbPreferredUrl, ENT_QUOTES); ?>" alt=""
                      class="sb-featured-thumb<?php echo $_fpHasCustomThumb ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes(); ?> width="<?php echo (int) $_fpThumbWidth; ?>" height="<?php echo (int) $_fpThumbHeight; ?>">
                 <?php else: ?>
                 <div class="sb-featured-thumb sb-featured-thumb--placeholder" aria-hidden="true">
