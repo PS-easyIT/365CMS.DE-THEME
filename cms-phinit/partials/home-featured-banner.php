@@ -29,7 +29,7 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
 <section class="content-section home-section home-section--featured"
          data-anim
          data-anim-delay="1"
-         <?php echo $isRotatingFeaturedBanner ? 'data-featured-banner-rotator data-rotation-key="' . htmlspecialchars($rotationKey, ENT_QUOTES) . '"' : ''; ?>>
+         <?php echo $isRotatingFeaturedBanner ? 'data-featured-banner-rotator data-rotation-key="' . htmlspecialchars($rotationKey, ENT_QUOTES) . '" data-rotate-interval="5000"' : ''; ?>>
     <?php foreach ($featuredBannerPosts as $bannerIndex => $featuredBannerPost): ?>
         <?php
         $isActiveBanner = $bannerIndex === 0;
@@ -73,7 +73,7 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
             <img src="<?php echo htmlspecialchars($bannerImage, ENT_QUOTES); ?>"
                  alt="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>"
                  <?php echo phinit_image_loading_attributes(true, true); ?>
-                 <?php echo phinit_image_dimension_attributes($bannerImage, 180, 120); ?>>
+                 <?php echo phinit_image_dimension_attributes($bannerImage, 320, 200); ?>>
         </a>
         <?php endif; ?>
         <div class="home-featured-banner__body">

@@ -558,12 +558,12 @@ trait CMS_Phinit_Theme_Assets_Trait
         try {
             $customizer = \CMS\Services\ThemeCustomizer::instance();
             $requestedSlugs = [
-                (string) $customizer->get('typography', 'font_family_ui', 'barlow'),
-                (string) $customizer->get('typography', 'font_family_brand', 'barlow-condensed'),
+                (string) $customizer->get('typography', 'font_family_ui', 'inter'),
+                (string) $customizer->get('typography', 'font_family_brand', 'space-grotesk'),
                 (string) $customizer->get('typography', 'font_family_code', 'jetbrains-mono'),
             ];
         } catch (\Throwable $e) {
-            $requestedSlugs = ['barlow', 'barlow-condensed', 'jetbrains-mono'];
+            $requestedSlugs = ['inter', 'space-grotesk', 'jetbrains-mono'];
         }
 
         $normalized = [];
@@ -740,13 +740,14 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         try {
             $c = \CMS\Services\ThemeCustomizer::instance();
-            $ui = $c->get('typography', 'font_family_ui', 'barlow');
-            $brand = $c->get('typography', 'font_family_brand', 'barlow-condensed');
+            $ui = $c->get('typography', 'font_family_ui', 'inter');
+            $brand = $c->get('typography', 'font_family_brand', 'space-grotesk');
             $code = $c->get('typography', 'font_family_code', 'jetbrains-mono');
             $fontMap = [
                 'barlow' => 'Barlow:wght@400;500;600;700',
                 'barlow-condensed' => 'Barlow+Condensed:wght@500;600;700;800',
                 'inter' => 'Inter:wght@400;500;600;700',
+                'space-grotesk' => 'Space+Grotesk:wght@500;600;700',
                 'roboto' => 'Roboto:wght@400;500;700',
                 'open-sans' => 'Open+Sans:wght@400;600;700',
                 'lato' => 'Lato:wght@400;700',
@@ -881,6 +882,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             'barlow' => "'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             'barlow-condensed' => "'Barlow Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             'inter' => "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            'space-grotesk' => "'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             'roboto' => "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             'open-sans' => "'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             'lato' => "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -900,11 +902,11 @@ trait CMS_Phinit_Theme_Assets_Trait
             'system-mono' => "'Cascadia Code', 'Consolas', 'Courier New', monospace",
         ];
 
-        $uiFont = $c->get('typography', 'font_family_ui', 'barlow');
+        $uiFont = $c->get('typography', 'font_family_ui', 'inter');
         if (!empty($uiFont) && isset($fontMapSlug[$uiFont])) {
             $css .= "    --font-ui: {$fontMapSlug[$uiFont]};\n";
         }
-        $brandFont = $c->get('typography', 'font_family_brand', 'barlow-condensed');
+        $brandFont = $c->get('typography', 'font_family_brand', 'space-grotesk');
         if (!empty($brandFont) && isset($fontMapSlug[$brandFont])) {
             $css .= "    --font-brand: {$fontMapSlug[$brandFont]};\n";
         }
@@ -997,6 +999,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $headerMenuVarMap = [
             'member_bar_font_size' => ['header', '--member-bar-link-size', 'px'],
             'member_bar_item_spacing' => ['header', '--member-bar-link-gap', 'px'],
+            'logo_title_font_size' => ['header', '--logo-title-font-size', 'px'],
             'main_nav_font_size' => ['header', '--main-nav-link-size', 'px'],
             'main_nav_item_spacing' => ['header', '--main-nav-link-space', 'px'],
             'dropdown_nav_font_size' => ['header', '--dropdown-link-size', 'px'],
@@ -1045,14 +1048,14 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $css .= "}\n";
         $css .= "\nbody {\n";
-        $css .= "    font-family: var(--font-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);\n";
+        $css .= "    font-family: var(--font-ui, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);\n";
         $css .= "    font-size: var(--fs-base, 14.5px);\n";
-        $css .= "    line-height: var(--lh-base, 1.55);\n";
+        $css .= "    line-height: var(--lh-base, 1.75);\n";
         $css .= "    background: var(--bg-secondary);\n";
         $css .= "    color: var(--text-primary);\n";
         $css .= "}\n";
-        $css .= "h1, h2, h3, h4, h5, h6, .site-logo, .main-nav a, .sub-nav a {\n";
-        $css .= "    font-family: var(--font-brand);\n";
+        $css .= "h1, h2, h3, h4, h5, h6, .section-label, .home-featured-banner__title, .post-card-title, .article-body h4, .site-logo, .main-nav a, .sub-nav a {\n";
+        $css .= "    font-family: var(--font-brand, 'Space Grotesk', 'Inter', sans-serif);\n";
         $css .= "}\n";
         $css .= "h1, h2, h3 { font-weight: var(--fw-heading, 700); }\n";
         $css .= ".main-nav a, .sub-nav a { font-weight: var(--fw-nav, 600); }\n";

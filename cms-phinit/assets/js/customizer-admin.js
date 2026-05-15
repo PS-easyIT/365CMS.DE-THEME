@@ -16,6 +16,7 @@
         'barlow':'Barlow','inter':'Inter','roboto':'Roboto','open-sans':'Open+Sans',
         'lato':'Lato','montserrat':'Montserrat','poppins':'Poppins',
         'source-sans':'Source+Sans+3','nunito':'Nunito',
+        'space-grotesk':'Space+Grotesk',
         'barlow-condensed':'Barlow+Condensed','roboto-condensed':'Roboto+Condensed',
         'oswald':'Oswald','rajdhani':'Rajdhani','exo2':'Exo+2',
         'jetbrains-mono':'JetBrains+Mono','fira-code':'Fira+Code','source-code':'Source+Code+Pro'
@@ -25,6 +26,7 @@
         'barlow':'Barlow','inter':'Inter','roboto':'Roboto','open-sans':'"Open Sans"',
         'lato':'Lato','montserrat':'Montserrat','poppins':'Poppins',
         'source-sans':'"Source Sans 3"','nunito':'Nunito','system':'system-ui,sans-serif',
+        'space-grotesk':'"Space Grotesk"',
         'barlow-condensed':'"Barlow Condensed"','roboto-condensed':'"Roboto Condensed"',
         'oswald':'Oswald','rajdhani':'Rajdhani','exo2':'"Exo 2"',
         'jetbrains-mono':'"JetBrains Mono",monospace','fira-code':'"Fira Code",monospace',
@@ -176,6 +178,22 @@
             });
         }
 
+        function syncAllWidgetOrderControls() {
+            document.querySelectorAll('[data-widget-order-control]').forEach((control) => {
+                const input = control.querySelector('[data-widget-order-input]');
+                const list = control.querySelector('[data-widget-order-list]');
+
+                if (!(input instanceof HTMLInputElement) || !(list instanceof HTMLElement)) {
+                    return;
+                }
+
+                input.value = Array.from(list.querySelectorAll('[data-widget-order-item]'))
+                    .map((item) => item instanceof HTMLElement ? (item.dataset.widgetKey || '') : '')
+                    .filter(Boolean)
+                    .join('\n');
+            });
+        }
+
         initWidgetOrderControls();
 
         function closeConfirmModal() {
@@ -231,6 +249,7 @@
                 element.addEventListener('input', markChanged);
             });
             form.addEventListener('submit', function () {
+                syncAllWidgetOrderControls();
                 changed = false;
             });
         }

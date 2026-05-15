@@ -9,7 +9,7 @@
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const boot = () => {
-        initHomepageFeaturedBannerReloadRotation();
+        initHomepageFeaturedBannerRotation();
         initFeaturedSidebarTitleBadges();
         initFeaturedSidebarRotators();
         initSidebarArticleCarousels();
@@ -21,40 +21,112 @@
         boot();
     }
 
-    function initHomepageFeaturedBannerReloadRotation() {
+    function initHomepageFeaturedBannerRotation() {
         const rotators = document.querySelectorAll('[data-featured-banner-rotator]');
         if (!rotators.length) return;
 
         rotators.forEach((rotator) => {
             const slides = Array.from(rotator.querySelectorAll('[data-featured-banner-slide]'));
+            const requestedInterval = Number.parseInt(rotator.getAttribute('data-rotate-interval') || '5000', 10);
+            const interval = Number.isFinite(requestedInterval)
+                ? Math.min(6000, Math.max(4000, requestedInterval))
+                : 5000;
+
             if (slides.length <= 1) {
                 return;
             }
 
             const rotationKey = rotator.getAttribute('data-rotation-key') || 'default';
             const storageKey = `cms-phinit-featured-banner:${rotationKey}`;
-            let nextIndex = 0;
+            let currentIndex = 0;
+            let timerId = 0;
+            let paused = prefersReducedMotion();
 
             try {
                 const storedIndex = Number.parseInt(window.localStorage.getItem(storageKey) || '', 10);
-                nextIndex = Number.isFinite(storedIndex) ? (storedIndex + 1) % slides.length : 0;
-                window.localStorage.setItem(storageKey, String(nextIndex));
+                currentIndex = Number.isFinite(storedIndex) ? storedIndex % slides.length : 0;
             } catch (error) {
-                nextIndex = Math.floor(Date.now() / 1000) % slides.length;
+                currentIndex = Math.floor(Date.now() / interval) % slides.length;
             }
 
-            slides.forEach((slide, index) => {
-                const isActive = index === nextIndex;
-                slide.classList.toggle('is-active', isActive);
-                slide.hidden = !isActive;
-                slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+            const showSlide = (nextIndex) => {
+                currentIndex = ((nextIndex % slides.length) + slides.length) % slides.length;
 
-                slide.querySelectorAll('a, button').forEach((control) => {
-                    if (control instanceof HTMLElement) {
-                        control.tabIndex = isActive ? 0 : -1;
-                    }
+                slides.forEach((slide, index) => {
+                    const isActive = index === currentIndex;
+                    slide.classList.toggle('is-active', isActive);
+                    slide.hidden = !isActive;
+                    slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+
+                    slide.querySelectorAll('a, button').forEach((control) => {
+                        if (control instanceof HTMLElement) {
+                            control.tabIndex = isActive ? 0 : -1;
+                        }
+                    });
                 });
+
+                try {
+                    window.localStorage.setItem(storageKey, String(currentIndex));
+                } catch (error) {
+                    // Storage kann z. B. im privaten Modus blockiert sein; Rotation läuft trotzdem.
+                }
+            };
+
+            const stopRotation = () => {
+                if (timerId) {
+                    window.clearInterval(timerId);
+                    timerId = 0;
+                }
+            };
+
+            const startRotation = () => {
+                stopRotation();
+
+                if (paused) {
+                    return;
+                }
+
+                timerId = window.setInterval(() => {
+                    showSlide(currentIndex + 1);
+                }, interval);
+            };
+
+            rotator.addEventListener('mouseenter', () => {
+                paused = true;
+                stopRotation();
             });
+
+            rotator.addEventListener('mouseleave', () => {
+                paused = prefersReducedMotion();
+                startRotation();
+            });
+
+            rotator.addEventListener('focusin', () => {
+                paused = true;
+                stopRotation();
+            });
+
+            rotator.addEventListener('focusout', (event) => {
+                if (event.relatedTarget instanceof Node && rotator.contains(event.relatedTarget)) {
+                    return;
+                }
+
+                paused = prefersReducedMotion();
+                startRotation();
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                paused = document.hidden || prefersReducedMotion();
+                if (paused) {
+                    stopRotation();
+                    return;
+                }
+
+                startRotation();
+            });
+
+            showSlide(currentIndex);
+            startRotation();
         });
     }
 

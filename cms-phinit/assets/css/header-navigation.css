@@ -124,8 +124,15 @@
 
 .site-logo {
     display: flex; align-items: center; gap: 20px;
-    color: #fff; font-size: 1.35rem; font-weight: 800;
+    color: #fff; font-size: var(--logo-title-font-size, 20px); font-weight: 800;
     letter-spacing: -0.5px; text-decoration: none;
+}
+.site-logo__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
 }
 .site-logo .logo-icon {
     width: 34px; height: 34px;
@@ -133,10 +140,19 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 1rem; font-weight: 900; color: #fff; flex-shrink: 0;
 }
-.site-logo .logo-text { color: #fff; }
+.site-logo .logo-text { color: #fff; line-height: 1; }
 .site-logo .logo-text,
 .site-logo .logo-text-beside {
     margin: 0;
+}
+.site-logo .logo-tagline {
+    display: block;
+    color: rgba(255,255,255,.64);
+    font-size: .68rem;
+    font-weight: 500;
+    letter-spacing: .018em;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 .site-logo .logo-accent { color: var(--logo-accent, var(--accent-teal-light)); }
 .site-logo .logo-suffix { color: var(--logo-suffix-color, var(--accent-color)); font-weight: 900; }
@@ -147,7 +163,7 @@
     transition: max-height .22s ease, transform .22s ease;
 }
 .site-logo .logo-text-beside {
-    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+    font-size: var(--logo-title-font-size, 20px); font-weight: 800; letter-spacing: -0.5px;
     color: #fff; white-space: nowrap;
 }
 
@@ -1018,6 +1034,9 @@ body.dark-mode .quicklinks-tool:hover {
         width: auto;
     }
     .site-logo .logo-text-beside {
+        display: none;
+    }
+    .site-logo .logo-tagline {
         display: none;
     }
     .site-logo .logo-text {

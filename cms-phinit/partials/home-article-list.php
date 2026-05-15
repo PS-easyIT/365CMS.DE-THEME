@@ -100,7 +100,7 @@ if (empty($_showList) || $featuredPosts === []) {
             [$_sbProj1Name, $_sbProj1Desc, $_sbProj1Url, $_sbProj1LogoUrl],
             [$_sbProj2Name, $_sbProj2Desc, $_sbProj2Url, $_sbProj2LogoUrl],
         ];
-        $_sbDefaultOrder = ['identity', 'carousel', 'quicklinks', 'contact', 'about', 'projects', 'featured', 'status', 'downloads', 'newsletter', 'social', 'notice', 'custom'];
+        $_sbDefaultOrder = ['identity', 'carousel', 'quicklinks', 'm365links', 'contact', 'about', 'projects', 'featured', 'status', 'downloads', 'newsletter', 'social', 'notice', 'custom'];
         $_sbOrderTokens = array_values(array_filter(array_map(
             static fn(string $item): string => strtolower(trim($item)),
             preg_split('/[\r\n,;|]+/', (string) ($_sbWidgetOrder ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: []

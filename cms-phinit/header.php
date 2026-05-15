@@ -341,10 +341,16 @@ if ($_showLanguageSwitch) {
                 <?php if (!empty($_logoUrl)): ?>
                     <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($siteTitle, ENT_QUOTES); ?>" <?php echo phinit_image_loading_attributes(true); ?> <?php echo phinit_image_dimension_attributes($_logoUrl); ?>>
                     <?php if ($_showLogoText): ?>
-                    <<?php echo $_siteTitleTag; ?> class="logo-text logo-text-beside"><?php echo htmlspecialchars((string) $_logoPart1, ENT_QUOTES, 'UTF-8'); ?><span class="logo-accent"><?php echo htmlspecialchars((string) $_logoPart2, ENT_QUOTES, 'UTF-8'); ?></span><span class="logo-suffix"><?php echo htmlspecialchars((string) $_logoSuffix, ENT_QUOTES, 'UTF-8'); ?></span></<?php echo $_siteTitleTag; ?>>
+                    <div class="site-logo__copy">
+                        <<?php echo $_siteTitleTag; ?> class="logo-text logo-text-beside"><?php echo htmlspecialchars((string) $_logoPart1, ENT_QUOTES, 'UTF-8'); ?><span class="logo-accent"><?php echo htmlspecialchars((string) $_logoPart2, ENT_QUOTES, 'UTF-8'); ?></span><span class="logo-suffix"><?php echo htmlspecialchars((string) $_logoSuffix, ENT_QUOTES, 'UTF-8'); ?></span></<?php echo $_siteTitleTag; ?>>
+                        <span class="logo-tagline">IT-Blog für Microsoft 365, Exchange &amp; PowerShell</span>
+                    </div>
                     <?php endif; ?>
                 <?php else: ?>
-                    <<?php echo $_siteTitleTag; ?> class="logo-text"><?php echo htmlspecialchars((string) $_logoPart1, ENT_QUOTES, 'UTF-8'); ?><span class="logo-accent"><?php echo htmlspecialchars((string) $_logoPart2, ENT_QUOTES, 'UTF-8'); ?></span><span class="logo-suffix"><?php echo htmlspecialchars((string) $_logoSuffix, ENT_QUOTES, 'UTF-8'); ?></span></<?php echo $_siteTitleTag; ?>>
+                    <div class="site-logo__copy">
+                        <<?php echo $_siteTitleTag; ?> class="logo-text"><?php echo htmlspecialchars((string) $_logoPart1, ENT_QUOTES, 'UTF-8'); ?><span class="logo-accent"><?php echo htmlspecialchars((string) $_logoPart2, ENT_QUOTES, 'UTF-8'); ?></span><span class="logo-suffix"><?php echo htmlspecialchars((string) $_logoSuffix, ENT_QUOTES, 'UTF-8'); ?></span></<?php echo $_siteTitleTag; ?>>
+                        <span class="logo-tagline">IT-Blog für Microsoft 365, Exchange &amp; PowerShell</span>
+                    </div>
                 <?php endif; ?>
             </a>
 
