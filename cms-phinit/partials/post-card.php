@@ -153,12 +153,9 @@ $_pcFallbackSrcset = $_pcBuildImageSrcset([
     ['url' => (string) ($cardImageDesktopSources['url'] ?? ''), 'width' => (int) ($cardImageDesktopSources['width'] ?? 0)],
     ['url' => (string) ($cardImageSources['url'] ?? $cardImage), 'width' => (int) ($cardImageSources['width'] ?? 0)],
 ]);
-$_pcImageSrc = trim((string) ($cardImageDesktopSources['url'] ?? ''));
-if ($_pcImageSrc === '') {
-    $_pcImageSrc = (string) ($cardImageSources['url'] ?? $cardImage);
-}
-$_pcImageWidth = max(1, (int) (($cardImageDesktopSources['width'] ?? 0) ?: ($cardImageSources['width'] ?? 162)));
-$_pcImageHeight = max(1, (int) (($cardImageDesktopSources['height'] ?? 0) ?: ($cardImageSources['height'] ?? 215)));
+$_pcImageSrc = (string) ($cardImageSources['url'] ?? $cardImage);
+$_pcImageWidth = max(1, (int) (($cardImageSources['width'] ?? 0) ?: 162));
+$_pcImageHeight = max(1, (int) (($cardImageSources['height'] ?? 0) ?: 215));
 
 // Excerpt aufbereiten (Editor.js-JSON wird in Klartext gewandelt)
 $_pc_excerpt = function_exists('phinit_excerpt_plain_text')
@@ -184,8 +181,9 @@ if ($show_rt && $show_meta) {
 ?>
 <article class="article-card">
 
-    <div class="article-thumb">
+    <div class="article-thumb<?php echo $cardImage !== '' ? ' article-thumb--has-image' : ''; ?>">
         <?php if ($cardImage !== ''): ?>
+        <span class="article-thumb-placeholder article-thumb-placeholder--skeleton" aria-hidden="true"><span></span></span>
         <picture>
              <?php if ($_pcAvifSrcset !== ''): ?>
              <source srcset="<?php echo $_pcAvifSrcset; ?>" sizes="<?php echo htmlspecialchars($_pcImageSizes, ENT_QUOTES); ?>" type="image/avif">

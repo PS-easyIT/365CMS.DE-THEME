@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.39`
+- Version: `1.5.41`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -24,6 +24,8 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Das Sidebar-Widget `Empfohlene Artikel` nutzt im Rotator jetzt eingebettete Links/Rechts-Pfeile statt unterer Pagination-Dots
 - Das Sidebar-Widget `Empfohlene Artikel` wurde zusätzlich um 35px erhöht; die Pfeilbuttons liegen jetzt stabil über dem Slide-Overlay und reagieren zuverlässig auf Klicks
 - Normale Blog-Listings laden kein HubSite-CSS mehr, und die dekorativen Sidebar-Thumbnails im Widget `Empfohlene Artikel` vermeiden redundante Alt-Texte im selben Link
+- Der mobile Startpfad überspringt Desktop-Dropdown-Logik, vermeidet den initialen Sticky-Header-Layoutread und nutzt kleinere responsive Desktop-Kandidaten für lazy geladene Artikelbilder
+- Beitrags-Vorschaubilder in der Startseiten-Artikelliste haben jetzt einen stabilen Skeleton-Placeholder, laden die ersten zwei sichtnahen Karten eager und preladen das Homepage-Lead-Bild bevorzugt als AVIF/WebP ohne unnötige Format-Dopplung
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend
 - locale-aware Homepage-Lead-Image-Abfrage ohne Alias-Mix im SQL-Filter
 - verwaltete Uploads/Featured Images werden im Public-Frontend über die `/media-file`-Delivery-Route normalisiert, damit ersetzte Bilder nicht an direkten `/uploads`-403 scheitern

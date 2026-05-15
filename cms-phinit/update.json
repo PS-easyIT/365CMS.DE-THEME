@@ -1,13 +1,32 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.39",
+  "version": "1.5.41",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-15",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.41",
+      "date": "2026-05-15",
+      "changes": [
+        "partials/home-article-list.php + partials/post-card.php: Die ersten zwei Artikelkarten werden als nahe/oberhalb der Falz behandelt; nur das erste Bild bleibt fetchpriority=high, während das zweite eager ohne zusätzliche High-Priority-Netzwerkkonkurrenz lädt",
+        "partials/post-card.php + assets/css/homepage-blog-critical.css + assets/css/homepage-blog.css + assets/js/navigation.js: Artikelbilder erhalten einen stabilen Skeleton-Placeholder mit reserviertem Bildbereich, der erst nach erfolgreichem Bildload ausgeblendet wird und bei Ladefehlern sichtbar bleibt",
+        "includes/theme-assets-trait.php: Der Homepage-Lead-Preload bevorzugt nun AVIF vor WebP und nutzt für Banner- bzw. Artikelbilder passende Fallback-Dimensionen, damit der Preload näher an der tatsächlich gerenderten Picture-Quelle liegt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.41 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.40",
+      "date": "2026-05-15",
+      "changes": [
+        "assets/js/navigation.js: Mobile- und Touch-Viewports überspringen die Desktop-Dropdown-Initialisierung vollständig; der Sticky-Header liest den Scrollstatus nicht mehr synchron beim DOMContentLoaded",
+        "partials/post-card.php: Nicht priorisierte Artikelkarten erhalten kleine 108x81-Desktop-Bildkandidaten per srcset/sizes, behalten aber größere Quellen für Mobile und Above-the-fold-Darstellung",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.40 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.39",
       "date": "2026-05-15",

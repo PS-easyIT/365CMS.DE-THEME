@@ -56,6 +56,31 @@
 
 ---
 
+## v1.5.41 — 15. Mai 2026
+
+### Startseite: stabile Beitrags-Vorschaubilder und sauberere Bildpriorisierung
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | Startseite / Artikelbilder | `partials/home-article-list.php` und `partials/post-card.php` behandeln die ersten zwei Artikelkarten als sichtnah: nur das erste Bild erhält `fetchpriority="high"`, das zweite lädt eager ohne zusätzliche High-Priority-Konkurrenz, und die übrigen Karten bleiben lazy mit kleinen Desktop-Kandidaten. |
+| 🎨 style | Startseite / Bild-UX | `partials/post-card.php`, `assets/css/homepage-blog-critical.css`, `assets/css/homepage-blog.css` und `assets/js/navigation.js` ergänzen einen stabilen Skeleton-Placeholder für vorhandene Beitragsbilder, der den reservierten Bildbereich sichtbar füllt und erst nach erfolgreichem Load ausgeblendet wird. |
+| 🟠 perf | Startseite / LCP-Preload | `includes/theme-assets-trait.php` bevorzugt beim Homepage-Lead-Preload AVIF vor WebP und nutzt für Banner- bzw. Artikelbilder passendere Fallback-Dimensionen, damit der Preload näher an der tatsächlich gerenderten `<picture>`-Quelle liegt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.41` synchronisiert. |
+
+---
+
+## v1.5.40 — 15. Mai 2026
+
+### PSI-Nacharbeit: Navigation-Reflow und responsive Artikelbilder
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | Navigation / Mobile | `assets/js/navigation.js` überspringt Desktop-Dropdown-Initialisierung auf Touch-/Mobile-Viewports und liest den Sticky-Header-Scrollstatus nicht mehr synchron beim `DOMContentLoaded`, um die im PSI-Report verbliebenen Forced-Reflow-Spitzen weiter zu reduzieren. |
+| 🟠 perf | Startseite / Artikelbilder | `partials/post-card.php` liefert für nicht priorisierte Artikelkarten zusätzliche kleine `108x81`-Desktop-Kandidaten per `srcset`/`sizes`, während Above-the-fold-/Mobile-Darstellung größere Quellen behält. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.40` synchronisiert. |
+
+---
+
 ## v1.5.39 — 15. Mai 2026
 
 ### Homepage: PSI-Nacharbeit für Home-CSS, Sidebar-A11y und Rotator

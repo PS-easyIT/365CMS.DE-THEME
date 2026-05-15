@@ -198,19 +198,35 @@
 
 .article-thumb {
     position: relative;
+    isolation: isolate;
     flex-shrink: 0;
     width: 162px;
     height: 215px;
     overflow: hidden;
     border-radius: calc(var(--radius) - 2px);
-    background: var(--bg-tertiary);
+    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
 }
 
 .article-thumb picture,
 .article-thumb img {
+    position: relative;
+    z-index: 2;
     display: block;
     width: 100%;
     height: 100%;
+}
+
+.article-thumb picture {
+    opacity: 1;
+    transition: opacity .12s ease;
+}
+
+.article-thumb--js-loading picture {
+    opacity: 0;
+}
+
+.article-thumb.is-loaded picture {
+    opacity: 1;
 }
 
 .article-thumb img {
@@ -233,6 +249,7 @@
     font-weight: 700;
     letter-spacing: .03em;
     text-decoration: none;
+    z-index: 3;
 }
 
 .article-thumb-placeholder {
@@ -244,6 +261,36 @@
     background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
     color: var(--text-light);
     font-size: 2rem;
+}
+
+.article-thumb-placeholder--skeleton {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    color: transparent;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, .04), transparent 45%),
+        linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    opacity: 1;
+    transition: opacity .12s ease;
+}
+
+.article-thumb-placeholder--skeleton::before {
+    content: '';
+    width: 46%;
+    height: 42%;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .36);
+    box-shadow: 0 0 0 22px rgba(255, 255, 255, .1);
+}
+
+.article-thumb.is-loaded .article-thumb-placeholder--skeleton {
+    opacity: 0;
+}
+
+.article-thumb.has-image-error .article-thumb-placeholder--skeleton {
+    opacity: 1;
 }
 
 .article-body {

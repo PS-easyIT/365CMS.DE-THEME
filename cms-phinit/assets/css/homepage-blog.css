@@ -362,18 +362,38 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
 
 .article-thumb {
     position: relative;
+    isolation: isolate;
     flex-shrink: 0;
     width: 162px;
     height: 215px;
     border-radius: calc(var(--radius) - 2px);
     overflow: hidden;
-    background: var(--bg-tertiary);
+    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+}
+
+.article-thumb picture,
+.article-thumb img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.article-thumb picture {
+    opacity: 1;
+    transition: opacity .12s ease;
+}
+
+.article-thumb--js-loading picture {
+    opacity: 0;
+}
+
+.article-thumb.is-loaded picture {
+    opacity: 1;
 }
 
 .article-thumb img {
-    display: block;
-    width: 162px;
-    height: 215px;
     object-fit: cover;
     object-position: center top;
 }
@@ -393,6 +413,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     text-decoration: none;
     transition: none;
     transform: none;
+    z-index: 3;
 }
 
 .thumb-badge:hover,
@@ -559,6 +580,36 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
     color: var(--text-light);
     font-size: 2rem;
+}
+
+.article-thumb-placeholder--skeleton {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    color: transparent;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, .04), transparent 45%),
+        linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    opacity: 1;
+    transition: opacity .12s ease;
+}
+
+.article-thumb-placeholder--skeleton::before {
+    content: '';
+    width: 46%;
+    height: 42%;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .36);
+    box-shadow: 0 0 0 22px rgba(255, 255, 255, .1);
+}
+
+.article-thumb.is-loaded .article-thumb-placeholder--skeleton {
+    opacity: 0;
+}
+
+.article-thumb.has-image-error .article-thumb-placeholder--skeleton {
+    opacity: 1;
 }
 
 /* ── Startseiten-Artikel-Liste + Sidebar ───────────────────────── */
@@ -2309,6 +2360,13 @@ body.dark-mode .article-list {
 
 body.dark-mode .article-thumb {
     border-color: var(--border-dark);
+    background: linear-gradient(135deg, rgba(51, 65, 85, .92) 0%, rgba(30, 41, 59, .96) 100%);
+}
+
+body.dark-mode .article-thumb-placeholder--skeleton {
+    background:
+        linear-gradient(135deg, rgba(45, 212, 191, .06), transparent 48%),
+        linear-gradient(135deg, rgba(51, 65, 85, .92) 0%, rgba(30, 41, 59, .96) 100%);
 }
 
 body.dark-mode .article-body p,
@@ -2709,6 +2767,7 @@ body.dark-mode .feed-dual-col {
         border-radius: 0;
     }
 
+    .article-thumb picture,
     .article-thumb img {
         width: 100% !important;
         height: 100% !important;
@@ -2852,7 +2911,11 @@ body.dark-mode .feed-dual-col {
         overflow: hidden !important;
     }
 
+    .article-list > .article-card > .article-thumb > picture,
+    .article-list > .article-card > .article-thumb > picture > img,
     .article-list > .article-card > .article-thumb > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture > img,
     .article-list.article-list--framed > .article-card > .article-thumb > img {
         display: block !important;
         width: 100% !important;
@@ -2938,6 +3001,7 @@ body.dark-mode .feed-dual-col {
         aspect-ratio: auto;
     }
 
+    .article-thumb picture,
     .article-thumb img {
         height: 195px !important;
         min-height: 195px !important;
@@ -3010,7 +3074,11 @@ body.dark-mode .feed-dual-col {
         overflow: hidden !important;
     }
 
+    .article-list > .article-card > .article-thumb > picture,
+    .article-list > .article-card > .article-thumb > picture > img,
     .article-list > .article-card > .article-thumb > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture > img,
     .article-list.article-list--framed > .article-card > .article-thumb > img {
         display: block !important;
         width: 100% !important;
@@ -3072,7 +3140,11 @@ body.dark-mode .feed-dual-col {
         border-radius: 0 !important;
     }
 
+    .article-list > .article-card > .article-thumb > picture,
+    .article-list > .article-card > .article-thumb > picture > img,
     .article-list > .article-card > .article-thumb > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture > img,
     .article-list.article-list--framed > .article-card > .article-thumb > img {
         width: 100% !important;
         height: 100% !important;

@@ -219,9 +219,11 @@ trait CMS_Phinit_Theme_Assets_Trait
             return;
         }
 
-        $mimeTypeAttr = preg_match('/\.webp(?:$|\?)/i', $homepageLeadImage) === 1
-            ? ' type="image/webp"'
-            : '';
+        $mimeTypeAttr = preg_match('/\.avif(?:$|\?)/i', $homepageLeadImage) === 1
+            ? ' type="image/avif"'
+            : (preg_match('/\.webp(?:$|\?)/i', $homepageLeadImage) === 1
+                ? ' type="image/webp"'
+                : '');
 
         echo '<link rel="preload" as="image" fetchpriority="high" href="' . htmlspecialchars($homepageLeadImage, ENT_QUOTES, 'UTF-8') . '"' . $mimeTypeAttr . '>' . "\n";
     }
@@ -1212,7 +1214,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $this->homepageLeadImageCache = '';
 
-        $resolveLeadImage = static function (?string $reference): string {
+        $resolveLeadImage = static function (?string $reference, int $fallbackWidth = 320, int $fallbackHeight = 200): string {
             $candidate = trim((string) $reference);
             if ($candidate === '') {
                 return '';
@@ -1222,9 +1224,14 @@ trait CMS_Phinit_Theme_Assets_Trait
                 $sources = phinit_get_picture_sources(
                     $candidate,
                     defined('SITE_URL') ? (string) SITE_URL : null,
-                    320,
-                    200
+                    $fallbackWidth,
+                    $fallbackHeight
                 );
+
+                $preferredUrl = trim((string) ($sources['avif_url'] ?? ''));
+                if ($preferredUrl !== '') {
+                    return $preferredUrl;
+                }
 
                 $preferredUrl = trim((string) ($sources['webp_url'] ?? ''));
                 if ($preferredUrl !== '') {
@@ -1246,6 +1253,8 @@ trait CMS_Phinit_Theme_Assets_Trait
             if (function_exists('phinit_get_homepage_view_model') && function_exists('phinit_get_homepage_posts_payload')) {
                 $homepagePayload = phinit_get_homepage_posts_payload(phinit_get_homepage_view_model());
                 $leadReference = '';
+                $leadFallbackWidth = 320;
+                $leadFallbackHeight = 200;
 
                 $featuredBannerPost = $homepagePayload['featuredBannerPost'] ?? null;
                 if (is_array($featuredBannerPost)) {
@@ -1255,9 +1264,11 @@ trait CMS_Phinit_Theme_Assets_Trait
                 $featuredPosts = $homepagePayload['featuredPosts'] ?? [];
                 if ($leadReference === '' && is_array($featuredPosts) && isset($featuredPosts[0]) && is_array($featuredPosts[0])) {
                     $leadReference = trim((string) ($featuredPosts[0]['featured_image'] ?? ''));
+                    $leadFallbackWidth = 162;
+                    $leadFallbackHeight = 215;
                 }
 
-                $this->homepageLeadImageCache = $resolveLeadImage($leadReference);
+                $this->homepageLeadImageCache = $resolveLeadImage($leadReference, $leadFallbackWidth, $leadFallbackHeight);
                 if ($this->homepageLeadImageCache !== '') {
                     return $this->homepageLeadImageCache;
                 }
@@ -1285,7 +1296,7 @@ trait CMS_Phinit_Theme_Assets_Trait
                  LIMIT 1"
             );
 
-            $this->homepageLeadImageCache = $resolveLeadImage((string) ($row->featured_image ?? ''));
+            $this->homepageLeadImageCache = $resolveLeadImage((string) ($row->featured_image ?? ''), 162, 215);
         } catch (\Throwable) {
             $this->homepageLeadImageCache = '';
         }

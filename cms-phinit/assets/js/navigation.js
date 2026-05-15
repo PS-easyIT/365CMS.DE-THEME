@@ -54,6 +54,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (isEnabled('stickyHeader'))  initStickyHeader();
         initBurgerMenu();
+        initArticleImagePlaceholders();
         initDesktopDropdowns();
         initDarkMode();
         if (isEnabled('progressBar'))   initScrollProgress();
@@ -139,6 +140,37 @@
             || document.querySelector('[data-passkey-register]')
             || document.querySelector('.member-backup-codes')
         );
+    }
+
+    /* ── Artikelbilder: Skeleton erst bei echtem Laden ausblenden ── */
+    function initArticleImagePlaceholders() {
+        document.querySelectorAll('.article-thumb--has-image').forEach((thumb) => {
+            const image = thumb.querySelector('img');
+            if (!(image instanceof HTMLImageElement)) {
+                return;
+            }
+
+            const markLoaded = () => {
+                thumb.classList.add('is-loaded');
+                thumb.classList.remove('article-thumb--js-loading');
+            };
+
+            if (image.complete && image.naturalWidth > 0) {
+                markLoaded();
+                return;
+            }
+
+            thumb.classList.add('article-thumb--js-loading');
+            if (image.complete) {
+                thumb.classList.add('has-image-error');
+                return;
+            }
+
+            image.addEventListener('load', markLoaded, { once: true });
+            image.addEventListener('error', () => {
+                thumb.classList.add('has-image-error');
+            }, { once: true });
+        });
     }
 
     /* ── Sticky Header ─────────────────────────────────────────── */
