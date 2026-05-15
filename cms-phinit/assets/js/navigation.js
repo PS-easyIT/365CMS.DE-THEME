@@ -95,9 +95,14 @@
     }
 
     function needsHomepageWidgets() {
+        if (window.CMSPhinitHomepageWidgetsLoaded === true || window.CMSPhinitHomepageWidgetsBooted === true) {
+            return false;
+        }
+
         return Boolean(
-            document.querySelector('.sb-featured-title-badge')
+            document.querySelector('[data-featured-banner-rotator]')
             || document.querySelector('[data-featured-rotator]')
+            || document.querySelector('[data-sidebar-carousel]')
         );
     }
 
@@ -344,41 +349,29 @@
             element.classList.add('is-visible');
         };
 
-        const isInitiallyVisible = (element) => {
-            const rect = element.getBoundingClientRect();
-            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
-            const revealOffset = 40;
-
-            return rect.bottom >= 0 && rect.top <= Math.max(revealOffset, viewportHeight - revealOffset);
-        };
-
-        const initiallyVisibleElements = els.filter((element) => isInitiallyVisible(element));
-        initiallyVisibleElements.forEach(revealElement);
-
-        const remainingElements = els.filter((element) => !element.classList.contains('is-visible'));
-        if (!remainingElements.length) {
-            return;
-        }
-
         if (typeof window.IntersectionObserver !== 'function') {
-            remainingElements.forEach(revealElement);
+            els.forEach(revealElement);
             return;
         }
 
         const observer = new IntersectionObserver(
-            (entries) => entries.forEach(e => { if (e.isIntersecting) { revealElement(e.target); observer.unobserve(e.target); } }),
-            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    revealElement(entry.target);
+                    observer.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.12 }
         );
 
-        remainingElements.forEach(el => observer.observe(el));
-
-        window.requestAnimationFrame(() => {
-            remainingElements.forEach((element) => {
-                if (!element.classList.contains('is-visible') && isInitiallyVisible(element)) {
-                    revealElement(element);
-                    observer.unobserve(element);
-                }
-            });
+        els.forEach((element) => {
+            if (!element.classList.contains('is-visible')) {
+                observer.observe(element);
+            }
         });
     }
 

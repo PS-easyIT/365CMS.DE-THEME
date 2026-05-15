@@ -43,6 +43,7 @@ if (empty($_showList) || $featuredPosts === []) {
 }
 ?>
 <section class="content-section home-section home-section--list">
+    <h2 class="visually-hidden"><?php echo htmlspecialchars((string) $_listLabel, ENT_QUOTES); ?></h2>
     <div class="section-header">
         <span class="section-label section-label--dark"><?php echo htmlspecialchars((string) $_listLabel, ENT_QUOTES); ?></span>
     </div>
@@ -149,13 +150,34 @@ if (empty($_showList) || $featuredPosts === []) {
         <div class="sb-widget sb-widget--identity"<?php echo $_sbWidgetOrderStyle('identity'); ?>>
             <?php $_idLink = !empty($_sbIdentityLinkUrl) ? (string) $_sbIdentityLinkUrl : '/'; ?>
             <?php $_idHref = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($_idLink, $siteUrl, ['http', 'https']) ?: '/') : $_idLink; ?>
-            <?php $_sbIdentityLogoSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url((string) $_sbIdentityLogoUrl, false, $siteUrl) : (string) $_sbIdentityLogoUrl; ?>
-            <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity<?php echo !empty($_sbIdentityBadgeText) ? ' sb-identity--has-badge' : ''; ?>">
+            <?php $_sbIdentitySiteName = trim((string) (defined('SITE_NAME') ? SITE_NAME : '')); ?>
+            <?php $_sbIdentityAriaBase = $_sbIdentitySiteName !== '' ? $_sbIdentitySiteName : 'Startseite'; ?>
+            <?php $_sbIdentityAriaLabel = empty($_sbIdentityTagline)
+                ? (function_exists('phinit_t')
+                    ? phinit_t('site_home_aria', ['site' => $_sbIdentityAriaBase], $currentLocale)
+                    : $_sbIdentityAriaBase)
+                : ''; ?>
+            <?php $_sbIdentityLogoReference = (string) ($_sbIdentityLogoUrl ?? ''); ?>
+            <?php $_sbIdentityLogoSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url($_sbIdentityLogoReference, false, $siteUrl) : $_sbIdentityLogoReference; ?>
+            <?php $_sbIdentityLogoSources = function_exists('phinit_get_picture_sources')
+                ? phinit_get_picture_sources($_sbIdentityLogoReference !== '' ? $_sbIdentityLogoReference : $_sbIdentityLogoSrc, $siteUrl, 130, 42)
+                : [
+                    'url' => $_sbIdentityLogoSrc,
+                    'webp_url' => '',
+                    'width' => 130,
+                    'height' => 42,
+                ]; ?>
+            <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity<?php echo !empty($_sbIdentityBadgeText) ? ' sb-identity--has-badge' : ''; ?>"<?php echo $_sbIdentityAriaLabel !== '' ? ' aria-label="' . htmlspecialchars($_sbIdentityAriaLabel, ENT_QUOTES) . '"' : ''; ?>>
                 <?php if ($_sbIdentityLogoSrc !== '' || !empty($_sbIdentityBadgeText)): ?>
                 <span class="sb-identity-brand">
                 <?php if ($_sbIdentityLogoSrc !== ''): ?>
-                <img src="<?php echo htmlspecialchars($_sbIdentityLogoSrc, ENT_QUOTES); ?>"
-                     alt="Site Logo" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes((string) $_sbIdentityLogoUrl); ?>>
+                <picture>
+                    <?php if (($_sbIdentityLogoSources['webp_url'] ?? '') !== ''): ?>
+                    <source srcset="<?php echo htmlspecialchars((string) ($_sbIdentityLogoSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
+                    <?php endif; ?>
+                    <img src="<?php echo htmlspecialchars((string) ($_sbIdentityLogoSources['url'] ?? $_sbIdentityLogoSrc), ENT_QUOTES); ?>"
+                         alt="" aria-hidden="true" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes($_sbIdentityLogoReference !== '' ? $_sbIdentityLogoReference : $_sbIdentityLogoSrc, 130, 42); ?>>
+                </picture>
                 <?php endif; ?>
                 <?php if (!empty($_sbIdentityBadgeText)): ?>
                 <span class="sb-identity-badge"><?php echo htmlspecialchars((string) $_sbIdentityBadgeText, ENT_QUOTES); ?></span>
@@ -477,20 +499,20 @@ if (empty($_showList) || $featuredPosts === []) {
             </a>
             <?php endforeach; ?>
             <?php if ($_sbEnableFeaturedRotation): ?>
-            </div>
-            <div class="sb-featured-rotator-nav" aria-label="Weitere Beiträge">
-                <?php foreach ($_sbFeatSlice as $_fp):
-                    $_fpIndex = (int) array_search($_fp, $_sbFeatSlice, true);
-                    $_fpButtonTitle = htmlspecialchars((string) ($_fp['title'] ?? ('Beitrag ' . ($_fpIndex + 1))), ENT_QUOTES);
-                    $_fpIsActive = $_fpIndex === 0;
-                ?>
+                <div class="sb-featured-rotator-controls" role="group" aria-label="Empfohlene Artikel steuern">
+                    <button type="button"
+                            class="sb-featured-rotator-arrow sb-featured-rotator-arrow--prev"
+                            data-featured-prev
+                            aria-label="Vorherigen Beitrag anzeigen">
+                        <span aria-hidden="true">‹</span>
+                    </button>
                 <button type="button"
-                        class="sb-featured-rotator-dot<?php echo $_fpIsActive ? ' is-active' : ''; ?>"
-                        data-featured-dot
-                        data-slide-target="<?php echo $_fpIndex; ?>"
-                        aria-label="Beitrag anzeigen: <?php echo $_fpButtonTitle; ?>"
-                        aria-pressed="<?php echo $_fpIsActive ? 'true' : 'false'; ?>"></button>
-                <?php endforeach; ?>
+                            class="sb-featured-rotator-arrow sb-featured-rotator-arrow--next"
+                            data-featured-next
+                            aria-label="Nächsten Beitrag anzeigen">
+                        <span aria-hidden="true">›</span>
+                    </button>
+                </div>
             </div>
             <?php endif; ?>
         </div>

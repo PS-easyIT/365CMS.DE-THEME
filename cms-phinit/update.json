@@ -1,13 +1,51 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.34",
+  "version": "1.5.38",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-15",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.38",
+      "date": "2026-05-15",
+      "changes": [
+        "assets/css/homepage-blog.css: Das Sidebar-Widget 'Empfohlene Artikel' ist insgesamt 35px höher und gibt dem rotierenden Featured-Bereich mehr sichtbare Höhe auf Desktop und Mobile",
+        "assets/css/homepage-blog.css + assets/js/homepage-widgets.js: Die eingebetteten Pfeilbuttons des Featured-Rotators erhalten robusteres Layering und verhindern per preventDefault()/stopPropagation(), dass Klicks im Slide-Overlay verloren gehen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.38 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.37",
+      "date": "2026-05-15",
+      "changes": [
+        "partials/home-article-list.php: Das Widget 'Empfohlene Artikel' ersetzt die bisherige Dot-/Pagination-Navigation durch zwei integrierte Pfeilbuttons links und rechts im Rotator",
+        "assets/js/homepage-widgets.js + assets/css/homepage-blog.css: Die Sidebar-Rotator-Logik unterstützt jetzt direkte Vor-/Zurück-Navigation per Pfeiltasten-Buttons samt eingebettetem Overlay-Styling",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.37 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.36",
+      "date": "2026-05-15",
+      "changes": [
+        "assets/css/homepage-blog-critical.css: neues kompaktes Critical-CSS für die sichtbaren Homepage-Komponenten oberhalb der Falz (Featured-Banner, Artikelliste und obere Sidebar-Widgets)",
+        "includes/theme-assets-trait.php: Auf der Startseite lädt zuerst homepage-blog-critical.css synchron; das große homepage-blog.css wird dort anschließend asynchron nachgeladen, während Blog-/Archivseiten den konservativen Sync-Pfad behalten",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.36 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.35",
+      "date": "2026-05-15",
+      "changes": [
+        "includes/theme-assets-trait.php: Homepage-Lead-Preload zeigt jetzt auf das tatsächlich gerenderte Startseitenbild (Featured-Banner vor Artikelliste), bevorzugt vorhandene WebP-Varianten und läuft nur noch auf echten Blog-Listing-Routen",
+        "includes/theme-assets-trait.php + assets/js/navigation.js + assets/js/homepage-widgets.js: Homepage-Widgets werden nicht mehr doppelt initialisiert oder früh direkt ausgeliefert; das Widget-Modul lädt bedarfsorientiert nach und vermeidet zusätzlichen Initial-JS-Overhead sowie unnötige Layoutmessungen",
+        "partials/home-featured-banner.php + partials/home-article-list.php + assets/css/homepage-blog.css: Featured-Banner und Sidebar-Identity nutzen modernes <picture>-Markup, größere Rotator-Dots und ein dekoratives Sidebar-Logo ohne redundanten Alt-Text",
+        "partials/post-card.php + partials/home-article-list.php + assets/css/homepage-blog.css + includes/theme-assets-trait.php: Die Startseiten-Artikelliste verwendet jetzt eine saubere h2/h3-Hierarchie statt h4-Sprüngen und hält die Styles dazu konsistent",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.35 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.34",
       "date": "2026-05-15",

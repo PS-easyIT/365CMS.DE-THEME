@@ -59,9 +59,18 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
             ? (phinit_safe_public_url($bannerHrefRaw, $siteUrl, ['http', 'https']) ?: '#')
             : ($bannerHrefRaw !== '' ? $bannerHrefRaw : '#');
 
+        $bannerImageReference = (string) ($featuredBannerPost['featured_image'] ?? '');
         $bannerImage = function_exists('phinit_normalize_public_media_url')
-            ? phinit_normalize_public_media_url((string) ($featuredBannerPost['featured_image'] ?? ''), false, $siteUrl)
-            : (string) ($featuredBannerPost['featured_image'] ?? '');
+            ? phinit_normalize_public_media_url($bannerImageReference, false, $siteUrl)
+            : $bannerImageReference;
+        $bannerImageSources = function_exists('phinit_get_picture_sources')
+            ? phinit_get_picture_sources($bannerImageReference !== '' ? $bannerImageReference : $bannerImage, $siteUrl, 320, 200)
+            : [
+                'url' => $bannerImage,
+                'webp_url' => '',
+                'width' => 320,
+                'height' => 200,
+            ];
         $bannerDateRaw = $featuredBannerPost['published_at'] ?? ($featuredBannerPost['created_at'] ?? '');
         ?>
     <article class="home-featured-banner<?php echo $bannerImage === '' ? ' home-featured-banner--no-media' : ''; ?><?php echo $isActiveBanner ? ' is-active' : ''; ?>"
@@ -70,10 +79,15 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
              <?php echo $isActiveBanner ? '' : 'hidden'; ?>>
         <?php if ($bannerImage !== ''): ?>
         <a href="<?php echo htmlspecialchars($bannerHref, ENT_QUOTES); ?>" class="home-featured-banner__media" aria-label="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>">
-            <img src="<?php echo htmlspecialchars($bannerImage, ENT_QUOTES); ?>"
-                 alt="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>"
-                 <?php echo phinit_image_loading_attributes(true, true); ?>
-                 <?php echo phinit_image_dimension_attributes($bannerImage, 320, 200); ?>>
+            <picture>
+                <?php if (($bannerImageSources['webp_url'] ?? '') !== ''): ?>
+                <source srcset="<?php echo htmlspecialchars((string) ($bannerImageSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
+                <?php endif; ?>
+                <img src="<?php echo htmlspecialchars((string) ($bannerImageSources['url'] ?? $bannerImage), ENT_QUOTES); ?>"
+                     alt="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>"
+                     <?php echo phinit_image_loading_attributes(true, true); ?>
+                     <?php echo phinit_image_dimension_attributes($bannerImageReference !== '' ? $bannerImageReference : $bannerImage, 320, 200); ?>>
+            </picture>
         </a>
         <?php endif; ?>
         <div class="home-featured-banner__body">

@@ -226,7 +226,7 @@ trait CMS_Phinit_Theme_Assets_Trait
     {
         $requestContext = $this->getRequestContext();
         $requestPath = (string) ($requestContext['path'] ?? '/');
-        if (!in_array($requestPath, ['/', '/blog'], true)) {
+        if (empty($requestContext['isBlogListing']) || !in_array($requestPath, ['/', '/blog'], true)) {
             return;
         }
 
@@ -235,7 +235,11 @@ trait CMS_Phinit_Theme_Assets_Trait
             return;
         }
 
-        echo '<link rel="preload" as="image" href="' . htmlspecialchars($homepageLeadImage, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+        $mimeTypeAttr = preg_match('/\.webp(?:$|\?)/i', $homepageLeadImage) === 1
+            ? ' type="image/webp"'
+            : '';
+
+        echo '<link rel="preload" as="image" fetchpriority="high" href="' . htmlspecialchars($homepageLeadImage, ENT_QUOTES, 'UTF-8') . '"' . $mimeTypeAttr . '>' . "\n";
     }
 
     private function themeAssetUrl(string $relativePath, string|int $version): string
@@ -343,6 +347,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $loadTemplateCss = $requestContext['isTemplateStyles'];
         $loadContentCardsCss = $loadHomepageBlogCss || $loadPageExtrasCss;
         $loadKnowledgebaseCss = $this->isKnowledgebaseRequest($requestPath);
+        $isHomepageListingRequest = $loadHomepageBlogCss && $requestPath === '/';
 
         $cssFile = CMS_PHINIT_THEME_DIR . 'style.css';
         $headerNavigationCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/header-navigation.css';
@@ -358,6 +363,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $imageArchiveCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-image-archive.css';
         $specialPagesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-special-pages.css';
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
+        $homepageBlogCriticalCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog-critical.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
         $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
         $knowledgebaseCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-knowledgebase.css';
@@ -447,8 +453,16 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
 
         if ($loadHomepageBlogCss && file_exists($homepageBlogCssFile)) {
+            if ($isHomepageListingRequest && file_exists($homepageBlogCriticalCssFile)) {
+                $homepageBlogCriticalVersion = $assetVersion($homepageBlogCriticalCssFile);
+                $this->emitStylesheet($this->themeAssetUrl('assets/css/homepage-blog-critical.css', $homepageBlogCriticalVersion));
+            }
+
             $homepageBlogVersion = $assetVersion($homepageBlogCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/homepage-blog.css', $homepageBlogVersion));
+            $this->emitStylesheet(
+                $this->themeAssetUrl('assets/css/homepage-blog.css', $homepageBlogVersion),
+                $isHomepageListingRequest
+            );
         }
 
         if ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
@@ -494,20 +508,6 @@ trait CMS_Phinit_Theme_Assets_Trait
         $scripts = [
             'assets/js/navigation.js',
         ];
-
-        $homeBasePath = $requestPath;
-        try {
-            if (class_exists('CMS\\Services\\ContentLocalizationService')) {
-                $localizedContext = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($requestPath);
-                $homeBasePath = (string) ($localizedContext['base_uri'] ?? $requestPath);
-            }
-        } catch (\Throwable) {
-            $homeBasePath = $requestPath;
-        }
-
-        if ($homeBasePath === '' || $homeBasePath === '/') {
-            $scripts[] = 'assets/js/homepage-widgets.js';
-        }
 
         foreach ($scripts as $scriptRelativePath) {
             $scriptFile = CMS_PHINIT_THEME_DIR . str_replace('/', DIRECTORY_SEPARATOR, $scriptRelativePath);
@@ -1117,7 +1117,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $css .= "    background: var(--bg-secondary);\n";
         $css .= "    color: var(--text-primary);\n";
         $css .= "}\n";
-        $css .= "h1, h2, h3, h4, h5, h6, .section-label, .home-featured-banner__title, .post-card-title, .article-body h4, .site-logo, .main-nav a, .sub-nav a {\n";
+        $css .= "h1, h2, h3, h4, h5, h6, .section-label, .home-featured-banner__title, .post-card-title, .article-body h3, .article-body h4, .site-logo, .main-nav a, .sub-nav a {\n";
         $css .= "    font-family: var(--font-brand, 'Space Grotesk', 'Sora', 'Inter', sans-serif);\n";
         $css .= "}\n";
         $css .= "h1, h2, h3 { font-weight: var(--fw-heading, 700); }\n";
@@ -1169,7 +1169,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
 
         $articleTitleFs = (int) ($c->get('typography', 'article_title_fontsize', 16) ?: 16);
-        $css .= ".article-body h4 { font-size: {$articleTitleFs}px !important; }\n";
+        $css .= ".article-body h3, .article-body h4 { font-size: {$articleTitleFs}px !important; }\n";
 
         $tileTitleFs = (int) ($c->get('typography', 'tile_title_fontsize', 15) ?: 15);
         $css .= ".post-card-title { font-size: {$tileTitleFs}px !important; }\n";
@@ -1228,7 +1228,57 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $this->homepageLeadImageCache = '';
 
+        $resolveLeadImage = static function (?string $reference): string {
+            $candidate = trim((string) $reference);
+            if ($candidate === '') {
+                return '';
+            }
+
+            if (function_exists('phinit_get_picture_sources')) {
+                $sources = phinit_get_picture_sources(
+                    $candidate,
+                    defined('SITE_URL') ? (string) SITE_URL : null,
+                    320,
+                    200
+                );
+
+                $preferredUrl = trim((string) ($sources['webp_url'] ?? ''));
+                if ($preferredUrl !== '') {
+                    return $preferredUrl;
+                }
+
+                $preferredUrl = trim((string) ($sources['url'] ?? ''));
+                if ($preferredUrl !== '') {
+                    return $preferredUrl;
+                }
+            }
+
+            return function_exists('phinit_normalize_public_media_url')
+                ? phinit_normalize_public_media_url($candidate, true)
+                : $candidate;
+        };
+
         try {
+            if (function_exists('phinit_get_homepage_view_model') && function_exists('phinit_get_homepage_posts_payload')) {
+                $homepagePayload = phinit_get_homepage_posts_payload(phinit_get_homepage_view_model());
+                $leadReference = '';
+
+                $featuredBannerPost = $homepagePayload['featuredBannerPost'] ?? null;
+                if (is_array($featuredBannerPost)) {
+                    $leadReference = trim((string) ($featuredBannerPost['featured_image'] ?? ''));
+                }
+
+                $featuredPosts = $homepagePayload['featuredPosts'] ?? [];
+                if ($leadReference === '' && is_array($featuredPosts) && isset($featuredPosts[0]) && is_array($featuredPosts[0])) {
+                    $leadReference = trim((string) ($featuredPosts[0]['featured_image'] ?? ''));
+                }
+
+                $this->homepageLeadImageCache = $resolveLeadImage($leadReference);
+                if ($this->homepageLeadImageCache !== '') {
+                    return $this->homepageLeadImageCache;
+                }
+            }
+
             $db = \CMS\Database::instance();
             $prefix = $db->getPrefix();
             $contentLocale = function_exists('phinit_get_request_content_locale')
@@ -1251,9 +1301,7 @@ trait CMS_Phinit_Theme_Assets_Trait
                  LIMIT 1"
             );
 
-            $this->homepageLeadImageCache = function_exists('phinit_normalize_public_media_url')
-                ? phinit_normalize_public_media_url((string) ($row->featured_image ?? ''), true)
-                : trim((string) ($row->featured_image ?? ''));
+            $this->homepageLeadImageCache = $resolveLeadImage((string) ($row->featured_image ?? ''));
         } catch (\Throwable) {
             $this->homepageLeadImageCache = '';
         }

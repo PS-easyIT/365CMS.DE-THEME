@@ -56,6 +56,56 @@
 
 ---
 
+## v1.5.38 — 15. Mai 2026
+
+### Sidebar: Empfohlene Artikel höher und Pfeile robuster
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Sidebar / Empfohlene Artikel | `assets/css/homepage-blog.css` erhöht das Widget `Empfohlene Artikel` insgesamt um `35px` und vergrößert die sichtbare Rotator-Fläche auf Desktop und Mobile. |
+| 🔴 fix | Startseite / Sidebar / Pfeilnavigation | `assets/css/homepage-blog.css` und `assets/js/homepage-widgets.js` geben den eingebetteten Pfeilbuttons ein robusteres Z-Index-/Overlay-Verhalten; Klicks werden per `preventDefault()` und `stopPropagation()` sauber vom Slide-Link entkoppelt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.38` synchronisiert. |
+
+---
+
+## v1.5.37 — 15. Mai 2026
+
+### Sidebar: Empfohlene Artikel mit Pfeilnavigation
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Sidebar / Empfohlene Artikel | `partials/home-article-list.php` entfernt die bisherige Dot-/Pagination-Leiste aus dem Widget `Empfohlene Artikel` und ersetzt sie durch zwei direkt im Rotator eingebettete Pfeile links und rechts. |
+| 🔴 fix | Startseite / Sidebar-Rotator | `assets/js/homepage-widgets.js` unterstützt die manuelle Vor-/Zurück-Navigation des Featured-Rotators jetzt per Pfeilbuttons; `assets/css/homepage-blog.css` liefert das passende Overlay- und Fokus-Styling. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.37` synchronisiert. |
+
+---
+
+## v1.5.36 — 15. Mai 2026
+
+### Startseite: weniger render-blocking CSS
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Critical CSS | `assets/css/homepage-blog-critical.css` bündelt die sichtbaren Above-the-fold-Stile für Featured-Banner, Artikelliste und obere Sidebar-Widgets in einem kompakten synchronen Stylesheet. |
+| 🔴 fix | Startseite / Asset-Ladepfad | `includes/theme-assets-trait.php` lädt auf der Startseite zuerst `homepage-blog-critical.css` synchron und zieht das große `homepage-blog.css` erst anschließend asynchron nach; Blog- und Archivseiten bleiben bewusst beim konservativen synchronen Pfad. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.36` synchronisiert. |
+
+---
+
+## v1.5.35 — 15. Mai 2026
+
+### Homepage-Performance und Accessibility geschärft
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / LCP | `includes/theme-assets-trait.php` preloaded das tatsächlich gerenderte Homepage-Lead-Bild (Featured-Banner vor Artikelliste), bevorzugt vorhandene WebP-Varianten und läuft nur noch auf echten Blog-Listing-Routen. |
+| 🔴 fix | Startseite / JS | `includes/theme-assets-trait.php`, `assets/js/navigation.js` und `assets/js/homepage-widgets.js` laden Homepage-Widgets nicht mehr doppelt; das Modul wird bedarfsorientiert nachgeladen und vermeidet zusätzlichen Initial-JS-Overhead sowie erzwungene Layoutmessungen. |
+| 🎨 style | Startseite / Bilder & Touch Targets | `partials/home-featured-banner.php`, `partials/home-article-list.php` und `assets/css/homepage-blog.css` nutzen für Banner und Sidebar-Identity modernes `<picture>`-Markup, größere Rotator-Dots und dekorative Logo-Alt-Texte ohne redundante Screenreader-Ausgabe. |
+| 🔴 fix | Startseite / Semantik | `partials/post-card.php`, `partials/home-article-list.php`, `assets/css/homepage-blog.css` und `includes/theme-assets-trait.php` korrigieren die Heading-Hierarchie der Artikelliste von `h4` auf `h3` samt passender Styles. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.35` synchronisiert. |
+
+---
+
 ## v1.5.34 — 15. Mai 2026
 
 ### Öffentliche Medienauslieferung für ersetzte Bilder stabilisiert

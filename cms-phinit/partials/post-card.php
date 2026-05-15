@@ -154,11 +154,11 @@ if ($show_rt && $show_meta) {
     </div>
 
     <div class="article-body">
-        <h4>
+        <h3>
             <a href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>">
                 <?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>
             </a>
-        </h4>
+        </h3>
         <?php if ($show_excerpt && !empty(trim($_pc_excerpt))): ?>
         <p><?php echo htmlspecialchars($_pc_excerpt, ENT_QUOTES); ?></p>
         <?php endif; ?>
