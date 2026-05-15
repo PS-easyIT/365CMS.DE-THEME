@@ -43,6 +43,7 @@ $homeShellStyle = implode(' ', [
 $homepagePostsPayload = phinit_get_homepage_posts_payload($homepageViewModel);
 $featuredPosts = is_array($homepagePostsPayload['featuredPosts'] ?? null) ? $homepagePostsPayload['featuredPosts'] : [];
 $featuredBannerPost = is_array($homepagePostsPayload['featuredBannerPost'] ?? null) ? $homepagePostsPayload['featuredBannerPost'] : null;
+$featuredBannerPosts = is_array($homepagePostsPayload['featuredBannerPosts'] ?? null) ? $homepagePostsPayload['featuredBannerPosts'] : [];
 $gridPosts = is_array($homepagePostsPayload['gridPosts'] ?? null) ? $homepagePostsPayload['gridPosts'] : [];
 $sbFeaturedPosts = is_array($homepagePostsPayload['sbFeaturedPosts'] ?? null) ? $homepagePostsPayload['sbFeaturedPosts'] : [];
 $currentPage = (int) ($homepagePostsPayload['currentPage'] ?? 1);
@@ -55,6 +56,7 @@ $feedSections = phinit_get_homepage_feed_sections();
     <!-- ── Featured-Banner ──────────────────────────────────── -->
     <?php get_theme_part('partials/home-featured-banner', array_merge($homepageViewModel, [
         'featuredBannerPost' => $featuredBannerPost,
+        'featuredBannerPosts' => $featuredBannerPosts,
         'siteUrl' => $siteUrl,
     ])); ?>
 

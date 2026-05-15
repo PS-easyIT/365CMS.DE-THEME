@@ -67,30 +67,31 @@
     gap: 18px;
 }
 
-.post-card {
+    background: transparent;
     display: flex;
     flex-direction: column;
     min-width: 0;
     height: 100%;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+    color: #fff;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
-
+    background: transparent;
 .post-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
 
-.home-section--grid .post-card {
+    color: #7dd3c7;
     display: grid;
     grid-template-columns: 108px minmax(0, 1fr);
     grid-template-areas:
-        'thumb title'
-        'thumb topmeta'
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+    color: #fff;
         'excerpt excerpt'
         'footer footer';
     column-gap: 16px;
@@ -313,7 +314,7 @@
     padding: 4px 10px;
     border: 1px solid rgba(13, 148, 136, .28);
     border-radius: 999px;
-    background: rgba(13, 148, 136, .06);
+    background: transparent;
     color: var(--accent-teal);
     font-weight: 700;
     text-decoration: none;
@@ -326,9 +327,9 @@
 }
 
 .post-card-meta__more:hover {
-    background: rgba(13, 148, 136, .13);
-    border-color: rgba(13, 148, 136, .45);
-    color: var(--accent-teal-light);
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+    color: #fff;
     text-decoration: none;
 }
 
@@ -450,7 +451,7 @@ body.dark-mode .section-header a {
 }
 
 body.dark-mode .post-card-meta__more {
-    background: rgba(45, 212, 191, .08);
+    background: transparent;
     border-color: rgba(45, 212, 191, .24);
 }
 
@@ -460,8 +461,9 @@ body.dark-mode .section-header a:hover {
 }
 
 body.dark-mode .post-card-meta__more:hover {
-    background: rgba(45, 212, 191, .14);
-    border-color: rgba(45, 212, 191, .4);
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+    color: #fff;
 }
 
 body.dark-mode .page-link {

@@ -6,48 +6,68 @@ if (!defined('ABSPATH')) {
 }
 
 $featuredBannerPost = isset($featuredBannerPost) && is_array($featuredBannerPost) ? $featuredBannerPost : [];
+$featuredBannerPosts = isset($featuredBannerPosts) && is_array($featuredBannerPosts)
+    ? array_values(array_filter($featuredBannerPosts, static fn($post): bool => is_array($post) && $post !== []))
+    : [];
+
+if ($featuredBannerPosts === [] && $featuredBannerPost !== []) {
+    $featuredBannerPosts = [$featuredBannerPost];
+}
+
 $siteUrl = isset($siteUrl) ? (string) $siteUrl : SITE_URL;
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
-if (empty($_showFeaturedBanner) || $featuredBannerPost === []) {
+if (empty($_showFeaturedBanner) || $featuredBannerPosts === []) {
     return;
 }
 
-$bannerTitle = trim((string) ($_featuredBannerTitle ?? ''));
-if ($bannerTitle === '') {
-    $bannerTitle = trim((string) ($featuredBannerPost['title'] ?? ''));
-}
-if ($bannerTitle === '') {
-    $bannerTitle = 'Featured';
-}
-
-$bannerText = trim((string) ($_featuredBannerText ?? ''));
-if ($bannerText === '') {
-    $bannerText = trim((string) ($featuredBannerPost['excerpt'] ?? ''));
-}
-if ($bannerText === '' && !empty($featuredBannerPost['content'])) {
-    $bannerText = function_exists('phinit_excerpt_plain_text')
-        ? phinit_excerpt_plain_text((string) $featuredBannerPost['content'])
-        : strip_tags((string) $featuredBannerPost['content']);
-}
-
-$bannerHrefRaw = (string) ($featuredBannerPost['permalink'] ?? '');
-if ($bannerHrefRaw === '' && function_exists('phinit_build_post_url')) {
-    $bannerHrefRaw = phinit_build_post_url($featuredBannerPost, $currentLocale);
-}
-$bannerHref = function_exists('phinit_safe_public_url')
-    ? (phinit_safe_public_url($bannerHrefRaw, $siteUrl, ['http', 'https']) ?: '#')
-    : ($bannerHrefRaw !== '' ? $bannerHrefRaw : '#');
-
-$bannerImage = function_exists('phinit_normalize_public_media_url')
-    ? phinit_normalize_public_media_url((string) ($featuredBannerPost['featured_image'] ?? ''), false, $siteUrl)
-    : (string) ($featuredBannerPost['featured_image'] ?? '');
-$bannerDateRaw = $featuredBannerPost['published_at'] ?? ($featuredBannerPost['created_at'] ?? '');
+$isRotatingFeaturedBanner = count($featuredBannerPosts) > 1;
+$rotationKey = implode('-', array_map(static fn(array $post): string => (string) ((int) ($post['id'] ?? 0)), $featuredBannerPosts));
 $bannerLabel = trim((string) ($_featuredBannerLabel ?? 'Featured'));
 $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen'));
 ?>
-<section class="content-section home-section home-section--featured" data-anim data-anim-delay="1">
-    <article class="home-featured-banner<?php echo $bannerImage === '' ? ' home-featured-banner--no-media' : ''; ?>">
+<section class="content-section home-section home-section--featured"
+         data-anim
+         data-anim-delay="1"
+         <?php echo $isRotatingFeaturedBanner ? 'data-featured-banner-rotator data-rotation-key="' . htmlspecialchars($rotationKey, ENT_QUOTES) . '"' : ''; ?>>
+    <?php foreach ($featuredBannerPosts as $bannerIndex => $featuredBannerPost): ?>
+        <?php
+        $isActiveBanner = $bannerIndex === 0;
+        $bannerTitle = $isRotatingFeaturedBanner ? '' : trim((string) ($_featuredBannerTitle ?? ''));
+        if ($bannerTitle === '') {
+            $bannerTitle = trim((string) ($featuredBannerPost['title'] ?? ''));
+        }
+        if ($bannerTitle === '') {
+            $bannerTitle = 'Featured';
+        }
+
+        $bannerText = $isRotatingFeaturedBanner ? '' : trim((string) ($_featuredBannerText ?? ''));
+        if ($bannerText === '') {
+            $bannerText = trim((string) ($featuredBannerPost['excerpt'] ?? ''));
+        }
+        if ($bannerText === '' && !empty($featuredBannerPost['content'])) {
+            $bannerText = function_exists('phinit_excerpt_plain_text')
+                ? phinit_excerpt_plain_text((string) $featuredBannerPost['content'])
+                : strip_tags((string) $featuredBannerPost['content']);
+        }
+
+        $bannerHrefRaw = (string) ($featuredBannerPost['permalink'] ?? '');
+        if ($bannerHrefRaw === '' && function_exists('phinit_build_post_url')) {
+            $bannerHrefRaw = phinit_build_post_url($featuredBannerPost, $currentLocale);
+        }
+        $bannerHref = function_exists('phinit_safe_public_url')
+            ? (phinit_safe_public_url($bannerHrefRaw, $siteUrl, ['http', 'https']) ?: '#')
+            : ($bannerHrefRaw !== '' ? $bannerHrefRaw : '#');
+
+        $bannerImage = function_exists('phinit_normalize_public_media_url')
+            ? phinit_normalize_public_media_url((string) ($featuredBannerPost['featured_image'] ?? ''), false, $siteUrl)
+            : (string) ($featuredBannerPost['featured_image'] ?? '');
+        $bannerDateRaw = $featuredBannerPost['published_at'] ?? ($featuredBannerPost['created_at'] ?? '');
+        ?>
+    <article class="home-featured-banner<?php echo $bannerImage === '' ? ' home-featured-banner--no-media' : ''; ?><?php echo $isActiveBanner ? ' is-active' : ''; ?>"
+             data-featured-banner-slide
+             aria-hidden="<?php echo $isActiveBanner ? 'false' : 'true'; ?>"
+             <?php echo $isActiveBanner ? '' : 'hidden'; ?>>
         <?php if ($bannerImage !== ''): ?>
         <a href="<?php echo htmlspecialchars($bannerHref, ENT_QUOTES); ?>" class="home-featured-banner__media" aria-label="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>">
             <img src="<?php echo htmlspecialchars($bannerImage, ENT_QUOTES); ?>"
@@ -80,4 +100,5 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
             </div>
         </div>
     </article>
+    <?php endforeach; ?>
 </section>

@@ -846,10 +846,30 @@
           "type": "text",
           "default": ""
         },
+        "sidebar_identity_badge_text": {
+          "label": "Site-Identity MVP-Badge Text",
+          "type": "text",
+          "default": ""
+        },
         "sidebar_identity_link_url": {
           "label": "Site-Identity Link-URL",
           "type": "url",
           "default": "/"
+        },
+        "sidebar_show_m365links": {
+          "label": "Microsoft 365 Schnelllinks anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_m365links_label": {
+          "label": "Microsoft 365 Schnelllinks Titel",
+          "type": "text",
+          "default": "Microsoft 365"
+        },
+        "sidebar_m365links_items": {
+          "label": "Microsoft 365 Links (Titel|URL|Icon optional)",
+          "type": "textarea",
+          "default": "Alle Beiträge|/blog|📰\nGlossar|/m365-glossar|📖\nLINUX|/tutorials-linux|\nM365 Analyse|/m365-analyse|🔍\nM365 Blogs|/m365-blogs|📝\nAdmin Links|/m365-admin-links|🔗"
         },
         "sidebar_show_projects": {
           "label": "Projekt-Widget anzeigen",

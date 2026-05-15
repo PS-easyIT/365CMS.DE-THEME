@@ -18,6 +18,8 @@ function phinit_get_homepage_view_model(): array
         '_showFeaturedBanner' => true,
         '_featuredBannerLabel' => 'Featured',
         '_featuredBannerPostId' => 0,
+        '_featuredBannerPostId2' => 0,
+        '_featuredBannerPostId3' => 0,
         '_featuredBannerTitle' => '',
         '_featuredBannerText' => '',
         '_featuredBannerButtonText' => 'Weiter lesen',
@@ -45,12 +47,28 @@ function phinit_get_homepage_view_model(): array
         '_listSidebarWidth' => 260,
         '_listSidebarTitle' => '',
         '_listSidebarContent' => '',
-        '_sbWidgetOrder' => "identity\ncarousel\nabout\nprojects\nfeatured\nstatus\ndownloads\nsocial\nnotice\ncustom",
+        '_sbWidgetOrder' => "identity\ncarousel\nquicklinks\nm365links\ncontact\nabout\nprojects\nfeatured\nstatus\ndownloads\nnewsletter\nsocial\nnotice\ncustom",
         '_sbShowArticleCarousel' => true,
         '_sbArticleCarouselLabel' => 'Artikel-Karussell',
         '_sbArticleCarouselCount' => 4,
         '_sbArticleCarouselImageHeight' => 96,
         '_sbArticleCarouselRotateSeconds' => 7,
+        '_sbShowQuicklinks' => true,
+        '_sbQuicklinksLabel' => 'Schnelllinks',
+        '_sbQuicklinksItems' => "Alle Beiträge|/blog|📰\nKontakt|/contact|✉️\nDownloads|/downloads|📥",
+        '_sbShowM365Links' => true,
+        '_sbM365LinksLabel' => 'Microsoft 365',
+        '_sbM365LinksItems' => "Alle Beiträge|/blog|📰\nGlossar|/m365-glossar|📖\nLINUX|/tutorials-linux|\nM365 Analyse|/m365-analyse|🔍\nM365 Blogs|/m365-blogs|📝\nAdmin Links|/m365-admin-links|🔗",
+        '_sbShowContact' => true,
+        '_sbContactTitle' => 'Kontakt',
+        '_sbContactText' => 'Fragen, Feedback oder Projektidee? Schreib mir kurz – ich melde mich zurück.',
+        '_sbContactButtonText' => 'Kontakt aufnehmen',
+        '_sbContactUrl' => '/contact',
+        '_sbShowNewsletter' => false,
+        '_sbNewsletterTitle' => 'Updates abonnieren',
+        '_sbNewsletterText' => 'Neue Artikel, Tools und 365CMS-Updates direkt verfolgen.',
+        '_sbNewsletterButtonText' => 'Newsletter öffnen',
+        '_sbNewsletterUrl' => '/newsletter',
         '_sbShowAboutMe' => false,
         '_sbAboutTitle' => 'About Me',
         '_sbAboutName' => '',
@@ -87,6 +105,7 @@ function phinit_get_homepage_view_model(): array
         '_sbShowIdentity' => true,
         '_sbIdentityLogoUrl' => '',
         '_sbIdentityTagline' => '',
+        '_sbIdentityBadgeText' => '',
         '_sbIdentityLinkUrl' => '/',
         '_sbProj1LogoUrl' => '',
         '_sbProj2LogoUrl' => '',
@@ -186,6 +205,8 @@ function phinit_get_homepage_view_model(): array
             '_showFeaturedBanner' => filter_var($customizer->get('homepage', 'show_home_featured_banner', true), FILTER_VALIDATE_BOOLEAN),
             '_featuredBannerLabel' => $customizer->get('homepage', 'home_featured_banner_label', 'Featured'),
             '_featuredBannerPostId' => (int) $customizer->get('homepage', 'home_featured_banner_post', 0),
+            '_featuredBannerPostId2' => (int) $customizer->get('homepage', 'home_featured_banner_post_2', 0),
+            '_featuredBannerPostId3' => (int) $customizer->get('homepage', 'home_featured_banner_post_3', 0),
             '_featuredBannerTitle' => $customizer->get('homepage', 'home_featured_banner_title', ''),
             '_featuredBannerText' => $customizer->get('homepage', 'home_featured_banner_text', ''),
             '_featuredBannerButtonText' => $customizer->get('homepage', 'home_featured_banner_button_text', 'Weiter lesen'),
@@ -221,6 +242,26 @@ function phinit_get_homepage_view_model(): array
             '_sbArticleCarouselCount' => max(2, min(6, (int) $customizer->get('homepage', 'sidebar_article_carousel_count', 4))),
             '_sbArticleCarouselImageHeight' => max(72, min(150, (int) $customizer->get('homepage', 'sidebar_article_carousel_image_height', 96))),
             '_sbArticleCarouselRotateSeconds' => max(3, min(30, (int) $customizer->get('homepage', 'sidebar_article_carousel_rotate_seconds', 7))),
+            '_sbShowQuicklinks' => filter_var($customizer->get('homepage', 'sidebar_show_quicklinks', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbQuicklinksLabel' => $customizer->get('homepage', 'sidebar_quicklinks_label', 'Schnelllinks'),
+            '_sbQuicklinksItems' => $customizer->get('homepage', 'sidebar_quicklinks_items', $defaults['_sbQuicklinksItems']),
+            '_sbShowM365Links' => filter_var($customizer->get('homepage', 'sidebar_show_m365links', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbM365LinksLabel' => $customizer->get('homepage', 'sidebar_m365links_label', 'Microsoft 365'),
+            '_sbM365LinksItems' => $customizer->get('homepage', 'sidebar_m365links_items', $defaults['_sbM365LinksItems']),
+            '_sbShowContact' => filter_var($customizer->get('homepage', 'sidebar_show_contact', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbContactTitle' => $customizer->get('homepage', 'sidebar_contact_title', 'Kontakt'),
+            '_sbContactText' => $customizer->get('homepage', 'sidebar_contact_text', $defaults['_sbContactText']),
+            '_sbContactButtonText' => $customizer->get('homepage', 'sidebar_contact_button_text', 'Kontakt aufnehmen'),
+            '_sbContactUrl' => function_exists('phinit_safe_public_url')
+                ? (phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_contact_url', '/contact'), $siteUrl, ['http', 'https']) ?: '/contact')
+                : $customizer->get('homepage', 'sidebar_contact_url', '/contact'),
+            '_sbShowNewsletter' => filter_var($customizer->get('homepage', 'sidebar_show_newsletter', false), FILTER_VALIDATE_BOOLEAN),
+            '_sbNewsletterTitle' => $customizer->get('homepage', 'sidebar_newsletter_title', 'Updates abonnieren'),
+            '_sbNewsletterText' => $customizer->get('homepage', 'sidebar_newsletter_text', $defaults['_sbNewsletterText']),
+            '_sbNewsletterButtonText' => $customizer->get('homepage', 'sidebar_newsletter_button_text', 'Newsletter öffnen'),
+            '_sbNewsletterUrl' => function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_newsletter_url', '/newsletter'), $siteUrl, ['http', 'https'])
+                : $customizer->get('homepage', 'sidebar_newsletter_url', '/newsletter'),
             '_sbShowAboutMe' => filter_var($customizer->get('homepage', 'sidebar_show_about_me', false), FILTER_VALIDATE_BOOLEAN),
             '_sbAboutTitle' => $customizer->get('homepage', 'sidebar_about_title', 'About Me'),
             '_sbAboutName' => $customizer->get('homepage', 'sidebar_about_name', ''),
@@ -283,6 +324,7 @@ function phinit_get_homepage_view_model(): array
                 ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_identity_logo_url', ''), $siteUrl)
                 : $customizer->get('homepage', 'sidebar_identity_logo_url', ''),
             '_sbIdentityTagline' => $customizer->get('homepage', 'sidebar_identity_tagline', ''),
+            '_sbIdentityBadgeText' => $customizer->get('homepage', 'sidebar_identity_badge_text', ''),
             '_sbIdentityLinkUrl' => function_exists('phinit_safe_public_url')
                 ? (phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_identity_link_url', '/'), $siteUrl, ['http', 'https']) ?: '/')
                 : $customizer->get('homepage', 'sidebar_identity_link_url', '/'),
@@ -523,6 +565,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
 {
     $defaults = [
         'featuredBannerPost' => null,
+        'featuredBannerPosts' => [],
         'featuredPosts' => [],
         'gridPosts' => [],
         'sbFeaturedPosts' => [],
@@ -540,13 +583,19 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         $_showList = !empty($viewModel['_showList']);
         $_showTileGrid = !empty($viewModel['_showTileGrid']);
         $_showFeaturedBanner = !empty($viewModel['_showFeaturedBanner']);
-        $_featuredBannerPostId = max(0, (int) ($viewModel['_featuredBannerPostId'] ?? 0));
+        $_featuredBannerPostIds = array_values(array_unique(array_filter([
+            max(0, (int) ($viewModel['_featuredBannerPostId'] ?? 0)),
+            max(0, (int) ($viewModel['_featuredBannerPostId2'] ?? 0)),
+            max(0, (int) ($viewModel['_featuredBannerPostId3'] ?? 0)),
+        ], static fn(int $postId): bool => $postId > 0)));
         $_listCount = max(1, (int) ($viewModel['_listCount'] ?? 4));
         $_tileCount = max(1, (int) ($viewModel['_tileCount'] ?? 6));
         $_sbShowFeaturedPosts = !empty($viewModel['_sbShowFeaturedPosts']);
 
         $featuredBannerPost = null;
-        if ($_showFeaturedBanner && $_featuredBannerPostId > 0) {
+        $featuredBannerPosts = [];
+        if ($_showFeaturedBanner && $_featuredBannerPostIds !== []) {
+            $_bannerIn = implode(',', array_map('intval', $_featuredBannerPostIds));
             $_bannerRows = $db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
                     p.title_en, p.excerpt_en, p.content_en,
@@ -554,12 +603,23 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                     c.slug AS category_slug
                  FROM {$prefix}posts p
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
-                 WHERE p.id = " . (int) $_featuredBannerPostId . " AND " . phinit_featured_sidebar_post_where('p') . "{$localeCondition}
-                 LIMIT 1"
+                 WHERE p.id IN ({$_bannerIn}) AND " . phinit_featured_sidebar_post_where('p') . "{$localeCondition}"
             ) ?: [];
 
-            $_bannerPrepared = phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $_bannerRows), $contentLocale);
-            $featuredBannerPost = $_bannerPrepared[0] ?? null;
+            $_bannerMap = [];
+            foreach (phinit_prepare_homepage_posts(array_map(static fn($r) => (array) $r, $_bannerRows), $contentLocale) as $_bannerPost) {
+                $_bannerMap[(int) $_bannerPost['id']] = $_bannerPost;
+            }
+
+            foreach ($_featuredBannerPostIds as $_bannerPostId) {
+                if (!isset($_bannerMap[$_bannerPostId])) {
+                    continue;
+                }
+
+                $featuredBannerPosts[] = $_bannerMap[$_bannerPostId];
+            }
+
+            $featuredBannerPost = $featuredBannerPosts[0] ?? null;
         }
 
         $featuredRows = $_showList
@@ -655,6 +715,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
 
         return [
             'featuredBannerPost' => $featuredBannerPost,
+            'featuredBannerPosts' => $featuredBannerPosts,
             'featuredPosts' => $featuredPosts,
             'gridPosts' => $gridPosts,
             'sbFeaturedPosts' => $sbFeaturedPosts,

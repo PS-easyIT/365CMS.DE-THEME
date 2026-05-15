@@ -9,6 +9,7 @@
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const boot = () => {
+        initHomepageFeaturedBannerReloadRotation();
         initFeaturedSidebarTitleBadges();
         initFeaturedSidebarRotators();
         initSidebarArticleCarousels();
@@ -18,6 +19,43 @@
         document.addEventListener('DOMContentLoaded', boot, { once: true });
     } else {
         boot();
+    }
+
+    function initHomepageFeaturedBannerReloadRotation() {
+        const rotators = document.querySelectorAll('[data-featured-banner-rotator]');
+        if (!rotators.length) return;
+
+        rotators.forEach((rotator) => {
+            const slides = Array.from(rotator.querySelectorAll('[data-featured-banner-slide]'));
+            if (slides.length <= 1) {
+                return;
+            }
+
+            const rotationKey = rotator.getAttribute('data-rotation-key') || 'default';
+            const storageKey = `cms-phinit-featured-banner:${rotationKey}`;
+            let nextIndex = 0;
+
+            try {
+                const storedIndex = Number.parseInt(window.localStorage.getItem(storageKey) || '', 10);
+                nextIndex = Number.isFinite(storedIndex) ? (storedIndex + 1) % slides.length : 0;
+                window.localStorage.setItem(storageKey, String(nextIndex));
+            } catch (error) {
+                nextIndex = Math.floor(Date.now() / 1000) % slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                const isActive = index === nextIndex;
+                slide.classList.toggle('is-active', isActive);
+                slide.hidden = !isActive;
+                slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+
+                slide.querySelectorAll('a, button').forEach((control) => {
+                    if (control instanceof HTMLElement) {
+                        control.tabIndex = isActive ? 0 : -1;
+                    }
+                });
+            });
+        });
     }
 
     function initFeaturedSidebarTitleBadges() {

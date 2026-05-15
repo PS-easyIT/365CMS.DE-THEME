@@ -460,6 +460,29 @@
     background: var(--accent-teal);
 }
 
+.main-menu-bar .main-nav > a.active,
+.main-menu-bar .main-nav > a[aria-current="page"],
+.main-menu-bar .main-nav > .has-dropdown.is-active-branch > .main-nav__item-head {
+    color: var(--text-nav-main-hover, #fff);
+    background: rgba(255, 255, 255, .09);
+    box-shadow: inset 0 -3px 0 var(--accent-color, #e8a838);
+}
+
+.main-menu-bar .main-nav > .has-dropdown.is-active-branch > .main-nav__item-head > .main-nav__link,
+.main-menu-bar .main-nav > .has-dropdown.is-active-branch > .main-nav__item-head > .main-nav__toggle {
+    color: var(--text-nav-main-hover, #fff);
+}
+
+.main-menu-bar .main-nav > a.active::after,
+.main-menu-bar .main-nav > a[aria-current="page"]::after,
+.main-menu-bar .main-nav > .has-dropdown.is-active-branch > .main-nav__item-head > .main-nav__link::after,
+.main-menu-bar .main-nav > .has-dropdown.is-active-branch > .main-nav__item-head > .main-nav__toggle::after {
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-color, #e8a838);
+}
+
 .main-nav__item-head {
     display: flex;
     align-items: stretch;

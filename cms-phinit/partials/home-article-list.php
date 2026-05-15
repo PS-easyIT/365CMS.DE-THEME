@@ -100,7 +100,7 @@ if (empty($_showList) || $featuredPosts === []) {
             [$_sbProj1Name, $_sbProj1Desc, $_sbProj1Url, $_sbProj1LogoUrl],
             [$_sbProj2Name, $_sbProj2Desc, $_sbProj2Url, $_sbProj2LogoUrl],
         ];
-        $_sbDefaultOrder = ['identity', 'carousel', 'about', 'projects', 'featured', 'status', 'downloads', 'social', 'notice', 'custom'];
+        $_sbDefaultOrder = ['identity', 'carousel', 'quicklinks', 'contact', 'about', 'projects', 'featured', 'status', 'downloads', 'newsletter', 'social', 'notice', 'custom'];
         $_sbOrderTokens = array_values(array_filter(array_map(
             static fn(string $item): string => strtolower(trim($item)),
             preg_split('/[\r\n,;|]+/', (string) ($_sbWidgetOrder ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: []
@@ -122,15 +122,22 @@ if (empty($_showList) || $featuredPosts === []) {
     </div><!-- /.homepage-list-main -->
     <aside class="<?php echo $_sbAsideClass; ?>">
 
-        <?php if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline))): ?>
+        <?php if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline) || !empty($_sbIdentityBadgeText))): ?>
         <div class="sb-widget sb-widget--identity"<?php echo $_sbWidgetOrderStyle('identity'); ?>>
             <?php $_idLink = !empty($_sbIdentityLinkUrl) ? (string) $_sbIdentityLinkUrl : '/'; ?>
             <?php $_idHref = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($_idLink, $siteUrl, ['http', 'https']) ?: '/') : $_idLink; ?>
             <?php $_sbIdentityLogoSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url((string) $_sbIdentityLogoUrl, false, $siteUrl) : (string) $_sbIdentityLogoUrl; ?>
-            <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity">
+            <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity<?php echo !empty($_sbIdentityBadgeText) ? ' sb-identity--has-badge' : ''; ?>">
+                <?php if ($_sbIdentityLogoSrc !== '' || !empty($_sbIdentityBadgeText)): ?>
+                <span class="sb-identity-brand">
                 <?php if ($_sbIdentityLogoSrc !== ''): ?>
                 <img src="<?php echo htmlspecialchars($_sbIdentityLogoSrc, ENT_QUOTES); ?>"
                      alt="Site Logo" class="sb-identity-logo" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes((string) $_sbIdentityLogoUrl); ?>>
+                <?php endif; ?>
+                <?php if (!empty($_sbIdentityBadgeText)): ?>
+                <span class="sb-identity-badge"><?php echo htmlspecialchars((string) $_sbIdentityBadgeText, ENT_QUOTES); ?></span>
+                <?php endif; ?>
+                </span>
                 <?php endif; ?>
                 <?php if (!empty($_sbIdentityTagline)): ?>
                 <span class="sb-identity-tagline"><?php echo htmlspecialchars($_sbIdentityTagline, ENT_QUOTES); ?></span>
@@ -208,6 +215,104 @@ if (empty($_showList) || $featuredPosts === []) {
                 </div>
                 <button type="button" class="sb-carousel-btn" data-sidebar-carousel-next aria-label="Nächster Artikel">›</button>
             </div>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($_sbShowQuicklinks) && trim((string) ($_sbQuicklinksItems ?? '')) !== ''): ?>
+        <?php
+        $_sbQuicklinkRows = [];
+        foreach (array_filter(array_map('trim', preg_split('/\R+/', (string) $_sbQuicklinksItems) ?: [])) as $_quicklinkLine) {
+            $_quicklinkParts = array_map('trim', explode('|', $_quicklinkLine, 3));
+            $_quicklinkLabel = (string) ($_quicklinkParts[0] ?? '');
+            $_quicklinkUrl = (string) ($_quicklinkParts[1] ?? '');
+            $_quicklinkIcon = (string) ($_quicklinkParts[2] ?? '↗');
+
+            if ($_quicklinkLabel === '' || $_quicklinkUrl === '') {
+                continue;
+            }
+
+            $_quicklinkHref = function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url($_quicklinkUrl, $siteUrl, ['http', 'https'])
+                : $_quicklinkUrl;
+
+            if ($_quicklinkHref === '') {
+                continue;
+            }
+
+            $_sbQuicklinkRows[] = [$_quicklinkLabel, $_quicklinkHref, $_quicklinkIcon];
+        }
+        ?>
+        <?php if ($_sbQuicklinkRows !== []): ?>
+        <div class="sb-widget sb-widget--quicklinks"<?php echo $_sbWidgetOrderStyle('quicklinks'); ?>>
+            <?php echo $_renderSidebarWidgetTitle((string) ($_sbQuicklinksLabel ?? 'Schnelllinks'), '⚡'); ?>
+            <nav class="sb-quicklinks" aria-label="<?php echo htmlspecialchars((string) ($_sbQuicklinksLabel ?? 'Schnelllinks'), ENT_QUOTES); ?>">
+                <?php foreach ($_sbQuicklinkRows as [$_quicklinkLabel, $_quicklinkHref, $_quicklinkIcon]): ?>
+                <?php $_quicklinkIsExternal = preg_match('#^https?://#i', (string) $_quicklinkHref) === 1; ?>
+                <a href="<?php echo htmlspecialchars((string) $_quicklinkHref, ENT_QUOTES); ?>" class="sb-quicklink"<?php echo $_quicklinkIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                    <span class="sb-quicklink__icon" aria-hidden="true"><?php echo htmlspecialchars((string) $_quicklinkIcon, ENT_QUOTES); ?></span>
+                    <span class="sb-quicklink__label"><?php echo htmlspecialchars((string) $_quicklinkLabel, ENT_QUOTES); ?></span>
+                </a>
+                <?php endforeach; ?>
+            </nav>
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (!empty($_sbShowM365Links) && trim((string) ($_sbM365LinksItems ?? '')) !== ''): ?>
+        <?php
+        $_sbM365LinkRows = [];
+        foreach (array_filter(array_map('trim', preg_split('/\R+/', (string) $_sbM365LinksItems) ?: [])) as $_m365LinkLine) {
+            $_m365LinkParts = array_map('trim', explode('|', $_m365LinkLine, 3));
+            $_m365LinkLabel = (string) ($_m365LinkParts[0] ?? '');
+            $_m365LinkUrl = (string) ($_m365LinkParts[1] ?? '');
+            $_m365LinkIcon = array_key_exists(2, $_m365LinkParts) ? (string) $_m365LinkParts[2] : '↗';
+
+            if ($_m365LinkLabel === '' || $_m365LinkUrl === '') {
+                continue;
+            }
+
+            $_m365LinkHref = function_exists('phinit_safe_public_url')
+                ? phinit_safe_public_url($_m365LinkUrl, $siteUrl, ['http', 'https'])
+                : $_m365LinkUrl;
+
+            if ($_m365LinkHref === '') {
+                continue;
+            }
+
+            $_sbM365LinkRows[] = [$_m365LinkLabel, $_m365LinkHref, $_m365LinkIcon];
+        }
+        ?>
+        <?php if ($_sbM365LinkRows !== []): ?>
+        <div class="sb-widget sb-widget--m365links"<?php echo $_sbWidgetOrderStyle('m365links'); ?>>
+            <?php echo $_renderSidebarWidgetTitle((string) ($_sbM365LinksLabel ?? 'Microsoft 365'), '☁️'); ?>
+            <nav class="sb-quicklinks sb-quicklinks--m365" aria-label="<?php echo htmlspecialchars((string) ($_sbM365LinksLabel ?? 'Microsoft 365'), ENT_QUOTES); ?>">
+                <?php foreach ($_sbM365LinkRows as [$_m365LinkLabel, $_m365LinkHref, $_m365LinkIcon]): ?>
+                <?php $_m365LinkIsExternal = preg_match('#^https?://#i', (string) $_m365LinkHref) === 1; ?>
+                <a href="<?php echo htmlspecialchars((string) $_m365LinkHref, ENT_QUOTES); ?>" class="sb-quicklink sb-quicklink--m365<?php echo $_m365LinkIcon === '' ? ' sb-quicklink--no-icon' : ''; ?>"<?php echo $_m365LinkIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                    <?php if ($_m365LinkIcon !== ''): ?>
+                    <span class="sb-quicklink__icon" aria-hidden="true"><?php echo htmlspecialchars((string) $_m365LinkIcon, ENT_QUOTES); ?></span>
+                    <?php endif; ?>
+                    <span class="sb-quicklink__label"><?php echo htmlspecialchars((string) $_m365LinkLabel, ENT_QUOTES); ?></span>
+                </a>
+                <?php endforeach; ?>
+            </nav>
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (!empty($_sbShowContact) && (!empty($_sbContactText) || !empty($_sbContactButtonText))): ?>
+        <?php $_sbContactHref = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url((string) ($_sbContactUrl ?? '/contact'), $siteUrl, ['http', 'https']) ?: '/contact') : (string) ($_sbContactUrl ?? '/contact'); ?>
+        <?php $_sbContactIsExternal = preg_match('#^https?://#i', $_sbContactHref) === 1; ?>
+        <div class="sb-widget sb-widget--contact"<?php echo $_sbWidgetOrderStyle('contact'); ?>>
+            <?php echo $_renderSidebarWidgetTitle((string) ($_sbContactTitle ?? 'Kontakt'), '✉️'); ?>
+            <?php if (!empty($_sbContactText)): ?>
+            <p class="sb-contact-text"><?php echo nl2br(htmlspecialchars((string) $_sbContactText, ENT_QUOTES)); ?></p>
+            <?php endif; ?>
+            <?php if ($_sbContactHref !== '' && !empty($_sbContactButtonText)): ?>
+            <a href="<?php echo htmlspecialchars($_sbContactHref, ENT_QUOTES); ?>" class="sb-widget-button sb-widget-button--primary"<?php echo $_sbContactIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                <?php echo htmlspecialchars((string) $_sbContactButtonText, ENT_QUOTES); ?>
+            </a>
             <?php endif; ?>
         </div>
         <?php endif; ?>
@@ -479,6 +584,22 @@ if (empty($_showList) || $featuredPosts === []) {
         </div>
         <?php endif; ?>
 
+        <?php if (!empty($_sbShowNewsletter) && (!empty($_sbNewsletterText) || !empty($_sbNewsletterButtonText))): ?>
+        <?php $_sbNewsletterHref = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) ($_sbNewsletterUrl ?? ''), $siteUrl, ['http', 'https']) : (string) ($_sbNewsletterUrl ?? ''); ?>
+        <?php $_sbNewsletterIsExternal = preg_match('#^https?://#i', $_sbNewsletterHref) === 1; ?>
+        <div class="sb-widget sb-widget--newsletter"<?php echo $_sbWidgetOrderStyle('newsletter'); ?>>
+            <?php echo $_renderSidebarWidgetTitle((string) ($_sbNewsletterTitle ?? 'Updates abonnieren'), '📬'); ?>
+            <?php if (!empty($_sbNewsletterText)): ?>
+            <p class="sb-newsletter-text"><?php echo nl2br(htmlspecialchars((string) $_sbNewsletterText, ENT_QUOTES)); ?></p>
+            <?php endif; ?>
+            <?php if ($_sbNewsletterHref !== '' && !empty($_sbNewsletterButtonText)): ?>
+            <a href="<?php echo htmlspecialchars($_sbNewsletterHref, ENT_QUOTES); ?>" class="sb-widget-button"<?php echo $_sbNewsletterIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                <?php echo htmlspecialchars((string) $_sbNewsletterButtonText, ENT_QUOTES); ?>
+            </a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
         <?php
         $_sbSocialSvg = [
             'linkedin' => '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>',
@@ -528,8 +649,8 @@ if (empty($_showList) || $featuredPosts === []) {
 
         <?php if ($_sbShowNotice && !empty($_sbNoticeTitle)): ?>
         <div class="sb-widget sb-widget--notice"<?php echo $_sbWidgetOrderStyle('notice'); ?>>
+            <?php echo $_renderSidebarWidgetTitle((string) $_sbNoticeTitle, '💡'); ?>
             <div class="sb-notice-body">
-                <?php echo str_replace('class="sb-widget-title"', 'class="sb-widget-title sb-widget-title--spaced"', $_renderSidebarWidgetTitle((string) $_sbNoticeTitle)); ?>
                 <?php if (!empty($_sbNoticeText)): ?>
                 <p class="sb-notice-text"><?php echo htmlspecialchars((string) $_sbNoticeText, ENT_QUOTES); ?></p>
                 <?php endif; ?>
