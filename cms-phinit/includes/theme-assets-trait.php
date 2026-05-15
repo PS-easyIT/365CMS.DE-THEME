@@ -1113,15 +1113,15 @@ trait CMS_Phinit_Theme_Assets_Trait
         $tileTitleFs = (int) ($c->get('typography', 'tile_title_fontsize', 15) ?: 15);
         $css .= ".post-card-title { font-size: {$tileTitleFs}px !important; }\n";
 
-        $postTitleFs = (int) ($c->get('posts', 'post_title_fontsize', 36) ?: 36);
-        $postTitleFs = max(30, min(56, $postTitleFs));
-        $postTitleMinFs = max(24, min($postTitleFs - 4, (int) round($postTitleFs * 0.82)));
-        $css .= ".post-title { font-size: clamp({$postTitleMinFs}px, 3.2vw, {$postTitleFs}px) !important; }\n";
+        $postTitleFs = (int) ($c->get('posts', 'post_title_fontsize', 28) ?: 28);
+        $postTitleFs = max(20, min(28, $postTitleFs));
+        $postTitleMinFs = max(20, min($postTitleFs - 4, (int) round($postTitleFs * 0.72)));
+        $css .= ".post-title { font-size: clamp({$postTitleMinFs}px, 2.1vw, {$postTitleFs}px) !important; }\n";
 
-        $pageTitleFs = (int) ($c->get('pages', 'page_title_fontsize', 36) ?: 36);
-        $pageTitleFs = max(30, min(56, $pageTitleFs));
-        $pageTitleMinFs = max(24, min($pageTitleFs - 4, (int) round($pageTitleFs * 0.82)));
-        $css .= ".page-header-block h1 { font-size: clamp({$pageTitleMinFs}px, 3vw, {$pageTitleFs}px) !important; }\n";
+        $pageTitleFs = (int) ($c->get('pages', 'page_title_fontsize', 28) ?: 28);
+        $pageTitleFs = max(20, min(28, $pageTitleFs));
+        $pageTitleMinFs = max(20, min($pageTitleFs - 4, (int) round($pageTitleFs * 0.72)));
+        $css .= ".page-header-block h1 { font-size: clamp({$pageTitleMinFs}px, 2.1vw, {$pageTitleFs}px) !important; }\n";
 
         if (!empty($pageHeroW)) {
             $pageWidth = max(80, (int) $pageHeroW);

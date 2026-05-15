@@ -343,19 +343,21 @@
 .page-header-block h1 {
     font-size: var(--fs-h1);
     font-weight: 800;
-    line-height: var(--lh-display-1, 1.04);
-    letter-spacing: var(--ls-display-1, -0.042em);
+    line-height: var(--lh-display-2, 1.08);
+    letter-spacing: var(--ls-display-2, -0.034em);
     color: var(--text-primary);
     margin-bottom: 8px;
     text-wrap: balance;
 }
 
 .page-header-block .breadcrumbs {
-    font-size: var(--fs-xs);
-    color: var(--text-light);
+    font-size: var(--hero-subtitle-size, .9rem);
+    color: var(--text-secondary);
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     align-items: center;
+    line-height: var(--hero-subtitle-line-height, 1.55);
 }
 
 .page-header-block .breadcrumbs a {

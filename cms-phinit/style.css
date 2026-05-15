@@ -55,6 +55,9 @@ Tags: it, tech, editorial, blog, dark-mode, responsive, professional
     --lh-display-2: 1.08;
     --lh-display-3: 1.12;
     --lh-display-4: 1.18;
+    --hero-title-size: clamp(20px, 2.1vw, 28px);
+    --hero-subtitle-size: .9rem;
+    --hero-subtitle-line-height: 1.55;
 
     /* — Layout — */
     --container-max:  1200px;

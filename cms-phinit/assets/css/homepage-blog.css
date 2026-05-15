@@ -139,7 +139,7 @@
 .home-featured-banner__title {
     margin: 0;
     font-family: var(--font-brand, 'Space Grotesk', 'Sora', 'Inter', sans-serif);
-    font-size: clamp(20px, 2.1vw, 28px);
+    font-size: var(--hero-title-size, clamp(20px, 2.1vw, 28px));
     line-height: var(--lh-display-2, 1.08);
     letter-spacing: var(--ls-display-2, -0.034em);
     color: var(--text-primary);
@@ -165,8 +165,8 @@
     max-width: none;
     margin: 8px 0 0;
     color: var(--text-secondary);
-    font-size: .9rem;
-    line-height: 1.55;
+    font-size: var(--hero-subtitle-size, .9rem);
+    line-height: var(--hero-subtitle-line-height, 1.55);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
@@ -3159,18 +3159,20 @@ body.dark-mode .feed-dual-col {
 }
 
 .blog-page-header h1 {
-    font-size: 1.6rem;
+    font-size: var(--hero-title-size, clamp(20px, 2.1vw, 28px));
     font-weight: 800;
     margin: 0 0 4px;
     font-family: var(--font-brand);
+    line-height: var(--lh-display-2, 1.08);
+    letter-spacing: var(--ls-display-2, -0.034em);
     color: var(--text-primary);
 }
 
 .blog-page-header p {
-    font-size: .92rem;
+    font-size: var(--hero-subtitle-size, .9rem);
     color: var(--text-muted);
     margin: 0;
-    line-height: 1.65;
+    line-height: var(--hero-subtitle-line-height, 1.55);
 }
 
 .blog-archive-bar {
@@ -3345,17 +3347,19 @@ body.dark-mode .blog-search-form button:hover {
 
 .author-profile-card h1 {
     margin: 0 0 8px;
-    font-size: var(--fs-h1);
+    font-size: var(--hero-title-size, clamp(20px, 2.1vw, 28px));
     font-weight: 800;
     font-family: var(--font-brand, inherit);
+    line-height: var(--lh-display-2, 1.08);
+    letter-spacing: var(--ls-display-2, -0.034em);
     color: var(--text-primary);
 }
 
 .author-profile-card__bio {
     margin: 0;
-    font-size: var(--fs-sm);
+    font-size: var(--hero-subtitle-size, .9rem);
     color: var(--text-muted);
-    line-height: 1.7;
+    line-height: var(--hero-subtitle-line-height, 1.55);
     max-width: 62ch;
 }
 
@@ -3473,11 +3477,11 @@ body.dark-mode .author-profile-detail {
     }
 
     .blog-page-header h1 {
-        font-size: clamp(1.3rem, 5.5vw, 1.7rem);
+        font-size: var(--hero-title-size, clamp(20px, 2.1vw, 28px));
     }
 
     .blog-page-header p {
-        font-size: .88rem;
+        font-size: var(--hero-subtitle-size, .9rem);
     }
 
     .blog-archive-bar {

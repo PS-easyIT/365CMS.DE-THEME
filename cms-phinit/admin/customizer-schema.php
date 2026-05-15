@@ -343,7 +343,7 @@ return [
                 'post_hero_height'       => ['label' => 'Beitragsbild Höhe (px)',           'type' => 'number',   'default' => '215'],
                 'post_hero_width'        => ['label' => 'Beitragsbild Breite (px)',         'type' => 'number',   'default' => '162'],
                 'show_post_hero'         => ['label' => 'Beitragsbild links vom Titel',     'type' => 'checkbox', 'default' => true],
-                'post_title_fontsize'    => ['label' => 'Beitrags-Titel Schriftgröße (px)', 'type' => 'number',   'default' => '36', 'min' => 24, 'max' => 56, 'step' => 1, 'description' => 'Desktop-Zielgröße für den großen Unterseiten-Titel; wird responsiv mit größerem Editorial-H1 umgesetzt.'],
+                'post_title_fontsize'    => ['label' => 'Beitrags-Titel Schriftgröße (px)', 'type' => 'number',   'default' => '28', 'min' => 20, 'max' => 28, 'step' => 1, 'description' => 'Entspricht standardmäßig der Titelgröße des Startseiten-Headers und bleibt auf Unterseiten responsiv daran angelehnt.'],
                 'show_post_meta'         => ['label' => 'Artikel-Meta anzeigen',            'type' => 'checkbox', 'default' => true],
                 'show_reading_time'      => ['label' => 'Lesezeit anzeigen',                'type' => 'checkbox', 'default' => true],
                 'reading_time_wpm'       => ['label' => 'Wörter pro Minute',                'type' => 'number',   'default' => '220'],
@@ -373,7 +373,7 @@ return [
             'title' => '📄 Seiten',
             'sections' => [
                 'show_page_title'        => ['label' => 'Seiten-Titel anzeigen',           'type' => 'checkbox', 'default' => true],
-                'page_title_fontsize'    => ['label' => 'Seiten-Titel Schriftgröße (px)',  'type' => 'number',   'default' => '36', 'min' => 24, 'max' => 56, 'step' => 1, 'description' => 'Desktop-Zielgröße für den großen Unterseiten-Titel; wird responsiv mit größerem Editorial-H1 umgesetzt.'],
+                'page_title_fontsize'    => ['label' => 'Seiten-Titel Schriftgröße (px)',  'type' => 'number',   'default' => '28', 'min' => 20, 'max' => 28, 'step' => 1, 'description' => 'Entspricht standardmäßig der Titelgröße des Startseiten-Headers und bleibt auf Unterseiten responsiv daran angelehnt.'],
                 'show_page_hero'         => ['label' => 'Seiten-Bild links vom Titel',     'type' => 'checkbox', 'default' => true],
                 'page_hero_width'        => ['label' => 'Seiten-Headerbild Breite (px)',   'type' => 'number',   'default' => '162', 'min' => 80, 'max' => 420, 'step' => 1],
                 'page_hero_height'       => ['label' => 'Seiten-Headerbild Höhe (px)',     'type' => 'number',   'default' => '220', 'min' => 100, 'max' => 420, 'step' => 1],

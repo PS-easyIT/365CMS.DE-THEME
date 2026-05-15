@@ -1388,11 +1388,11 @@
         "post_title_fontsize": {
           "label": "Beitragstitel Schriftgröße (px)",
           "type": "number",
-          "default": 36,
-          "min": 24,
-          "max": 56,
+          "default": 28,
+          "min": 20,
+          "max": 28,
           "step": 1,
-          "description": "Desktop-Zielgröße für große Unterseiten-Titel; wird responsiv als deutlicher Editorial-H1 ausgegeben."
+          "description": "Entspricht standardmäßig der Titelgröße des Startseiten-Headers und bleibt auf Unterseiten responsiv daran angelehnt."
         },
         "show_post_meta": {
           "label": "Post-Meta anzeigen (Datum, Kategorie)",
@@ -1563,11 +1563,11 @@
         "page_title_fontsize": {
           "label": "Seitentitel Schriftgröße (px)",
           "type": "number",
-          "default": 36,
-          "min": 24,
-          "max": 56,
+          "default": 28,
+          "min": 20,
+          "max": 28,
           "step": 1,
-          "description": "Desktop-Zielgröße für große Unterseiten-Titel; wird responsiv als deutlicher Editorial-H1 ausgegeben."
+          "description": "Entspricht standardmäßig der Titelgröße des Startseiten-Headers und bleibt auf Unterseiten responsiv daran angelehnt."
         },
         "show_page_hero": {
           "label": "Seitenbild im Header anzeigen",

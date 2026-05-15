@@ -151,10 +151,10 @@
 .post-title {
     font-size: var(--fs-h1);
     font-weight: 800;
-    line-height: var(--lh-display-1, 1.04);
-    letter-spacing: var(--ls-display-1, -0.042em);
+    line-height: var(--lh-display-2, 1.08);
+    letter-spacing: var(--ls-display-2, -0.034em);
     color: var(--text-primary);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     text-wrap: balance;
 }
 
@@ -163,18 +163,19 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    font-size: var(--fs-xs);
-    color: var(--text-muted);
+    font-size: var(--hero-subtitle-size, .9rem);
+    color: var(--text-secondary);
     border-top: 1px solid var(--border-color);
     padding-top: 12px;
     margin-top: 0;
+    line-height: var(--hero-subtitle-line-height, 1.55);
 }
 
 .post-meta__item {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    line-height: 1.35;
+    line-height: inherit;
 }
 
 .post-meta__icon {
