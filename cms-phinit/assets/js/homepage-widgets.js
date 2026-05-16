@@ -14,6 +14,44 @@
 
     const prefersReducedMotion = () =>
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lifecycleControls = new Set();
+    let lifecycleEventsBound = false;
+
+    function bindLifecycleEvents() {
+        if (lifecycleEventsBound) {
+            return;
+        }
+
+        lifecycleEventsBound = true;
+
+        const pauseAll = () => {
+            lifecycleControls.forEach((control) => control.pause());
+        };
+
+        const resumeAll = () => {
+            lifecycleControls.forEach((control) => control.resume());
+        };
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                pauseAll();
+                return;
+            }
+
+            resumeAll();
+        }, { passive: true });
+        window.addEventListener('pagehide', pauseAll, { passive: true });
+        window.addEventListener('pageshow', resumeAll, { passive: true });
+    }
+
+    function registerLifecycleControl(control) {
+        lifecycleControls.add(control);
+        bindLifecycleEvents();
+
+        if (document.hidden) {
+            control.pause();
+        }
+    }
 
     const boot = () => {
         if (globalScope.CMSPhinitHomepageWidgetsBooted) {
@@ -51,7 +89,10 @@
             const storageKey = `cms-phinit-featured-banner:${rotationKey}`;
             let currentIndex = 0;
             let timerId = 0;
-            let paused = prefersReducedMotion();
+            let interactionPaused = false;
+            let lifecyclePaused = document.hidden;
+
+            const rotationPaused = () => interactionPaused || lifecyclePaused || prefersReducedMotion();
 
             try {
                 const storedIndex = Number.parseInt(window.localStorage.getItem(storageKey) || '', 10);
@@ -93,7 +134,7 @@
             const startRotation = () => {
                 stopRotation();
 
-                if (paused) {
+                if (rotationPaused()) {
                     return;
                 }
 
@@ -103,17 +144,17 @@
             };
 
             rotator.addEventListener('mouseenter', () => {
-                paused = true;
+                interactionPaused = true;
                 stopRotation();
             });
 
             rotator.addEventListener('mouseleave', () => {
-                paused = prefersReducedMotion();
+                interactionPaused = false;
                 startRotation();
             });
 
             rotator.addEventListener('focusin', () => {
-                paused = true;
+                interactionPaused = true;
                 stopRotation();
             });
 
@@ -122,18 +163,19 @@
                     return;
                 }
 
-                paused = prefersReducedMotion();
+                interactionPaused = false;
                 startRotation();
             });
 
-            document.addEventListener('visibilitychange', () => {
-                paused = document.hidden || prefersReducedMotion();
-                if (paused) {
+            registerLifecycleControl({
+                pause: () => {
+                    lifecyclePaused = true;
                     stopRotation();
-                    return;
+                },
+                resume: () => {
+                    lifecyclePaused = document.hidden;
+                    startRotation();
                 }
-
-                startRotation();
             });
 
             showSlide(currentIndex);
@@ -158,7 +200,10 @@
 
             let currentIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains('is-active')));
             let timerId = 0;
-            let paused = prefersReducedMotion();
+            let interactionPaused = false;
+            let lifecyclePaused = document.hidden;
+
+            const rotationPaused = () => interactionPaused || lifecyclePaused || prefersReducedMotion();
 
             const showSlide = (nextIndex) => {
                 currentIndex = ((nextIndex % slides.length) + slides.length) % slides.length;
@@ -187,7 +232,7 @@
             const startRotation = () => {
                 stopRotation();
 
-                if (paused || !Number.isFinite(interval) || interval < 2000) {
+                if (rotationPaused() || !Number.isFinite(interval) || interval < 2000) {
                     return;
                 }
 
@@ -218,17 +263,17 @@
             });
 
             rotator.addEventListener('mouseenter', () => {
-                paused = true;
+                interactionPaused = true;
                 stopRotation();
             });
 
             rotator.addEventListener('mouseleave', () => {
-                paused = prefersReducedMotion();
+                interactionPaused = false;
                 startRotation();
             });
 
             rotator.addEventListener('focusin', () => {
-                paused = true;
+                interactionPaused = true;
                 stopRotation();
             });
 
@@ -237,18 +282,19 @@
                     return;
                 }
 
-                paused = prefersReducedMotion();
+                interactionPaused = false;
                 startRotation();
             });
 
-            document.addEventListener('visibilitychange', () => {
-                paused = document.hidden || prefersReducedMotion();
-                if (paused) {
+            registerLifecycleControl({
+                pause: () => {
+                    lifecyclePaused = true;
                     stopRotation();
-                    return;
+                },
+                resume: () => {
+                    lifecyclePaused = document.hidden;
+                    startRotation();
                 }
-
-                startRotation();
             });
 
             showSlide(currentIndex);
@@ -273,7 +319,10 @@
 
             let currentIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains('is-active')));
             let timerId = 0;
-            let paused = prefersReducedMotion();
+            let interactionPaused = false;
+            let lifecyclePaused = document.hidden;
+
+            const rotationPaused = () => interactionPaused || lifecyclePaused || prefersReducedMotion();
 
             const showSlide = (nextIndex) => {
                 currentIndex = ((nextIndex % slides.length) + slides.length) % slides.length;
@@ -305,7 +354,7 @@
             const startRotation = () => {
                 stopRotation();
 
-                if (paused || !Number.isFinite(interval) || interval < 3000) {
+                if (rotationPaused() || !Number.isFinite(interval) || interval < 3000) {
                     return;
                 }
 
@@ -332,17 +381,17 @@
             });
 
             carousel.addEventListener('mouseenter', () => {
-                paused = true;
+                interactionPaused = true;
                 stopRotation();
             });
 
             carousel.addEventListener('mouseleave', () => {
-                paused = prefersReducedMotion();
+                interactionPaused = false;
                 startRotation();
             });
 
             carousel.addEventListener('focusin', () => {
-                paused = true;
+                interactionPaused = true;
                 stopRotation();
             });
 
@@ -351,18 +400,19 @@
                     return;
                 }
 
-                paused = prefersReducedMotion();
+                interactionPaused = false;
                 startRotation();
             });
 
-            document.addEventListener('visibilitychange', () => {
-                paused = document.hidden || prefersReducedMotion();
-                if (paused) {
+            registerLifecycleControl({
+                pause: () => {
+                    lifecyclePaused = true;
                     stopRotation();
-                    return;
+                },
+                resume: () => {
+                    lifecyclePaused = document.hidden;
+                    startRotation();
                 }
-
-                startRotation();
             });
 
             showSlide(currentIndex);

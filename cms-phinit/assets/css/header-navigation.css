@@ -219,9 +219,6 @@
     background-size: 320px 160px, 360px 180px, 340px 170px, 380px 190px, 320px 160px, 300px 160px, 340px 170px, 380px 180px, 100% 100%;
     background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
     opacity: .34;
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
-    animation: phinit-network-drift 28s linear infinite;
 }
 
 .hdr-bar-main::after {
@@ -235,15 +232,6 @@
 .hdr-bar-main .mobile-menu {
     position: relative;
     z-index: 1;
-}
-
-@keyframes phinit-network-drift {
-    0% {
-        transform: translate3d(0, 0, 0);
-    }
-    100% {
-        transform: translate3d(-36px, 0, 0);
-    }
 }
 
 .main-nav {
@@ -1047,8 +1035,3 @@ body.dark-mode .quicklinks-tool:hover {
     .burger-btn { display: flex; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .hdr-bar-main::before {
-        animation: none;
-    }
-}

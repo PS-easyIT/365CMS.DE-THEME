@@ -323,11 +323,166 @@ if (!function_exists('phinit_safe_public_media_url')) {
     }
 }
 
+if (!function_exists('phinit_extract_upload_relative_path')) {
+    /**
+     * Extrahiert aus einer Medienreferenz den relativen Pfad innerhalb von UPLOAD_PATH.
+     */
+    function phinit_extract_upload_relative_path(?string $value): string
+    {
+        $rawValue = trim(html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        if ($rawValue === '' || preg_match('/^[A-Za-z]:[\\\/]/', $rawValue) === 1) {
+            return '';
+        }
+
+        $url = str_replace('\\', '/', $rawValue);
+        if (str_starts_with($url, '//')) {
+            return '';
+        }
+
+        $siteBase = rtrim((string) (defined('SITE_URL') ? SITE_URL : ''), '/');
+        $uploadBase = rtrim((string) (defined('UPLOAD_URL') ? UPLOAD_URL : ''), '/');
+        $relativePath = '';
+
+        if (preg_match('#^https?://#i', $url) === 1) {
+            $urlPath = (string) (parse_url($url, PHP_URL_PATH) ?? '');
+            if (str_ends_with($urlPath, '/media-file') || $urlPath === '/media-file') {
+                $query = (string) (parse_url($url, PHP_URL_QUERY) ?? '');
+                parse_str($query, $params);
+                $relativePath = (string) ($params['path'] ?? '');
+            } elseif ($uploadBase !== '' && str_starts_with($url, $uploadBase . '/')) {
+                $relativePath = ltrim(substr($url, strlen($uploadBase)), '/');
+            } elseif ($siteBase !== '' && str_starts_with($url, $siteBase . '/uploads/')) {
+                $relativePath = ltrim(substr($url, strlen($siteBase . '/uploads/')), '/');
+            }
+        } elseif (str_starts_with($url, '/media-file')) {
+            $query = (string) (parse_url($url, PHP_URL_QUERY) ?? '');
+            parse_str($query, $params);
+            $relativePath = (string) ($params['path'] ?? '');
+        } elseif (str_starts_with($url, '/uploads/')) {
+            $relativePath = ltrim(substr($url, strlen('/uploads/')), '/');
+        } elseif (!str_starts_with($url, '/') && preg_match('#^[a-z][a-z0-9+.-]*:#i', $url) !== 1) {
+            $relativePath = $url;
+        }
+
+        $relativePath = trim(str_replace('\\', '/', $relativePath), '/');
+        if ($relativePath === '') {
+            return '';
+        }
+
+        $relativePath = implode('/', array_map(static fn(string $segment): string => rawurldecode($segment), explode('/', $relativePath)));
+        $relativePath = trim((string) preg_replace('#/+#', '/', $relativePath), '/');
+
+        if ($relativePath === '' || str_contains($relativePath, '..') || preg_match('#^[a-z][a-z0-9+.-]*:#i', $relativePath) === 1) {
+            return '';
+        }
+
+        return $relativePath;
+    }
+}
+
+if (!function_exists('phinit_upload_path_can_be_served_directly')) {
+    /**
+     * Prüft konservativ, ob ein Upload-Bild direkt aus /uploads ausgeliefert werden darf.
+     */
+    function phinit_upload_path_can_be_served_directly(string $relativePath, string $absolutePath): bool
+    {
+        $relativePath = trim(str_replace('\\', '/', $relativePath), '/');
+        if ($relativePath === '' || $absolutePath === '' || !is_file($absolutePath)) {
+            return false;
+        }
+
+        if ($relativePath === 'member' || str_starts_with($relativePath, 'member/')) {
+            return false;
+        }
+
+        foreach (explode('/', $relativePath) as $segment) {
+            if ($segment !== '' && str_starts_with($segment, '.')) {
+                return false;
+            }
+        }
+
+        $extension = strtolower((string) pathinfo($relativePath, PATHINFO_EXTENSION));
+        if (!in_array($extension, ['avif', 'bmp', 'gif', 'ico', 'jpg', 'jpeg', 'png', 'webp'], true)) {
+            return false;
+        }
+
+        if (!is_readable($absolutePath)) {
+            return false;
+        }
+
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return true;
+        }
+
+        $permissions = @fileperms($absolutePath);
+        if (!is_int($permissions)) {
+            return false;
+        }
+
+        if (($permissions & 0004) !== 0) {
+            return true;
+        }
+
+        $publicPermissions = ($permissions & 0777) | 0644;
+        if (@chmod($absolutePath, $publicPermissions)) {
+            clearstatcache(true, $absolutePath);
+            $updatedPermissions = @fileperms($absolutePath);
+
+            return is_int($updatedPermissions) && ($updatedPermissions & 0004) !== 0;
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('phinit_build_direct_upload_media_url')) {
+    /**
+     * Baut eine cache- und webserverfreundliche direkte /uploads-URL.
+     */
+    function phinit_build_direct_upload_media_url(string $relativePath, ?string $siteUrl = null): string
+    {
+        $relativePath = trim(str_replace('\\', '/', $relativePath), '/');
+        if ($relativePath === '' || str_contains($relativePath, '..')) {
+            return '';
+        }
+
+        $baseUrl = rtrim((string) (defined('UPLOAD_URL') ? UPLOAD_URL : ''), '/');
+        if ($baseUrl === '') {
+            $siteBase = rtrim((string) ($siteUrl ?? (defined('SITE_URL') ? SITE_URL : '')), '/');
+            $baseUrl = $siteBase !== '' ? $siteBase . '/uploads' : '/uploads';
+        }
+
+        $segments = array_map(static fn(string $segment): string => rawurlencode($segment), explode('/', $relativePath));
+
+        return $baseUrl . '/' . implode('/', $segments);
+    }
+}
+
+if (!function_exists('phinit_prefer_direct_public_upload_url')) {
+    /**
+     * Liefert für öffentliche Upload-Bilder bevorzugt direkte /uploads-URLs.
+     */
+    function phinit_prefer_direct_public_upload_url(?string $value, ?string $siteUrl = null): string
+    {
+        $relativePath = phinit_extract_upload_relative_path($value);
+        if ($relativePath === '' || !defined('UPLOAD_PATH')) {
+            return '';
+        }
+
+        $absolutePath = rtrim((string) UPLOAD_PATH, "\\/") . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        if (!phinit_upload_path_can_be_served_directly($relativePath, $absolutePath)) {
+            return '';
+        }
+
+        return phinit_build_direct_upload_media_url($relativePath, $siteUrl);
+    }
+}
+
 if (!function_exists('phinit_normalize_public_media_url')) {
     /**
      * Konvertiert öffentliche Medienreferenzen in frontend-taugliche Delivery-URLs.
-     * Verwaltete Uploads laufen bewusst über /media-file, damit auch ersetzte Bilder
-     * mit restriktiven Dateirechten (z. B. 0640) im Public-Frontend stabil geladen werden.
+     * Öffentliche Upload-Bilder laufen bevorzugt direkt über /uploads. Private,
+     * versteckte oder nicht sicher direkt lesbare Dateien bleiben bei /media-file.
      */
     function phinit_normalize_public_media_url(?string $value, bool $preferInline = true, ?string $siteUrl = null): string
     {
@@ -336,9 +491,34 @@ if (!function_exists('phinit_normalize_public_media_url')) {
             return '';
         }
 
+        $directUploadUrl = phinit_prefer_direct_public_upload_url($url, $siteUrl);
+        if ($directUploadUrl !== '') {
+            return phinit_safe_public_media_url($directUploadUrl, $siteUrl);
+        }
+
         try {
             if (class_exists('\\CMS\\Services\\MediaDeliveryService')) {
-                $url = \CMS\Services\MediaDeliveryService::getInstance()->normalizeAdminVisibleUrl($url);
+                $delivery = \CMS\Services\MediaDeliveryService::getInstance();
+                $normalizedUrl = $delivery->normalizeUrl($url, $preferInline);
+                $directUploadUrl = phinit_prefer_direct_public_upload_url($normalizedUrl, $siteUrl);
+                if ($directUploadUrl !== '') {
+                    return phinit_safe_public_media_url($directUploadUrl, $siteUrl);
+                }
+
+                $normalizedRelativePath = phinit_extract_upload_relative_path($normalizedUrl);
+                $url = $normalizedUrl;
+
+                if ($normalizedRelativePath !== '') {
+                    if (method_exists($delivery, 'buildDeliveryUrl')) {
+                        $url = $delivery->buildDeliveryUrl($normalizedRelativePath, $preferInline ? 'inline' : 'attachment');
+                    } elseif (method_exists($delivery, 'normalizeAdminVisibleUrl')) {
+                        $url = $delivery->normalizeAdminVisibleUrl($normalizedUrl);
+                    }
+                }
+
+                if (str_contains($url, '/media-file') && method_exists($delivery, 'normalizeAdminVisibleUrl')) {
+                    $url = $delivery->normalizeAdminVisibleUrl($url);
+                }
             }
         } catch (\Throwable) {
         }
@@ -427,12 +607,16 @@ if (!function_exists('phinit_image_loading_attributes')) {
     /**
      * Liefert standardisierte Loading-/Priority-Attribute für Theme-Bilder.
      */
-    function phinit_image_loading_attributes(bool $aboveTheFold = false, bool $highPriority = true): string
+    function phinit_image_loading_attributes(bool $aboveTheFold = false, bool $highPriority = true, bool $lowPriority = false): string
     {
         if ($aboveTheFold) {
             return $highPriority
                 ? 'loading="eager" fetchpriority="high" decoding="async"'
                 : 'loading="eager" decoding="async"';
+        }
+
+        if ($lowPriority) {
+            return 'fetchpriority="low" decoding="async"';
         }
 
         if (!phinit_is_image_lazy_loading_enabled()) {

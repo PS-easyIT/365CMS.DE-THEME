@@ -1128,6 +1128,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
 
 .sb-status-dot {
     flex-shrink: 0;
+    position: relative;
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -1136,6 +1137,16 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
 .sb-status-dot--ok {
     background: #22c55e;
     box-shadow: 0 0 0 3px rgba(34, 197, 94, .2);
+}
+
+.sb-status-dot--ok::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: rgba(34, 197, 94, .24);
+    opacity: .75;
+    transform: scale(.9);
     animation: sb-pulse 2.5s ease-in-out infinite;
 }
 
@@ -1150,8 +1161,16 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
 }
 
 @keyframes sb-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(34, 197, 94, .2); }
-    50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, .38); }
+    0%, 100% { opacity: .72; transform: scale(.9); }
+    50% { opacity: 1; transform: scale(1.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sb-status-dot--ok::after {
+        animation: none;
+        opacity: .72;
+        transform: scale(1);
+    }
 }
 
 .sb-download-list { list-style: none; padding: 0; margin: 0; }

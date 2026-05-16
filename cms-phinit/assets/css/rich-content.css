@@ -259,6 +259,9 @@ body.dark-mode .post-body pre.code-block--powershell {
 }
 
 .page-content img,
+.post-body img,
+.page-content picture,
+.post-body picture,
 .page-content .editorjs-image img,
 .page-content .editorjs-gallery img,
 .page-content .editorjs-carousel img,
@@ -270,6 +273,27 @@ body.dark-mode .post-body pre.code-block--powershell {
     border-radius: var(--radius-sm);
     max-width: 100%;
     height: auto;
+}
+
+.page-content .phinit-content-image,
+.post-body .phinit-content-image,
+.page-content figure > img,
+.post-body figure > img,
+.page-content picture > img,
+.post-body picture > img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.page-content figure,
+.post-body figure,
+.page-content .editorjs-image,
+.post-body .editorjs-image {
+    width: 100%;
+    max-width: 100%;
 }
 
 .page-content figure figcaption,

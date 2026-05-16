@@ -89,7 +89,7 @@ $bannerButtonText = trim((string) ($_featuredBannerButtonText ?? 'Weiter lesen')
                 <?php endif; ?>
                 <img src="<?php echo htmlspecialchars((string) ($bannerImageSources['url'] ?? $bannerImage), ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($bannerTitle, ENT_QUOTES); ?>"
-                     <?php echo phinit_image_loading_attributes(true, true); ?>
+                     <?php echo phinit_image_loading_attributes($isActiveBanner, $isActiveBanner, !$isActiveBanner); ?>
                      <?php echo phinit_image_dimension_attributes($bannerImageReference !== '' ? $bannerImageReference : $bannerImage, 320, 200); ?>>
             </picture>
         </a>

@@ -435,10 +435,15 @@
         if (!bar) return;
 
         let isTicking = false;
+        let maxScroll = 0;
+
+        const recomputeMaxScroll = () => {
+            maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        };
+
         const update = () => {
             isTicking = false;
-            const total    = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
+            const progress = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
             bar.style.width = Math.min(progress, 100) + '%';
         };
 
@@ -452,6 +457,19 @@
         };
 
         window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => {
+            recomputeMaxScroll();
+            onScroll();
+        }, { passive: true });
+        window.addEventListener('load', () => {
+            recomputeMaxScroll();
+            onScroll();
+        }, { once: true });
+        window.addEventListener('pageshow', () => {
+            recomputeMaxScroll();
+            onScroll();
+        });
+        recomputeMaxScroll();
         update();
     }
 

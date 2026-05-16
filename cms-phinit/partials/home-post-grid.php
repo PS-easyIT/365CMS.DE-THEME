@@ -21,7 +21,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
     return;
 }
 ?>
-<section class="content-section home-section home-section--grid" data-anim data-anim-delay="2">
+<section class="content-section home-section home-section--grid">
     <div class="section-header">
         <span class="section-label section-label--dark"><?php echo htmlspecialchars((string) $_tileLabel, ENT_QUOTES); ?></span>
     </div>
@@ -83,7 +83,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
             ? phinit_normalize_public_media_url((string) ($post['featured_image'] ?? ''), false, $siteUrl)
             : (string) ($post['featured_image'] ?? '');
         ?>
-        <article class="post-card" data-anim data-anim-delay="<?php echo min((int) $i + 1, 4); ?>">
+        <article class="post-card">
             <?php
             $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? '');
             $tileReadTime = !empty($post['read_time']) ? (int) $post['read_time'] : 0;
@@ -98,8 +98,8 @@ if (empty($_showTileGrid) || $gridPosts === []) {
             <div class="post-card-thumb">
                 <img src="<?php echo htmlspecialchars($postFeaturedImage, ENT_QUOTES); ?>"
                      alt="<?php echo htmlspecialchars($displayTitle, ENT_QUOTES); ?>"
-                     <?php echo phinit_image_loading_attributes(); ?>
-                     <?php echo phinit_image_dimension_attributes($postFeaturedImage, 108, 81); ?>>
+                     <?php echo phinit_image_loading_attributes(true, false); ?>
+                     <?php echo phinit_image_dimension_attributes((string) ($post['featured_image'] ?? $postFeaturedImage), 320, 180); ?>>
             </div>
             <?php else: ?>
             <div class="post-card-thumb post-card-thumb--placeholder">

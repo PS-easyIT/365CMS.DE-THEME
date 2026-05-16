@@ -8,6 +8,25 @@
     const gaId = currentScript && currentScript.dataset ? (currentScript.dataset.gaId || '') : '';
     const isValidGaId = /^G-[A-Z0-9]{6,}$/.test(gaId);
     let analyticsInitialized = false;
+    let trackingScriptScheduled = false;
+
+    function runWhenIdle(callback) {
+        const run = () => {
+            if (typeof window.requestIdleCallback === 'function') {
+                window.requestIdleCallback(callback, { timeout: 2000 });
+                return;
+            }
+
+            window.setTimeout(callback, 1200);
+        };
+
+        if (document.readyState === 'complete') {
+            run();
+            return;
+        }
+
+        window.addEventListener('load', run, { once: true });
+    }
 
     function isConsentAccepted() {
         try {
@@ -31,13 +50,21 @@
         document.head.appendChild(script);
     }
 
+    function scheduleTrackingScript() {
+        if (trackingScriptScheduled) {
+            return;
+        }
+
+        trackingScriptScheduled = true;
+        runWhenIdle(ensureTrackingScript);
+    }
+
     function ensureAnalytics() {
         if (!isValidGaId || analyticsInitialized || !isConsentAccepted()) {
             return;
         }
 
         analyticsInitialized = true;
-        ensureTrackingScript();
 
         window.dataLayer = window.dataLayer || [];
         window.gtag = window.gtag || function gtag() {
@@ -46,6 +73,7 @@
 
         window.gtag('js', new Date());
         window.gtag('config', gaId, { anonymize_ip: true });
+        scheduleTrackingScript();
     }
 
     if (isValidGaId) {

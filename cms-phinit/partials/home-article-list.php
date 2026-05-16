@@ -164,8 +164,6 @@ if (empty($_showList) || $featuredPosts === []) {
                 ? phinit_get_picture_sources($_sbIdentityLogoReference !== '' ? $_sbIdentityLogoReference : $_sbIdentityLogoSrc, $siteUrl, 130, 42)
                 : [
                     'url' => $_sbIdentityLogoSrc,
-                    'webp_url' => '',
-                    'width' => 130,
                     'height' => 42,
                 ]; ?>
             <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity<?php echo !empty($_sbIdentityBadgeText) ? ' sb-identity--has-badge' : ''; ?>"<?php echo $_sbIdentityAriaLabel !== '' ? ' aria-label="' . htmlspecialchars($_sbIdentityAriaLabel, ENT_QUOTES) . '"' : ''; ?>>
@@ -227,7 +225,7 @@ if (empty($_showList) || $featuredPosts === []) {
                         <?php if ($_carouselThumb !== ''): ?>
                         <img src="<?php echo htmlspecialchars($_carouselThumb, ENT_QUOTES); ?>"
                              alt="<?php echo $_carouselTitle; ?>"
-                             class="sb-carousel-image" <?php echo phinit_image_loading_attributes(); ?> width="260" height="<?php echo (int) $_sbCarouselImageHeight; ?>">
+                                class="sb-carousel-image" <?php echo phinit_image_loading_attributes(false, false, !$_carouselIsActive); ?> width="260" height="<?php echo (int) $_sbCarouselImageHeight; ?>">
                         <?php else: ?>
                         <div class="sb-carousel-image sb-carousel-image--placeholder" aria-hidden="true">
                             <?php echo htmlspecialchars(mb_substr(strip_tags($_carouselTitleRaw !== '' ? $_carouselTitleRaw : '?'), 0, 1), ENT_QUOTES); ?>
@@ -477,40 +475,22 @@ if (empty($_showList) || $featuredPosts === []) {
                             ? phinit_normalize_public_media_url((string) $_fp['featured_image'], false, $siteUrl)
                             : (string) $_fp['featured_image'])
                         : '');
-                $_fpThumbWidth = 64;
-                $_fpThumbHeight = 48;
                 $_fpThumbReference = $_fpHasCustomThumb
                     ? (string) ($_fp['custom_sidebar_image'] ?? '')
                     : (string) ($_fp['featured_image'] ?? '');
-                $_fpThumbSources = function_exists('phinit_get_thumbnail_picture_sources')
-                    ? phinit_get_thumbnail_picture_sources(
-                        $_fpThumbReference !== '' ? $_fpThumbReference : $_fpThumb,
-                        $siteUrl,
-                        $_fpThumbWidth,
-                        $_fpThumbHeight,
-                        'crop'
-                    )
-                    : [
-                        'url' => $_fpThumb,
-                        'avif_url' => '',
-                        'webp_url' => '',
-                        'width' => $_fpThumbWidth,
-                        'height' => $_fpThumbHeight,
-                    ];
-                $_fpThumbPreferredUrl = trim((string) ($_fpThumbSources['avif_url'] ?? ''));
-                if ($_fpThumbPreferredUrl === '') {
-                    $_fpThumbPreferredUrl = trim((string) ($_fpThumbSources['webp_url'] ?? ''));
-                }
-                if ($_fpThumbPreferredUrl === '') {
-                    $_fpThumbPreferredUrl = trim((string) ($_fpThumbSources['url'] ?? $_fpThumb));
-                }
+                $_fpThumbDimensionReference = $_fpThumbReference !== '' ? $_fpThumbReference : $_fpThumb;
+                $_fpThumbFallbackWidth = $_fpHasCustomThumb ? 336 : 480;
+                $_fpThumbFallbackHeight = $_fpHasCustomThumb ? 248 : 320;
+                $_fpImageIsVisible = $_fpIsActive || !$_sbEnableFeaturedRotation;
+                $_fpImageAboveFold = $_fpImageIsVisible && $_fpIndex < 2;
+                $_fpImageLowPriority = $_sbEnableFeaturedRotation && !$_fpIsActive;
             ?>
             <a href="<?php echo htmlspecialchars($_fpHref, ENT_QUOTES); ?>"
                class="sb-featured-post<?php echo $_sbEnableFeaturedRotation ? ' sb-featured-post--slide' : ''; ?><?php echo $_fpIsActive ? ' is-active' : ''; ?>"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-slide data-slide-index="<?php echo $_fpIndex; ?>" aria-hidden="<?php echo $_fpIsActive ? 'false' : 'true'; ?>" tabindex="<?php echo $_fpIsActive ? '0' : '-1'; ?>"<?php endif; ?>>
                 <?php if ($_fpThumb !== ''): ?>
-                <img src="<?php echo htmlspecialchars($_fpThumbPreferredUrl, ENT_QUOTES); ?>" alt=""
-                     class="sb-featured-thumb<?php echo $_fpHasCustomThumb ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes(); ?> width="<?php echo (int) $_fpThumbWidth; ?>" height="<?php echo (int) $_fpThumbHeight; ?>">
+                <img src="<?php echo htmlspecialchars($_fpThumb, ENT_QUOTES); ?>" alt=""
+                     class="sb-featured-thumb<?php echo $_fpHasCustomThumb ? ' sb-featured-thumb--custom' : ''; ?>" <?php echo phinit_image_loading_attributes($_fpImageAboveFold, false, $_fpImageLowPriority); ?> <?php echo phinit_image_dimension_attributes($_fpThumbDimensionReference, $_fpThumbFallbackWidth, $_fpThumbFallbackHeight); ?>>
                 <?php else: ?>
                 <div class="sb-featured-thumb sb-featured-thumb--placeholder" aria-hidden="true">
                     <?php echo mb_substr(strip_tags((string) ($_fp['title'] ?? '?')), 0, 1); ?>

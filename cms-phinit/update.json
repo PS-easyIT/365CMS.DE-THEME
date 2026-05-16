@@ -1,13 +1,71 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.41",
+  "version": "1.5.47",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
-  "release_date": "2026-05-15",
+  "release_date": "2026-05-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.47",
+      "date": "2026-05-16",
+      "changes": [
+        "includes/theme-template-helpers.php: Öffentliche Upload-Bilder werden bei Bedarf auf webserverlesbare Rechte korrigiert und danach direkt über /uploads ausgeliefert; geschützte Member-/Hidden-Pfade bleiben ausgeschlossen",
+        "includes/theme-content-helpers.php: Bilder innerhalb von Seiten- und Beitragscontent normalisieren src und srcset zentral über den PHINIT-Mediennormalizer, damit auch Detailseiten bevorzugt direkte Upload-URLs nutzen",
+        "includes/theme-content-helpers.php + assets/css/rich-content.css: Content-Bilder erhalten eine einheitliche Klasse, passende sizes-Angaben und skalieren im Seiten-/Beitragstext auf die verfügbare Inhaltsbreite",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.47 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.46",
+      "date": "2026-05-16",
+      "changes": [
+        "includes/theme-template-helpers.php: Direkte /uploads-Auslieferung wird nur noch für wirklich öffentlich lesbare Bilddateien genutzt; 0640-Uploads fallen wieder zuverlässig auf /media-file zurück",
+        "includes/theme-template-helpers.php: Relative Upload-Referenzen werden als Upload-Kandidaten erkannt und bei fehlender direkter Lesbarkeit explizit über /media-file ausgeliefert",
+        "partials/home-post-grid.php: Startseiten-Grid-Bilder laden nicht mehr lazy und das Grid selbst wartet nicht mehr auf Scroll-/Animation-Trigger",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.46 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.45",
+      "date": "2026-05-16",
+      "changes": [
+        "includes/theme-template-helpers.php: Der zentrale PHINIT-Mediennormalizer bevorzugt für öffentliche Upload-Bilder jetzt direkte /uploads-URLs und fällt nur für private, versteckte oder nicht direkt lesbare Dateien auf /media-file zurück",
+        "includes/theme-template-helpers.php: Root-relative /uploads- und /media-file-Referenzen werden defensiv auf lokale Upload-Pfade gemappt, damit auch bestehende gespeicherte Medienwerte sauber direkt ausgeliefert werden können",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.45 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.44",
+      "date": "2026-05-16",
+      "changes": [
+        "partials/home-article-list.php: Das Widget 'Empfohlene Artikel' nutzt wieder die normalisierte Original-Bildquelle statt 64x48-Thumbnail-Derivate, damit Rotator- und Sidebar-Bilder nicht niedrig aufgelöst gestreckt werden",
+        "partials/home-article-list.php: Sichtbare Empfehlungsbilder laden eager ohne High-Priority-Konkurrenz zum LCP-Bild; nur versteckte Rotator-Slides bleiben fetchpriority=low",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.44 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.43",
+      "date": "2026-05-15",
+      "changes": [
+        "assets/js/navigation.js: Die Scroll-Fortschrittsanzeige cached die maximale Scrollstrecke und aktualisiert sie nur noch bei Resize, Load und BFCache-Pageshow statt bei jedem Scroll-Event layoutrelevante Werte zu lesen",
+        "assets/js/homepage-widgets.js: Featured- und Sidebar-Rotatoren teilen sich nun einen zentralen Page-Lifecycle-Handler mit visibilitychange, pagehide und pageshow, stoppen Timer bei versteckten/BFCache-Seiten und starten sie sauber wieder",
+        "assets/js/analytics-loader.js: Consent-basiertes Google Analytics initialisiert die dataLayer-Queue sofort, lädt das externe gtag-Script aber erst nach Load/Idle nach und hält Third-Party-JS aus dem frühen Renderpfad",
+        "assets/css/header-navigation.css + assets/css/homepage-blog.css: Der dekorative Header-Hintergrund ist nicht mehr dauerhaft animiert, und die Status-Pulsanimation nutzt transform/opacity statt animierter box-shadow-Paints",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.43 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.42",
+      "date": "2026-05-15",
+      "changes": [
+        "partials/home-featured-banner.php: Bei rotierenden Featured-Bannern bleibt nur der aktive erste Slide eager mit fetchpriority=high; versteckte Slides laufen mit fetchpriority=low im Hintergrund an, damit sie dem LCP-Bild keine Bandbreite wegnehmen",
+        "partials/home-article-list.php + includes/theme-template-helpers.php: Inaktive Sidebar-Carousel-/Featured-Rotator-Bilder können als Low-Priority-Images markiert werden, während sichtbare oder nahe Artikelbilder unverändert priorisiert bleiben",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.42 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.41",
       "date": "2026-05-15",

@@ -56,6 +56,82 @@
 
 ---
 
+## v1.5.47 — 16. Mai 2026
+
+### Content-Bilder: direkte Auslieferung und Breiten-Skalierung
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | Medien / Direct Delivery | `includes/theme-template-helpers.php` korrigiert öffentliche Upload-Bilder bei Bedarf auf webserverlesbare Rechte und liefert sie danach direkt über `/uploads/...` aus. Geschützte Member-/Hidden-Pfade und Nicht-Bilder bleiben weiterhin ausgeschlossen. |
+| 🔴 fix | Seiten-/Beitragscontent | `includes/theme-content-helpers.php` normalisiert `src` und `srcset` aller Content-`img`-Tags über den zentralen PHINIT-Mediennormalizer, sodass auch Bilder in Seiten- und Beitragsdetailseiten bevorzugt direkte Upload-URLs nutzen. |
+| 🎨 style | Rich Content / Bilder | `assets/css/rich-content.css` skaliert Contentbilder, Figures und Picture-Elemente auf die verfügbare Inhaltsbreite und hält die Höhe automatisch proportional. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.47` synchronisiert. |
+
+---
+
+## v1.5.46 — 16. Mai 2026
+
+### Startseiten-Grid: Bilder sofort und mit robustem Delivery-Fallback
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Medien / Direct Delivery | `includes/theme-template-helpers.php` nutzt direkte `/uploads/...`-URLs nur noch für tatsächlich öffentlich lesbare Bilddateien. Uploads mit restriktiven Rechten wie `0640` fallen wieder zuverlässig auf `/media-file` zurück, statt als direkte, aber vom Webserver nicht auslieferbare URL im Frontend zu landen. |
+| 🔴 fix | Medien / Relative Pfade | Relative Upload-Referenzen werden im PHINIT-Normalizer als Upload-Kandidaten erkannt und bei fehlender direkter Lesbarkeit explizit über `/media-file` ausgeliefert. |
+| 🟠 perf | Startseite / Grid | `partials/home-post-grid.php` lädt Grid-Bilder nicht mehr lazy und entfernt die `data-anim`-Trigger vom Grid, damit die Kachelbilder auf der Startseite sofort im initialen Renderpfad stehen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.46` synchronisiert. |
+
+---
+
+## v1.5.45 — 16. Mai 2026
+
+### Medien: direkte Upload-Auslieferung für öffentliche Theme-Bilder
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | Medien / Public Images | `includes/theme-template-helpers.php` bevorzugt im zentralen `phinit_normalize_public_media_url()` für öffentliche Upload-Bilder jetzt direkte `/uploads/...`-URLs. Dadurch vermeiden PHINIT-Templates für öffentliche Bilder den zusätzlichen PHP-Hop über `/media-file`. |
+| 🛡️ security | Medien / Fallback-Regeln | Private Member-Dateien, versteckte Pfade, Nicht-Bilddateien und lokal nicht sicher direkt lesbare Uploads bleiben weiterhin bei der kontrollierten `/media-file`-Auslieferung. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.45` synchronisiert. |
+
+---
+
+## v1.5.44 — 16. Mai 2026
+
+### Empfohlene Artikel: Original-Bildquelle statt gestreckter Miniatur
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Sidebar / Empfohlene Artikel | `partials/home-article-list.php` nutzt für das Widget „Empfohlene Artikel“ wieder die normalisierte Original-Bildquelle statt generierter `64x48`-Thumbnail-Derivate. Dadurch werden Rotator- und Sidebar-Bilder nicht mehr niedrig aufgelöst auf große Flächen gestreckt. |
+| 🟠 perf | Startseite / Sidebar / Bildpriorisierung | Sichtbare Empfehlungsbilder laden jetzt eager ohne `fetchpriority="high"`, damit sie nicht verzögert erscheinen, aber auch nicht mit dem LCP-Bild konkurrieren. Versteckte Rotator-Slides bleiben weiterhin `fetchpriority="low"`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.44` synchronisiert. |
+
+---
+
+## v1.5.43 — 15. Mai 2026
+
+### Nicht-Bild-Performance: weniger Main-Thread-, Timer- und Third-Party-Druck
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | JS / Scroll & Layout | `assets/js/navigation.js` cached die maximale Scrollstrecke für die Fortschrittsleiste und aktualisiert sie nur noch bei `resize`, `load` und `pageshow`, statt auf jedem Scroll-Frame `scrollHeight` zu lesen. |
+| 🟠 perf | Startseite / Rotatoren | `assets/js/homepage-widgets.js` bündelt die bisher mehrfach registrierten Sichtbarkeits-Listener in einem zentralen Lifecycle-Handler und pausiert Carousel-/Featured-Timer zusätzlich über `pagehide`/`pageshow` BFCache-freundlich. |
+| 🟠 perf | Third-Party / Analytics | `assets/js/analytics-loader.js` initialisiert die Consent-Queue direkt, verschiebt den externen `gtag.js`-Download aber auf Load/Idle, damit Analytics nicht mit frühem Rendering und LCP konkurriert. |
+| 🟠 perf | CSS / Daueranimationen | `assets/css/header-navigation.css` entfernt die permanente dekorative Header-Hintergrundanimation; `assets/css/homepage-blog.css` ersetzt animierte `box-shadow`-Puls-Paints durch eine `transform`/`opacity`-Animation mit Reduced-Motion-Fallback. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.43` synchronisiert. |
+
+---
+
+## v1.5.42 — 15. Mai 2026
+
+### Startseite: versteckte Rotator-Bilder aus dem LCP-Wettbewerb nehmen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | Startseite / Featured-Banner | `partials/home-featured-banner.php` priorisiert bei mehreren Featured-Banner-Slides nur noch den aktiven ersten Slide mit `loading="eager" fetchpriority="high"`; versteckte Slides laufen mit `fetchpriority="low"` im Hintergrund an, damit sie das LCP-Bild nicht ausbremsen und beim Rotieren nicht leer erscheinen. |
+| 🟠 perf | Startseite / Sidebar-Rotatoren | `includes/theme-template-helpers.php` und `partials/home-article-list.php` unterstützen Low-Priority-Attribute für inaktive Carousel-/Featured-Rotator-Bilder, während sichtnahe Artikelbilder unverändert eager bzw. high-priority bleiben. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.42` synchronisiert. |
+
+---
+
 ## v1.5.41 — 15. Mai 2026
 
 ### Startseite: stabile Beitrags-Vorschaubilder und sauberere Bildpriorisierung

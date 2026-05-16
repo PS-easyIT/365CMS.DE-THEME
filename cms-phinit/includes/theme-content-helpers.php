@@ -70,6 +70,130 @@ if (!function_exists('phinit_prepare_renderable_content')) {
     }
 }
 
+if (!function_exists('phinit_get_html_attribute')) {
+    /**
+     * Liest ein HTML-Attribut aus einem Tag.
+     */
+    function phinit_get_html_attribute(string $tag, string $attribute): string
+    {
+        $attribute = preg_quote($attribute, '/');
+
+        if (preg_match('/\s' . $attribute . '\s*=\s*(["\'])(.*?)\1/isu', $tag, $match) !== 1) {
+            return '';
+        }
+
+        return html_entity_decode((string) ($match[2] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+}
+
+if (!function_exists('phinit_set_html_attribute')) {
+    /**
+     * Setzt oder ersetzt ein HTML-Attribut in einem Tag.
+     */
+    function phinit_set_html_attribute(string $tag, string $attribute, string $value): string
+    {
+        $attribute = strtolower(trim($attribute));
+        if ($tag === '' || $attribute === '' || preg_match('/^[a-z][a-z0-9:-]*$/i', $attribute) !== 1) {
+            return $tag;
+        }
+
+        $escapedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        $pattern = '/\s' . preg_quote($attribute, '/') . '\s*=\s*(["\'])(.*?)\1/isu';
+        if (preg_match($pattern, $tag) === 1) {
+            $updated = preg_replace_callback(
+                $pattern,
+                static fn(): string => ' ' . $attribute . '="' . $escapedValue . '"',
+                $tag,
+                1
+            );
+
+            return is_string($updated) ? $updated : $tag;
+        }
+
+        $closing = str_ends_with($tag, '/>') ? '/>' : '>';
+        $baseTag = substr($tag, 0, -strlen($closing));
+
+        return rtrim($baseTag) . ' ' . $attribute . '="' . $escapedValue . '"' . $closing;
+    }
+}
+
+if (!function_exists('phinit_append_html_class')) {
+    /**
+     * Ergänzt eine CSS-Klasse an einem HTML-Tag, ohne bestehende Klassen zu verlieren.
+     */
+    function phinit_append_html_class(string $tag, string $className): string
+    {
+        $className = trim($className);
+        if ($tag === '' || $className === '') {
+            return $tag;
+        }
+
+        $currentClass = phinit_get_html_attribute($tag, 'class');
+        $classes = preg_split('/\s+/', trim($currentClass)) ?: [];
+        $classes = array_values(array_filter(array_map('trim', $classes), static fn(string $class): bool => $class !== ''));
+
+        if (!in_array($className, $classes, true)) {
+            $classes[] = $className;
+        }
+
+        return phinit_set_html_attribute($tag, 'class', implode(' ', $classes));
+    }
+}
+
+if (!function_exists('phinit_normalize_content_image_url')) {
+    /**
+     * Normalisiert Content-Bild-URLs bevorzugt auf direkte öffentliche Upload-URLs.
+     */
+    function phinit_normalize_content_image_url(string $url): string
+    {
+        $url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        if ($url === '' || preg_match('#^(?:data|blob|cid):#i', $url) === 1) {
+            return $url;
+        }
+
+        if (function_exists('phinit_normalize_public_media_url')) {
+            $normalized = phinit_normalize_public_media_url($url, true, defined('SITE_URL') ? (string) SITE_URL : null);
+            if ($normalized !== '') {
+                return $normalized;
+            }
+        }
+
+        return function_exists('phinit_safe_public_media_url')
+            ? phinit_safe_public_media_url($url, defined('SITE_URL') ? (string) SITE_URL : null)
+            : $url;
+    }
+}
+
+if (!function_exists('phinit_normalize_content_image_srcset')) {
+    /**
+     * Normalisiert alle URL-Kandidaten eines srcset-Attributs.
+     */
+    function phinit_normalize_content_image_srcset(string $srcset): string
+    {
+        $candidates = array_filter(array_map('trim', explode(',', $srcset)), static fn(string $candidate): bool => $candidate !== '');
+        if ($candidates === []) {
+            return '';
+        }
+
+        $normalizedCandidates = [];
+        foreach ($candidates as $candidate) {
+            if (preg_match('/^(\S+)(\s+.+)?$/u', $candidate, $match) !== 1) {
+                continue;
+            }
+
+            $url = phinit_normalize_content_image_url((string) ($match[1] ?? ''));
+            if ($url === '') {
+                continue;
+            }
+
+            $descriptor = trim((string) ($match[2] ?? ''));
+            $normalizedCandidates[] = $descriptor !== '' ? $url . ' ' . $descriptor : $url;
+        }
+
+        return implode(', ', $normalizedCandidates);
+    }
+}
+
 if (!function_exists('phinit_enhance_content_images')) {
     /**
      * Ergänzt Inhaltsbilder standardmäßig um Loading-/Priority-Attribute.
@@ -95,6 +219,28 @@ if (!function_exists('phinit_enhance_content_images')) {
                 $imageIndex++;
                 $isFirstImage = $imageIndex === 1;
                 $lazyLoadingEnabled = phinit_is_image_lazy_loading_enabled();
+
+                $src = phinit_get_html_attribute($tag, 'src');
+                if ($src !== '') {
+                    $normalizedSrc = phinit_normalize_content_image_url($src);
+                    if ($normalizedSrc !== '') {
+                        $tag = phinit_set_html_attribute($tag, 'src', $normalizedSrc);
+                    }
+                }
+
+                $srcset = phinit_get_html_attribute($tag, 'srcset');
+                if ($srcset !== '') {
+                    $normalizedSrcset = phinit_normalize_content_image_srcset($srcset);
+                    if ($normalizedSrcset !== '') {
+                        $tag = phinit_set_html_attribute($tag, 'srcset', $normalizedSrcset);
+                    }
+                }
+
+                if (preg_match('/\ssizes\s*=\s*["\'][^"\']*["\']/i', $tag) !== 1) {
+                    $tag = phinit_set_html_attribute($tag, 'sizes', '(max-width: 768px) calc(100vw - 40px), min(100vw, 860px)');
+                }
+
+                $tag = phinit_append_html_class($tag, 'phinit-content-image');
 
                 $closing = str_ends_with($tag, '/>') ? '/>' : '>';
                 $baseTag = substr($tag, 0, -strlen($closing));
