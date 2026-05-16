@@ -2896,9 +2896,12 @@ body.dark-mode .feed-dual-col {
         display: inline-flex;
         position: static;
         width: auto;
-        justify-content: flex-end;
+        align-items: center;
+        justify-content: center;
         margin-top: 0;
         margin-left: auto;
+        min-height: 30px;
+        padding: 3px 7px;
         flex-shrink: 0;
         align-self: end;
     }
@@ -3200,6 +3203,15 @@ body.dark-mode .feed-dual-col {
         min-height: 44px;
     }
 
+    .article-meta__more,
+    .post-card-meta__more {
+        min-height: 30px !important;
+        padding: 3px 7px !important;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+    }
+
     .homepage-list-sidebar .sb-social-link {
         width: 44px;
         min-width: 44px;
@@ -3222,6 +3234,105 @@ body.dark-mode .feed-dual-col {
     .sb-quicklink__label,
     .sb-quicklink--m365 .sb-quicklink__label {
         font-size: 11.5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-list > .article-card,
+    .article-list.article-list--framed > .article-card {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+    }
+
+    .article-list > .article-card > .article-thumb,
+    .article-list.article-list--framed > .article-card > .article-thumb {
+        display: flex !important;
+        align-items: stretch !important;
+        flex: 0 0 96px !important;
+        width: 96px !important;
+        max-width: 96px !important;
+        min-width: 96px !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+        align-self: stretch !important;
+        border-radius: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .article-list > .article-card > .article-thumb > picture,
+    .article-list > .article-card > .article-thumb > picture > img,
+    .article-list > .article-card > .article-thumb > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture,
+    .article-list.article-list--framed > .article-card > .article-thumb > picture > img,
+    .article-list.article-list--framed > .article-card > .article-thumb > img {
+        display: block !important;
+        width: 100% !important;
+        height: 195px !important;
+        min-height: 195px !important;
+        max-height: 195px !important;
+        object-fit: cover !important;
+        object-position: center top;
+    }
+
+    .article-list > .article-card > .article-body,
+    .article-list.article-list--framed > .article-card > .article-body {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        width: auto !important;
+        padding: 11px 13px !important;
+        overflow: hidden !important;
+    }
+
+    .article-list > .article-card .article-body p,
+    .article-list.article-list--framed > .article-card .article-body p {
+        -webkit-line-clamp: 3 !important;
+        line-clamp: 3 !important;
+    }
+
+    .homepage-list-sidebar {
+        display: none !important;
+    }
+
+    .homepage-list-sidebar.homepage-list-sidebar--feat {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        max-width: none !important;
+        align-self: stretch;
+        order: 2;
+    }
+
+    .homepage-list-sidebar.homepage-list-sidebar--feat > .sb-widget:not(.sb-widget--featured) {
+        display: none !important;
+    }
+
+    .homepage-list-sidebar.homepage-list-sidebar--feat > .sb-widget--featured {
+        width: 100%;
+    }
+
+    .article-meta__more,
+    .post-card-meta__more {
+        min-height: 30px !important;
+        padding: 3px 7px !important;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-list > .article-card > .article-thumb,
+    .article-list.article-list--framed > .article-card > .article-thumb {
+        flex-basis: 80px !important;
+        width: 80px !important;
+        max-width: 80px !important;
+        min-width: 80px !important;
     }
 }
 

@@ -149,7 +149,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                             href="<?php echo htmlspecialchars($postPermalink, ENT_QUOTES); ?>"
                               aria-label="<?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>">
                         <span class="post-card-meta__more-label post-card-meta__more-label--desktop"><?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?></span>
-                        <span class="post-card-meta__more-label post-card-meta__more-label--mobile">Weiter</span>
+                        <span class="post-card-meta__more-label post-card-meta__more-label--mobile"><?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?></span>
                     </a>
                 </div>
             </div>

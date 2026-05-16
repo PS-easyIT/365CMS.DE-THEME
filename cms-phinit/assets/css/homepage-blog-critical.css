@@ -386,6 +386,14 @@
     white-space: nowrap;
 }
 
+@media (max-width: 768px) {
+    .article-meta__more {
+        min-height: 30px;
+        padding: 3px 7px;
+        line-height: 1.2;
+    }
+}
+
 .sb-widget {
     padding: 12px 14px;
     border: 1px solid var(--border-color);

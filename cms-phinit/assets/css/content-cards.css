@@ -618,9 +618,12 @@ body.dark-mode .page-link.dots {
         order: 99;
         display: inline-flex;
         width: auto;
-        justify-content: flex-end;
+        align-items: center;
+        justify-content: center;
         margin-top: 0;
         margin-left: auto;
+        min-height: 30px;
+        padding: 3px 7px;
         position: static;
         flex: 0 0 auto;
     }
@@ -682,5 +685,7 @@ body.dark-mode .page-link.dots {
     .post-card-meta__more,
     .home-section--grid .post-card-meta__more {
         position: static;
+        min-height: 30px;
+        padding: 3px 7px;
     }
 }

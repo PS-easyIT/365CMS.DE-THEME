@@ -56,6 +56,30 @@
 
 ---
 
+## v1.5.49 — 16. Mai 2026
+
+### Mobile Buttons: kompakter und konsistent
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Mobile Buttons | `assets/css/content-cards.css`, `assets/css/homepage-blog.css` und `assets/css/homepage-blog-critical.css` machen die mobilen „Weiter lesen“-Buttons schmaler, ohne die Schriftgröße zu reduzieren. |
+| 🔴 fix | Startseite / Gridcards | `partials/home-post-grid.php` verwendet mobil denselben Buttontext wie die Listcards, sodass Grid- und Listcards einheitlich „Weiter lesen“ anzeigen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.49` synchronisiert. |
+
+---
+
+## v1.5.48 — 16. Mai 2026
+
+### Mobile Startseite: Listen-Cards und Sidebar reduziert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Mobile Artikelcards | `assets/css/homepage-blog.css` hält die Artikelcards der Listenansicht mobil im kompakten Bild-links-Layout wie die Gridcards, inklusive fixer Bildspalte und gekürztem Textbereich. |
+| 🔴 fix | Startseite / Mobile Sidebar | `assets/css/homepage-blog.css` blendet mobil alle Sidebar-Widgets außer `Empfohlene Artikel` aus; wenn keine empfohlenen Artikel aktiv sind, bleibt die Sidebar auf Mobile vollständig verborgen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.48` synchronisiert. |
+
+---
+
 ## v1.5.47 — 16. Mai 2026
 
 ### Content-Bilder: direkte Auslieferung und Breiten-Skalierung

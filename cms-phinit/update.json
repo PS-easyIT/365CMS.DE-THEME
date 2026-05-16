@@ -1,13 +1,31 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.47",
+  "version": "1.5.49",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.49",
+      "date": "2026-05-16",
+      "changes": [
+        "partials/home-post-grid.php: Gridcard-Weiterlesen-Buttons verwenden mobil denselben Text wie die Listcards statt der gekürzten 'Weiter'-Variante",
+        "assets/css/content-cards.css + assets/css/homepage-blog.css + assets/css/homepage-blog-critical.css: Mobile Weiterlesen-Buttons behalten ihre Schriftgröße, werden aber mit kleineren Innenabständen und kompakterer Mindesthöhe schmaler dargestellt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.49 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.48",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/homepage-blog.css: Die Artikelcards der Startseiten-Listenansicht behalten in der Mobileansicht das kompakte Bild-links-Layout wie die Gridcards statt wieder auf Bild-oben umzubrechen",
+        "assets/css/homepage-blog.css: Die Startseiten-Sidebar blendet mobil alle Widgets außer 'Empfohlene Artikel' aus; wenn keine empfohlenen Artikel aktiv sind, bleibt die Sidebar mobil verborgen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.48 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.47",
       "date": "2026-05-16",
