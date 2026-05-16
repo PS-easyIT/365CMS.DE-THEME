@@ -383,13 +383,37 @@ body.m365lic-theme-embed:not(.is-member) .site-footer {
     }
 
     .footer-about {
-        grid-template-columns: 48px minmax(0, 1fr);
-        gap: 12px;
+        display: block;
+        text-align: center;
     }
 
-    .footer-about__media {
-        width: 48px;
-        height: 48px;
+    .footer-about__media,
+    .footer-about__heading,
+    .footer-about .footer-about__text,
+    .footer-about .footer-about__social .footer-about__contact {
+        display: none;
+    }
+
+    .footer-about .footer-about__social {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+        margin-top: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .footer-about .footer-about__social::-webkit-scrollbar {
+        display: none;
+    }
+
+    .footer-about .footer-about__social a:not(.footer-about__contact) {
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
     }
 
     .footer-brand__actions {

@@ -206,6 +206,26 @@ trait CMS_Phinit_Theme_Assets_Trait
         echo '<noscript><link rel="stylesheet" href="' . $escapedHref . '"></noscript>' . "\n";
     }
 
+    private function emitInlineStylesheet(string $file, string $id, string|int $version): bool
+    {
+        if (!is_readable($file)) {
+            return false;
+        }
+
+        $css = file_get_contents($file);
+        if (!is_string($css) || trim($css) === '') {
+            return false;
+        }
+
+        $safeId = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
+        $safeVersion = htmlspecialchars((string) $version, ENT_QUOTES, 'UTF-8');
+        $safeCss = str_replace('</style', '<\/style', $css);
+
+        echo '<style id="' . $safeId . '" data-inline-version="' . $safeVersion . '">' . "\n" . $safeCss . "\n" . '</style>' . "\n";
+
+        return true;
+    }
+
     public function outputCriticalResourceHints(): void
     {
         $requestContext = $this->getRequestContext();
@@ -369,11 +389,15 @@ trait CMS_Phinit_Theme_Assets_Trait
         };
 
         $version = $assetVersion($cssFile);
-        $this->emitStylesheet($this->themeAssetUrl('style.css', $version));
+        if (!$isHomepageListingRequest || !$this->emitInlineStylesheet($cssFile, 'cms-phinit-base-inline', $version)) {
+            $this->emitStylesheet($this->themeAssetUrl('style.css', $version));
+        }
 
         if (file_exists($headerNavigationCssFile)) {
             $headerNavigationVersion = $assetVersion($headerNavigationCssFile);
-            $this->emitStylesheet($this->themeAssetUrl('assets/css/header-navigation.css', $headerNavigationVersion));
+            if (!$isHomepageListingRequest || !$this->emitInlineStylesheet($headerNavigationCssFile, 'cms-phinit-header-inline', $headerNavigationVersion)) {
+                $this->emitStylesheet($this->themeAssetUrl('assets/css/header-navigation.css', $headerNavigationVersion));
+            }
         }
 
         $uiChromeIsCritical = $loadPageDetailCss || $loadPostDetailCss || $isHubSiteRequest;
@@ -441,7 +465,9 @@ trait CMS_Phinit_Theme_Assets_Trait
         if ($loadHomepageBlogCss && file_exists($homepageBlogCssFile)) {
             if ($isHomepageListingRequest && file_exists($homepageBlogCriticalCssFile)) {
                 $homepageBlogCriticalVersion = $assetVersion($homepageBlogCriticalCssFile);
-                $this->emitStylesheet($this->themeAssetUrl('assets/css/homepage-blog-critical.css', $homepageBlogCriticalVersion));
+                if (!$this->emitInlineStylesheet($homepageBlogCriticalCssFile, 'cms-phinit-home-critical-inline', $homepageBlogCriticalVersion)) {
+                    $this->emitStylesheet($this->themeAssetUrl('assets/css/homepage-blog-critical.css', $homepageBlogCriticalVersion));
+                }
             }
 
             $homepageBlogVersion = $assetVersion($homepageBlogCssFile);

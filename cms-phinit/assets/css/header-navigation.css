@@ -175,7 +175,7 @@
 .hdr-search input {
     background: transparent; border: none; padding: 6px 12px;
     color: #fff; font-size: var(--fs-sm); width: 170px; outline: none;
-    transition: width .3s ease, padding .22s ease;
+    transition: padding .22s ease;
 }
 .hdr-search input::placeholder { color: rgba(255,255,255,.5); }
 .hdr-search input:focus         { width: 220px; }
@@ -194,7 +194,7 @@
     background: var(--bg-header2, var(--primary-dark));
     border-top: 1px solid rgba(255,255,255,.06);
     min-height: var(--header-h, 56px);
-    transition: min-height .22s ease, box-shadow .22s ease;
+    transition: min-height .22s ease;
 }
 .hdr-bar-main::before,
 .hdr-bar-main::after {

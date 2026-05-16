@@ -26,11 +26,11 @@ function phinit_get_customizer_legacy_alias_map(): array
 {
     return [
         'homepage' => [
-            'article_list_label' => 'featured_section_title',
-            'article_list_count' => 'featured_posts_count',
-            'show_info_grid' => 'show_info_cards',
-            'tile_grid_label' => 'grid_section_title',
-            'tile_grid_count' => 'grid_posts_per_page',
+            'featured_section_title' => 'article_list_label',
+            'featured_posts_count' => 'article_list_count',
+            'show_info_cards' => 'show_info_grid',
+            'grid_section_title' => 'tile_grid_label',
+            'grid_posts_per_page' => 'tile_grid_count',
         ],
     ];
 }

@@ -176,29 +176,29 @@ function phinit_get_homepage_view_model(): array
         $customizer = ThemeCustomizer::instance();
         $siteUrl = defined('SITE_URL') ? (string) SITE_URL : '';
 
-        $featuredSectionTitle = $customizer->get('homepage', 'featured_section_title', null);
+        $featuredSectionTitle = $customizer->get('homepage', 'article_list_label', null);
         if (!is_string($featuredSectionTitle) || trim($featuredSectionTitle) === '') {
-            $featuredSectionTitle = $customizer->get('homepage', 'article_list_label', 'Aktuell');
+            $featuredSectionTitle = $customizer->get('homepage', 'featured_section_title', 'Aktuell');
         }
 
-        $featuredPostsCount = $customizer->get('homepage', 'featured_posts_count', null);
+        $featuredPostsCount = $customizer->get('homepage', 'article_list_count', null);
         if (!is_numeric((string) $featuredPostsCount)) {
-            $featuredPostsCount = $customizer->get('homepage', 'article_list_count', 4);
+            $featuredPostsCount = $customizer->get('homepage', 'featured_posts_count', 4);
         }
 
-        $showInfoCards = $customizer->get('homepage', 'show_info_cards', null);
+        $showInfoCards = $customizer->get('homepage', 'show_info_grid', null);
         if ($showInfoCards === null || $showInfoCards === '') {
-            $showInfoCards = $customizer->get('homepage', 'show_info_grid', true);
+            $showInfoCards = $customizer->get('homepage', 'show_info_cards', true);
         }
 
-        $gridSectionTitle = $customizer->get('homepage', 'grid_section_title', null);
+        $gridSectionTitle = $customizer->get('homepage', 'tile_grid_label', null);
         if (!is_string($gridSectionTitle) || trim($gridSectionTitle) === '') {
-            $gridSectionTitle = $customizer->get('homepage', 'tile_grid_label', 'Weitere Beiträge');
+            $gridSectionTitle = $customizer->get('homepage', 'grid_section_title', 'Weitere Beiträge');
         }
 
-        $gridPostsPerPage = $customizer->get('homepage', 'grid_posts_per_page', null);
+        $gridPostsPerPage = $customizer->get('homepage', 'tile_grid_count', null);
         if (!is_numeric((string) $gridPostsPerPage)) {
-            $gridPostsPerPage = $customizer->get('homepage', 'tile_grid_count', 6);
+            $gridPostsPerPage = $customizer->get('homepage', 'grid_posts_per_page', 6);
         }
 
         return array_merge($defaults, [

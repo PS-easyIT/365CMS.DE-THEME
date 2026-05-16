@@ -281,16 +281,16 @@
 
             const dropdownDepth = Number.parseInt(dropdown.dataset.navDepth || '0', 10);
             const dropdownRect = dropdown.getBoundingClientRect();
-            const panelRect = panel.getBoundingClientRect();
-            const panelWidth = Math.max(panelRect.width, panel.scrollWidth, 240);
+            const panelWidth = Number.parseInt(dropdown.dataset.navPanelWidth || '', 10) || (dropdownDepth > 0 ? 260 : 240);
+            const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
             let nextAlignment = '';
 
             if (dropdownDepth <= 0) {
-                if (dropdownRect.left + panelWidth > window.innerWidth - 16) {
+                if (dropdownRect.left + panelWidth > viewportWidth - 16) {
                     nextAlignment = 'end';
                 }
             } else {
-                const spaceRight = window.innerWidth - dropdownRect.right;
+                const spaceRight = viewportWidth - dropdownRect.right;
                 const spaceLeft = dropdownRect.left;
                 if (spaceRight < panelWidth && spaceLeft > spaceRight) {
                     nextAlignment = 'left';
@@ -353,7 +353,7 @@
 
                 const willOpen = !dropdown.classList.contains('is-open');
                 const keepOpen = willOpen ? getAncestorPath(dropdown) : getAncestorPath(dropdown).slice(1);
-                scheduleDropdownAlignment(dropdown);
+                updateDropdownAlignment(dropdown);
                 closeAll(keepOpen);
                 dropdown.classList.toggle('is-open', willOpen);
                 toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
@@ -444,7 +444,7 @@
         const update = () => {
             isTicking = false;
             const progress = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
-            bar.style.width = Math.min(progress, 100) + '%';
+            bar.style.transform = 'scaleX(' + (Math.min(progress, 100) / 100).toFixed(4) + ')';
         };
 
         const onScroll = () => {

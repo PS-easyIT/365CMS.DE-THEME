@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.53",
+  "version": "1.5.58",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-16",
@@ -9,10 +9,53 @@
   "details_url": "https://phinit.de",
   "changelog": [
     {
+      "version": "1.5.58",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/footer-consent.css: Die mobile Footer-About-Sektion zeigt nur noch die Social-Media-Icons als horizontale Icon-Leiste; Avatar, About-Text, Heading und Kontaktbutton werden mobil ausgeblendet",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.58 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.57",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/homepage-blog.css: Das Sidebar-Widget 'Empfohlene Artikel' ist ausschließlich in der Höhe um 14px reduziert; Breite, Typografie, Overlay und Rotator-Verhalten bleiben unverändert",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.57 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.56",
+      "date": "2026-05-16",
+      "changes": [
+        "theme.json: Der Homepage-Default article_list_count ist wieder auf 4 synchronisiert, damit die Startseiten-Listcards standardmäßig vier Artikel anzeigen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.56 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.55",
+      "date": "2026-05-16",
+      "changes": [
+        "partials/home-article-list.php: Das Sidebar-Widget 'Empfohlene Artikel' aktiviert die Rotator-Darstellung bereits ab zwei ausgewählten Artikeln, sodass immer genau ein vollflächiger Artikel angezeigt und im konfigurierten Intervall weitergeschaltet wird",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.55 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.54",
+      "date": "2026-05-16",
+      "changes": [
+        "admin/customizer-schema.php + admin/customizer-request-handler.php + theme.json + includes/theme-home-helpers.php: Homepage-Customizer nutzt wieder konsistente kanonische Keys und migriert alte Alias-Werte auf die neuen Namen",
+        "includes/theme-assets-trait.php: Startseiten-kritische Basis-, Header- und Homepage-CSS werden inline ausgegeben, damit die Render-Blocking-Kette für den Above-the-fold-Pfad kürzer wird",
+        "assets/js/navigation.js + style.css + assets/css/header-navigation.css + assets/css/homepage-blog.css + assets/css/content-cards.css + assets/css/ui-chrome.css: Dropdown-Messungen vermeiden unnötige Panel-Layoutreads; Hover-/Progress-Transitions animieren keine box-shadow-/all-/width-Properties mehr",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.54 aktualisiert"
+      ]
+    },
+    {
       "version": "1.5.53",
       "date": "2026-05-16",
       "changes": [
         "assets/css/homepage-blog.css + assets/css/homepage-blog-critical.css: Mobile Startseiten-Listcard-Auszüge sind per line-clamp und max-height hart auf maximal drei Zeilen begrenzt",
+        "assets/css/homepage-blog.css: Rotierende Sidebar-Empfehlungen zeigen wieder vollflächige Cover-Bilder und den Beitragstitel als Badge oben, auch mit Custom-/Side-Media-Klassen",
         "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.53 aktualisiert"
       ]
     },

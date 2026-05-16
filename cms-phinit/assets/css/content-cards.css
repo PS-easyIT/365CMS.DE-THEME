@@ -87,7 +87,7 @@
     color: var(--text-primary);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
-    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    transition: transform .18s ease, background-color .18s ease;
 }
 
 .post-card:hover {

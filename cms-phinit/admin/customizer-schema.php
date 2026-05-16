@@ -465,7 +465,7 @@ return [
         'layout'     => ['📐 Maße' => ['container_width','page_edge_tint_opacity','sidebar_width','border_radius','border_radius_md','content_gap','spacing_header_content','spacing_content_footer','spacing_sections'], '🍞 Breadcrumb' => ['show_breadcrumb','breadcrumb_on_posts','breadcrumb_on_pages'], '⚙️ Funktionen' => ['sidebar_position','enable_sticky_header','enable_progress_bar','enable_back_to_top','enable_dark_mode_toggle','enable_scroll_animations']],
         'header'     => ['🏷️ Logo & Marke' => ['logo_text_part1','logo_text_part2','logo_text_suffix','logo_url','show_logo_text_with_image','logo_max_height','logo_title_font_size','logo_accent_color'], '👤 Member-Bar' => ['show_member_bar','member_bar_height','member_bar_font_size','member_bar_item_spacing'], '🧭 Hauptnav' => ['main_nav_height','main_nav_font_size','main_nav_item_spacing','dropdown_nav_font_size','dropdown_nav_item_spacing','show_search_bar','search_placeholder','show_rss_link','show_login_button'], '⚡ Quicklinks' => ['show_quicklinks','sub_bar_height','quicklinks_font_size','quicklinks_item_spacing','mobile_menu_font_size','mobile_menu_item_spacing'], '🌍 Sprache' => ['show_language_switcher','language_switcher_mode','language_switcher_label','language_switcher_slug','language_switcher_flag','language_switcher_aria_label']],
         'footer'     => ['🏷️ Brand & Text' => ['footer_brand_name','footer_tagline','footer_col2_title','footer_col3_title','footer_col4_title','copyright_text','show_footer_social','footer_menu_font_size','footer_menu_item_spacing','footer_bottom_font_size','footer_bottom_item_spacing'], '🍪 Cookie-Consent' => ['show_consent_banner','consent_text','consent_privacy_url'], '🔗 Network-Bar' => ['show_network_bar','network_bar_font_size','network_bar_item_spacing','network_bar_link1_label','network_bar_link1_url','network_bar_link2_label','network_bar_link2_url','network_bar_link3_label','network_bar_link3_url','network_bar_link4_label','network_bar_link4_url','network_bar_link5_label','network_bar_link5_url']],
-        'homepage'   => ['⭐ Featured-Banner' => ['show_home_featured_banner','home_featured_banner_post','home_featured_banner_post_2','home_featured_banner_post_3','home_featured_banner_label','home_featured_banner_title','home_featured_banner_text','home_featured_banner_button_text'], '📌 Repo-Card' => ['show_repo_card','repo_card_title','repo_card_description','repo_card_badge','repo_card_btn_text','repo_card_btn_url'], '📰 Artikel-Liste' => ['show_article_list','featured_section_title','featured_posts_count','article_list_link_url','article_thumb_width','article_thumb_height','show_article_excerpt','show_article_meta','show_article_badge','show_meta_category','show_meta_date','show_meta_readtime'], '🗂️ Kategorie-Cards' => ['show_info_cards','info_card1_title','info_card1_text','info_card1_link_text','info_card1_link_url','info_card1_style','info_card2_title','info_card2_text','info_card2_link_text','info_card2_link_url','info_card2_style','show_info_card3','info_card3_title','info_card3_text','info_card3_link_text','info_card3_link_url','info_card3_link_text_2','info_card3_link_url_2','info_card3_link_text_3','info_card3_link_url_3','info_card3_badge','info_card3_style'], '🧱 Kachel-Grid & Bildhöhe' => ['show_tile_grid','grid_section_title','grid_posts_per_page','tile_grid_columns','show_tile_excerpt','show_tile_category','show_tile_date','tile_grid_image_height','tile_grid_link_url'], '📡 RSS-Feeds' => ['show_feed_section','feed1_channel_id','feed1_count','feed2_channel_id','feed2_count'], '📏 Sektionen-Abstände' => ['home_header_content_spacing','spacing_repo_card','spacing_article_list','spacing_info_cards','spacing_tile_grid','spacing_rss_feeds']],
+        'homepage'   => ['⭐ Featured-Banner' => ['show_home_featured_banner','home_featured_banner_post','home_featured_banner_post_2','home_featured_banner_post_3','home_featured_banner_label','home_featured_banner_title','home_featured_banner_text','home_featured_banner_button_text'], '📌 Repo-Card' => ['show_repo_card','repo_card_title','repo_card_description','repo_card_badge','repo_card_btn_text','repo_card_btn_url'], '📰 Artikel-Liste' => ['show_article_list','article_list_label','article_list_count','article_list_link_url','article_thumb_width','article_thumb_height','show_article_excerpt','show_article_meta','show_article_badge','show_meta_category','show_meta_date','show_meta_readtime'], '🗂️ Kategorie-Cards' => ['show_info_grid','info_card1_title','info_card1_text','info_card1_link_text','info_card1_link_url','info_card1_style','info_card2_title','info_card2_text','info_card2_link_text','info_card2_link_url','info_card2_style','show_info_card3','info_card3_title','info_card3_text','info_card3_link_text','info_card3_link_url','info_card3_link_text_2','info_card3_link_url_2','info_card3_link_text_3','info_card3_link_url_3','info_card3_badge','info_card3_style'], '🧱 Kachel-Grid & Bildhöhe' => ['show_tile_grid','tile_grid_label','tile_grid_count','tile_grid_columns','show_tile_excerpt','show_tile_category','show_tile_date','tile_grid_image_height','tile_grid_link_url'], '📡 RSS-Feeds' => ['show_feed_section','feed1_channel_id','feed1_count','feed2_channel_id','feed2_count'], '📏 Sektionen-Abstände' => ['home_header_content_spacing','spacing_repo_card','spacing_article_list','spacing_info_cards','spacing_tile_grid','spacing_rss_feeds']],
         'posts'      => ['🖼️ Hero & Meta' => ['post_hero_height','post_hero_width','show_post_hero','post_title_fontsize','show_post_meta','show_reading_time','reading_time_wpm'], '📖 Inhaltsverzeichnis' => ['show_toc','toc_sticky','toc_min_headings','toc_header_text'], '📌 Sidebar-Widgets' => ['show_sidebar_social','sidebar_social_header','show_sidebar_related','sidebar_related_header','related_count'], '🔗 Share-Buttons' => ['show_share_buttons','show_share_linkedin','show_share_twitter','show_share_mastodon','show_share_email','show_share_copy','show_share_print'], '💻 Tech-Card' => ['show_tech_card','tech_card_header'], '👤 Autorenbox & Navigation' => ['show_author_box','author_name','author_bio','author_avatar_url','show_post_nav'], '💬 Kommentare & Tags' => ['show_comments','comments_header','comment_form_header','show_post_tags']],
         'pages'      => ['📄 Seiteneinstellungen' => ['show_page_title','page_title_fontsize','show_page_hero','page_hero_width','page_hero_height','page_hero_fit_mode','show_page_updated_date','page_layout','show_page_sidebar','page_sidebar_show_nav','show_page_toc']],
         'social'     => ['🔗 Profile & URLs' => ['social_linkedin','social_github','social_gitlab','social_twitter','social_mastodon','social_rss','social_youtube','social_xing'], '🏷️ Button-Labels' => ['social_label_linkedin','social_label_github','social_label_gitlab','social_label_rss']],
@@ -497,7 +497,7 @@ return [
                 ['tab' => 'homepage', 'key' => 'repo_card_btn_url'],
                 ['tab' => 'homepage', 'key' => 'show_article_list'],
                 ['tab' => 'homepage', 'key' => 'show_list_sidebar'],
-                ['tab' => 'homepage', 'key' => 'show_info_cards'],
+                ['tab' => 'homepage', 'key' => 'show_info_grid'],
                 ['tab' => 'homepage', 'key' => 'show_info_card3'],
                 ['tab' => 'homepage', 'key' => 'show_tile_grid'],
                 ['tab' => 'homepage', 'key' => 'show_feed_section'],
@@ -509,7 +509,7 @@ return [
                 ['tab' => 'homepage', 'key' => 'spacing_rss_feeds'],
             ],
             'groups' => [
-                '👁️ Sichtbarkeit der Sektionen' => ['show_home_featured_banner','show_repo_card','show_article_list','show_list_sidebar','show_info_cards','show_info_card3','show_tile_grid','show_feed_section'],
+                '👁️ Sichtbarkeit der Sektionen' => ['show_home_featured_banner','show_repo_card','show_article_list','show_list_sidebar','show_info_grid','show_info_card3','show_tile_grid','show_feed_section'],
                 '⭐ Featured-Banner' => ['home_featured_banner_post','home_featured_banner_post_2','home_featured_banner_post_3','home_featured_banner_label','home_featured_banner_title','home_featured_banner_text','home_featured_banner_button_text'],
                 '🔤 Header-Typografie' => ['hero_title_fontsize','hero_subtitle_fontsize','section_label_fontsize'],
                 '📌 Intro / Repo-Card' => ['repo_card_title','repo_card_description','repo_card_badge','repo_card_btn_text','repo_card_btn_url'],
@@ -520,8 +520,8 @@ return [
             'title' => '📰 Startseite · Artikelliste',
             'fields' => [
                 ['tab' => 'homepage', 'key' => 'show_article_list'],
-                ['tab' => 'homepage', 'key' => 'featured_section_title'],
-                ['tab' => 'homepage', 'key' => 'featured_posts_count'],
+                ['tab' => 'homepage', 'key' => 'article_list_label'],
+                ['tab' => 'homepage', 'key' => 'article_list_count'],
                 ['tab' => 'homepage', 'key' => 'article_list_link_url'],
                 ['tab' => 'homepage', 'key' => 'article_thumb_width'],
                 ['tab' => 'homepage', 'key' => 'article_thumb_height'],
@@ -533,7 +533,7 @@ return [
                 ['tab' => 'homepage', 'key' => 'show_meta_readtime'],
             ],
             'groups' => [
-                '🧾 Inhalt & Anzahl' => ['show_article_list','featured_section_title','featured_posts_count','article_list_link_url'],
+                '🧾 Inhalt & Anzahl' => ['show_article_list','article_list_label','article_list_count','article_list_link_url'],
                 '🖼️ Vorschaubilder' => ['article_thumb_width','article_thumb_height','show_article_badge'],
                 '✍️ Text & Metadaten' => ['show_article_excerpt','show_article_meta','show_meta_category','show_meta_date','show_meta_readtime'],
             ],
@@ -653,7 +653,7 @@ return [
         'homepage-cards' => [
             'title' => '🗂️ Startseite · Themenkarten',
             'fields' => [
-                ['tab' => 'homepage', 'key' => 'show_info_cards'],
+                ['tab' => 'homepage', 'key' => 'show_info_grid'],
                 ['tab' => 'homepage', 'key' => 'info_card1_title'],
                 ['tab' => 'homepage', 'key' => 'info_card1_text'],
                 ['tab' => 'homepage', 'key' => 'info_card1_link_text'],
@@ -677,7 +677,7 @@ return [
                 ['tab' => 'homepage', 'key' => 'info_card3_link_url_3'],
             ],
             'groups' => [
-                '1️⃣ Themenkarte 1' => ['show_info_cards','info_card1_title','info_card1_text','info_card1_link_text','info_card1_link_url','info_card1_style'],
+                '1️⃣ Themenkarte 1' => ['show_info_grid','info_card1_title','info_card1_text','info_card1_link_text','info_card1_link_url','info_card1_style'],
                 '2️⃣ Themenkarte 2' => ['info_card2_title','info_card2_text','info_card2_link_text','info_card2_link_url','info_card2_style'],
                 '3️⃣ Projekte-Card' => ['show_info_card3','info_card3_title','info_card3_text','info_card3_badge','info_card3_style','info_card3_link_text','info_card3_link_url','info_card3_link_text_2','info_card3_link_url_2','info_card3_link_text_3','info_card3_link_url_3'],
             ],
@@ -686,8 +686,8 @@ return [
             'title' => '🧱 Startseite · Grid & Feeds',
             'fields' => [
                 ['tab' => 'homepage', 'key' => 'show_tile_grid'],
-                ['tab' => 'homepage', 'key' => 'grid_section_title'],
-                ['tab' => 'homepage', 'key' => 'grid_posts_per_page'],
+                ['tab' => 'homepage', 'key' => 'tile_grid_label'],
+                ['tab' => 'homepage', 'key' => 'tile_grid_count'],
                 ['tab' => 'homepage', 'key' => 'tile_grid_columns'],
                 ['tab' => 'homepage', 'key' => 'show_tile_excerpt'],
                 ['tab' => 'homepage', 'key' => 'show_tile_category'],
@@ -701,7 +701,7 @@ return [
                 ['tab' => 'homepage', 'key' => 'feed2_count'],
             ],
             'groups' => [
-                '🧱 Kachel-Grid' => ['show_tile_grid','grid_section_title','grid_posts_per_page','tile_grid_columns','show_tile_excerpt','show_tile_category','show_tile_date','tile_grid_image_height','tile_grid_link_url'],
+                '🧱 Kachel-Grid' => ['show_tile_grid','tile_grid_label','tile_grid_count','tile_grid_columns','show_tile_excerpt','show_tile_category','show_tile_date','tile_grid_image_height','tile_grid_link_url'],
                 '📡 RSS-Feeds' => ['show_feed_section','feed1_channel_id','feed1_count','feed2_channel_id','feed2_count'],
             ],
         ],

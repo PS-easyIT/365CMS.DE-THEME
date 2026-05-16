@@ -1,7 +1,7 @@
 /*
 Theme Name: CMS Phinit
 Description: IT-Profi Theme inspiriert von phinit.de – Deep Navy, Gold-Akzente, professionelles Editorial-Layout für technische Blogs & Wissensseiten.
-Version: 1.5.53
+Version: 1.5.58
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phinit.de
 Tags: it, tech, editorial, blog, dark-mode, responsive, professional
@@ -83,8 +83,8 @@ Tags: it, tech, editorial, blog, dark-mode, responsive, professional
     --shadow-sm:  0 1px 4px rgba(0,0,0,.06);
     --shadow:     0 4px 14px rgba(0,0,0,.09);
     --shadow-lg:  0 8px 28px rgba(0,0,0,.14);
-    --transition: all 0.25s cubic-bezier(.4,0,.2,1);
-    --transition-fast: all 0.15s ease;
+    --transition: color 0.25s cubic-bezier(.4,0,.2,1), background-color 0.25s cubic-bezier(.4,0,.2,1), border-color 0.25s cubic-bezier(.4,0,.2,1), opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
+    --transition-fast: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
 
     /* — Z-Index Scale — */
     --z-header:  1000;

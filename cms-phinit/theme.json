@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.53",
+  "version": "1.5.58",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -870,15 +870,15 @@
           "type": "checkbox",
           "default": true
         },
-        "featured_section_title": {
+        "article_list_label": {
           "label": "Titel der Featured-Sektion",
           "type": "text",
           "default": "Aktuelle Beiträge"
         },
-        "featured_posts_count": {
-          "label": "Anzahl Featured-Beiträge",
+        "article_list_count": {
+          "label": "Anzahl Artikel",
           "type": "number",
-          "default": 3,
+          "default": 4,
           "min": 1,
           "max": 6
         },
@@ -1215,7 +1215,7 @@
           "type": "url",
           "default": ""
         },
-        "show_info_cards": {
+        "show_info_grid": {
           "label": "Kategorie-Info-Cards anzeigen",
           "type": "checkbox",
           "default": true
@@ -1343,12 +1343,12 @@
           "type": "checkbox",
           "default": true
         },
-        "grid_section_title": {
+        "tile_grid_label": {
           "label": "Titel des Beitrags-Grids",
           "type": "text",
           "default": "Alle Artikel"
         },
-        "grid_posts_per_page": {
+        "tile_grid_count": {
           "label": "Beiträge pro Seite im Grid",
           "type": "number",
           "default": 9,

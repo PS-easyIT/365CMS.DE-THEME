@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.53`
+- Version: `1.5.58`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -30,11 +30,17 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - AVIF-/WebP-/Thumbnail-Derivate der Startseiten-Listcards werden nach einem Medienersatz automatisch erneuert und per `filemtime`-Cachebuster ausgeliefert, damit ersetzte Beitragsbilder sofort sichtbar werden.
 - Beitrags- und Featured-Artikelbilder der Startseite verwenden die direkte Original-Upload-Quelle mit `filemtime`-Cachebuster statt komprimierter Picture-/Thumbnail-Derivate; mobile Featured-Banner und seitliche Sidebar-Featured-Boxen bleiben im Bild-links-Layout neben Titel und Teaser.
 - Textauszüge der mobilen Startseiten-Listcards sind zusätzlich per echter `max-height` auf maximal drei Zeilen begrenzt, damit Browser-Kantenfälle keine vierte Zeile anzeigen.
+- Die Startseiten-Listcards zeigen standardmäßig wieder vier Artikel, weil der `theme.json`-Default für `article_list_count` mit Customizer- und PHP-Defaults synchronisiert ist.
+- Rotierende Sidebar-Empfehlungen zeigen wieder vollflächige Cover-Bilder mit Beitragstitel als Badge oben.
+- Das Sidebar-Widget `Empfohlene Artikel` ist in der Höhe exakt um 14px reduziert, ohne Breite, Overlays, Typografie oder Rotator-Verhalten zu verändern.
+- Die mobile Footer-About-Sektion zeigt nur noch die Social-Media-Icons horizontal nebeneinander; Avatar, About-Text und Kontaktbutton sind mobil ausgeblendet.
 - Rotierende Featured-/Sidebar-Bilder priorisieren nur den sichtbaren aktiven Slide; versteckte Slides laufen mit niedriger Fetch-Priority im Hintergrund an, damit sie dem LCP-Bild keine Bandbreite wegnehmen und beim Rotieren nicht leer erscheinen
 - Nicht-Bild-Performance: Scroll-Fortschritt vermeidet Layoutreads pro Scroll, Homepage-Rotatoren pausieren über Page-Lifecycle/BFCache-Hooks, Google Analytics lädt externes Third-Party-JS erst nach Load/Idle und dekorative Daueranimationen wurden entschärft
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend
 - locale-aware Homepage-Lead-Image-Abfrage ohne Alias-Mix im SQL-Filter
 - verwaltete Uploads/Featured Images werden im Public-Frontend über die `/media-file`-Delivery-Route normalisiert, damit ersetzte Bilder nicht an direkten `/uploads`-403 scheitern
+- Startseiten-kritisches Basis-/Header-/Homepage-CSS wird inline ausgeliefert, der Homepage-Customizer nutzt konsistente Keys und Hover-Animationen verzichten auf layout-/paintlastige `all`-/`box-shadow`-Transitions
+- Das Sidebar-Widget `Empfohlene Artikel` rotiert bereits bei zwei ausgewählten Artikeln wieder als ein einzelner vollflächiger Slide im 6-Sekunden-Intervall statt beide Beiträge untereinander zu zeigen
 
 ## Sicherheit & Audit
 

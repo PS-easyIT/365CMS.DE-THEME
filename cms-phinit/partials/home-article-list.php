@@ -74,7 +74,7 @@ if (empty($_showList) || $featuredPosts === []) {
         $_sbFeatProjMode = $_sbFeaturedActive && $_sbShowProjects;
         $_sbFeatSocialMode = $_sbFeaturedActive && $_sbShowSocial;
         $_sbFeatSlice = array_slice($sbFeaturedPosts, 0, 6);
-        $_sbEnableFeaturedRotation = count($_sbFeatSlice) > 2;
+        $_sbEnableFeaturedRotation = count($_sbFeatSlice) > 1;
         $_sbFeaturedBadgeStyle = in_array((string) ($_sbFeaturedBadgeStyle ?? 'teal'), ['neutral', 'teal', 'gold', 'dark'], true)
             ? (string) $_sbFeaturedBadgeStyle
             : 'teal';

@@ -7,6 +7,7 @@
 | 🟢 | `feat` | Neues Feature |
 | 🔴 | `fix` | Bugfix |
 | 🟡 | `refactor` | Code-Umbau ohne Funktionsänderung |
+| 🟠 | `perf` | Performance-Verbesserung |
 | 🎨 | `style` | Design- / UI-Änderungen |
 | 🔵 | `docs` | Dokumentation |
 | 🛡️ | `security` | Sicherheits- / Hardening-Maßnahme |
@@ -56,6 +57,63 @@
 
 ---
 
+## v1.5.58 — 16. Mai 2026
+
+### Mobile Footer: nur Social Icons
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Footer / Mobile | `assets/css/footer-consent.css` blendet in der mobilen Footer-About-Sektion Avatar, Heading, About-Text und Kontaktbutton aus; sichtbar bleibt nur eine horizontale Social-Media-Icon-Leiste. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.58` synchronisiert. |
+
+---
+
+## v1.5.57 — 16. Mai 2026
+
+### Empfohlene Artikel: 14px niedrigere Widget-Höhe
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Sidebar Featured | `assets/css/homepage-blog.css` reduziert ausschließlich die Höhe des Widgets `Empfohlene Artikel` um `14px`; Breite, Overlay-Badge, Typografie und Rotator-Verhalten bleiben unverändert. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.57` synchronisiert. |
+
+---
+
+## v1.5.56 — 16. Mai 2026
+
+### Startseiten-Listcards wieder vier Artikel
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Listcards | `theme.json` setzt den Default von `homepage.article_list_count` wieder auf `4` und nutzt denselben Label-Text wie der Theme-Customizer, damit ohne bewusst gesetzten Customizer-Wert wieder vier Listcards erscheinen statt drei. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.56` synchronisiert. |
+
+---
+
+## v1.5.55 — 16. Mai 2026
+
+### Empfohlene Artikel: ein Artikel pro Rotation
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Sidebar Featured | `partials/home-article-list.php` aktiviert die Rotator-Darstellung für `Empfohlene Artikel` bereits ab zwei ausgewählten Artikeln, damit das Widget wieder genau einen vollflächigen Artikel anzeigt und alle `6s` weiterwechselt statt zwei Beiträge untereinander zu rendern. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.55` synchronisiert. |
+
+---
+
+## v1.5.54 — 16. Mai 2026
+
+### Customizer-Kompatibilität und PageSpeed-Pfad
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Theme Customizer / Homepage | `admin/customizer-schema.php`, `admin/customizer-request-handler.php`, `theme.json` und `includes/theme-home-helpers.php` synchronisieren die Homepage-Feldnamen auf die kanonischen Keys `article_list_label`, `article_list_count`, `show_info_grid`, `tile_grid_label` und `tile_grid_count`; alte Alias-Werte werden weiter migriert und lösen beim Speichern keine Unknown-Setting-Warnungen mehr aus. |
+| 🟠 perf | Startseite / Kritischer CSS-Pfad | `includes/theme-assets-trait.php` gibt auf der Homepage Basis-, Header- und Critical-Homepage-CSS inline aus, damit die render-blockierende CSS-Kette oberhalb der Falz verkürzt wird. |
+| 🟠 perf | Navigation & Animationen | `assets/js/navigation.js`, `style.css`, `assets/css/header-navigation.css`, `assets/css/homepage-blog.css`, `assets/css/content-cards.css` und `assets/css/ui-chrome.css` vermeiden unnötige Panel-Layoutreads in Dropdowns und entfernen `all`-/`box-shadow`-/`width`-Transitions aus den gemeldeten Hover- und Progress-Pfaden. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.54` synchronisiert. |
+
+---
+
 ## v1.5.53 — 16. Mai 2026
 
 ### Listcard-Auszüge: maximal 3 Zeilen
@@ -63,6 +121,7 @@
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
 | 🎨 style | Startseite / Mobile Listcards | `assets/css/homepage-blog.css` und `assets/css/homepage-blog-critical.css` begrenzen Textauszüge der Startseiten-Listcards zusätzlich zu `line-clamp` per echter `max-height` auf maximal drei Zeilen, damit Browser-Kantenfälle keine vierte Zeile anzeigen. |
+| 🎨 style | Sidebar / Empfohlene Artikel | `assets/css/homepage-blog.css` stellt rotierende Sidebar-Empfehlungen wieder als vollflächiges Cover-Bild mit Titel-Badge oben dar, auch wenn Custom-/Side-Media-Klassen aktiv sind. |
 | 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.53` synchronisiert. |
 
 ---
