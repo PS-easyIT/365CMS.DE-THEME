@@ -383,37 +383,84 @@ body.m365lic-theme-embed:not(.is-member) .site-footer {
     }
 
     .footer-about {
-        display: block;
-        text-align: center;
+        order: -1;
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 12px;
+        text-align: left;
     }
 
-    .footer-about__media,
-    .footer-about__heading,
-    .footer-about .footer-about__text,
-    .footer-about .footer-about__social .footer-about__contact {
-        display: none;
+    .footer-about--no-image {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .footer-about__media {
+        display: block;
+        width: 48px;
+        height: 48px;
+    }
+
+    .footer-about__heading {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        margin-bottom: 6px;
+    }
+
+    .footer-about .footer-about__text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        margin-bottom: 10px;
     }
 
     .footer-about .footer-about__social {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         gap: 8px;
         width: 100%;
         margin-top: 0;
-        overflow-x: auto;
-        scrollbar-width: none;
-    }
-
-    .footer-about .footer-about__social::-webkit-scrollbar {
-        display: none;
+        overflow: visible;
     }
 
     .footer-about .footer-about__social a:not(.footer-about__contact) {
         flex: 0 0 32px;
         width: 32px;
         height: 32px;
+    }
+
+    .footer-about .footer-about__social .footer-about__contact {
+        display: inline-flex;
+        flex: 0 0 auto;
+        min-height: 32px;
+        margin-left: 0;
+    }
+
+    .footer-about .footer-about__social .footer-about__contact:not(:first-child) {
+        margin-left: 0;
+    }
+
+    .footer-about .footer-about__social a:active,
+    .footer-about .footer-about__social .footer-about__contact:active,
+    .footer-account-link:active,
+    .back-to-top-btn:active {
+        transform: scale(.96);
+        filter: brightness(1.08);
+    }
+
+    .back-to-top-btn {
+        right: 16px;
+        bottom: 16px;
+        width: 38px;
+        height: 38px;
+        opacity: 0;
+    }
+
+    .back-to-top-btn.visible {
+        opacity: .88;
     }
 
     .footer-brand__actions {

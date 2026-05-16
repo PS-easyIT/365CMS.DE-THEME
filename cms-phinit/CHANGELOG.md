@@ -57,6 +57,57 @@
 
 ---
 
+## v1.5.62 — 16. Mai 2026
+
+### Mobile Kartenanzahl hart begrenzt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟠 perf | Mobile Homepage Counts | `includes/theme-home-helpers.php` begrenzt Mobile-Requests auf maximal vier Listcards und maximal vier Gridcards, auch wenn die List-Sektion deaktiviert ist. |
+| 🎨 style | Mobile Viewport-Fallback | `assets/css/homepage-blog.css` und `assets/css/content-cards.css` blenden in der mobilen Ansicht Listcards und Gridcards ab dem fünften Eintrag aus, damit auch Desktop-Responsive-Tests maximal vier sichtbare Karten zeigen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.62` synchronisiert. |
+
+---
+
+## v1.5.61 — 16. Mai 2026
+
+### Desktop Gridcard-Meta-Abstand
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Desktop Gridcards | `assets/css/content-cards.css` zieht die Meta-Zeile in der Desktopansicht nochmals `16px` näher an den Titel (`margin-top: -27px`); Listcards und Mobile-Regeln bleiben unverändert. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.61` synchronisiert. |
+
+---
+
+## v1.5.60 — 16. Mai 2026
+
+### Mobile Kartenhöhe und Burger-Menü
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Desktop Gridcards | `assets/css/content-cards.css` reduziert in der Desktopansicht ausschließlich bei Gridcards den Abstand zwischen Titel und Meta-Zeile um `8px`; Listcards bleiben unverändert. |
+| 🎨 style | Mobile Navigation | `assets/css/header-navigation.css` entfernt den eigenen Scrollbereich des Burger-Menüs, sodass die geöffnete Navigation in der normalen Seitenhöhe liegt. |
+| 🎨 style | Mobile Cards | `assets/css/homepage-blog.css` und `assets/css/content-cards.css` kürzen mobile List- und Gridcards inklusive Bildbereich um `30px` auf `165px`. |
+| 🟠 perf | Mobile Homepage Grid | `includes/theme-home-helpers.php` zeigt in der mobilen Sektion „Alle Beiträge“ wieder vier Gridcards statt zwei, während die vier Listcards erhalten bleiben. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.60` synchronisiert. |
+
+---
+
+## v1.5.59 — 16. Mai 2026
+
+### Mobile Scanbarkeit und Footer-Korrektur
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Mobile Cards | `assets/css/homepage-blog.css` und `assets/css/content-cards.css` vergrößern mobil den Abstand zwischen Titel und Meta-Zeile bei List- und Gridcards um `4px`, begrenzen Teaser mobil auf zwei Zeilen und ergänzen dezente `:active`-States für Karten und Buttons. |
+| 🟠 perf | Mobile Pagination | `includes/theme-home-helpers.php` und `blog.php` reduzieren Mobile-Requests serverseitig auf sechs Artikel pro Seite, damit lange Artikellisten kürzer werden und Pagination früher sichtbar ist. |
+| 🎨 style | Footer / Mobile | `assets/css/footer-consent.css` zeigt die Footer-About-Spalte mobil wieder als ersten Footer-Block, hält den Kontaktbutton sichtbar und richtet Social-Media-Icons nebeneinander aus. |
+| 🎨 style | Mobile Bedienung | `assets/css/homepage-blog.css` gibt den Pfeilen im Widget `Empfohlene Artikel` mindestens `44×44px` Touch-Fläche; `assets/js/navigation.js` zeigt Back-to-top mobil erst ab zwei Bildschirmhöhen Scroll. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.59` synchronisiert. |
+
+---
+
 ## v1.5.58 — 16. Mai 2026
 
 ### Mobile Footer: nur Social Icons

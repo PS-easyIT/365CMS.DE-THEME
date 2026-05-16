@@ -1,13 +1,52 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.58",
+  "version": "1.5.62",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.62",
+      "date": "2026-05-16",
+      "changes": [
+        "includes/theme-home-helpers.php: Mobile Requests begrenzen Listcards auf maximal vier und Gridcards auch ohne List-Sektion auf maximal vier",
+        "assets/css/homepage-blog.css + assets/css/content-cards.css: Mobile Viewport-Fallback blendet Listcards und Gridcards ab dem fünften Eintrag aus, damit Responsive-Desktop-Tests ebenfalls maximal vier Karten zeigen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.62 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.61",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/content-cards.css: Desktop-Gridcards ziehen die Meta-Zeile nochmals 16px näher an den Titel; Listcards und Mobile-Regeln bleiben unverändert",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.61 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.60",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/content-cards.css: Desktop-Gridcards rücken die Meta-Zeile um 8px näher an den Titel; Listcards bleiben unverändert",
+        "assets/css/header-navigation.css: Das mobile Burger-Menü besitzt keinen eigenen Scrollbereich mehr und wächst in die normale Seitenhöhe hinein",
+        "assets/css/homepage-blog.css + assets/css/content-cards.css: Mobile List- und Gridcards sind um 30px auf 165px gekürzt; Bilder skalieren entsprechend mit",
+        "includes/theme-home-helpers.php: Die mobile Sektion 'Alle Beiträge' zeigt wieder vier Gridcards statt zwei, während die vier Listcards erhalten bleiben",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.60 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.59",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/homepage-blog.css + assets/css/content-cards.css: Mobile List- und Gridcards erhalten 4px mehr Abstand zwischen Titel und Meta-Zeile, Teaser werden mobil auf zwei Zeilen begrenzt und Tap-Active-States geben haptisches Feedback",
+        "includes/theme-home-helpers.php + blog.php: Mobile Requests zeigen serverseitig nur noch sechs Artikel pro Seite, damit Pagination früher sichtbar wird und lange Mobile-Seiten kürzer laden",
+        "assets/css/footer-consent.css: Die Footer-About-Spalte ist mobil wieder als erster Footer-Block sichtbar; Kontaktbutton bleibt sichtbar und Social Icons bleiben nebeneinander ausgerichtet",
+        "assets/css/homepage-blog.css + assets/js/navigation.js: Empfohlene-Artikel-Pfeile haben mindestens 44x44px Touch-Fläche; Back-to-top erscheint mobil ab zwei Bildschirmhöhen Scroll",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.59 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.58",
       "date": "2026-05-16",

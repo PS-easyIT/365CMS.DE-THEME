@@ -940,7 +940,7 @@ body.dark-mode .quicklinks-tool:hover {
     display: none; position: absolute; top: 100%; left: 0; right: 0;
     background: var(--primary-dark); border-top: 2px solid var(--accent-teal);
     box-shadow: var(--shadow-lg); z-index: var(--z-mobile-menu, 1100);
-    max-height: calc(100vh - var(--header-h, 56px)); overflow-y: auto;
+    max-height: none; overflow-y: visible;
 }
 .mobile-menu.open { display: block; }
 .mobile-menu a {

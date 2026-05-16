@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.58`
+- Version: `1.5.62`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -33,7 +33,13 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Die Startseiten-Listcards zeigen standardmäßig wieder vier Artikel, weil der `theme.json`-Default für `article_list_count` mit Customizer- und PHP-Defaults synchronisiert ist.
 - Rotierende Sidebar-Empfehlungen zeigen wieder vollflächige Cover-Bilder mit Beitragstitel als Badge oben.
 - Das Sidebar-Widget `Empfohlene Artikel` ist in der Höhe exakt um 14px reduziert, ohne Breite, Overlays, Typografie oder Rotator-Verhalten zu verändern.
-- Die mobile Footer-About-Sektion zeigt nur noch die Social-Media-Icons horizontal nebeneinander; Avatar, About-Text und Kontaktbutton sind mobil ausgeblendet.
+- Die mobile Footer-About-Sektion ist wieder als erster Footer-Block sichtbar; Kontaktbutton bleibt mobil sichtbar und Social-Media-Icons bleiben nebeneinander ausgerichtet.
+- Mobile List- und Gridcards nutzen zwei Zeilen Teaser, 4px mehr Abstand zwischen Titel und Meta-Zeile, Tap-Active-Feedback und serverseitig sechs Artikel pro Seite.
+- Der mobile Back-to-top-Button erscheint auf langen Seiten ab zwei Bildschirmhöhen Scroll; die Empfohlene-Artikel-Pfeile besitzen mindestens 44×44px Touch-Fläche.
+- Desktop-Gridcards rücken die Meta-Zeile 8px näher an den Titel, während Listcards unverändert bleiben; mobile List-/Gridcards sind auf 165px gekürzt und die Sektion „Alle Beiträge“ zeigt mobil vier Gridcards.
+- Desktop-Gridcards ziehen die Meta-Zeile nochmals deutlich näher an den Titel; Listcards und Mobile-Abstände bleiben unverändert.
+- Mobile Listcards und Gridcards sind hart auf maximal vier sichtbare Karten begrenzt; ein CSS-Fallback greift auch in Desktop-Browsern mit schmaler Responsive-Ansicht.
+- Das mobile Burger-Menü besitzt keinen eigenen Scrollbereich mehr und öffnet vollständig im normalen Seitenfluss unterhalb des Headers.
 - Rotierende Featured-/Sidebar-Bilder priorisieren nur den sichtbaren aktiven Slide; versteckte Slides laufen mit niedriger Fetch-Priority im Hintergrund an, damit sie dem LCP-Bild keine Bandbreite wegnehmen und beim Rotieren nicht leer erscheinen
 - Nicht-Bild-Performance: Scroll-Fortschritt vermeidet Layoutreads pro Scroll, Homepage-Rotatoren pausieren über Page-Lifecycle/BFCache-Hooks, Google Analytics lädt externes Third-Party-JS erst nach Load/Idle und dekorative Daueranimationen wurden entschärft
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend

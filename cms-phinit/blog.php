@@ -21,6 +21,9 @@ $_bQuery  = phinit_input_string($_GET, 'q', '', 200);
 $_blogDefaultPage = isset($currentPage) ? (int) $currentPage : 1;
 $_blogPage = phinit_input_int($_GET, 'page', phinit_input_int($_GET, 'p', $_blogDefaultPage, 1), 1);
 $_blogPer  = isset($perPage) && (int)$perPage > 0 ? (int)$perPage : 10;
+if (function_exists('phinit_is_probable_mobile_request') && phinit_is_probable_mobile_request()) {
+    $_blogPer = min($_blogPer, 6);
+}
 
 // Eigene DB-Abfrage mit optionaler Volltextsuche (Prepared Statements)
 try {

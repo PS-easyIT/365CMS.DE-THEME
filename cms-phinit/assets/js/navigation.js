@@ -534,9 +534,11 @@
         if (!btn) return;
 
         let isTicking = false;
+        const mobileViewport = window.matchMedia('(max-width: 768px)');
+        const visibilityThreshold = () => mobileViewport.matches ? window.innerHeight * 2 : 400;
         const updateVisibility = () => {
             isTicking = false;
-            btn.classList.toggle('visible', window.scrollY > 400);
+            btn.classList.toggle('visible', window.scrollY > visibilityThreshold());
         };
 
         window.addEventListener('scroll', () => {
@@ -547,6 +549,7 @@
             isTicking = true;
             scheduleNextFrame(updateVisibility);
         }, { passive: true });
+        window.addEventListener('resize', updateVisibility, { passive: true });
 
         updateVisibility();
         btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));

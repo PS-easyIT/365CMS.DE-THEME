@@ -7,6 +7,26 @@ if (!defined('ABSPATH')) {
 
 use CMS\Services\ThemeCustomizer;
 
+if (!function_exists('phinit_is_probable_mobile_request')) {
+    /**
+     * Erkennt echte Mobile-Requests best-effort für serverseitige Mobile-Paginierung.
+     */
+    function phinit_is_probable_mobile_request(): bool
+    {
+        $clientHintMobile = (string) ($_SERVER['HTTP_SEC_CH_UA_MOBILE'] ?? '');
+        if ($clientHintMobile === '?1') {
+            return true;
+        }
+
+        $userAgent = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
+        if ($userAgent === '') {
+            return false;
+        }
+
+        return preg_match('/Mobile|Android|iPhone|iPod|IEMobile|Opera Mini/i', $userAgent) === 1;
+    }
+}
+
 /**
  * Liefert das View-Model für die Startseite inklusive robuster Fallback-Defaults.
  *
@@ -590,6 +610,15 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         ], static fn(int $postId): bool => $postId > 0)));
         $_listCount = max(1, (int) ($viewModel['_listCount'] ?? 4));
         $_tileCount = max(1, (int) ($viewModel['_tileCount'] ?? 6));
+        if (phinit_is_probable_mobile_request()) {
+            $_mobileGridPostsPerPage = 4;
+            if ($_showList) {
+                $_listCount = min($_listCount, 4);
+                $_tileCount = $_mobileGridPostsPerPage;
+            } else {
+                $_tileCount = min($_tileCount, $_mobileGridPostsPerPage);
+            }
+        }
         $_sbShowFeaturedPosts = !empty($viewModel['_sbShowFeaturedPosts']);
 
         $featuredBannerPost = null;
