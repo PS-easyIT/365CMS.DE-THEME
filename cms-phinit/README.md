@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.52`
+- Version: `1.5.53`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -29,6 +29,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Mobile Startseiten-Listcards übernehmen das Gridcard-artige Bild-links-Layout inklusive passender 96px/80px-Bildspalte, Meta-/Auszug-Reihenfolge und Kategorie/Weiterlesen-Footer.
 - AVIF-/WebP-/Thumbnail-Derivate der Startseiten-Listcards werden nach einem Medienersatz automatisch erneuert und per `filemtime`-Cachebuster ausgeliefert, damit ersetzte Beitragsbilder sofort sichtbar werden.
 - Beitrags- und Featured-Artikelbilder der Startseite verwenden die direkte Original-Upload-Quelle mit `filemtime`-Cachebuster statt komprimierter Picture-/Thumbnail-Derivate; mobile Featured-Banner und seitliche Sidebar-Featured-Boxen bleiben im Bild-links-Layout neben Titel und Teaser.
+- Textauszüge der mobilen Startseiten-Listcards sind zusätzlich per echter `max-height` auf maximal drei Zeilen begrenzt, damit Browser-Kantenfälle keine vierte Zeile anzeigen.
 - Rotierende Featured-/Sidebar-Bilder priorisieren nur den sichtbaren aktiven Slide; versteckte Slides laufen mit niedriger Fetch-Priority im Hintergrund an, damit sie dem LCP-Bild keine Bandbreite wegnehmen und beim Rotieren nicht leer erscheinen
 - Nicht-Bild-Performance: Scroll-Fortschritt vermeidet Layoutreads pro Scroll, Homepage-Rotatoren pausieren über Page-Lifecycle/BFCache-Hooks, Google Analytics lädt externes Third-Party-JS erst nach Load/Idle und dekorative Daueranimationen wurden entschärft
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend

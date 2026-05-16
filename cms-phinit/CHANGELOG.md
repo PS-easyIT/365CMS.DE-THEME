@@ -56,6 +56,17 @@
 
 ---
 
+## v1.5.53 — 16. Mai 2026
+
+### Listcard-Auszüge: maximal 3 Zeilen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Mobile Listcards | `assets/css/homepage-blog.css` und `assets/css/homepage-blog-critical.css` begrenzen Textauszüge der Startseiten-Listcards zusätzlich zu `line-clamp` per echter `max-height` auf maximal drei Zeilen, damit Browser-Kantenfälle keine vierte Zeile anzeigen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.53` synchronisiert. |
+
+---
+
 ## v1.5.52 — 16. Mai 2026
 
 ### Originalbilder und mobiler Featured-Banner
