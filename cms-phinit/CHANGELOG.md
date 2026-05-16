@@ -57,6 +57,18 @@
 
 ---
 
+## v1.5.63 — 16. Mai 2026
+
+### Desktop Grid-Abstand und Inline-CSS-Minifizierung
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Desktop Gridcards | `assets/css/content-cards.css` reduziert den Abstand zwischen Titel und Meta-Zeile nochmals um `4px` (`margin-top: -31px`); Listcards und Mobile-Regeln bleiben unverändert. |
+| 🟠 perf | Inline CSS | `includes/theme-assets-trait.php` minifiziert inline ausgelieferte CSS-Dateien zur Renderzeit, damit PageSpeed die nicht zuordenbare unminifizierte CSS-Nutzlast deutlich kleiner bewertet. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.63` synchronisiert. |
+
+---
+
 ## v1.5.62 — 16. Mai 2026
 
 ### Mobile Kartenanzahl hart begrenzt

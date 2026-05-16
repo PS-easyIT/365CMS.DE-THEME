@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.62`
+- Version: `1.5.63`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -38,6 +38,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Der mobile Back-to-top-Button erscheint auf langen Seiten ab zwei Bildschirmhöhen Scroll; die Empfohlene-Artikel-Pfeile besitzen mindestens 44×44px Touch-Fläche.
 - Desktop-Gridcards rücken die Meta-Zeile 8px näher an den Titel, während Listcards unverändert bleiben; mobile List-/Gridcards sind auf 165px gekürzt und die Sektion „Alle Beiträge“ zeigt mobil vier Gridcards.
 - Desktop-Gridcards ziehen die Meta-Zeile nochmals deutlich näher an den Titel; Listcards und Mobile-Abstände bleiben unverändert.
+- Desktop-Gridcards reduzieren den Titel-/Meta-Abstand nochmals um 4px; inline ausgelieferte CSS-Dateien werden beim Rendern minifiziert, um PageSpeed-Warnungen zu nicht zuordenbarer CSS-Nutzlast zu senken.
 - Mobile Listcards und Gridcards sind hart auf maximal vier sichtbare Karten begrenzt; ein CSS-Fallback greift auch in Desktop-Browsern mit schmaler Responsive-Ansicht.
 - Das mobile Burger-Menü besitzt keinen eigenen Scrollbereich mehr und öffnet vollständig im normalen Seitenfluss unterhalb des Headers.
 - Rotierende Featured-/Sidebar-Bilder priorisieren nur den sichtbaren aktiven Slide; versteckte Slides laufen mit niedriger Fetch-Priority im Hintergrund an, damit sie dem LCP-Bild keine Bandbreite wegnehmen und beim Rotieren nicht leer erscheinen

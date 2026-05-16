@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.62",
+  "version": "1.5.63",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.63",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/content-cards.css: Desktop-Gridcards ziehen die Meta-Zeile weitere 4px näher an den Titel (margin-top: -31px); Listcards und Mobile-Regeln bleiben unverändert",
+        "includes/theme-assets-trait.php: Inline ausgelieferte CSS-Dateien werden beim Rendern minifiziert, wodurch die PageSpeed-Warnung zu nicht zuordenbarer unminifizierter CSS-Nutzlast reduziert wird",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.63 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.62",
       "date": "2026-05-16",

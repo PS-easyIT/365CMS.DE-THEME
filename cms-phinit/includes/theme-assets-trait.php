@@ -219,11 +219,24 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $safeId = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
         $safeVersion = htmlspecialchars((string) $version, ENT_QUOTES, 'UTF-8');
-        $safeCss = str_replace('</style', '<\/style', $css);
+        $safeCss = str_replace('</style', '<\/style', $this->minifyCss($css));
 
         echo '<style id="' . $safeId . '" data-inline-version="' . $safeVersion . '">' . "\n" . $safeCss . "\n" . '</style>' . "\n";
 
         return true;
+    }
+
+    /**
+     * Minimiert inline ausgelieferte CSS-Dateien für PageSpeed, ohne Quelldateien zu verändern.
+     */
+    private function minifyCss(string $css): string
+    {
+        $css = preg_replace('#/\*.*?\*/#s', '', $css) ?? $css;
+        $css = preg_replace('/\s+/', ' ', $css) ?? $css;
+        $css = preg_replace('/\s*([{}:;,>+~])\s*/', '$1', $css) ?? $css;
+        $css = str_replace([';}',' {',' }'], ['}','{','}'], $css);
+
+        return trim($css);
     }
 
     public function outputCriticalResourceHints(): void
