@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.49`
+- Version: `1.5.51`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`
 
@@ -26,6 +26,8 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Normale Blog-Listings laden kein HubSite-CSS mehr, und die dekorativen Sidebar-Thumbnails im Widget `Empfohlene Artikel` vermeiden redundante Alt-Texte im selben Link
 - Der mobile Startpfad überspringt Desktop-Dropdown-Logik, vermeidet den initialen Sticky-Header-Layoutread und nutzt kleinere responsive Desktop-Kandidaten für lazy geladene Artikelbilder
 - Beitrags-Vorschaubilder in der Startseiten-Artikelliste haben jetzt einen stabilen Skeleton-Placeholder, laden die ersten zwei sichtnahen Karten eager und preladen das Homepage-Lead-Bild bevorzugt als AVIF/WebP ohne unnötige Format-Dopplung
+- Mobile Startseiten-Listcards übernehmen das Gridcard-artige Bild-links-Layout inklusive passender 96px/80px-Bildspalte, Meta-/Auszug-Reihenfolge und Kategorie/Weiterlesen-Footer.
+- AVIF-/WebP-/Thumbnail-Derivate der Startseiten-Listcards werden nach einem Medienersatz automatisch erneuert und per `filemtime`-Cachebuster ausgeliefert, damit ersetzte Beitragsbilder sofort sichtbar werden.
 - Rotierende Featured-/Sidebar-Bilder priorisieren nur den sichtbaren aktiven Slide; versteckte Slides laufen mit niedriger Fetch-Priority im Hintergrund an, damit sie dem LCP-Bild keine Bandbreite wegnehmen und beim Rotieren nicht leer erscheinen
 - Nicht-Bild-Performance: Scroll-Fortschritt vermeidet Layoutreads pro Scroll, Homepage-Rotatoren pausieren über Page-Lifecycle/BFCache-Hooks, Google Analytics lädt externes Third-Party-JS erst nach Load/Idle und dekorative Daueranimationen wurden entschärft
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend

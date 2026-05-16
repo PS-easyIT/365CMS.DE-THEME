@@ -56,6 +56,31 @@
 
 ---
 
+## v1.5.51 — 16. Mai 2026
+
+### Listcard-Bilder: Medienersatz erneuert Derivate
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Listcards | `includes/theme-template-helpers.php` erkennt veraltete AVIF-, WebP- und Thumbnail-Derivate, wenn das Originalbild nach einem Medienersatz neuer ist, und erzeugt die Varianten neu. |
+| 🔴 fix | Medien / Browsercache | Lokal ausgelieferte Picture-/Thumbnail-URLs erhalten einen `filemtime`-Cachebuster, damit Listcards nach dem Ersetzen nicht weiter alte Derivatdateien aus dem Cache anzeigen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.51` synchronisiert. |
+
+---
+
+## v1.5.50 — 16. Mai 2026
+
+### Mobile Listcards: gleiche Struktur wie Gridcards
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Mobile Artikelcards | `assets/css/homepage-blog.css` und `assets/css/homepage-blog-critical.css` setzen die Listcards mobil final auf ein Gridcard-artiges Bild-links-Layout mit fixer 96px/80px-Bildspalte, Titel, Meta, Auszug und Footer rechts daneben. |
+| 🔴 fix | Startseite / Mobile Cascade | Der späte Mobile-Override, der Listcards wieder als Bild-oben-Spaltenlayout darstellen konnte, wird durch scoped `.home-section--list`-Regeln zuverlässig überstimmt. |
+| 🟠 perf | Startseite / Responsive Images | `partials/post-card.php` meldet für mobile Listcard-Bilder passende `sizes`-Werte (`96px` bzw. `80px`) statt Full-Width, damit Browser kleinere Bildkandidaten wählen können. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.50` synchronisiert. |
+
+---
+
 ## v1.5.49 — 16. Mai 2026
 
 ### Mobile Buttons: kompakter und konsistent

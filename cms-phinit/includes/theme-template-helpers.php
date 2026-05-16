@@ -805,6 +805,47 @@ if (!function_exists('phinit_local_path_to_public_url')) {
     }
 }
 
+if (!function_exists('phinit_public_image_url_with_mtime')) {
+    /**
+     * Ergänzt lokale Bild-URLs um einen filemtime-basierten Cachebuster.
+     */
+    function phinit_public_image_url_with_mtime(string $url, string $path): string
+    {
+        $url = trim($url);
+        if ($url === '' || $path === '' || !is_file($path)) {
+            return $url;
+        }
+
+        clearstatcache(true, $path);
+        $mtime = (int) (filemtime($path) ?: 0);
+        if ($mtime < 1) {
+            return $url;
+        }
+
+        return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . $mtime;
+    }
+}
+
+if (!function_exists('phinit_image_variant_is_fresh')) {
+    /**
+     * Prüft, ob ein generiertes Bildderivat neuer oder gleich alt wie das Original ist.
+     */
+    function phinit_image_variant_is_fresh(string $variantPath, string $sourcePath): bool
+    {
+        if ($variantPath === '' || $sourcePath === '' || !is_file($variantPath) || !is_file($sourcePath)) {
+            return false;
+        }
+
+        clearstatcache(true, $variantPath);
+        clearstatcache(true, $sourcePath);
+
+        $variantTime = (int) (filemtime($variantPath) ?: 0);
+        $sourceTime = (int) (filemtime($sourcePath) ?: 0);
+
+        return $variantTime > 0 && $sourceTime > 0 && $variantTime >= $sourceTime;
+    }
+}
+
 if (!function_exists('phinit_get_picture_sources')) {
     /**
      * Liefert bevorzugte Bildquellen inkl. optionalem lokal generiertem WebP-Fallback.
@@ -834,13 +875,15 @@ if (!function_exists('phinit_get_picture_sources')) {
             return $result;
         }
 
+        $result['url'] = phinit_public_image_url_with_mtime($result['url'], $sourcePath);
+
         $extension = strtolower((string) pathinfo($sourcePath, PATHINFO_EXTENSION));
         if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'avif'], true) || !class_exists('\CMS\Services\ImageService')) {
             return $result;
         }
 
         if ($extension === 'avif') {
-            $result['avif_url'] = $normalizedUrl;
+            $result['avif_url'] = $result['url'];
             return $result;
         }
 
@@ -857,14 +900,14 @@ if (!function_exists('phinit_get_picture_sources')) {
             if (!empty($imageInfo['avif_support'])) {
                 $avifPath = preg_replace('/\.[a-z0-9]+$/i', '.avif', $sourcePath);
                 if (is_string($avifPath) && $avifPath !== '' && $avifPath !== $sourcePath) {
-                    if (!is_file($avifPath)) {
+                    if (!phinit_image_variant_is_fresh($avifPath, $sourcePath)) {
                         $generatedAvifPath = $imageService->convertToAvif($sourcePath, 62, 6);
                         if (is_string($generatedAvifPath) && is_file($generatedAvifPath)) {
                             $avifPath = $generatedAvifPath;
                         }
                     }
 
-                    if (is_file($avifPath)) {
+                    if (phinit_image_variant_is_fresh($avifPath, $sourcePath)) {
                         $avifSize = (int) (filesize($avifPath) ?: 0);
                         if ($avifSize > 0 && ($sourceSize === 0 || $avifSize < $sourceSize)) {
                             $avifUrl = phinit_local_path_to_public_url($avifPath);
@@ -872,6 +915,7 @@ if (!function_exists('phinit_get_picture_sources')) {
                                 $result['avif_url'] = function_exists('phinit_normalize_public_media_url')
                                     ? phinit_normalize_public_media_url($avifUrl, true, $siteUrl)
                                     : phinit_safe_public_media_url($avifUrl, $siteUrl);
+                                $result['avif_url'] = phinit_public_image_url_with_mtime($result['avif_url'], $avifPath);
                             }
                         }
                     }
@@ -887,13 +931,17 @@ if (!function_exists('phinit_get_picture_sources')) {
                 return $result;
             }
 
-            if (!is_file($webpPath)) {
+            if (!phinit_image_variant_is_fresh($webpPath, $sourcePath)) {
                 $generatedPath = $imageService->convertToWebP($sourcePath, 78, false);
                 if (!is_string($generatedPath) || !is_file($generatedPath)) {
                     return $result;
                 }
 
                 $webpPath = $generatedPath;
+            }
+
+            if (!phinit_image_variant_is_fresh($webpPath, $sourcePath)) {
+                return $result;
             }
 
             $webpSize = (int) (filesize($webpPath) ?: 0);
@@ -909,6 +957,7 @@ if (!function_exists('phinit_get_picture_sources')) {
             $result['webp_url'] = function_exists('phinit_normalize_public_media_url')
                 ? phinit_normalize_public_media_url($webpUrl, true, $siteUrl)
                 : phinit_safe_public_media_url($webpUrl, $siteUrl);
+            $result['webp_url'] = phinit_public_image_url_with_mtime($result['webp_url'], $webpPath);
         } catch (\Throwable) {
             return $result;
         }
@@ -973,7 +1022,7 @@ if (!function_exists('phinit_get_thumbnail_picture_sources')) {
             $variantPath .= (string) ($pathInfo['filename'] ?? 'image');
             $variantPath .= '-' . $resolvedMode . '-' . $width . 'x' . $height . '.' . $extension;
 
-            if (!is_file($variantPath)) {
+            if (!phinit_image_variant_is_fresh($variantPath, $sourcePath)) {
                 $generatedPath = $resolvedMode === 'contain'
                     ? $imageService->resize($sourcePath, $width, $height, $variantPath, 80)
                     : $imageService->createThumbnail($sourcePath, $width, $height, $variantPath, 80);
@@ -983,6 +1032,10 @@ if (!function_exists('phinit_get_thumbnail_picture_sources')) {
                 }
 
                 $variantPath = $generatedPath;
+            }
+
+            if (!phinit_image_variant_is_fresh($variantPath, $sourcePath)) {
+                return $fallback;
             }
 
             $sourceSize = (int) (filesize($sourcePath) ?: 0);

@@ -139,8 +139,8 @@ $_pcBuildImageSrcset = static function (array $candidates): string {
     return implode(', ', $srcset);
 };
 $_pcImageSizes = $above_the_fold_image
-    ? '(max-width: 768px) calc(100vw - 28px), 162px'
-    : '(max-width: 768px) calc(100vw - 28px), 108px';
+    ? '(max-width: 480px) 80px, (max-width: 768px) 96px, 162px'
+    : '(max-width: 480px) 80px, (max-width: 768px) 96px, 108px';
 $_pcAvifSrcset = $_pcBuildImageSrcset([
     ['url' => (string) ($cardImageDesktopSources['avif_url'] ?? ''), 'width' => (int) ($cardImageDesktopSources['width'] ?? 0)],
     ['url' => (string) ($cardImageSources['avif_url'] ?? ''), 'width' => (int) ($cardImageSources['width'] ?? 0)],
@@ -232,6 +232,13 @@ if ($show_rt && $show_meta) {
             <?php endif; ?>
         </div>
         <div class="article-footer">
+            <?php if ($show_cat && $categoryLabel !== ''): ?>
+                <?php if ($categoryUrl !== ''): ?>
+                <a class="cat article-footer__cat-mobile" href="<?php echo htmlspecialchars($categoryUrl, ENT_QUOTES); ?>"><?php echo phinit_escape_text($categoryLabel); ?></a>
+                <?php else: ?>
+                <span class="cat article-footer__cat-mobile"><?php echo phinit_escape_text($categoryLabel); ?></span>
+                <?php endif; ?>
+            <?php endif; ?>
             <a class="article-meta__more"
                href="<?php echo htmlspecialchars($permalink, ENT_QUOTES); ?>"
                aria-label="<?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>">

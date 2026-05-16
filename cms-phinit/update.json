@@ -1,13 +1,31 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.49",
+  "version": "1.5.51",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.51",
+      "date": "2026-05-16",
+      "changes": [
+        "includes/theme-template-helpers.php: AVIF-, WebP- und Thumbnail-Derivate werden neu erzeugt, sobald das Originalbild nach einem Medienersatz neuer ist als die vorhandene Variante",
+        "includes/theme-template-helpers.php: Lokal ausgelieferte Picture-/Thumbnail-URLs erhalten einen filemtime-basierten Cachebuster, damit Listcards nach dem Ersetzen nicht mehr alte Derivatdateien aus dem Browsercache zeigen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.51 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.50",
+      "date": "2026-05-16",
+      "changes": [
+        "assets/css/homepage-blog.css + assets/css/homepage-blog-critical.css: Listcards der Startseite erzwingen mobil wieder das Gridcard-artige Bild-links-Layout mit fixer 96px/80px-Bildspalte, gleicher Textreihenfolge und kompaktem Footer",
+        "partials/post-card.php: Mobile Listcard-Bilder melden passende sizes-Werte für 96px/80px statt Full-Width und zeigen die Kategorie im mobilen Footer wie bei Gridcards links neben dem Weiterlesen-Button",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.50 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.49",
       "date": "2026-05-16",
