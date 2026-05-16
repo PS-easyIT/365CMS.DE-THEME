@@ -82,6 +82,13 @@ if (empty($_showTileGrid) || $gridPosts === []) {
         $postFeaturedImage = function_exists('phinit_normalize_public_media_url')
             ? phinit_normalize_public_media_url((string) ($post['featured_image'] ?? ''), false, $siteUrl)
             : (string) ($post['featured_image'] ?? '');
+        if ($postFeaturedImage !== '' && function_exists('phinit_get_local_image_path') && function_exists('phinit_public_image_url_with_mtime')) {
+            $_gridImageReference = (string) ($post['featured_image'] ?? $postFeaturedImage);
+            $_gridImagePath = phinit_get_local_image_path($_gridImageReference !== '' ? $_gridImageReference : $postFeaturedImage);
+            if ($_gridImagePath !== '') {
+                $postFeaturedImage = phinit_public_image_url_with_mtime($postFeaturedImage, $_gridImagePath);
+            }
+        }
         ?>
         <article class="post-card">
             <?php

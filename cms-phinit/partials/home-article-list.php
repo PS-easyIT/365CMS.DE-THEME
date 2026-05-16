@@ -94,6 +94,11 @@ if (empty($_showList) || $featuredPosts === []) {
         if ($_sbResolvedFeaturedImageLayout === 'auto') {
             $_sbResolvedFeaturedImageLayout = ($_sbFeatProjMode || $_sbFeatSocialMode) ? 'side' : 'below';
         }
+        $_sbFeaturedWidgetClass = 'sb-widget sb-widget--featured'
+            . ' sb-widget--featured-badge-style-' . $_sbFeaturedBadgeStyle
+            . ($_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : '')
+            . ($_sbFeaturedHasCustomImages ? ' sb-widget--featured-custom-media' : '')
+            . ($_sbResolvedFeaturedImageLayout === 'side' ? ' sb-widget--featured-media-side' : ' sb-widget--featured-media-below');
         $_sbAsideClass = 'homepage-list-sidebar'
             . ($_sbFeaturedActive ? ' homepage-list-sidebar--feat' : '')
             . ($_sbFeatProjMode ? ' homepage-list-sidebar--feat-proj' : '')
@@ -212,6 +217,12 @@ if (empty($_showList) || $featuredPosts === []) {
                             ? phinit_normalize_public_media_url((string) $_carouselPost['featured_image'], false, $siteUrl)
                             : (string) $_carouselPost['featured_image'])
                         : '';
+                    if ($_carouselThumb !== '' && function_exists('phinit_get_local_image_path') && function_exists('phinit_public_image_url_with_mtime')) {
+                        $_carouselThumbPath = phinit_get_local_image_path((string) ($_carouselPost['featured_image'] ?? $_carouselThumb));
+                        if ($_carouselThumbPath !== '') {
+                            $_carouselThumb = phinit_public_image_url_with_mtime($_carouselThumb, $_carouselThumbPath);
+                        }
+                    }
                     $_carouselCat = trim((string) ($_carouselPost['category_name'] ?? ''));
                     $_carouselDateRaw = $_carouselPost['published_at'] ?? ($_carouselPost['created_at'] ?? '');
                     $_carouselDate = !empty($_carouselDateRaw) ? date('j. M Y', strtotime((string) $_carouselDateRaw)) : '';
@@ -435,7 +446,7 @@ if (empty($_showList) || $featuredPosts === []) {
         <?php endif; ?>
 
         <?php if ($_sbShowFeaturedPosts && !empty($sbFeaturedPosts)): ?>
-        <div class="sb-widget sb-widget--featured sb-widget--featured-badge-style-<?php echo htmlspecialchars($_sbFeaturedBadgeStyle, ENT_QUOTES); ?><?php echo $_sbEnableFeaturedRotation ? ' sb-widget--featured-rotating' : ''; ?>"
+        <div class="<?php echo htmlspecialchars($_sbFeaturedWidgetClass, ENT_QUOTES); ?>"
                                  style="order: <?php echo (int) ($_sbOrderMap['featured'] ?? 99); ?>; --sb-featured-title-size: <?php echo htmlspecialchars(number_format($_sbFeaturedTitleSize, 1, '.', ''), ENT_QUOTES); ?>px; --sb-featured-badge-size: <?php echo htmlspecialchars(number_format($_sbFeaturedBadgeSize, 1, '.', ''), ENT_QUOTES); ?>px;"
                <?php if ($_sbEnableFeaturedRotation): ?>data-featured-rotator data-rotate-interval="<?php echo (int) $_sbFeaturedRotateInterval; ?>"<?php endif; ?>>
             <?php echo $_renderSidebarWidgetTitle((string) $_sbFeaturedPostsLabel, '📌'); ?>
@@ -478,6 +489,12 @@ if (empty($_showList) || $featuredPosts === []) {
                 $_fpThumbReference = $_fpHasCustomThumb
                     ? (string) ($_fp['custom_sidebar_image'] ?? '')
                     : (string) ($_fp['featured_image'] ?? '');
+                if ($_fpThumb !== '' && function_exists('phinit_get_local_image_path') && function_exists('phinit_public_image_url_with_mtime')) {
+                    $_fpThumbPath = phinit_get_local_image_path($_fpThumbReference !== '' ? $_fpThumbReference : $_fpThumb);
+                    if ($_fpThumbPath !== '') {
+                        $_fpThumb = phinit_public_image_url_with_mtime($_fpThumb, $_fpThumbPath);
+                    }
+                }
                 $_fpThumbDimensionReference = $_fpThumbReference !== '' ? $_fpThumbReference : $_fpThumb;
                 $_fpThumbFallbackWidth = $_fpHasCustomThumb ? 336 : 480;
                 $_fpThumbFallbackHeight = $_fpHasCustomThumb ? 248 : 320;

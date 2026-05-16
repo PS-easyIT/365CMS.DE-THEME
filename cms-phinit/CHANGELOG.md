@@ -56,6 +56,18 @@
 
 ---
 
+## v1.5.52 — 16. Mai 2026
+
+### Originalbilder und mobiler Featured-Banner
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Medien / Originalauslieferung | `partials/post-card.php`, `partials/home-featured-banner.php`, `partials/home-post-grid.php` und `partials/home-article-list.php` liefern Beitrags- und Featured-Artikelbilder direkt über die normalisierte Original-Upload-URL mit `filemtime`-Cachebuster aus, ohne AVIF-/WebP-/Thumbnail-`srcset`, damit nicht versehentlich komprimierte Derivate oder alte Browsercache-Versionen gewählt werden. |
+| 🎨 style | Startseite / Mobile Featured-Banner | `assets/css/homepage-blog.css`, `assets/css/homepage-blog-critical.css` und `partials/home-article-list.php` halten Featured-Artikelbilder mobil links neben Titel, Meta/Footer und Teaser statt oberhalb der Karte; die Sidebar-Featured-Box gibt ihr berechnetes Side-/Below-Layout jetzt wieder als Klasse aus. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.52` synchronisiert. |
+
+---
+
 ## v1.5.51 — 16. Mai 2026
 
 ### Listcard-Bilder: Medienersatz erneuert Derivate

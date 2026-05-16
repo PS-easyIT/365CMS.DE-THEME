@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.51",
+  "version": "1.5.52",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
   "release_date": "2026-05-16",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.52",
+      "date": "2026-05-16",
+      "changes": [
+        "partials/post-card.php + partials/home-featured-banner.php + partials/home-post-grid.php + partials/home-article-list.php: Beitrags- und Featured-Artikelbilder verwenden die direkte Original-Upload-URL mit filemtime-Cachebuster ohne AVIF-/WebP-/Thumbnail-srcset, damit Public-Browser keine komprimierten Derivate oder alte Cache-Versionen auswählen",
+        "assets/css/homepage-blog.css + assets/css/homepage-blog-critical.css + partials/home-article-list.php: Der mobile Featured-Banner bleibt im Bild-links-Layout neben Titel, Meta/Footer und Teaser; die Sidebar-Featured-Box gibt ihr berechnetes Side-/Below-Layout wieder als Klasse aus",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.52 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.51",
       "date": "2026-05-16",

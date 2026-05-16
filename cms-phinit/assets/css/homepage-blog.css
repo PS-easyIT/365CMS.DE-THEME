@@ -556,6 +556,7 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
     color: var(--text-secondary);
     margin: 6px 0 0;
     line-height: 1.55;
+    max-height: calc(1.55em * 2);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -1992,6 +1993,54 @@ body.dark-mode .sb-notice-body p {
     text-shadow: none;
 }
 
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-post {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-primary);
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-thumb,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-thumb--placeholder {
+    position: relative;
+    inset: auto;
+    width: 84px;
+    min-width: 84px;
+    height: 62px;
+    min-height: 62px;
+    max-height: 62px;
+    border-radius: 8px;
+    flex: 0 0 84px;
+    object-fit: cover;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-body {
+    position: relative;
+    inset: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0;
+    background: none;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-body::before,
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-title-badge {
+    display: none;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-body-inner {
+    padding: 0;
+}
+
+.homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-side:not(.sb-widget--featured-rotating) .sb-featured-title {
+    display: -webkit-box;
+    color: var(--text-primary);
+    text-shadow: none;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
 .homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-media-below .sb-featured-post {
     flex-direction: column;
 }
@@ -2686,23 +2735,69 @@ body.dark-mode .feed-dual-col {
     }
 
     .home-featured-banner {
-        grid-template-columns: 1fr;
-        grid-template-rows: 84px minmax(0, 1fr);
-        gap: 12px;
-        height: clamp(200px, 54vw, 250px);
-        max-height: 250px;
+        grid-template-columns: 96px minmax(0, 1fr);
+        grid-template-rows: none;
+        gap: 0;
+        height: 195px;
+        max-height: 195px;
         min-height: 0;
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .home-featured-banner--no-media {
+        grid-template-columns: minmax(0, 1fr);
+        height: clamp(180px, 48vw, 230px);
+        max-height: 230px;
         padding: 14px;
     }
 
     .home-featured-banner__media {
-        height: 84px;
-        max-height: 84px;
+        width: 96px;
+        min-width: 96px;
+        height: 195px;
+        max-height: 195px;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .home-featured-banner__media img {
+        object-fit: cover;
+        object-position: center top;
+        filter: none;
+        opacity: 1;
+    }
+
+    .home-featured-banner__body {
+        padding: 11px 13px;
+    }
+
+    .home-featured-banner__label {
+        margin-bottom: 4px;
+        padding-bottom: 3px;
+    }
+
+    .home-featured-banner__title {
+        font-size: .98rem;
+        line-height: 1.24;
     }
 
     .home-featured-banner__text {
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
+        margin-top: 7px;
+        font-size: var(--fs-sm);
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+
+    .home-featured-banner__footer {
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .home-featured-banner__button {
+        min-height: 30px;
+        padding: 3px 7px;
+        border-radius: 999px;
     }
 
     .info-grid,
@@ -2838,6 +2933,7 @@ body.dark-mode .feed-dual-col {
         margin: 7px 0 0;
         font-size: var(--fs-sm) !important;
         line-height: 1.6;
+        max-height: calc(1.6em * 3) !important;
     }
 
     .article-meta {
@@ -2996,6 +3092,28 @@ body.dark-mode .feed-dual-col {
 }
 
 @media (max-width: 480px) {
+    .home-featured-banner {
+        grid-template-columns: 80px minmax(0, 1fr);
+    }
+
+    .home-featured-banner__media {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .home-featured-banner__body {
+        padding: 10px 12px;
+    }
+
+    .home-featured-banner__title {
+        font-size: .92rem;
+    }
+
+    .home-featured-banner__text {
+        font-size: .82rem;
+        line-height: 1.55;
+    }
+
     .info-card-actions--count-3 {
         grid-template-columns: 1fr;
     }
@@ -3043,6 +3161,7 @@ body.dark-mode .feed-dual-col {
     .article-body p {
         font-size: .82rem !important;
         line-height: 1.55;
+        max-height: calc(1.55em * 3) !important;
     }
 
     .article-meta {
@@ -3185,6 +3304,7 @@ body.dark-mode .feed-dual-col {
     .article-body p {
         -webkit-line-clamp: 2 !important;
         line-clamp: 2 !important;
+        max-height: calc(1.6em * 2) !important;
     }
 
     .article-footer {
@@ -3293,6 +3413,7 @@ body.dark-mode .feed-dual-col {
     .article-list.article-list--framed > .article-card .article-body p {
         -webkit-line-clamp: 3 !important;
         line-clamp: 3 !important;
+        max-height: calc(1.6em * 3) !important;
     }
 
     .homepage-list-sidebar {
@@ -3450,6 +3571,7 @@ body.dark-mode .feed-dual-col {
         color: var(--text-secondary) !important;
         font-size: var(--fs-sm) !important;
         line-height: 1.6 !important;
+        max-height: calc(1.6em * 3) !important;
         -webkit-box-orient: vertical !important;
         -webkit-line-clamp: 3 !important;
         line-clamp: 3 !important;
@@ -3530,6 +3652,7 @@ body.dark-mode .feed-dual-col {
     .home-section--list .article-body p {
         font-size: .82rem !important;
         line-height: 1.55 !important;
+        max-height: calc(1.55em * 3) !important;
     }
 }
 
