@@ -1,12 +1,21 @@
-<?php if (!defined('ABSPATH')) exit; get_header(); ?>
-<main id="main" class="bb-main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="bb-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:5rem;font-family:var(--font-heading);color:var(--primary-color);line-height:1;">404</div>
-        <h1 style="font-family:var(--font-heading);margin:1rem 0 .5rem;">Seite nicht gefunden</h1>
-        <p style="color:var(--muted-color);">Die gesuchte Seite existiert nicht.</p>
-        <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;">
-            <a href="<?php echo SITE_URL; ?>" class="bb-btn bb-btn-primary">Zur Startseite</a>
-            <a href="<?php echo SITE_URL; ?>/handwerker" class="bb-btn bb-btn-outline">Handwerker finden</a>
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+
+$safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$siteUrl = SITE_URL;
+?>
+<main id="main" class="bb-main bb-error-screen" role="main">
+    <div class="bb-card bb-error-card">
+        <div class="bb-error-code">404</div>
+        <h1 class="bb-error-title">Seite nicht gefunden</h1>
+        <p class="bb-error-text">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
+        <div class="bb-error-actions">
+            <a href="<?php echo $safe($siteUrl); ?>" class="bb-btn bb-btn-primary">Zur Startseite</a>
+            <a href="<?php echo $safe(rtrim($siteUrl, '/') . '/handwerker'); ?>" class="bb-btn bb-btn-outline">Handwerker finden</a>
         </div>
     </div>
 </main>

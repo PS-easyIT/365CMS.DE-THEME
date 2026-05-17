@@ -1,10 +1,23 @@
-<?php if (!defined('ABSPATH')) exit; get_header(); $errorCode = $errorCode ?? 500; $errorMessage = $errorMessage ?? 'Ein Fehler ist aufgetreten.'; ?>
-<main id="main" class="bb-main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="bb-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:4rem;font-family:var(--font-heading);color:var(--accent-color);line-height:1;"><?php echo (int)$errorCode; ?></div>
-        <h1 style="font-family:var(--font-heading);margin:1rem 0 .5rem;">Systemfehler</h1>
-        <p style="color:var(--muted-color);"><?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?></p>
-        <a href="<?php echo SITE_URL; ?>" class="bb-btn bb-btn-primary" style="margin-top:1.5rem;">Zur Startseite</a>
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+
+$errorCode    = isset($errorCode)    ? (int) $errorCode    : 500;
+$errorMessage = isset($errorMessage) ? (string) $errorMessage : 'Ein Fehler ist aufgetreten.';
+$safe         = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$siteUrl      = SITE_URL;
+?>
+<main id="main" class="bb-main bb-error-screen" role="main">
+    <div class="bb-card bb-error-card">
+        <div class="bb-error-code bb-error-code--system"><?php echo (int) $errorCode; ?></div>
+        <h1 class="bb-error-title">Systemfehler</h1>
+        <p class="bb-error-text"><?php echo $safe($errorMessage); ?></p>
+        <div class="bb-error-actions">
+            <a href="<?php echo $safe($siteUrl); ?>" class="bb-btn bb-btn-primary">Zur Startseite</a>
+        </div>
     </div>
 </main>
 <?php get_footer(); ?>

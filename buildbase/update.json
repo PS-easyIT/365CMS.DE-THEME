@@ -3,12 +3,15 @@
   "name": "BuildBase",
   "type": "theme",
   "license": "free",
-  "version": "1.0.0",
-  "min_cms_version": "0.20.0",
-  "released": "2026-02-21",
+  "version": "3.0.1",
+  "min_cms_version": "3.0.0",
+  "requires_php": "8.4",
+  "released": "2026-05-17",
   "download_url": "",
   "checksum_sha256": "",
   "changelog": {
+    "3.0.1": "Re-Audit: v3-Hooks gehärtet, alle Customizer-Keys verkabelt, Inline-Styles entfernt, Blueprint-Hero, Sicherheits-Amber Akzente.",
+    "3.0.0": "Modernisierung auf 365CMS v3.x.x / PHP 8.4: cms_init-Menüregistrierung, Customizer-Key-Mapping, Reduced-Motion-Navigation.",
     "1.0.0": "Erstveröffentlichung: Bau- & Handwerk-Theme."
   }
 }
