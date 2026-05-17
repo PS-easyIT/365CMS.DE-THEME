@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * IT Expert Network Theme - Functions
  *
- * Theme-spezifische Funktionen, Hooks und Helper-Klassen für das CMSv2-System.
+ * Theme-spezifische Funktionen, Hooks und Helper-Klassen für das 365CMS v3-System.
  *
  * @package IT_Expert_Network_Theme
  * @version 1.0.0
@@ -81,6 +81,30 @@ class IT_Expert_Network_Theme
         // Sidebar CSS-Variablen aus Customizer injizieren
         \CMS\Hooks::addAction('head', [$this, 'outputSidebarStyles'], 26);
     }
+
+    private function getSettingOption(string $key, string $default = ''): string
+    {
+        try {
+            $db = \CMS\Database::instance();
+            $row = $db->execute(
+                "SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = ?",
+                [$key]
+            )->fetch();
+
+            if ($row === false || $row === null) {
+                return $default;
+            }
+
+            return (string)($row->option_value ?? $row['option_value'] ?? $default);
+        } catch (\Throwable) {
+            return $default;
+        }
+    }
+
+    private function isLocalFontsEnabled(): bool
+    {
+        return $this->getSettingOption('privacy_use_local_fonts', '0') === '1';
+    }
     
     /**
      * Output Custom Header Code from SEO Settings
@@ -100,10 +124,7 @@ class IT_Expert_Network_Theme
      */
     public function outputCookieBanner(): void
     {
-        $db = \CMS\Database::instance();
-        // Check if cookie banner is enabled
-        $enabled = $db->execute("SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = 'cookie_consent_enabled'")->fetch();
-        if (!$enabled || $enabled->option_value !== '1') {
+        if ($this->getSettingOption('cookie_consent_enabled', '0') !== '1') {
             return;
         }
 
@@ -111,8 +132,7 @@ class IT_Expert_Network_Theme
         $settings = [];
         $keys = ['cookie_banner_position', 'cookie_banner_text', 'cookie_accept_text', 'cookie_essential_text', 'cookie_policy_url', 'cookie_primary_color'];
         foreach ($keys as $k) {
-            $row = $db->execute("SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = ?", [$k])->fetch();
-            $settings[$k] = $row ? $row->option_value : '';
+            $settings[$k] = $this->getSettingOption($k, '');
         }
 
         // Defaults
@@ -198,6 +218,7 @@ HTML;
     {
         $v = THEME_VERSION;
         $styleUrl = htmlspecialchars((string) (THEME_URL_BASE . '/style.css?v=' . $v), ENT_QUOTES, 'UTF-8');
+        echo '<link rel="preload" href="' . $styleUrl . '" as="style">' . "\n";
         echo '<link rel="stylesheet" href="' . $styleUrl . '">' . "\n";
     }
 
@@ -236,14 +257,12 @@ HTML;
      */
     public function outputPreconnect(): void
     {
-        // Don't preconnect to Google if we use local fonts
-        $db = \CMS\Database::instance();
-        $useLocal = $db->execute("SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = 'privacy_use_local_fonts'")->fetch();
-        if ($useLocal && $useLocal->option_value === '1') {
+        if ($this->isLocalFontsEnabled()) {
             return;
         }
 
         echo '<link rel="preconnect" href="' . htmlspecialchars('https://fonts.googleapis.com', ENT_QUOTES, 'UTF-8') . '">' . "\n";
+        echo '<link rel="preconnect" href="' . htmlspecialchars('https://fonts.gstatic.com', ENT_QUOTES, 'UTF-8') . '" crossorigin>' . "\n";
         echo '<link rel="dns-prefetch" href="' . htmlspecialchars('//fonts.googleapis.com', ENT_QUOTES, 'UTF-8') . '">' . "\n";
     }
 
@@ -252,11 +271,7 @@ HTML;
      */
     public function outputGoogleFonts(): void
     {
-        // Check if local fonts are enabled
-        $db = \CMS\Database::instance();
-        $useLocal = $db->execute("SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = 'privacy_use_local_fonts'")->fetch();
-        
-        if ($useLocal && $useLocal->option_value === '1') {
+        if ($this->isLocalFontsEnabled()) {
             // Use local CSS if available
             if (file_exists(ASSETS_PATH . 'css/local-fonts.css')) {
                 $localFontsUrl = function_exists('cms_asset_url')
@@ -545,7 +560,8 @@ HTML;
                      FROM {$prefix}feed_items fi
                      WHERE fi.is_hidden = 0
                      ORDER BY fi.pub_date DESC
-                     LIMIT " . $count
+                     LIMIT ?",
+                    [$count]
                 );
                 $items = $stmt->fetchAll() ?: [];
             } catch (\Throwable $e) { /* feed_items ggf. nicht vorhanden */ }
@@ -695,7 +711,8 @@ HTML;
                  FROM {$prefix}posts
                  WHERE status = 'published'
                  ORDER BY published_at DESC
-                 LIMIT " . $count
+                 LIMIT ?",
+                [$count]
             );
             $posts = $stmt->fetchAll() ?: [];
         } catch (\Throwable $e) { /* posts-Tabelle ggf. nicht vorhanden */ }

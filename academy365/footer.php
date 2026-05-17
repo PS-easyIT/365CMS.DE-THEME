@@ -2,9 +2,15 @@
 $safe = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 try { $c = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable $e) { $c = null; }
 $copyrightText = $c ? $c->get('footer', 'copyright_text', '') : '';
+$footerText = $c ? $c->get('footer', 'footer_text', 'Lernen ohne Grenzen. Starte noch heute.') : 'Lernen ohne Grenzen. Starte noch heute.';
 $siteTitle     = \CMS\ThemeManager::instance()->getSiteTitle();
 $siteUrl       = SITE_URL;
 $year          = date('Y');
+$copyrightLine = str_replace(
+    ['{year}', '{site_title}'],
+    [$year, $siteTitle],
+    (string) $copyrightText
+);
 ?>
 </div><!-- #content .ac-site-content -->
 <footer id="colophon" class="ac-site-footer" role="contentinfo">
@@ -13,7 +19,7 @@ $year          = date('Y');
             <a href="<?php echo $safe($siteUrl); ?>" class="ac-footer-logo">
                 <span aria-hidden="true">🎓</span><?php echo $safe($siteTitle); ?>
             </a>
-            <p class="ac-footer-tagline">Lernen ohne Grenzen. Starte noch heute.</p>
+            <p class="ac-footer-tagline"><?php echo $safe((string) $footerText); ?></p>
         </div>
         <nav class="ac-footer-nav" aria-label="Fußzeilen-Navigation">
             <div class="ac-footer-col">
@@ -57,7 +63,7 @@ $year          = date('Y');
         <div class="ac-container">
             <p>
                 <?php if ($copyrightText && trim($copyrightText) !== '') : ?>
-                    <?php echo $safe($copyrightText); ?>
+                    <?php echo $safe($copyrightLine); ?>
                 <?php else : ?>
                     &copy; <?php echo $year; ?> <?php echo $safe($siteTitle); ?>. Alle Rechte vorbehalten.
                 <?php endif; ?>

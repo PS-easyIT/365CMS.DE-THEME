@@ -168,7 +168,8 @@ if ($showExperts && $hasExperts) {
              FROM {$prefix}experts e
              WHERE e.status = 'active'
              ORDER BY e.created_at DESC
-             LIMIT " . $expertsLimit
+             LIMIT ?",
+            [$expertsLimit]
         );
         $experts = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }
@@ -179,7 +180,8 @@ $companies = [];
 if ($showCompanies && $hasCompanies) {
     try {
         $stmt = $db->execute(
-            "SELECT * FROM {$prefix}companies WHERE status = 'active' ORDER BY created_at DESC LIMIT " . $companiesLimit
+            "SELECT * FROM {$prefix}companies WHERE status = 'active' ORDER BY created_at DESC LIMIT ?",
+            [$companiesLimit]
         );
         $companies = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }
@@ -190,7 +192,8 @@ $events = [];
 if (($showEvents || $showStrip) && $hasEvents) {
     try {
         $stmt = $db->execute(
-            "SELECT * FROM {$prefix}events WHERE status = 'published' AND event_date >= CURDATE() ORDER BY event_date ASC LIMIT " . $eventsLimit
+            "SELECT * FROM {$prefix}events WHERE status = 'published' AND event_date >= CURDATE() ORDER BY event_date ASC LIMIT ?",
+            [$eventsLimit]
         );
         $events = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }
@@ -210,7 +213,8 @@ if ($showSpeakers && $hasSpeakers) {
              FROM {$prefix}speakers s
              WHERE s.status = 'active'
              ORDER BY s.is_featured DESC, s.created_at DESC
-             LIMIT " . $speakersLimit
+             LIMIT ?",
+            [$speakersLimit]
         );
         $speakers = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }
@@ -226,7 +230,8 @@ if ($showJobs && $hasJobs) {
              FROM {$prefix}jpg_profiles p
              WHERE p.status = 'published'
              ORDER BY p.published_at DESC, p.created_at DESC
-             LIMIT " . $jobsLimit
+             LIMIT ?",
+            [$jobsLimit]
         );
         $jobs = $stmt->fetchAll() ?: [];
     } catch (\Throwable $e) { /* */ }

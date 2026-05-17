@@ -2,37 +2,46 @@
 <main id="main" class="ac-main-content" role="main">
 <?php
 $safe = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$safeHeadline = static function (string $value): string {
+    return preg_replace('/\r\n|\r|\n/', '<br>', htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8')) ?? '';
+};
+$slugify = static function (string $value): string {
+    $slug = strtolower(trim($value));
+    $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug) ?? '';
+    $slug = trim($slug, '-');
+    return $slug !== '' ? $slug : 'kurs';
+};
 try {
     $c = \CMS\Services\ThemeCustomizer::instance();
     // --- learning_hero ---
     $heroBadge       = $c->get('learning_hero', 'hero_badge',             'Die #1 Lernplattform');
     $heroHeadline    = $c->get('learning_hero', 'hero_headline',          'Lerne neue Skills.<br>Starte deine Karriere.');
     $heroSubline     = $c->get('learning_hero', 'hero_subline',           'Tausende Kurse von echten Experten – jederzeit und überall verfügbar.');
-    $heroCta         = $c->get('learning_hero', 'hero_cta_label',         'Kurse entdecken');
-    $heroCtaUrl      = $c->get('learning_hero', 'hero_cta_url',           SITE_URL . '/courses');
-    $heroSecCta      = $c->get('learning_hero', 'hero_secondary_cta_label', 'Als Tutor anmelden');
-    $heroSecCtaUrl   = $c->get('learning_hero', 'hero_secondary_cta_url',   SITE_URL . '/tutor-register');
-    $coursesLabel    = $c->get('learning_hero', 'courses_label',  '2.400+ Kurse');
-    $studentsLabel   = $c->get('learning_hero', 'students_label', '185.000 Lernende');
-    $tutorsLabel     = $c->get('learning_hero', 'tutors_label',   '620 Tutoren');
+    $heroCta         = $c->get('learning_hero', 'hero_cta_courses',         'Kurskatalog entdecken');
+    $heroCtaUrl      = SITE_URL . '/courses';
+    $heroSecCta      = $c->get('learning_hero', 'hero_cta_start', 'Kostenlos starten');
+    $heroSecCtaUrl   = SITE_URL . '/register';
+    $coursesLabel    = $c->get('learning_hero', 'hero_stat_courses',  '2.400+ Kurse');
+    $studentsLabel   = $c->get('learning_hero', 'hero_stat_students', '185.000 Lernende');
+    $tutorsLabel     = $c->get('learning_hero', 'hero_stat_tutors',   '620 Dozenten');
     // --- learning_courses ---
-    $coursesSectionTitle = $c->get('learning_courses', 'courses_section_title', 'Beliebte Kurse');
-    $labelFree       = $c->get('learning_courses', 'badge_label_free',   'Kostenlos');
-    $labelCert       = $c->get('learning_courses', 'badge_label_cert',   'Zertifikat');
-    $labelNew        = $c->get('learning_courses', 'badge_label_new',    'Neu');
-    $labelBest       = $c->get('learning_courses', 'badge_label_best',   'Bestseller');
-    $showRating      = (bool) $c->get('learning_courses', 'show_rating', true);
-    $showParticipants= (bool) $c->get('learning_courses', 'show_participants', true);
-    $showDuration    = (bool) $c->get('learning_courses', 'show_duration', true);
-    $showProgress    = (bool) $c->get('learning_courses', 'show_progress_bar', false);
-    $enableGami      = (bool) $c->get('learning_courses', 'enable_gamification', true);
+    $coursesSectionTitle = $c->get('learning_courses', 'featured_courses_title', 'Empfohlene Kurse');
+    $labelFree       = $c->get('learning_courses', 'free_label',   'Kostenlos');
+    $labelCert       = $c->get('learning_courses', 'certificate_label',   'Mit Zertifikat');
+    $labelNew        = $c->get('learning_courses', 'new_badge_label',    'Neu');
+    $labelBest       = $c->get('learning_courses', 'bestseller_label',   'Bestseller');
+    $showRating      = filter_var($c->get('learning_courses', 'show_course_rating', true), FILTER_VALIDATE_BOOLEAN);
+    $showParticipants= filter_var($c->get('learning_courses', 'show_participant_count', true), FILTER_VALIDATE_BOOLEAN);
+    $showDuration    = filter_var($c->get('learning_courses', 'show_duration', true), FILTER_VALIDATE_BOOLEAN);
+    $showProgress    = filter_var($c->get('layout', 'show_progress_bars', true), FILTER_VALIDATE_BOOLEAN);
+    $enableGami      = filter_var($c->get('advanced', 'enable_gamification', false), FILTER_VALIDATE_BOOLEAN);
     // --- learning_content ---
-    $tutorTitle      = $c->get('learning_content', 'tutor_section_title', 'Lerne von den Besten');
-    $tutorSubline    = $c->get('learning_content', 'tutor_section_subline', 'Unsere Tutoren sind erfahrene Praktiker aus der Industrie.');
-    $subscriptionCta = $c->get('learning_content', 'subscription_cta_title', 'Unbegrenztes Lernen mit Academy365 Pro');
-    $subscriptionSub = $c->get('learning_content', 'subscription_cta_subline', 'Alle Kurse – ein Preis. Starte noch heute.');
-    $subscriptionBtn = $c->get('learning_content', 'subscription_cta_button', 'Jetzt Pro werden');
-    $subscriptionUrl = $c->get('learning_content', 'subscription_cta_url', SITE_URL . '/pro');
+    $tutorTitle      = $c->get('learning_content', 'tutors_section_title', 'Unsere Experten-Dozenten');
+    $tutorSubline    = 'Unsere Dozenten verbinden Praxiswissen mit didaktischer Erfahrung.';
+    $subscriptionCta = $c->get('learning_content', 'cta_section_title', 'Starte Deine Weiterbildung heute');
+    $subscriptionSub = $c->get('learning_content', 'cta_section_text', 'Registriere Dich kostenlos und starte mit ausgewählten Kursen.');
+    $subscriptionBtn = $c->get('learning_content', 'subscription_cta_label', 'Premium 7 Tage gratis testen');
+    $subscriptionUrl = SITE_URL . '/register';
 } catch (\Throwable $e) {
     $heroBadge = 'Die #1 Lernplattform'; $heroHeadline = 'Lerne neue Skills.<br>Starte deine Karriere.';
     $heroSubline = 'Tausende Kurse von echten Experten.'; $heroCta = 'Kurse entdecken';
@@ -53,7 +62,7 @@ try {
         <?php if ($heroBadge && trim($heroBadge) !== '') : ?>
             <span class="ac-hero-badge"><?php echo $safe($heroBadge); ?></span>
         <?php endif; ?>
-        <h1 class="ac-hero-headline"><?php echo $heroHeadline; ?></h1>
+            <h1 class="ac-hero-headline"><?php echo $safeHeadline((string) $heroHeadline); ?></h1>
         <?php if ($heroSubline && trim($heroSubline) !== '') : ?>
             <p class="ac-hero-subline"><?php echo $safe($heroSubline); ?></p>
         <?php endif; ?>
@@ -135,7 +144,7 @@ try {
                         </div>
                         <small><?php echo $course['progress']; ?>% abgeschlossen</small>
                     <?php endif; ?>
-                    <a href="<?php echo $safe(SITE_URL . '/courses/' . sanitize_title($course['title'])); ?>" class="ac-btn ac-btn-secondary ac-btn-sm ac-mt-1">Zum Kurs</a>
+                    <a href="<?php echo $safe(SITE_URL . '/courses/' . $slugify((string) $course['title'])); ?>" class="ac-btn ac-btn-secondary ac-btn-sm ac-mt-1">Zum Kurs</a>
                 </div>
             </article>
             <?php endforeach; ?>
@@ -170,7 +179,7 @@ try {
             </div>
             <?php endfor; ?>
         </div>
-        <div style="text-align:center;margin-top:2rem;">
+        <div class="ac-section-cta-row">
             <a href="<?php echo $safe(SITE_URL . '/tutors'); ?>" class="ac-btn ac-btn-secondary">Alle Tutoren →</a>
         </div>
     </div>
@@ -178,13 +187,13 @@ try {
 
 <!-- SUBSCRIPTION CTA -->
 <section class="ac-cta-section" aria-labelledby="cta-heading">
-    <div class="ac-container" style="text-align:center;">
+    <div class="ac-container ac-cta-section-inner">
         <?php if ($enableGami) : ?>
             <span class="ac-xp-badge ac-mb-1">PRO</span>
         <?php endif; ?>
         <h2 id="cta-heading"><?php echo $safe($subscriptionCta); ?></h2>
         <?php if ($subscriptionSub && trim($subscriptionSub) !== '') : ?>
-            <p class="ac-hero-subline" style="color:rgba(255,255,255,.85);"><?php echo $safe($subscriptionSub); ?></p>
+            <p class="ac-hero-subline ac-hero-subline--on-dark"><?php echo $safe($subscriptionSub); ?></p>
         <?php endif; ?>
         <a href="<?php echo $safe($subscriptionUrl); ?>" class="ac-btn ac-btn-accent ac-btn-lg"><?php echo $safe($subscriptionBtn); ?></a>
     </div>

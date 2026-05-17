@@ -5,7 +5,7 @@ Author: PHINIT.DE / Andreas Hepp
 Author URI: https://365cms.de
 Description: IT-Networking-Dashboard – Deep Navy, Gold-Akzente, modulares Kachel-Layout für Experten, Firmen, Events & Speaker.
 Version: 3.4.13
-Requires PHP: 8.1
+Requires PHP: 8.4
 License: GNU General Public License v2 or later
 */
 
@@ -72,6 +72,8 @@ License: GNU General Public License v2 or later
     /* Transitions */
     --transition: all 0.2s ease;
     --transition-fast: all 0.15s ease;
+    --focus-ring-color: var(--accent-color);
+    --focus-ring-shadow: 0 0 0 0.2rem rgb(200 149 46 / 0.22);
 }
 
 /* ===== Reduced Motion ===== */
@@ -168,10 +170,10 @@ a {
 a:hover { color: var(--link-hover-color, var(--accent-hover)); }
 
 /* ===== Accessibility ===== */
-*:focus { outline: none; }
+:focus:not(:focus-visible) { outline: none; }
 
 *:focus-visible {
-    outline: 3px solid var(--accent-color);
+    outline: 3px solid var(--focus-ring-color);
     outline-offset: 2px;
     border-radius: 2px;
 }
@@ -958,6 +960,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
 .hero-search-field select:focus {
     outline: none;
     border-color: var(--accent-color);
+    box-shadow: var(--focus-ring-shadow);
 }
 
 .hero-search-field select {
@@ -988,6 +991,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
 }
 
 .hero-search-btn:hover { background: var(--accent-hover); }
+.hero-search-btn:focus-visible { box-shadow: var(--focus-ring-shadow); }
 
 /* Search Tags */
 .search-tags {
@@ -2082,7 +2086,7 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
 .form-control:focus {
     outline: none;
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgb(200 149 46 / 0.1);
+    box-shadow: var(--focus-ring-shadow);
 }
 
 .form-control::placeholder { color: var(--muted-color); }
@@ -3085,7 +3089,7 @@ body.dark-mode .btn-secondary {
     transition: var(--transition-fast);
 }
 .directory-search-input::placeholder { color: rgba(255,255,255,.55); }
-.directory-search-input:focus       { outline: none; border-color: var(--accent-color); background: rgba(255,255,255,.18); }
+.directory-search-input:focus       { outline: none; border-color: var(--accent-color); background: rgba(255,255,255,.18); box-shadow: var(--focus-ring-shadow); }
 .directory-search-btn               { flex-shrink: 0; }
 
 /* ── Breadcrumb ── */
@@ -3140,7 +3144,7 @@ body.dark-mode .btn-secondary {
 .filter-select { width: 100%; padding: .55rem .75rem; border: 1px solid var(--border-color); border-radius: 6px; background: #fff; font-size: .9rem; color: var(--text-color); cursor: pointer; }
 .filter-input  { width: 100%; padding: .55rem .75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: .9rem; color: var(--text-color); box-sizing: border-box; }
 .filter-input:focus,
-.filter-select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(200,149,46,.15); }
+.filter-select:focus { outline: none; border-color: var(--accent-color); box-shadow: var(--focus-ring-shadow); }
 .filter-apply-btn { width: 100%; margin-top: .25rem; }
 .filter-reset-btn { display: block; width: 100%; text-align: center; margin-top: .5rem; font-size: .85rem; }
 .empty-state-reset-btn { margin-top: 1rem; }

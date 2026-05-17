@@ -5,6 +5,7 @@
  */
 (function () {
   'use strict';
+  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ──────────────────────────────────────────
    * Sticky Header
@@ -61,11 +62,13 @@
   if (searchToggle && searchPanel) {
     const openSearch = () => {
       searchPanel.hidden = false;
+      searchPanel.setAttribute('aria-hidden', 'false');
       searchToggle.setAttribute('aria-expanded', 'true');
       if (searchInput) setTimeout(() => searchInput.focus(), 50);
     };
     const closeSearch = () => {
       searchPanel.hidden = true;
+      searchPanel.setAttribute('aria-hidden', 'true');
       searchToggle.setAttribute('aria-expanded', 'false');
       searchToggle.focus();
     };
@@ -94,8 +97,15 @@
       observer.unobserve(bar);
     });
   };
-  const progressObserver = new IntersectionObserver(animateProgressBars, { threshold: 0.3 });
-  document.querySelectorAll('.ac-progress-bar').forEach((bar) => progressObserver.observe(bar));
+  if ('IntersectionObserver' in window) {
+    const progressObserver = new IntersectionObserver(animateProgressBars, { threshold: 0.3 });
+    document.querySelectorAll('.ac-progress-bar').forEach((bar) => progressObserver.observe(bar));
+  } else {
+    document.querySelectorAll('.ac-progress-bar').forEach((bar) => {
+      const target = parseInt(bar.getAttribute('data-progress') || '0', 10);
+      bar.style.width = Math.min(100, Math.max(0, target)) + '%';
+    });
+  }
 
   /* ──────────────────────────────────────────
    * Rating Stars – build visual star fill via CSS var
@@ -110,7 +120,7 @@
    * Scroll Reveal – .ac-card, .ac-tutor-card, .ac-stat-item
    * ────────────────────────────────────────── */
   const revealItems = document.querySelectorAll('.ac-card, .ac-stat-item, .ac-tutor-card');
-  if (revealItems.length) {
+  if (!prefersReducedMotion && revealItems.length && 'IntersectionObserver' in window) {
     revealItems.forEach((el, i) => {
       el.style.opacity = '0';
       el.style.transform = 'translateY(24px)';
@@ -131,7 +141,7 @@
    * Hero Stats Counter Animation
    * ────────────────────────────────────────── */
   const statItems = document.querySelectorAll('.ac-stat-item');
-  if (statItems.length) {
+  if (!prefersReducedMotion && statItems.length && 'IntersectionObserver' in window) {
     const countObserver = new IntersectionObserver((entries, obs) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
