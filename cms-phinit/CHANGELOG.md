@@ -57,6 +57,18 @@
 
 ---
 
+## v1.5.64 — 17. Mai 2026
+
+### Dropdown-Pfeile in der Hauptnavigation korrigiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Header / Dropdown-Menü | `header.php` dekodiert Menü- und Quicklink-Labels vor dem finalen Escaping sicher mit `html_entity_decode()`, sodass gespeicherte Entities wie `&rsaquo;` als Zeichen statt als sichtbarer Entity-Text erscheinen. |
+| 🔴 fix | Header / Dropdown-CSS | `assets/css/header-navigation.css` nutzt für dekorative Untermenü-Pfeile den Unicode-Escape `\203A`, damit der Browser zuverlässig `›` rendert. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.64` synchronisiert. |
+
+---
+
 ## v1.5.63 — 16. Mai 2026
 
 ### Desktop Grid-Abstand und Inline-CSS-Minifizierung

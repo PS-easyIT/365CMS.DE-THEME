@@ -1,7 +1,7 @@
 # 365Network Theme – Dokumentation
 
 > **Theme-Slug:** `365Network`  
-> **Version:** 3.4.11  
+> **Version:** 3.4.13  
 > **Design:** Deep Navy (#0c1526) + Gold (#c8952e)  
 > **Typ:** Dashboard-orientiertes IT-Experten-Netzwerk-Theme
 
@@ -35,6 +35,8 @@ Das 365Network-Theme ist ein **Dashboard-Style-Theme** für die 365CMS-Plattform
 - Die Hotfixes `v3.4.7` und `v3.4.8` härten den eingebetteten Theme-Customizer und die Homepage weiter nach: `admin/customizer.php` fällt bei früher Bootstrap-Reihenfolge sicher auf Core-Sanitizer zurück, und `home.php` normalisiert Bereichs-, Detail- und CTA-Links sowie Firmen-/Experten-Medienpfade jetzt konsequent fail-closed.
 - `v3.4.9` vereinheitlicht schließlich auch die Ausgabe der statischen Theme-Assets in `functions.php`, sodass `style.css`, `js/navigation.js` und `js/theme.js` denselben Attribut-Escaping-Standard wie die übrigen Frontend-URLs einhalten.
 - `v3.4.10` zieht Footer-, Fallback- und Head-Details nach: `footer.php` bündelt seine Safe-URL-Ziele zentral, `index.php` läuft nun ebenfalls mit `declare(strict_types=1)`, und `functions.php` normalisiert `og:url` sowie die Preconnect-Hints konsequent über denselben Attribut-Ausgabepfad.
+- `v3.4.13` synchronisiert das Theme-Cache-Busting: `THEME_VERSION` in `functions.php` entspricht wieder `style.css`, `theme.json` und `update.json`, damit geänderte Header-/Layout-CSS zuverlässig neu geladen wird.
+- `v3.4.12` gibt den `body_class`-Filter am `<body>` aus, damit Plugin-spezifische Embed-Klassen und Layout-Resets auf öffentlichen Pluginseiten greifen.
 - `v3.4.11` schließt eine Admin-Lücke im Menüeditor: `theme.json` deklariert die 365Network-Menüpositionen jetzt explizit, damit Header-, Mobile-, Footer- und Speaker-Menüs auch ohne voll geladenes Theme im Admin korrekt erkannt und gespeichert werden.
 - In den Theme-PHP-Templates verbleiben nach aktuellem Audit keine eingebetteten `<style>`-Blöcke mehr; Frontend-Styling sitzt jetzt konsistenter in `style.css`.
 - Aktuelle manuelle Audit-Scorecard: **Security 98/100 · Best Practice 97/100 · Performance 94/100 · Maintainability 98/100**.

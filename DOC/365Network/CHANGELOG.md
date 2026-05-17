@@ -12,6 +12,22 @@
 
 ---
 
+## v3.4.13 — Mai 2026
+
+### Theme-CSS-Cache-Busting synchronisiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Cache-Busting | `THEME_VERSION` in `functions.php` auf `3.4.13` synchronisiert, damit Browser die geänderte `style.css` nicht weiter über die alte `3.4.11`-URL laden. |
+
+## v3.4.12 — Mai 2026
+
+### Plugin-Body-Klassen im Header verfügbar
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Header | `header.php` gibt den `body_class`-Filter jetzt am `<body>` aus. Dadurch greifen Plugin-spezifische Body-Klassen und Layout-Resets auf öffentlichen Pluginseiten zuverlässig. |
+
 ## v3.4.10 — März 2026
 ---
 

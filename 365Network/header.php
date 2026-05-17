@@ -116,7 +116,12 @@ $registerUrl = theme_route_url('register');
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 
-<body>
+<body<?php
+    $bodyClasses = \CMS\Hooks::applyFilters('body_class', $isLoggedIn ? 'is-logged-in' : '');
+    $bodyClasses = trim((string) $bodyClasses);
+    $bodyClassAttribute = htmlspecialchars($bodyClasses, ENT_QUOTES, 'UTF-8');
+    echo $bodyClassAttribute !== '' ? ' class="' . $bodyClassAttribute . '"' : '';
+?>>
 <?php \CMS\Hooks::doAction('body_start'); ?>
 <div id="page" class="site">
     <a class="skip-link" href="#content">Zum Inhalt springen</a>

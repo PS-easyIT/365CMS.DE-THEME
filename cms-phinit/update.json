@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.63",
+  "version": "1.5.64",
   "requires_cms": "2.5.0",
   "tested_up_to": "2.9.788",
-  "release_date": "2026-05-16",
+  "release_date": "2026-05-17",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.64",
+      "date": "2026-05-17",
+      "changes": [
+        "header.php: Navigations- und Quicklink-Labels werden vor dem finalen htmlspecialchars() sicher per html_entity_decode() normalisiert, sodass gespeicherte Entities wie &rsaquo; als Zeichen statt als Text erscheinen",
+        "assets/css/header-navigation.css: Dropdown-Pfeile nutzen den Unicode-Escape \\203A statt eines literal/HTML-Entity-abhängigen Zeichens",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.64 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.63",
       "date": "2026-05-16",

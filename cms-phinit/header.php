@@ -409,8 +409,13 @@ if ($_showLanguageSwitch) {
 
                 return false;
             };
+            $normalizeNavLabel = static function (mixed $label): string {
+                $decodedLabel = html_entity_decode(trim((string) $label), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+                return trim($decodedLabel);
+            };
             $dropdownIndex = 0;
-            $renderDesktopMenuItems = static function (array $items, int $depth = 0) use (&$renderDesktopMenuItems, $navIsActive, $navItemHasActiveBranch, $_localizedHref, $_currentLocale, &$dropdownIndex): void {
+            $renderDesktopMenuItems = static function (array $items, int $depth = 0) use (&$renderDesktopMenuItems, $navIsActive, $navItemHasActiveBranch, $normalizeNavLabel, $_localizedHref, $_currentLocale, &$dropdownIndex): void {
                 foreach ($items as $item) {
                     if (!is_array($item)) {
                         continue;
@@ -418,7 +423,7 @@ if ($_showLanguageSwitch) {
 
                     $itemUrl = (string) ($item['url'] ?? '#');
                     $itemHref = $_localizedHref($itemUrl);
-                    $itemLabel = trim((string) ($item['label'] ?? ''));
+                    $itemLabel = $normalizeNavLabel($item['label'] ?? '');
                     $itemChildren = is_array($item['children'] ?? null) ? $item['children'] : [];
                     $itemIsCurrent = $navIsActive($itemUrl);
                     $itemIsActiveBranch = $navItemHasActiveBranch($item);
@@ -465,13 +470,13 @@ if ($_showLanguageSwitch) {
                     <?php
                 }
             };
-            $renderMobileMenuItems = static function (array $items, int $depth = 0) use (&$renderMobileMenuItems, $_localizedHref): void {
+            $renderMobileMenuItems = static function (array $items, int $depth = 0) use (&$renderMobileMenuItems, $normalizeNavLabel, $_localizedHref): void {
                 foreach ($items as $item) {
                     if (!is_array($item)) {
                         continue;
                     }
 
-                    $itemLabel = trim((string) ($item['label'] ?? ''));
+                    $itemLabel = $normalizeNavLabel($item['label'] ?? '');
                     if ($itemLabel === '') {
                         continue;
                     }
@@ -607,7 +612,7 @@ if ($_showLanguageSwitch) {
                     <nav class="sub-nav" aria-label="<?php echo htmlspecialchars(phinit_t('quicklinks', [], $_currentLocale), ENT_QUOTES); ?>">
                         <?php if (!empty($quicklinkItems)): ?>
                             <?php foreach ($quicklinkItems as $ql): ?>
-                            <a href="<?php echo htmlspecialchars($_localizedHref((string) ($ql['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($ql['label'] ?? '', ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref((string) ($ql['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($normalizeNavLabel($ql['label'] ?? ''), ENT_QUOTES); ?></a>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/entra-id', $_currentLocale), ENT_QUOTES); ?>">Entra ID</a>

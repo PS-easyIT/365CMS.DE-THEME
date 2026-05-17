@@ -608,7 +608,7 @@
     box-shadow: none;
 }
 .main-nav .dropdown a::before {
-    content: '›';
+    content: '\203A';
     flex: 0 0 auto;
     color: color-mix(in srgb, var(--accent-color) 84%, white 16%);
     font-size: .9rem;
@@ -663,7 +663,7 @@
     line-height: 1.35;
 }
 .main-nav .dropdown .main-nav__item-head > .main-nav__link::before {
-    content: '›';
+    content: '\203A';
     flex: 0 0 auto;
     color: color-mix(in srgb, var(--accent-color) 84%, white 16%);
     font-size: .9rem;
