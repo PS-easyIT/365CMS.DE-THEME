@@ -10,6 +10,7 @@ final class MedCare_Theme {
         \CMS\Hooks::addAction('head',          [$this, 'outputGoogleFonts'],      5);
         \CMS\Hooks::addAction('head',          [$this, 'outputCustomStyles'],    15);
         \CMS\Hooks::addAction('before_footer', [$this, 'outputNavigationScript'],99);
+        \CMS\Hooks::addAction('cms_init',      [$this, 'registerNavMenus'],      10);
         \CMS\Hooks::addAction('init',          [$this, 'registerNavMenus'],      10);
     }
     public function registerNavMenus(): void {
@@ -21,25 +22,48 @@ final class MedCare_Theme {
         $fonts = 'Open+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;700';
         echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
         echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
-        echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=' . $fonts . '&display=swap">' . "\n";
+        $url = 'https://fonts.googleapis.com/css2?family=' . $fonts . '&display=swap';
+        echo '<link rel="stylesheet" href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+    }
+
+    private function mapFontChoice(string $fontChoice, string $fallback): string
+    {
+        return match ($fontChoice) {
+            'open-sans' => '"Open Sans", sans-serif',
+            'roboto' => 'Roboto, sans-serif',
+            'lato' => 'Lato, sans-serif',
+            'inter' => 'Inter, sans-serif',
+            'source-sans-pro' => '"Source Sans 3", sans-serif',
+            'libre-baskerville' => '"Libre Baskerville", serif',
+            'source-serif-pro' => '"Source Serif 4", serif',
+            'georgia' => 'Georgia, serif',
+            default => $fallback,
+        };
     }
     public function outputCustomStyles(): void {
         try { $c = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable $e) { return; }
-        $p = fn(string $s, string $k, string $d) => htmlspecialchars($c->get($s, $k, $d), ENT_QUOTES, 'UTF-8');
+        $p = fn(string $s, string $k, string $d) => htmlspecialchars((string) $c->get($s, $k, $d), ENT_QUOTES, 'UTF-8');
+        $baseFontChoice = (string) $c->get('typography', 'font_family_base', 'open-sans');
+        $headingFontChoice = (string) $c->get('typography', 'font_family_heading', 'source-sans-pro');
+        $medicalTextChoice = (string) $c->get('typography', 'font_family_medical_text', 'source-serif-pro');
+        $baseFont = htmlspecialchars($this->mapFontChoice($baseFontChoice, '"Open Sans", sans-serif'), ENT_QUOTES, 'UTF-8');
+        $headingFont = htmlspecialchars($this->mapFontChoice($headingFontChoice, '"Source Sans 3", sans-serif'), ENT_QUOTES, 'UTF-8');
+        $medicalTextFont = htmlspecialchars($this->mapFontChoice($medicalTextChoice, '"Source Serif 4", serif'), ENT_QUOTES, 'UTF-8');
         echo '<style id="mc-custom-vars">:root{';
         echo '--primary-color:'    . $p('colors', 'primary_color',   '#0ea5e9') . ';';
-        echo '--primary-dark:'     . $p('colors', 'primary_dark',    '#0284c7') . ';';
-        echo '--secondary-color:'  . $p('colors', 'secondary_color', '#0c4a6e') . ';';
+        echo '--primary-dark:'     . $p('colors', 'secondary_color', '#0284c7') . ';';
+        echo '--secondary-color:'  . $p('header', 'header_border_color', '#0c4a6e') . ';';
         echo '--accent-color:'     . $p('colors', 'accent_color',    '#10b981') . ';';
-        echo '--bg-primary:'       . $p('colors', 'bg_primary',      '#f0f9ff') . ';';
-        echo '--bg-secondary:'     . $p('colors', 'bg_secondary',    '#e0f2fe') . ';';
-        echo '--text-primary:'     . $p('colors', 'text_primary',    '#0c1a2e') . ';';
-        echo '--muted-color:'      . $p('colors', 'muted_color',     '#9ca3af') . ';';
+        echo '--bg-primary:'       . $p('colors', 'bg_color',      '#f0f9ff') . ';';
+        echo '--bg-secondary:'     . $p('colors', 'card_bg_color',    '#ffffff') . ';';
+        echo '--text-primary:'     . $p('colors', 'text_color',    '#0f172a') . ';';
+        echo '--muted-color:'      . $p('colors', 'muted_color',     '#64748b') . ';';
         echo '--border-color:'     . $p('colors', 'border_color',    '#bae6fd') . ';';
-        echo '--font-body:'        . $p('typography', 'font_family_body',    '"Open Sans", sans-serif') . ';';
-        echo '--font-heading:'     . $p('typography', 'font_family_heading', '"Source Sans Pro", sans-serif') . ';';
-        echo '--font-serif:'       . $p('typography', 'font_family_serif',   '"Source Serif Pro", serif') . ';';
-        echo '--header-height:'    . $p('layout', 'header_height', '72px') . ';';
+        echo '--font-body:'        . $baseFont . ';';
+        echo '--font-heading:'     . $headingFont . ';';
+        echo '--font-serif:'       . $medicalTextFont . ';';
+        echo '--header-height:'    . $p('header', 'header_height', '76') . 'px;';
+        echo '--focus-ring:'       . $p('colors', 'primary_color', '#0ea5e9') . ';';
         echo '}';
         $custom = $c->get('advanced', 'custom_css', '');
         if ($custom && trim($custom) !== '') echo $custom;

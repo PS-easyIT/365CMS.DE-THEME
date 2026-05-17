@@ -31,13 +31,26 @@ $ctaText      = $c?->get('medical_content', 'cta_section_text',          '')    
 $siteUrl    = SITE_URL;
 $isLoggedIn = theme_is_logged_in();
 $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$buildUrl   = static function (string $baseUrl, string $path): string {
+    $trimmedPath = trim($path);
+    if ($trimmedPath === '') {
+        return rtrim($baseUrl, '/') . '/';
+    }
+    if (str_starts_with($trimmedPath, 'http://') || str_starts_with($trimmedPath, 'https://')) {
+        return $trimmedPath;
+    }
+    if (str_starts_with($trimmedPath, '#')) {
+        return rtrim($baseUrl, '/') . '/' . $trimmedPath;
+    }
+    return rtrim($baseUrl, '/') . '/' . ltrim($trimmedPath, '/');
+};
 ?>
 <main id="main" class="mc-main" role="main">
 
     <!-- Notfall-Info Banner -->
     <?php if (!empty($emergInfo)) : ?>
     <div class="mc-emergency-notice" role="alert" aria-live="polite">
-        <div class="mc-container" style="display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;">
+        <div class="mc-container mc-emergency-notice-row">
             <strong>⚕️ Wichtiger Hinweis:</strong>
             <span><?php echo $safe($emergInfo); ?></span>
         </div>
@@ -57,7 +70,7 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
 
             <!-- Hero Sucheingabe -->
             <form class="mc-hero-search" role="search" method="get"
-                  action="<?php echo $safe($siteUrl); ?>/aerzte" aria-label="Arzt suchen">
+                  action="<?php echo $safe($buildUrl($siteUrl, '/aerzte')); ?>" aria-label="Arzt suchen">
                 <label for="hero-search-input" class="mc-visually-hidden">Arzt, Fachgebiet oder PLZ eingeben</label>
                 <input id="hero-search-input" type="search" name="q"
                        placeholder="Arzt, Fachgebiet oder PLZ …"
@@ -69,10 +82,10 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
             </form>
 
             <div class="mc-cta-group">
-                <a href="<?php echo $safe($siteUrl . $heroSecUrl); ?>" class="mc-btn mc-btn-secondary">
+                <a href="<?php echo $safe($buildUrl($siteUrl, (string) $heroSecUrl)); ?>" class="mc-btn mc-btn-secondary">
                     🗓️ <?php echo $safe($heroSecCta); ?>
                 </a>
-                <a href="<?php echo $safe($siteUrl . $heroCtaUrl); ?>" class="mc-btn mc-btn-white">
+                <a href="<?php echo $safe($buildUrl($siteUrl, (string) $heroCtaUrl)); ?>" class="mc-btn mc-btn-white">
                     Alle Ärzte anzeigen
                 </a>
             </div>
@@ -116,7 +129,7 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
             ?>
             <div class="mc-specialties-grid">
                 <?php foreach ($specialties as $sp) : ?>
-                <a href="<?php echo $safe($siteUrl . $sp['url']); ?>"
+                <a href="<?php echo $safe($buildUrl($siteUrl, (string) $sp['url'])); ?>"
                    class="mc-specialty-card"
                    aria-label="Fachgebiet <?php echo $safe($sp['label']); ?> anzeigen">
                     <span class="mc-specialty-icon" aria-hidden="true"><?php echo $sp['icon']; ?></span>
@@ -125,7 +138,7 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
                     </span>
                 </a>
                 <?php endforeach; ?>
-                <a href="<?php echo $safe($siteUrl); ?>/fachgebiete"
+                <a href="<?php echo $safe($buildUrl($siteUrl, '/fachgebiete')); ?>"
                    class="mc-specialty-card mc-specialty-card--more"
                    aria-label="Alle Fachgebiete anzeigen">
                     <span class="mc-specialty-icon" aria-hidden="true">→</span>
@@ -153,15 +166,15 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
                 </button>
             </div>
             <div class="mc-grid" style="margin-top:1.5rem;">
-                <div class="mc-card" style="text-align:center;grid-column:1/-1;padding:2.5rem 2rem;">
-                    <div style="font-size:3rem;margin-bottom:.75rem;" aria-hidden="true">👨‍⚕️</div>
-                    <h3 style="font-family:var(--font-heading);color:var(--secondary-color);margin-bottom:.5rem;">
+                <div class="mc-card mc-card--doctor-cta">
+                    <div class="mc-card-doctor-emoji" aria-hidden="true">👨‍⚕️</div>
+                    <h3 class="mc-card-doctor-title">
                         Alle Ärzte &amp; Therapeuten entdecken
                     </h3>
-                    <p style="color:var(--muted-color);max-width:500px;margin:0 auto 1.25rem;">
+                    <p class="mc-card-doctor-lead">
                         Finden Sie den passenden Spezialisten in Ihrer Nähe – mit Bewertungen, Öffnungszeiten und Online-Terminbuchung.
                     </p>
-                    <a href="<?php echo $safe($siteUrl); ?>/aerzte" class="mc-btn mc-btn-primary">
+                    <a href="<?php echo $safe($buildUrl($siteUrl, '/aerzte')); ?>" class="mc-btn mc-btn-primary">
                         Alle Ärzte anzeigen →
                     </a>
                 </div>
@@ -187,14 +200,13 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
                     </ul>
                 </div>
                 <div class="mc-booking-cta__actions">
-                    <a href="<?php echo $safe($siteUrl); ?>/termin" class="mc-btn mc-btn-primary mc-btn-lg">
+                    <a href="<?php echo $safe($buildUrl($siteUrl, '/termin')); ?>" class="mc-btn mc-btn-primary mc-btn-lg">
                         🗓️ Termin buchen
                     </a>
-                    <a href="<?php echo $safe($siteUrl); ?>/register" class="mc-btn mc-btn-outline"
-                       style="margin-top:.75rem;">
+                    <a href="<?php echo $safe($buildUrl($siteUrl, '/register')); ?>" class="mc-btn mc-btn-outline mc-booking-register-btn">
                         Als Arzt registrieren
                     </a>
-                    <p style="font-size:var(--font-xs);color:var(--muted-color);margin-top:.75rem;text-align:center;">
+                    <p class="mc-booking-dsgvo-note">
                         Ihre Daten werden gemäß DSGVO &amp; § 203 StGB geschützt.
                     </p>
                 </div>
@@ -238,22 +250,22 @@ $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8')
     <!-- ═══ Registrierungs-CTA ═════════════════════════════════════════════ -->
     <?php if (!$isLoggedIn && !empty(trim($ctaTitle))) : ?>
     <section class="mc-section" aria-labelledby="cta-heading">
-        <div class="mc-container" style="text-align:center;">
+        <div class="mc-container mc-cta-center">
             <h2 id="cta-heading"><?php echo $safe($ctaTitle); ?></h2>
             <?php if (!empty(trim($ctaText))) : ?>
-                <p style="color:var(--text-secondary);max-width:600px;margin:.75rem auto 1.75rem;">
+                <p class="mc-cta-lead">
                     <?php echo $safe($ctaText); ?>
                 </p>
             <?php else : ?>
-                <p style="color:var(--text-secondary);max-width:600px;margin:.75rem auto 1.75rem;">
+                <p class="mc-cta-lead">
                     Registrieren Sie sich und verwalten Sie Termine, Befunde und Nachrichten sicher und papierlos.
                 </p>
             <?php endif; ?>
-            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-                <a href="<?php echo $safe($siteUrl); ?>/register" class="mc-btn mc-btn-primary mc-btn-lg">
+            <div class="mc-cta-actions">
+                <a href="<?php echo $safe($buildUrl($siteUrl, '/register')); ?>" class="mc-btn mc-btn-primary mc-btn-lg">
                     Jetzt kostenlos registrieren
                 </a>
-                <a href="<?php echo $safe($siteUrl); ?>/aerzte" class="mc-btn mc-btn-outline">
+                <a href="<?php echo $safe($buildUrl($siteUrl, '/aerzte')); ?>" class="mc-btn mc-btn-outline">
                     Arzt suchen
                 </a>
             </div>

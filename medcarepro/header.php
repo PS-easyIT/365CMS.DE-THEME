@@ -15,10 +15,10 @@
 try {
     $c = \CMS\Services\ThemeCustomizer::instance();
     $logoUrl         = $c->get('header', 'logo_url', '');
-    $showSearch      = $c->get('header', 'show_search', true);
-    $showFontSize    = $c->get('accessibility', 'enable_font_size_toggle',    true);
-    $showContrast    = $c->get('accessibility', 'enable_high_contrast_toggle', true);
-    $showEmergency   = $c->get('header', 'show_emergency_banner', false);
+    $showSearch      = true;
+    $showFontSize    = filter_var($c->get('accessibility', 'enable_font_size_toggle', true), FILTER_VALIDATE_BOOLEAN);
+    $showContrast    = filter_var($c->get('accessibility', 'enable_high_contrast_toggle', true), FILTER_VALIDATE_BOOLEAN);
+    $showEmergency   = filter_var($c->get('header', 'show_emergency_banner', false), FILTER_VALIDATE_BOOLEAN);
     $emergencyPhone  = $c->get('header', 'emergency_phone', '112');
     $emergencyBanner = $c->get('header', 'emergency_banner_text', 'Notfall? Bitte rufen Sie sofort an:');
 } catch (\Throwable $e) {
@@ -30,20 +30,26 @@ $siteTitle    = $themeManager->getSiteTitle();
 $isLoggedIn   = theme_is_logged_in();
 $siteUrl      = SITE_URL;
 $safe         = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$homeUrl      = function_exists('theme_route_url') ? theme_route_url('home') : rtrim($siteUrl, '/') . '/';
+$searchUrl    = function_exists('theme_route_url') ? theme_route_url('search') : rtrim($siteUrl, '/') . '/search';
+$loginUrl     = function_exists('theme_route_url') ? theme_route_url('login') : rtrim($siteUrl, '/') . '/login';
+$registerUrl  = function_exists('theme_route_url') ? theme_route_url('register') : rtrim($siteUrl, '/') . '/register';
+$memberUrl    = rtrim($siteUrl, '/') . '/member';
+$telHref      = preg_replace('/[^0-9+]/', '', (string) $emergencyPhone) ?? '';
 ?>
 <?php if ($showEmergency && !empty($emergencyPhone)) : ?>
 <style>:root{--header-height:calc(72px + 2.375rem);}</style>
 <div class="mc-emergency-banner" role="alert" aria-live="polite">
-    <div class="mc-container" style="display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;">
+    <div class="mc-container mc-emergency-banner-row">
         <span><?php echo $safe($emergencyBanner); ?></span>
-        <a href="tel:<?php echo preg_replace('/\D/', '', $emergencyPhone); ?>" class="mc-emergency-phone"><?php echo $safe($emergencyPhone); ?></a>
+        <a href="tel:<?php echo $safe($telHref); ?>" class="mc-emergency-phone"><?php echo $safe($emergencyPhone); ?></a>
     </div>
 </div>
 <?php endif; ?>
 <header id="masthead" class="mc-site-header" role="banner">
     <div class="mc-header-inner">
         <div class="mc-branding">
-            <a href="<?php echo $safe($siteUrl); ?>" rel="home">
+            <a href="<?php echo $safe($homeUrl); ?>" rel="home">
                 <?php if (!empty($logoUrl)) : ?>
                     <img src="<?php echo $safe($logoUrl); ?>" alt="<?php echo $safe($siteTitle); ?>" width="150" height="44">
                 <?php else : ?>
@@ -62,30 +68,30 @@ $safe         = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
                 <button id="contrastToggle" class="mc-btn mc-btn-ghost mc-font-size-toggle" aria-label="Kontrast wechseln" title="Hoher Kontrast">◑</button>
             <?php endif; ?>
             <?php if ($showSearch) : ?>
-                <button id="searchToggle" class="mc-btn mc-btn-ghost" style="padding:.5rem;" aria-label="Suche öffnen" aria-expanded="false">
+                <button id="searchToggle" type="button" class="mc-btn mc-btn-ghost mc-search-toggle-btn" aria-label="Suche öffnen" aria-expanded="false">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                 </button>
             <?php endif; ?>
             <?php if ($isLoggedIn) : ?>
-                <a href="<?php echo $safe($siteUrl); ?>/member" class="mc-btn mc-btn-primary">Mein Bereich</a>
+                <a href="<?php echo $safe($memberUrl); ?>" class="mc-btn mc-btn-primary">Mein Bereich</a>
             <?php else : ?>
-                <a href="<?php echo $safe($siteUrl); ?>/login"    class="mc-btn mc-btn-ghost">Anmelden</a>
-                <a href="<?php echo $safe($siteUrl); ?>/register" class="mc-btn mc-btn-primary">Arzt registrieren</a>
+                <a href="<?php echo $safe($loginUrl); ?>"    class="mc-btn mc-btn-ghost">Anmelden</a>
+                <a href="<?php echo $safe($registerUrl); ?>" class="mc-btn mc-btn-primary">Arzt registrieren</a>
             <?php endif; ?>
-            <button id="mobileMenuToggle" class="mc-mobile-toggle" aria-label="Menü öffnen" aria-expanded="false">
+            <button id="mobileMenuToggle" type="button" class="mc-mobile-toggle" aria-label="Menü öffnen" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>
     </div>
     <?php if ($showSearch) : ?>
-    <div id="searchPanel" class="mc-search-panel" hidden style="background:var(--bg-secondary);border-top:1px solid var(--border-color);padding:.75rem 0;">
+    <div id="searchPanel" class="mc-search-panel" hidden aria-hidden="true">
         <div class="mc-header-inner">
-            <form role="search" method="get" action="<?php echo $safe($siteUrl); ?>/search" style="display:flex;gap:.5rem;flex:1;">
+            <form role="search" method="get" action="<?php echo $safe($searchUrl); ?>" class="mc-header-search-form">
                 <label for="mc-search" class="mc-visually-hidden">Arzt/Fachgebiet suchen</label>
-                <input id="mc-search" type="search" name="q" placeholder="Arzt, Fachgebiet, PLZ suchen …" autocomplete="off" style="flex:1;padding:.6rem .9rem;border:1px solid var(--border-color);border-radius:var(--radius-pill);font-family:var(--font-body);">
+                <input id="mc-search" type="search" name="q" placeholder="Arzt, Fachgebiet, PLZ suchen …" autocomplete="off" class="mc-header-search-input">
                 <button type="submit" class="mc-btn mc-btn-primary" aria-label="Suchen">Suchen</button>
             </form>
-            <button id="searchClose" class="mc-btn mc-btn-ghost" aria-label="Schließen">✕</button>
+            <button id="searchClose" type="button" class="mc-btn mc-btn-ghost" aria-label="Schließen">✕</button>
         </div>
     </div>
     <?php endif; ?>

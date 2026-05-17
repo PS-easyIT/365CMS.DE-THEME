@@ -15,7 +15,7 @@
 try {
     $c = \CMS\Services\ThemeCustomizer::instance();
     $logoUrl        = $c->get('header', 'logo_url',                    '');
-    $showTracking   = $c->get('header', 'show_tracking_quick_search',   true);
+    $showTracking   = filter_var($c->get('header', 'show_tracking_quick_search', true), FILTER_VALIDATE_BOOLEAN);
     $trackingPh     = $c->get('header', 'tracking_placeholder',         'Sendungsnummer eingeben …');
 } catch (\Throwable $e) { $logoUrl = ''; $showTracking = true; $trackingPh = 'Sendungsnummer …'; }
 $themeManager = \CMS\ThemeManager::instance();
@@ -23,11 +23,15 @@ $siteTitle    = $themeManager->getSiteTitle();
 $isLoggedIn   = theme_is_logged_in();
 $siteUrl      = SITE_URL;
 $safe         = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$homeUrl      = function_exists('theme_route_url') ? theme_route_url('home') : rtrim($siteUrl, '/') . '/';
+$loginUrl     = function_exists('theme_route_url') ? theme_route_url('login') : rtrim($siteUrl, '/') . '/login';
+$registerUrl  = function_exists('theme_route_url') ? theme_route_url('register') : rtrim($siteUrl, '/') . '/register';
+$memberUrl    = rtrim($siteUrl, '/') . '/member';
 ?>
 <header id="masthead" class="ll-site-header" role="banner">
     <div class="ll-header-inner">
         <div class="ll-branding">
-            <a href="<?php echo $safe($siteUrl); ?>" rel="home">
+            <a href="<?php echo $safe($homeUrl); ?>" rel="home">
                 <?php if (!empty($logoUrl)) : ?>
                     <img src="<?php echo $safe($logoUrl); ?>" alt="<?php echo $safe($siteTitle); ?>" width="150" height="40">
                 <?php else : ?>
@@ -47,12 +51,12 @@ $safe         = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
         <?php endif; ?>
         <div class="ll-header-actions">
             <?php if ($isLoggedIn) : ?>
-                <a href="<?php echo $safe($siteUrl); ?>/member" class="ll-btn ll-btn-accent">Dashboard</a>
+                <a href="<?php echo $safe($memberUrl); ?>" class="ll-btn ll-btn-accent">Dashboard</a>
             <?php else : ?>
-                <a href="<?php echo $safe($siteUrl); ?>/login"    class="ll-btn ll-btn-outline">Anmelden</a>
-                <a href="<?php echo $safe($siteUrl); ?>/register" class="ll-btn ll-btn-accent">Kostenlos starten</a>
+                <a href="<?php echo $safe($loginUrl); ?>"    class="ll-btn ll-btn-outline">Anmelden</a>
+                <a href="<?php echo $safe($registerUrl); ?>" class="ll-btn ll-btn-accent">Kostenlos starten</a>
             <?php endif; ?>
-            <button id="mobileMenuToggle" class="ll-mobile-toggle" aria-label="Menü öffnen" aria-expanded="false">
+            <button id="mobileMenuToggle" type="button" class="ll-mobile-toggle" aria-label="Menü öffnen" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>

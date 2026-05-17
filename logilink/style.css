@@ -53,6 +53,7 @@
     --radius-pill:      9999px;
     --header-height:    68px;
     --container-max:    1200px;
+    --focus-ring:       #f59e0b;
 }
 
 /* ================================================================
@@ -66,6 +67,8 @@ a   { color: var(--primary-color); text-decoration: none; }
 a:hover { text-decoration: underline; }
 ul  { list-style: none; }
 .ll-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
 
 /* ================================================================
    3. Layout
@@ -133,6 +136,8 @@ ul  { list-style: none; }
     .main-navigation.open { display: block; }
     .main-navigation ul { flex-direction: column; }
 }
+.ll-btn:focus-visible,
+.ll-tracking-quick input:focus-visible { box-shadow: 0 0 0 .2rem rgb(245 158 11 / 0.22); }
 
 /* ================================================================
    5. Buttons
@@ -220,6 +225,10 @@ ul  { list-style: none; }
    ================================================================ */
 .ll-section     { padding: var(--spacing-2xl) 0; }
 .ll-section--alt{ background: var(--bg-secondary); }
+.ll-status-legend-row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.ll-section--network-cta { background: var(--secondary-color); text-align: center; padding: 3rem 0; }
+.ll-network-cta-title { color: #fff; }
+.ll-network-cta-button { margin-top: 1.25rem; }
 
 /* ================================================================
    9. Skip Link
