@@ -1,7 +1,7 @@
 {
   "name": "365Network",
   "slug": "365network",
-  "version": "3.4.13",
+  "version": "3.4.14",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "IT-Networking-Dashboard – Deep Navy & Gold, modulares Kachel-Layout für Experten, Firmen, Events, Speaker, Jobs, Feeds & Buchung.",
   "tags": ["professional", "editorial", "responsive", "cms", "network", "dark-mode", "directory", "booking"],
@@ -672,7 +672,7 @@
           "options": {
             "dark": "Dunkel (Navy)",
             "accent": "Akzentfarbe (Gold)",
-            "gradient": "Gradient (Navy → Blau)",
+            "gradient": "Gradient (Navy → Gold)",
             "light": "Hell (Weiß)"
           },
           "default": "dark",

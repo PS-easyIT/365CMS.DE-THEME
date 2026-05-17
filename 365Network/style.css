@@ -4,7 +4,7 @@ Theme URI: https://365cms.de
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://365cms.de
 Description: IT-Networking-Dashboard – Deep Navy, Gold-Akzente, modulares Kachel-Layout für Experten, Firmen, Events & Speaker.
-Version: 3.4.13
+Version: 3.4.14
 Requires PHP: 8.4
 License: GNU General Public License v2 or later
 */
@@ -1683,10 +1683,26 @@ body.dark-mode .theme-toggle .light-icon { display: inline; }
     color: #ffffff;
 }
 
+/* Navy → Gold: ties the CTA to the brand palette instead of a generic blue gradient */
 .homepage-cta--gradient {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+    background:
+        linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 55%, var(--accent-hover) 100%);
     color: var(--text-light);
+    position: relative;
+    overflow: hidden;
 }
+
+.homepage-cta--gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 90% 50%, rgb(200 149 46 / 0.18) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.homepage-cta--gradient .homepage-cta-inner { position: relative; z-index: 1; }
+.homepage-cta--gradient .homepage-cta-title { color: #ffffff; }
+.homepage-cta--gradient .homepage-cta-text  { color: rgb(255 255 255 / 0.88); }
 
 .homepage-cta--light {
     background: #ffffff;

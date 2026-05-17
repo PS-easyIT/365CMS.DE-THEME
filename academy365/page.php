@@ -7,7 +7,7 @@
                     <header class="ac-page-header">
                         <h1 class="ac-page-title"><?php \CMS\CMS::instance()->theTitle(); ?></h1>
                     </header>
-                    <div class="ac-page-body" style="font-family:var(--font-body);">
+                    <div class="ac-page-body">
                         <?php \CMS\CMS::instance()->theContent(); ?>
                     </div>
                 </article>

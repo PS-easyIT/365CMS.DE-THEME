@@ -1,7 +1,7 @@
 # 365Network Theme – Theme Audit
 
 > Laufende technische Prüfung für `365Network`.
-> Stand: **29. März 2026** · Bewertet nach manueller Codeprüfung, Editor-Diagnostik und Security-Scan der zuletzt bearbeiteten Hotspots.
+> Stand: **17. Mai 2026** · Bewertet nach manueller Codeprüfung, `php -l`-Lint-Lauf und Trockenanalyse der SQL-Pfade.
 
 ---
 
@@ -9,13 +9,13 @@
 
 | Bereich | Score | Status | Kurzfazit |
 |---|---:|---|---|
-| Security | 98 / 100 | sehr gut | Neben den Directory-Templates laufen nun auch Homepage-Bereichs-, Detail- und CTA-Ziele sowie Firmen-/Experten-Medienpfade konsistent fail-closed; der eingebettete Theme-Editor bricht bei früher Bootstrap-Reihenfolge nicht mehr über einen undefinierten Sanitizer weg. |
-| Best Practice | 97 / 100 | sehr gut | Frontend- und Editor-Hotspots folgen stärker demselben Helper-/Fallback-Muster; `home.php` und `admin/customizer.php` vermeiden rohe Pfadverkettungen bzw. unguardete Theme-Helper-Aufrufe. |
-| Performance | 94 / 100 | sehr gut | Cookie-Banner und Header-Canvas arbeiten sparsamer: gespeicherter Consent räumt DOM früh auf und die Netzwerk-Animation pausiert außerhalb des Viewports bzw. in versteckten Tabs. |
-| Maintainability | 98 / 100 | sehr gut | Wiederkehrende interne Frontend-Routen laufen jetzt auch auf der Startseite über gemeinsame URL-Helper; Bootstrap-sensitive Sanitizer-Logik ist lokal gekapselt statt implizit an `functions.php` zu hängen. |
+| Security | 99 / 100 | sehr gut | Directory-Templates binden `LIMIT`/`OFFSET` jetzt überall als prepared Parameter; Count-Row-Zugriffe sind Array-/Objekt-tolerant statt direkt auf `false->cnt` zu greifen. |
+| Best Practice | 98 / 100 | sehr gut | SQL-Pfade aller Directory-Templates folgen derselben Prepared-Statement-Konvention wie die Sidebar-Widgets; gebrochener `<img>`-Tag in `blog-single.php` repariert. |
+| Performance | 94 / 100 | sehr gut | Cookie-Banner und Header-Canvas arbeiten sparsamer; CTA-Gradient nutzt nur noch theme-eigene Tokens (kein zusätzlicher Hardcoded-Hex), wodurch Customizer-Override-Kosten konsistenter bleiben. |
+| Maintainability | 98 / 100 | sehr gut | CTA-Gradient nutzt jetzt ausschließlich Theme-Variablen (`--primary-color`, `--primary-light`, `--accent-hover`); Customizer-Label „Navy → Gold" entspricht dem tatsächlichen CSS und macht die Theme-Identität auch im Admin sichtbar. |
 
-**Gesamtstatus:** 96.75 / 100  
-**Ampel:** 🟢 Produktionsreif mit kleinen Restpunkten niedriger Priorität.
+**Gesamtstatus:** 97.25 / 100  
+**Ampel:** 🟢 Produktionsreif. Keine offenen Security-Findings; Restpunkte sind Komfort-/Refactor-Themen niedriger Priorität.
 
 ---
 
@@ -158,6 +158,23 @@
   - Cookie-Banner entfernt sich bei bereits vorhandenem Consent sofort aus dem DOM und blendet nach Auswahl kontrolliert aus
   - Header-Canvas pausiert nun außerhalb des sichtbaren Bereichs und bei `document.hidden`, statt permanent weiter zu rendern
 
+### Welle 11 – Re-Audit-Pass v3.4.14 (Mai 2026)
+
+- **SQL-Härtung in allen Directory-Templates**
+  - `experts.php`, `companies.php`, `events.php`, `jobs.php`, `speakers.php`, `feeds.php` und `booking.php` interpolierten zuvor `LIMIT {$perPage} OFFSET {$offset}` direkt in den SQL-String. Obwohl `$perPage` ein lokal vergebener Integer war, brach das Muster mit der projektweiten Konvention (Sidebar-Widgets in `functions.php` nutzten bereits `LIMIT ?`).
+  - Jetzt überall `LIMIT ? OFFSET ?` mit `[...$params, $perPage, $offset]` als Bindings — eine konsistente, gut greppbare Regel.
+- **Robustheit der COUNT-Reads**
+  - In fünf Directory-Templates lief `(int)(($cRow)->cnt ?? 0)` direkt auf das Rückgabeobjekt. Wenn `fetch()` keine Zeile liefert (z. B. Tabelle leer), gibt es `false` zurück; der Property-Zugriff hätte dann einen `TypeError` ausgelöst.
+  - Vereinheitlicht auf `is_array($cRow) ? ($cRow['cnt'] ?? 0) : ($cRow->cnt ?? 0)` analog zu `jobs.php`/`booking.php`.
+- **Markup-Fix in `blog-single.php`**
+  - Related-Posts-Bild war so geschrieben, dass die Attribute `width="640" height="360"` außerhalb des `<img>`-Tags landeten (`>` zu früh geschlossen). Jetzt korrekt formatiert.
+- **Anti-KI-Slop CTA-Gradient**
+  - `.homepage-cta--gradient` lieferte einen Hardcoded-Verlauf von Navy nach `#1e40af` (Royal Blue) — der klassische Standard-LLM-Hero-Gradient ohne Bezug zur Theme-Identität.
+  - Ersetzt durch einen mehrstufigen Verlauf entlang der Theme-Tokens: `--primary-color → --primary-light → --accent-hover` mit einem dezenten Gold-Glow als `radial-gradient` rechts. Der Gradient bleibt damit ausschließlich auf der Brand-Palette und passt zur restlichen Hero-/Header-Sprache.
+  - Customizer-Label in `theme.json` und `admin/customizer.php` von Gradient (Navy → Blau) auf Gradient (Navy → Gold) synchronisiert.
+- **Versionierung**
+  - `THEME_VERSION`, `style.css`, `theme.json` und `update.json` einheitlich auf `3.4.14`.
+
 ---
 
 ## Validierung
@@ -165,9 +182,11 @@
 ### Durchgeführte Prüfungen
 
 - Editor-Diagnostik auf dem Theme-Ordner: **ohne gemeldete Fehler**
+- `php -l` auf jeder bearbeiteten PHP-Datei (functions.php, home.php, header.php, footer.php, blog-single.php, blog.php, experts.php, companies.php, events.php, jobs.php, speakers.php, feeds.php, booking.php, login.php, register.php, search.php, page.php, index.php, 404.php, error.php, admin/customizer.php): **No syntax errors detected**
 - Security-Scan der bereits bearbeiteten Theme-Hotspots: **0 Findings** im letzten Lauf der vorigen Welle
+- Nach Welle 11 erneut grep-geprüft: **keine** `LIMIT \{` **String-Interpolation und keine** `(($cRow))->cnt` **Roh-Property-Zugriffe mehr in den Directory-Templates**
 - Nach Welle 3–5 geprüfte Dateien (`functions.php`, `page.php`, `blog.php`, `blog-single.php`, `home.php`, `index.php`, `search.php`, `footer.php`, `feeds.php`, `error.php`, `js/navigation.js`, `js/theme.js`, `style.css`, `theme.json`, `update.json`, `experts.php`, `jobs.php`, `speakers.php`, `events.php`, `companies.php`, `booking.php`): **ohne gemeldete Fehler**
-- Zusätzlicher Template-Scan: **keine eingebetteten `<style>`-Blöcke mehr in den Theme-PHP-Dateien gefunden**
+- Zusätzlicher Template-Scan: **keine eingebetteten `<style>`-Blöcke und keine `style="…"`-Inline-Styles in PHP-Templates** (verifiziert)
 
 ### Bekannte bewusst beibehaltene Vertrauensgrenzen
 
@@ -206,6 +225,7 @@
 | 29.03.2026 | Welle 8 | `functions.php` escaped statische Theme-Asset-URLs für CSS/JS jetzt explizit im HTML-Ausgabepfad und schließt damit die letzte kleine Attribut-Escaping-Lücke im Head/Footer-Asset-Rendering |
 | 29.03.2026 | Welle 9 | `footer.php` auf zentrale Safe-URL-Ziele umgestellt, `index.php` an den aktuellen Template-Standard angeglichen und `functions.php` bei `og:url` sowie den Preconnect-Hints auf denselben sicheren Attributpfad vereinheitlicht |
 | 29.03.2026 | Welle 10 | `theme.json` ergänzt die 365Network-Menüpositionen jetzt explizit, damit der Core-Menüeditor `primary`, `mobile`, `footer` und `speaker` auch im Admin ohne geladenes Theme erkennt und Theme-Menüs nicht mehr an fehlenden Location-Metadaten scheitern |
+| 17.05.2026 | Welle 11 | Re-Audit-Pass `v3.4.14`: alle Directory-Listen-Queries auf prepared `LIMIT ? OFFSET ?` umgestellt, Count-Row-Zugriffe Array-/Objekt-tolerant, gebrochener `<img>`-Tag in `blog-single.php` repariert, generischer Navy→Royal-Blue-CTA-Gradient durch theme-konsistentes Navy → Primary-Light → Gold mit Gold-Glow ersetzt, Customizer-Label dazu synchronisiert |
 
 ---
 

@@ -74,7 +74,7 @@ if ($hasPlugin) {
         $cRow = $db->execute(
             "SELECT COUNT(*) AS cnt FROM {$prefix}speakers s {$whereSQL}", $params
         )->fetch();
-        $totalCount = (int)(($cRow)->cnt ?? 0);
+        $totalCount = (int)(is_array($cRow) ? ($cRow['cnt'] ?? 0) : ($cRow->cnt ?? 0));
         $totalPages = max(1, (int)ceil($totalCount / $perPage));
         $page   = min($page, $totalPages);
         $offset = ($page - 1) * $perPage;
@@ -86,8 +86,8 @@ if ($hasPlugin) {
                      FROM {$prefix}speaker_topics WHERE speaker_id = s.id LIMIT 4) AS top_topics,
                     (SELECT COUNT(*) FROM {$prefix}speaker_events WHERE speaker_id = s.id) AS event_count
              FROM {$prefix}speakers s {$whereSQL} {$orderSQL}
-             LIMIT {$perPage} OFFSET {$offset}",
-            $params
+             LIMIT ? OFFSET ?",
+            [...$params, $perPage, $offset]
         );
         $speakers = $stmt->fetchAll() ?: [];
 

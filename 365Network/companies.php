@@ -88,14 +88,14 @@ if ($hasPlugin) {
         $cRow = $db->execute(
             "SELECT COUNT(*) AS cnt FROM {$prefix}companies c {$whereSQL}", $params
         )->fetch();
-        $totalCount = (int)(($cRow)->cnt ?? 0);
+        $totalCount = (int)(is_array($cRow) ? ($cRow['cnt'] ?? 0) : ($cRow->cnt ?? 0));
         $totalPages = max(1, (int)ceil($totalCount / $perPage));
         $page   = min($page, $totalPages);
         $offset = ($page - 1) * $perPage;
 
         $stmt = $db->execute(
-            "SELECT c.* FROM {$prefix}companies c {$whereSQL} {$orderSQL} LIMIT {$perPage} OFFSET {$offset}",
-            $params
+            "SELECT c.* FROM {$prefix}companies c {$whereSQL} {$orderSQL} LIMIT ? OFFSET ?",
+            [...$params, $perPage, $offset]
         );
         $companies = $stmt->fetchAll() ?: [];
 

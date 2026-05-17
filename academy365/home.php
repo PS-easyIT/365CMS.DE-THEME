@@ -11,6 +11,18 @@ $slugify = static function (string $value): string {
     $slug = trim($slug, '-');
     return $slug !== '' ? $slug : 'kurs';
 };
+$buildUrl = static function (string $path) : string {
+    return rtrim((string) SITE_URL, '/') . '/' . ltrim($path, '/');
+};
+$routeUrl = static function (string $route, string $fallbackPath) use ($buildUrl): string {
+    if (function_exists('theme_route_url')) {
+        return theme_route_url($route, [], [], $buildUrl($fallbackPath));
+    }
+    return $buildUrl($fallbackPath);
+};
+$coursesUrl  = $routeUrl('courses',  'courses');
+$registerUrl = $routeUrl('register', 'register');
+$tutorsUrl   = $routeUrl('tutors',   'tutors');
 try {
     $c = \CMS\Services\ThemeCustomizer::instance();
     // --- learning_hero ---
@@ -18,9 +30,9 @@ try {
     $heroHeadline    = $c->get('learning_hero', 'hero_headline',          'Lerne neue Skills.<br>Starte deine Karriere.');
     $heroSubline     = $c->get('learning_hero', 'hero_subline',           'Tausende Kurse von echten Experten – jederzeit und überall verfügbar.');
     $heroCta         = $c->get('learning_hero', 'hero_cta_courses',         'Kurskatalog entdecken');
-    $heroCtaUrl      = SITE_URL . '/courses';
+    $heroCtaUrl      = $coursesUrl;
     $heroSecCta      = $c->get('learning_hero', 'hero_cta_start', 'Kostenlos starten');
-    $heroSecCtaUrl   = SITE_URL . '/register';
+    $heroSecCtaUrl   = $registerUrl;
     $coursesLabel    = $c->get('learning_hero', 'hero_stat_courses',  '2.400+ Kurse');
     $studentsLabel   = $c->get('learning_hero', 'hero_stat_students', '185.000 Lernende');
     $tutorsLabel     = $c->get('learning_hero', 'hero_stat_tutors',   '620 Dozenten');
@@ -41,18 +53,18 @@ try {
     $subscriptionCta = $c->get('learning_content', 'cta_section_title', 'Starte Deine Weiterbildung heute');
     $subscriptionSub = $c->get('learning_content', 'cta_section_text', 'Registriere Dich kostenlos und starte mit ausgewählten Kursen.');
     $subscriptionBtn = $c->get('learning_content', 'subscription_cta_label', 'Premium 7 Tage gratis testen');
-    $subscriptionUrl = SITE_URL . '/register';
+    $subscriptionUrl = $registerUrl;
 } catch (\Throwable $e) {
     $heroBadge = 'Die #1 Lernplattform'; $heroHeadline = 'Lerne neue Skills.<br>Starte deine Karriere.';
     $heroSubline = 'Tausende Kurse von echten Experten.'; $heroCta = 'Kurse entdecken';
-    $heroCtaUrl = SITE_URL . '/courses'; $heroSecCta = 'Als Tutor anmelden'; $heroSecCtaUrl = SITE_URL . '/tutor-register';
+    $heroCtaUrl = $coursesUrl; $heroSecCta = 'Als Tutor anmelden'; $heroSecCtaUrl = $routeUrl('tutor-register', 'tutor-register');
     $coursesLabel = '2.400+ Kurse'; $studentsLabel = '185.000 Lernende'; $tutorsLabel = '620 Tutoren';
     $coursesSectionTitle = 'Beliebte Kurse'; $labelFree = 'Kostenlos'; $labelCert = 'Zertifikat';
     $labelNew = 'Neu'; $labelBest = 'Bestseller';
     $showRating = true; $showParticipants = true; $showDuration = true; $showProgress = false; $enableGami = true;
     $tutorTitle = 'Lerne von den Besten'; $tutorSubline = 'Unsere Tutoren sind erfahrene Praktiker.';
     $subscriptionCta = 'Unbegrenztes Lernen mit Academy365 Pro'; $subscriptionSub = 'Alle Kurse – ein Preis.';
-    $subscriptionBtn = 'Jetzt Pro werden'; $subscriptionUrl = SITE_URL . '/pro';
+    $subscriptionBtn = 'Jetzt Pro werden'; $subscriptionUrl = $routeUrl('pro', 'pro');
 }
 ?>
 
@@ -87,7 +99,7 @@ try {
     <div class="ac-container">
         <div class="ac-section-head">
             <h2 id="courses-heading"><?php echo $safe($coursesSectionTitle); ?></h2>
-            <a href="<?php echo $safe(SITE_URL . '/courses'); ?>" class="ac-link-arrow">Alle Kurse →</a>
+            <a href="<?php echo $safe($coursesUrl); ?>" class="ac-link-arrow">Alle Kurse →</a>
         </div>
         <?php if ($enableGami) : ?>
             <div class="ac-gami-hint">
@@ -130,7 +142,7 @@ try {
                         <?php endif; ?>
                         <?php if ($showRating) : ?>
                             <span class="ac-rating" title="<?php echo $safe((string)$course['rating']); ?> / 5">
-                                <span class="ac-rating-stars" style="--rating:<?php echo $safe((string)$course['rating']); ?>" aria-hidden="true"></span>
+                                <span class="ac-rating-stars" data-rating="<?php echo $safe((string)$course['rating']); ?>" aria-hidden="true"></span>
                                 <?php echo $safe((string)$course['rating']); ?>
                             </span>
                         <?php endif; ?>
@@ -139,12 +151,12 @@ try {
                         <?php endif; ?>
                     </div>
                     <?php if ($showProgress && $course['progress'] > 0) : ?>
-                        <div class="ac-progress" role="progressbar" aria-valuenow="<?php echo $course['progress']; ?>" aria-valuemin="0" aria-valuemax="100">
-                            <div class="ac-progress-bar" data-progress="<?php echo $course['progress']; ?>" style="width:<?php echo $course['progress']; ?>%"></div>
+                        <div class="ac-progress" role="progressbar" aria-valuenow="<?php echo (int) $course['progress']; ?>" aria-valuemin="0" aria-valuemax="100">
+                            <div class="ac-progress-bar" data-progress="<?php echo (int) $course['progress']; ?>"></div>
                         </div>
-                        <small><?php echo $course['progress']; ?>% abgeschlossen</small>
+                        <small><?php echo (int) $course['progress']; ?>% abgeschlossen</small>
                     <?php endif; ?>
-                    <a href="<?php echo $safe(SITE_URL . '/courses/' . $slugify((string) $course['title'])); ?>" class="ac-btn ac-btn-secondary ac-btn-sm ac-mt-1">Zum Kurs</a>
+                    <a href="<?php echo $safe($buildUrl('courses/' . $slugify((string) $course['title']))); ?>" class="ac-btn ac-btn-secondary ac-btn-sm ac-mt-1">Zum Kurs</a>
                 </div>
             </article>
             <?php endforeach; ?>
@@ -171,7 +183,7 @@ try {
                     <p class="ac-muted">Experte für IT &amp; Entwicklung</p>
                     <?php if ($showRating) : ?>
                         <div class="ac-rating" aria-label="Bewertung">
-                            <span class="ac-rating-stars" style="--rating:4.8" aria-hidden="true"></span>
+                            <span class="ac-rating-stars" data-rating="4.8" aria-hidden="true"></span>
                             4.8
                         </div>
                     <?php endif; ?>
@@ -180,7 +192,7 @@ try {
             <?php endfor; ?>
         </div>
         <div class="ac-section-cta-row">
-            <a href="<?php echo $safe(SITE_URL . '/tutors'); ?>" class="ac-btn ac-btn-secondary">Alle Tutoren →</a>
+            <a href="<?php echo $safe($tutorsUrl); ?>" class="ac-btn ac-btn-secondary">Alle Tutoren →</a>
         </div>
     </div>
 </section>

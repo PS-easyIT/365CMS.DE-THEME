@@ -7,17 +7,19 @@ $siteUrl = SITE_URL;
 ?>
 <main id="main" class="ac-main-content" role="main">
     <div class="ac-container ac-error-page">
-        <div class="ac-error-code" aria-hidden="true"><?php echo $statusCode; ?></div>
-        <span style="font-size:4rem;" aria-hidden="true">⚠️</span>
+        <div class="ac-error-code" aria-hidden="true"><?php echo (int) $statusCode; ?></div>
+        <span class="ac-error-emoji" aria-hidden="true">⚠️</span>
         <h1>Ein Fehler ist aufgetreten</h1>
         <p class="ac-muted">
             <?php if (!empty($errorMessage)) : ?>
-                <?php echo $safe($errorMessage); ?>
+                <?php echo $safe((string) $errorMessage); ?>
             <?php else : ?>
                 Es ist ein technischer Fehler aufgetreten. Bitte versuche es später erneut.
             <?php endif; ?>
         </p>
-        <a href="<?php echo $safe($siteUrl); ?>" class="ac-btn ac-btn-primary" style="margin-top:1.5rem;">Zurück zur Startseite</a>
+        <div class="ac-error-actions">
+            <a href="<?php echo $safe($siteUrl); ?>" class="ac-btn ac-btn-primary">Zurück zur Startseite</a>
+        </div>
     </div>
 </main>
 <?php get_footer(); ?>

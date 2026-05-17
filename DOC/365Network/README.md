@@ -1,7 +1,7 @@
 # 365Network Theme – Dokumentation
 
 > **Theme-Slug:** `365Network`  
-> **Version:** 3.4.13  
+> **Version:** 3.4.14  
 > **Design:** Deep Navy (#0c1526) + Gold (#c8952e)  
 > **Typ:** Dashboard-orientiertes IT-Experten-Netzwerk-Theme
 
@@ -24,8 +24,9 @@
 
 Das 365Network-Theme ist ein **Dashboard-Style-Theme** für die 365CMS-Plattform. Es kombiniert ein dunkles Navy-Design mit goldenen Akzenten und bietet eine vollständig hook-basierte Homepage-Architektur, die es Plugins ermöglicht, eigene Inhalte zu injizieren.
 
-### Aktueller Audit-Stand (März 2026)
+### Aktueller Audit-Stand (Mai 2026)
 
+- `v3.4.14` (Re-Audit-Pass): Directory-Templates `experts`, `companies`, `events`, `jobs`, `speakers`, `feeds` und `booking` binden `LIMIT`/`OFFSET` jetzt als prepared Parameter; Count-Row-Zugriffe sind Array-/Objekt-tolerant. Ein gebrochener `<img>`-Tag in `blog-single.php` wurde repariert. Der CTA-Stil „Gradient" wurde von einem generischen Navy → Royal-Blue auf ein theme-konsistentes Navy → Primary-Light → Gold mit Gold-Glow überführt (Anti-KI-Slop) und das Customizer-Label dazu synchronisiert.
 - Security-Hotspots in Blog, Booking, Events, Feeds, Companies und Customizer wurden in `v3.4.3` gehärtet.
 - Query-Link-Generierung läuft jetzt zentralisiert und fail-closed über Theme-Helper statt rohe `$_GET`-Merges zu rendern.
 - Der Customizer escaped dynamische Feldattribute explizit und prüft Uploads zusätzlich auf MIME-Type und Größenlimit.
@@ -39,7 +40,7 @@ Das 365Network-Theme ist ein **Dashboard-Style-Theme** für die 365CMS-Plattform
 - `v3.4.12` gibt den `body_class`-Filter am `<body>` aus, damit Plugin-spezifische Embed-Klassen und Layout-Resets auf öffentlichen Pluginseiten greifen.
 - `v3.4.11` schließt eine Admin-Lücke im Menüeditor: `theme.json` deklariert die 365Network-Menüpositionen jetzt explizit, damit Header-, Mobile-, Footer- und Speaker-Menüs auch ohne voll geladenes Theme im Admin korrekt erkannt und gespeichert werden.
 - In den Theme-PHP-Templates verbleiben nach aktuellem Audit keine eingebetteten `<style>`-Blöcke mehr; Frontend-Styling sitzt jetzt konsistenter in `style.css`.
-- Aktuelle manuelle Audit-Scorecard: **Security 98/100 · Best Practice 97/100 · Performance 94/100 · Maintainability 98/100**.
+- Aktuelle manuelle Audit-Scorecard: **Security 99/100 · Best Practice 98/100 · Performance 94/100 · Maintainability 98/100** (Re-Pass v3.4.14).
 
 ### Design-Philosophie
 

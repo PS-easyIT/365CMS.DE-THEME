@@ -1,7 +1,7 @@
 {
   "name": "BuildBase",
   "slug": "buildbase",
-  "version": "1.0.0",
+  "version": "3.0.1",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "Bau & Handwerk Theme – Robust, solide, handwerklich. Für Bauunternehmen, Architekten und Handwerksbetriebe.",
   "tags": ["bau", "handwerk", "portfolio", "directory", "robust", "cms"],
@@ -264,6 +264,12 @@
           "type": "checkbox",
           "default": true
         },
+        "show_search_btn": {
+          "label": "Such-Button im Header anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Lupen-Icon und Such-Panel im Header einblenden"
+        },
         "show_emergency_banner": {
           "label": "Notfall-Service Banner anzeigen",
           "type": "checkbox",
@@ -422,6 +428,45 @@
           "type": "color",
           "default": "#44403c",
           "description": "Endfarbe des Hero-Verlaufs"
+        },
+        "show_hero_stats": {
+          "label": "Hero-Kennzahlen anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Drei kompakte Kennzahlen unterhalb der CTA-Buttons"
+        },
+        "hero_stat_1_value": {
+          "label": "Kennzahl 1 – Wert",
+          "type": "text",
+          "default": "800+",
+          "description": "Z.B. Anzahl Handwerker im Netzwerk"
+        },
+        "hero_stat_1_label": {
+          "label": "Kennzahl 1 – Beschriftung",
+          "type": "text",
+          "default": "Handwerker im Netzwerk"
+        },
+        "hero_stat_2_value": {
+          "label": "Kennzahl 2 – Wert",
+          "type": "text",
+          "default": "2.400+",
+          "description": "Z.B. abgeschlossene Projekte"
+        },
+        "hero_stat_2_label": {
+          "label": "Kennzahl 2 – Beschriftung",
+          "type": "text",
+          "default": "Abgeschlossene Projekte"
+        },
+        "hero_stat_3_value": {
+          "label": "Kennzahl 3 – Wert",
+          "type": "text",
+          "default": "4,8★",
+          "description": "Z.B. Durchschnittsbewertung"
+        },
+        "hero_stat_3_label": {
+          "label": "Kennzahl 3 – Beschriftung",
+          "type": "text",
+          "default": "Ø Kundenbewertung"
         }
       }
     },
@@ -489,6 +534,12 @@
           "type": "textarea",
           "default": "Registrieren Sie Ihren Betrieb kostenlos und werden Sie sichtbar für Kunden in Ihrer Region.",
           "description": "Beschreibungstext im CTA-Bereich"
+        },
+        "cta_button_label": {
+          "label": "CTA-Button Beschriftung",
+          "type": "text",
+          "default": "Jetzt Betrieb registrieren",
+          "description": "Beschriftung des Registrierungs-Buttons im CTA-Bereich"
         }
       }
     },

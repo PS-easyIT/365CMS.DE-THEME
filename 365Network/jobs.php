@@ -114,8 +114,8 @@ if ($hasPlugin) {
                     p.remote_option, p.salary_min, p.salary_max, p.salary_currency,
                     p.summary, p.published_at, p.views
              FROM {$prefix}jpg_profiles p {$whereSQL} {$orderSQL}
-             LIMIT {$perPage} OFFSET {$offset}",
-            $params
+             LIMIT ? OFFSET ?",
+            [...$params, $perPage, $offset]
         );
         $jobs = $stmt->fetchAll() ?: [];
 

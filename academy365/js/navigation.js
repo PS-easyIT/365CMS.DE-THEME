@@ -84,36 +84,39 @@
   /* ──────────────────────────────────────────
    * Progress Bars – animate from data-progress attr
    * ────────────────────────────────────────── */
-  const animateProgressBars = (entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const bar     = entry.target;
-      const target  = parseInt(bar.getAttribute('data-progress') || '0', 10);
-      bar.style.width = '0%';
-      requestAnimationFrame(() => {
-        bar.style.transition = 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-        bar.style.width = Math.min(100, Math.max(0, target)) + '%';
-      });
-      observer.unobserve(bar);
-    });
+  const clamp = (v) => Math.min(100, Math.max(0, v));
+  const setBarImmediate = (bar) => {
+    const target = parseInt(bar.getAttribute('data-progress') || '0', 10);
+    bar.style.width = clamp(target) + '%';
   };
-  if ('IntersectionObserver' in window) {
+  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+    document.querySelectorAll('.ac-progress-bar').forEach(setBarImmediate);
+  } else {
+    const animateProgressBars = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const bar    = entry.target;
+        const target = parseInt(bar.getAttribute('data-progress') || '0', 10);
+        bar.style.width = '0%';
+        requestAnimationFrame(() => {
+          bar.style.width = clamp(target) + '%';
+        });
+        observer.unobserve(bar);
+      });
+    };
     const progressObserver = new IntersectionObserver(animateProgressBars, { threshold: 0.3 });
     document.querySelectorAll('.ac-progress-bar').forEach((bar) => progressObserver.observe(bar));
-  } else {
-    document.querySelectorAll('.ac-progress-bar').forEach((bar) => {
-      const target = parseInt(bar.getAttribute('data-progress') || '0', 10);
-      bar.style.width = Math.min(100, Math.max(0, target)) + '%';
-    });
   }
 
   /* ──────────────────────────────────────────
-   * Rating Stars – build visual star fill via CSS var
+   * Rating Stars – fill driven by data-rating, applied as --rating CSS var
    * ────────────────────────────────────────── */
   document.querySelectorAll('.ac-rating-stars').forEach((el) => {
-    const rating = parseFloat(el.style.getPropertyValue('--rating') || el.dataset.rating || '0');
-    if (!isNaN(rating)) el.style.setProperty('--rating', String(rating));
-    el.setAttribute('aria-label', `Bewertung: ${rating} von 5`);
+    const raw = el.dataset.rating || el.style.getPropertyValue('--rating') || '0';
+    const rating = parseFloat(String(raw).replace(',', '.'));
+    const safeRating = isNaN(rating) ? 0 : Math.min(5, Math.max(0, rating));
+    el.style.setProperty('--rating', String(safeRating));
+    el.setAttribute('aria-label', `Bewertung: ${safeRating} von 5`);
   });
 
   /* ──────────────────────────────────────────

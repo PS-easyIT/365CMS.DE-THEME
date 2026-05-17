@@ -15,10 +15,10 @@ try {
 <main id="main" class="ac-main-content" role="main">
     <div class="ac-container ac-error-page">
         <div class="ac-error-code" aria-hidden="true">404</div>
-        <span style="font-size:4rem;" aria-hidden="true">🎓</span>
+        <span class="ac-error-emoji" aria-hidden="true">🎓</span>
         <h1><?php echo $safe($notFoundTitle); ?></h1>
         <p class="ac-muted"><?php echo $safe($notFoundMessage); ?></p>
-        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;">
+        <div class="ac-error-actions">
             <a href="<?php echo $safe($siteUrl . '/courses'); ?>" class="ac-btn ac-btn-primary"><?php echo $safe($notFoundCta); ?></a>
             <a href="<?php echo $safe($siteUrl); ?>" class="ac-btn ac-btn-ghost">Zur Startseite</a>
         </div>

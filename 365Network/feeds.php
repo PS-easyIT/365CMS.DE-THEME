@@ -74,7 +74,7 @@ if ($hasPlugin) {
         $cRow = $db->execute(
             "SELECT COUNT(*) AS cnt FROM {$prefix}feed_items fi {$whereSQL}", $params
         )->fetch();
-        $totalCount = (int)(($cRow)->cnt ?? 0);
+        $totalCount = (int)(is_array($cRow) ? ($cRow['cnt'] ?? 0) : ($cRow->cnt ?? 0));
         $totalPages = (int)ceil($totalCount / $perPage);
         $page = min($page, max(1, $totalPages));
         $offset = ($page - 1) * $perPage;
@@ -84,8 +84,8 @@ if ($hasPlugin) {
              FROM {$prefix}feed_items fi
              LEFT JOIN {$prefix}feeds f ON fi.feed_id = f.id
              {$whereSQL} {$orderSQL}
-             LIMIT {$perPage} OFFSET {$offset}",
-            $params
+             LIMIT ? OFFSET ?",
+            [...$params, $perPage, $offset]
         );
         $items = $stmt->fetchAll() ?: [];
 

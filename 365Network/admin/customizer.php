@@ -804,7 +804,7 @@ $config = [
                 'options'     => [
                     'dark'     => 'Dunkel (Navy)',
                     'accent'   => 'Akzentfarbe (Gold)',
-                    'gradient' => 'Gradient (Navy → Blau)',
+                    'gradient' => 'Gradient (Navy → Gold)',
                     'light'    => 'Hell (Weiß)',
                 ],
                 'default'     => 'dark',

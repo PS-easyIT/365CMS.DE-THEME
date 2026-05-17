@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?php echo htmlspecialchars(\CMS\ThemeManager::instance()->getSiteDescription(), ENT_QUOTES, 'UTF-8'); ?>">
     <title><?php echo htmlspecialchars(\CMS\ThemeManager::instance()->getSiteTitle(), ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars(\CMS\ThemeManager::instance()->getThemeUrl('academy365'), ENT_QUOTES, 'UTF-8'); ?>/style.css">
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 <body class="ac-body <?php echo theme_is_logged_in() ? 'is-logged-in' : ''; ?>">
@@ -22,11 +21,11 @@ $siteTitle    = $themeManager->getSiteTitle();
 $isLoggedIn   = theme_is_logged_in();
 $siteUrl      = SITE_URL;
 $safe         = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$homeUrl      = function_exists('theme_route_url') ? theme_route_url('home') : rtrim($siteUrl, '/') . '/';
-$searchUrl    = function_exists('theme_route_url') ? theme_route_url('search') : rtrim($siteUrl, '/') . '/search';
-$loginUrl     = function_exists('theme_route_url') ? theme_route_url('login') : rtrim($siteUrl, '/') . '/login';
-$registerUrl  = function_exists('theme_route_url') ? theme_route_url('register') : rtrim($siteUrl, '/') . '/register';
-$memberUrl    = rtrim($siteUrl, '/') . '/member';
+$homeUrl      = function_exists('theme_route_url') ? theme_route_url('home')               : rtrim($siteUrl, '/') . '/';
+$searchUrl    = function_exists('theme_route_url') ? theme_route_url('search')             : rtrim($siteUrl, '/') . '/search';
+$loginUrl     = function_exists('theme_route_url') ? theme_route_url('login')              : rtrim($siteUrl, '/') . '/login';
+$registerUrl  = function_exists('theme_route_url') ? theme_route_url('register')           : rtrim($siteUrl, '/') . '/register';
+$memberUrl    = function_exists('theme_route_url') ? theme_route_url('member-dashboard', ['area' => 'member']) : rtrim($siteUrl, '/') . '/member';
 ?>
 <header id="masthead" class="ac-site-header" role="banner">
     <div class="ac-header-inner">

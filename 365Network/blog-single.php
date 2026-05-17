@@ -167,7 +167,9 @@ try {
                 <a href="<?php echo $rUrl; ?>" class="blog-related__card">
                     <?php if ($rImage) : ?>
                     <div class="blog-related__image">
-                        <img src="<?php echo htmlspecialchars($rImage, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo $rTitle; ?>" loading="lazy">
+                        <img src="<?php echo htmlspecialchars($rImage, ENT_QUOTES, 'UTF-8'); ?>"
+                             alt="<?php echo $rTitle; ?>"
+                             loading="lazy"
                              width="640" height="360">
                     </div>
                     <?php else : ?>

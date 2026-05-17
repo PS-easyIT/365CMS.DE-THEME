@@ -106,8 +106,8 @@ if ($hasPlugin) {
         $provStmt = $db->execute(
             "SELECT bp.id, bp.display_name, bp.slug, bp.avatar_url, bp.bio, bp.timezone, bp.currency
              FROM {$prefix}booking_providers bp {$whereSQL} {$orderSQL}
-             LIMIT {$perPage} OFFSET {$offset}",
-            $params
+             LIMIT ? OFFSET ?",
+            [...$params, $perPage, $offset]
         );
         $providers = $provStmt->fetchAll() ?: [];
 

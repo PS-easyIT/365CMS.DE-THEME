@@ -3,12 +3,14 @@
   "name": "Academy365",
   "type": "theme",
   "license": "free",
-  "version": "1.0.0",
+  "version": "3.0.1",
   "min_cms_version": "0.20.0",
-  "released": "2026-02-21",
+  "released": "2026-05-17",
   "download_url": "",
   "checksum_sha256": "",
   "changelog": {
+    "3.0.1": "Re-Audit-Pass: vollständiges Customizer-Mapping (Header/Footer/Layout/Buttons/Typografie), Stylesheet-Preload, identitätsstiftender Hero-Verlauf, alle Inline-Styles in CSS-Klassen extrahiert, Requires PHP: 8.4 deklariert.",
+    "3.0.0": "v3-Kompatibilität: cms_init-Menüs, Customizer-Key-Mapping korrigiert, sichere Headline-/Slug-Helper, :focus-visible & reduced-motion.",
     "1.0.0": "Erstveröffentlichung: E-Learning & Kursplattform-Theme."
   }
 }

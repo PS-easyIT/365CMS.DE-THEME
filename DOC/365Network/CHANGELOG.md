@@ -12,6 +12,21 @@
 
 ---
 
+## v3.4.14 — Mai 2026
+
+### Re-Audit-Pass: prepared LIMIT/OFFSET in allen Directory-Templates, Markup-Fix, identitätsstiftender CTA-Gradient
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | SQL/Directories | `experts.php`, `companies.php`, `events.php`, `jobs.php`, `speakers.php`, `feeds.php` und `booking.php` binden `LIMIT`/`OFFSET` jetzt als parametrisierte Werte (`LIMIT ? OFFSET ?` mit angehängtem Spread `[...$params, $perPage, $offset]`), statt die Integer in den SQL-String zu interpolieren. Damit folgen die Directory-Listen demselben Prepared-Statement-Muster wie die Sidebar-Widgets. |
+| 🔴 fix | Robustheit/Directories | Count-Row-Zugriffe auf `$cRow->cnt` waren zuvor in fünf Templates als `(($cRow)->cnt ?? 0)` formuliert und konnten bei einer leeren Ergebnismenge (`fetch()` liefert `false`) einen Fehlerzustand auslösen. Jetzt überall einheitlich `is_array($cRow) ? ($cRow['cnt'] ?? 0) : ($cRow->cnt ?? 0)`. |
+| 🔴 fix | Markup | `blog-single.php` Related-Posts-Bild hatte einen gebrochenen `<img>`-Tag (Attribute `width`/`height` leakten als Text in das nachfolgende Markup). Korrekt geschlossen und auf separate Zeilen normalisiert. |
+| 🎨 style | Design/CTA | `.homepage-cta--gradient` nutzte zuvor `linear-gradient(135deg, navy, #1e40af)` — ein generischer Navy→Royal-Blue-Verlauf, der nicht zur Theme-Identität passt. Ersetzt durch `Navy → Primary-Light → Gold (accent-hover)` mit einem dezenten Gold-Glow rechts via `radial-gradient`. Das passt zur Markenpalette und vermeidet das KI-Slop-Muster „Standard-Blau-Verlauf für jede CTA". |
+| 🔵 docs | Customizer | Customizer-Label von „Gradient (Navy → Blau)" auf „Gradient (Navy → Gold)" in `theme.json` und `admin/customizer.php` synchronisiert, damit Backend und CSS-Realität übereinstimmen. |
+| 🟡 refactor | Versions | `THEME_VERSION` (`functions.php`), `style.css`, `theme.json` und `update.json` synchron auf `3.4.14` angehoben; `update.json` um den 3.4.14-Eintrag und ein aktuelles Release-Datum ergänzt. |
+
+---
+
 ## v3.4.13 — Mai 2026
 
 ### Theme-CSS-Cache-Busting synchronisiert

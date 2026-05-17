@@ -22,7 +22,7 @@
             <div class="ac-pagination"><?php \CMS\CMS::instance()->thePagination(); ?></div>
         <?php else : ?>
             <div class="ac-empty-state">
-                <span aria-hidden="true" style="font-size:3rem;">📚</span>
+                <span class="ac-empty-emoji" aria-hidden="true">📚</span>
                 <p>Noch keine Kurse vorhanden.</p>
                 <a href="<?php echo htmlspecialchars(SITE_URL, ENT_QUOTES, 'UTF-8'); ?>" class="ac-btn ac-btn-primary">Zurück zur Startseite</a>
             </div>
