@@ -54,6 +54,7 @@
     --radius-pill:     9999px;
     --header-height:   72px;
     --container-max:   1200px;
+    --focus-ring:      #0ea5e9;
 }
 
 /* ================================================================
@@ -68,6 +69,8 @@ a:hover { text-decoration: underline; }
 ul  { list-style: none; }
 .mc-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 p { line-height: 1.8; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
 
 /* ================================================================
    3. Layout
@@ -112,6 +115,15 @@ p { line-height: 1.8; }
     .main-navigation.open { display: block; }
     .main-navigation ul { flex-direction: column; }
 }
+.mc-btn:focus-visible,
+.mc-header-search-input:focus-visible,
+.mc-hero-search-input:focus-visible { box-shadow: 0 0 0 .2rem rgb(14 165 233 / 0.22); }
+.mc-search-toggle-btn { padding: .5rem; }
+.mc-emergency-banner-row,
+.mc-emergency-notice-row { display: flex; align-items: center; justify-content: center; gap: .75rem; flex-wrap: wrap; }
+.mc-search-panel { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: .75rem 0; }
+.mc-header-search-form { display: flex; gap: .5rem; flex: 1; }
+.mc-header-search-input { flex: 1; padding: .6rem .9rem; border: 1px solid var(--border-color); border-radius: var(--radius-pill); font-family: var(--font-body); }
 
 /* ================================================================
    5. Buttons
@@ -390,6 +402,15 @@ body.mc-large-text      { font-size: 1.125rem; }
     align-items: stretch;
 }
 .mc-btn-lg { padding: .9rem 2rem; font-size: var(--font-md); }
+.mc-booking-register-btn { margin-top: .75rem; }
+.mc-booking-dsgvo-note { font-size: var(--font-xs); color: var(--muted-color); margin-top: .75rem; text-align: center; }
+.mc-card--doctor-cta { text-align: center; grid-column: 1 / -1; padding: 2.5rem 2rem; }
+.mc-card-doctor-emoji { font-size: 3rem; margin-bottom: .75rem; }
+.mc-card-doctor-title { font-family: var(--font-heading); color: var(--secondary-color); margin-bottom: .5rem; }
+.mc-card-doctor-lead { color: var(--muted-color); max-width: 500px; margin: 0 auto 1.25rem; }
+.mc-cta-center { text-align: center; }
+.mc-cta-lead { color: var(--text-secondary); max-width: 600px; margin: .75rem auto 1.75rem; }
+.mc-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
 /* ================================================================
    16. Trust Grid

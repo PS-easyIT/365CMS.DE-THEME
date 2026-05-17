@@ -3,6 +3,7 @@
  */
 (function () {
     'use strict';
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const html    = document.documentElement;
     const header  = document.getElementById('masthead');
     const mToggle = document.getElementById('mobileMenuToggle');
@@ -36,8 +37,18 @@
         });
     }
     if (srchBtn && srchPnl) {
-        srchBtn.addEventListener('click', () => { srchPnl.removeAttribute('hidden'); srchBtn.setAttribute('aria-expanded', 'true'); srchPnl.querySelector('input')?.focus(); });
-        srchCls?.addEventListener('click', () => { srchPnl.setAttribute('hidden', ''); srchBtn.setAttribute('aria-expanded', 'false'); });
+        srchBtn.addEventListener('click', () => {
+            srchPnl.removeAttribute('hidden');
+            srchPnl.setAttribute('aria-hidden', 'false');
+            srchBtn.setAttribute('aria-expanded', 'true');
+            srchPnl.querySelector('input')?.focus();
+        });
+        srchCls?.addEventListener('click', () => {
+            srchPnl.setAttribute('hidden', '');
+            srchPnl.setAttribute('aria-hidden', 'true');
+            srchBtn.setAttribute('aria-expanded', 'false');
+            srchBtn.focus();
+        });
     }
     // Accessibility: Font size toggle
     if (fontBtn) {
@@ -57,7 +68,7 @@
             localStorage.setItem(hc, active ? '1' : '0');
         });
     }
-    if ('IntersectionObserver' in window) {
+    if (!prefersReducedMotion && 'IntersectionObserver' in window) {
         const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } }); }, { threshold: 0.1 });
         document.querySelectorAll('.mc-card').forEach(el => obs.observe(el));
     }

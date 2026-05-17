@@ -1,6 +1,6 @@
 # MedCare Pro – Theme für 365 CMS
 
-**Version:** 1.0.1  
+**Version:** 1.0.2  
 **Autor:** PHINIT.DE / Andreas Hepp  
 **Lizenz:** Proprietär – nur für 365CMS.DE  
 **Zielgruppe:** Arztpraxen, Kliniken, Therapeuten, Pflegedienste, Gesundheitsportale
@@ -183,6 +183,13 @@ include THEME_PATH . 'medcarepro/partials/doctor-card.php';
 ---
 
 ## Changelog
+
+### 1.0.2 (2026-05-17)
+- **v3-Kompatibilität:** Menü-Registrierung zusätzlich über `cms_init` abgesichert.
+- **Customizer-Fixes:** Key-Mapping in `functions.php` auf die tatsächlichen `theme.json`-Keys korrigiert (Farben, Typografie, Header-Höhe, Medical-Font).
+- **Sicherheit:** Google-Fonts-URL escaped; Header-/CTA-Links in Templates konsistent über sichere URL-Konstruktion.
+- **A11y:** `aria-hidden`-Toggling für Suche, sichtbare `:focus-visible`-States, reduzierte Bewegung bei `prefers-reduced-motion`.
+- **Code-Qualität:** Inline-Styles in `header.php`/`home.php` in dedizierte CSS-Klassen verschoben.
 
 ### 1.0.1 (2026-02-23)
 - **Fix:** `theme_is_logged_in()`, `theme_nav_menu()`, `get_header()`, `get_footer()` implementiert (vorher Fatal Error)
