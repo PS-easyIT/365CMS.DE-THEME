@@ -31,7 +31,7 @@ $siteUrl = biz_site_url();
                     'hero_headline',
                     'Wir bringen <span class="highlight">Ihr Unternehmen</span> erfolgreich in die Zukunft.'
                 );
-                echo $headline;
+                echo biz_safe_headline((string) $headline);
                 ?>
             </h1>
 
@@ -43,11 +43,11 @@ $siteUrl = biz_site_url();
             </p>
 
             <div class="biz-hero-actions">
-                <a href="<?php echo $siteUrl; ?>/<?php echo htmlspecialchars(biz_config('hero_cta_primary_url', '#leistungen'), ENT_QUOTES, 'UTF-8'); ?>"
+                <a href="<?php echo htmlspecialchars(biz_href((string) biz_config('hero_cta_primary_url', '#leistungen')), ENT_QUOTES, 'UTF-8'); ?>"
                    class="btn-biz btn-biz-primary btn-biz-lg">
                     <?php echo htmlspecialchars(biz_config('hero_cta_primary_label', 'Leistungen entdecken'), ENT_QUOTES, 'UTF-8'); ?>
                 </a>
-                <a href="<?php echo $siteUrl; ?>/<?php echo htmlspecialchars(biz_config('hero_cta_secondary_url', '#kontakt'), ENT_QUOTES, 'UTF-8'); ?>"
+                <a href="<?php echo htmlspecialchars(biz_href((string) biz_config('hero_cta_secondary_url', '#kontakt')), ENT_QUOTES, 'UTF-8'); ?>"
                    class="btn-biz btn-biz-outline btn-biz-lg">
                     <?php echo htmlspecialchars(biz_config('hero_cta_secondary_label', 'Kontakt aufnehmen'), ENT_QUOTES, 'UTF-8'); ?>
                 </a>
@@ -149,7 +149,7 @@ $siteUrl = biz_site_url();
                     <li>Persönlicher Ansprechpartner für jedes Projekt</li>
                 </ul>
 
-                <a href="<?php echo $siteUrl; ?>/#kontakt" class="btn-biz btn-biz-primary">
+                <a href="<?php echo htmlspecialchars(biz_href('#kontakt'), ENT_QUOTES, 'UTF-8'); ?>" class="btn-biz btn-biz-primary">
                     Jetzt kennenlernen →
                 </a>
             </div>

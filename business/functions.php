@@ -47,15 +47,18 @@ class IT_Business_Theme
     public function enqueueStyles(): void
     {
         $v   = defined('THEME_VERSION') ? THEME_VERSION : '1.0.0';
-        $url = \CMS\ThemeManager::instance()->getThemeUrl();
-        echo '<link rel="stylesheet" href="' . $url . '/style.css?v=' . $v . '">' . "\n";
+        $url = rtrim((string) \CMS\ThemeManager::instance()->getThemeUrl(), '/');
+        $styleUrl = htmlspecialchars($url . '/style.css?v=' . rawurlencode((string) $v), ENT_QUOTES, 'UTF-8');
+        echo '<link rel="preload" href="' . $styleUrl . '" as="style">' . "\n";
+        echo '<link rel="stylesheet" href="' . $styleUrl . '">' . "\n";
     }
 
     public function enqueueScripts(): void
     {
         $v   = defined('THEME_VERSION') ? THEME_VERSION : '1.0.0';
-        $url = \CMS\ThemeManager::instance()->getThemeUrl();
-        echo '<script src="' . $url . '/js/navigation.js?v=' . $v . '"></script>' . "\n";
+        $url = rtrim((string) \CMS\ThemeManager::instance()->getThemeUrl(), '/');
+        $scriptUrl = htmlspecialchars($url . '/js/navigation.js?v=' . rawurlencode((string) $v), ENT_QUOTES, 'UTF-8');
+        echo '<script src="' . $scriptUrl . '" defer></script>' . "\n";
     }
 
     // ── Meta ─────────────────────────────────────────────────────────────────
@@ -158,11 +161,45 @@ if (!function_exists('biz_nav_menu')) {
             $isActive = ($path === '' || $path === '/') ? ($requestUri === '' || $requestUri === '/') : str_starts_with($requestUri, $path);
             $class   = $isActive ? ' class="active"' : '';
             $target  = !empty($item['target']) && $item['target'] === '_blank' ? ' target="_blank" rel="noopener noreferrer"' : '';
-            $url     = htmlspecialchars($item['url'],   ENT_QUOTES, 'UTF-8');
+            $rawUrl = (string)($item['url'] ?? '#');
+            $sanitizedUrl = filter_var($rawUrl, FILTER_VALIDATE_URL)
+                ? $rawUrl
+                : (str_starts_with($rawUrl, '/') || str_starts_with($rawUrl, '#') ? $rawUrl : '#');
+            $url     = htmlspecialchars($sanitizedUrl,   ENT_QUOTES, 'UTF-8');
             $label   = htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8');
             echo '<li' . $class . '><a href="' . $url . '"' . $target . '>' . $label . '</a></li>' . "\n";
         }
         echo '</ul>' . "\n";
+    }
+}
+
+if (!function_exists('biz_href')) {
+    function biz_href(string $target): string
+    {
+        $trimmed = trim($target);
+        if ($trimmed === '') {
+            return biz_site_url() . '/';
+        }
+        if (str_starts_with($trimmed, 'http://') || str_starts_with($trimmed, 'https://')) {
+            return $trimmed;
+        }
+        if (str_starts_with($trimmed, '#')) {
+            return biz_site_url() . '/' . $trimmed;
+        }
+        return biz_site_url() . '/' . ltrim($trimmed, '/');
+    }
+}
+
+if (!function_exists('biz_safe_headline')) {
+    function biz_safe_headline(string $headline): string
+    {
+        $escaped = htmlspecialchars($headline, ENT_QUOTES, 'UTF-8');
+        $escaped = str_replace(
+            ['&lt;span class=&quot;highlight&quot;&gt;', '&lt;/span&gt;'],
+            ['<span class="highlight">', '</span>'],
+            $escaped
+        );
+        return $escaped;
     }
 }
 

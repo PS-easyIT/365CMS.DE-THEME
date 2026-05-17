@@ -5,7 +5,7 @@ Author: PHIN IT Solutions
 Author URI: https://phin.network
 Description: Professionelles Company-Presentation-Theme. Optimiert als Unternehmens-Landingpage mit Hero, Leistungen, Über-uns und Kontakt-Sektionen. Kein Blog, kein Member-Bereich.
 Version: 1.0.0
-Requires PHP: 8.1
+Requires PHP: 8.4
 License: GNU General Public License v2 or later
 */
 
@@ -46,7 +46,7 @@ body {
 img { max-width: 100%; height: auto; display: block; }
 a { color: var(--biz-accent); text-decoration: none; transition: color 0.2s; }
 a:hover { color: var(--biz-accent-hover); }
-*, *:focus { outline: none; }
+:focus:not(:focus-visible) { outline: none; }
 *:focus-visible { outline: 3px solid var(--biz-accent); outline-offset: 2px; border-radius: 3px; }
 
 .skip-link { position: absolute; top: -40px; left: 0; background: var(--biz-accent); color: #fff; padding: 8px 16px; z-index: 200; }
@@ -209,6 +209,7 @@ a:hover { color: var(--biz-accent-hover); }
     padding-left: 2rem;
 }
 .biz-drawer-cta { padding: 1.5rem; }
+.biz-drawer-cta-link { width: 100%; justify-content: center; display: flex; }
 
 /* ===== Hero ===== */
 .biz-hero {
@@ -499,6 +500,8 @@ a:hover { color: var(--biz-accent-hover); }
     border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 .biz-footer-brand .biz-logo-text { font-size: 1.125rem; margin-bottom: 1rem; display: block; }
+.biz-footer-brand-link { margin-bottom: 1rem; display: inline-flex; }
+.biz-footer-brand-icon { margin-right: 0.625rem; flex-shrink: 0; }
 .biz-footer-brand p { font-size: 0.9rem; line-height: 1.65; margin-bottom: 1.5rem; }
 .biz-footer-col h4 {
     color: var(--biz-white);

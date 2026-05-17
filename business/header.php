@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$tm       = \CMS\ThemeManager::instance();
 $title    = biz_site_title();
 $siteUrl  = biz_site_url();
 
@@ -38,7 +37,7 @@ try {
             <div class="biz-header-inner">
 
                 <!-- Logo -->
-                <a href="<?php echo $siteUrl; ?>/" class="biz-logo" aria-label="<?php echo $title; ?>">
+                <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="biz-logo" aria-label="<?php echo $title; ?>">
                     <?php if (!empty($_logoUrl)) : ?>
                         <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
                              alt="<?php echo $title; ?>" class="biz-logo-img">
@@ -58,7 +57,7 @@ try {
 
                 <!-- Header CTA & Mobile Toggle -->
                 <div class="biz-header-cta">
-                    <a href="<?php echo $siteUrl; ?>/#kontakt" class="btn-biz btn-biz-primary">
+                    <a href="<?php echo htmlspecialchars(biz_href('#kontakt'), ENT_QUOTES, 'UTF-8'); ?>" class="btn-biz btn-biz-primary">
                         Kontakt
                     </a>
                 </div>
@@ -81,9 +80,8 @@ try {
     <nav id="bizMobileDrawer" class="biz-mobile-drawer" aria-label="Mobile Navigation" aria-hidden="true">
         <?php biz_nav_menu('primary'); ?>
         <div class="biz-drawer-cta">
-            <a href="<?php echo $siteUrl; ?>/#kontakt"
-               class="btn-biz btn-biz-primary"
-               style="width:100%;justify-content:center;display:flex;">
+            <a href="<?php echo htmlspecialchars(biz_href('#kontakt'), ENT_QUOTES, 'UTF-8'); ?>"
+               class="btn-biz btn-biz-primary biz-drawer-cta-link">
                 Kontakt aufnehmen
             </a>
         </div>

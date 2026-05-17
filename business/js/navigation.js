@@ -6,6 +6,7 @@
 
 (function () {
     'use strict';
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function init() {
 
@@ -13,9 +14,7 @@
         const header = document.getElementById('biz-masthead');
         if (header) {
             window.addEventListener('scroll', function () {
-                header.style.background = window.scrollY > 60
-                    ? 'rgba(15,23,42,0.97)'
-                    : '';
+                header.classList.toggle('scrolled', window.scrollY > 60);
             }, { passive: true });
         }
 
@@ -68,7 +67,7 @@
                     e.preventDefault();
                     close();
                     setTimeout(function () {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                     }, drawer && drawer.classList.contains('is-open') ? 300 : 0);
                 }
             });

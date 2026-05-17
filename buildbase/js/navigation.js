@@ -3,6 +3,7 @@
  */
 (function () {
     'use strict';
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const header  = document.getElementById('masthead');
     const mToggle = document.getElementById('mobileMenuToggle');
     const nav     = document.querySelector('.main-navigation');
@@ -32,10 +33,20 @@
         });
     }
     if (srchBtn && srchPnl) {
-        srchBtn.addEventListener('click', () => { srchPnl.removeAttribute('hidden'); srchBtn.setAttribute('aria-expanded', 'true'); srchPnl.querySelector('input')?.focus(); });
-        srchCls?.addEventListener('click', () => { srchPnl.setAttribute('hidden', ''); srchBtn.setAttribute('aria-expanded', 'false'); });
+        srchBtn.addEventListener('click', () => {
+            srchPnl.removeAttribute('hidden');
+            srchPnl.setAttribute('aria-hidden', 'false');
+            srchBtn.setAttribute('aria-expanded', 'true');
+            srchPnl.querySelector('input')?.focus();
+        });
+        srchCls?.addEventListener('click', () => {
+            srchPnl.setAttribute('hidden', '');
+            srchPnl.setAttribute('aria-hidden', 'true');
+            srchBtn.setAttribute('aria-expanded', 'false');
+            srchBtn.focus();
+        });
     }
-    if ('IntersectionObserver' in window) {
+    if (!prefersReducedMotion && 'IntersectionObserver' in window) {
         const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } }); }, { threshold: 0.1 });
         document.querySelectorAll('.bb-card').forEach(el => obs.observe(el));
     }
