@@ -61,11 +61,11 @@ $allowedTags = '<p><br><strong><b><em><i><u><s>'
 <div class="ptc-page-content">
     <div class="ptc-container">
         <?php if ($pageContent && trim($pageContent) !== '') : ?>
-            <div class="ptc-prose sun-editor-editable" style="max-width:<?php echo $pageMaxWidth; ?>px;">
+            <div class="ptc-prose ptc-prose--constrained sun-editor-editable">
                 <?php echo strip_tags($pageContent, $allowedTags); ?>
             </div>
         <?php else : ?>
-            <p style="color:var(--ptc-slate);font-style:italic;">Diese Seite hat noch keinen Inhalt.</p>
+            <p class="ptc-text-muted">Diese Seite hat noch keinen Inhalt.</p>
         <?php endif; ?>
     </div>
 </div>

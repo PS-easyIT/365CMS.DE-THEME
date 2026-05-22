@@ -1,26 +1,279 @@
 {
-    "name": "Business Presentation",
-    "version": "1.0.0",
-    "description": "Professionelles Unternehmens-Presentation-Theme",
-    "author": "PHIN IT Solutions",
-    "textdomain": "biz-theme",
-    "template": "business",
-    "menus": {
-        "primary": "Hauptnavigation",
-        "footer-nav": "Footer-Navigation",
-        "footer-legal": "Rechtliche Links"
+  "name": "Business Presentation",
+  "slug": "business",
+  "version": "3.0.2",
+  "description": "Editorial B2B-Corporate-Theme – Slate-Anker, Kupfer-Gold-Akzent, redaktionelle Whitespace-Disziplin. Für IT-Beratung, Dienstleister und Consultancies.",
+  "author": "PHIN IT Solutions",
+  "textdomain": "biz-theme",
+  "template": "business",
+  "tags": ["business", "corporate", "consulting", "b2b", "landing", "editorial"],
+  "supports": ["custom-logo", "sticky-header", "custom-css"],
+
+  "menus": {
+    "primary": "Hauptnavigation",
+    "footer-nav": "Footer-Navigation",
+    "footer-legal": "Rechtliche Links"
+  },
+
+  "settings": {
+    "hero_badge": "Ihr verlässlicher IT-Partner",
+    "hero_headline": "Wir bringen <span class=\"highlight\">Ihr Unternehmen</span> erfolgreich in die Zukunft.",
+    "hero_text": "Mit fundierter Expertise, modernsten Technologien und einem engagierten Team entwickeln wir maßgeschneiderte Lösungen für Ihre digitalen Herausforderungen.",
+    "hero_cta_primary_label": "Leistungen entdecken",
+    "hero_cta_primary_url": "#leistungen",
+    "hero_cta_secondary_label": "Kontakt aufnehmen",
+    "hero_cta_secondary_url": "#kontakt",
+    "about_heading": "Über uns – der Experte an Ihrer Seite",
+    "cta_heading": "Bereit für den nächsten Schritt?",
+    "cta_text": "Kontaktieren Sie uns noch heute für ein unverbindliches Erstgespräch. Wir freuen uns auf Ihre Anfrage.",
+    "footer_tagline": "Ihr Partner für digitale Innovation und maßgeschneiderte IT-Lösungen."
+  },
+
+  "customization": {
+
+    "colors": {
+      "label": "Farben",
+      "description": "Deep-Slate-Anker mit einem warmen, deliberaten Kupfer-Gold-Akzent.",
+      "settings": {
+        "primary_color": {
+          "label": "Primärfarbe",
+          "type": "color",
+          "default": "#c08a2e",
+          "description": "Kupfer-Gold – Haupt-Akzent für CTAs, Highlights und Rules."
+        },
+        "primary_hover": {
+          "label": "Primär Hover",
+          "type": "color",
+          "default": "#a16f1e"
+        },
+        "ink_color": {
+          "label": "Anker / Ink",
+          "type": "color",
+          "default": "#0c1320",
+          "description": "Tiefe Slate-Farbe für Header, Hero und Footer."
+        },
+        "ink_soft": {
+          "label": "Anker (weicher)",
+          "type": "color",
+          "default": "#18243a"
+        },
+        "paper_color": {
+          "label": "Papier / Surface",
+          "type": "color",
+          "default": "#f7f5f0",
+          "description": "Warmes Off-White für alternierende Sektionen."
+        },
+        "text_color": {
+          "label": "Textfarbe",
+          "type": "color",
+          "default": "#1a2030"
+        },
+        "muted_color": {
+          "label": "Gedämpfte Textfarbe",
+          "type": "color",
+          "default": "#5a6479"
+        },
+        "border_color": {
+          "label": "Rahmenfarbe",
+          "type": "color",
+          "default": "#dcd9d1"
+        }
+      }
     },
-    "settings": {
-        "hero_badge": "Ihr verlässlicher IT-Partner",
-        "hero_headline": "Wir bringen <span class=\"highlight\">Ihr Unternehmen</span> erfolgreich in die Zukunft.",
-        "hero_text": "Mit fundierter Expertise, modernsten Technologien und einem engagierten Team entwickeln wir maßgeschneiderte Lösungen für Ihre digitalen Herausforderungen.",
-        "hero_cta_primary_label": "Leistungen entdecken",
-        "hero_cta_primary_url": "#leistungen",
-        "hero_cta_secondary_label": "Kontakt aufnehmen",
-        "hero_cta_secondary_url": "#kontakt",
-        "about_heading": "Über uns – der Experte an Ihrer Seite",
-        "cta_heading": "Bereit für den nächsten Schritt?",
-        "cta_text": "Kontaktieren Sie uns noch heute für ein unverbindliches Erstgespräch. Wir freuen uns auf Ihre Anfrage.",
-        "footer_tagline": "Ihr Partner für digitale Innovation und maßgeschneiderte IT-Lösungen."
+
+    "typography": {
+      "label": "Typografie",
+      "description": "Klare Hierarchie mit System-UI als Body, optional Inter / Source Serif für Display.",
+      "settings": {
+        "font_family_base": {
+          "label": "Basis-Schriftart",
+          "type": "select",
+          "options": {
+            "system":     "System-UI (empfohlen)",
+            "inter":      "Inter",
+            "source-sans":"Source Sans 3"
+          },
+          "default": "system"
+        },
+        "font_family_heading": {
+          "label": "Überschriften-Schriftart",
+          "type": "select",
+          "options": {
+            "system":      "System-UI (empfohlen)",
+            "inter":       "Inter",
+            "source-serif":"Source Serif 4 (redaktionell)"
+          },
+          "default": "system"
+        },
+        "font_size_base": {
+          "label": "Basis-Schriftgröße (px)",
+          "type": "number",
+          "default": 16,
+          "min": 14,
+          "max": 20
+        },
+        "line_height_base": {
+          "label": "Zeilenhöhe",
+          "type": "number",
+          "default": 1.65,
+          "min": 1.3,
+          "max": 2.2,
+          "step": 0.05
+        }
+      }
+    },
+
+    "layout": {
+      "label": "Layout",
+      "description": "Editorial-Whitespace, klare Container.",
+      "settings": {
+        "container_width": {
+          "label": "Container-Breite (px)",
+          "type": "number",
+          "default": 1200,
+          "min": 960,
+          "max": 1440
+        },
+        "section_spacing": {
+          "label": "Sektionsabstand (rem)",
+          "type": "number",
+          "default": 5,
+          "min": 2,
+          "max": 9,
+          "step": 0.5
+        },
+        "border_radius": {
+          "label": "Eckenradius (px)",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 16,
+          "description": "Konservativer Radius für seriöse, ruhige Optik."
+        }
+      }
+    },
+
+    "header": {
+      "label": "Header",
+      "settings": {
+        "logo_url": {
+          "label": "Header Logo",
+          "type": "image",
+          "default": "",
+          "description": "Firmenlogo im Header."
+        },
+        "enable_sticky_header": {
+          "label": "Sticky Header",
+          "type": "checkbox",
+          "default": true
+        }
+      }
+    },
+
+    "footer": {
+      "label": "Footer",
+      "settings": {
+        "footer_tagline": {
+          "label": "Footer-Tagline",
+          "type": "textarea",
+          "default": "Ihr Partner für digitale Innovation und maßgeschneiderte IT-Lösungen."
+        },
+        "footer_copyright": {
+          "label": "Copyright-Text",
+          "type": "text",
+          "default": "© {year} {site_title}. Alle Rechte vorbehalten.",
+          "description": "Platzhalter: {year}, {site_title}"
+        }
+      }
+    },
+
+    "biz_hero": {
+      "label": "Hero-Bereich",
+      "description": "Texte für den Hero-Einstiegsbereich.",
+      "settings": {
+        "hero_badge": {
+          "label": "Hero Eyebrow / Badge",
+          "type": "text",
+          "default": "Ihr verlässlicher IT-Partner"
+        },
+        "hero_headline": {
+          "label": "Hero Hauptüberschrift",
+          "type": "textarea",
+          "default": "Wir bringen <span class=\"highlight\">Ihr Unternehmen</span> erfolgreich in die Zukunft.",
+          "description": "Erlaubt nur <span class=\"highlight\">…</span> als Inline-Markup."
+        },
+        "hero_text": {
+          "label": "Hero Beschreibung",
+          "type": "textarea",
+          "default": "Mit fundierter Expertise, modernsten Technologien und einem engagierten Team entwickeln wir maßgeschneiderte Lösungen für Ihre digitalen Herausforderungen."
+        },
+        "hero_cta_primary_label": {
+          "label": "Primärer CTA – Label",
+          "type": "text",
+          "default": "Leistungen entdecken"
+        },
+        "hero_cta_primary_url": {
+          "label": "Primärer CTA – URL",
+          "type": "text",
+          "default": "#leistungen"
+        },
+        "hero_cta_secondary_label": {
+          "label": "Sekundärer CTA – Label",
+          "type": "text",
+          "default": "Kontakt aufnehmen"
+        },
+        "hero_cta_secondary_url": {
+          "label": "Sekundärer CTA – URL",
+          "type": "text",
+          "default": "#kontakt"
+        }
+      }
+    },
+
+    "biz_content": {
+      "label": "Seiteninhalte",
+      "description": "Über-uns, CTA und Footer-Texte.",
+      "settings": {
+        "about_heading": {
+          "label": "Über uns – Überschrift",
+          "type": "text",
+          "default": "Über uns – der Experte an Ihrer Seite"
+        },
+        "about_image": {
+          "label": "Über-uns Bild",
+          "type": "image",
+          "default": "",
+          "description": "Optionales Bild im Über-uns-Bereich."
+        },
+        "cta_heading": {
+          "label": "CTA – Überschrift",
+          "type": "text",
+          "default": "Bereit für den nächsten Schritt?"
+        },
+        "cta_text": {
+          "label": "CTA – Text",
+          "type": "textarea",
+          "default": "Kontaktieren Sie uns noch heute für ein unverbindliches Erstgespräch. Wir freuen uns auf Ihre Anfrage."
+        },
+        "footer_tagline": {
+          "label": "Footer Tagline",
+          "type": "textarea",
+          "default": "Ihr Partner für digitale Innovation und maßgeschneiderte IT-Lösungen."
+        }
+      }
+    },
+
+    "advanced": {
+      "label": "Erweitert",
+      "settings": {
+        "custom_css": {
+          "label": "Eigenes CSS",
+          "type": "textarea",
+          "default": "",
+          "description": "Zusätzliches CSS wird im <head> nach den Theme-Variablen ausgegeben."
+        }
+      }
     }
+
+  }
 }

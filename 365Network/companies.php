@@ -31,13 +31,13 @@ $homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 $companiesBaseUrl = theme_safe_url($siteUrl . '/companies', $siteUrl . '/companies');
 
 // ── Parameter ──
-$search   = trim(strip_tags($_GET['q'] ?? ''));
-$sector   = trim(strip_tags($_GET['sector'] ?? ''));
-$size     = trim(strip_tags($_GET['size'] ?? ''));
-$location = trim(strip_tags($_GET['location'] ?? ''));
-$sort     = in_array($_GET['sort'] ?? '', ['latest', 'name', 'size']) ? $_GET['sort'] : 'latest';
-$view     = ($_GET['view'] ?? 'grid') === 'list' ? 'list' : 'grid';
-$page     = max(1, (int)($_GET['page'] ?? 1));
+$search   = theme_clean_query_text($_GET['q'] ?? '', 120);
+$sector   = theme_clean_query_text($_GET['sector'] ?? '', 80);
+$size     = theme_clean_query_text($_GET['size'] ?? '', 24);
+$location = theme_clean_query_text($_GET['location'] ?? '', 80);
+$sort     = theme_clean_query_choice($_GET['sort'] ?? '', ['latest', 'name', 'size'], 'latest');
+$view     = theme_clean_query_choice($_GET['view'] ?? '', ['grid', 'list'], 'grid');
+$page     = theme_clean_query_int($_GET['page'] ?? 1, 1, 1, 10000);
 $perPage  = 18;
 
 $companies  = [];
@@ -157,7 +157,7 @@ require_once __DIR__ . '/header.php';
         <!-- Sidebar: Filter -->
         <aside class="directory-filters" aria-label="Firmen-Filter">
             <form method="GET" action="">
-                <?php if ($search): ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES); ?>"><?php endif; ?>
+                <?php if ($search): ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
 
                 <?php if (!empty($sectors)): ?>
                 <div class="filter-panel">
@@ -165,9 +165,9 @@ require_once __DIR__ . '/header.php';
                     <select name="sector" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Branchen</option>
                         <?php foreach ($sectors as $sec): if (!$sec) continue; ?>
-                            <option value="<?php echo htmlspecialchars($sec, ENT_QUOTES); ?>"
+                            <option value="<?php echo htmlspecialchars($sec, ENT_QUOTES, 'UTF-8'); ?>"
                                 <?php echo $sector === $sec ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($sec, ENT_QUOTES); ?>
+                                <?php echo htmlspecialchars($sec, ENT_QUOTES, 'UTF-8'); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -180,9 +180,9 @@ require_once __DIR__ . '/header.php';
                     <select name="location" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Städte</option>
                         <?php foreach ($locations as $loc): if (!$loc) continue; ?>
-                            <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES); ?>"
+                            <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES, 'UTF-8'); ?>"
                                 <?php echo $location === $loc ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($loc, ENT_QUOTES); ?>
+                                <?php echo htmlspecialchars($loc, ENT_QUOTES, 'UTF-8'); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

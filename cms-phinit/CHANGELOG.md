@@ -57,6 +57,19 @@
 
 ---
 
+## v1.5.65 — 20. Mai 2026
+
+### TOC-Anker und EditorJS-Abstände stabilisiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Inhaltsverzeichnis / Überschriften-Anker | `includes/theme-content-helpers.php` stabilisiert Heading-IDs nach der finalen Sanitizer-Stufe, normalisiert leere oder ungültige IDs und macht Duplikate eindeutig (`-2`, `-3`, …), damit Klicks im 365CMS-Inhaltsverzeichnis wieder zuverlässig zu `h2`–`h6` springen. |
+| 🔴 fix | EditorJS / Public-Abstände | `assets/css/rich-content.css` nimmt `.editorjs-spacer` aus generischen Rich-Content-Margins heraus und rendert gespeicherte Spacer-Höhen über robuste `[data-height]`-Fallbacks, sodass Werte wie `25px`, `75px` oder `160px` im Frontend sichtbar bleiben. |
+| 🛡️ security | Sanitizer / EditorJS-Attribute | `CMS/core/Services/PurifierService.php` erlaubt sichere EditorJS-Attribute wie `data-height`, `role`, `aria-hidden` und CMS-Spacing-Datenattribute in den relevanten Purifier-Profilen; die HTML-Definition wurde revisioniert, damit alte Caches die neuen Regeln sauber übernehmen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.65` synchronisiert. |
+
+---
+
 ## v1.5.64 — 17. Mai 2026
 
 ### Dropdown-Pfeile in der Hauptnavigation korrigiert

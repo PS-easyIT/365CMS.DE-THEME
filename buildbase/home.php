@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * BuildBase Theme – Home / Startseite
  *
@@ -35,22 +37,22 @@ $ctaTitle       = (string) ($c?->get('build_content', 'cta_section_title',      
 $ctaText        = (string) ($c?->get('build_content', 'cta_section_text',           'Registrieren Sie Ihren Betrieb kostenlos und werden Sie sichtbar für Kunden in Ihrer Region.') ?? '');
 $ctaBtnLabel    = (string) ($c?->get('build_content', 'cta_button_label',           'Jetzt Betrieb registrieren')              ?? 'Jetzt Betrieb registrieren');
 
-$siteUrl    = SITE_URL;
+$siteUrl    = buildbase_safe_url((string) SITE_URL, '/');
 $isLoggedIn = theme_is_logged_in();
 $safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 
 $buildUrl = static function (string $baseUrl, string $path): string {
     $trimmed = trim($path);
     if ($trimmed === '') {
-        return rtrim($baseUrl, '/') . '/';
+        return buildbase_safe_url(rtrim($baseUrl, '/') . '/', rtrim($baseUrl, '/') . '/');
     }
     if (str_starts_with($trimmed, 'http://') || str_starts_with($trimmed, 'https://')) {
-        return $trimmed;
+        return buildbase_safe_url($trimmed, rtrim($baseUrl, '/') . '/');
     }
     if (str_starts_with($trimmed, '#')) {
-        return rtrim($baseUrl, '/') . '/' . $trimmed;
+        return buildbase_safe_url(rtrim($baseUrl, '/') . '/' . $trimmed, rtrim($baseUrl, '/') . '/');
     }
-    return rtrim($baseUrl, '/') . '/' . ltrim($trimmed, '/');
+    return buildbase_safe_url(rtrim($baseUrl, '/') . '/' . ltrim($trimmed, '/'), rtrim($baseUrl, '/') . '/');
 };
 
 $heroCtaUrl  = $buildUrl($siteUrl, '/handwerker');

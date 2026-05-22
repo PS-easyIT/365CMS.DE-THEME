@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.64`
+- Version: `1.5.65`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.13`
 
 ## Enthaltene Kernbereiche
 
@@ -18,6 +18,8 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Member-Bereich mit Dashboard, Profil, Favoriten, Sicherheit und Feeds
 - locale-aware Seitenauflösung für EN-Custom-Slugs inkl. page-/landing-/special-page-CSS
 - JSON-LD-Breadcrumbs für Artikel und Seiten ohne sichtbare Public-Breadcrumb-Leiste
+- stabilisierte 365CMS-Inhaltsverzeichnis-Anker für EditorJS-/HTML-Überschriften inklusive leerer oder doppelter IDs
+- EditorJS-Abstandsblöcke werden im Public-Frontend mit gespeicherter `data-height`-Höhe gerendert statt auf generische Inhaltsabstände zurückzufallen
 - kompakter Seiten-/Beitragsstart mit 25px Abstand nach dem sticky Header; HubSites starten bewusst mit 0px Abstand, weil ihr eigenes Markup den Abstand mitbringt
 - entlasteter Mobile-Head-Pfad mit inline Theme-Init, asynchronem UI-/Card-CSS auf Home-/Blog-Listings und intrinsischen Header-Logo-Dimensionen
 - Startseite rendert oberhalb der Falz jetzt über ein eigenes `homepage-blog-critical.css`; das große Home-Stylesheet wird dort erst nach dem First Paint asynchron nachgeladen
@@ -55,6 +57,8 @@ Die wichtigsten Security-Härtungen der letzten Runde:
 
 - dedizierter Purifier-Renderpfad für Seiten- und Landing-Content
 - HubSite-kompatibles Sanitizer-Profil im Core (`hub`)
+- finaler Renderpfad stabilisiert Überschriften-IDs nach der Sanitizer-Stufe, damit TOC-Ziele erhalten bleiben
+- EditorJS-Spacer nutzen ausschließlich erlaubte Safe-Attribute (`data-height`, `role`, `aria-hidden`) und CSS-Fallbacks statt unsicherer Markup-Annahmen
 - kontrollierter Temp-Staging-Flow für Customizer-Importe
 - Public-URL-/Media-Allowlist in Frontend- und Member-Pfaden
 - Post-/Hub-Content wird ausschließlich über den zentralen Purifier-Renderpfad ausgegeben

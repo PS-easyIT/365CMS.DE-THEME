@@ -1,4 +1,12 @@
-<?php get_header(); ?>
+<?php
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+?>
 <main id="main" class="ac-main-content" role="main">
 <?php
 $safe = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
@@ -12,13 +20,15 @@ $slugify = static function (string $value): string {
     return $slug !== '' ? $slug : 'kurs';
 };
 $buildUrl = static function (string $path) : string {
-    return rtrim((string) SITE_URL, '/') . '/' . ltrim($path, '/');
+    $url = rtrim((string) SITE_URL, '/') . '/' . ltrim($path, '/');
+
+    return academy365_safe_url($url, rtrim((string) SITE_URL, '/') . '/');
 };
 $routeUrl = static function (string $route, string $fallbackPath) use ($buildUrl): string {
     if (function_exists('theme_route_url')) {
         return theme_route_url($route, [], [], $buildUrl($fallbackPath));
     }
-    return $buildUrl($fallbackPath);
+    return academy365_safe_url($buildUrl($fallbackPath), $buildUrl($fallbackPath));
 };
 $coursesUrl  = $routeUrl('courses',  'courses');
 $registerUrl = $routeUrl('register', 'register');

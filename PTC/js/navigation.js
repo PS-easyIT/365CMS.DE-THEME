@@ -14,6 +14,8 @@
 (function () {
     'use strict';
 
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     function init() {
 
         // ===== Sticky Header =====
@@ -33,8 +35,11 @@
         var drawer  = document.getElementById('ptcMobileDrawer');
         var overlay = document.getElementById('ptcMobileOverlay');
 
+        var lastFocusBeforeMenu = null;
+
         function openMenu() {
             if (!toggle || !drawer || !overlay) return;
+            lastFocusBeforeMenu = document.activeElement;
             drawer.classList.add('is-open');
             overlay.classList.add('is-open');
             toggle.classList.add('is-active');
@@ -53,7 +58,10 @@
             toggle.setAttribute('aria-label', 'Menü öffnen');
             drawer.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
-            toggle.focus();
+            var restore = lastFocusBeforeMenu || toggle;
+            if (restore && typeof restore.focus === 'function') {
+                restore.focus();
+            }
         }
 
         if (toggle) {
@@ -89,8 +97,12 @@
                     setTimeout(function () {
                         var headerH = header ? header.offsetHeight : 72;
                         var top = target.getBoundingClientRect().top + window.pageYOffset - headerH;
-                        window.scrollTo({ top: top, behavior: 'smooth' });
-                    }, delay);
+                        if (prefersReducedMotion) {
+                            window.scrollTo(0, top);
+                        } else {
+                            window.scrollTo({ top: top, behavior: 'smooth' });
+                        }
+                    }, prefersReducedMotion ? 0 : delay);
                 }
             });
         });

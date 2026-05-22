@@ -1,12 +1,30 @@
-<?php if (!defined('ABSPATH')) exit; get_header(); ?>
-<main id="main" class="mc-main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="mc-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:5rem;font-weight:800;color:var(--primary-color);line-height:1;">404</div>
-        <h1 style="font-family:var(--font-heading);margin:1rem 0 .5rem;">Seite nicht gefunden</h1>
-        <p style="color:var(--muted-color);">Die gesuchte Seite existiert nicht.</p>
-        <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
-            <a href="<?php echo SITE_URL; ?>" class="mc-btn mc-btn-primary">Zur Startseite</a>
-            <a href="<?php echo SITE_URL; ?>/aerzte" class="mc-btn mc-btn-outline">Arzt suchen</a>
+<?php
+/**
+ * 404 – MedCare Pro Theme
+ *
+ * @package MedCarePro_Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+
+$safe       = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$homeUrl    = $safe(theme_route_url('home'));
+$doctorsUrl = $safe(theme_route_url('doctors'));
+?>
+<main id="main" class="mc-main mc-status-page" role="main">
+    <div class="mc-container mc-status-page__container">
+        <div class="mc-card mc-status-card">
+            <div class="mc-status-code mc-status-code--info">404</div>
+            <h1 class="mc-status-title">Seite nicht gefunden</h1>
+            <p class="mc-status-text">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
+            <div class="mc-status-actions">
+                <a href="<?php echo $homeUrl; ?>" class="mc-btn mc-btn-primary">Zur Startseite</a>
+                <a href="<?php echo $doctorsUrl; ?>" class="mc-btn mc-btn-outline">Arzt suchen</a>
+            </div>
         </div>
     </div>
 </main>

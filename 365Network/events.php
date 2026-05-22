@@ -31,14 +31,15 @@ $homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 $eventsBaseUrl = theme_safe_url($siteUrl . '/events', $siteUrl . '/events');
 
 // ── Parameter ──
-$search   = trim(strip_tags($_GET['q'] ?? ''));
-$type     = trim(strip_tags($_GET['type'] ?? ''));
-$location = trim(strip_tags($_GET['location'] ?? ''));
-$month    = preg_match('/^\d{4}-\d{2}$/', $_GET['month'] ?? '') ? $_GET['month'] : '';
+$search   = theme_clean_query_text($_GET['q'] ?? '', 120);
+$type     = theme_clean_query_text($_GET['type'] ?? '', 80);
+$location = theme_clean_query_text($_GET['location'] ?? '', 80);
+$monthRaw = theme_clean_query_text($_GET['month'] ?? '', 7);
+$month    = preg_match('/^\d{4}-\d{2}$/', $monthRaw) ? $monthRaw : '';
 $past     = !empty($_GET['past']);
-$sort     = in_array($_GET['sort'] ?? '', ['date', 'name', 'latest']) ? $_GET['sort'] : 'date';
-$view     = ($_GET['view'] ?? 'grid') === 'list' ? 'list' : 'grid';
-$page     = max(1, (int)($_GET['page'] ?? 1));
+$sort     = theme_clean_query_choice($_GET['sort'] ?? '', ['date', 'name', 'latest'], 'date');
+$view     = theme_clean_query_choice($_GET['view'] ?? '', ['grid', 'list'], 'grid');
+$page     = theme_clean_query_int($_GET['page'] ?? 1, 1, 1, 10000);
 $perPage  = 18;
 
 $events     = [];
@@ -168,7 +169,7 @@ require_once __DIR__ . '/header.php';
         <!-- Sidebar: Filter -->
         <aside class="directory-filters" aria-label="Events-Filter">
             <form method="GET" action="">
-                <?php if ($search): ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES); ?>"><?php endif; ?>
+                <?php if ($search): ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
 
                 <!-- Vergangen / Kommend -->
                 <div class="filter-panel">
@@ -187,9 +188,9 @@ require_once __DIR__ . '/header.php';
                     <select name="type" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Kategorien</option>
                         <?php foreach ($categories as $cat): if (!$cat) continue; ?>
-                            <option value="<?php echo htmlspecialchars($cat, ENT_QUOTES); ?>"
+                            <option value="<?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?>"
                                 <?php echo $type === $cat ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($cat, ENT_QUOTES); ?>
+                                <?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -202,9 +203,9 @@ require_once __DIR__ . '/header.php';
                     <select name="location" class="filter-select" data-auto-submit-filter>
                         <option value="">Alle Städte</option>
                         <?php foreach ($locations as $loc): if (!$loc) continue; ?>
-                            <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES); ?>"
+                            <option value="<?php echo htmlspecialchars($loc, ENT_QUOTES, 'UTF-8'); ?>"
                                 <?php echo $location === $loc ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($loc, ENT_QUOTES); ?>
+                                <?php echo htmlspecialchars($loc, ENT_QUOTES, 'UTF-8'); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

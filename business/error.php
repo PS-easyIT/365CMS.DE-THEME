@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Business Theme – Fehlerseite (generisch)
  *
@@ -9,23 +11,27 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$errorCode    = $GLOBALS['error_code']    ?? 500;
-$errorMessage = $GLOBALS['error_message'] ?? 'Ein unerwarteter Fehler ist aufgetreten.';
-http_response_code((int)$errorCode);
+$errorCode    = (int) ($GLOBALS['error_code']    ?? 500);
+$errorMessage = (string) ($GLOBALS['error_message'] ?? 'Ein unerwarteter Fehler ist aufgetreten.');
+http_response_code($errorCode);
 ?>
 
 <section class="biz-page-hero">
     <div class="biz-container">
-        <p style="font-size:0.875rem;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Fehler <?php echo (int)$errorCode; ?></p>
+        <p class="biz-page-eyebrow">Fehler <?php echo $errorCode; ?></p>
         <h1>Etwas ist schiefgelaufen.</h1>
     </div>
 </section>
 
 <div class="biz-page-content">
-    <div class="biz-container" style="text-align:center;padding:5rem 0;">
-        <p style="color:#64748b;margin-bottom:2.5rem;">
-            <?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?>
-        </p>
-        <a href="<?php echo biz_site_url(); ?>/" class="btn-biz btn-biz-primary btn-biz-lg">🏠 Zur Startseite</a>
+    <div class="biz-container">
+        <div class="biz-error-wrap">
+            <p class="biz-error-text">
+                <?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?>
+            </p>
+            <div class="biz-error-actions">
+                <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="btn-biz btn-biz-primary btn-biz-lg">Zur Startseite</a>
+            </div>
+        </div>
     </div>
 </div>

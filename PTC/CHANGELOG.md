@@ -1,41 +1,46 @@
 # PTC Theme – Changelog
 
+## 3.0.0 Nachtrag (2026-05-19)
+
+### Abschlussdokumentation der Generisierung
+
+- `PTC-Corporate.color-theme.json` ist bewusst entfernt; das Theme nutzt nur noch neutrale Customizer-/CSS-Tokens statt firmenspezifischer CI-Artefakte.
+- `admin/customizer.php`, Templates, `js/navigation.js` und `style.css` sind als generisches Branchen-Theme dokumentiert: Personalvermittlung, Arbeitnehmerüberlassung und Weiterbildung ohne Betreiber-Festverdrahtung.
+- `README.md`, `theme.json`, `update.json`, `style.css` und `functions.php` bilden den finalen v3/PHP-8.4-Stand `3.0.0` ab.
+
+## 3.0.0 (2026-05-18)
+
+### Generalisierung (Breaking für alte CI)
+
+- Entfernt: firmenspezifische Namen, Slogans, Adressen, Logos und Navy/Gold-CI-Bezüge
+- Neutrale Platzhaltertexte für Personalvermittlung & Weiterbildung
+- CSS-Variablen: `--color-primary`, `--color-accent`, `--color-*` statt `--ptc-navy` / `--ptc-gold`
+- Gelöscht: `PTC-Corporate.color-theme.json`
+- Network-Bar-Defaults leer (optional)
+
+### v3 / PHP 8.4
+
+- `PTC_THEME_VERSION` 3.0.0, sync mit `theme.json`, `style.css`, `update.json`
+- Hooks: `head`, `before_footer`, `init`, `cms_init`
+- Styles: preload + versioniert; `navigation.js` defer
+- `mapFontChoice()`, Google Fonts mit preconnect
+- `outputCustomStyles()` für alle Customizer-Farben/Layout-Tokens
+- `filter_var`, `htmlspecialchars`, `sanitizeCustomCss`
+- `theme_nav_menu`, `get_header`, `get_footer`, `ptc_get_setting`, `ptc_href`, `ptc_body_class`, `ptc_safe_headline`
+- Events-Query: prepared `LIMIT`
+- `--focus-ring`, `:focus-visible`, `prefers-reduced-motion`
+- Mobile-Menü: Fokus-Wiederherstellung nach Schließen
+
+### Design
+
+- Pipeline-Sektion (Vermittlungsprozess)
+- Dual-CTA-Karten (Kandidaten / Arbeitgeber)
+- Keine generischen SaaS-Gradienten; vertrauensorientierte Farbpalette
+
 ## 1.1.0 (2026-03-01)
 
-### Neue Features
-- **Services erweitert:** Bis zu 12 Service-Karten (vorher 8)
-- **Icons deaktivierbar:** Checkbox `services_show_icons` blendet Icons auf Service-Karten aus
-- **MS Booking Integration:** Iframe-Embed für Microsoft Booking im Termine-Bereich
-- **Network Bar:** Netzwerk-Leiste unter dem Footer (PHIN IT, 365CMS, 365 Network + Name)
-- **CTA-Farben:** Eigene Farbeinstellungen für die CTA-Sektion (Gradient + Textfarbe)
-- **Seitenrand-Farben:** Konfigurierbare Hintergrundfarbe und Akzentstreifen an Seitenrändern
-- **Customizer-Navigation:** Startseiten-Tabs (Hero, Services, Events, FAQ) gruppiert unter „🏠 Startseite"
-
-### Bugfixes
-- **Logo-Upload Bug:** Beim Speichern des Customizers wurde ein hochgeladenes Logo durch den alten POST-Wert überschrieben
-- **CSS-Variablen:** Header-Höhe und Logo-Höhe verwendeten hardcodierte Werte statt CSS-Custom-Properties
-- **Sticky Footer:** Footer schwebt nicht mehr in der Seitenmitte bei kurzem Content
-
-### CSS-Verbesserungen
-- Sticky Footer via Flexbox (`.ptc-site`)
-- `.ptc-header-inner` nutzt `var(--ptc-header-height, 72px)`
-- `.ptc-logo-img` nutzt `var(--ptc-logo-height, 40px)`
-- `.ptc-content` nutzt `var(--ptc-header-height)` für padding-top
-- CTA-Sektion (``.ptc-cta-section``) nutzt CSS-Variablen für Gradient und Textfarbe
-- Neue Button-Klasse `.btn-ptc-outline`
-- Service-Card Stilvarianten: shadow, flat, filled (via `data-card-style`)
-- Dekorative Seitenrand-Akzentlinien (via `body::before`/`::after`)
-- Network Bar responsive (Stack bei ≤768px)
-- MS Booking Iframe responsive (`max-width: 100%`)
+- Services 12 Karten, MS Booking, Network Bar, CTA-/Seitenrand-Farben
 
 ## 1.0.0 (2026-02-21)
 
-### Erstveröffentlichung
-- Corporate Theme für PTC GmbH Personaldienstleistungen
-- Marineblau + Gold Corporate Identity
-- Sektionen: Hero, Dienstleistungen (6 Karten), Termine, FAQ, Kontakt-CTA
-- Vollständiger Theme-Customizer mit 10 Tabs
-- Responsive Design (Mobile, Tablet, Desktop)
-- Dark-Mode-Unterstützung
-- Sticky Header mit Scroll-Effekt
-- Plugin-Integration (cms-events)
+- Erstveröffentlichung

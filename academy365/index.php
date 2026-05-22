@@ -1,4 +1,12 @@
-<?php get_header(); ?>
+<?php
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+?>
 <main id="main" class="ac-main-content ac-archive-content" role="main">
     <div class="ac-container">
         <header class="ac-archive-header">

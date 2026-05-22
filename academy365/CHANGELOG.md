@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.2 - 2026-05-19 Nachtrag
+
+- Abschlussdokumentation für den Security-/Robustheits-Pass: Template-Guards, URL-Fallbacks, Customizer-CSS-Validierung und defensive `advanced.custom_css`-Bereinigung sind als zusammengehöriger v3/PHP-8.4-Release-Stand dokumentiert.
+- `theme.json`, `update.json`, `style.css`, `functions.php` und `CHANGELOG.md` bleiben auf `3.0.2` synchron; der Update-Feed trägt das Nachtragsdatum vom 19.05.2026.
+
+## 3.0.2 - 2026-05-18
+
+Security-/Robustheits-Pass für academy365 (365CMS v3.x.x / PHP 8.4):
+
+- **Customizer-CSS gehärtet:** Farbwerte laufen über `academy365_css_color()`, numerische Tokens werden mit `academy365_css_number()` auf die Schema-Grenzen geclamped, Select-Werte über Allowlists geprüft.
+- **Custom CSS defensiv bereinigt:** `advanced.custom_css` entfernt nun `<style>`-Tags, `@import`, `expression()`, `javascript:`-URLs sowie alte Browser-Sinks wie `behavior`/`binding` vor der Ausgabe.
+- **URL-Ausgaben fail-closed:** Header-Logo, Header-Routen, Footer-Links sowie 404/Error-Aktionen nutzen `academy365_safe_url()` mit sicheren Fallbacks.
+- **Template-Standard:** `header.php`, `footer.php`, `home.php`, `page.php`, `index.php`, `404.php` und `error.php` besitzen jetzt `declare(strict_types=1)` und `ABSPATH`-Guard.
+- **Version & Manifest:** `ACADEMY365_THEME_VERSION`, `style.css`, `theme.json` und `update.json` auf `3.0.2`; Manifest-Anforderungen auf 365CMS `3.0.0` und PHP `8.4` gesetzt.
+
 ## 3.0.1 - 2026-05-17
 
 Re-Audit-Pass für academy365 (365CMS v3.x.x / PHP 8.4):

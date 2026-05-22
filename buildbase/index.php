@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -7,7 +9,7 @@ get_header();
 
 $posts = \CMS\Services\PostService::getPosts(['per_page' => 12]);
 $safe  = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$siteUrl = SITE_URL;
+$siteUrl = buildbase_safe_url((string) SITE_URL, '/');
 ?>
 <main id="main" class="bb-main bb-page-section" role="main">
     <div class="bb-container">
@@ -16,7 +18,7 @@ $siteUrl = SITE_URL;
         <?php if (!empty($posts)) : ?>
             <div class="bb-grid">
                 <?php foreach ($posts as $post) :
-                    $postUrl   = isset($post->url)     ? (string) $post->url     : $siteUrl;
+                    $postUrl   = buildbase_safe_url(isset($post->url) ? (string) $post->url : $siteUrl, $siteUrl);
                     $postTitle = isset($post->title)   ? (string) $post->title   : '';
                     $excerpt   = isset($post->excerpt) ? (string) $post->excerpt : '';
                 ?>

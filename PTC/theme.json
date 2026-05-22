@@ -1,1024 +1,1757 @@
 {
-  "name": "PTC GmbH – Personal & Bildung",
-  "slug": "PTC",
-  "version": "1.2.1",
-  "author": "PHIN IT Solutions / Andreas Hepp",
-  "description": "Corporate Theme für Personaldienstleistungen – PTC GmbH. Marineblau + Gold CI. Fokus auf Seriosität, Klarheit und Vertrauen. Sektionen: Hero, Dienstleistungen, Termine, FAQ, Kontakt.",
-  "tags": ["corporate", "personal", "dienstleistung", "bildung", "responsive", "business"],
-  "supports": ["custom-logo", "sticky-header", "custom-css"],
-
-  "menus": {
-    "primary":      "Hauptmenü (Header)",
-    "footer-nav":   "Footer-Navigation",
-    "footer-legal": "Rechtliche Links"
-  },
-
-  "templates": {
-    "home":        "home.php",
-    "page":        "page.php",
-    "blog":        "blog.php",
-    "blog-single": "blog-single.php",
-    "login":       "login.php",
-    "register":    "register.php",
-    "search":      "search.php",
-    "404":         "404.php",
-    "error":       "error.php"
-  },
-
-  "partials": {
-    "header": "header.php",
-    "footer": "footer.php"
-  },
-
-  "settings": {
-    "hero_badge": "Ihr Partner für Bildung, Karriere und Zukunft",
-    "hero_headline": "Willkommen bei <span class=\"highlight\">PTC GmbH</span> – Ihr Partner für Personaldienstleistungen.",
-    "hero_text": "Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Logistiklehrwerkstatt – alles aus einer Hand.",
-    "hero_cta_primary_label": "Entdecken Sie Ihre Möglichkeiten",
-    "hero_cta_primary_url": "#dienstleistungen",
-    "hero_cta_secondary_label": "Kontakt aufnehmen",
-    "hero_cta_secondary_url": "#kontakt",
-    "about_heading": "Über PTC – Kompetenz, die bewegt",
-    "cta_heading": "Bereit für den nächsten Karriereschritt?",
-    "cta_text": "Ob Arbeitnehmer auf Jobsuche oder Unternehmen mit Personalbedarf – sprechen Sie uns an. Wir finden die passende Lösung für Sie.",
-    "footer_tagline": "PTC GmbH – Ihr Partner für Bildung, Karriere und Zukunft."
-  },
-
-  "customization": {
-
-    "colors": {
-      "label": "Farben",
-      "description": "Marken-, Text-, Hintergrund- und Statusfarben der PTC Corporate Identity.",
-      "settings": {
-        "primary_color": {
-          "label": "Primärfarbe (Navy)",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Hauptfarbe – Marineblau der PTC Corporate Identity"
+    "name": "PTC – Personalvermittlung & Schulungen",
+    "slug": "PTC",
+    "version": "3.0.0",
+    "author": "365CMS",
+    "description": "Branchentheme für Personalvermittlung und berufliche Weiterbildung. Vertrauen, Kompetenz, Entwicklung – anpassbar über zentrale Design-Tokens.",
+    "tags": [
+        "corporate",
+        "personal",
+        "dienstleistung",
+        "bildung",
+        "responsive",
+        "business"
+    ],
+    "supports": [
+        "custom-logo",
+        "sticky-header",
+        "custom-css"
+    ],
+    "menus": {
+        "primary": "Hauptmenü (Header)",
+        "footer-nav": "Footer-Navigation",
+        "footer-legal": "Rechtliche Links"
+    },
+    "templates": {
+        "home": "home.php",
+        "page": "page.php",
+        "blog": "blog.php",
+        "blog-single": "blog-single.php",
+        "login": "login.php",
+        "register": "register.php",
+        "search": "search.php",
+        "404": "404.php",
+        "error": "error.php"
+    },
+    "partials": {
+        "header": "header.php",
+        "footer": "footer.php"
+    },
+    "settings": {
+        "hero_badge": "Ihr Spezialist für Personalvermittlung und berufliche Weiterbildung",
+        "hero_headline": "Menschen verbinden. <span class=\"highlight\">Kompetenz entwickeln.</span>",
+        "hero_text": "Personalvermittlung, Arbeitnehmerüberlassung und praxisnahe Qualifizierung – aus einer Hand für Kandidaten und Arbeitgeber.",
+        "hero_cta_primary_label": "Für Kandidaten",
+        "hero_cta_primary_url": "#kandidaten",
+        "hero_cta_secondary_label": "Für Arbeitgeber",
+        "hero_cta_secondary_url": "#arbeitgeber",
+        "about_heading": "Kompetenz, die Karrieren und Teams stärkt",
+        "cta_heading": "Bereit für den nächsten Schritt?",
+        "cta_text": "Ob Jobsuche, Personalbedarf oder Weiterbildung – wir begleiten Sie mit Erfahrung und klaren Prozessen.",
+        "footer_tagline": "Ihr Partner für Personalvermittlung, Zeitarbeit und berufliche Weiterbildung."
+    },
+    "customization": {
+        "colors": {
+            "label": "Farben",
+            "description": "Marken-, Text- und Hintergrundfarben – zentral als Design-Tokens.",
+            "settings": {
+                "primary_color": {
+                    "label": "Primärfarbe",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Vertrauen – Überschriften, Header, wichtige Flächen"
+                },
+                "primary_hover": {
+                    "label": "Primärfarbe Hover",
+                    "type": "color",
+                    "default": "#123a47",
+                    "description": "Dunklerer Ton für Hover-Zustände"
+                },
+                "primary_light": {
+                    "label": "Primärfarbe Hell",
+                    "type": "color",
+                    "default": "#E8F0FE",
+                    "description": "Aufgehellt für Hintergründe und Badges"
+                },
+                "accent_color": {
+                    "label": "Akzentfarbe",
+                    "type": "color",
+                    "default": "#2d7a5f",
+                    "description": "Entwicklung – CTAs, Highlights, Fortschritt"
+                },
+                "accent_hover": {
+                    "label": "Akzentfarbe Hover",
+                    "type": "color",
+                    "default": "#236349",
+                    "description": "Dunkleres Gold für Hover-Zustände"
+                },
+                "accent_light": {
+                    "label": "Akzentfarbe Hell",
+                    "type": "color",
+                    "default": "#e6f4ef",
+                    "description": "Heller Goldton für dezente Markierungen"
+                },
+                "secondary_color": {
+                    "label": "Sekundärfarbe (Slate)",
+                    "type": "color",
+                    "default": "#607D8B",
+                    "description": "Schiefergrau für Nebenelemente"
+                },
+                "text_color": {
+                    "label": "Textfarbe",
+                    "type": "color",
+                    "default": "#334155",
+                    "description": "Standard-Fließtextfarbe"
+                },
+                "heading_color": {
+                    "label": "Überschriftenfarbe",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Farbe aller Überschriften (h1–h6)"
+                },
+                "text_light": {
+                    "label": "Helle Textfarbe",
+                    "type": "color",
+                    "default": "#F8F9FA",
+                    "description": "Für dunkle Hintergründe (Header, Footer, Hero)"
+                },
+                "muted_color": {
+                    "label": "Gedämpfte Textfarbe",
+                    "type": "color",
+                    "default": "#94a3b8",
+                    "description": "Timestamps, Platzhalter, Hints"
+                },
+                "bg_color": {
+                    "label": "Seitenhintergrund",
+                    "type": "color",
+                    "default": "#F8F9FA",
+                    "description": "Hintergrundfarbe des Content-Bereichs (Off-White)"
+                },
+                "bg_secondary": {
+                    "label": "Sekundärer Hintergrund",
+                    "type": "color",
+                    "default": "#F1F5F9",
+                    "description": "Hintergrund für Cards und alternierende Sektionen"
+                },
+                "link_color": {
+                    "label": "Linkfarbe",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Standard-Linkfarbe im Content-Bereich"
+                },
+                "link_hover_color": {
+                    "label": "Link Hover-Farbe",
+                    "type": "color",
+                    "default": "#2d7a5f",
+                    "description": "Linkfarbe beim Hover-Zustand"
+                },
+                "border_color": {
+                    "label": "Rahmenfarbe",
+                    "type": "color",
+                    "default": "#E2E8F0",
+                    "description": "Standard-Rahmenfarbe für Trennlinien und Cards"
+                },
+                "success_color": {
+                    "label": "Erfolgsfarbe",
+                    "type": "color",
+                    "default": "#22c55e",
+                    "description": "Positivmeldungen und Status-Badges"
+                },
+                "error_color": {
+                    "label": "Fehlerfarbe",
+                    "type": "color",
+                    "default": "#ef4444",
+                    "description": "Fehlermeldungen und Warnungen"
+                },
+                "cta_bg_color": {
+                    "label": "CTA-Hintergrund",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Hintergrundfarbe der CTA-Sektion (Gradient-Start)"
+                },
+                "cta_bg_to": {
+                    "label": "CTA-Hintergrund (Ende)",
+                    "type": "color",
+                    "default": "#123a47",
+                    "description": "Endfarbe des CTA-Gradienten"
+                },
+                "cta_text_color": {
+                    "label": "CTA-Textfarbe",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Textfarbe im CTA-Bereich"
+                },
+                "side_margin_color": {
+                    "label": "Seitenrand-Farbe",
+                    "type": "color",
+                    "default": "#EDF1F5",
+                    "description": "Hintergrundfarbe der Seiten-Ränder"
+                },
+                "side_accent_color": {
+                    "label": "Seitenrand-Akzent",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Farbe der dekorativen Seitenstreifen"
+                },
+                "side_accent_width": {
+                    "label": "Seitenrand-Breite (px)",
+                    "type": "number",
+                    "default": 0,
+                    "min": 0,
+                    "max": 12,
+                    "description": "Breite der Seitenstreifen (0 = aus)"
+                },
+                "hero_bg_color": {
+                    "label": "Hero-Hintergrund",
+                    "type": "color",
+                    "default": "#F8F9FA",
+                    "description": "Hintergrundfarbe der Hero-Sektion"
+                },
+                "hero_bg_to": {
+                    "label": "Hero-Hintergrund (Ende)",
+                    "type": "color",
+                    "default": "#F1F5F9",
+                    "description": "Gradient-Endfarbe der Hero-Sektion"
+                },
+                "services_bg_color": {
+                    "label": "Services-Hintergrund",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Hintergrundfarbe der Dienstleistungen-Sektion"
+                },
+                "services_card_bg": {
+                    "label": "Services-Card Hintergrund",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Hintergrundfarbe einzelner Service-Karten"
+                },
+                "events_bg_color": {
+                    "label": "Termine-Hintergrund",
+                    "type": "color",
+                    "default": "#F0F4F8",
+                    "description": "Hintergrundfarbe der Termine-Sektion"
+                },
+                "events_card_bg": {
+                    "label": "Termine-Card Hintergrund",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Hintergrundfarbe einzelner Termin-Karten"
+                },
+                "faq_bg_color": {
+                    "label": "FAQ-Hintergrund",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Hintergrundfarbe der FAQ-Sektion"
+                },
+                "faq_item_bg": {
+                    "label": "FAQ-Item Hintergrund",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Hintergrundfarbe einzelner FAQ-Einträge"
+                },
+                "network_bar_bg": {
+                    "label": "Network Bar Hintergrund",
+                    "type": "color",
+                    "default": "#0f2d38",
+                    "description": "Hintergrundfarbe der Netzwerk-Leiste"
+                },
+                "network_bar_text": {
+                    "label": "Network Bar Textfarbe",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Textfarbe in der Netzwerk-Leiste"
+                },
+                "blog_hero_bg": {
+                    "label": "Blog Hero Hintergrund",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Hintergrundfarbe des Blog-Hero-Bereichs"
+                },
+                "blog_hero_text": {
+                    "label": "Blog Hero Text",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Textfarbe im Blog-Hero-Bereich"
+                },
+                "blog_content_bg": {
+                    "label": "Blog Inhalt Hintergrund",
+                    "type": "color",
+                    "default": "#F8F9FA",
+                    "description": "Hintergrundfarbe des Blog-Inhaltsbereichs"
+                },
+                "blog_card_bg": {
+                    "label": "Blog Karte Hintergrund",
+                    "type": "color",
+                    "default": "#FFFFFF",
+                    "description": "Hintergrundfarbe der Blog-Karten"
+                },
+                "blog_card_title": {
+                    "label": "Blog Karte Titel",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Titelfarbe auf Blog-Karten"
+                },
+                "blog_category_bg": {
+                    "label": "Kategorie-Badge Hintergrund",
+                    "type": "color",
+                    "default": "#e6f4ef",
+                    "description": "Hintergrundfarbe der Kategorie-Badges"
+                },
+                "blog_category_text": {
+                    "label": "Kategorie-Badge Text",
+                    "type": "color",
+                    "default": "#236349",
+                    "description": "Textfarbe der Kategorie-Badges"
+                }
+            }
         },
-        "primary_hover": {
-          "label": "Primärfarbe Hover",
-          "type": "color",
-          "default": "#001F42",
-          "description": "Dunklerer Ton für Hover-Zustände"
+        "typography": {
+            "label": "Typografie",
+            "description": "Schriftarten, Größen, Zeilenhöhe und Gewichtung.",
+            "settings": {
+                "font_family_base": {
+                    "label": "Basis-Schriftart",
+                    "type": "select",
+                    "options": {
+                        "system": "System-Standard",
+                        "inter": "Inter",
+                        "roboto": "Roboto",
+                        "open-sans": "Open Sans",
+                        "lato": "Lato",
+                        "montserrat": "Montserrat",
+                        "poppins": "Poppins",
+                        "raleway": "Raleway"
+                    },
+                    "default": "system",
+                    "description": "Schriftart für Fließtext"
+                },
+                "font_family_heading": {
+                    "label": "Überschriften-Schriftart",
+                    "type": "select",
+                    "options": {
+                        "system": "System-Standard",
+                        "georgia": "Georgia (Serif)",
+                        "inter": "Inter",
+                        "roboto": "Roboto",
+                        "open-sans": "Open Sans",
+                        "lato": "Lato",
+                        "montserrat": "Montserrat",
+                        "poppins": "Poppins",
+                        "raleway": "Raleway"
+                    },
+                    "default": "system",
+                    "description": "Schriftart für alle Überschriften"
+                },
+                "font_size_base": {
+                    "label": "Basis-Schriftgröße (px)",
+                    "type": "number",
+                    "default": 16,
+                    "min": 12,
+                    "max": 24,
+                    "description": "Schriftgröße des Fließtexts (px)"
+                },
+                "line_height_base": {
+                    "label": "Zeilenhöhe",
+                    "type": "number",
+                    "default": 1.6,
+                    "min": 1.2,
+                    "max": 2.5,
+                    "step": 0.1,
+                    "description": "Zeilenhöhe des Fließtexts (Faktor)"
+                },
+                "font_weight_heading": {
+                    "label": "Überschriften-Gewicht",
+                    "type": "select",
+                    "options": {
+                        "400": "Regular (400)",
+                        "500": "Medium (500)",
+                        "600": "Semi-Bold (600)",
+                        "700": "Bold (700)",
+                        "800": "Extra-Bold (800)",
+                        "900": "Black (900)"
+                    },
+                    "default": "700",
+                    "description": "Font-Weight für alle Überschriften"
+                }
+            }
         },
-        "primary_light": {
-          "label": "Primärfarbe Hell",
-          "type": "color",
-          "default": "#E8F0FE",
-          "description": "Aufgehellt für Hintergründe und Badges"
+        "layout": {
+            "label": "Layout",
+            "description": "Container, Abstände, Eckenradius und Sticky-Header.",
+            "settings": {
+                "container_width": {
+                    "label": "Container-Breite (px)",
+                    "type": "number",
+                    "default": 1280,
+                    "min": 800,
+                    "max": 1920,
+                    "description": "Maximale Breite des Inhaltsbereichs"
+                },
+                "content_padding": {
+                    "label": "Content-Padding (rem)",
+                    "type": "number",
+                    "default": 2,
+                    "min": 0.5,
+                    "max": 6,
+                    "step": 0.25,
+                    "description": "Horizontaler Innenabstand des Containers"
+                },
+                "border_radius": {
+                    "label": "Eckenradius (px)",
+                    "type": "number",
+                    "default": 12,
+                    "min": 0,
+                    "max": 32,
+                    "description": "Standard-Rundung für Cards, Buttons und Felder"
+                },
+                "section_spacing": {
+                    "label": "Sektionsabstand (rem)",
+                    "type": "number",
+                    "default": 5,
+                    "min": 1,
+                    "max": 10,
+                    "step": 0.5,
+                    "description": "Vertikaler Abstand zwischen Seitenbereichen"
+                },
+                "enable_sticky_header": {
+                    "label": "Sticky Header aktivieren",
+                    "type": "checkbox",
+                    "default": true,
+                    "description": "Header bleibt beim Scrollen oben fixiert"
+                }
+            }
         },
-        "accent_color": {
-          "label": "Akzentfarbe (Gold)",
-          "type": "color",
-          "default": "#D4A017",
-          "description": "Gold – CTAs, Highlights, Akzente"
+        "header": {
+            "label": "Header & Logo",
+            "description": "Logo, Farben, Höhe und Aktions-Buttons im Header.",
+            "settings": {
+                "logo_url": {
+                    "label": "Header Logo",
+                    "type": "image",
+                    "default": "",
+                    "description": "Logo-Bild (JPG, PNG, WebP, SVG). Leer = Text-Logo."
+                },
+                "logo_text": {
+                    "label": "Logo-Text (Wordmark)",
+                    "type": "text",
+                    "default": "",
+                    "description": "Text-Logo als Fallback"
+                },
+                "header_bg_color": {
+                    "label": "Header-Hintergrund",
+                    "type": "color",
+                    "default": "#1a4d5c",
+                    "description": "Hintergrundfarbe der Navigationsleiste"
+                },
+                "header_text_color": {
+                    "label": "Header-Textfarbe",
+                    "type": "color",
+                    "default": "#F8F9FA",
+                    "description": "Farbe von Navigationslinks und Logo-Text"
+                },
+                "header_accent_color": {
+                    "label": "Header-Akzentfarbe",
+                    "type": "color",
+                    "default": "#2d7a5f",
+                    "description": "Aktive Links, Hover-Zustand"
+                },
+                "header_height": {
+                    "label": "Header-Höhe (px)",
+                    "type": "number",
+                    "default": 72,
+                    "min": 48,
+                    "max": 120,
+                    "description": "Höhe der Navigationsleiste"
+                },
+                "logo_max_height": {
+                    "label": "Logo-Maximalhöhe (px)",
+                    "type": "number",
+                    "default": 48,
+                    "min": 24,
+                    "max": 100,
+                    "description": "Maximale Höhe des Site-Logos"
+                },
+                "nav_font_size": {
+                    "label": "Menü-Schriftgröße (px)",
+                    "type": "number",
+                    "default": "14",
+                    "description": "Schriftgröße der Hauptmenüpunkte"
+                },
+                "nav_sub_font_size": {
+                    "label": "Untermenü-Schriftgröße (px)",
+                    "type": "number",
+                    "default": "13",
+                    "description": "Schriftgröße der Untermenüpunkte"
+                },
+                "show_header_shadow": {
+                    "label": "Header-Schatten anzeigen",
+                    "type": "checkbox",
+                    "default": true,
+                    "description": "Subtiler Schatten unterhalb der Navigationsleiste"
+                },
+                "show_login_btn": {
+                    "label": "Anmelden-Button anzeigen",
+                    "type": "checkbox",
+                    "default": false,
+                    "description": "Login-Button für nicht angemeldete Besucher"
+                },
+                "login_btn_icon_only": {
+                    "label": "Anmelden-Button: Nur Icon",
+                    "type": "checkbox",
+                    "default": false,
+                    "description": "Zeigt nur das Icon ohne Text – macht den Button schmaler"
+                },
+                "show_register_btn": {
+                    "label": "Registrieren-Button anzeigen",
+                    "type": "checkbox",
+                    "default": false,
+                    "description": "Registrieren-Button für nicht angemeldete Besucher"
+                },
+                "register_btn_icon_only": {
+                    "label": "Registrieren-Button: Nur Icon",
+                    "type": "checkbox",
+                    "default": false,
+                    "description": "Zeigt nur das Icon ohne Text – macht den Button schmaler"
+                },
+                "header_cta_text": {
+                    "label": "Header CTA-Button Text",
+                    "type": "text",
+                    "default": "Kontakt",
+                    "description": "Text des CTA-Buttons im Header (leer = ausgeblendet)"
+                },
+                "header_cta_url": {
+                    "label": "Header CTA-Button URL",
+                    "type": "text",
+                    "default": "/#kontakt",
+                    "description": "Ziel-URL des CTA-Buttons"
+                },
+                "header_animation": {
+                    "label": "Header Hintergrund-Animation",
+                    "type": "select",
+                    "default": "none",
+                    "description": "Dezente Animation im Header-Hintergrund"
+                }
+            }
         },
-        "accent_hover": {
-          "label": "Akzentfarbe Hover",
-          "type": "color",
-          "default": "#B8860B",
-          "description": "Dunkleres Gold für Hover-Zustände"
+        "footer": {
+            "label": "Footer",
+            "description": "Farben, Texte, Kontaktdaten und Social-Links im Footer.",
+            "settings": {
+                "footer_width": {
+                    "label": "Footer-Breite",
+                    "type": "select",
+                    "default": "full",
+                    "description": "Volle Breite oder Content-Breite"
+                },
+                "footer_bg_color": {
+                    "label": "Footer-Hintergrund",
+                    "type": "color",
+                    "default": "#0f2d38",
+                    "description": "Hintergrundfarbe im Footer"
+                },
+                "footer_text_color": {
+                    "label": "Footer-Textfarbe",
+                    "type": "color",
+                    "default": "#94a3b8",
+                    "description": "Textfarbe im Footer"
+                },
+                "footer_link_color": {
+                    "label": "Footer-Linkfarbe",
+                    "type": "color",
+                    "default": "#F8F9FA",
+                    "description": "Farbe der Links im Footer"
+                },
+                "footer_tagline": {
+                    "label": "Footer-Beschreibungstext",
+                    "type": "textarea",
+                    "default": "Ihr Partner für Personalvermittlung, Zeitarbeit und berufliche Weiterbildung.",
+                    "description": "Text im ersten Footer-Widget"
+                },
+                "footer_address": {
+                    "label": "Adresse / Kontakt",
+                    "type": "textarea",
+                    "default": "Musterstraße 1\n12345 Musterstadt",
+                    "description": "Adressdaten im Kontakt-Widget"
+                },
+                "footer_phone": {
+                    "label": "Telefon",
+                    "type": "text",
+                    "default": "",
+                    "description": "Telefonnummer im Footer-Kontaktbereich"
+                },
+                "footer_email": {
+                    "label": "E-Mail",
+                    "type": "text",
+                    "default": "",
+                    "description": "E-Mail im Footer-Kontaktbereich"
+                },
+                "copyright_text": {
+                    "label": "Copyright-Text",
+                    "type": "text",
+                    "default": "© {year} {site_title}. Alle Rechte vorbehalten.",
+                    "description": "Platzhalter: {year}, {site_title}"
+                },
+                "social_facebook": {
+                    "label": "Facebook URL",
+                    "type": "text",
+                    "default": "",
+                    "description": "URL zum Facebook-Profil (leer = ausgeblendet)"
+                },
+                "social_instagram": {
+                    "label": "Instagram URL",
+                    "type": "text",
+                    "default": "",
+                    "description": "URL zum Instagram-Profil (leer = ausgeblendet)"
+                },
+                "social_linkedin": {
+                    "label": "LinkedIn URL",
+                    "type": "text",
+                    "default": "",
+                    "description": "URL zum LinkedIn-Profil (leer = ausgeblendet)"
+                },
+                "social_xing": {
+                    "label": "Xing URL",
+                    "type": "text",
+                    "default": "",
+                    "description": "URL zum Xing-Profil (leer = ausgeblendet)"
+                },
+                "social_youtube": {
+                    "label": "YouTube URL",
+                    "type": "text",
+                    "default": "",
+                    "description": "URL zum YouTube-Kanal (leer = ausgeblendet)"
+                },
+                "show_network_bar": {
+                    "label": "Network Bar anzeigen",
+                    "type": "checkbox",
+                    "default": false,
+                    "description": "Netzwerk-Leiste unter dem Footer einblenden"
+                },
+                "network_bar_name": {
+                    "label": "Network Bar – Name",
+                    "type": "text",
+                    "default": "",
+                    "description": "Name/Label links in der Network Bar"
+                },
+                "network_bar_link1_label": {
+                    "label": "Network Link 1 – Label",
+                    "type": "text",
+                    "default": ""
+                },
+                "network_bar_link1_url": {
+                    "label": "Network Link 1 – URL",
+                    "type": "text",
+                    "default": ""
+                },
+                "network_bar_link2_label": {
+                    "label": "Network Link 2 – Label",
+                    "type": "text",
+                    "default": ""
+                },
+                "network_bar_link2_url": {
+                    "label": "Network Link 2 – URL",
+                    "type": "text",
+                    "default": ""
+                },
+                "network_bar_link3_label": {
+                    "label": "Network Link 3 – Label",
+                    "type": "text",
+                    "default": ""
+                },
+                "network_bar_link3_url": {
+                    "label": "Network Link 3 – URL",
+                    "type": "text",
+                    "default": ""
+                }
+            }
         },
-        "accent_light": {
-          "label": "Akzentfarbe Hell",
-          "type": "color",
-          "default": "#FDF5E6",
-          "description": "Heller Goldton für dezente Markierungen"
+        "buttons": {
+            "label": "Buttons",
+            "description": "Eckenradius, Padding, Schriftgewicht und Textstil.",
+            "settings": {
+                "button_border_radius": {
+                    "label": "Button-Eckenradius (px)",
+                    "type": "number",
+                    "default": 8,
+                    "min": 0,
+                    "max": 50,
+                    "description": "Eckenrundung aller regulären Buttons"
+                },
+                "button_padding_x": {
+                    "label": "Button-Padding horizontal (rem)",
+                    "type": "number",
+                    "default": 2,
+                    "min": 0.5,
+                    "max": 4,
+                    "step": 0.25,
+                    "description": "Horizontaler Innenabstand"
+                },
+                "button_padding_y": {
+                    "label": "Button-Padding vertikal (rem)",
+                    "type": "number",
+                    "default": 0.875,
+                    "min": 0.25,
+                    "max": 2,
+                    "step": 0.125,
+                    "description": "Vertikaler Innenabstand"
+                },
+                "button_font_weight": {
+                    "label": "Button-Schriftgewicht",
+                    "type": "select",
+                    "options": {
+                        "400": "Regular (400)",
+                        "500": "Medium (500)",
+                        "600": "Semi-Bold (600)",
+                        "700": "Bold (700)"
+                    },
+                    "default": "600",
+                    "description": "Schriftgewicht aller Buttons"
+                },
+                "button_transform": {
+                    "label": "Button-Textumwandlung",
+                    "type": "select",
+                    "options": {
+                        "none": "Normal",
+                        "uppercase": "GROSSBUCHSTABEN",
+                        "capitalize": "Erster Buchstabe groß"
+                    },
+                    "default": "none",
+                    "description": "Textformatierung für Button-Beschriftungen"
+                }
+            }
         },
-        "secondary_color": {
-          "label": "Sekundärfarbe (Slate)",
-          "type": "color",
-          "default": "#607D8B",
-          "description": "Schiefergrau für Nebenelemente"
+        "homepage": {
+            "label": "Startseite",
+            "description": "Sektionen der Homepage: Hero, Dienstleistungen, Termine, FAQ, CTA.",
+            "settings": {
+                "show_hero": {
+                    "label": "Hero-Sektion anzeigen",
+                    "type": "checkbox",
+                    "default": true,
+                    "description": "Große Hero-Sektion mit Badge, Überschrift und CTAs"
+                },
+                "hero_badge": {
+                    "label": "Hero-Badge Text",
+                    "type": "text",
+                    "default": "Ihr Spezialist für Personalvermittlung und berufliche Weiterbildung",
+                    "description": "Kleiner Badge-Text über der Überschrift"
+                },
+                "hero_title": {
+                    "label": "Hero-Überschrift",
+                    "type": "text",
+                    "default": "Menschen verbinden. <span class=\"highlight\">Kompetenz entwickeln.</span>",
+                    "description": "Hauptüberschrift (HTML erlaubt)"
+                },
+                "hero_text": {
+                    "label": "Hero-Beschreibungstext",
+                    "type": "textarea",
+                    "default": "Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Weiterbildung – alles aus einer Hand.",
+                    "description": "Einleitungstext unter der Überschrift"
+                },
+                "hero_cta_primary_label": {
+                    "label": "Primärer CTA-Button Text",
+                    "type": "text",
+                    "default": "Entdecken Sie Ihre Möglichkeiten",
+                    "description": "Beschriftung des Haupt-Buttons"
+                },
+                "hero_cta_primary_url": {
+                    "label": "Primärer CTA-Button URL",
+                    "type": "text",
+                    "default": "#dienstleistungen",
+                    "description": "Ziel-URL des Haupt-Buttons"
+                },
+                "hero_cta_secondary_label": {
+                    "label": "Sekundärer CTA-Button Text",
+                    "type": "text",
+                    "default": "Kontakt aufnehmen",
+                    "description": "Beschriftung des zweiten Buttons (leer = ausgeblendet)"
+                },
+                "hero_cta_secondary_url": {
+                    "label": "Sekundärer CTA-Button URL",
+                    "type": "text",
+                    "default": "#kontakt",
+                    "description": "Ziel-URL des zweiten Buttons"
+                },
+                "hero_bg_image": {
+                    "label": "Hero-Hintergrundbild",
+                    "type": "image",
+                    "default": "",
+                    "description": "Optionales Hintergrundbild im Hero-Bereich"
+                },
+                "show_cta": {
+                    "label": "CTA-Sektion anzeigen",
+                    "type": "checkbox",
+                    "default": true,
+                    "description": "Call-to-Action-Bereich am Seitenende"
+                },
+                "cta_title": {
+                    "label": "CTA-Überschrift",
+                    "type": "text",
+                    "default": "Bereit für den nächsten Karriereschritt?",
+                    "description": "Überschrift des CTA-Bereichs"
+                },
+                "cta_text": {
+                    "label": "CTA-Beschreibungstext",
+                    "type": "textarea",
+                    "default": "Ob Arbeitnehmer auf Jobsuche oder Unternehmen mit Personalbedarf – sprechen Sie uns an. Wir finden die passende Lösung für Sie.",
+                    "description": "Text im CTA-Bereich"
+                },
+                "cta_button_label": {
+                    "label": "CTA-Button Text",
+                    "type": "text",
+                    "default": "Jetzt Kontakt aufnehmen",
+                    "description": "Beschriftung des CTA-Buttons"
+                },
+                "cta_button_url": {
+                    "label": "CTA-Button URL",
+                    "type": "text",
+                    "default": "/#kontakt",
+                    "description": "Ziel-URL des CTA-Buttons"
+                },
+                "cta_secondary_label": {
+                    "label": "CTA zweiter Button Text",
+                    "type": "text",
+                    "default": "Unsere Leistungen entdecken",
+                    "description": "Zweiter CTA-Button (leer = ausgeblendet)"
+                },
+                "cta_secondary_url": {
+                    "label": "CTA zweiter Button URL",
+                    "type": "text",
+                    "default": "/#dienstleistungen",
+                    "description": "Ziel-URL des zweiten CTA-Buttons"
+                }
+            }
         },
-        "text_color": {
-          "label": "Textfarbe",
-          "type": "color",
-          "default": "#334155",
-          "description": "Standard-Fließtextfarbe"
+        "services": {
+            "label": "Dienstleistungen",
+            "description": "Service-Karten (bis zu 12) mit Icon, Titel, Beschreibung und optionalem Link.",
+            "settings": {
+                "show_services": {
+                    "label": "Sektion anzeigen",
+                    "type": "checkbox",
+                    "default": true
+                },
+                "services_tag": {
+                    "label": "Tag-Text",
+                    "type": "text",
+                    "default": "Unsere Leistungen"
+                },
+                "services_title": {
+                    "label": "Überschrift",
+                    "type": "text",
+                    "default": "Unsere Dienstleistungen"
+                },
+                "services_subtitle": {
+                    "label": "Untertitel",
+                    "type": "textarea",
+                    "default": "Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen."
+                },
+                "services_columns": {
+                    "label": "Spalten",
+                    "type": "select",
+                    "options": {
+                        "2": "2",
+                        "3": "3",
+                        "4": "4"
+                    },
+                    "default": "3"
+                },
+                "services_bg_style": {
+                    "label": "Hintergrund-Stil",
+                    "type": "select",
+                    "options": {
+                        "default": "Transparent",
+                        "alt": "Weiß",
+                        "navy": "Navy"
+                    },
+                    "default": "default"
+                },
+                "services_card_style": {
+                    "label": "Card-Design",
+                    "type": "select",
+                    "options": {
+                        "bordered": "Rahmen",
+                        "shadow": "Schatten",
+                        "flat": "Flach",
+                        "filled": "Gefüllt"
+                    },
+                    "default": "bordered"
+                },
+                "services_icon_style": {
+                    "label": "Icon-Stil",
+                    "type": "select",
+                    "options": {
+                        "circle": "Kreis",
+                        "square": "Quadrat",
+                        "plain": "Nur Emoji",
+                        "large": "Groß"
+                    },
+                    "default": "circle"
+                },
+                "services_show_hover": {
+                    "label": "Hover-Effekt",
+                    "type": "checkbox",
+                    "default": true,
+                    "description": "Goldlinie und Anheben beim Darüberfahren"
+                },
+                "services_show_icons": {
+                    "label": "Icons anzeigen",
+                    "type": "checkbox",
+                    "default": true,
+                    "description": "Icons auf den Service-Karten ein-/ausblenden"
+                },
+                "services_max_items": {
+                    "label": "Max. sichtbare Karten",
+                    "type": "number",
+                    "default": 6
+                },
+                "services_show_cta": {
+                    "label": "CTA-Button anzeigen",
+                    "type": "checkbox",
+                    "default": false
+                },
+                "services_cta_label": {
+                    "label": "CTA-Button Text",
+                    "type": "text",
+                    "default": "Alle Leistungen entdecken"
+                },
+                "services_cta_url": {
+                    "label": "CTA-Button URL",
+                    "type": "text",
+                    "default": "/leistungen"
+                },
+                "service_1_icon": {
+                    "label": "Service 1 Icon",
+                    "type": "text",
+                    "default": "🎯"
+                },
+                "service_1_image": {
+                    "label": "Service 1 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_1_title": {
+                    "label": "Service 1 Titel",
+                    "type": "text",
+                    "default": "Personalvermittlung"
+                },
+                "service_1_text": {
+                    "label": "Service 1 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_1_url": {
+                    "label": "Service 1 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_2_icon": {
+                    "label": "Service 2 Icon",
+                    "type": "text",
+                    "default": "🏗️"
+                },
+                "service_2_image": {
+                    "label": "Service 2 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_2_title": {
+                    "label": "Service 2 Titel",
+                    "type": "text",
+                    "default": "Weiterbildung"
+                },
+                "service_2_text": {
+                    "label": "Service 2 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_2_url": {
+                    "label": "Service 2 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_3_icon": {
+                    "label": "Service 3 Icon",
+                    "type": "text",
+                    "default": "🎓"
+                },
+                "service_3_image": {
+                    "label": "Service 3 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_3_title": {
+                    "label": "Service 3 Titel",
+                    "type": "text",
+                    "default": "Akademie & Weiterbildung"
+                },
+                "service_3_text": {
+                    "label": "Service 3 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_3_url": {
+                    "label": "Service 3 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_4_icon": {
+                    "label": "Service 4 Icon",
+                    "type": "text",
+                    "default": "🤝"
+                },
+                "service_4_image": {
+                    "label": "Service 4 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_4_title": {
+                    "label": "Service 4 Titel",
+                    "type": "text",
+                    "default": "Personalvermittlung"
+                },
+                "service_4_text": {
+                    "label": "Service 4 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_4_url": {
+                    "label": "Service 4 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_5_icon": {
+                    "label": "Service 5 Icon",
+                    "type": "text",
+                    "default": "🔄"
+                },
+                "service_5_image": {
+                    "label": "Service 5 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_5_title": {
+                    "label": "Service 5 Titel",
+                    "type": "text",
+                    "default": "Arbeitnehmerüberlassung"
+                },
+                "service_5_text": {
+                    "label": "Service 5 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_5_url": {
+                    "label": "Service 5 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_6_icon": {
+                    "label": "Service 6 Icon",
+                    "type": "text",
+                    "default": "🚀"
+                },
+                "service_6_image": {
+                    "label": "Service 6 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_6_title": {
+                    "label": "Service 6 Titel",
+                    "type": "text",
+                    "default": "Ausbildung"
+                },
+                "service_6_text": {
+                    "label": "Service 6 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_6_url": {
+                    "label": "Service 6 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_7_icon": {
+                    "label": "Service 7 Icon",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_7_image": {
+                    "label": "Service 7 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_7_title": {
+                    "label": "Service 7 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_7_text": {
+                    "label": "Service 7 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_7_url": {
+                    "label": "Service 7 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_8_icon": {
+                    "label": "Service 8 Icon",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_8_image": {
+                    "label": "Service 8 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_8_title": {
+                    "label": "Service 8 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_8_text": {
+                    "label": "Service 8 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_8_url": {
+                    "label": "Service 8 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_9_icon": {
+                    "label": "Service 9 Icon",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_9_image": {
+                    "label": "Service 9 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_9_title": {
+                    "label": "Service 9 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_9_text": {
+                    "label": "Service 9 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_9_url": {
+                    "label": "Service 9 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_10_icon": {
+                    "label": "Service 10 Icon",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_10_image": {
+                    "label": "Service 10 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_10_title": {
+                    "label": "Service 10 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_10_text": {
+                    "label": "Service 10 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_10_url": {
+                    "label": "Service 10 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_11_icon": {
+                    "label": "Service 11 Icon",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_11_image": {
+                    "label": "Service 11 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_11_title": {
+                    "label": "Service 11 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_11_text": {
+                    "label": "Service 11 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_11_url": {
+                    "label": "Service 11 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_12_icon": {
+                    "label": "Service 12 Icon",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_12_image": {
+                    "label": "Service 12 Bild",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_12_title": {
+                    "label": "Service 12 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "service_12_text": {
+                    "label": "Service 12 Beschreibung",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "service_12_url": {
+                    "label": "Service 12 Link",
+                    "type": "text",
+                    "default": ""
+                }
+            }
         },
-        "heading_color": {
-          "label": "Überschriftenfarbe",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Farbe aller Überschriften (h1–h6)"
+        "events": {
+            "label": "Termine",
+            "description": "Aktuelle Termine – automatisch aus cms-events Plugin oder manuell gepflegt (bis zu 6 Einträge).",
+            "settings": {
+                "show_events": {
+                    "label": "Sektion anzeigen",
+                    "type": "checkbox",
+                    "default": true
+                },
+                "events_tag": {
+                    "label": "Tag-Text",
+                    "type": "text",
+                    "default": "Veranstaltungen"
+                },
+                "events_title": {
+                    "label": "Überschrift",
+                    "type": "text",
+                    "default": "Aktuelle Termine & Angebote"
+                },
+                "events_subtitle": {
+                    "label": "Untertitel",
+                    "type": "textarea",
+                    "default": "Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen."
+                },
+                "events_source": {
+                    "label": "Datenquelle",
+                    "type": "select",
+                    "options": {
+                        "auto": "Automatisch",
+                        "plugin": "Nur Plugin",
+                        "manual": "Nur manuell"
+                    },
+                    "default": "auto"
+                },
+                "events_max_items": {
+                    "label": "Maximale Anzahl",
+                    "type": "number",
+                    "default": 6
+                },
+                "events_columns": {
+                    "label": "Spalten",
+                    "type": "select",
+                    "options": {
+                        "2": "2",
+                        "3": "3",
+                        "4": "4"
+                    },
+                    "default": "3"
+                },
+                "events_bg_style": {
+                    "label": "Hintergrund-Stil",
+                    "type": "select",
+                    "options": {
+                        "alt": "Weiß",
+                        "default": "Transparent",
+                        "navy": "Navy"
+                    },
+                    "default": "alt"
+                },
+                "events_show_date_badge": {
+                    "label": "Datums-Badge",
+                    "type": "checkbox",
+                    "default": true
+                },
+                "events_link_text": {
+                    "label": "Link-Text",
+                    "type": "text",
+                    "default": "Mehr erfahren →"
+                },
+                "events_card_style": {
+                    "label": "Card-Design",
+                    "type": "select",
+                    "options": {
+                        "bordered": "Rahmen",
+                        "shadow": "Schatten",
+                        "flat": "Flach"
+                    },
+                    "default": "bordered"
+                },
+                "events_show_empty": {
+                    "label": "Platzhalter anzeigen",
+                    "type": "checkbox",
+                    "default": true
+                },
+                "events_empty_text": {
+                    "label": "Platzhaltertext",
+                    "type": "text",
+                    "default": "Neue Termine werden in Kürze veröffentlicht"
+                },
+                "events_empty_hint": {
+                    "label": "Platzhalter-Hinweis",
+                    "type": "text",
+                    "default": "Schauen Sie bald wieder vorbei oder kontaktieren Sie uns direkt."
+                },
+                "events_show_cta": {
+                    "label": "CTA-Button anzeigen",
+                    "type": "checkbox",
+                    "default": false
+                },
+                "events_cta_label": {
+                    "label": "CTA-Button Text",
+                    "type": "text",
+                    "default": "Alle Termine ansehen"
+                },
+                "events_cta_url": {
+                    "label": "CTA-Button URL",
+                    "type": "text",
+                    "default": "/termine"
+                },
+                "events_booking_url": {
+                    "label": "MS Booking Embed-URL",
+                    "type": "text",
+                    "default": "",
+                    "description": "Microsoft Booking URL für Inline-Buchungsformular"
+                },
+                "events_booking_title": {
+                    "label": "MS Booking Überschrift",
+                    "type": "text",
+                    "default": "Online-Termin buchen"
+                },
+                "events_booking_height": {
+                    "label": "MS Booking Höhe (px)",
+                    "type": "number",
+                    "default": 600
+                },
+                "event_1_title": {
+                    "label": "Termin 1 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_1_date": {
+                    "label": "Termin 1 Datum",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_1_text": {
+                    "label": "Termin 1 Text",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "event_1_url": {
+                    "label": "Termin 1 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_2_title": {
+                    "label": "Termin 2 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_2_date": {
+                    "label": "Termin 2 Datum",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_2_text": {
+                    "label": "Termin 2 Text",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "event_2_url": {
+                    "label": "Termin 2 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_3_title": {
+                    "label": "Termin 3 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_3_date": {
+                    "label": "Termin 3 Datum",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_3_text": {
+                    "label": "Termin 3 Text",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "event_3_url": {
+                    "label": "Termin 3 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_4_title": {
+                    "label": "Termin 4 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_4_date": {
+                    "label": "Termin 4 Datum",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_4_text": {
+                    "label": "Termin 4 Text",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "event_4_url": {
+                    "label": "Termin 4 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_5_title": {
+                    "label": "Termin 5 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_5_date": {
+                    "label": "Termin 5 Datum",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_5_text": {
+                    "label": "Termin 5 Text",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "event_5_url": {
+                    "label": "Termin 5 Link",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_6_title": {
+                    "label": "Termin 6 Titel",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_6_date": {
+                    "label": "Termin 6 Datum",
+                    "type": "text",
+                    "default": ""
+                },
+                "event_6_text": {
+                    "label": "Termin 6 Text",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "event_6_url": {
+                    "label": "Termin 6 Link",
+                    "type": "text",
+                    "default": ""
+                }
+            }
         },
-        "text_light": {
-          "label": "Helle Textfarbe",
-          "type": "color",
-          "default": "#F8F9FA",
-          "description": "Für dunkle Hintergründe (Header, Footer, Hero)"
+        "faq": {
+            "label": "FAQ",
+            "description": "Häufig gestellte Fragen – bis zu 8 Frage-Antwort-Paare.",
+            "settings": {
+                "show_faq": {
+                    "label": "Sektion anzeigen",
+                    "type": "checkbox",
+                    "default": true
+                },
+                "faq_tag": {
+                    "label": "Tag-Text",
+                    "type": "text",
+                    "default": "Wissenswertes"
+                },
+                "faq_title": {
+                    "label": "Überschrift",
+                    "type": "text",
+                    "default": "Häufig gestellte Fragen"
+                },
+                "faq_subtitle": {
+                    "label": "Untertitel",
+                    "type": "textarea",
+                    "default": "Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen."
+                },
+                "faq_style": {
+                    "label": "Darstellungs-Stil",
+                    "type": "select",
+                    "options": {
+                        "accordion": "Akkordeon",
+                        "open": "Alle geöffnet"
+                    },
+                    "default": "accordion"
+                },
+                "faq_max_width": {
+                    "label": "Maximale Breite (px)",
+                    "type": "number",
+                    "default": 720
+                },
+                "faq_bg_style": {
+                    "label": "Hintergrund-Stil",
+                    "type": "select",
+                    "options": {
+                        "default": "Transparent",
+                        "alt": "Weiß"
+                    },
+                    "default": "default"
+                },
+                "faq_show_cta": {
+                    "label": "CTA anzeigen",
+                    "type": "checkbox",
+                    "default": false
+                },
+                "faq_cta_text": {
+                    "label": "CTA-Hinweistext",
+                    "type": "text",
+                    "default": "Ihre Frage war nicht dabei?"
+                },
+                "faq_cta_label": {
+                    "label": "CTA-Button Text",
+                    "type": "text",
+                    "default": "Kontaktieren Sie uns"
+                },
+                "faq_cta_url": {
+                    "label": "CTA-Button URL",
+                    "type": "text",
+                    "default": "/#kontakt"
+                },
+                "faq_1_question": {
+                    "label": "Frage 1",
+                    "type": "text",
+                    "default": "Was sind Ihre Personaldienstleistungen?"
+                },
+                "faq_1_answer": {
+                    "label": "Antwort 1",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_2_question": {
+                    "label": "Frage 2",
+                    "type": "text",
+                    "default": "Was ist Arbeitnehmerüberlassung?"
+                },
+                "faq_2_answer": {
+                    "label": "Antwort 2",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_3_question": {
+                    "label": "Frage 3",
+                    "type": "text",
+                    "default": "Welche Weiterbildungen bieten Sie an?"
+                },
+                "faq_3_answer": {
+                    "label": "Antwort 3",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_4_question": {
+                    "label": "Frage 4",
+                    "type": "text",
+                    "default": ""
+                },
+                "faq_4_answer": {
+                    "label": "Antwort 4",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_5_question": {
+                    "label": "Frage 5",
+                    "type": "text",
+                    "default": ""
+                },
+                "faq_5_answer": {
+                    "label": "Antwort 5",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_6_question": {
+                    "label": "Frage 6",
+                    "type": "text",
+                    "default": ""
+                },
+                "faq_6_answer": {
+                    "label": "Antwort 6",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_7_question": {
+                    "label": "Frage 7",
+                    "type": "text",
+                    "default": ""
+                },
+                "faq_7_answer": {
+                    "label": "Antwort 7",
+                    "type": "textarea",
+                    "default": ""
+                },
+                "faq_8_question": {
+                    "label": "Frage 8",
+                    "type": "text",
+                    "default": ""
+                },
+                "faq_8_answer": {
+                    "label": "Antwort 8",
+                    "type": "textarea",
+                    "default": ""
+                }
+            }
         },
-        "muted_color": {
-          "label": "Gedämpfte Textfarbe",
-          "type": "color",
-          "default": "#94a3b8",
-          "description": "Timestamps, Platzhalter, Hints"
+        "blog": {
+            "label": "Blog & Seiten",
+            "description": "Einstellungen für Blog-Übersicht, Einzelbeiträge und statische Seiten.",
+            "settings": {
+                "blog_layout": {
+                    "label": "Blog-Layout",
+                    "type": "select",
+                    "default": "grid"
+                },
+                "blog_columns": {
+                    "label": "Spaltenanzahl (Grid)",
+                    "type": "select",
+                    "default": "3"
+                },
+                "blog_show_sidebar": {
+                    "label": "Sidebar anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_show_featured_image": {
+                    "label": "Beitragsbild anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_show_excerpt": {
+                    "label": "Textauszug anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_show_date": {
+                    "label": "Datum anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_show_author": {
+                    "label": "Autor anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_show_category": {
+                    "label": "Kategorie-Badge anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_hero_title": {
+                    "label": "Blog-Überschrift",
+                    "type": "text",
+                    "default": "Unser Blog"
+                },
+                "blog_hero_subtitle": {
+                    "label": "Blog-Untertitel",
+                    "type": "text",
+                    "default": "Aktuelle Beiträge, Einblicke und Neuigkeiten"
+                },
+                "blog_single_show_featured": {
+                    "label": "Beitragsbild auf Einzelseite",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_single_show_author": {
+                    "label": "Autor auf Einzelseite",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_single_show_date": {
+                    "label": "Datum auf Einzelseite",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_single_show_tags": {
+                    "label": "Tags auf Einzelseite",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_single_show_related": {
+                    "label": "Ähnliche Beiträge anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_single_show_reading_time": {
+                    "label": "Lesezeit anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "blog_single_max_width": {
+                    "label": "Maximale Artikelbreite (px)",
+                    "type": "number",
+                    "default": "820"
+                },
+                "page_show_title": {
+                    "label": "Seitentitel anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "page_show_updated": {
+                    "label": "Zuletzt aktualisiert anzeigen",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "page_show_featured_image": {
+                    "label": "Beitragsbild auf Seiten",
+                    "type": "checkbox",
+                    "default": "1"
+                },
+                "page_max_width": {
+                    "label": "Maximale Seitenbreite (px)",
+                    "type": "number",
+                    "default": "960"
+                }
+            }
         },
-        "bg_color": {
-          "label": "Seitenhintergrund",
-          "type": "color",
-          "default": "#F8F9FA",
-          "description": "Hintergrundfarbe des Content-Bereichs (Off-White)"
-        },
-        "bg_secondary": {
-          "label": "Sekundärer Hintergrund",
-          "type": "color",
-          "default": "#F1F5F9",
-          "description": "Hintergrund für Cards und alternierende Sektionen"
-        },
-        "link_color": {
-          "label": "Linkfarbe",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Standard-Linkfarbe im Content-Bereich"
-        },
-        "link_hover_color": {
-          "label": "Link Hover-Farbe",
-          "type": "color",
-          "default": "#D4A017",
-          "description": "Linkfarbe beim Hover-Zustand"
-        },
-        "border_color": {
-          "label": "Rahmenfarbe",
-          "type": "color",
-          "default": "#E2E8F0",
-          "description": "Standard-Rahmenfarbe für Trennlinien und Cards"
-        },
-        "success_color": {
-          "label": "Erfolgsfarbe",
-          "type": "color",
-          "default": "#22c55e",
-          "description": "Positivmeldungen und Status-Badges"
-        },
-        "error_color": {
-          "label": "Fehlerfarbe",
-          "type": "color",
-          "default": "#ef4444",
-          "description": "Fehlermeldungen und Warnungen"
-        },
-        "cta_bg_color": {
-          "label": "CTA-Hintergrund",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Hintergrundfarbe der CTA-Sektion (Gradient-Start)"
-        },
-        "cta_bg_to": {
-          "label": "CTA-Hintergrund (Ende)",
-          "type": "color",
-          "default": "#001F42",
-          "description": "Endfarbe des CTA-Gradienten"
-        },
-        "cta_text_color": {
-          "label": "CTA-Textfarbe",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Textfarbe im CTA-Bereich"
-        },
-        "side_margin_color": {
-          "label": "Seitenrand-Farbe",
-          "type": "color",
-          "default": "#EDF1F5",
-          "description": "Hintergrundfarbe der Seiten-Ränder"
-        },
-        "side_accent_color": {
-          "label": "Seitenrand-Akzent",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Farbe der dekorativen Seitenstreifen"
-        },
-        "side_accent_width": {
-          "label": "Seitenrand-Breite (px)",
-          "type": "number",
-          "default": 0,
-          "min": 0,
-          "max": 12,
-          "description": "Breite der Seitenstreifen (0 = aus)"
-        },
-
-        "hero_bg_color": {
-          "label": "Hero-Hintergrund",
-          "type": "color",
-          "default": "#F8F9FA",
-          "description": "Hintergrundfarbe der Hero-Sektion"
-        },
-        "hero_bg_to": {
-          "label": "Hero-Hintergrund (Ende)",
-          "type": "color",
-          "default": "#F1F5F9",
-          "description": "Gradient-Endfarbe der Hero-Sektion"
-        },
-        "services_bg_color": {
-          "label": "Services-Hintergrund",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Hintergrundfarbe der Dienstleistungen-Sektion"
-        },
-        "services_card_bg": {
-          "label": "Services-Card Hintergrund",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Hintergrundfarbe einzelner Service-Karten"
-        },
-        "events_bg_color": {
-          "label": "Termine-Hintergrund",
-          "type": "color",
-          "default": "#F0F4F8",
-          "description": "Hintergrundfarbe der Termine-Sektion"
-        },
-        "events_card_bg": {
-          "label": "Termine-Card Hintergrund",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Hintergrundfarbe einzelner Termin-Karten"
-        },
-        "faq_bg_color": {
-          "label": "FAQ-Hintergrund",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Hintergrundfarbe der FAQ-Sektion"
-        },
-        "faq_item_bg": {
-          "label": "FAQ-Item Hintergrund",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Hintergrundfarbe einzelner FAQ-Einträge"
-        },
-        "network_bar_bg": {
-          "label": "Network Bar Hintergrund",
-          "type": "color",
-          "default": "#000D1A",
-          "description": "Hintergrundfarbe der Netzwerk-Leiste"
-        },
-        "network_bar_text": {
-          "label": "Network Bar Textfarbe",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Textfarbe in der Netzwerk-Leiste"
-        },
-        "blog_hero_bg": {
-          "label": "Blog Hero Hintergrund",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Hintergrundfarbe des Blog-Hero-Bereichs"
-        },
-        "blog_hero_text": {
-          "label": "Blog Hero Text",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Textfarbe im Blog-Hero-Bereich"
-        },
-        "blog_content_bg": {
-          "label": "Blog Inhalt Hintergrund",
-          "type": "color",
-          "default": "#F8F9FA",
-          "description": "Hintergrundfarbe des Blog-Inhaltsbereichs"
-        },
-        "blog_card_bg": {
-          "label": "Blog Karte Hintergrund",
-          "type": "color",
-          "default": "#FFFFFF",
-          "description": "Hintergrundfarbe der Blog-Karten"
-        },
-        "blog_card_title": {
-          "label": "Blog Karte Titel",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Titelfarbe auf Blog-Karten"
-        },
-        "blog_category_bg": {
-          "label": "Kategorie-Badge Hintergrund",
-          "type": "color",
-          "default": "#FDF5E6",
-          "description": "Hintergrundfarbe der Kategorie-Badges"
-        },
-        "blog_category_text": {
-          "label": "Kategorie-Badge Text",
-          "type": "color",
-          "default": "#B8860B",
-          "description": "Textfarbe der Kategorie-Badges"
+        "advanced": {
+            "label": "Erweitert",
+            "description": "Custom Code, Tracking und erweiterte Einstellungen.",
+            "settings": {
+                "custom_css": {
+                    "label": "Eigenes CSS",
+                    "type": "textarea",
+                    "default": "",
+                    "description": "Zusätzliches CSS am Ende aller Theme-Styles"
+                },
+                "custom_head_code": {
+                    "label": "Custom Head Code (Tracking, Meta)",
+                    "type": "textarea",
+                    "default": "",
+                    "description": "Wird im <head> ausgegeben"
+                },
+                "custom_footer_code": {
+                    "label": "Custom Footer Code (Analytics, Widgets)",
+                    "type": "textarea",
+                    "default": "",
+                    "description": "Wird vor </body> ausgegeben"
+                }
+            }
         }
-      }
-    },
-
-    "typography": {
-      "label": "Typografie",
-      "description": "Schriftarten, Größen, Zeilenhöhe und Gewichtung.",
-      "settings": {
-        "font_family_base": {
-          "label": "Basis-Schriftart",
-          "type": "select",
-          "options": {
-            "system": "System-Standard",
-            "inter": "Inter",
-            "roboto": "Roboto",
-            "open-sans": "Open Sans",
-            "lato": "Lato",
-            "montserrat": "Montserrat",
-            "poppins": "Poppins",
-            "raleway": "Raleway"
-          },
-          "default": "system",
-          "description": "Schriftart für Fließtext"
-        },
-        "font_family_heading": {
-          "label": "Überschriften-Schriftart",
-          "type": "select",
-          "options": {
-            "system": "System-Standard",
-            "georgia": "Georgia (Serif)",
-            "inter": "Inter",
-            "roboto": "Roboto",
-            "open-sans": "Open Sans",
-            "lato": "Lato",
-            "montserrat": "Montserrat",
-            "poppins": "Poppins",
-            "raleway": "Raleway"
-          },
-          "default": "system",
-          "description": "Schriftart für alle Überschriften"
-        },
-        "font_size_base": {
-          "label": "Basis-Schriftgröße (px)",
-          "type": "number",
-          "default": 16,
-          "min": 12,
-          "max": 24,
-          "description": "Schriftgröße des Fließtexts (px)"
-        },
-        "line_height_base": {
-          "label": "Zeilenhöhe",
-          "type": "number",
-          "default": 1.6,
-          "min": 1.2,
-          "max": 2.5,
-          "step": 0.1,
-          "description": "Zeilenhöhe des Fließtexts (Faktor)"
-        },
-        "font_weight_heading": {
-          "label": "Überschriften-Gewicht",
-          "type": "select",
-          "options": {
-            "400": "Regular (400)",
-            "500": "Medium (500)",
-            "600": "Semi-Bold (600)",
-            "700": "Bold (700)",
-            "800": "Extra-Bold (800)",
-            "900": "Black (900)"
-          },
-          "default": "700",
-          "description": "Font-Weight für alle Überschriften"
-        }
-      }
-    },
-
-    "layout": {
-      "label": "Layout",
-      "description": "Container, Abstände, Eckenradius und Sticky-Header.",
-      "settings": {
-        "container_width": {
-          "label": "Container-Breite (px)",
-          "type": "number",
-          "default": 1280,
-          "min": 800,
-          "max": 1920,
-          "description": "Maximale Breite des Inhaltsbereichs"
-        },
-        "content_padding": {
-          "label": "Content-Padding (rem)",
-          "type": "number",
-          "default": 2,
-          "min": 0.5,
-          "max": 6,
-          "step": 0.25,
-          "description": "Horizontaler Innenabstand des Containers"
-        },
-        "border_radius": {
-          "label": "Eckenradius (px)",
-          "type": "number",
-          "default": 12,
-          "min": 0,
-          "max": 32,
-          "description": "Standard-Rundung für Cards, Buttons und Felder"
-        },
-        "section_spacing": {
-          "label": "Sektionsabstand (rem)",
-          "type": "number",
-          "default": 5,
-          "min": 1,
-          "max": 10,
-          "step": 0.5,
-          "description": "Vertikaler Abstand zwischen Seitenbereichen"
-        },
-        "enable_sticky_header": {
-          "label": "Sticky Header aktivieren",
-          "type": "checkbox",
-          "default": true,
-          "description": "Header bleibt beim Scrollen oben fixiert"
-        }
-      }
-    },
-
-    "header": {
-      "label": "Header & Logo",
-      "description": "Logo, Farben, Höhe und Aktions-Buttons im Header.",
-      "settings": {
-        "logo_url": {
-          "label": "Header Logo",
-          "type": "image",
-          "default": "",
-          "description": "Logo-Bild (JPG, PNG, WebP, SVG). Leer = Text-Logo."
-        },
-        "logo_text": {
-          "label": "Logo-Text (Wordmark)",
-          "type": "text",
-          "default": "PTC GmbH",
-          "description": "Text-Logo als Fallback"
-        },
-        "header_bg_color": {
-          "label": "Header-Hintergrund",
-          "type": "color",
-          "default": "#002D5D",
-          "description": "Hintergrundfarbe der Navigationsleiste"
-        },
-        "header_text_color": {
-          "label": "Header-Textfarbe",
-          "type": "color",
-          "default": "#F8F9FA",
-          "description": "Farbe von Navigationslinks und Logo-Text"
-        },
-        "header_accent_color": {
-          "label": "Header-Akzentfarbe",
-          "type": "color",
-          "default": "#D4A017",
-          "description": "Aktive Links, Hover-Zustand"
-        },
-        "header_height": {
-          "label": "Header-Höhe (px)",
-          "type": "number",
-          "default": 72,
-          "min": 48,
-          "max": 120,
-          "description": "Höhe der Navigationsleiste"
-        },
-        "logo_max_height": {
-          "label": "Logo-Maximalhöhe (px)",
-          "type": "number",
-          "default": 48,
-          "min": 24,
-          "max": 100,
-          "description": "Maximale Höhe des Site-Logos"
-        },
-        "nav_font_size": {
-          "label": "Menü-Schriftgröße (px)",
-          "type": "number",
-          "default": "14",
-          "description": "Schriftgröße der Hauptmenüpunkte"
-        },
-        "nav_sub_font_size": {
-          "label": "Untermenü-Schriftgröße (px)",
-          "type": "number",
-          "default": "13",
-          "description": "Schriftgröße der Untermenüpunkte"
-        },
-        "show_header_shadow": {
-          "label": "Header-Schatten anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Subtiler Schatten unterhalb der Navigationsleiste"
-        },
-        "show_login_btn": {
-          "label": "Anmelden-Button anzeigen",
-          "type": "checkbox",
-          "default": false,
-          "description": "Login-Button für nicht angemeldete Besucher"
-        },
-        "login_btn_icon_only": {
-          "label": "Anmelden-Button: Nur Icon",
-          "type": "checkbox",
-          "default": false,
-          "description": "Zeigt nur das Icon ohne Text – macht den Button schmaler"
-        },
-        "show_register_btn": {
-          "label": "Registrieren-Button anzeigen",
-          "type": "checkbox",
-          "default": false,
-          "description": "Registrieren-Button für nicht angemeldete Besucher"
-        },
-        "register_btn_icon_only": {
-          "label": "Registrieren-Button: Nur Icon",
-          "type": "checkbox",
-          "default": false,
-          "description": "Zeigt nur das Icon ohne Text – macht den Button schmaler"
-        },
-        "header_cta_text": {
-          "label": "Header CTA-Button Text",
-          "type": "text",
-          "default": "Kontakt",
-          "description": "Text des CTA-Buttons im Header (leer = ausgeblendet)"
-        },
-        "header_cta_url": {
-          "label": "Header CTA-Button URL",
-          "type": "text",
-          "default": "/#kontakt",
-          "description": "Ziel-URL des CTA-Buttons"
-        },
-        "header_animation": {
-          "label": "Header Hintergrund-Animation",
-          "type": "select",
-          "default": "none",
-          "description": "Dezente Animation im Header-Hintergrund"
-        }
-      }
-    },
-
-    "footer": {
-      "label": "Footer",
-      "description": "Farben, Texte, Kontaktdaten und Social-Links im Footer.",
-      "settings": {
-        "footer_width": {
-          "label": "Footer-Breite",
-          "type": "select",
-          "default": "full",
-          "description": "Volle Breite oder Content-Breite"
-        },
-        "footer_bg_color": {
-          "label": "Footer-Hintergrund",
-          "type": "color",
-          "default": "#001A33",
-          "description": "Hintergrundfarbe im Footer"
-        },
-        "footer_text_color": {
-          "label": "Footer-Textfarbe",
-          "type": "color",
-          "default": "#94a3b8",
-          "description": "Textfarbe im Footer"
-        },
-        "footer_link_color": {
-          "label": "Footer-Linkfarbe",
-          "type": "color",
-          "default": "#F8F9FA",
-          "description": "Farbe der Links im Footer"
-        },
-        "footer_tagline": {
-          "label": "Footer-Beschreibungstext",
-          "type": "textarea",
-          "default": "PTC GmbH – Ihr Partner für Bildung, Karriere und Zukunft.",
-          "description": "Text im ersten Footer-Widget"
-        },
-        "footer_address": {
-          "label": "Adresse / Kontakt",
-          "type": "textarea",
-          "default": "PTC GmbH\nMusterstraße 1\n12345 Musterstadt",
-          "description": "Adressdaten im Kontakt-Widget"
-        },
-        "footer_phone": {
-          "label": "Telefon",
-          "type": "text",
-          "default": "",
-          "description": "Telefonnummer im Footer-Kontaktbereich"
-        },
-        "footer_email": {
-          "label": "E-Mail",
-          "type": "text",
-          "default": "",
-          "description": "E-Mail im Footer-Kontaktbereich"
-        },
-        "copyright_text": {
-          "label": "Copyright-Text",
-          "type": "text",
-          "default": "© {year} {site_title}. Alle Rechte vorbehalten.",
-          "description": "Platzhalter: {year}, {site_title}"
-        },
-        "social_facebook": {
-          "label": "Facebook URL",
-          "type": "text",
-          "default": "",
-          "description": "URL zum Facebook-Profil (leer = ausgeblendet)"
-        },
-        "social_instagram": {
-          "label": "Instagram URL",
-          "type": "text",
-          "default": "",
-          "description": "URL zum Instagram-Profil (leer = ausgeblendet)"
-        },
-        "social_linkedin": {
-          "label": "LinkedIn URL",
-          "type": "text",
-          "default": "",
-          "description": "URL zum LinkedIn-Profil (leer = ausgeblendet)"
-        },
-        "social_xing": {
-          "label": "Xing URL",
-          "type": "text",
-          "default": "",
-          "description": "URL zum Xing-Profil (leer = ausgeblendet)"
-        },
-        "social_youtube": {
-          "label": "YouTube URL",
-          "type": "text",
-          "default": "",
-          "description": "URL zum YouTube-Kanal (leer = ausgeblendet)"
-        },
-        "show_network_bar": {
-          "label": "Network Bar anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Netzwerk-Leiste unter dem Footer einblenden"
-        },
-        "network_bar_name": {
-          "label": "Network Bar – Name",
-          "type": "text",
-          "default": "Andreas Hepp",
-          "description": "Name/Label links in der Network Bar"
-        },
-        "network_bar_link1_label": { "label": "Network Link 1 – Label", "type": "text", "default": "PHIN IT" },
-        "network_bar_link1_url":   { "label": "Network Link 1 – URL", "type": "text", "default": "https://phinit.de" },
-        "network_bar_link2_label": { "label": "Network Link 2 – Label", "type": "text", "default": "365CMS" },
-        "network_bar_link2_url":   { "label": "Network Link 2 – URL", "type": "text", "default": "https://365cms.de" },
-        "network_bar_link3_label": { "label": "Network Link 3 – Label", "type": "text", "default": "365 Network" },
-        "network_bar_link3_url":   { "label": "Network Link 3 – URL", "type": "text", "default": "https://365network.de" }
-      }
-    },
-
-    "buttons": {
-      "label": "Buttons",
-      "description": "Eckenradius, Padding, Schriftgewicht und Textstil.",
-      "settings": {
-        "button_border_radius": {
-          "label": "Button-Eckenradius (px)",
-          "type": "number",
-          "default": 8,
-          "min": 0,
-          "max": 50,
-          "description": "Eckenrundung aller regulären Buttons"
-        },
-        "button_padding_x": {
-          "label": "Button-Padding horizontal (rem)",
-          "type": "number",
-          "default": 2,
-          "min": 0.5,
-          "max": 4,
-          "step": 0.25,
-          "description": "Horizontaler Innenabstand"
-        },
-        "button_padding_y": {
-          "label": "Button-Padding vertikal (rem)",
-          "type": "number",
-          "default": 0.875,
-          "min": 0.25,
-          "max": 2,
-          "step": 0.125,
-          "description": "Vertikaler Innenabstand"
-        },
-        "button_font_weight": {
-          "label": "Button-Schriftgewicht",
-          "type": "select",
-          "options": {
-            "400": "Regular (400)",
-            "500": "Medium (500)",
-            "600": "Semi-Bold (600)",
-            "700": "Bold (700)"
-          },
-          "default": "600",
-          "description": "Schriftgewicht aller Buttons"
-        },
-        "button_transform": {
-          "label": "Button-Textumwandlung",
-          "type": "select",
-          "options": {
-            "none": "Normal",
-            "uppercase": "GROSSBUCHSTABEN",
-            "capitalize": "Erster Buchstabe groß"
-          },
-          "default": "none",
-          "description": "Textformatierung für Button-Beschriftungen"
-        }
-      }
-    },
-
-    "homepage": {
-      "label": "Startseite",
-      "description": "Sektionen der Homepage: Hero, Dienstleistungen, Termine, FAQ, CTA.",
-      "settings": {
-        "show_hero": {
-          "label": "Hero-Sektion anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Große Hero-Sektion mit Badge, Überschrift und CTAs"
-        },
-        "hero_badge": {
-          "label": "Hero-Badge Text",
-          "type": "text",
-          "default": "Ihr Partner für Bildung, Karriere und Zukunft",
-          "description": "Kleiner Badge-Text über der Überschrift"
-        },
-        "hero_title": {
-          "label": "Hero-Überschrift",
-          "type": "text",
-          "default": "Willkommen bei <span class=\"highlight\">PTC GmbH</span> – Ihr Partner für Personaldienstleistungen.",
-          "description": "Hauptüberschrift (HTML erlaubt)"
-        },
-        "hero_text": {
-          "label": "Hero-Beschreibungstext",
-          "type": "textarea",
-          "default": "Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Logistiklehrwerkstatt – alles aus einer Hand.",
-          "description": "Einleitungstext unter der Überschrift"
-        },
-        "hero_cta_primary_label": {
-          "label": "Primärer CTA-Button Text",
-          "type": "text",
-          "default": "Entdecken Sie Ihre Möglichkeiten",
-          "description": "Beschriftung des Haupt-Buttons"
-        },
-        "hero_cta_primary_url": {
-          "label": "Primärer CTA-Button URL",
-          "type": "text",
-          "default": "#dienstleistungen",
-          "description": "Ziel-URL des Haupt-Buttons"
-        },
-        "hero_cta_secondary_label": {
-          "label": "Sekundärer CTA-Button Text",
-          "type": "text",
-          "default": "Kontakt aufnehmen",
-          "description": "Beschriftung des zweiten Buttons (leer = ausgeblendet)"
-        },
-        "hero_cta_secondary_url": {
-          "label": "Sekundärer CTA-Button URL",
-          "type": "text",
-          "default": "#kontakt",
-          "description": "Ziel-URL des zweiten Buttons"
-        },
-        "hero_bg_image": {
-          "label": "Hero-Hintergrundbild",
-          "type": "image",
-          "default": "",
-          "description": "Optionales Hintergrundbild im Hero-Bereich"
-        },
-        "show_cta": {
-          "label": "CTA-Sektion anzeigen",
-          "type": "checkbox",
-          "default": true,
-          "description": "Call-to-Action-Bereich am Seitenende"
-        },
-        "cta_title": {
-          "label": "CTA-Überschrift",
-          "type": "text",
-          "default": "Bereit für den nächsten Karriereschritt?",
-          "description": "Überschrift des CTA-Bereichs"
-        },
-        "cta_text": {
-          "label": "CTA-Beschreibungstext",
-          "type": "textarea",
-          "default": "Ob Arbeitnehmer auf Jobsuche oder Unternehmen mit Personalbedarf – sprechen Sie uns an. Wir finden die passende Lösung für Sie.",
-          "description": "Text im CTA-Bereich"
-        },
-        "cta_button_label": {
-          "label": "CTA-Button Text",
-          "type": "text",
-          "default": "Jetzt Kontakt aufnehmen",
-          "description": "Beschriftung des CTA-Buttons"
-        },
-        "cta_button_url": {
-          "label": "CTA-Button URL",
-          "type": "text",
-          "default": "/#kontakt",
-          "description": "Ziel-URL des CTA-Buttons"
-        },
-        "cta_secondary_label": {
-          "label": "CTA zweiter Button Text",
-          "type": "text",
-          "default": "Unsere Leistungen entdecken",
-          "description": "Zweiter CTA-Button (leer = ausgeblendet)"
-        },
-        "cta_secondary_url": {
-          "label": "CTA zweiter Button URL",
-          "type": "text",
-          "default": "/#dienstleistungen",
-          "description": "Ziel-URL des zweiten CTA-Buttons"
-        }
-      }
-    },
-
-    "services": {
-      "label": "Dienstleistungen",
-      "description": "Service-Karten (bis zu 12) mit Icon, Titel, Beschreibung und optionalem Link.",
-      "settings": {
-        "show_services":      { "label": "Sektion anzeigen",           "type": "checkbox", "default": true },
-        "services_tag":       { "label": "Tag-Text",                   "type": "text",     "default": "Unsere Leistungen" },
-        "services_title":     { "label": "Überschrift",                "type": "text",     "default": "Unsere Dienstleistungen" },
-        "services_subtitle":  { "label": "Untertitel",                 "type": "textarea", "default": "Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen." },
-        "services_columns":   { "label": "Spalten",                    "type": "select",   "options": { "2": "2", "3": "3", "4": "4" }, "default": "3" },
-        "services_bg_style":  { "label": "Hintergrund-Stil",           "type": "select",   "options": { "default": "Transparent", "alt": "Weiß", "navy": "Navy" }, "default": "default" },
-        "services_card_style":{ "label": "Card-Design",                "type": "select",   "options": { "bordered": "Rahmen", "shadow": "Schatten", "flat": "Flach", "filled": "Gefüllt" }, "default": "bordered" },
-        "services_icon_style":{ "label": "Icon-Stil",                  "type": "select",   "options": { "circle": "Kreis", "square": "Quadrat", "plain": "Nur Emoji", "large": "Groß" }, "default": "circle" },
-        "services_show_hover":{ "label": "Hover-Effekt",              "type": "checkbox", "default": true, "description": "Goldlinie und Anheben beim Darüberfahren" },
-        "services_show_icons":{ "label": "Icons anzeigen",             "type": "checkbox", "default": true, "description": "Icons auf den Service-Karten ein-/ausblenden" },
-        "services_max_items": { "label": "Max. sichtbare Karten",      "type": "number",   "default": 6 },
-        "services_show_cta":  { "label": "CTA-Button anzeigen",        "type": "checkbox", "default": false },
-        "services_cta_label": { "label": "CTA-Button Text",            "type": "text",     "default": "Alle Leistungen entdecken" },
-        "services_cta_url":   { "label": "CTA-Button URL",             "type": "text",     "default": "/leistungen" },
-        "service_1_icon":     { "label": "Service 1 Icon",             "type": "text",     "default": "🎯" },
-        "service_1_image":    { "label": "Service 1 Bild",             "type": "text",     "default": "" },
-        "service_1_title":    { "label": "Service 1 Titel",            "type": "text",     "default": "Aktivierung und Vermittlung" },
-        "service_1_text":     { "label": "Service 1 Beschreibung",     "type": "textarea", "default": "" },
-        "service_1_url":      { "label": "Service 1 Link",             "type": "text",     "default": "" },
-        "service_2_icon":     { "label": "Service 2 Icon",             "type": "text",     "default": "🏗️" },
-        "service_2_image":    { "label": "Service 2 Bild",             "type": "text",     "default": "" },
-        "service_2_title":    { "label": "Service 2 Titel",            "type": "text",     "default": "Logistiklehrwerkstatt" },
-        "service_2_text":     { "label": "Service 2 Beschreibung",     "type": "textarea", "default": "" },
-        "service_2_url":      { "label": "Service 2 Link",             "type": "text",     "default": "" },
-        "service_3_icon":     { "label": "Service 3 Icon",             "type": "text",     "default": "🎓" },
-        "service_3_image":    { "label": "Service 3 Bild",             "type": "text",     "default": "" },
-        "service_3_title":    { "label": "Service 3 Titel",            "type": "text",     "default": "Akademie und Bildung" },
-        "service_3_text":     { "label": "Service 3 Beschreibung",     "type": "textarea", "default": "" },
-        "service_3_url":      { "label": "Service 3 Link",             "type": "text",     "default": "" },
-        "service_4_icon":     { "label": "Service 4 Icon",             "type": "text",     "default": "🤝" },
-        "service_4_image":    { "label": "Service 4 Bild",             "type": "text",     "default": "" },
-        "service_4_title":    { "label": "Service 4 Titel",            "type": "text",     "default": "Personalvermittlung" },
-        "service_4_text":     { "label": "Service 4 Beschreibung",     "type": "textarea", "default": "" },
-        "service_4_url":      { "label": "Service 4 Link",             "type": "text",     "default": "" },
-        "service_5_icon":     { "label": "Service 5 Icon",             "type": "text",     "default": "🔄" },
-        "service_5_image":    { "label": "Service 5 Bild",             "type": "text",     "default": "" },
-        "service_5_title":    { "label": "Service 5 Titel",            "type": "text",     "default": "Arbeitnehmerüberlassung" },
-        "service_5_text":     { "label": "Service 5 Beschreibung",     "type": "textarea", "default": "" },
-        "service_5_url":      { "label": "Service 5 Link",             "type": "text",     "default": "" },
-        "service_6_icon":     { "label": "Service 6 Icon",             "type": "text",     "default": "🚀" },
-        "service_6_image":    { "label": "Service 6 Bild",             "type": "text",     "default": "" },
-        "service_6_title":    { "label": "Service 6 Titel",            "type": "text",     "default": "Ausbildung" },
-        "service_6_text":     { "label": "Service 6 Beschreibung",     "type": "textarea", "default": "" },
-        "service_6_url":      { "label": "Service 6 Link",             "type": "text",     "default": "" },
-        "service_7_icon":     { "label": "Service 7 Icon",             "type": "text",     "default": "" },
-        "service_7_image":    { "label": "Service 7 Bild",             "type": "text",     "default": "" },
-        "service_7_title":    { "label": "Service 7 Titel",            "type": "text",     "default": "" },
-        "service_7_text":     { "label": "Service 7 Beschreibung",     "type": "textarea", "default": "" },
-        "service_7_url":      { "label": "Service 7 Link",             "type": "text",     "default": "" },
-        "service_8_icon":     { "label": "Service 8 Icon",             "type": "text",     "default": "" },
-        "service_8_image":    { "label": "Service 8 Bild",             "type": "text",     "default": "" },
-        "service_8_title":    { "label": "Service 8 Titel",            "type": "text",     "default": "" },
-        "service_8_text":     { "label": "Service 8 Beschreibung",     "type": "textarea", "default": "" },
-        "service_8_url":      { "label": "Service 8 Link",             "type": "text",     "default": "" },
-        "service_9_icon":     { "label": "Service 9 Icon",             "type": "text",     "default": "" },
-        "service_9_image":    { "label": "Service 9 Bild",             "type": "text",     "default": "" },
-        "service_9_title":    { "label": "Service 9 Titel",            "type": "text",     "default": "" },
-        "service_9_text":     { "label": "Service 9 Beschreibung",     "type": "textarea", "default": "" },
-        "service_9_url":      { "label": "Service 9 Link",             "type": "text",     "default": "" },
-        "service_10_icon":    { "label": "Service 10 Icon",            "type": "text",     "default": "" },
-        "service_10_image":   { "label": "Service 10 Bild",            "type": "text",     "default": "" },
-        "service_10_title":   { "label": "Service 10 Titel",           "type": "text",     "default": "" },
-        "service_10_text":    { "label": "Service 10 Beschreibung",    "type": "textarea", "default": "" },
-        "service_10_url":     { "label": "Service 10 Link",            "type": "text",     "default": "" },
-        "service_11_icon":    { "label": "Service 11 Icon",            "type": "text",     "default": "" },
-        "service_11_image":   { "label": "Service 11 Bild",            "type": "text",     "default": "" },
-        "service_11_title":   { "label": "Service 11 Titel",           "type": "text",     "default": "" },
-        "service_11_text":    { "label": "Service 11 Beschreibung",    "type": "textarea", "default": "" },
-        "service_11_url":     { "label": "Service 11 Link",            "type": "text",     "default": "" },
-        "service_12_icon":    { "label": "Service 12 Icon",            "type": "text",     "default": "" },
-        "service_12_image":   { "label": "Service 12 Bild",            "type": "text",     "default": "" },
-        "service_12_title":   { "label": "Service 12 Titel",           "type": "text",     "default": "" },
-        "service_12_text":    { "label": "Service 12 Beschreibung",    "type": "textarea", "default": "" },
-        "service_12_url":     { "label": "Service 12 Link",            "type": "text",     "default": "" }
-      }
-    },
-
-    "events": {
-      "label": "Termine",
-      "description": "Aktuelle Termine – automatisch aus cms-events Plugin oder manuell gepflegt (bis zu 6 Einträge).",
-      "settings": {
-        "show_events":        { "label": "Sektion anzeigen",           "type": "checkbox", "default": true },
-        "events_tag":         { "label": "Tag-Text",                   "type": "text",     "default": "Veranstaltungen" },
-        "events_title":       { "label": "Überschrift",                "type": "text",     "default": "Aktuelle Termine & Angebote" },
-        "events_subtitle":    { "label": "Untertitel",                 "type": "textarea", "default": "Entdecken Sie unsere aktuellen Kursangebote, Workshops und Veranstaltungen." },
-        "events_source":      { "label": "Datenquelle",               "type": "select",   "options": { "auto": "Automatisch", "plugin": "Nur Plugin", "manual": "Nur manuell" }, "default": "auto" },
-        "events_max_items":   { "label": "Maximale Anzahl",           "type": "number",   "default": 6 },
-        "events_columns":     { "label": "Spalten",                    "type": "select",   "options": { "2": "2", "3": "3", "4": "4" }, "default": "3" },
-        "events_bg_style":    { "label": "Hintergrund-Stil",           "type": "select",   "options": { "alt": "Weiß", "default": "Transparent", "navy": "Navy" }, "default": "alt" },
-        "events_show_date_badge": { "label": "Datums-Badge",          "type": "checkbox", "default": true },
-        "events_link_text":   { "label": "Link-Text",                  "type": "text",     "default": "Mehr erfahren →" },
-        "events_card_style":  { "label": "Card-Design",               "type": "select",   "options": { "bordered": "Rahmen", "shadow": "Schatten", "flat": "Flach" }, "default": "bordered" },
-        "events_show_empty":  { "label": "Platzhalter anzeigen",       "type": "checkbox", "default": true },
-        "events_empty_text":  { "label": "Platzhaltertext",            "type": "text",     "default": "Neue Termine werden in Kürze veröffentlicht" },
-        "events_empty_hint":  { "label": "Platzhalter-Hinweis",        "type": "text",     "default": "Schauen Sie bald wieder vorbei oder kontaktieren Sie uns direkt." },
-        "events_show_cta":    { "label": "CTA-Button anzeigen",        "type": "checkbox", "default": false },
-        "events_cta_label":   { "label": "CTA-Button Text",            "type": "text",     "default": "Alle Termine ansehen" },
-        "events_cta_url":     { "label": "CTA-Button URL",             "type": "text",     "default": "/termine" },
-        "events_booking_url":   { "label": "MS Booking Embed-URL",      "type": "text",     "default": "", "description": "Microsoft Booking URL für Inline-Buchungsformular" },
-        "events_booking_title": { "label": "MS Booking Überschrift",     "type": "text",     "default": "Online-Termin buchen" },
-        "events_booking_height":{ "label": "MS Booking Höhe (px)",      "type": "number",   "default": 600 },
-        "event_1_title": { "label": "Termin 1 Titel", "type": "text", "default": "" },
-        "event_1_date":  { "label": "Termin 1 Datum", "type": "text", "default": "" },
-        "event_1_text":  { "label": "Termin 1 Text",  "type": "textarea", "default": "" },
-        "event_1_url":   { "label": "Termin 1 Link",  "type": "text", "default": "" },
-        "event_2_title": { "label": "Termin 2 Titel", "type": "text", "default": "" },
-        "event_2_date":  { "label": "Termin 2 Datum", "type": "text", "default": "" },
-        "event_2_text":  { "label": "Termin 2 Text",  "type": "textarea", "default": "" },
-        "event_2_url":   { "label": "Termin 2 Link",  "type": "text", "default": "" },
-        "event_3_title": { "label": "Termin 3 Titel", "type": "text", "default": "" },
-        "event_3_date":  { "label": "Termin 3 Datum", "type": "text", "default": "" },
-        "event_3_text":  { "label": "Termin 3 Text",  "type": "textarea", "default": "" },
-        "event_3_url":   { "label": "Termin 3 Link",  "type": "text", "default": "" },
-        "event_4_title": { "label": "Termin 4 Titel", "type": "text", "default": "" },
-        "event_4_date":  { "label": "Termin 4 Datum", "type": "text", "default": "" },
-        "event_4_text":  { "label": "Termin 4 Text",  "type": "textarea", "default": "" },
-        "event_4_url":   { "label": "Termin 4 Link",  "type": "text", "default": "" },
-        "event_5_title": { "label": "Termin 5 Titel", "type": "text", "default": "" },
-        "event_5_date":  { "label": "Termin 5 Datum", "type": "text", "default": "" },
-        "event_5_text":  { "label": "Termin 5 Text",  "type": "textarea", "default": "" },
-        "event_5_url":   { "label": "Termin 5 Link",  "type": "text", "default": "" },
-        "event_6_title": { "label": "Termin 6 Titel", "type": "text", "default": "" },
-        "event_6_date":  { "label": "Termin 6 Datum", "type": "text", "default": "" },
-        "event_6_text":  { "label": "Termin 6 Text",  "type": "textarea", "default": "" },
-        "event_6_url":   { "label": "Termin 6 Link",  "type": "text", "default": "" }
-      }
-    },
-
-    "faq": {
-      "label": "FAQ",
-      "description": "Häufig gestellte Fragen – bis zu 8 Frage-Antwort-Paare.",
-      "settings": {
-        "show_faq":           { "label": "Sektion anzeigen",           "type": "checkbox", "default": true },
-        "faq_tag":            { "label": "Tag-Text",                   "type": "text",     "default": "Wissenswertes" },
-        "faq_title":          { "label": "Überschrift",                "type": "text",     "default": "Häufig gestellte Fragen" },
-        "faq_subtitle":       { "label": "Untertitel",                 "type": "textarea", "default": "Hier finden Sie Antworten auf die wichtigsten Fragen zu unseren Dienstleistungen." },
-        "faq_style":          { "label": "Darstellungs-Stil",          "type": "select",   "options": { "accordion": "Akkordeon", "open": "Alle geöffnet" }, "default": "accordion" },
-        "faq_max_width":      { "label": "Maximale Breite (px)",       "type": "number",   "default": 720 },
-        "faq_bg_style":       { "label": "Hintergrund-Stil",           "type": "select",   "options": { "default": "Transparent", "alt": "Weiß" }, "default": "default" },
-        "faq_show_cta":       { "label": "CTA anzeigen",               "type": "checkbox", "default": false },
-        "faq_cta_text":       { "label": "CTA-Hinweistext",            "type": "text",     "default": "Ihre Frage war nicht dabei?" },
-        "faq_cta_label":      { "label": "CTA-Button Text",            "type": "text",     "default": "Kontaktieren Sie uns" },
-        "faq_cta_url":        { "label": "CTA-Button URL",             "type": "text",     "default": "/#kontakt" },
-        "faq_1_question":     { "label": "Frage 1",                    "type": "text",     "default": "Was sind Ihre Personaldienstleistungen?" },
-        "faq_1_answer":       { "label": "Antwort 1",                  "type": "textarea", "default": "" },
-        "faq_2_question":     { "label": "Frage 2",                    "type": "text",     "default": "Was ist Arbeitnehmerüberlassung?" },
-        "faq_2_answer":       { "label": "Antwort 2",                  "type": "textarea", "default": "" },
-        "faq_3_question":     { "label": "Frage 3",                    "type": "text",     "default": "Welche Weiterbildungen bieten Sie an?" },
-        "faq_3_answer":       { "label": "Antwort 3",                  "type": "textarea", "default": "" },
-        "faq_4_question":     { "label": "Frage 4",                    "type": "text",     "default": "" },
-        "faq_4_answer":       { "label": "Antwort 4",                  "type": "textarea", "default": "" },
-        "faq_5_question":     { "label": "Frage 5",                    "type": "text",     "default": "" },
-        "faq_5_answer":       { "label": "Antwort 5",                  "type": "textarea", "default": "" },
-        "faq_6_question":     { "label": "Frage 6",                    "type": "text",     "default": "" },
-        "faq_6_answer":       { "label": "Antwort 6",                  "type": "textarea", "default": "" },
-        "faq_7_question":     { "label": "Frage 7",                    "type": "text",     "default": "" },
-        "faq_7_answer":       { "label": "Antwort 7",                  "type": "textarea", "default": "" },
-        "faq_8_question":     { "label": "Frage 8",                    "type": "text",     "default": "" },
-        "faq_8_answer":       { "label": "Antwort 8",                  "type": "textarea", "default": "" }
-      }
-    },
-
-    "blog": {
-      "label": "Blog & Seiten",
-      "description": "Einstellungen für Blog-Übersicht, Einzelbeiträge und statische Seiten.",
-      "settings": {
-        "blog_layout":                 { "label": "Blog-Layout",                    "type": "select",   "default": "grid" },
-        "blog_columns":                { "label": "Spaltenanzahl (Grid)",            "type": "select",   "default": "3" },
-        "blog_show_sidebar":           { "label": "Sidebar anzeigen",               "type": "checkbox", "default": "1" },
-        "blog_show_featured_image":    { "label": "Beitragsbild anzeigen",          "type": "checkbox", "default": "1" },
-        "blog_show_excerpt":           { "label": "Textauszug anzeigen",            "type": "checkbox", "default": "1" },
-        "blog_show_date":              { "label": "Datum anzeigen",                 "type": "checkbox", "default": "1" },
-        "blog_show_author":            { "label": "Autor anzeigen",                 "type": "checkbox", "default": "1" },
-        "blog_show_category":          { "label": "Kategorie-Badge anzeigen",       "type": "checkbox", "default": "1" },
-        "blog_hero_title":             { "label": "Blog-Überschrift",               "type": "text",     "default": "Unser Blog" },
-        "blog_hero_subtitle":          { "label": "Blog-Untertitel",                "type": "text",     "default": "Aktuelle Beiträge, Einblicke und Neuigkeiten" },
-        "blog_single_show_featured":   { "label": "Beitragsbild auf Einzelseite",   "type": "checkbox", "default": "1" },
-        "blog_single_show_author":     { "label": "Autor auf Einzelseite",          "type": "checkbox", "default": "1" },
-        "blog_single_show_date":       { "label": "Datum auf Einzelseite",          "type": "checkbox", "default": "1" },
-        "blog_single_show_tags":       { "label": "Tags auf Einzelseite",           "type": "checkbox", "default": "1" },
-        "blog_single_show_related":    { "label": "Ähnliche Beiträge anzeigen",     "type": "checkbox", "default": "1" },
-        "blog_single_show_reading_time": { "label": "Lesezeit anzeigen",            "type": "checkbox", "default": "1" },
-        "blog_single_max_width":       { "label": "Maximale Artikelbreite (px)",     "type": "number",  "default": "820" },
-        "page_show_title":             { "label": "Seitentitel anzeigen",           "type": "checkbox", "default": "1" },
-        "page_show_updated":           { "label": "Zuletzt aktualisiert anzeigen", "type": "checkbox", "default": "1" },
-        "page_show_featured_image":    { "label": "Beitragsbild auf Seiten",        "type": "checkbox", "default": "1" },
-        "page_max_width":              { "label": "Maximale Seitenbreite (px)",      "type": "number",  "default": "960" }
-      }
-    },
-
-    "advanced": {
-      "label": "Erweitert",
-      "description": "Custom Code, Tracking und erweiterte Einstellungen.",
-      "settings": {
-        "custom_css": {
-          "label": "Eigenes CSS",
-          "type": "textarea",
-          "default": "",
-          "description": "Zusätzliches CSS am Ende aller Theme-Styles"
-        },
-        "custom_head_code": {
-          "label": "Custom Head Code (Tracking, Meta)",
-          "type": "textarea",
-          "default": "",
-          "description": "Wird im <head> ausgegeben"
-        },
-        "custom_footer_code": {
-          "label": "Custom Footer Code (Analytics, Widgets)",
-          "type": "textarea",
-          "default": "",
-          "description": "Wird vor </body> ausgegeben"
-        }
-      }
     }
-
-  }
 }

@@ -1,15 +1,28 @@
 <?php
-if (!defined('ABSPATH')) exit;
+/**
+ * PersonalFlow Theme – 404 Template
+ *
+ * @package PersonalFlow_Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 get_header();
+
+$safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
-<main id="main" class="pf-main error-page" role="main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="pf-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:5rem;color:var(--primary-color);font-weight:800;line-height:1;">404</div>
-        <h1 style="margin:1rem 0 .5rem;">Seite nicht gefunden</h1>
-        <p style="color:var(--muted-color);">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
-        <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
-            <a href="<?php echo SITE_URL; ?>" class="pf-btn pf-btn-primary">Zur Startseite</a>
-            <a href="<?php echo SITE_URL; ?>/jobs" class="pf-btn pf-btn-ghost">Offene Stellen</a>
+<main id="main" class="pf-main pf-error-shell" role="main">
+    <div class="pf-container">
+        <div class="pf-error-card pf-reveal">
+            <div class="pf-error-code">404</div>
+            <h1>Seite nicht gefunden</h1>
+            <p>Diese Seite oder dieses Profil existiert nicht (mehr) oder wurde an einen anderen Pfad verschoben.</p>
+            <div class="pf-error-actions">
+                <a href="<?php echo $safe(theme_route_url('home')); ?>" class="pf-btn pf-btn-primary">Zur Startseite</a>
+                <a href="<?php echo $safe(theme_route_url('jobs')); ?>" class="pf-btn pf-btn-ghost">Offene Stellen</a>
+            </div>
         </div>
     </div>
 </main>

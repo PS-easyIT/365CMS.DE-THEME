@@ -31,17 +31,18 @@ $homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 $bookingBaseUrl = theme_safe_url($siteUrl . '/booking', $siteUrl . '/booking');
 
 // ── Parameter ──
-$search    = trim(strip_tags($_GET['q']      ?? ''));
-$typeFilter = in_array($_GET['type'] ?? '', ['online', 'onsite', 'hybrid']) ? $_GET['type'] : '';
-$sort      = in_array($_GET['sort'] ?? '', ['latest', 'name', 'price']) ? $_GET['sort'] : 'name';
-$view      = ($_GET['view'] ?? 'grid') === 'list' ? 'list' : 'grid';
-$page      = max(1, (int)($_GET['page'] ?? 1));
+$search    = theme_clean_query_text($_GET['q'] ?? '', 120);
+$typeFilter = theme_clean_query_choice($_GET['type'] ?? '', ['online', 'onsite', 'hybrid']);
+$sort      = theme_clean_query_choice($_GET['sort'] ?? '', ['latest', 'name', 'price'], 'name');
+$view      = theme_clean_query_choice($_GET['view'] ?? '', ['grid', 'list'], 'grid');
+$page      = theme_clean_query_int($_GET['page'] ?? 1, 1, 1, 10000);
 $perPage   = 12;
 
 // Vorauswahl
-$preExpert  = (int)($_GET['expert']  ?? 0);
-$preService = (int)($_GET['service'] ?? 0);
-$preDate    = preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['date'] ?? '') ? $_GET['date'] : '';
+$preExpert  = theme_clean_query_int($_GET['expert'] ?? 0, 0, 0, 1000000);
+$preService = theme_clean_query_int($_GET['service'] ?? 0, 0, 0, 1000000);
+$preDateRaw = theme_clean_query_text($_GET['date'] ?? '', 10);
+$preDate    = preg_match('/^\d{4}-\d{2}-\d{2}$/', $preDateRaw) ? $preDateRaw : '';
 
 $providers   = [];
 $services    = [];         // serviceId → [rows]
@@ -182,7 +183,7 @@ require_once __DIR__ . '/header.php';
 
         <aside class="directory-filters" aria-label="Buchungsfilter">
             <form method="GET" action="">
-                <?php if ($search): ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES); ?>"><?php endif; ?>
+                <?php if ($search): ?><input type="hidden" name="q" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
 
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🗓️ Leistungsart</h3>

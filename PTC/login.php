@@ -32,8 +32,8 @@ $success   = theme_get_flash('success');
                          alt="<?php echo $siteTitle; ?>" class="ptc-auth-logo-img">
                 <?php else: ?>
                     <svg width="52" height="52" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <circle cx="18" cy="18" r="18" fill="var(--ptc-navy, #002D5D)"/>
-                        <path d="M10 12h5v3h-5zM10 17h5v3h-5zM10 22h5v3h-5zM17 12h9v3h-9zM17 17h7v3h-7zM17 22h5v3h-5z" fill="var(--ptc-gold, #D4A017)"/>
+                        <circle cx="18" cy="18" r="18" fill="var(--color-primary)"/>
+                        <path d="M10 12h5v3h-5zM10 17h5v3h-5zM10 22h5v3h-5zM17 12h9v3h-9zM17 17h7v3h-7zM17 22h5v3h-5z" fill="var(--color-accent)"/>
                     </svg>
                 <?php endif; ?>
                 <p>Melde dich mit deinem Konto an</p>
@@ -78,7 +78,7 @@ $success   = theme_get_flash('success');
                            required>
                 </div>
 
-                <button type="submit" class="btn-ptc btn-ptc-accent" style="width:100%;margin-top:1rem;">
+                <button type="submit" class="btn-ptc btn-ptc-accent" class="ptc-auth-submit">
                     Anmelden
                 </button>
             </form>

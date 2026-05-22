@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -7,7 +9,7 @@ get_header();
 
 $page    = \CMS\Services\PageService::getCurrent();
 $safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$siteUrl = SITE_URL;
+$siteUrl = buildbase_safe_url((string) SITE_URL, '/');
 ?>
 <main id="main" class="bb-main bb-page-section" role="main">
     <div class="bb-container bb-container--narrow">

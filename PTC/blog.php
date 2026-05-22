@@ -197,12 +197,12 @@ $gridClass = $blogLayout === 'list'
                 <?php else : ?>
                     <!-- Empty State -->
                     <div class="ptc-blog-empty">
-                        <p style="font-size:2.5rem;margin:0;">📭</p>
+                        <p class="ptc-empty-icon" aria-hidden="true">📭</p>
                         <p><strong>Keine Artikel gefunden</strong></p>
                         <?php if ($activeCategory || $activeTag) : ?>
                             <p>Für diese Auswahl gibt es noch keine Beiträge.</p>
                             <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/blog"
-                               class="ptc-btn ptc-btn--primary" style="margin-top:1rem;">Alle Artikel anzeigen</a>
+                               class="btn-ptc btn-ptc-primary ptc-section-cta--spaced">Alle Artikel anzeigen</a>
                         <?php else : ?>
                             <p>Die ersten Artikel erscheinen hier, sobald sie veröffentlicht werden.</p>
                         <?php endif; ?>

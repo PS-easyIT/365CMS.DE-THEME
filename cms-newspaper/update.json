@@ -1,0 +1,15 @@
+{
+  "slug": "cms-newspaper",
+  "name": "CMS Newspaper",
+  "type": "theme",
+  "license": "free",
+  "version": "1.0.0",
+  "min_cms_version": "3.0.0",
+  "requires_php": "8.4",
+  "released": "2026-05-19",
+  "download_url": "",
+  "checksum_sha256": "",
+  "changelog": {
+    "1.0.0": "Erstes funktionales 365CMS-v3-Release: vollständige Templatestruktur, Customizer-Schema, editoriale Broadsheet-Identität (Playfair Display + Source Sans 3 + IBM Plex Mono, Ink-Schwarz mit Signal-Rot), Rule-Line-Layout, A11y- und Reduced-Motion-Härtung. Nachtrag 2026-05-19: Theme-Registry, README, CHANGELOG.md und Update-Feed auf den Initialstand synchronisiert."
+  }
+}

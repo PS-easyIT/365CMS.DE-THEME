@@ -9,29 +9,30 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$themeManager = \CMS\ThemeManager::instance();
-$siteTitle    = $themeManager->getSiteTitle();
-$isLoggedIn   = theme_is_logged_in();
-$siteUrl      = SITE_URL;
+$tnTitle    = tn_site_title();
+$tnTitleEsc = tn_html_attr($tnTitle);
+$tnIsLogged = theme_is_logged_in();
 
-try {
-    $c = \CMS\Services\ThemeCustomizer::instance();
-    $footerText        = $c->get('footer', 'footer_text', 'Die führende Plattform für IT-Experten, Tech-Teams und Softwarehäuser.');
-    $showTechLinks     = $c->get('footer', 'show_tech_links', true);
-    $copyrightTemplate = $c->get('footer', 'copyright_text', '&copy; {year} {site_title}. Alle Rechte vorbehalten.');
-} catch (\Throwable $e) {
-    $footerText        = 'IT-Expert-Netzwerk';
-    $showTechLinks     = true;
-    $copyrightTemplate = '&copy; {year} {site_title}. Alle Rechte vorbehalten.';
-}
+$footerText = (string) tn_get_setting(
+    'footer',
+    'footer_text',
+    'Die führende Plattform für IT-Experten, Tech-Teams und Softwarehäuser.'
+);
+$showTechLinks = filter_var(
+    tn_get_setting('footer', 'show_tech_links', true),
+    FILTER_VALIDATE_BOOLEAN
+);
+$copyrightTemplate = (string) tn_get_setting(
+    'footer',
+    'copyright_text',
+    '&copy; {year} {site_title}. Alle Rechte vorbehalten.'
+);
 
 $copyrightText = str_replace(
     ['{year}', '{site_title}'],
-    [gmdate('Y'), htmlspecialchars($siteTitle, ENT_QUOTES, 'UTF-8')],
+    [gmdate('Y'), $tnTitleEsc],
     $copyrightTemplate
 );
-
-$safe = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
     </div><!-- #content .site-content -->
 
@@ -41,45 +42,39 @@ $safe = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
             <div class="footer-container">
                 <div class="footer-widgets">
 
-                    <!-- Branding -->
                     <div class="footer-widget">
-                        <h3 class="footer-widget-title"><?php echo $safe($siteTitle); ?></h3>
-                        <p><?php echo nl2br($safe($footerText)); ?></p>
+                        <h3 class="footer-widget-title"><?php echo $tnTitleEsc; ?></h3>
+                        <p><?php echo nl2br(tn_html_attr($footerText)); ?></p>
                     </div>
 
                     <?php if ($showTechLinks) : ?>
-                    <!-- Tech-Kategorien -->
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Netzwerk</h3>
                         <ul>
-                            <li><a href="<?php echo $safe($siteUrl); ?>/it-experts">IT-Experten</a></li>
-                            <li><a href="<?php echo $safe($siteUrl); ?>/companies">Tech-Unternehmen</a></li>
-                            <li><a href="<?php echo $safe($siteUrl); ?>/events">Tech Events</a></li>
-                            <li><a href="<?php echo $safe($siteUrl); ?>/jobs">IT Jobs</a></li>
-                            <li><a href="<?php echo $safe($siteUrl); ?>/marketplace">Marketplace</a></li>
+                            <li><a href="<?php echo tn_html_attr(theme_route_url('experts')); ?>">IT-Experten</a></li>
+                            <li><a href="<?php echo tn_html_attr(theme_route_url('companies')); ?>">Tech-Unternehmen</a></li>
+                            <li><a href="<?php echo tn_html_attr(theme_route_url('events')); ?>">Tech Events</a></li>
+                            <li><a href="<?php echo tn_html_attr(theme_route_url('jobs')); ?>">IT Jobs</a></li>
                         </ul>
                     </div>
 
-                    <!-- Mitglieder -->
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Mitglieder</h3>
                         <ul>
-                            <?php if ($isLoggedIn) : ?>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/member">Mein Dashboard</a></li>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/member/profile">Mein Profil</a></li>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/member/projects">Meine Projekte</a></li>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/logout">Abmelden</a></li>
+                            <?php if ($tnIsLogged) : ?>
+                                <li><a href="<?php echo tn_html_attr(theme_route_url('member')); ?>">Mein Dashboard</a></li>
+                                <li><a href="<?php echo tn_html_attr(theme_route_url('member/profile')); ?>">Mein Profil</a></li>
+                                <li><a href="<?php echo tn_html_attr(theme_route_url('logout')); ?>">Abmelden</a></li>
                             <?php else : ?>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/login">Anmelden</a></li>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/register">Registrieren (kostenlos)</a></li>
-                                <li><a href="<?php echo $safe($siteUrl); ?>/register?role=expert">Experten-Profil anlegen</a></li>
+                                <li><a href="<?php echo tn_html_attr(theme_route_url('login')); ?>">Anmelden</a></li>
+                                <li><a href="<?php echo tn_html_attr(theme_route_url('register')); ?>">Registrieren</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>
                     <?php else : ?>
-                        <div class="footer-widget">
-                            <?php theme_nav_menu('footer-nav'); ?>
-                        </div>
+                    <div class="footer-widget">
+                        <?php theme_nav_menu('footer-nav'); ?>
+                    </div>
                     <?php endif; ?>
 
                 </div>
@@ -87,70 +82,26 @@ $safe = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
         </div>
 
         <div class="footer-bottom">
-            <div class="footer-container">
-                <?php echo $copyrightText; ?>
+            <div class="footer-container footer-bottom-inner">
+                <p class="footer-copyright"><?php echo $copyrightText; ?></p>
                 <?php
-                // Rechtliche Links
-                $legalMenu = \CMS\ThemeManager::instance()->getMenu('footer-legal');
+                try {
+                    $legalMenu = \CMS\ThemeManager::instance()->getMenu('footer-legal');
+                } catch (\Throwable) {
+                    $legalMenu = [];
+                }
                 if (!empty($legalMenu)) : ?>
-                    <span aria-hidden="true"> · </span>
-                    <?php theme_nav_menu('footer-legal'); ?>
+                    <nav class="footer-legal-nav" aria-label="Rechtliche Links">
+                        <?php theme_nav_menu('footer-legal'); ?>
+                    </nav>
                 <?php endif; ?>
             </div>
         </div>
 
-    </footer><!-- #colophon -->
+    </footer>
 
 </div><!-- #page -->
 
 <?php \CMS\Hooks::doAction('before_footer'); ?>
-<script>
-// TechNexus – Theme Toggle & Header Scroll
-(function() {
-    const html    = document.documentElement;
-    const toggle  = document.getElementById('themeToggle');
-    const header  = document.getElementById('masthead');
-    const mMenu   = document.getElementById('mobileMenuToggle');
-    const nav     = document.querySelector('.main-navigation');
-    const srch    = document.getElementById('searchToggle');
-    const srchPnl = document.getElementById('searchPanel');
-    const srchCls = document.getElementById('searchClose');
-
-    // Dark mode
-    const saved = localStorage.getItem('tn-color-scheme');
-    if (saved) html.setAttribute('data-theme', saved);
-
-    toggle?.addEventListener('click', () => {
-        const current = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        html.setAttribute('data-theme', current);
-        localStorage.setItem('tn-color-scheme', current);
-    });
-
-    // Sticky header blur
-    if (header) {
-        window.addEventListener('scroll', () => {
-            header.classList.toggle('scrolled', window.scrollY > 20);
-        }, { passive: true });
-    }
-
-    // Mobile menu
-    mMenu?.addEventListener('click', () => {
-        const expanded = mMenu.getAttribute('aria-expanded') === 'true';
-        mMenu.setAttribute('aria-expanded', String(!expanded));
-        nav?.classList.toggle('open', !expanded);
-    });
-
-    // Search panel
-    srch?.addEventListener('click', () => {
-        srchPnl?.removeAttribute('hidden');
-        srchPnl?.querySelector('input')?.focus();
-        srch.setAttribute('aria-expanded', 'true');
-    });
-    srchCls?.addEventListener('click', () => {
-        srchPnl?.setAttribute('hidden', '');
-        srch?.setAttribute('aria-expanded', 'false');
-    });
-})();
-</script>
 </body>
 </html>

@@ -1,10 +1,33 @@
-<?php if (!defined('ABSPATH')) exit; get_header(); $errorCode = $errorCode ?? 500; $errorMessage = $errorMessage ?? 'Ein Fehler ist aufgetreten.'; ?>
-<main id="main" class="mc-main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="mc-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:4rem;font-weight:800;color:var(--warning-color);line-height:1;"><?php echo (int)$errorCode; ?></div>
-        <h1 style="font-family:var(--font-heading);margin:1rem 0 .5rem;">Systemfehler</h1>
-        <p style="color:var(--muted-color);"><?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?></p>
-        <a href="<?php echo SITE_URL; ?>" class="mc-btn mc-btn-primary" style="margin-top:1.5rem;">Zur Startseite</a>
+<?php
+/**
+ * Generische Fehlerseite – MedCare Pro Theme
+ *
+ * Erwartet optional: $errorCode (int), $errorMessage (string)
+ *
+ * @package MedCarePro_Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+
+$safe         = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$errorCode    = (int) ($errorCode ?? 500);
+$errorMessage = (string) ($errorMessage ?? 'Ein Fehler ist aufgetreten.');
+$homeUrl      = $safe(theme_route_url('home'));
+?>
+<main id="main" class="mc-main mc-status-page" role="main">
+    <div class="mc-container mc-status-page__container">
+        <div class="mc-card mc-status-card">
+            <div class="mc-status-code mc-status-code--error"><?php echo $errorCode; ?></div>
+            <h1 class="mc-status-title">Systemfehler</h1>
+            <p class="mc-status-text"><?php echo $safe($errorMessage); ?></p>
+            <div class="mc-status-actions">
+                <a href="<?php echo $homeUrl; ?>" class="mc-btn mc-btn-primary">Zur Startseite</a>
+            </div>
+        </div>
     </div>
 </main>
 <?php get_footer(); ?>

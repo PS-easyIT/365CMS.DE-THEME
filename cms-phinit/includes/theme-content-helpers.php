@@ -297,7 +297,10 @@ if (!function_exists('phinit_slugify_heading')) {
      */
     function phinit_slugify_heading(string $text): string
     {
-        $slug = mb_strtolower(phinit_display_text($text), 'UTF-8');
+        $displayText = phinit_display_text($text);
+        $slug = function_exists('mb_strtolower')
+            ? mb_strtolower($displayText, 'UTF-8')
+            : strtolower($displayText);
         $slug = preg_replace('/[äÄ]/u', 'ae', $slug);
         $slug = preg_replace('/[öÖ]/u', 'oe', $slug);
         $slug = preg_replace('/[üÜ]/u', 'ue', $slug);
@@ -330,9 +333,25 @@ if (!function_exists('phinit_with_heading_ids')) {
         $usedIds = [];
         $toc = [];
 
+        $makeUniqueId = static function (string $preferred, string $text) use (&$usedIds): string {
+            $baseId = trim($preferred);
+            if ($baseId === '' || preg_match('/^[A-Za-z][A-Za-z0-9_.:-]*$/', $baseId) !== 1) {
+                $baseId = phinit_slugify_heading($text);
+            }
+
+            $id = $baseId !== '' ? $baseId : 'heading';
+            $suffix = 2;
+            while (in_array($id, $usedIds, true)) {
+                $id = $baseId . '-' . $suffix;
+                $suffix++;
+            }
+
+            return $id;
+        };
+
         $htmlWithIds = preg_replace_callback(
             '/<h([' . preg_quote($levelPattern, '/') . '])([^>]*)>(.*?)<\/h\1>/isu',
-            static function (array $matches) use (&$usedIds, &$toc): string {
+            static function (array $matches) use (&$usedIds, &$toc, $makeUniqueId): string {
                 $level = (int)($matches[1] ?? 2);
                 $attrs = (string)($matches[2] ?? '');
                 $inner = (string)($matches[3] ?? '');
@@ -342,23 +361,18 @@ if (!function_exists('phinit_with_heading_ids')) {
                     return $matches[0];
                 }
 
-                if (preg_match('/\bid=["\']([^"\']+)["\']/i', $attrs, $idMatch) === 1) {
-                    $id = trim((string)($idMatch[1] ?? ''));
-                } else {
-                    $id = phinit_slugify_heading($text);
-                    $baseId = $id;
-                    $suffix = 2;
-                    while (in_array($id, $usedIds, true)) {
-                        $id = $baseId . '-' . $suffix;
-                        $suffix++;
-                    }
-                    $attrs .= ' id="' . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . '"';
+                $preferredId = '';
+                if (preg_match('/\bid\s*=\s*(["\'])(.*?)\1/i', $attrs, $idMatch) === 1) {
+                    $preferredId = html_entity_decode(trim((string)($idMatch[2] ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 }
+
+                $id = $makeUniqueId($preferredId, $text);
+                $openingTag = phinit_set_html_attribute('<h' . $level . $attrs . '>', 'id', $id);
 
                 $usedIds[] = $id;
                 $toc[] = ['level' => $level, 'id' => $id, 'text' => $text];
 
-                return '<h' . $level . $attrs . '>' . $inner . '</h' . $level . '>';
+                return $openingTag . $inner . '</h' . $level . '>';
             },
             $html
         );
@@ -456,7 +470,13 @@ if (!function_exists('phinit_render_sanitized_content')) {
             return;
         }
 
-        echo phinit_sanitize_renderable_content($html, $profile);
+        $safeHtml = phinit_sanitize_renderable_content($html, $profile);
+        if ($safeHtml === '') {
+            return;
+        }
+
+        $headingData = phinit_with_heading_ids($safeHtml, [2, 3, 4, 5, 6]);
+        echo $headingData['html'];
     }
 }
 

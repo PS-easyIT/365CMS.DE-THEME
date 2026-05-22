@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Business Theme – Footer
  *
@@ -11,7 +13,25 @@ if (!defined('ABSPATH')) {
 
 $siteUrl   = biz_site_url();
 $siteTitle = biz_site_title();
-$tagline   = biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.');
+$tagline   = (string) biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.');
+
+try {
+    $copyRaw = (string) \CMS\Services\ThemeCustomizer::instance()->get(
+        'footer',
+        'footer_copyright',
+        '© {year} {site_title}. Alle Rechte vorbehalten.'
+    );
+} catch (\Throwable) {
+    $copyRaw = '© {year} {site_title}. Alle Rechte vorbehalten.';
+}
+$copyText = htmlspecialchars(
+    strtr($copyRaw, [
+        '{year}'       => gmdate('Y'),
+        '{site_title}' => \CMS\ThemeManager::instance()->getSiteTitle(),
+    ]),
+    ENT_QUOTES,
+    'UTF-8'
+);
 ?>
     </main><!-- /#main-content -->
 
@@ -21,10 +41,11 @@ $tagline   = biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.
 
                 <!-- Brand -->
                 <div class="biz-footer-brand">
-                    <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="biz-logo biz-footer-brand-link">
-                        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="biz-footer-brand-icon">
-                            <rect width="32" height="32" rx="8" fill="#6366f1"/>
-                            <path d="M8 10h4v12H8V10zm6 0h4v12h-4V10zm6 4h4v8h-4v-8z" fill="white"/>
+                    <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="biz-logo biz-footer-brand-link biz-focus-shadow">
+                        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true" focusable="false" class="biz-footer-brand-icon">
+                            <rect width="32" height="32" rx="6" fill="#c08a2e"/>
+                            <path d="M8 10h4v12H8V10zm6 0h4v12h-4V10zm6 4h4v8h-4v-8z" fill="#0c1320"/>
                         </svg>
                         <span class="biz-logo-text"><?php echo $siteTitle; ?></span>
                     </a>
@@ -46,10 +67,10 @@ $tagline   = biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.
                 <div class="biz-footer-col">
                     <h4>Leistungen</h4>
                     <ul>
-                        <li><a href="<?php echo $siteUrl; ?>/#leistungen">Beratung</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/#leistungen">Entwicklung</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/#leistungen">Support</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/#leistungen">Schulungen</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('#leistungen'), ENT_QUOTES, 'UTF-8'); ?>">Beratung</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('#leistungen'), ENT_QUOTES, 'UTF-8'); ?>">Entwicklung</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('#leistungen'), ENT_QUOTES, 'UTF-8'); ?>">Support</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('#leistungen'), ENT_QUOTES, 'UTF-8'); ?>">Schulungen</a></li>
                     </ul>
                 </div>
 
@@ -57,9 +78,9 @@ $tagline   = biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.
                 <div class="biz-footer-col">
                     <h4>Kontakt</h4>
                     <ul>
-                        <li><a href="<?php echo $siteUrl; ?>/#kontakt">Kontaktformular</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/impressum">Impressum</a></li>
-                        <li><a href="<?php echo $siteUrl; ?>/datenschutz">Datenschutz</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('#kontakt'), ENT_QUOTES, 'UTF-8'); ?>">Kontaktformular</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('/impressum'), ENT_QUOTES, 'UTF-8'); ?>">Impressum</a></li>
+                        <li><a href="<?php echo htmlspecialchars(biz_href('/datenschutz'), ENT_QUOTES, 'UTF-8'); ?>">Datenschutz</a></li>
                     </ul>
                 </div>
 
@@ -67,7 +88,7 @@ $tagline   = biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.
 
             <!-- Bottom Bar -->
             <div class="biz-footer-bottom">
-                <span>&copy; <?php echo gmdate('Y'); ?> <?php echo $siteTitle; ?>. Alle Rechte vorbehalten.</span>
+                <span><?php echo $copyText; ?></span>
                 <nav class="biz-footer-legal" aria-label="Rechtliche Links">
                     <?php biz_nav_menu('footer-legal'); ?>
                 </nav>

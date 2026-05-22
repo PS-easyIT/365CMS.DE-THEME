@@ -1,15 +1,31 @@
 <?php
-if (!defined('ABSPATH')) exit;
+/**
+ * PersonalFlow Theme – Generic Error Template
+ *
+ * @package PersonalFlow_Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 get_header();
-$errorCode    = $errorCode ?? 500;
-$errorMessage = $errorMessage ?? 'Ein unerwarteter Fehler ist aufgetreten.';
+
+$errorCode    = isset($errorCode)    ? (int)    $errorCode    : 500;
+$errorMessage = isset($errorMessage) ? (string) $errorMessage : 'Ein unerwarteter Fehler ist aufgetreten.';
+
+$safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
-<main id="main" class="pf-main error-page" role="main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="pf-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:4rem;color:var(--accent-color);font-weight:800;line-height:1;"><?php echo (int)$errorCode; ?></div>
-        <h1 style="margin:1rem 0 .5rem;">Systemfehler</h1>
-        <p style="color:var(--muted-color);"><?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?></p>
-        <a href="<?php echo SITE_URL; ?>" class="pf-btn pf-btn-primary" style="margin-top:1.5rem;">Zur Startseite</a>
+<main id="main" class="pf-main pf-error-shell" role="main">
+    <div class="pf-container">
+        <div class="pf-error-card pf-reveal">
+            <div class="pf-error-code pf-error-code--system"><?php echo (int) $errorCode; ?></div>
+            <h1>Systemfehler</h1>
+            <p><?php echo $safe($errorMessage); ?></p>
+            <div class="pf-error-actions">
+                <a href="<?php echo $safe(theme_route_url('home')); ?>" class="pf-btn pf-btn-primary">Zur Startseite</a>
+            </div>
+        </div>
     </div>
 </main>
 <?php get_footer(); ?>

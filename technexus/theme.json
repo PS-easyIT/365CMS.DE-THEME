@@ -1,7 +1,7 @@
 {
   "name": "TechNexus",
   "slug": "technexus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "IT & Tech Hub Theme – Präzise, technisch, vertrauenswürdig. Für IT-Dienstleister, Softwarehäuser und Tech-Hubs.",
   "tags": ["tech", "it", "dark-mode", "responsive", "cms", "network"],
@@ -16,19 +16,19 @@
         "primary_color": {
           "label": "Primärfarbe",
           "type": "color",
-          "default": "#2563eb",
-          "description": "Electric Blue – Hauptfarbe für Buttons, Links und Akzente"
+          "default": "#0891b2",
+          "description": "Electric Cyan – Hauptfarbe für Buttons, Links und Akzente"
         },
         "secondary_color": {
           "label": "Sekundärfarbe",
           "type": "color",
-          "default": "#1d4ed8",
-          "description": "Dunkleres Blau für Hover-Zustände"
+          "default": "#0e7490",
+          "description": "Dunkleres Cyan für Hover-Zustände"
         },
         "accent_color": {
           "label": "Akzentfarbe",
           "type": "color",
-          "default": "#06b6d4",
+          "default": "#22d3ee",
           "description": "Cyan-Akzent für Tech-Stack-Badges und Highlights"
         },
         "code_color": {
@@ -407,7 +407,7 @@
         "hero_badge": {
           "label": "Hero Badge-Text",
           "type": "text",
-          "default": "🚀 Die IT-Expert Plattform",
+          "default": "IT-Expert Plattform",
           "description": "Kleiner Badge over dem Haupttitel"
         },
         "hero_headline": {
@@ -512,7 +512,7 @@
             "border": "Farbiger Rahmen",
             "none": "Kein Effekt"
           },
-          "default": "lift",
+          "default": "border",
           "description": "Hover-Animation der Expert-Cards"
         }
       }

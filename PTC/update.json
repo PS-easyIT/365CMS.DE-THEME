@@ -1,15 +1,17 @@
 {
   "slug": "PTC",
-  "name": "PTC GmbH – Personal & Bildung",
+  "name": "PTC – Personalvermittlung & Schulungen",
   "type": "theme",
   "license": "free",
-  "version": "1.2.1",
-  "min_cms_version": "0.20.0",
-  "released": "2026-03-01",
+  "version": "3.0.0",
+  "min_cms_version": "3.0.0",
+  "requires_php": "8.4",
+  "released": "2026-05-19",
   "download_url": "",
   "checksum_sha256": "",
   "changelog": {
-    "1.1.0": "Customizer: Services 12 Karten, Icons deaktivierbar, MS Booking Integration, Network Bar, CTA-Farben, Seitenrand-Farben, Nav-Gruppierung. CSS: Sticky Footer, Header/Logo-Höhe via Variablen, Side Accents. Bugfix: Logo-Upload wurde überschrieben.",
-    "1.0.0": "Erstveröffentlichung: Corporate-Theme für PTC GmbH Personaldienstleistungen. Hero, Dienstleistungen-Grid, Termine, FAQ, Kontakt."
+    "3.0.0": "v3/PHP 8.4: generisches Branchentheme, neutrale Design-Tokens (--color-*), Pipeline-Sektion, Dual-CTA, v3-Hooks und Hilfsfunktionen. Nachtrag 2026-05-19: README, Changelog und Entfernung der alten Corporate-Color-Datei dokumentiert.",
+    "1.1.0": "Customizer-Erweiterungen, MS Booking, Network Bar.",
+    "1.0.0": "Erstveröffentlichung."
   }
 }

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -8,7 +10,7 @@ get_header();
 $errorCode    = isset($errorCode)    ? (int) $errorCode    : 500;
 $errorMessage = isset($errorMessage) ? (string) $errorMessage : 'Ein Fehler ist aufgetreten.';
 $safe         = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$siteUrl      = SITE_URL;
+$siteUrl      = buildbase_safe_url((string) SITE_URL, '/');
 ?>
 <main id="main" class="bb-main bb-error-screen" role="main">
     <div class="bb-card bb-error-card">

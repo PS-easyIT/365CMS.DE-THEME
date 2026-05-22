@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -22,14 +24,17 @@ $themeManager = \CMS\ThemeManager::instance();
 $siteTitle    = (string) $themeManager->getSiteTitle();
 $siteDesc     = (string) $themeManager->getSiteDescription();
 $isLoggedIn   = theme_is_logged_in();
-$siteUrl      = SITE_URL;
+$siteUrl      = (string) SITE_URL;
 
 $safe        = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$homeUrl     = function_exists('theme_route_url') ? theme_route_url('home')     : rtrim($siteUrl, '/') . '/';
-$searchUrl   = function_exists('theme_route_url') ? theme_route_url('search')   : rtrim($siteUrl, '/') . '/search';
-$loginUrl    = function_exists('theme_route_url') ? theme_route_url('login')    : rtrim($siteUrl, '/') . '/login';
-$registerUrl = function_exists('theme_route_url') ? theme_route_url('register') : rtrim($siteUrl, '/') . '/register';
-$memberUrl   = rtrim($siteUrl, '/') . '/member';
+$siteBase    = rtrim(buildbase_safe_url($siteUrl, '/'), '/');
+$siteBase    = $siteBase !== '' ? $siteBase : '/';
+$homeUrl     = buildbase_safe_url(function_exists('theme_route_url') ? theme_route_url('home') : $siteBase . '/', $siteBase . '/');
+$searchUrl   = buildbase_safe_url(function_exists('theme_route_url') ? theme_route_url('search') : $siteBase . '/search', $siteBase . '/search');
+$loginUrl    = buildbase_safe_url(function_exists('theme_route_url') ? theme_route_url('login') : $siteBase . '/login', $siteBase . '/login');
+$registerUrl = buildbase_safe_url(function_exists('theme_route_url') ? theme_route_url('register') : $siteBase . '/register', $siteBase . '/register');
+$memberUrl   = buildbase_safe_url($siteBase . '/member', $siteBase . '/');
+$logoSafeUrl = buildbase_safe_url($logoUrl);
 
 $telDigits = preg_replace('/[^0-9+]/', '', $emergencyPhone) ?? '';
 $hasEmBanner = $showEmBanner && $emergencyPhone !== '';
@@ -64,8 +69,8 @@ if ($hasEmBanner)  { $bodyClasses[] = 'has-emergency-banner'; }
 
             <div class="bb-branding">
                 <a href="<?php echo $safe($homeUrl); ?>" class="bb-site-logo" rel="home">
-                    <?php if ($logoUrl !== '') : ?>
-                        <img src="<?php echo $safe($logoUrl); ?>" alt="<?php echo $safe($siteTitle); ?>" width="160" height="44">
+                    <?php if ($logoSafeUrl !== '') : ?>
+                        <img src="<?php echo $safe($logoSafeUrl); ?>" alt="<?php echo $safe($siteTitle); ?>" width="160" height="44">
                     <?php else : ?>
                         <span class="bb-logo-text">
                             <span class="bb-logo-icon" aria-hidden="true">&#9874;</span>

@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "updated": "2026-02-21",
+  "updated": "2026-05-20",
   "themes": [
     {
       "slug": "365network",
@@ -51,6 +51,11 @@
       "slug": "PTC",
       "name": "PTC GmbH – Personal & Bildung",
       "manifest": "THEMES/PTC/update.json"
+    },
+    {
+      "slug": "cms-newspaper",
+      "name": "CMS Newspaper",
+      "manifest": "THEMES/cms-newspaper/update.json"
     },
     {
       "slug": "cms-phinit",

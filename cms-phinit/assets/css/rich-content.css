@@ -77,7 +77,6 @@
 .post-body .editorjs-embed,
 .post-body .editorjs-drawing,
 .post-body .editorjs-delimiter,
-.post-body .editorjs-spacer,
 .page-content .editorjs-warning,
 .page-content .editorjs-link,
 .page-content .editorjs-attaches,
@@ -87,8 +86,7 @@
 .page-content .editorjs-carousel,
 .page-content .editorjs-embed,
 .page-content .editorjs-drawing,
-.page-content .editorjs-delimiter,
-.page-content .editorjs-spacer {
+.page-content .editorjs-delimiter {
     margin: 1.25rem 0;
 }
 
@@ -481,8 +479,61 @@ body.dark-mode .post-body pre.code-block--powershell {
 
 .page-content .editorjs-spacer,
 .post-body .editorjs-spacer {
+    --cms-phinit-editorjs-spacer-height: 40px;
+    box-sizing: border-box;
+    display: block !important;
+    clear: both;
+    flex: 0 0 auto;
     width: 100%;
+    height: var(--cms-phinit-editorjs-spacer-height) !important;
+    min-height: var(--cms-phinit-editorjs-spacer-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
 }
+
+.page-content .editorjs-spacer[data-height="15"],
+.post-body .editorjs-spacer[data-height="15"] { --cms-phinit-editorjs-spacer-height: 15px; }
+.page-content .editorjs-spacer[data-height="16"],
+.post-body .editorjs-spacer[data-height="16"] { --cms-phinit-editorjs-spacer-height: 16px; }
+.page-content .editorjs-spacer[data-height="24"],
+.post-body .editorjs-spacer[data-height="24"] { --cms-phinit-editorjs-spacer-height: 24px; }
+.page-content .editorjs-spacer[data-height="25"],
+.post-body .editorjs-spacer[data-height="25"] { --cms-phinit-editorjs-spacer-height: 25px; }
+.page-content .editorjs-spacer[data-height="32"],
+.post-body .editorjs-spacer[data-height="32"] { --cms-phinit-editorjs-spacer-height: 32px; }
+.page-content .editorjs-spacer[data-height="40"],
+.post-body .editorjs-spacer[data-height="40"] { --cms-phinit-editorjs-spacer-height: 40px; }
+.page-content .editorjs-spacer[data-height="48"],
+.post-body .editorjs-spacer[data-height="48"] { --cms-phinit-editorjs-spacer-height: 48px; }
+.page-content .editorjs-spacer[data-height="56"],
+.post-body .editorjs-spacer[data-height="56"] { --cms-phinit-editorjs-spacer-height: 56px; }
+.page-content .editorjs-spacer[data-height="60"],
+.post-body .editorjs-spacer[data-height="60"] { --cms-phinit-editorjs-spacer-height: 60px; }
+.page-content .editorjs-spacer[data-height="64"],
+.post-body .editorjs-spacer[data-height="64"] { --cms-phinit-editorjs-spacer-height: 64px; }
+.page-content .editorjs-spacer[data-height="72"],
+.post-body .editorjs-spacer[data-height="72"] { --cms-phinit-editorjs-spacer-height: 72px; }
+.page-content .editorjs-spacer[data-height="75"],
+.post-body .editorjs-spacer[data-height="75"] { --cms-phinit-editorjs-spacer-height: 75px; }
+.page-content .editorjs-spacer[data-height="80"],
+.post-body .editorjs-spacer[data-height="80"] { --cms-phinit-editorjs-spacer-height: 80px; }
+.page-content .editorjs-spacer[data-height="96"],
+.post-body .editorjs-spacer[data-height="96"] { --cms-phinit-editorjs-spacer-height: 96px; }
+.page-content .editorjs-spacer[data-height="100"],
+.post-body .editorjs-spacer[data-height="100"] { --cms-phinit-editorjs-spacer-height: 100px; }
+.page-content .editorjs-spacer[data-height="120"],
+.post-body .editorjs-spacer[data-height="120"] { --cms-phinit-editorjs-spacer-height: 120px; }
+.page-content .editorjs-spacer[data-height="140"],
+.post-body .editorjs-spacer[data-height="140"] { --cms-phinit-editorjs-spacer-height: 140px; }
+.page-content .editorjs-spacer[data-height="160"],
+.post-body .editorjs-spacer[data-height="160"] { --cms-phinit-editorjs-spacer-height: 160px; }
+.page-content .editorjs-spacer[data-height="180"],
+.post-body .editorjs-spacer[data-height="180"] { --cms-phinit-editorjs-spacer-height: 180px; }
+.page-content .editorjs-spacer[data-height="200"],
+.post-body .editorjs-spacer[data-height="200"] { --cms-phinit-editorjs-spacer-height: 200px; }
 
 body.dark-mode .page-content,
 body.dark-mode .post-body {

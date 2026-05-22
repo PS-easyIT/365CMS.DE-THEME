@@ -1,57 +1,57 @@
 <?php
-if (!defined('ABSPATH')) exit;
-try { $c = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable $e) { $c = null; }
+/**
+ * MedCare Pro Theme – Home Template
+ *
+ * @package MedCarePro_Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+$safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 
 // Hero
-$heroBadge    = $c?->get('medical_hero', 'hero_badge',               '✚ Gesundheitsplattform')      ?? '✚ Gesundheitsplattform';
-$heroHeadline = $c?->get('medical_hero', 'hero_headline',            'Ihren Arzt einfach online finden') ?? 'Ihren Arzt einfach online finden';
-$heroSubline  = $c?->get('medical_hero', 'hero_subline',             'Ärzte, Kliniken und Fachspezialisten in Ihrer Region – schnell, sicher und kostenlos.') ?? '';
-$heroCta      = $c?->get('medical_hero', 'hero_cta_label',           'Arzt suchen')        ?? 'Arzt suchen';
-$heroCtaUrl   = $c?->get('medical_hero', 'hero_cta_url',             '/aerzte')            ?? '/aerzte';
-$heroSecCta   = $c?->get('medical_hero', 'hero_secondary_cta_label', 'Termin buchen')      ?? 'Termin buchen';
-$heroSecUrl   = $c?->get('medical_hero', 'hero_secondary_cta_url',   '/termin')            ?? '/termin';
-$showStats    = $c?->get('medical_hero', 'show_stats_bar',           true)                 ?? true;
-$statNum1     = $c?->get('medical_hero', 'stat_doctors_count',       '1.500+')             ?? '1.500+';
-$statLbl1     = $c?->get('medical_hero', 'stat_doctors_label',       'Ärzte & Kliniken')   ?? 'Ärzte & Kliniken';
-$statNum2     = $c?->get('medical_hero', 'stat_specialties_count',   '40+')                ?? '40+';
-$statLbl2     = $c?->get('medical_hero', 'stat_specialties_label',   'Fachgebiete')        ?? 'Fachgebiete';
-$statLbl3     = $c?->get('medical_hero', 'stat_booking_label',       'Online-Termine')     ?? 'Online-Termine';
+$heroBadge    = (string) mc_get_setting('medical_hero', 'hero_badge',               '✚ Gesundheitsplattform');
+$heroHeadline = (string) mc_get_setting('medical_hero', 'hero_headline',            'Ihren Arzt einfach online finden');
+$heroSubline  = (string) mc_get_setting('medical_hero', 'hero_subline',             'Ärzte, Kliniken und Fachspezialisten in Ihrer Region – schnell, sicher und kostenlos.');
+$heroCta      = (string) mc_get_setting('medical_hero', 'hero_cta_label',           'Arzt suchen');
+$heroCtaUrl   = (string) mc_get_setting('medical_hero', 'hero_cta_url',             '/aerzte');
+$heroSecCta   = (string) mc_get_setting('medical_hero', 'hero_secondary_cta_label', 'Termin buchen');
+$heroSecUrl   = (string) mc_get_setting('medical_hero', 'hero_secondary_cta_url',   '/termin');
+$showStats    = filter_var(mc_get_setting('medical_hero', 'show_stats_bar', true), FILTER_VALIDATE_BOOLEAN);
+$statNum1     = (string) mc_get_setting('medical_hero', 'stat_doctors_count',     '1.500+');
+$statLbl1     = (string) mc_get_setting('medical_hero', 'stat_doctors_label',     'Ärzte & Kliniken');
+$statNum2     = (string) mc_get_setting('medical_hero', 'stat_specialties_count', '40+');
+$statLbl2     = (string) mc_get_setting('medical_hero', 'stat_specialties_label', 'Fachgebiete');
+$statLbl3     = (string) mc_get_setting('medical_hero', 'stat_booking_label',     'Online-Termine');
 
 // Content
-$doctorsTitle = $c?->get('medical_content', 'doctor_section_title',      'Unsere Fachärzte')           ?? 'Unsere Fachärzte';
-$specTitle    = $c?->get('medical_content', 'specialties_section_title', 'Medizinische Fachbereiche')  ?? 'Medizinische Fachbereiche';
-$bookingTitle = $c?->get('medical_content', 'booking_section_title',     'Termin vereinbaren')         ?? 'Termin vereinbaren';
-$bookingText  = $c?->get('medical_content', 'booking_intro_text',        'Online-Terminbuchung rund um die Uhr – ohne Warteschleife.') ?? '';
-$gkvLabel     = $c?->get('medical_content', 'insurance_label_public',    'Kassenpatient (GKV)')        ?? 'Kassenpatient (GKV)';
-$pkvLabel     = $c?->get('medical_content', 'insurance_label_private',   'Privatpatient (PKV)')        ?? 'Privatpatient (PKV)';
-$emergInfo    = $c?->get('medical_content', 'emergency_info_text',       '')                           ?? '';
-$ctaTitle     = $c?->get('medical_content', 'cta_section_title',         'Ihr Online-Patientenportal') ?? 'Ihr Online-Patientenportal';
-$ctaText      = $c?->get('medical_content', 'cta_section_text',          '')                           ?? '';
+$doctorsTitle = (string) mc_get_setting('medical_content', 'doctor_section_title',      'Unsere Fachärzte');
+$specTitle    = (string) mc_get_setting('medical_content', 'specialties_section_title', 'Medizinische Fachbereiche');
+$bookingTitle = (string) mc_get_setting('medical_content', 'booking_section_title',     'Termin vereinbaren');
+$bookingText  = (string) mc_get_setting('medical_content', 'booking_intro_text',        'Online-Terminbuchung rund um die Uhr – ohne Warteschleife.');
+$gkvLabel     = (string) mc_get_setting('medical_content', 'insurance_label_public',    'Kassenpatient (GKV)');
+$pkvLabel     = (string) mc_get_setting('medical_content', 'insurance_label_private',   'Privatpatient (PKV)');
+$emergInfo    = (string) mc_get_setting('medical_content', 'emergency_info_text',       '');
+$ctaTitle     = (string) mc_get_setting('medical_content', 'cta_section_title',         'Ihr Online-Patientenportal');
+$ctaText      = (string) mc_get_setting('medical_content', 'cta_section_text',          '');
 
-$siteUrl    = SITE_URL;
 $isLoggedIn = theme_is_logged_in();
-$safe       = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$buildUrl   = static function (string $baseUrl, string $path): string {
-    $trimmedPath = trim($path);
-    if ($trimmedPath === '') {
-        return rtrim($baseUrl, '/') . '/';
-    }
-    if (str_starts_with($trimmedPath, 'http://') || str_starts_with($trimmedPath, 'https://')) {
-        return $trimmedPath;
-    }
-    if (str_starts_with($trimmedPath, '#')) {
-        return rtrim($baseUrl, '/') . '/' . $trimmedPath;
-    }
-    return rtrim($baseUrl, '/') . '/' . ltrim($trimmedPath, '/');
-};
+$doctorsUrl = $safe(mc_href($heroCtaUrl));
+$bookingUrl = $safe(mc_href($heroSecUrl));
+$fieldsUrl  = $safe(theme_route_url('fields'));
+$registerUrl= $safe(theme_route_url('register'));
+$searchActionUrl = $safe(mc_href('/aerzte'));
 ?>
 <main id="main" class="mc-main" role="main">
 
-    <!-- Notfall-Info Banner -->
-    <?php if (!empty($emergInfo)) : ?>
+    <?php if (trim($emergInfo) !== '') : ?>
     <div class="mc-emergency-notice" role="alert" aria-live="polite">
         <div class="mc-container mc-emergency-notice-row">
-            <strong>⚕️ Wichtiger Hinweis:</strong>
+            <strong class="mc-emergency-notice-tag">
+                <span aria-hidden="true">⚕</span> Wichtiger Hinweis
+            </strong>
             <span><?php echo $safe($emergInfo); ?></span>
         </div>
     </div>
@@ -59,58 +59,66 @@ $buildUrl   = static function (string $baseUrl, string $path): string {
 
     <!-- ═══ Hero ═══════════════════════════════════════════════════════════ -->
     <section class="mc-hero" aria-labelledby="hero-heading">
-        <div class="mc-container">
-            <?php if (!empty($heroBadge)) : ?>
+        <div class="mc-hero-backdrop" aria-hidden="true"></div>
+        <div class="mc-container mc-hero-inner">
+            <?php if (trim($heroBadge) !== '') : ?>
                 <div class="mc-hero-badge"><?php echo $safe($heroBadge); ?></div>
             <?php endif; ?>
-            <h1 id="hero-heading"><?php echo $safe($heroHeadline); ?></h1>
-            <?php if (!empty($heroSubline)) : ?>
+            <h1 id="hero-heading" class="mc-hero-heading"><?php echo $safe($heroHeadline); ?></h1>
+            <?php if (trim($heroSubline) !== '') : ?>
                 <p class="mc-hero-sub"><?php echo $safe($heroSubline); ?></p>
             <?php endif; ?>
 
-            <!-- Hero Sucheingabe -->
-            <form class="mc-hero-search" role="search" method="get"
-                  action="<?php echo $safe($buildUrl($siteUrl, '/aerzte')); ?>" aria-label="Arzt suchen">
+            <form class="mc-hero-search"
+                  role="search"
+                  method="get"
+                  action="<?php echo $searchActionUrl; ?>"
+                  aria-label="Arzt suchen">
                 <label for="hero-search-input" class="mc-visually-hidden">Arzt, Fachgebiet oder PLZ eingeben</label>
-                <input id="hero-search-input" type="search" name="q"
+                <input id="hero-search-input"
+                       type="search"
+                       name="q"
                        placeholder="Arzt, Fachgebiet oder PLZ …"
-                       autocomplete="off" class="mc-hero-search-input">
-                <button type="submit" class="mc-btn mc-btn-primary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                       autocomplete="off"
+                       class="mc-hero-search-input">
+                <button type="submit" class="mc-btn mc-btn-primary mc-hero-search-submit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         focusable="false" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                     <?php echo $safe($heroCta); ?>
                 </button>
             </form>
 
-            <div class="mc-cta-group">
-                <a href="<?php echo $safe($buildUrl($siteUrl, (string) $heroSecUrl)); ?>" class="mc-btn mc-btn-secondary">
-                    🗓️ <?php echo $safe($heroSecCta); ?>
+            <div class="mc-hero-actions">
+                <a href="<?php echo $bookingUrl; ?>" class="mc-btn mc-btn-accent mc-btn-lg">
+                    <span class="mc-btn-icon" aria-hidden="true">🗓</span>
+                    <?php echo $safe($heroSecCta); ?>
                 </a>
-                <a href="<?php echo $safe($buildUrl($siteUrl, (string) $heroCtaUrl)); ?>" class="mc-btn mc-btn-white">
+                <a href="<?php echo $doctorsUrl; ?>" class="mc-btn mc-btn-onhero">
                     Alle Ärzte anzeigen
                 </a>
             </div>
 
             <?php if ($showStats) : ?>
-            <div class="mc-stats-row" aria-label="Plattform-Statistiken">
-                <div class="mc-stat">
+            <ul class="mc-stats-row" aria-label="Plattform-Statistiken">
+                <li class="mc-stat">
                     <span class="mc-stat-number"><?php echo $safe($statNum1); ?></span>
                     <span class="mc-stat-label"><?php echo $safe($statLbl1); ?></span>
-                </div>
-                <div class="mc-stat">
+                </li>
+                <li class="mc-stat">
                     <span class="mc-stat-number"><?php echo $safe($statNum2); ?></span>
                     <span class="mc-stat-label"><?php echo $safe($statLbl2); ?></span>
-                </div>
-                <div class="mc-stat">
+                </li>
+                <li class="mc-stat">
                     <span class="mc-stat-number">24/7</span>
                     <span class="mc-stat-label"><?php echo $safe($statLbl3); ?></span>
-                </div>
-            </div>
+                </li>
+            </ul>
             <?php endif; ?>
         </div>
     </section><!-- /.mc-hero -->
 
     <!-- ═══ Fachgebiete ════════════════════════════════════════════════════ -->
-    <section class="mc-section" aria-labelledby="specialties-heading">
+    <section class="mc-section mc-section--specialties" aria-labelledby="specialties-heading">
         <div class="mc-container">
             <div class="mc-section-header">
                 <h2 id="specialties-heading"><?php echo $safe($specTitle); ?></h2>
@@ -118,92 +126,107 @@ $buildUrl   = static function (string $baseUrl, string $path): string {
             </div>
             <?php
             $specialties = [
-                ['slug' => 'allgemein',    'label' => 'Allgemeinmedizin', 'icon' => '🩺', 'url' => '/fachgebiet/allgemeinmedizin'],
-                ['slug' => 'kardiologie',  'label' => 'Kardiologie',      'icon' => '❤️', 'url' => '/fachgebiet/kardiologie'],
-                ['slug' => 'neurologie',   'label' => 'Neurologie',       'icon' => '🧠', 'url' => '/fachgebiet/neurologie'],
-                ['slug' => 'orthopaedie',  'label' => 'Orthopädie',       'icon' => '🦴', 'url' => '/fachgebiet/orthopaedie'],
-                ['slug' => 'dermatologie', 'label' => 'Dermatologie',     'icon' => '🔬', 'url' => '/fachgebiet/dermatologie'],
-                ['slug' => 'zahn',         'label' => 'Zahnmedizin',      'icon' => '🦷', 'url' => '/fachgebiet/zahnmedizin'],
-                ['slug' => 'psychologie',  'label' => 'Psychologie',      'icon' => '🧘', 'url' => '/fachgebiet/psychologie'],
+                ['slug' => 'general',     'label' => 'Allgemeinmedizin', 'icon' => '🩺', 'url' => '/fachgebiet/allgemeinmedizin'],
+                ['slug' => 'cardio',      'label' => 'Kardiologie',      'icon' => '❤',  'url' => '/fachgebiet/kardiologie'],
+                ['slug' => 'neuro',       'label' => 'Neurologie',       'icon' => '🧠', 'url' => '/fachgebiet/neurologie'],
+                ['slug' => 'ortho',       'label' => 'Orthopädie',       'icon' => '🦴', 'url' => '/fachgebiet/orthopaedie'],
+                ['slug' => 'derma',       'label' => 'Dermatologie',     'icon' => '🔬', 'url' => '/fachgebiet/dermatologie'],
+                ['slug' => 'dental',      'label' => 'Zahnmedizin',      'icon' => '🦷', 'url' => '/fachgebiet/zahnmedizin'],
+                ['slug' => 'psychology',  'label' => 'Psychologie',      'icon' => '🧘', 'url' => '/fachgebiet/psychologie'],
+                ['slug' => 'surgery',     'label' => 'Chirurgie',        'icon' => '🩹', 'url' => '/fachgebiet/chirurgie'],
             ];
             ?>
-            <div class="mc-specialties-grid">
+            <ul class="mc-specialties-grid">
                 <?php foreach ($specialties as $sp) : ?>
-                <a href="<?php echo $safe($buildUrl($siteUrl, (string) $sp['url'])); ?>"
-                   class="mc-specialty-card"
-                   aria-label="Fachgebiet <?php echo $safe($sp['label']); ?> anzeigen">
-                    <span class="mc-specialty-icon" aria-hidden="true"><?php echo $sp['icon']; ?></span>
-                    <span class="mc-specialty-name mc-specialty--<?php echo $sp['slug']; ?>">
-                        <?php echo $safe($sp['label']); ?>
-                    </span>
-                </a>
+                <li class="mc-specialty">
+                    <a href="<?php echo $safe(mc_href((string) $sp['url'])); ?>"
+                       class="mc-specialty-card mc-specialty-card--<?php echo $safe($sp['slug']); ?>"
+                       aria-label="Fachgebiet <?php echo $safe($sp['label']); ?> anzeigen">
+                        <span class="mc-specialty-icon" aria-hidden="true"><?php echo $safe($sp['icon']); ?></span>
+                        <span class="mc-specialty-name"><?php echo $safe($sp['label']); ?></span>
+                    </a>
+                </li>
                 <?php endforeach; ?>
-                <a href="<?php echo $safe($buildUrl($siteUrl, '/fachgebiete')); ?>"
-                   class="mc-specialty-card mc-specialty-card--more"
-                   aria-label="Alle Fachgebiete anzeigen">
-                    <span class="mc-specialty-icon" aria-hidden="true">→</span>
-                    <span>Alle Fachgebiete</span>
-                </a>
-            </div>
+                <li class="mc-specialty">
+                    <a href="<?php echo $fieldsUrl; ?>"
+                       class="mc-specialty-card mc-specialty-card--more"
+                       aria-label="Alle Fachgebiete anzeigen">
+                        <span class="mc-specialty-icon" aria-hidden="true">→</span>
+                        <span class="mc-specialty-name">Alle Fachgebiete</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </section><!-- /.mc-specialties -->
 
     <!-- ═══ Ärzte ══════════════════════════════════════════════════════════ -->
-    <section class="mc-section mc-section--alt" aria-labelledby="doctors-heading">
+    <section class="mc-section mc-section--doctors" aria-labelledby="doctors-heading">
         <div class="mc-container">
             <div class="mc-section-header">
                 <h2 id="doctors-heading"><?php echo $safe($doctorsTitle); ?></h2>
                 <p>Qualifizierte Experten für Ihre Gesundheit – geprüft und zertifiziert</p>
             </div>
-            <!-- Versicherungsfilter -->
             <div class="mc-insurance-filter" role="group" aria-label="Nach Versicherungstyp filtern">
-                <button class="mc-insurance-btn active" data-insurance="all" aria-pressed="true">Alle</button>
-                <button class="mc-insurance-btn" data-insurance="gkv" aria-pressed="false">
+                <button type="button"
+                        class="mc-insurance-btn is-active"
+                        data-insurance="all"
+                        aria-pressed="true">Alle</button>
+                <button type="button"
+                        class="mc-insurance-btn"
+                        data-insurance="gkv"
+                        aria-pressed="false">
                     <span class="mc-insurance-badge mc-insurance--gkv"><?php echo $safe($gkvLabel); ?></span>
                 </button>
-                <button class="mc-insurance-btn" data-insurance="pkv" aria-pressed="false">
+                <button type="button"
+                        class="mc-insurance-btn"
+                        data-insurance="pkv"
+                        aria-pressed="false">
                     <span class="mc-insurance-badge mc-insurance--pkv"><?php echo $safe($pkvLabel); ?></span>
                 </button>
             </div>
-            <div class="mc-grid" style="margin-top:1.5rem;">
-                <div class="mc-card mc-card--doctor-cta">
-                    <div class="mc-card-doctor-emoji" aria-hidden="true">👨‍⚕️</div>
-                    <h3 class="mc-card-doctor-title">
-                        Alle Ärzte &amp; Therapeuten entdecken
-                    </h3>
-                    <p class="mc-card-doctor-lead">
-                        Finden Sie den passenden Spezialisten in Ihrer Nähe – mit Bewertungen, Öffnungszeiten und Online-Terminbuchung.
-                    </p>
-                    <a href="<?php echo $safe($buildUrl($siteUrl, '/aerzte')); ?>" class="mc-btn mc-btn-primary">
-                        Alle Ärzte anzeigen →
-                    </a>
+            <div class="mc-doctor-cta-card">
+                <div class="mc-doctor-cta-glyph" aria-hidden="true">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                         focusable="false" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8"/>
+                    </svg>
                 </div>
+                <h3 class="mc-doctor-cta-title">Alle Ärzte &amp; Therapeuten entdecken</h3>
+                <p class="mc-doctor-cta-lead">
+                    Finden Sie den passenden Spezialisten in Ihrer Nähe – mit Bewertungen, Öffnungszeiten und Online-Terminbuchung.
+                </p>
+                <a href="<?php echo $doctorsUrl; ?>" class="mc-btn mc-btn-primary">
+                    Alle Ärzte anzeigen
+                    <span aria-hidden="true">→</span>
+                </a>
             </div>
         </div>
     </section><!-- /.mc-doctors -->
 
     <!-- ═══ Termin-CTA ═════════════════════════════════════════════════════ -->
     <?php if (!$isLoggedIn) : ?>
-    <section class="mc-section" aria-labelledby="booking-heading">
+    <section class="mc-section mc-section--booking" aria-labelledby="booking-heading">
         <div class="mc-container">
             <div class="mc-booking-cta">
                 <div class="mc-booking-cta__text">
                     <h2 id="booking-heading"><?php echo $safe($bookingTitle); ?></h2>
-                    <?php if (!empty($bookingText)) : ?>
-                        <p><?php echo $safe($bookingText); ?></p>
+                    <?php if (trim($bookingText) !== '') : ?>
+                        <p class="mc-booking-cta__lead"><?php echo $safe($bookingText); ?></p>
                     <?php endif; ?>
                     <ul class="mc-booking-features">
-                        <li>✓ Sofortige Online-Buchung – 24 Stunden, 7 Tage die Woche</li>
-                        <li>✓ Automatische Erinnerungen per E-Mail</li>
-                        <li>✓ DSGVO-konforme Datenhaltung nach § 203 StGB</li>
-                        <li>✓ Für GKV- und PKV-Patienten verfügbar</li>
+                        <li><span class="mc-tick" aria-hidden="true">✓</span> Sofortige Online-Buchung – 24 Stunden, 7 Tage die Woche</li>
+                        <li><span class="mc-tick" aria-hidden="true">✓</span> Automatische Erinnerungen per E-Mail</li>
+                        <li><span class="mc-tick" aria-hidden="true">✓</span> DSGVO-konforme Datenhaltung nach § 203 StGB</li>
+                        <li><span class="mc-tick" aria-hidden="true">✓</span> Für GKV- und PKV-Patienten verfügbar</li>
                     </ul>
                 </div>
                 <div class="mc-booking-cta__actions">
-                    <a href="<?php echo $safe($buildUrl($siteUrl, '/termin')); ?>" class="mc-btn mc-btn-primary mc-btn-lg">
-                        🗓️ Termin buchen
+                    <a href="<?php echo $bookingUrl; ?>" class="mc-btn mc-btn-primary mc-btn-lg">
+                        <span class="mc-btn-icon" aria-hidden="true">🗓</span>
+                        Termin buchen
                     </a>
-                    <a href="<?php echo $safe($buildUrl($siteUrl, '/register')); ?>" class="mc-btn mc-btn-outline mc-booking-register-btn">
+                    <a href="<?php echo $registerUrl; ?>" class="mc-btn mc-btn-outline">
                         Als Arzt registrieren
                     </a>
                     <p class="mc-booking-dsgvo-note">
@@ -215,57 +238,77 @@ $buildUrl   = static function (string $baseUrl, string $path): string {
     </section><!-- /.mc-booking-cta -->
     <?php endif; ?>
 
-    <!-- ═══ Trust / Vertrauenssignale ═════════════════════════════════════ -->
-    <section class="mc-section mc-section--alt" aria-labelledby="trust-heading">
+    <!-- ═══ Trust ═════════════════════════════════════════════════════════ -->
+    <section class="mc-section mc-section--trust" aria-labelledby="trust-heading">
         <div class="mc-container">
             <div class="mc-section-header">
                 <h2 id="trust-heading">Warum MedCare Pro?</h2>
                 <p>Qualität, Datenschutz und Verlässlichkeit – für Patienten und Ärzte</p>
             </div>
-            <div class="mc-trust-grid">
-                <div class="mc-trust-item">
-                    <div class="mc-trust-icon" aria-hidden="true">🔒</div>
-                    <h3>DSGVO-konform</h3>
-                    <p>Alle Patientendaten werden nach höchsten Datenschutzstandards verarbeitet. Keine Datenweitergabe an Dritte.</p>
-                </div>
-                <div class="mc-trust-item">
-                    <div class="mc-trust-icon" aria-hidden="true">✅</div>
+            <ul class="mc-trust-grid">
+                <li class="mc-trust-item">
+                    <div class="mc-trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                             focusable="false" aria-hidden="true">
+                            <rect x="5" y="11" width="14" height="9" rx="2"/>
+                            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                        </svg>
+                    </div>
+                    <h3>DSGVO &amp; § 203 StGB</h3>
+                    <p>Patientendaten werden nach höchsten Datenschutzstandards verarbeitet. Keine Datenweitergabe an Dritte.</p>
+                </li>
+                <li class="mc-trust-item">
+                    <div class="mc-trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                             focusable="false" aria-hidden="true">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                    </div>
                     <h3>Geprüfte Ärzte</h3>
                     <p>Jedes Arztprofil wird vor der Freischaltung auf Approbation und Qualifikation verifiziert.</p>
-                </div>
-                <div class="mc-trust-item">
-                    <div class="mc-trust-icon" aria-hidden="true">📱</div>
+                </li>
+                <li class="mc-trust-item">
+                    <div class="mc-trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                             focusable="false" aria-hidden="true">
+                            <rect x="6" y="3" width="12" height="18" rx="2"/>
+                            <path d="M11 18h2"/>
+                        </svg>
+                    </div>
                     <h3>Online-Buchung 24/7</h3>
                     <p>Termin online vereinbaren – ohne Warteschleife, rund um die Uhr verfügbar.</p>
-                </div>
-                <div class="mc-trust-item">
-                    <div class="mc-trust-icon" aria-hidden="true">⭐</div>
+                </li>
+                <li class="mc-trust-item">
+                    <div class="mc-trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                             focusable="false" aria-hidden="true">
+                            <path d="M12 17.3l-6.18 3.7 1.64-7.03L2 9.24l7.19-.61L12 2l2.81 6.63 7.19.61-5.46 4.73 1.64 7.03z"/>
+                        </svg>
+                    </div>
                     <h3>Echte Bewertungen</h3>
                     <p>Verifizierte Patientenbewertungen helfen, den richtigen Arzt für Ihre Bedürfnisse zu finden.</p>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     </section><!-- /.mc-trust -->
 
     <!-- ═══ Registrierungs-CTA ═════════════════════════════════════════════ -->
-    <?php if (!$isLoggedIn && !empty(trim($ctaTitle))) : ?>
-    <section class="mc-section" aria-labelledby="cta-heading">
+    <?php if (!$isLoggedIn && trim($ctaTitle) !== '') : ?>
+    <section class="mc-section mc-section--cta" aria-labelledby="cta-heading">
         <div class="mc-container mc-cta-center">
             <h2 id="cta-heading"><?php echo $safe($ctaTitle); ?></h2>
-            <?php if (!empty(trim($ctaText))) : ?>
-                <p class="mc-cta-lead">
-                    <?php echo $safe($ctaText); ?>
-                </p>
+            <?php if (trim($ctaText) !== '') : ?>
+                <p class="mc-cta-lead"><?php echo $safe($ctaText); ?></p>
             <?php else : ?>
                 <p class="mc-cta-lead">
                     Registrieren Sie sich und verwalten Sie Termine, Befunde und Nachrichten sicher und papierlos.
                 </p>
             <?php endif; ?>
             <div class="mc-cta-actions">
-                <a href="<?php echo $safe($buildUrl($siteUrl, '/register')); ?>" class="mc-btn mc-btn-primary mc-btn-lg">
+                <a href="<?php echo $registerUrl; ?>" class="mc-btn mc-btn-primary mc-btn-lg">
                     Jetzt kostenlos registrieren
                 </a>
-                <a href="<?php echo $safe($buildUrl($siteUrl, '/aerzte')); ?>" class="mc-btn mc-btn-outline">
+                <a href="<?php echo $doctorsUrl; ?>" class="mc-btn mc-btn-outline">
                     Arzt suchen
                 </a>
             </div>

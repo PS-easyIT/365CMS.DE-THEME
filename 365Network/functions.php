@@ -14,14 +14,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('THEME_VERSION', '3.4.14');
+define('THEME_VERSION', '3.4.15');
 define('THEME_DIR', THEME_PATH . '365Network/');
 define('THEME_URL_BASE', \CMS\ThemeManager::instance()->getThemeUrl());
 
 /**
  * Theme Bootstrap - Hooks & Assets registrieren
  */
-class IT_Expert_Network_Theme
+final class IT_Expert_Network_Theme
 {
     private static ?self $instance = null;
 
@@ -360,39 +360,39 @@ HTML;
             // ── Fix 1: secondary_color → --primary-hover Korrektur ──
             // Core setzt --primary-hover auf den secondary_color Wert (Grau).
             // Wir überschreiben --primary-hover mit dem dedizierten primary_hover Key.
-            $primaryHover = $colors['primary_hover'] ?? '#162040';
+            $primaryHover = theme_css_color((string) ($colors['primary_hover'] ?? ''), '#162040');
             $css .= "    --primary-hover: {$primaryHover};\n";
 
             // ── Fix 2: bg_color Triple-Mapping Korrektur ──
             // Core setzt --bg-secondary und --light-bg auf denselben Wert wie --background-color.
             // Wir überschreiben sie mit dem dedizierten bg_secondary Key.
-            $bgSecondary = $colors['bg_secondary'] ?? '#f1f5f9';
+            $bgSecondary = theme_css_color((string) ($colors['bg_secondary'] ?? ''), '#f1f5f9');
             $css .= "    --bg-secondary: {$bgSecondary};\n";
             $css .= "    --light-bg: {$bgSecondary};\n";
 
             // ── Theme-spezifische Farb-Variablen (nicht im Core-Mapping) ──
-            $primaryLight = $colors['primary_light'] ?? '#1a2a42';
+            $primaryLight = theme_css_color((string) ($colors['primary_light'] ?? ''), '#1a2a42');
             $css .= "    --primary-light: {$primaryLight};\n";
 
-            $accentHover = $colors['accent_hover'] ?? '#a67a24';
+            $accentHover = theme_css_color((string) ($colors['accent_hover'] ?? ''), '#a67a24');
             $css .= "    --accent-hover: {$accentHover};\n";
 
-            $accentLight = $colors['accent_light'] ?? '#d4a84a';
+            $accentLight = theme_css_color((string) ($colors['accent_light'] ?? ''), '#d4a84a');
             $css .= "    --accent-light: {$accentLight};\n";
 
-            $headingColor = $colors['heading_color'] ?? '#0f172a';
+            $headingColor = theme_css_color((string) ($colors['heading_color'] ?? ''), '#0f172a');
             $css .= "    --heading-color: {$headingColor};\n";
 
-            $textLight = $colors['text_light'] ?? '#e2e8f0';
+            $textLight = theme_css_color((string) ($colors['text_light'] ?? ''), '#e2e8f0');
             $css .= "    --text-light: {$textLight};\n";
 
             // ── Header-Akzentfarbe & Border ──
-            $headerAccent = $header['header_accent_color'] ?? '#c8952e';
+            $headerAccent = theme_css_color((string) ($header['header_accent_color'] ?? ''), '#c8952e');
             $css .= "    --header-text-secondary: {$headerAccent};\n";
             $css .= "    --header-border: {$primaryLight};\n";
 
             // ── Netzwerk-Animation ──
-            $animOpacity = (int)($effects['animation_opacity'] ?? 15);
+            $animOpacity = max(0, min(100, (int)($effects['animation_opacity'] ?? 15)));
             $css .= "    --network-animation-opacity: " . ($animOpacity / 100) . ";\n";
 
             $css .= "}\n";
@@ -468,16 +468,16 @@ HTML;
      */
     public function outputSidebarStyles(): void
     {
-        $bg      = $this->getSidebarSetting('sidebar_bg_color', '#ffffff');
-        $border  = $this->getSidebarSetting('sidebar_border_color', '#e2e8f0');
-        $radius  = $this->getSidebarSetting('sidebar_border_radius', 12);
-        $padding = $this->getSidebarSetting('sidebar_padding', 1.25);
-        $tSize   = $this->getSidebarSetting('sidebar_title_size', 1.0);
-        $tColor  = $this->getSidebarSetting('sidebar_title_color', '#1e293b');
-        $txtColor = $this->getSidebarSetting('sidebar_text_color', '#475569');
-        $gap     = $this->getSidebarSetting('sidebar_gap', 1.25);
+        $bg      = theme_css_color((string) $this->getSidebarSetting('sidebar_bg_color', '#ffffff'), '#ffffff');
+        $border  = theme_css_color((string) $this->getSidebarSetting('sidebar_border_color', '#e2e8f0'), '#e2e8f0');
+        $radius  = theme_css_number($this->getSidebarSetting('sidebar_border_radius', 12), 12.0, 0.0, 32.0);
+        $padding = theme_css_number($this->getSidebarSetting('sidebar_padding', 1.25), 1.25, 0.25, 4.0);
+        $tSize   = theme_css_number($this->getSidebarSetting('sidebar_title_size', 1.0), 1.0, 0.75, 2.0);
+        $tColor  = theme_css_color((string) $this->getSidebarSetting('sidebar_title_color', '#1e293b'), '#1e293b');
+        $txtColor = theme_css_color((string) $this->getSidebarSetting('sidebar_text_color', '#475569'), '#475569');
+        $gap     = theme_css_number($this->getSidebarSetting('sidebar_gap', 1.25), 1.25, 0.25, 4.0);
         $shadow  = $this->sidebarBool('sidebar_shadow', true);
-        $width   = (int)$this->getSidebarSetting('sidebar_width', 340);
+        $width   = (int) theme_css_number($this->getSidebarSetting('sidebar_width', 340), 340.0, 240.0, 520.0);
 
         $css = "/* 365Network – Sidebar Customizer */\n";
         $css .= ".dashboard-sidebar {\n";
@@ -797,6 +797,59 @@ function theme_sanitize_html(string $html, string $profile = 'default'): string
     }
 
     return strip_tags($html);
+}
+
+function theme_clean_query_text(mixed $value, int $maxLength = 120): string
+{
+    if (!is_scalar($value)) {
+        return '';
+    }
+
+    $clean = trim(strip_tags((string) $value));
+    $clean = preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $clean) ?? '';
+    $clean = preg_replace('/\s+/u', ' ', $clean) ?? '';
+
+    return mb_substr(trim($clean), 0, max(1, $maxLength));
+}
+
+function theme_clean_query_choice(mixed $value, array $allowed, string $default = ''): string
+{
+    $candidate = theme_clean_query_text($value, 80);
+
+    return in_array($candidate, $allowed, true) ? $candidate : $default;
+}
+
+function theme_clean_query_int(mixed $value, int $default = 0, int $min = 0, int $max = 1000000): int
+{
+    $int = is_numeric($value) ? (int) $value : $default;
+
+    return max($min, min($max, $int));
+}
+
+function theme_css_color(string $value, string $fallback): string
+{
+    $candidate = trim($value);
+
+    if (preg_match('/^#[0-9a-f]{3,8}$/i', $candidate) === 1) {
+        return $candidate;
+    }
+
+    if (preg_match('/^(rgb|rgba|hsl|hsla)\(\s*[0-9.%\s,]+\)$/i', $candidate) === 1) {
+        return $candidate;
+    }
+
+    if (preg_match('/^var\(--[a-z0-9_-]+\)$/i', $candidate) === 1) {
+        return $candidate;
+    }
+
+    return $fallback;
+}
+
+function theme_css_number(mixed $value, float $default, float $min, float $max): float
+{
+    $number = is_numeric($value) ? (float) $value : $default;
+
+    return max($min, min($max, $number));
 }
 
 function theme_has_relative_reference_prefix(string $value): bool

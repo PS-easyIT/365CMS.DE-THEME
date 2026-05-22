@@ -19,8 +19,8 @@ if (!defined('ABSPATH')) {
 </section>
 
 <div class="ptc-page-content">
-    <div class="ptc-container" style="text-align:center;padding:4rem 0;">
-        <p style="color:var(--ptc-slate);margin-bottom:2rem;">Bitte nutzen Sie die Navigation oder kehren Sie zur Startseite zurück.</p>
-        <a href="<?php echo ptc_site_url(); ?>/" class="btn-ptc btn-ptc-primary">Zur Startseite</a>
+    <div class="ptc-container ptc-center-block">
+        <p class="ptc-text-muted">Bitte nutzen Sie die Navigation oder kehren Sie zur Startseite zurück.</p>
+        <a href="<?php echo ptc_href('/'); ?>" class="btn-ptc btn-ptc-primary">Zur Startseite</a>
     </div>
 </div>

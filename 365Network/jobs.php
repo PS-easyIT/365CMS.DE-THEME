@@ -36,18 +36,27 @@ $validRemote = ['onsite', 'hybrid', 'remote'];
 $validSorts  = ['latest', 'title', 'views'];
 
 // ── Parameter ──
-$search = trim(strip_tags($_GET['q']      ?? ''));
-$type   = in_array($_GET['type']   ?? '', $validTypes)  ? $_GET['type']   : '';
-$level  = in_array($_GET['level']  ?? '', $validLevels) ? $_GET['level']  : '';
-$remote = in_array($_GET['remote'] ?? '', $validRemote) ? $_GET['remote'] : '';
-$sort   = in_array($_GET['sort']   ?? '', $validSorts)  ? $_GET['sort']   : 'latest';
-$view   = ($_GET['view'] ?? 'grid') === 'list' ? 'list' : 'grid';
-$page   = max(1, (int)($_GET['page'] ?? 1));
+$search = theme_clean_query_text($_GET['q'] ?? '', 120);
+$type   = theme_clean_query_choice($_GET['type'] ?? '', $validTypes);
+$level  = theme_clean_query_choice($_GET['level'] ?? '', $validLevels);
+$remote = theme_clean_query_choice($_GET['remote'] ?? '', $validRemote);
+$sort   = theme_clean_query_choice($_GET['sort'] ?? '', $validSorts, 'latest');
+$view   = theme_clean_query_choice($_GET['view'] ?? '', ['grid', 'list'], 'grid');
+$page   = theme_clean_query_int($_GET['page'] ?? 1, 1, 1, 10000);
 $perPage = 18;
 
 $jobs       = [];
 $totalCount = 0;
 $totalPages = 1;
+
+$jobsQuery = [
+    'q' => $search,
+    'type' => $type,
+    'level' => $level,
+    'remote' => $remote,
+    'sort' => $sort,
+    'view' => $view,
+];
 
 // Labels
 $typeLabels = [
@@ -190,10 +199,10 @@ require_once __DIR__ . '/header.php';
                 <div class="filter-panel">
                     <h3 class="filter-panel-title">🌐 Remote-Option</h3>
                     <div class="filter-link-list">
-                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['remote' => '', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['remote' => '', 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="filter-link <?php echo $remote === '' ? 'is-active' : ''; ?>">Alle</a>
                         <?php foreach ($remoteLabels as $val => $lbl): ?>
-                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['remote' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
+                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['remote' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                                class="filter-link <?php echo $remote === $val ? 'is-active' : ''; ?>"><?php echo $lbl; ?></a>
                         <?php endforeach; ?>
                     </div>
@@ -225,9 +234,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -317,16 +326,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['page' => (string) ($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['page' => (string) ($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['page' => (string) $i]), ENT_QUOTES, 'UTF-8'); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['page' => (string) $i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $_GET, ['page' => (string) ($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/jobs', $jobsQuery, ['page' => (string) ($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

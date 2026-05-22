@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Business Theme – Index / Fallback
  *
@@ -18,8 +20,10 @@ if (!defined('ABSPATH')) {
 </section>
 
 <div class="biz-page-content">
-    <div class="biz-container" style="text-align:center;padding:4rem 0;">
-        <p style="color:#64748b;margin-bottom:2rem;">Bitte nutzen Sie die Navigation oder kehren Sie zur Startseite zurück.</p>
-        <a href="<?php echo biz_site_url(); ?>/" class="btn-biz btn-biz-primary">Zur Startseite</a>
+    <div class="biz-container">
+        <div class="biz-error-wrap-narrow">
+            <p class="biz-error-text">Bitte nutzen Sie die Navigation oder kehren Sie zur Startseite zurück.</p>
+            <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="btn-biz btn-biz-primary">Zur Startseite</a>
+        </div>
     </div>
 </div>

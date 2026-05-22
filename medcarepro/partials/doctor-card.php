@@ -1,71 +1,83 @@
 <?php
 /**
- * Partial: Arzt-Karte
+ * Partial: Arzt-Karte – MedCare Pro Theme
  *
  * Erwartet $doctor (array|object) mit:
  *   - id, name, title, specialty, specialty_slug, avatar_url,
  *     insurance (array: 'gkv', 'pkv'), rating, review_count,
- *     location, next_appointment, url
+ *     location, next_appointment, url, verified
  *
  * Verwendung:
  *   <?php $doctor = [...]; include THEME_PATH . 'medcarepro/partials/doctor-card.php'; ?>
  *
- * @package MedCarePro
+ * @package MedCarePro_Theme
  */
-if (!defined('ABSPATH')) exit;
 
-$safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$siteUrl = SITE_URL;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-if (empty($doctor)) return;
+$safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 
-$d          = (array)$doctor;
-$id         = (int)($d['id']               ?? 0);
-$name       = $safe($d['name']             ?? $d['display_name'] ?? '');
-$title      = $safe($d['title']            ?? $d['academic_title'] ?? '');
-$specialty  = $safe($d['specialty']        ?? $d['specialty_name'] ?? '');
-$specSlug   = $safe($d['specialty_slug']   ?? strtolower(str_replace(' ', '', $specialty)));
-$avatarUrl  = $safe($d['avatar_url']       ?? '');
-$location   = $safe($d['location']         ?? $d['city'] ?? '');
-$rating     = (float)($d['rating']         ?? 0);
-$reviews    = (int)($d['review_count']     ?? 0);
-$nextAppt   = $safe($d['next_appointment'] ?? '');
-$profileUrl = $safe($d['url']              ?? ($siteUrl . '/arzt/' . $id));
+if (empty($doctor)) {
+    return;
+}
+
+$d          = (array) $doctor;
+$id         = (int) ($d['id']               ?? 0);
+$name       = $safe((string) ($d['name']             ?? $d['display_name'] ?? ''));
+$titleAbbr  = $safe((string) ($d['title']            ?? $d['academic_title'] ?? ''));
+$specialty  = $safe((string) ($d['specialty']        ?? $d['specialty_name'] ?? ''));
+$specSlug   = $safe((string) ($d['specialty_slug']   ?? strtolower(str_replace([' ', '/'], '-', (string) ($d['specialty'] ?? 'general')))));
+$avatarUrl  = $safe((string) ($d['avatar_url']       ?? ''));
+$location   = $safe((string) ($d['location']         ?? $d['city'] ?? ''));
+$rating     = (float) ($d['rating']         ?? 0);
+$reviews    = (int) ($d['review_count']   ?? 0);
+$nextAppt   = $safe((string) ($d['next_appointment'] ?? ''));
+$profileUrl = $safe((string) ($d['url']              ?? mc_href('/arzt/' . $id)));
+$bookingUrl = $safe(mc_href('/termin?doctor=' . $id));
 $hasGkv     = !empty($d['insurance']['gkv']) || !empty($d['gkv']);
 $hasPkv     = !empty($d['insurance']['pkv']) || !empty($d['pkv']);
 $verified   = !empty($d['verified']);
+$ratingRnd  = (int) round($rating);
 ?>
 <article class="mc-card mc-doctor-card" aria-labelledby="doctor-<?php echo $id; ?>">
-    <!-- Avatar -->
-    <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:.875rem;">
-        <?php if (!empty($avatarUrl)) : ?>
+    <div class="mc-doctor-card__head">
+        <?php if ($avatarUrl !== '') : ?>
         <img src="<?php echo $avatarUrl; ?>" alt="Profilbild von <?php echo $name; ?>"
              class="mc-doctor-avatar" width="80" height="80">
         <?php else : ?>
-        <div class="mc-doctor-avatar" style="background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;font-size:2rem;" aria-hidden="true">
-            👨‍⚕️
+        <div class="mc-doctor-avatar mc-doctor-avatar--placeholder" aria-hidden="true">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 focusable="false" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8"/>
+            </svg>
         </div>
         <?php endif; ?>
-        <div style="flex:1;min-width:0;">
-            <h2 class="mc-doctor-name" id="doctor-<?php echo $id; ?>" style="font-size:var(--font-md);">
-                <?php echo $title ? $title . ' ' . $name : $name; ?>
+
+        <div class="mc-doctor-card__title-block">
+            <h2 class="mc-doctor-name" id="doctor-<?php echo $id; ?>">
+                <?php echo $titleAbbr !== '' ? $titleAbbr . ' ' . $name : $name; ?>
                 <?php if ($verified) : ?>
-                <span title="Verifizierter Arzt" aria-label="Verifizierter Arzt" style="color:var(--accent-color);font-size:var(--font-sm);">✅</span>
+                <span class="mc-doctor-verified" title="Verifizierter Arzt" aria-label="Verifizierter Arzt">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                         focusable="false" aria-hidden="true">
+                        <path d="M12 1l3.09 6.26L22 8.27l-5 4.87 1.18 6.88L12 17.27 5.82 20l1.18-6.88L2 8.27l6.91-1.01z"/>
+                    </svg>
+                </span>
                 <?php endif; ?>
             </h2>
-            <?php if (!empty($specialty)) : ?>
+            <?php if ($specialty !== '') : ?>
             <p class="mc-doctor-title">
-                <span class="mc-specialty-badge mc-specialty--<?php echo $specSlug; ?>">
-                    <?php echo $specialty; ?>
-                </span>
+                <span class="mc-specialty-badge mc-specialty-badge--<?php echo $specSlug; ?>"><?php echo $specialty; ?></span>
             </p>
             <?php endif; ?>
         </div>
     </div>
 
-    <!-- Versicherung -->
     <?php if ($hasGkv || $hasPkv) : ?>
-    <div style="margin-bottom:.6rem;">
+    <div class="mc-doctor-card__insurance">
         <?php if ($hasGkv) : ?>
         <span class="mc-insurance-badge mc-insurance--gkv">GKV</span>
         <?php endif; ?>
@@ -75,42 +87,42 @@ $verified   = !empty($d['verified']);
     </div>
     <?php endif; ?>
 
-    <!-- Bewertung -->
     <?php if ($rating > 0) : ?>
-    <div style="font-size:var(--font-sm);color:var(--muted-color);margin-bottom:.5rem;">
-        <span style="color:#f59e0b;font-size:var(--font-md);">
-            <?php echo str_repeat('★', (int)round($rating)) . str_repeat('☆', 5 - (int)round($rating)); ?>
+    <div class="mc-doctor-rating">
+        <span class="mc-doctor-rating__stars" aria-hidden="true">
+            <?php echo str_repeat('★', $ratingRnd) . str_repeat('☆', 5 - $ratingRnd); ?>
         </span>
-        <span><?php echo number_format($rating, 1); ?></span>
+        <span class="mc-doctor-rating__value"><?php echo number_format($rating, 1); ?></span>
         <?php if ($reviews > 0) : ?>
-        <span>(<?php echo $reviews; ?> Bewertungen)</span>
+        <span class="mc-doctor-rating__count">(<?php echo $reviews; ?> Bewertungen)</span>
         <?php endif; ?>
     </div>
     <?php endif; ?>
 
-    <!-- Standort -->
-    <?php if (!empty($location)) : ?>
-    <p style="font-size:var(--font-sm);color:var(--muted-color);margin-bottom:.5rem;">
-        📍 <?php echo $location; ?>
+    <?php if ($location !== '') : ?>
+    <p class="mc-doctor-location">
+        <span class="mc-doctor-location__icon" aria-hidden="true">📍</span>
+        <?php echo $location; ?>
     </p>
     <?php endif; ?>
 
-    <!-- Nächster Termin -->
-    <?php if (!empty($nextAppt)) : ?>
-    <p style="font-size:var(--font-sm);color:var(--accent-color);font-weight:600;margin-bottom:.75rem;">
-        🗓️ Nächster Termin: <?php echo $nextAppt; ?>
+    <?php if ($nextAppt !== '') : ?>
+    <p class="mc-doctor-appointment">
+        <span class="mc-doctor-appointment__icon" aria-hidden="true">🗓</span>
+        Nächster Termin: <?php echo $nextAppt; ?>
     </p>
     <?php endif; ?>
 
-    <!-- Aktionen -->
-    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:auto;padding-top:.875rem;border-top:1px solid var(--border-color);">
-        <a href="<?php echo $profileUrl; ?>" class="mc-btn mc-btn-outline" style="flex:1;min-width:0;justify-content:center;font-size:var(--font-xs);"
+    <div class="mc-doctor-card__actions">
+        <a href="<?php echo $profileUrl; ?>"
+           class="mc-btn mc-btn-outline mc-btn-sm mc-doctor-card__profile-btn"
            aria-label="Profil von <?php echo $name; ?> anzeigen">
             Profil
         </a>
-        <a href="<?php echo $safe($siteUrl . '/termin?doctor=' . $id); ?>" class="mc-btn mc-btn-primary" style="flex:1;min-width:0;justify-content:center;font-size:var(--font-xs);"
+        <a href="<?php echo $bookingUrl; ?>"
+           class="mc-btn mc-btn-primary mc-btn-sm mc-doctor-card__book-btn"
            aria-label="Termin bei <?php echo $name; ?> buchen">
-            🗓️ Termin
+            Termin buchen
         </a>
     </div>
 </article>

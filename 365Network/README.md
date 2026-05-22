@@ -1,6 +1,6 @@
 # 365Network Theme
 
-Version: 3.4.14
+Version: 3.4.15
 Target: 365CMS v3.x.x, PHP 8.4
 
 ## Focus
@@ -19,6 +19,7 @@ Professionelles Networking-Dashboard für IT-Experten, Firmen, Events, Speaker, 
 - JS respektiert `prefers-reduced-motion`; das Header-Canvas pausiert außerhalb des Viewports und in versteckten Tabs.
 - CTA-Gradient nutzt jetzt das identitätsstiftende Navy → Gold (statt eines generischen Navy → Royal Blue) und vermeidet damit klassisches KI-Slop-Design.
 - `style.css` deklariert `Requires PHP: 8.4` im Stylesheet-Header.
+- Nachtrag 19.05.2026: Directory-GET-Parameter, Customizer-CSS-Werte und fehlende UTF-8-Attribut-Escapes wurden auf den v3/PHP-8.4-Hardening-Stand `3.4.15` nachgezogen.
 
 ## Files
 

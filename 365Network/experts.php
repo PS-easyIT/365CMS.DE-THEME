@@ -31,13 +31,13 @@ $homeUrl   = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 $expertsBaseUrl = theme_safe_url($siteUrl . '/experts', $siteUrl . '/experts');
 
 // ── Parameter ──
-$search   = trim(strip_tags($_GET['q'] ?? ''));
-$location = trim(strip_tags($_GET['location'] ?? ''));
-$skill    = trim(strip_tags($_GET['skill'] ?? ''));
-$avail    = in_array($_GET['avail'] ?? '', ['available', 'limited', 'booked']) ? $_GET['avail'] : '';
-$sort     = in_array($_GET['sort'] ?? '', ['latest', 'name', 'experience']) ? $_GET['sort'] : 'latest';
-$view     = ($_GET['view'] ?? 'grid') === 'list' ? 'list' : 'grid';
-$page     = max(1, (int)($_GET['page'] ?? 1));
+$search   = theme_clean_query_text($_GET['q'] ?? '', 120);
+$location = theme_clean_query_text($_GET['location'] ?? '', 80);
+$skill    = theme_clean_query_text($_GET['skill'] ?? '', 80);
+$avail    = theme_clean_query_choice($_GET['avail'] ?? '', ['available', 'limited', 'booked']);
+$sort     = theme_clean_query_choice($_GET['sort'] ?? '', ['latest', 'name', 'experience'], 'latest');
+$view     = theme_clean_query_choice($_GET['view'] ?? '', ['grid', 'list'], 'grid');
+$page     = theme_clean_query_int($_GET['page'] ?? 1, 1, 1, 10000);
 $perPage  = 18;
 
 $experts      = [];
@@ -45,6 +45,15 @@ $locations    = [];
 $skills       = [];
 $totalCount   = 0;
 $totalPages   = 1;
+
+$expertsQuery = [
+    'q' => $search,
+    'location' => $location,
+    'skill' => $skill,
+    'avail' => $avail,
+    'sort' => $sort,
+    'view' => $view,
+];
 
 if ($hasPlugin) {
     try {
@@ -196,7 +205,7 @@ require_once __DIR__ . '/header.php';
                         <?php
                         $availOpts = ['' => 'Alle', 'available' => '✅ Verfügbar', 'limited' => '🟡 Eingeschränkt', 'booked' => '🔴 Gebucht'];
                         foreach ($availOpts as $val => $label): ?>
-                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $_GET, ['avail' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
+                            <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $expertsQuery, ['avail' => $val, 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                                class="filter-link <?php echo $avail === $val ? 'is-active' : ''; ?>">
                                 <?php echo $label; ?>
                             </a>
@@ -231,9 +240,9 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                 </div>
                 <div class="directory-toolbar-right">
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $_GET, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $expertsQuery, ['view' => 'grid']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'grid' ? 'is-active' : ''; ?>" aria-label="Rasteransicht">⊞</a>
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $_GET, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $expertsQuery, ['view' => 'list']), ENT_QUOTES, 'UTF-8'); ?>"
                        class="view-toggle-btn <?php echo $view === 'list' ? 'is-active' : ''; ?>" aria-label="Listenansicht">≡</a>
                 </div>
             </div>
@@ -311,16 +320,16 @@ require_once __DIR__ . '/header.php';
             <?php if ($totalPages > 1): ?>
             <nav class="directory-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1): ?>
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $_GET, ['page' => (string) ($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $expertsQuery, ['page' => (string) ($page - 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">← Zurück</a>
                 <?php endif; ?>
                 <div class="pagination-pages">
                     <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $_GET, ['page' => (string) $i]), ENT_QUOTES, 'UTF-8'); ?>"
+                        <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $expertsQuery, ['page' => (string) $i]), ENT_QUOTES, 'UTF-8'); ?>"
                            class="pagination-page <?php echo $i === $page ? 'is-current' : ''; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
                 </div>
                 <?php if ($page < $totalPages): ?>
-                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $_GET, ['page' => (string) ($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
+                    <a href="<?php echo htmlspecialchars(theme_build_query_url('/experts', $expertsQuery, ['page' => (string) ($page + 1)]), ENT_QUOTES, 'UTF-8'); ?>" class="pagination-btn">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

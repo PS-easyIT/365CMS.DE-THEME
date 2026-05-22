@@ -45,18 +45,16 @@ $typeBadges = [
 </section>
 
 <section class="ptc-page-content">
-    <div class="ptc-container" style="max-width:800px;">
+    <div class="ptc-container ptc-search-wrap">
 
         <!-- Suchformular -->
-        <form action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search" method="GET"
-              style="display:flex;gap:0.75rem;margin-bottom:2.5rem;">
-            <input class="ptc-form-control"
+        <form class="ptc-search-form" action="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search" method="GET">
+            <input class="ptc-form-control ptc-search-input"
                    type="search"
                    name="q"
                    placeholder="Suche nach Seiten, Themen…"
                    value="<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>"
-                   aria-label="Suchbegriff"
-                   style="flex:1;">
+                   aria-label="Suchbegriff">
             <button type="submit" class="btn-ptc btn-ptc-primary">Suchen</button>
         </form>
 
@@ -82,7 +80,7 @@ $typeBadges = [
                             <a href="<?php echo $resultUrl; ?>">
                                 <?php echo htmlspecialchars($resultTitle, ENT_QUOTES, 'UTF-8'); ?>
                             </a>
-                            <span class="ptc-search-badge" style="background:<?php echo $badge['bg']; ?>;color:<?php echo $badge['color']; ?>;">
+                            <span class="ptc-search-badge ptc-search-badge--<?php echo htmlspecialchars($resultType, ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo htmlspecialchars($badge['label']); ?>
                             </span>
                         </h2>
@@ -98,7 +96,7 @@ $typeBadges = [
 
         <?php else: ?>
             <div class="ptc-empty-state">
-                <p style="font-size:2.5rem;margin:0;">🔍</p>
+                <p class="ptc-empty-icon" aria-hidden="true">🔍</p>
                 <?php if ($query && trim($query) !== ''): ?>
                     <p><strong>Keine Ergebnisse für „<?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?>" gefunden.</strong></p>
                     <p class="ptc-text-muted">Versuche andere Suchbegriffe oder weniger Wörter.</p>
@@ -106,7 +104,7 @@ $typeBadges = [
                     <p><strong>Gib einen Suchbegriff ein, um loszulegen.</strong></p>
                 <?php endif; ?>
                 <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/"
-                   class="btn-ptc btn-ptc-ghost" style="margin-top:1rem;">
+                   class="btn-ptc btn-ptc-ghost ptc-section-cta--spaced">
                     ← Zur Startseite
                 </a>
             </div>

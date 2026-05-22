@@ -2,110 +2,113 @@
 /**
  * Einzelner Blog-Beitrag – MedCare Pro Theme
  *
- * Erwartet: $post (object|array)
+ * Erwartet: $post (object|null)
  *
- * @package MedCarePro
+ * @package MedCarePro_Theme
  */
-if (!defined('ABSPATH')) exit;
-get_header();
-$safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$siteUrl = SITE_URL;
 
-/** @var object|null $post */
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+
+$safe    = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+$blogUrl    = $safe(theme_route_url('blog'));
+$homeUrl    = $safe(theme_route_url('home'));
+$doctorsUrl = $safe(theme_route_url('doctors'));
+
 if (empty($post)) {
     try {
         $post = \CMS\Services\PostService::getCurrent();
-    } catch (\Throwable $e) {
+    } catch (\Throwable) {
         $post = null;
     }
 }
 ?>
-<main id="main" class="mc-main" role="main" style="padding:var(--spacing-2xl) 0;">
-    <div class="mc-container" style="max-width:860px;">
+<main id="main" class="mc-main mc-blog-single" role="main">
+    <div class="mc-container mc-blog-single__container">
 
         <?php if (!empty($post)) :
-            $title    = $safe($post->title ?? '');
-            $content  = $post->content ?? '';
-            $date     = isset($post->created_at) ? date('d. F Y', strtotime($post->created_at)) : '';
-            $author   = $safe($post->author_name ?? '');
-            $category = $safe($post->category_name ?? '');
-            $imgUrl   = $safe($post->thumbnail_url ?? '');
-            $dsgvoNote = mc_get_setting('dsgvo_medical', 'show_privacy_on_forms', true)
-                         ? mc_get_setting('dsgvo_medical', 'privacy_form_text', '')
-                         : '';
+            $title    = $safe((string) ($post->title ?? ''));
+            $content  = (string) ($post->content ?? '');
+            $date     = isset($post->created_at) ? date('d. F Y', strtotime((string) $post->created_at)) : '';
+            $author   = $safe((string) ($post->author_name ?? ''));
+            $category = $safe((string) ($post->category_name ?? ''));
+            $imgUrl   = $safe((string) ($post->thumbnail_url ?? ''));
+            $showPriv = filter_var(mc_get_setting('dsgvo_medical', 'show_privacy_on_forms', true), FILTER_VALIDATE_BOOLEAN);
+            $privacyNote = $showPriv
+                ? (string) mc_get_setting('dsgvo_medical', 'privacy_form_text', '')
+                : '';
         ?>
 
-        <!-- Breadcrumb -->
-        <nav aria-label="Breadcrumb" style="font-size:var(--font-sm);color:var(--muted-color);margin-bottom:1.5rem;">
-            <a href="<?php echo $safe($siteUrl); ?>">Startseite</a> ›
-            <a href="<?php echo $safe($siteUrl); ?>/blog">Gesundheitsratgeber</a> ›
+        <nav class="mc-breadcrumb" aria-label="Breadcrumb">
+            <a href="<?php echo $homeUrl; ?>">Startseite</a>
+            <span class="mc-breadcrumb__sep" aria-hidden="true">›</span>
+            <a href="<?php echo $blogUrl; ?>">Gesundheitsratgeber</a>
+            <span class="mc-breadcrumb__sep" aria-hidden="true">›</span>
             <span aria-current="page"><?php echo $title; ?></span>
         </nav>
 
-        <article aria-labelledby="post-title">
-            <!-- Header -->
-            <header style="margin-bottom:2rem;">
-                <?php if (!empty($category)) : ?>
-                <span class="mc-specialty-badge" style="margin-bottom:.75rem;display:inline-block;">
-                    <?php echo $category; ?>
-                </span>
+        <article class="mc-blog-single__article" aria-labelledby="post-title">
+            <header class="mc-blog-single__header">
+                <?php if ($category !== '') : ?>
+                <span class="mc-specialty-badge mc-blog-single__category"><?php echo $category; ?></span>
                 <?php endif; ?>
 
-                <h1 id="post-title" style="font-family:var(--font-heading);font-size:clamp(1.5rem,4vw,var(--font-4xl));color:var(--secondary-color);line-height:1.25;margin-bottom:.75rem;">
-                    <?php echo $title; ?>
-                </h1>
+                <h1 id="post-title" class="mc-blog-single__title"><?php echo $title; ?></h1>
 
-                <div style="display:flex;flex-wrap:wrap;gap:1rem;font-size:var(--font-sm);color:var(--muted-color);padding-bottom:1.25rem;border-bottom:1px solid var(--border-color);">
-                    <?php if (!empty($author)) : ?>
-                    <span>👤 <?php echo $author; ?></span>
+                <div class="mc-blog-single__meta">
+                    <?php if ($author !== '') : ?>
+                    <span class="mc-blog-single__author"><?php echo $author; ?></span>
                     <?php endif; ?>
-                    <?php if (!empty($date)) : ?>
-                    <time>📅 <?php echo $date; ?></time>
+                    <?php if ($date !== '') : ?>
+                    <time class="mc-blog-single__date"><?php echo $date; ?></time>
                     <?php endif; ?>
-                    <span style="margin-left:auto;">
-                        <a href="<?php echo $safe($siteUrl); ?>/blog" style="color:var(--primary-color);">← Zurück zum Ratgeber</a>
+                    <span class="mc-blog-single__back">
+                        <a href="<?php echo $blogUrl; ?>">← Zurück zum Ratgeber</a>
                     </span>
                 </div>
             </header>
 
-            <?php if (!empty($imgUrl)) : ?>
-            <img src="<?php echo $imgUrl; ?>" alt="<?php echo $title; ?>"
-                 style="width:100%;max-height:420px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:2rem;">
+            <?php if ($imgUrl !== '') : ?>
+            <img src="<?php echo $imgUrl; ?>" alt="" class="mc-blog-single__hero-img">
             <?php endif; ?>
 
-            <!-- Inhalt -->
-            <?php if (!empty($content)) : ?>
-            <div class="mc-card prose" style="padding:2rem;">
+            <?php if ($content !== '') : ?>
+            <div class="mc-card mc-blog-single__content prose">
                 <?php echo \CMS\Helpers\ContentHelper::processContent($content); ?>
             </div>
             <?php endif; ?>
 
-            <!-- Medizinischer Hinweis -->
-            <div class="mc-emergency-info" style="margin-top:2rem;" role="note">
-                <strong>⚕️ Medizinischer Hinweis:</strong>
-                Dieser Artikel dient ausschließlich der allgemeinen Information. Er ersetzt keine professionelle ärztliche Beratung.
-                Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt.
+            <div class="mc-medical-disclaimer" role="note">
+                <strong class="mc-medical-disclaimer__tag">
+                    <span aria-hidden="true">⚕</span> Medizinischer Hinweis
+                </strong>
+                <p>
+                    Dieser Artikel dient ausschließlich der allgemeinen Information. Er ersetzt keine professionelle ärztliche Beratung.
+                    Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt.
+                </p>
             </div>
 
-            <?php if (!empty($dsgvoNote)) : ?>
-            <p class="mc-dsgvo-note" style="margin-top:1rem;"><?php echo $safe($dsgvoNote); ?></p>
+            <?php if ($privacyNote !== '') : ?>
+            <p class="mc-dsgvo-note mc-blog-single__privacy"><?php echo $safe($privacyNote); ?></p>
             <?php endif; ?>
         </article>
 
-        <!-- Navigation: zurück / vorwärts -->
-        <nav style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:2.5rem;" aria-label="Beitragsnavigation">
-            <a href="<?php echo $safe($siteUrl); ?>/blog" class="mc-btn mc-btn-outline">← Alle Beiträge</a>
-            <a href="<?php echo $safe($siteUrl); ?>/aerzte" class="mc-btn mc-btn-primary">Passenden Arzt finden</a>
+        <nav class="mc-blog-single__nav" aria-label="Beitragsnavigation">
+            <a href="<?php echo $blogUrl; ?>" class="mc-btn mc-btn-outline">← Alle Beiträge</a>
+            <a href="<?php echo $doctorsUrl; ?>" class="mc-btn mc-btn-primary">Passenden Arzt finden</a>
         </nav>
 
         <?php else : ?>
-        <div class="mc-card" style="text-align:center;padding:3rem 2rem;">
-            <div style="font-size:3rem;margin-bottom:.75rem;" aria-hidden="true">🔍</div>
-            <h1 style="font-family:var(--font-heading);color:var(--secondary-color);margin-bottom:.5rem;">Beitrag nicht gefunden</h1>
-            <p style="color:var(--muted-color);">Dieser Beitrag existiert leider nicht mehr.</p>
-            <a href="<?php echo $safe($siteUrl); ?>/blog" class="mc-btn mc-btn-primary" style="margin-top:1.25rem;">
-                Zurück zum Ratgeber
-            </a>
+        <div class="mc-card mc-empty-state">
+            <div class="mc-empty-state__icon" aria-hidden="true">🔍</div>
+            <h1 class="mc-empty-state__title">Beitrag nicht gefunden</h1>
+            <p class="mc-empty-state__text">Dieser Beitrag existiert leider nicht mehr.</p>
+            <a href="<?php echo $blogUrl; ?>" class="mc-btn mc-btn-primary mc-empty-state__action">Zurück zum Ratgeber</a>
         </div>
         <?php endif; ?>
 

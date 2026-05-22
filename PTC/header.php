@@ -59,7 +59,7 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 
-<body>
+<body class="<?php echo ptc_body_class(); ?>">
 <?php \CMS\Hooks::doAction('body_start'); ?>
 <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
 
@@ -78,9 +78,9 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
                         <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
                              alt="<?php echo $title; ?>" class="ptc-logo-img">
                     <?php else : ?>
-                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <circle cx="18" cy="18" r="18" fill="var(--ptc-navy, #002D5D)"/>
-                            <path d="M10 12h5v3h-5zM10 17h5v3h-5zM10 22h5v3h-5zM17 12h9v3h-9zM17 17h7v3h-7zM17 22h5v3h-5z" fill="var(--ptc-gold, #D4A017)"/>
+                        <svg class="ptc-logo-mark" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
+                            <path d="M9 11h6v2H9zm0 5h6v2H9zm0 5h4v2H9zm10-10h8v2h-8zm0 5h6v2h-6zm0 5h5v2h-5z" fill="var(--color-accent)"/>
                         </svg>
                         <span class="ptc-logo-text"><?php echo $title; ?></span>
                     <?php endif; ?>

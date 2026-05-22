@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<?php
+declare(strict_types=1);
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+?><!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -21,18 +27,19 @@ $siteTitle    = $themeManager->getSiteTitle();
 $isLoggedIn   = theme_is_logged_in();
 $siteUrl      = SITE_URL;
 $safe         = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-$homeUrl      = function_exists('theme_route_url') ? theme_route_url('home')               : rtrim($siteUrl, '/') . '/';
-$searchUrl    = function_exists('theme_route_url') ? theme_route_url('search')             : rtrim($siteUrl, '/') . '/search';
-$loginUrl     = function_exists('theme_route_url') ? theme_route_url('login')              : rtrim($siteUrl, '/') . '/login';
-$registerUrl  = function_exists('theme_route_url') ? theme_route_url('register')           : rtrim($siteUrl, '/') . '/register';
-$memberUrl    = function_exists('theme_route_url') ? theme_route_url('member-dashboard', ['area' => 'member']) : rtrim($siteUrl, '/') . '/member';
+$homeUrl      = academy365_safe_url(function_exists('theme_route_url') ? theme_route_url('home') : rtrim($siteUrl, '/') . '/', rtrim($siteUrl, '/') . '/');
+$searchUrl    = academy365_safe_url(function_exists('theme_route_url') ? theme_route_url('search') : rtrim($siteUrl, '/') . '/search', rtrim($siteUrl, '/') . '/search');
+$loginUrl     = academy365_safe_url(function_exists('theme_route_url') ? theme_route_url('login') : rtrim($siteUrl, '/') . '/login', rtrim($siteUrl, '/') . '/login');
+$registerUrl  = academy365_safe_url(function_exists('theme_route_url') ? theme_route_url('register') : rtrim($siteUrl, '/') . '/register', rtrim($siteUrl, '/') . '/register');
+$memberUrl    = academy365_safe_url(function_exists('theme_route_url') ? theme_route_url('member-dashboard', ['area' => 'member']) : rtrim($siteUrl, '/') . '/member', rtrim($siteUrl, '/') . '/member');
+$logoSafeUrl  = academy365_safe_url((string) $logoUrl);
 ?>
 <header id="masthead" class="ac-site-header" role="banner">
     <div class="ac-header-inner">
         <div class="ac-branding">
             <a href="<?php echo $safe($homeUrl); ?>" rel="home">
-                <?php if (!empty($logoUrl)) : ?>
-                    <img src="<?php echo $safe($logoUrl); ?>" alt="<?php echo $safe($siteTitle); ?>" width="150" height="44">
+                <?php if ($logoSafeUrl !== '') : ?>
+                    <img src="<?php echo $safe($logoSafeUrl); ?>" alt="<?php echo $safe($siteTitle); ?>" width="150" height="44">
                 <?php else : ?>
                     <span class="ac-logo-text"><span aria-hidden="true">🎓</span><?php echo $safe($siteTitle); ?></span>
                 <?php endif; ?>

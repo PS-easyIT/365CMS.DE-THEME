@@ -3,12 +3,17 @@
   "name": "Business Presentation",
   "type": "theme",
   "license": "free",
-  "version": "1.0.0",
-  "min_cms_version": "0.20.0",
-  "released": "2026-02-21",
+  "version": "3.0.2",
+  "min_cms_version": "3.0.0",
+  "min_php": "8.4",
+  "requires_php": "8.4",
+  "released": "2026-05-19",
   "download_url": "",
   "checksum_sha256": "",
   "changelog": {
+    "3.0.2": "365CMS-v3.x.x Security-/Robustheits-Pass: Customizer-CSS-Werte werden validiert/geclamped, eigenes CSS defensiv bereinigt, URL-Helper fail-closed gehärtet, CMS-Seiten-HTML entfernt Event-/Style-Attribute und gefährliche href/src-Protokolle, Templates nutzen strict_types plus ABSPATH-Guard und das Mobile-Menü sperrt Scroll über eine Body-Klasse statt direktem Inline-Style. Nachtrag 2026-05-19: README, Changelog und Update-Feed auf den Abschlussstand synchronisiert.",
+    "3.0.1": "Re-Audit: editoriale B2B-Identität (Slate + Kupfer-Gold), Customizer-Schema, härtere Output-Escapings, Inline-Style-Cleanup, vollständige PHP 8.4 / 365CMS v3 Kompatibilität.",
+    "3.0.0": "Erstes 365CMS-v3-kompatibles Release auf PHP 8.4.",
     "1.0.0": "Erstveröffentlichung: Professionelles Business-Präsentation-Theme."
   }
 }

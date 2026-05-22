@@ -1,6 +1,6 @@
 <?php
 /**
- * PTC GmbH Theme – Customizer (Admin)
+ * PTC Theme – Customizer (Admin)
  *
  * Umfangreiche Anpassungsmöglichkeiten für Farben, Typografie, Layout,
  * Header, Footer, Buttons, Startseite (Hero, Dienstleistungen, Termine,
@@ -50,15 +50,15 @@ $config = [
         'sections' => [
             'primary_color' => [
                 'label'       => 'Primärfarbe (Navy)',
-                'description' => 'Hauptfarbe – Marineblau der PTC Corporate Identity.',
+                'description' => 'Hauptfarbe – Primärfarbe – Vertrauen und Seriosität.',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'primary_hover' => [
                 'label'       => 'Primärfarbe Hover',
                 'description' => 'Dunklerer Ton für Hover-Zustände auf Navy-Elementen.',
                 'type'        => 'color',
-                'default'     => '#001F42',
+                'default'     => '#123a47',
             ],
             'primary_light' => [
                 'label'       => 'Primärfarbe Hell',
@@ -68,15 +68,15 @@ $config = [
             ],
             'accent_color' => [
                 'label'       => 'Akzentfarbe (Gold)',
-                'description' => 'Goldton der PTC Corporate Identity – CTAs, Highlights.',
+                'description' => 'Akzentfarbe – Entwicklung und CTAs – CTAs, Highlights.',
                 'type'        => 'color',
-                'default'     => '#D4A017',
+                'default'     => '#2d7a5f',
             ],
             'accent_hover' => [
                 'label'       => 'Akzentfarbe Hover',
                 'description' => 'Dunkleres Gold für Hover-Zustände.',
                 'type'        => 'color',
-                'default'     => '#B8860B',
+                'default'     => '#236349',
             ],
             'accent_light' => [
                 'label'       => 'Akzentfarbe Hell',
@@ -100,7 +100,7 @@ $config = [
                 'label'       => 'Überschriftenfarbe',
                 'description' => 'Farbe aller Überschriften (h1–h6).',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'text_light' => [
                 'label'       => 'Helle Textfarbe',
@@ -130,13 +130,13 @@ $config = [
                 'label'       => 'Linkfarbe',
                 'description' => 'Standard-Linkfarbe im Content-Bereich.',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'link_hover_color' => [
                 'label'       => 'Link Hover-Farbe',
                 'description' => 'Linkfarbe beim Hover-Zustand.',
                 'type'        => 'color',
-                'default'     => '#D4A017',
+                'default'     => '#2d7a5f',
             ],
             'border_color' => [
                 'label'       => 'Rahmenfarbe',
@@ -162,13 +162,13 @@ $config = [
                 'label'       => 'CTA-Hintergrund (Verlauf Start)',
                 'description' => 'Startfarbe des CTA-Sektions-Hintergrund-Verlaufs.',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'cta_bg_to' => [
                 'label'       => 'CTA-Hintergrund (Verlauf Ende)',
                 'description' => 'Endfarbe des CTA-Sektions-Verlaufs.',
                 'type'        => 'color',
-                'default'     => '#001F42',
+                'default'     => '#123a47',
             ],
             'cta_text_color' => [
                 'label'       => 'CTA-Textfarbe',
@@ -188,7 +188,7 @@ $config = [
                 'label'       => 'Seitenrand-Akzent',
                 'description' => 'Optionale farbige Akzentlinie am linken und rechten Seitenrand. Leer/transparent = deaktiviert.',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'side_accent_width' => [
                 'label'       => 'Seitenrand-Akzent Breite (px)',
@@ -264,7 +264,7 @@ $config = [
                 'label'       => 'Blog Hero Hintergrund',
                 'description' => 'Hintergrundfarbe des Blog-Hero-Bereichs.',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'blog_hero_text' => [
                 'label'       => 'Blog Hero Text',
@@ -288,7 +288,7 @@ $config = [
                 'label'       => 'Blog Karte Titel',
                 'description' => 'Titelfarbe auf Blog-Karten.',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'blog_category_bg' => [
                 'label'       => 'Kategorie-Badge Hintergrund',
@@ -300,7 +300,7 @@ $config = [
                 'label'       => 'Kategorie-Badge Text',
                 'description' => 'Textfarbe der Kategorie-Badges.',
                 'type'        => 'color',
-                'default'     => '#B8860B',
+                'default'     => '#236349',
             ],
         ],
     ],
@@ -428,13 +428,13 @@ $config = [
                 'label'       => 'Logo-Text (Wordmark)',
                 'description' => 'Text-Logo als Fallback wenn kein Bild vorhanden.',
                 'type'        => 'text',
-                'default'     => 'PTC GmbH',
+                'default'     => '',
             ],
             'header_bg_color' => [
                 'label'       => 'Header-Hintergrundfarbe',
                 'description' => 'Hintergrundfarbe der Navigationsleiste (Navy).',
                 'type'        => 'color',
-                'default'     => '#002D5D',
+                'default'     => '#1a4d5c',
             ],
             'header_text_color' => [
                 'label'       => 'Header-Textfarbe',
@@ -446,7 +446,7 @@ $config = [
                 'label'       => 'Header-Akzentfarbe',
                 'description' => 'Akzentfarbe im Header – aktive Links, Hover-Zustand.',
                 'type'        => 'color',
-                'default'     => '#D4A017',
+                'default'     => '#2d7a5f',
             ],
             'header_height' => [
                 'label'       => 'Header-Höhe (px)',
@@ -574,13 +574,13 @@ $config = [
                 'label'       => 'Footer-Beschreibungstext',
                 'description' => 'Text im ersten Footer-Widget (z. B. Firmenbeschreibung).',
                 'type'        => 'textarea',
-                'default'     => 'PTC GmbH – Ihr Partner für Bildung, Karriere und Zukunft.',
+                'default'     => ' – Ihr Partner für Bildung, Karriere und Zukunft.',
             ],
             'footer_address' => [
                 'label'       => 'Adresse / Kontakt',
                 'description' => 'Adressdaten im Kontakt-Widget des Footers.',
                 'type'        => 'textarea',
-                'default'     => "PTC GmbH\nMusterstraße 1\n12345 Musterstadt",
+                'default'     => "\nMusterstraße 1\n12345 Musterstadt",
             ],
             'footer_phone' => [
                 'label'       => 'Telefon',
@@ -642,19 +642,19 @@ $config = [
                 'label'       => 'Network Bar – Name',
                 'description' => 'Name/Label links in der Network Bar.',
                 'type'        => 'text',
-                'default'     => 'Andreas Hepp',
+                'default'     => '',
             ],
             'network_bar_link1_label' => [
                 'label'       => 'Link 1 – Label',
                 'description' => '',
                 'type'        => 'text',
-                'default'     => 'PHIN IT',
+                'default'     => '',
             ],
             'network_bar_link1_url' => [
                 'label'       => 'Link 1 – URL',
                 'description' => '',
                 'type'        => 'text',
-                'default'     => 'https://phinit.de',
+                'default'     => '',
             ],
             'network_bar_link2_label' => [
                 'label'       => 'Link 2 – Label',
@@ -896,7 +896,7 @@ $config = [
                 'label'       => 'Service 2 – Titel',
                 'description' => '',
                 'type'        => 'text',
-                'default'     => 'Logistiklehrwerkstatt',
+                'default'     => 'Weiterbildung & Qualifizierung',
             ],
             'service_2_text' => [
                 'label'       => 'Service 2 – Beschreibung',
@@ -1629,7 +1629,7 @@ $config = [
                 'label'       => 'Antwort 1',
                 'description' => '',
                 'type'        => 'textarea',
-                'default'     => 'Wir bieten ein breites Spektrum an Personaldienstleistungen: Von der klassischen Personalvermittlung über Arbeitnehmerüberlassung bis hin zu individuellen Bildungs- und Qualifizierungsangeboten in unserer Akademie und Logistiklehrwerkstatt.',
+                'default'     => 'Wir bieten ein breites Spektrum an Personaldienstleistungen: Von der klassischen Personalvermittlung über Arbeitnehmerüberlassung bis hin zu individuellen Bildungs- und Qualifizierungsangeboten in unserer Akademie und Weiterbildung & Qualifizierung.',
             ],
 
             // ── FAQ 2 ──
@@ -1665,7 +1665,7 @@ $config = [
                 'label'       => '💬 Frage 4',
                 'description' => '',
                 'type'        => 'text',
-                'default'     => 'Wie finde ich über PTC den passenden Job?',
+                'default'     => 'Wie finde ich bei uns den passenden Job?',
             ],
             'faq_4_answer' => [
                 'label'       => 'Antwort 4',
@@ -1755,13 +1755,13 @@ $config = [
                 'label'       => 'Hero-Überschrift',
                 'description' => 'Hauptüberschrift – HTML-Tags wie &lt;span class="highlight"&gt; erlaubt.',
                 'type'        => 'text',
-                'default'     => 'Willkommen bei <span class="highlight">PTC GmbH</span> – Ihr Partner für Personaldienstleistungen.',
+                'default'     => 'Willkommen bei <span class="highlight"></span> – Ihr Partner für Personaldienstleistungen.',
             ],
             'hero_text' => [
                 'label'       => 'Hero-Beschreibungstext',
                 'description' => 'Einleitungstext unter der Überschrift.',
                 'type'        => 'textarea',
-                'default'     => 'Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Logistiklehrwerkstatt – alles aus einer Hand.',
+                'default'     => 'Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Weiterbildung & Qualifizierung – alles aus einer Hand.',
             ],
             'hero_cta_primary_label' => [
                 'label'       => 'Primärer CTA-Button Text',
@@ -2077,7 +2077,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                $newFileName = 'ptc-logo-' . time() . '.' . $fileExt;
+                $newFileName = 'theme-logo-' . time() . '.' . $fileExt;
                 $destPath    = $uploadDir . '/' . $newFileName;
                 if (move_uploaded_file($_FILES['logo_upload_file']['tmp_name'], $destPath)) {
                     $customizer->set('header', 'logo_url', UPLOAD_URL . '/theme-logos/' . $newFileName);
@@ -2099,7 +2099,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                $newFileName = 'ptc-hero-' . time() . '.' . $fileExt;
+                $newFileName = 'theme-hero-' . time() . '.' . $fileExt;
                 $destPath    = $uploadDir . '/' . $newFileName;
                 if (move_uploaded_file($_FILES['hero_bg_upload_file']['tmp_name'], $destPath)) {
                     $customizer->set('homepage', 'hero_bg_image', UPLOAD_URL . '/theme-images/' . $newFileName);
@@ -2171,7 +2171,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theme Customizer – <?php echo defined('SITE_NAME') ? $esc(SITE_NAME) : 'PTC GmbH'; ?></title>
+    <title>Theme Customizer – <?php echo defined('SITE_NAME') ? $esc(SITE_NAME) : ''; ?></title>
     <link rel="stylesheet" href="<?php echo $esc($coreMainCssUrl); ?>">
     <link rel="stylesheet" href="<?php echo $esc($coreAdminCssUrl); ?>">
     <?php renderAdminSidebarStyles(); ?>
@@ -2226,7 +2226,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
         <div class="admin-page-header">
             <div>
                 <h2>🎨 Theme Customizer – PTC</h2>
-                <p>Passe das Aussehen des PTC Corporate-Themes an.</p>
+                <p>Passe das Aussehen des des Themes an.</p>
             </div>
             <div class="header-actions">
                 <a href="<?php echo $esc(SITE_URL); ?>/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">🌐 Seite ansehen</a>
@@ -2711,7 +2711,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                 <button class="modal-close" onclick="closeResetModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Alle Einstellungen dieses Tabs werden auf die <strong>Standard-Designwerte</strong> des PTC-Themes zurückgesetzt.</p>
+                <p>Alle Einstellungen dieses Tabs werden auf die <strong>Standard-Designwerte</strong> des Themes zurückgesetzt.</p>
                 <p style="color:#64748b;font-size:.875rem;">Bereits gespeicherte Anpassungen gehen für diesen Bereich verloren.</p>
             </div>
             <div class="modal-footer">
@@ -2732,30 +2732,30 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 
         // PTC CSS-Variable-Mapping
         var cssVarMap = {
-            'colors_primary_color':     '--ptc-navy',
-            'colors_primary_hover':     '--ptc-navy-dark',
-            'colors_primary_light':     '--ptc-navy-light',
-            'colors_accent_color':      '--ptc-gold',
-            'colors_accent_hover':      '--ptc-gold-dark',
-            'colors_accent_light':      '--ptc-gold-light',
-            'colors_secondary_color':   '--ptc-slate',
-            'colors_text_color':        '--ptc-text',
-            'colors_heading_color':     '--ptc-heading',
-            'colors_text_light':        '--ptc-white',
-            'colors_muted_color':       '--ptc-muted',
-            'colors_bg_color':          '--ptc-bg',
-            'colors_bg_secondary':      '--ptc-bg-alt',
-            'colors_link_color':        '--ptc-link',
-            'colors_link_hover_color':  '--ptc-link-hover',
-            'colors_border_color':      '--ptc-border',
-            'colors_success_color':     '--ptc-success',
-            'colors_error_color':       '--ptc-error',
-            'header_header_bg_color':   '--ptc-navy',
-            'header_header_text_color': '--ptc-white',
-            'header_header_accent_color': '--ptc-gold',
-            'footer_footer_bg_color':   '--ptc-footer-bg',
-            'footer_footer_text_color': '--ptc-footer-text',
-            'footer_footer_link_color': '--ptc-footer-link',
+            'colors_primary_color':     '--color-primary',
+            'colors_primary_hover':     '--color-primary-hover',
+            'colors_primary_light':     '--color-primary-light',
+            'colors_accent_color':      '--color-accent',
+            'colors_accent_hover':      '--color-accent-hover',
+            'colors_accent_light':      '--color-accent-light',
+            'colors_secondary_color':   '--color-secondary',
+            'colors_text_color':        '--color-text',
+            'colors_heading_color':     '--color-heading',
+            'colors_text_light':        '--color-on-dark',
+            'colors_muted_color':       '--color-muted',
+            'colors_bg_color':          '--color-bg',
+            'colors_bg_secondary':      '--color-bg-alt',
+            'colors_link_color':        '--color-link',
+            'colors_link_hover_color':  '--color-link-hover',
+            'colors_border_color':      '--color-border',
+            'colors_success_color':     '--color-success',
+            'colors_error_color':       '--color-error',
+            'header_header_bg_color':   '--color-primary',
+            'header_header_text_color': '--color-on-dark',
+            'header_header_accent_color': '--color-accent',
+            'footer_footer_bg_color':   '--footer-bg',
+            'footer_footer_text_color': '--footer-text',
+            'footer_footer_link_color': '--footer-link',
         };
 
         function updateLivePreview() {
@@ -2824,7 +2824,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                 previewWrap.style.cssText = 'padding:1rem;border-bottom:1px solid #f1f5f9;background:#fafafa;';
                 var title = document.createElement('div');
                 title.style.cssText = 'font-size:.75rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;';
-                title.textContent = 'PTC Farb-Vorschau';
+                title.textContent = 'Farb-Vorschau';
                 previewWrap.appendChild(title);
                 previewWrap.appendChild(palette);
                 firstCard.insertBefore(previewWrap, firstCard.firstChild);

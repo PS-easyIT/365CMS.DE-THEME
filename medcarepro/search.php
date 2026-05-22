@@ -4,33 +4,40 @@
  *
  * Erwartet: $results (array), $query (string), $total (int), $currentPage (int), $totalPages (int)
  *
- * @package MedCarePro
+ * @package MedCarePro_Theme
  */
+
 declare(strict_types=1);
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 get_header();
-$safe    = static fn(mixed $v): string => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
-$siteUrl = SITE_URL;
-$rawQuery = trim((string)($_GET['q'] ?? $query ?? ''));
-$query = strip_tags($rawQuery);
-$query = function_exists('mb_substr') ? mb_substr($query, 0, 120) : substr($query, 0, 120);
-$queryEsc = htmlspecialchars((string)$query, ENT_QUOTES, 'UTF-8');
-$page    = max(1, (int)($_GET['page'] ?? $currentPage ?? 1));
-$normalizeResultUrl = static function (mixed $value, string $fallback) use ($safe): string {
-    $url = trim((string)$value);
+
+$safe    = static fn(mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
+
+$rawQuery = trim((string) ($_GET['q'] ?? $query ?? ''));
+$query    = strip_tags($rawQuery);
+$query    = function_exists('mb_substr') ? mb_substr($query, 0, 120) : substr($query, 0, 120);
+$queryEsc = $safe($query);
+$page     = max(1, (int) ($_GET['page'] ?? $currentPage ?? 1));
+
+$searchUrl  = $safe(theme_route_url('search'));
+$doctorsUrl = $safe(theme_route_url('doctors'));
+
+$normalizeResultUrl = static function (mixed $value, string $fallback): string {
+    $url = trim((string) $value);
     if ($url === '' || preg_match('/[\x00-\x1F\x7F]/', $url) === 1 || preg_match('#^javascript:#i', $url) === 1) {
-        return htmlspecialchars((string)$fallback, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8');
     }
-
     if (str_starts_with($url, '//')) {
-        return htmlspecialchars((string)$fallback, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8');
     }
-
     if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $url) === 1 && filter_var($url, FILTER_VALIDATE_URL) === false) {
-        return htmlspecialchars((string)$fallback, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8');
     }
-
-    return htmlspecialchars((string)$url, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 };
 
 if (empty($results)) {
@@ -38,124 +45,122 @@ if (empty($results)) {
         $results    = [];
         $total      = 0;
         $totalPages = 1;
-        if (!empty($query)) {
+        if ($query !== '') {
             $results    = \CMS\Services\PostService::search($query, ['per_page' => 12, 'page' => $page]);
             $total      = \CMS\Services\PostService::searchCount($query);
-            $totalPages = (int)ceil($total / 12);
+            $totalPages = (int) ceil($total / 12);
         }
-    } catch (\Throwable $e) {
-        $results = []; $total = 0; $totalPages = 1;
+    } catch (\Throwable) {
+        $results = [];
+        $total = 0;
+        $totalPages = 1;
     }
 }
 ?>
-<main id="main" class="mc-main" role="main" style="padding:var(--spacing-2xl) 0;">
+<main id="main" class="mc-main mc-search-page" role="main">
     <div class="mc-container">
 
-        <!-- Suchformular -->
-        <div class="mc-card" style="padding:2rem;margin-bottom:2rem;">
-            <form role="search" method="get" action="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/search"
-                  style="display:flex;gap:.75rem;flex-wrap:wrap;" aria-label="Suche">
+        <div class="mc-card mc-search-form-card">
+            <form role="search" method="get" action="<?php echo $searchUrl; ?>" class="mc-search-form" aria-label="Suche">
                 <label for="search-input" class="mc-visually-hidden">Suchbegriff eingeben</label>
-                <input id="search-input" type="search" name="q"
-                      value="<?php echo $queryEsc; ?>"
+                <input id="search-input"
+                       type="search"
+                       name="q"
+                       value="<?php echo $queryEsc; ?>"
                        placeholder="Arzt, Fachgebiet, Diagnose …"
-                       class="mc-input" style="flex:1;min-width:200px;"
+                       class="mc-input mc-search-form__input"
                        autofocus>
                 <button type="submit" class="mc-btn mc-btn-primary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         focusable="false" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
                     Suchen
                 </button>
             </form>
         </div>
 
-        <?php if (!empty($query)) : ?>
-        <h1 id="search-results-heading"
-            style="font-family:var(--font-heading);font-size:var(--font-2xl);color:var(--secondary-color);margin-bottom:1.5rem;">
+        <?php if ($query !== '') : ?>
+        <h1 id="search-results-heading" class="mc-search-results__heading">
             Suchergebnisse für
-            <em style="font-style:normal;color:var(--primary-color);">&ldquo;<?php echo $queryEsc; ?>&rdquo;</em>
-            <?php if ($total > 0) : ?>
-                <span style="font-size:var(--font-sm);font-weight:400;color:var(--muted-color);margin-left:.5rem;">
-                    (<?php echo (int)$total; ?> Treffer)
-                </span>
+            <em class="mc-search-results__term">&ldquo;<?php echo $queryEsc; ?>&rdquo;</em>
+            <?php if (($total ?? 0) > 0) : ?>
+                <span class="mc-search-results__count">(<?php echo (int) $total; ?> Treffer)</span>
             <?php endif; ?>
         </h1>
 
         <?php if (!empty($results)) : ?>
-        <div style="display:flex;flex-direction:column;gap:1rem;" aria-live="polite">
+        <div class="mc-search-results__list" aria-live="polite">
             <?php foreach ($results as $r) :
-                $fallbackUrl = $siteUrl . '/' . rawurlencode((string)($r->slug ?? $r->id ?? ''));
+                $fallbackUrl = mc_href('/' . rawurlencode((string) ($r->slug ?? $r->id ?? '')));
                 $url     = $normalizeResultUrl($r->url ?? $fallbackUrl, $fallbackUrl);
-                $title   = htmlspecialchars((string)($r->title ?? ''), ENT_QUOTES, 'UTF-8');
-                $excerpt = htmlspecialchars((string)($r->excerpt ?? ''), ENT_QUOTES, 'UTF-8');
-                $type    = htmlspecialchars((string)($r->type ?? ''), ENT_QUOTES, 'UTF-8');
-                $date    = isset($r->created_at) ? date('d.m.Y', strtotime($r->created_at)) : '';
-                $imgUrl  = htmlspecialchars((string)($r->thumbnail_url ?? ''), ENT_QUOTES, 'UTF-8');
+                $title   = $safe((string) ($r->title ?? ''));
+                $excerpt = $safe((string) ($r->excerpt ?? ''));
+                $type    = (string) ($r->type ?? '');
+                $typeEsc = $safe($type);
+                $date    = isset($r->created_at) ? date('d.m.Y', strtotime((string) $r->created_at)) : '';
+                $imgUrl  = $safe((string) ($r->thumbnail_url ?? ''));
             ?>
-            <div class="mc-search-result">
-                <?php if (!empty($imgUrl)) : ?>
-                <img src="<?php echo htmlspecialchars((string)$imgUrl, ENT_QUOTES, 'UTF-8'); ?>" alt="" aria-hidden="true" class="mc-search-result__avatar">
+            <article class="mc-search-result">
+                <?php if ($imgUrl !== '') : ?>
+                <img src="<?php echo $imgUrl; ?>" alt="" aria-hidden="true" class="mc-search-result__avatar">
                 <?php else : ?>
-                <div class="mc-search-result__avatar" style="background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;" aria-hidden="true">
-                    <?php echo ($type === 'doctor') ? '👨‍⚕️' : '📄'; ?>
+                <div class="mc-search-result__avatar mc-search-result__avatar--placeholder" aria-hidden="true">
+                    <?php echo ($type === 'doctor') ? '👨‍⚕' : '📄'; ?>
                 </div>
                 <?php endif; ?>
-                <div style="flex:1;min-width:0;">
+                <div class="mc-search-result__body">
                     <h2 class="mc-search-result__name">
-                        <a href="<?php echo htmlspecialchars((string)$url, ENT_QUOTES, 'UTF-8'); ?>" style="color:inherit;text-decoration:none;">
-                            <?php echo htmlspecialchars((string)($r->title ?? ''), ENT_QUOTES, 'UTF-8'); ?>
-                        </a>
+                        <a href="<?php echo $url; ?>"><?php echo $title; ?></a>
                     </h2>
-                    <?php if (!empty($excerpt)) : ?>
-                    <p class="mc-search-result__meta" style="margin-top:.35rem;line-height:1.55;">
-                        <?php echo htmlspecialchars((string)($r->excerpt ?? ''), ENT_QUOTES, 'UTF-8'); ?>
-                    </p>
+                    <?php if ($excerpt !== '') : ?>
+                    <p class="mc-search-result__excerpt"><?php echo $excerpt; ?></p>
                     <?php endif; ?>
-                    <div style="display:flex;align-items:center;gap:1rem;margin-top:.5rem;flex-wrap:wrap;">
-                        <?php if (!empty($type)) : ?>
-                        <span class="mc-specialty-badge"><?php echo $type === 'doctor' ? '👨‍⚕️ Arzt' : '📰 Artikel'; ?></span>
+                    <div class="mc-search-result__meta">
+                        <?php if ($typeEsc !== '') : ?>
+                        <span class="mc-specialty-badge"><?php echo $type === 'doctor' ? 'Arzt' : 'Artikel'; ?></span>
                         <?php endif; ?>
-                        <?php if (!empty($date)) : ?>
-                        <span style="font-size:var(--font-xs);color:var(--muted-color);">📅 <?php echo $date; ?></span>
+                        <?php if ($date !== '') : ?>
+                        <span class="mc-search-result__date"><?php echo $safe($date); ?></span>
                         <?php endif; ?>
-                        <a href="<?php echo htmlspecialchars((string)$url, ENT_QUOTES, 'UTF-8'); ?>" class="mc-btn mc-btn-outline" style="padding:.3rem .75rem;font-size:var(--font-xs);margin-left:auto;">
+                        <a href="<?php echo $url; ?>" class="mc-btn mc-btn-outline mc-btn-sm mc-search-result__action">
                             Anzeigen →
                         </a>
                     </div>
                 </div>
-            </div>
+            </article>
             <?php endforeach; ?>
-        </div><!-- /results -->
+        </div>
 
         <?php else : ?>
-        <div class="mc-card" style="text-align:center;padding:3rem 2rem;">
-            <div style="font-size:3rem;margin-bottom:.75rem;" aria-hidden="true">🔍</div>
-            <h2 style="font-family:var(--font-heading);color:var(--secondary-color);margin-bottom:.5rem;">Kein Ergebnis gefunden</h2>
-            <p style="color:var(--muted-color);max-width:480px;margin:0 auto 1.25rem;">
+        <div class="mc-card mc-empty-state">
+            <div class="mc-empty-state__icon" aria-hidden="true">🔍</div>
+            <h2 class="mc-empty-state__title">Kein Ergebnis gefunden</h2>
+            <p class="mc-empty-state__text">
                 Zu <strong><?php echo $queryEsc; ?></strong> wurde nichts gefunden. Bitte versuchen Sie andere Suchbegriffe oder durchsuchen Sie direkt unsere Ärzteliste.
             </p>
-            <a href="<?php echo htmlspecialchars((string)$siteUrl, ENT_QUOTES, 'UTF-8'); ?>/aerzte" class="mc-btn mc-btn-primary">Arzt suchen</a>
+            <a href="<?php echo $doctorsUrl; ?>" class="mc-btn mc-btn-primary mc-empty-state__action">Arzt suchen</a>
         </div>
         <?php endif; ?>
 
-        <!-- Pagination -->
-        <?php if ($totalPages > 1) : ?>
-        <nav aria-label="Seitennavigation" style="display:flex;gap:.5rem;justify-content:center;margin-top:2.5rem;flex-wrap:wrap;">
+        <?php if (($totalPages ?? 1) > 1) : ?>
+        <nav class="mc-pagination" aria-label="Seitennavigation">
             <?php if ($page > 1) : ?>
-            <a href="?q=<?php echo rawurlencode($query); ?>&page=<?php echo $page - 1; ?>" class="mc-btn mc-btn-outline" rel="prev">← Zurück</a>
+            <a href="<?php echo $searchUrl; ?>?q=<?php echo rawurlencode($query); ?>&amp;page=<?php echo $page - 1; ?>" class="mc-btn mc-btn-outline mc-btn-sm" rel="prev">← Zurück</a>
             <?php endif; ?>
-            <span style="padding:.5rem 1rem;font-size:var(--font-sm);color:var(--muted-color);align-self:center;">
-                Seite <?php echo (int)$page; ?> von <?php echo (int)$totalPages; ?>
-            </span>
+            <span class="mc-pagination__status">Seite <?php echo (int) $page; ?> von <?php echo (int) $totalPages; ?></span>
             <?php if ($page < $totalPages) : ?>
-            <a href="?q=<?php echo rawurlencode($query); ?>&page=<?php echo $page + 1; ?>" class="mc-btn mc-btn-outline" rel="next">Weiter →</a>
+            <a href="<?php echo $searchUrl; ?>?q=<?php echo rawurlencode($query); ?>&amp;page=<?php echo $page + 1; ?>" class="mc-btn mc-btn-outline mc-btn-sm" rel="next">Weiter →</a>
             <?php endif; ?>
         </nav>
         <?php endif; ?>
 
         <?php else : ?>
-        <!-- Keine Suchanfrage -->
         <div class="mc-section-header">
-            <h1 id="search-results-heading" style="font-size:var(--font-3xl);">🔍 Arzt &amp; Ratgeber-Suche</h1>
+            <h1 id="search-results-heading" class="mc-search-results__heading">
+                <span class="mc-search-results__title-eyebrow">Arzt &amp; Ratgeber-Suche</span>
+            </h1>
             <p>Geben Sie einen Suchbegriff ein, um Ärzte, Fachgebiete oder Gesundheitsartikel zu finden.</p>
         </div>
         <?php endif; ?>

@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.4.15 - 2026-05-19
+
+Nachtrag zum 365CMS-v3.x.x Security-/Performance-Pass:
+
+- **Customizer-CSS:** Dynamische Farb- und Zahlenwerte aus `functions.php` laufen über `theme_css_color()` und `theme_css_number()` und werden vor der Ausgabe validiert bzw. geclamped.
+- **Directory-Parameter:** Experten-, Jobs- und Speaker-Query-States werden zentral normalisiert, gekürzt und von Steuerzeichen befreit; Links mergen keine rohen `$_GET`-Arrays mehr.
+- **Output-Escaping:** Directory-Filterausgaben wurden auf explizites `ENT_QUOTES, 'UTF-8'`-Escaping nachgezogen.
+- **Versionierung:** `THEME_VERSION`, `style.css`, `theme.json`, `update.json`, README und Doku-Changelog stehen konsistent auf `3.4.15`.
+
 ## 3.4.14 - 2026-05-17
 
 Re-Audit-Pass für 365Network (v3.x.x / PHP 8.4):

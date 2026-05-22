@@ -59,19 +59,19 @@ $showFaq      = $faqBool('show_faq', true);
 $showCta      = $hpBool('show_cta', true);
 
 // Hero
-$heroBadge        = (string) $hpGet('hero_badge', 'Ihr Partner für Bildung, Karriere und Zukunft');
-$heroTitle        = (string) $hpGet('hero_title', 'Willkommen bei <span class="highlight">PTC GmbH</span> – Ihr Partner für Personaldienstleistungen.');
-$heroText         = (string) $hpGet('hero_text', 'Wir verbinden Menschen mit Chancen: Personalvermittlung, Arbeitnehmerüberlassung, Akademie & Bildung und Logistiklehrwerkstatt – alles aus einer Hand.');
-$heroCta1Label    = (string) $hpGet('hero_cta_primary_label', 'Entdecken Sie Ihre Möglichkeiten');
-$heroCta1Url      = (string) $hpGet('hero_cta_primary_url', '#dienstleistungen');
-$heroCta2Label    = (string) $hpGet('hero_cta_secondary_label', 'Kontakt aufnehmen');
-$heroCta2Url      = (string) $hpGet('hero_cta_secondary_url', '#kontakt');
+$heroBadge        = (string) $hpGet('hero_badge', 'Ihr Spezialist für Personalvermittlung und berufliche Weiterbildung');
+$heroTitle        = (string) $hpGet('hero_title', 'Menschen verbinden. <span class="highlight">Kompetenz entwickeln.</span>');
+$heroText         = (string) $hpGet('hero_text', 'Personalvermittlung, Arbeitnehmerüberlassung und praxisnahe Qualifizierung – für Kandidaten und Arbeitgeber aus einer Hand.');
+$heroCta1Label    = (string) $hpGet('hero_cta_primary_label', 'Für Kandidaten');
+$heroCta1Url      = (string) $hpGet('hero_cta_primary_url', '#kandidaten');
+$heroCta2Label    = (string) $hpGet('hero_cta_secondary_label', 'Für Arbeitgeber');
+$heroCta2Url      = (string) $hpGet('hero_cta_secondary_url', '#arbeitgeber');
 $heroBgImage      = (string) $hpGet('hero_bg_image', '');
 
 // Services
 $servicesTag      = (string) $svcGet('services_tag', 'Unsere Leistungen');
 $servicesTitle    = (string) $svcGet('services_title', 'Unsere Dienstleistungen');
-$servicesSubtitle = (string) $svcGet('services_subtitle', 'Von Aktivierung über Logistik bis hin zur Personalvermittlung – wir bieten maßgeschneiderte Lösungen.');
+$servicesSubtitle = (string) $svcGet('services_subtitle', 'Von der Vermittlung über Zeitarbeit bis zur beruflichen Qualifizierung – passgenau für Ihren Bedarf.');
 $servicesCols     = (string) $svcGet('services_columns', '3');
 $servicesBgStyle  = (string) $svcGet('services_bg_style', 'default');
 $servicesCardStyle = (string) $svcGet('services_card_style', 'bordered');
@@ -165,7 +165,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
                     <span class="ptc-hero-badge"><?php echo htmlspecialchars($heroBadge, ENT_QUOTES, 'UTF-8'); ?></span>
                 <?php endif; ?>
 
-                <h1><?php echo $heroTitle; /* HTML erlaubt – aus Customizer */ ?></h1>
+                <h1><?php echo ptc_safe_headline($heroTitle); ?></h1>
 
                 <?php if ($heroText !== ''): ?>
                     <p class="ptc-hero-lead">
@@ -209,6 +209,47 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
 <?php endif; ?>
 
 <?php \CMS\Hooks::doAction('home_after_hero'); ?>
+
+<!-- ██ VERMITTLUNGSPROZESS + DUAL CTA ████████████████████████████████████ -->
+<section class="ptc-pipeline" id="kandidaten" aria-labelledby="ptc-pipeline-title">
+    <div class="ptc-container">
+        <div class="ptc-section-head">
+            <span class="ptc-section-tag">Unser Prozess</span>
+            <h2 id="ptc-pipeline-title">Vom Erstkontakt bis zur Einstellung</h2>
+            <p>Transparente Schritte für Kandidaten und Arbeitgeber – nachvollziehbar in jeder Phase.</p>
+        </div>
+        <ol class="ptc-pipeline-steps">
+            <li class="ptc-pipeline-step">
+                <h3>Bewerbung</h3>
+                <p>Profil, Qualifikation und Zielposition erfassen.</p>
+            </li>
+            <li class="ptc-pipeline-step">
+                <h3>Vorauswahl</h3>
+                <p>Abgleich mit offenen Stellen und Anforderungsprofilen.</p>
+            </li>
+            <li class="ptc-pipeline-step">
+                <h3>Vermittlung</h3>
+                <p>Gespräche, Feedback und passende Unternehmen.</p>
+            </li>
+            <li class="ptc-pipeline-step">
+                <h3>Einstellung</h3>
+                <p>Vertrag, Onboarding und optional Weiterbildung.</p>
+            </li>
+        </ol>
+        <div class="ptc-dual-cta" id="arbeitgeber">
+            <article class="ptc-dual-cta-card ptc-dual-cta-card--candidates">
+                <h3>Für Kandidaten</h3>
+                <p class="ptc-text-muted">Jobsuche, Bewerbungscoaching und Qualifizierung auf dem Weg zu Ihrem nächsten Schritt.</p>
+                <a href="<?php echo htmlspecialchars($heroCta1Url, ENT_QUOTES, 'UTF-8'); ?>" class="btn-ptc btn-ptc-accent btn-ptc-sm">Stellen entdecken</a>
+            </article>
+            <article class="ptc-dual-cta-card ptc-dual-cta-card--employers">
+                <h3>Für Arbeitgeber</h3>
+                <p class="ptc-text-muted">Fachkräfte, Zeitarbeit und Schulungen – wenn Kapazität und Qualifikation zählen.</p>
+                <a href="<?php echo htmlspecialchars($heroCta2Url, ENT_QUOTES, 'UTF-8'); ?>" class="btn-ptc btn-ptc-primary btn-ptc-sm">Personal anfragen</a>
+            </article>
+        </div>
+    </div>
+</section>
 
 <?php if ($showServices): ?>
 <!-- ██ DIENSTLEISTUNGEN ██████████████████████████████████████████████████ -->
@@ -346,7 +387,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
                         <?php endif; ?>
                         <h4><?php echo htmlspecialchars($event['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?></h4>
                         <?php if (!empty($event['text'])): ?>
-                            <p style="color:var(--ptc-muted);font-size:.9rem;margin:.5rem 0;"><?php echo htmlspecialchars($event['text'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            <p class="ptc-text-muted ptc-text-muted--sm"><?php echo htmlspecialchars($event['text'], ENT_QUOTES, 'UTF-8'); ?></p>
                         <?php endif; ?>
                         <?php
                         $eventUrl = '';
@@ -371,7 +412,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
                     </div>
                     <h4><?php echo htmlspecialchars($eventsEmptyText, ENT_QUOTES, 'UTF-8'); ?></h4>
                     <?php if ($eventsEmptyHint !== ''): ?>
-                        <p style="color:var(--ptc-muted);font-size:.9rem;"><?php echo htmlspecialchars($eventsEmptyHint, ENT_QUOTES, 'UTF-8'); ?></p>
+                        <p class="ptc-text-muted ptc-text-muted--sm"><?php echo htmlspecialchars($eventsEmptyHint, ENT_QUOTES, 'UTF-8'); ?></p>
                     <?php endif; ?>
                 </article>
             </div>
@@ -393,14 +434,13 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
         $bookingHeight = (int) $evtGet('events_booking_height', 600);
         if ($bookingUrl !== ''):
         ?>
-        <div class="ptc-booking-embed" style="margin-top:2.5rem;">
+        <div class="ptc-booking-embed">
             <?php if ($bookingTitle !== ''): ?>
-                <h3 style="text-align:center;margin-bottom:1.25rem;"><?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?></h3>
+                <h3><?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?></h3>
             <?php endif; ?>
             <iframe src="<?php echo htmlspecialchars($bookingUrl, ENT_QUOTES, 'UTF-8'); ?>"
-                    width="100%" height="<?php echo $bookingHeight; ?>"
+                    width="100%" height="<?php echo (int) $bookingHeight; ?>"
                     frameborder="0" scrolling="yes"
-                    style="border:0;border-radius:var(--ptc-radius, 8px);background:#fff;"
                     title="<?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?>"
                     loading="lazy"></iframe>
         </div>
@@ -427,7 +467,7 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
             <?php endif; ?>
         </div>
 
-        <div class="ptc-faq-list"<?php if ($faqMaxWidth > 0): ?> style="max-width:<?php echo $faqMaxWidth; ?>px;margin-left:auto;margin-right:auto;"<?php endif; ?>>
+        <div class="ptc-faq-list<?php echo $faqMaxWidth > 0 ? ' ptc-faq-list--constrained' : ''; ?>">
 
             <?php foreach ($faqItems as $item): ?>
             <details class="ptc-faq-item"<?php echo $faqStyle === 'open' ? ' open' : ''; ?>>
@@ -441,9 +481,9 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
         </div>
 
         <?php if ($faqShowCta): ?>
-        <div class="ptc-section-cta" style="margin-top:2rem;">
+        <div class="ptc-section-cta ptc-section-cta--spaced">
             <?php if ($faqCtaText !== ''): ?>
-                <p style="color:var(--ptc-muted);margin-bottom:.75rem;"><?php echo htmlspecialchars($faqCtaText, ENT_QUOTES, 'UTF-8'); ?></p>
+                <p class="ptc-text-muted"><?php echo htmlspecialchars($faqCtaText, ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
             <?php if ($faqCtaLabel !== ''): ?>
                 <a href="<?php echo htmlspecialchars($faqCtaUrl, ENT_QUOTES, 'UTF-8'); ?>"

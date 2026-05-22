@@ -30,7 +30,7 @@
             toggle.classList.add('is-active');
             toggle.setAttribute('aria-expanded', 'true');
             drawer.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('mobile-menu-open');
         }
 
         function close() {
@@ -40,7 +40,15 @@
             toggle.classList.remove('is-active');
             toggle.setAttribute('aria-expanded', 'false');
             drawer.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
+            document.body.classList.remove('mobile-menu-open');
+        }
+
+        function findAnchorTarget(hash) {
+            if (!hash || hash.length <= 1 || !/^#[A-Za-z][A-Za-z0-9_-]*$/.test(hash)) {
+                return null;
+            }
+
+            return document.getElementById(hash.slice(1));
         }
 
         if (toggle) {
@@ -62,7 +70,7 @@
             link.addEventListener('click', function (e) {
                 const href  = link.getAttribute('href');
                 const hash  = href.includes('#') ? '#' + href.split('#')[1] : href;
-                const target = hash.length > 1 ? document.querySelector(hash) : null;
+                const target = findAnchorTarget(hash);
                 if (target) {
                     e.preventDefault();
                     close();

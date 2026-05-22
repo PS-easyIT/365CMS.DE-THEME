@@ -12,6 +12,19 @@
 
 ---
 
+## v3.4.15 — 19. Mai 2026
+
+### Security-/Performance-Pass für 365CMS v3.x.x und PHP 8.4
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Security/CSS | Dynamische Customizer-CSS-Werte aus `functions.php` werden jetzt über `theme_css_color()` und `theme_css_number()` validiert bzw. begrenzt, bevor sie in `<style>`-Variablen landen. |
+| 🔴 fix | Security/Directories | Directory-GET-Parameter werden über zentrale Helper normalisiert, gekürzt und von Steuerzeichen befreit; Experten-, Jobs- und Speaker-Links nutzen normalisierte Query-State-Arrays statt roher `$_GET`-Merges. |
+| 🟡 refactor | Output-Consistency | Mehrere Directory-Filterausgaben wurden auf explizites `ENT_QUOTES, 'UTF-8'`-Escaping angehoben. |
+| 🟡 refactor | Versions | `THEME_VERSION`, `style.css`, `theme.json` und `update.json` auf `3.4.15` synchronisiert; Manifest-Anforderungen auf 365CMS `3.0.0` und PHP `8.4` gesetzt. |
+
+---
+
 ## v3.4.14 — Mai 2026
 
 ### Re-Audit-Pass: prepared LIMIT/OFFSET in allen Directory-Templates, Markup-Fix, identitätsstiftender CTA-Gradient

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Business Theme – Header
  *
@@ -11,12 +13,14 @@ if (!defined('ABSPATH')) {
 
 $title    = biz_site_title();
 $siteUrl  = biz_site_url();
+$bodyCls  = biz_body_class();
 
 try {
-    $_logoUrl = \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
-} catch (\Throwable $_e) {
+    $_logoUrl = (string) \CMS\Services\ThemeCustomizer::instance()->get('header', 'logo_url', '');
+} catch (\Throwable) {
     $_logoUrl = '';
 }
+$logoUrl = biz_safe_url($_logoUrl);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -27,7 +31,7 @@ try {
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>
 
-<body>
+<body class="<?php echo $bodyCls; ?>">
 <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
 
 <div class="biz-site">
@@ -37,14 +41,15 @@ try {
             <div class="biz-header-inner">
 
                 <!-- Logo -->
-                <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="biz-logo" aria-label="<?php echo $title; ?>">
-                    <?php if (!empty($_logoUrl)) : ?>
-                        <img src="<?php echo htmlspecialchars($_logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                <a href="<?php echo htmlspecialchars(biz_href('/'), ENT_QUOTES, 'UTF-8'); ?>" class="biz-logo biz-focus-shadow" aria-label="<?php echo $title; ?>">
+                    <?php if ($logoUrl !== '') : ?>
+                        <img src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>"
                              alt="<?php echo $title; ?>" class="biz-logo-img">
                     <?php else : ?>
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect width="32" height="32" rx="8" fill="#6366f1"/>
-                            <path d="M8 10h4v12H8V10zm6 0h4v12h-4V10zm6 4h4v8h-4v-8z" fill="white"/>
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true" focusable="false">
+                            <rect width="32" height="32" rx="6" fill="#c08a2e"/>
+                            <path d="M8 10h4v12H8V10zm6 0h4v12h-4V10zm6 4h4v8h-4v-8z" fill="#0c1320"/>
                         </svg>
                         <span class="biz-logo-text"><?php echo $title; ?></span>
                     <?php endif; ?>
@@ -55,9 +60,10 @@ try {
                     <?php biz_nav_menu('primary'); ?>
                 </nav>
 
-                <!-- Header CTA & Mobile Toggle -->
+                <!-- Header CTA -->
                 <div class="biz-header-cta">
-                    <a href="<?php echo htmlspecialchars(biz_href('#kontakt'), ENT_QUOTES, 'UTF-8'); ?>" class="btn-biz btn-biz-primary">
+                    <a href="<?php echo htmlspecialchars(biz_href('#kontakt'), ENT_QUOTES, 'UTF-8'); ?>"
+                       class="btn-biz btn-biz-primary">
                         Kontakt
                     </a>
                 </div>

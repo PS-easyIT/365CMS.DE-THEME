@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.0.2 – 2026-05-19 Nachtrag
+
+- Abschlussdokumentation für den Security-/Robustheits-Pass: validierte Customizer-CSS-Werte, fail-closed URL-Helper, strict_types/ABSPATH-Guards und ausgelagerte Template-Styles sind als finaler v3/PHP-8.4-Stand nachgetragen.
+- `theme.json`, `update.json`, `style.css`, `functions.php` und `CHANGELOG.md` bleiben auf `3.0.2` synchron; der Update-Feed trägt das Nachtragsdatum vom 19.05.2026.
+
+## 3.0.2 – 2026-05-18
+
+### Security-/Robustheits-Pass (365CMS v3.x.x / PHP 8.4)
+
+- Customizer-CSS-Werte werden vor der Ausgabe als CSS-Variablen über strikte Farb-, Zahlen- und Choice-Helper validiert bzw. auf die `theme.json`-Grenzen begrenzt.
+- `advanced.custom_css` entfernt nun zusätzlich zu `</style>` auch `<style>`-Tags, `@import`, `expression()`, `javascript:`-URLs sowie Legacy-Sinks wie `behavior`/`binding`.
+- Header-/Footer-/Home-/Index-/404-/Error-URLs laufen über `buildbase_safe_url()` mit sicheren Fallbacks; Logo-URLs und Post-URLs validieren fail-closed.
+- Footer-Copyright wird als Text behandelt, Platzhalter werden ersetzt und anschließend escaped ausgegeben.
+- `header.php`, `footer.php`, `home.php`, `page.php`, `index.php`, `404.php` und `error.php` verwenden jetzt einheitlich `declare(strict_types=1)` mit `ABSPATH`-Guard.
+- `BUILDBASE_THEME_VERSION`, `style.css`, `theme.json` und `update.json` sind auf `3.0.2` synchronisiert.
+
 ## 3.0.1 – 2026-05-17
 
 ### Re-Audit-Pass (PHP 8.4 / 365CMS v3.x.x)

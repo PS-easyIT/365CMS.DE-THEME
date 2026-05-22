@@ -3,12 +3,16 @@
   "name": "MedCare Pro",
   "type": "theme",
   "license": "free",
-  "version": "1.0.0",
-  "min_cms_version": "0.20.0",
-  "released": "2026-02-21",
+  "version": "1.0.3",
+  "min_cms_version": "3.0.0",
+  "requires_php": "8.4",
+  "released": "2026-05-19",
   "download_url": "",
   "checksum_sha256": "",
   "changelog": {
+    "1.0.3": "Re-Audit: medizinische Trust-Identität neu gesetzt (Klinik-Anker-Teal statt SaaS-Sky-Blue, Source Serif 4 für editoriale Akzente), vollständige Customizer-Verkabelung (Header/Footer/Buttons/Layout/Typografie/Spezialgebiete/A11y), neue Asset-Pipeline (enqueueStyles/enqueueScripts mit Cache-Bust), Inline-Style- und Inline-<style>-Cleanup, has-emergency-banner Body-Klasse statt JS-Padding-Hack, dynamische Google-Fonts-URL (nur tatsächlich gewählte Familien), defensive Sanitisierung custom_css/tel, Mobile-Menu mit aria-controls/Escape/Focus-Restore. Nachtrag 2026-05-19: eigene CHANGELOG.md ergänzt und README/Update-Feed auf den finalen Healthcare-Abschlussstand synchronisiert.",
+    "1.0.2": "v3-Kompatibilität: cms_init für Menüs, mapFontChoice, Customizer-Key-Mapping korrigiert, aria-hidden für Suchpanel, reduzierte Bewegung.",
+    "1.0.1": "Helper-Funktionen implementiert (theme_is_logged_in, theme_nav_menu, get_header, get_footer), Customizer-Key-Mismatches behoben, optionaler Notfall-Banner, 4-spaltiger Footer, neue Templates (home, blog, search, login, register).",
     "1.0.0": "Erstveröffentlichung: Healthcare & Praxis-Theme."
   }
 }

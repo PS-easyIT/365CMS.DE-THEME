@@ -1,7 +1,7 @@
 {
   "name": "MedCare Pro",
   "slug": "medcarepro",
-  "version": "1.0.1",
+  "version": "1.0.3",
 
   "templates": {
     "home":         "home.php",

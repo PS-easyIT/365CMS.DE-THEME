@@ -1,0 +1,416 @@
+{
+  "name": "CMS Newspaper",
+  "slug": "cms-newspaper",
+  "version": "1.0.0",
+  "author": "PHINIT.DE / Andreas Hepp",
+  "description": "Editoriales News-Portal-Theme – Broadsheet-Typografie (Playfair Display + Source Sans 3 + IBM Plex Mono), Ink-Schwarz mit Signal-Rot, Rule-Lines statt Card-Shadows. Für Tech-/IT-News, Magazine und redaktionelle Portale.",
+  "textdomain": "cms-newspaper",
+  "template": "cms-newspaper",
+  "tags": ["news", "newspaper", "magazine", "editorial", "broadsheet", "portal", "blog"],
+  "supports": ["custom-logo", "sticky-header", "custom-css", "dark-mode"],
+
+  "templates": {
+    "home": "home.php",
+    "index": "index.php",
+    "page": "page.php",
+    "404": "404.php",
+    "error": "error.php"
+  },
+
+  "menus": {
+    "primary-nav": "Hauptnavigation (Ressorts)",
+    "footer-nav":  "Footer-Navigation",
+    "footer-legal":"Rechtliche Links",
+    "topics-nav":  "Themen-Schnellnavigation (Sub-Bar)"
+  },
+
+  "settings": {
+    "masthead_kicker":   "SERVER_NODE: DE_WEST // STATUS: OPTIMAL",
+    "masthead_brand":    "PHIN<span>IT</span>.DE",
+    "hero_kicker":       "[ V5.0 DEPLOYED ]",
+    "hero_headline":     "PhinIT Script-Repository",
+    "hero_lead":         "Holen Sie sich 150+ validierte, code-signierte PowerShell-Module für Ihre Microsoft 365 Administration. Open-Source und Enterprise-Ready.",
+    "hero_cta_label":    "Open GitHub",
+    "hero_cta_url":      "https://github.com/phinit-de",
+    "breaking_heading":  "Breaking Intelligence",
+    "archive_heading":   "Deep-Dive Archiv",
+    "feed_left_heading": "Borns IT-Blog Feed",
+    "feed_right_heading":"Heise IT-News",
+    "footer_tagline":    "Das führende Intelligence-Portal für Microsoft 365 Professionals. Unabhängige Analysen, validierte PowerShell-Skripte und Cloud-Architektur-Deep-Dives."
+  },
+
+  "customization": {
+
+    "colors": {
+      "label": "Farben",
+      "description": "Editoriale Restpalette: Ink-Schwarz als Anker, Papier-Off-White als Surface, Signal-Rot als Kategorie- und Breaking-Akzent.",
+      "settings": {
+        "ink_color": {
+          "label": "Ink (Anker-Schwarz)",
+          "type": "color",
+          "default": "#0a0b0c",
+          "description": "Druckschwarz für Masthead, Headlines und Repo-Karte."
+        },
+        "ink_mid": {
+          "label": "Ink (mittel)",
+          "type": "color",
+          "default": "#3a3b3c"
+        },
+        "ink_dim": {
+          "label": "Ink (gedämpft)",
+          "type": "color",
+          "default": "#6b6c6d"
+        },
+        "ink_ghost": {
+          "label": "Ink (Geistergrau)",
+          "type": "color",
+          "default": "#9a9b9c"
+        },
+        "paper_color": {
+          "label": "Papier (Hintergrund)",
+          "type": "color",
+          "default": "#f8f9fa",
+          "description": "Off-White für die Seitenfläche – kein Bilderbuch-Weiß."
+        },
+        "surface_color": {
+          "label": "Surface (Karten)",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        "accent_color": {
+          "label": "Signal-Rot (Kategorien / Breaking)",
+          "type": "color",
+          "default": "#e32d12",
+          "description": "Sparsam einsetzbarer Editorial-Akzent – Breaking, Badges, Top-Rule der Repo-Karte."
+        },
+        "accent_hover": {
+          "label": "Signal-Rot Hover",
+          "type": "color",
+          "default": "#c22510"
+        },
+        "border_color": {
+          "label": "Rahmenfarbe (Hairlines)",
+          "type": "color",
+          "default": "#e4e5e7",
+          "description": "Hairline-Rules zwischen Artikeln und Sektionen."
+        },
+        "live_color": {
+          "label": "Live-/OK-Status (grün)",
+          "type": "color",
+          "default": "#22c55e",
+          "description": "Status-Indikator in der oberen Utility-Bar."
+        }
+      }
+    },
+
+    "typography": {
+      "label": "Typografie",
+      "description": "Editoriale Trinity – Playfair (Display), Source Sans 3 (Body), IBM Plex Mono (Kicker/Meta).",
+      "settings": {
+        "font_family_display": {
+          "label": "Display-Schrift (Headlines & Masthead)",
+          "type": "select",
+          "options": {
+            "playfair":     "Playfair Display (Masthead-Serif, empfohlen)",
+            "source-serif": "Source Serif 4",
+            "eb-garamond":  "EB Garamond",
+            "lora":         "Lora",
+            "syne":         "Syne (Geometric Display, Prototype)"
+          },
+          "default": "playfair"
+        },
+        "font_family_base": {
+          "label": "Body-Schrift",
+          "type": "select",
+          "options": {
+            "source-sans": "Source Sans 3 (empfohlen)",
+            "inter":       "Inter",
+            "barlow":      "Barlow",
+            "system":      "System-UI"
+          },
+          "default": "source-sans"
+        },
+        "font_family_mono": {
+          "label": "Mono-Schrift (Kicker / Meta)",
+          "type": "select",
+          "options": {
+            "plex-mono":  "IBM Plex Mono (empfohlen)",
+            "jetbrains":  "JetBrains Mono",
+            "system-mono":"System-Mono"
+          },
+          "default": "plex-mono"
+        },
+        "font_size_base": {
+          "label": "Basis-Schriftgröße (px)",
+          "type": "number",
+          "default": 16,
+          "min": 14,
+          "max": 20
+        },
+        "line_height_base": {
+          "label": "Zeilenhöhe (Body)",
+          "type": "number",
+          "default": 1.6,
+          "min": 1.3,
+          "max": 2.0,
+          "step": 0.05
+        }
+      }
+    },
+
+    "layout": {
+      "label": "Layout",
+      "description": "Schmale Spaltenbreite für Lesetempo, broadsheet-artige Sektions-Stacks.",
+      "settings": {
+        "container_width": {
+          "label": "Container-Breite (px)",
+          "type": "number",
+          "default": 1040,
+          "min": 960,
+          "max": 1440,
+          "description": "Editorial-Breite – kleiner als generische SaaS-Container, näher an klassischer Portalbreite."
+        },
+        "section_spacing": {
+          "label": "Sektionsabstand (rem)",
+          "type": "number",
+          "default": 4,
+          "min": 2,
+          "max": 8,
+          "step": 0.5
+        },
+        "border_radius": {
+          "label": "Eckenradius (px)",
+          "type": "number",
+          "default": 6,
+          "min": 0,
+          "max": 12,
+          "description": "Konservativ – Broadsheets sind nicht pillenförmig."
+        }
+      }
+    },
+
+    "header": {
+      "label": "Header",
+      "settings": {
+        "logo_url": {
+          "label": "Logo-Bild (optional)",
+          "type": "image",
+          "default": "",
+          "description": "Optional – sonst wird die textuelle Wordmark gerendert."
+        },
+        "enable_sticky_header": {
+          "label": "Sticky-Header aktivieren",
+          "type": "checkbox",
+          "default": true
+        },
+        "show_utility_bar": {
+          "label": "Obere Utility-Bar anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Schmale Statuszeile mit Server-Status und Social-Icons."
+        },
+        "show_topics_bar": {
+          "label": "Themen-Schnellleiste anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Sub-Navigation unter dem Masthead (Hash-Tag-Stil)."
+        },
+        "show_search": {
+          "label": "Such-Toggle im Header anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "utility_status_label": {
+          "label": "Utility-Bar Statustext",
+          "type": "text",
+          "default": "SERVER_NODE: DE_WEST // STATUS:"
+        },
+        "utility_status_state": {
+          "label": "Utility-Bar Status-Zustand",
+          "type": "text",
+          "default": "OPTIMAL"
+        }
+      }
+    },
+
+    "footer": {
+      "label": "Footer",
+      "settings": {
+        "footer_tagline": {
+          "label": "Footer-Tagline",
+          "type": "textarea",
+          "default": "Das führende Intelligence-Portal für Microsoft 365 Professionals. Unabhängige Analysen, validierte PowerShell-Skripte und Cloud-Architektur-Deep-Dives."
+        },
+        "footer_copyright": {
+          "label": "Copyright-Template",
+          "type": "text",
+          "default": "© {year} {site_title} // designed & developed with 365CMS.DE",
+          "description": "Platzhalter: {year}, {site_title}"
+        },
+        "show_partner_strip": {
+          "label": "Partner-Strip anzeigen",
+          "type": "checkbox",
+          "default": true,
+          "description": "Schmaler schwarzer Streifen unter dem Footer mit Partner-Links."
+        }
+      }
+    },
+
+    "buttons": {
+      "label": "Buttons",
+      "description": "Ink-Rechteck statt Hochglanz-Pille – passend zur Druck-Anmutung.",
+      "settings": {
+        "button_border_radius": {
+          "label": "Button-Eckenradius (px)",
+          "type": "number",
+          "default": 4,
+          "min": 0,
+          "max": 12
+        },
+        "button_padding_x": {
+          "label": "Button Padding horizontal (rem)",
+          "type": "number",
+          "default": 1.5,
+          "min": 0.5,
+          "max": 3,
+          "step": 0.25
+        },
+        "button_padding_y": {
+          "label": "Button Padding vertikal (rem)",
+          "type": "number",
+          "default": 0.75,
+          "min": 0.25,
+          "max": 1.5,
+          "step": 0.125
+        },
+        "button_transform": {
+          "label": "Button-Texttransform",
+          "type": "select",
+          "options": {
+            "uppercase": "Uppercase (redaktionell)",
+            "none":      "Keine"
+          },
+          "default": "uppercase"
+        }
+      }
+    },
+
+    "news_hero": {
+      "label": "Hero / Repo-Karte",
+      "description": "Die schwarze Karten-Box am Anfang der Startseite (Repository-Push).",
+      "settings": {
+        "hero_kicker": {
+          "label": "Hero Kicker",
+          "type": "text",
+          "default": "[ V5.0 DEPLOYED ]"
+        },
+        "hero_headline": {
+          "label": "Hero Headline",
+          "type": "text",
+          "default": "PhinIT Script-Repository"
+        },
+        "hero_lead": {
+          "label": "Hero Lead-Text",
+          "type": "textarea",
+          "default": "Holen Sie sich 150+ validierte, code-signierte PowerShell-Module für Ihre Microsoft 365 Administration. Open-Source und Enterprise-Ready."
+        },
+        "hero_cta_label": {
+          "label": "Hero CTA-Label",
+          "type": "text",
+          "default": "Open GitHub"
+        },
+        "hero_cta_url": {
+          "label": "Hero CTA-URL",
+          "type": "text",
+          "default": "https://github.com/phinit-de"
+        }
+      }
+    },
+
+    "news_content": {
+      "label": "Sektionen & Feeds",
+      "description": "Überschriften der einzelnen Listen- und Grid-Sektionen.",
+      "settings": {
+        "breaking_heading": {
+          "label": "Breaking-Sektion: Überschrift",
+          "type": "text",
+          "default": "Breaking Intelligence"
+        },
+        "info_left_heading": {
+          "label": "Info-Box links: Überschrift",
+          "type": "text",
+          "default": "Admin Playbooks"
+        },
+        "info_left_text": {
+          "label": "Info-Box links: Text",
+          "type": "textarea",
+          "default": "Exklusive Tutorials für die tägliche Administration Ihrer Microsoft 365 Umgebung. Von Teams Policies bis SharePoint Architekturen."
+        },
+        "info_left_cta_label": {
+          "label": "Info-Box links: CTA-Label",
+          "type": "text",
+          "default": "Playbooks durchsuchen"
+        },
+        "info_left_cta_url": {
+          "label": "Info-Box links: CTA-URL",
+          "type": "text",
+          "default": "/playbooks"
+        },
+        "info_right_heading": {
+          "label": "Info-Box rechts: Überschrift",
+          "type": "text",
+          "default": "DSGVO & Compliance"
+        },
+        "info_right_text": {
+          "label": "Info-Box rechts: Text",
+          "type": "textarea",
+          "default": "Konfigurations-Checklisten und rechtliche Best Practices für Purview, das Security Center und Datenschutz-Beauftragte."
+        },
+        "info_right_cta_label": {
+          "label": "Info-Box rechts: CTA-Label",
+          "type": "text",
+          "default": "Compliance Hub öffnen"
+        },
+        "info_right_cta_url": {
+          "label": "Info-Box rechts: CTA-URL",
+          "type": "text",
+          "default": "/compliance"
+        },
+        "archive_heading": {
+          "label": "Archiv-Sektion: Überschrift",
+          "type": "text",
+          "default": "Deep-Dive Archiv"
+        },
+        "feed_left_heading": {
+          "label": "RSS links: Überschrift",
+          "type": "text",
+          "default": "Borns IT-Blog Feed"
+        },
+        "feed_right_heading": {
+          "label": "RSS rechts: Überschrift",
+          "type": "text",
+          "default": "Heise IT-News"
+        },
+        "show_breaking_label": {
+          "label": "„LIVE“-Indikator in der Breaking-Überschrift",
+          "type": "checkbox",
+          "default": true,
+          "description": "Roter Punkt + Label – sparsam eingesetztes Breaking-News-Signal."
+        }
+      }
+    },
+
+    "advanced": {
+      "label": "Erweitert",
+      "settings": {
+        "custom_css": {
+          "label": "Eigenes CSS",
+          "type": "textarea",
+          "default": "",
+          "description": "Zusätzliches CSS wird im <head> nach den Theme-Variablen ausgegeben."
+        }
+      }
+    }
+
+  }
+}

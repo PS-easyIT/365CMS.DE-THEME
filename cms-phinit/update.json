@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.64",
+  "version": "1.5.65",
   "requires_cms": "2.5.0",
-  "tested_up_to": "2.9.788",
-  "release_date": "2026-05-17",
+  "tested_up_to": "3.0.13",
+  "release_date": "2026-05-20",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.65",
+      "date": "2026-05-20",
+      "changes": [
+        "includes/theme-content-helpers.php: Final sanitisierte Seiten-/Beitragsinhalte erhalten stabile, eindeutige Überschriften-IDs, sodass das 365CMS-Inhaltsverzeichnis wieder zuverlässig zu h2-h6-Ankern springt",
+        "assets/css/rich-content.css: EditorJS-Spacer werden aus generischen Inhaltsabständen herausgenommen und per data-height-Fallbacks in gespeicherten Höhen wie 25px, 75px oder 160px sichtbar gerendert",
+        "CMS/core/Services/PurifierService.php: Der Core-Purifier erlaubt die sicheren EditorJS-Attribute data-height, role, aria-hidden und CMS-Spacing-Datenattribute; die HTML-Definition wurde revisioniert",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.65 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.64",
       "date": "2026-05-17",

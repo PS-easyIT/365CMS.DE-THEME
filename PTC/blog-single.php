@@ -104,7 +104,7 @@ $allowedTags = '<p><br><strong><b><em><i><u><s>'
 </nav>
 
 <!-- ── Article ── -->
-<article class="ptc-article" style="--ptc-article-max-width: <?php echo $maxWidth; ?>px;">
+<article class="ptc-article ptc-prose--constrained">
     <div class="ptc-container">
 
         <!-- Article Header -->

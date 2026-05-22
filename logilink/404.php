@@ -1,12 +1,29 @@
-<?php if (!defined('ABSPATH')) exit; get_header(); ?>
-<main id="main" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
-    <div class="ll-card" style="text-align:center;padding:3rem 2rem;max-width:500px;">
-        <div style="font-size:5rem;font-weight:800;color:var(--accent-color);font-family:var(--font-mono);line-height:1;">404</div>
-        <h1 style="margin:1rem 0 .5rem;">Seite nicht gefunden</h1>
-        <p style="color:var(--muted-color);">Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
-        <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
-            <a href="<?php echo SITE_URL; ?>" class="ll-btn ll-btn-primary">Zur Startseite</a>
-            <a href="<?php echo SITE_URL; ?>/tracking" class="ll-btn ll-btn-accent">Sendung verfolgen</a>
+<?php
+/**
+ * LogiLink Theme – 404 Template
+ *
+ * @package LogiLink_Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+get_header();
+
+$homeUrl  = htmlspecialchars(theme_route_url('home'),     ENT_QUOTES, 'UTF-8');
+$trackUrl = htmlspecialchars(theme_route_url('tracking'), ENT_QUOTES, 'UTF-8');
+?>
+<main id="main" class="ll-main ll-error-wrap" role="main">
+    <div class="ll-container">
+        <div class="ll-card ll-error-card">
+            <div class="ll-error-code">404</div>
+            <h1>Seite nicht gefunden</h1>
+            <p>Die gesuchte Seite existiert nicht oder wurde verschoben.</p>
+            <div class="ll-error-actions">
+                <a href="<?php echo $homeUrl; ?>"  class="ll-btn ll-btn-primary">Zur Startseite</a>
+                <a href="<?php echo $trackUrl; ?>" class="ll-btn ll-btn-accent">Sendung verfolgen</a>
+            </div>
         </div>
     </div>
 </main>

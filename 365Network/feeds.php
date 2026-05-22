@@ -29,11 +29,11 @@ $feedsBaseUrl = theme_safe_url($siteUrl . '/feeds', $siteUrl . '/feeds');
 $homeUrl = theme_safe_url($siteUrl . '/', $siteUrl . '/');
 
 // ── Parameter ──
-$search = trim(strip_tags($_GET['q'] ?? ''));
-$source = (int)($_GET['source'] ?? 0);
-$cat    = trim(strip_tags($_GET['cat'] ?? ''));
-$sort   = ($_GET['sort'] ?? 'latest') === 'title' ? 'title' : 'latest';
-$page   = max(1, (int)($_GET['page'] ?? 1));
+$search = theme_clean_query_text($_GET['q'] ?? '', 120);
+$source = theme_clean_query_int($_GET['source'] ?? 0, 0, 0, 1000000);
+$cat    = theme_clean_query_text($_GET['cat'] ?? '', 80);
+$sort   = theme_clean_query_choice($_GET['sort'] ?? '', ['latest', 'title'], 'latest');
+$page   = theme_clean_query_int($_GET['page'] ?? 1, 1, 1, 10000);
 $perPage = 18;
 
 $items      = [];
@@ -192,7 +192,7 @@ require_once __DIR__ . '/header.php';
                     <?php foreach ($sources as $src) : ?>
                         <a href="<?php echo htmlspecialchars(theme_build_query_url('/feeds', $feedsQuery, ['source' => (string)((int)$src['id']), 'page' => '1']), ENT_QUOTES, 'UTF-8'); ?>"
                            class="feed-source-link <?php echo $source === $src['id'] ? 'is-active' : ''; ?>">
-                            <?php echo htmlspecialchars($src['name'], ENT_QUOTES); ?>
+                            <?php echo htmlspecialchars($src['name'], ENT_QUOTES, 'UTF-8'); ?>
                         </a>
                     <?php endforeach; ?>
                     <?php if (empty($sources) && $hasPlugin) : ?>
@@ -289,7 +289,7 @@ require_once __DIR__ . '/header.php';
                     <?php endif; ?>
                     <div class="feed-dir-body">
                         <div class="feed-dir-source">
-                            <?php if ($iFavicon) : ?><img src="<?php echo htmlspecialchars($iFavicon, ENT_QUOTES); ?>" alt="" width="16" height="16" loading="lazy"><?php endif; ?>
+                            <?php if ($iFavicon) : ?><img src="<?php echo htmlspecialchars($iFavicon, ENT_QUOTES, 'UTF-8'); ?>" alt="" width="16" height="16" loading="lazy"><?php endif; ?>
                             <?php if ($iFeed) : ?><span><?php echo $iFeed; ?></span><?php endif; ?>
                             <?php if ($iCat) : ?><span class="feed-cat-badge"><?php echo $iCat; ?></span><?php endif; ?>
                         </div>
