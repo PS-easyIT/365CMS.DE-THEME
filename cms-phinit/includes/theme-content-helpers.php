@@ -31,7 +31,7 @@ if (!function_exists('phinit_sanitize_renderable_content')) {
 
         $sanitized = strip_tags(
             $html,
-            '<p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
+            '<p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><caption><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
         );
 
         $sanitized = preg_replace('/\s+on[a-z0-9_-]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $sanitized) ?? $sanitized;
@@ -477,6 +477,23 @@ if (!function_exists('phinit_render_sanitized_content')) {
 
         $headingData = phinit_with_heading_ids($safeHtml, [2, 3, 4, 5, 6]);
         echo $headingData['html'];
+    }
+}
+
+if (!function_exists('phinit_render_prepared_content')) {
+    /**
+     * Gibt bereits sanitisiertes und final vorbereitetes Content-HTML aus.
+     *
+     * Wichtig für TOC-Seiten: Die Links werden aus genau diesem HTML erzeugt,
+     * deshalb darf der Ausgabepfad keine zweite Heading-ID-Runde starten.
+     */
+    function phinit_render_prepared_content(string $html): void
+    {
+        if (trim($html) === '') {
+            return;
+        }
+
+        echo $html;
     }
 }
 

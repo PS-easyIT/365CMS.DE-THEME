@@ -116,6 +116,7 @@
         return Boolean(
             document.querySelector('.toc-list')
             || document.querySelector('[data-inline-toc]')
+            || document.querySelector('[data-cms-toc-root]')
             || document.querySelector('[data-share-copy]')
             || document.querySelector('[data-share-print]')
             || document.querySelector('pre > code')

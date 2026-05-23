@@ -18,6 +18,11 @@
 
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
+| 🔴 fix | Site Tables / Captions | `CMS/core/Services/PurifierService.php`, `includes/theme-content-helpers.php`, `assets/css/rich-content.css` und `assets/css/hub-sites.css` erhalten zentral gerenderte Tabellen-Captions in normalen Inhalten und HubSites und stellen sie sichtbar oberhalb der Tabelle dar. |
+| 🔴 fix | Startseite / Dark-Mode-Buttons | `assets/css/homepage-blog.css`, `assets/css/homepage-blog-critical.css`, `style.css` und `assets/css/member-auth.css` hellen die Texte von Startseiten-Buttons sowie globalen Outline-/Ghost-Buttons im Dark Mode auf und sichern Member-Hover-Fallbacks ab, damit Buttons und Links nicht mehr dunkel auf dunklem Hintergrund erscheinen. |
+| 🔴 fix | Dark Mode / Links & Favoriten | `style.css`, `assets/css/rich-content.css`, `assets/css/post-detail.css`, `assets/css/page-detail.css` und `assets/css/member-auth.css` setzen helle blaue Inhalts-Weblinks sowie dunkle, lesbare Favoriten- und Member-Favoritenzustände, damit Links nicht zu dunkel sind und Favoriten-Text nicht mehr weiß auf weißem Hintergrund steht. |
+| 🔴 fix | Inhaltsverzeichnis / Public-Anker | `includes/theme-content-helpers.php`, `post.php`, `post-wide.php`, `post-tech.php`, `page.php`, `page-wide.php`, `page-landing.php`, `assets/js/navigation.js` und `assets/js/content-interactions.js` verhindern, dass PHINIT-TOC-Links gegen andere IDs zeigen als die final gerenderten Überschriften. Bereits sanitisiertes und mit Heading-IDs versehenes HTML wird nun ohne zweite Sanitizer-/ID-Runde ausgegeben; TOC-Klicks scrollen zusätzlich mit Sticky-Header-Offset zum Ziel und werden auch bei rein Core-generierten TOCs geladen. |
+| 🔵 docs | Medienvertrag / Core 3.0.24 | `README.md` beschreibt den aktuellen Medienvertrag korrekt: öffentliche Featured Images nutzen direkte `/uploads/...`-Referenzen mit passenden Dateirechten; private, Hidden- und Member-Pfade bleiben über `/media-file` geschützt. |
 | 🔴 fix | Startseite / Grid & Sidebar | `assets/css/content-cards.css` und `assets/css/homepage-blog.css` setzen den Gridcard-Titel wieder über die Meta-Zeile, deaktivieren den Hover-Effekt der Startseiten-Artikelliste und entschärfen Kontakt-Button sowie Projektkarten in der Sidebar optisch zu einer ruhigeren, weniger kräftig-blauen Darstellung. |
 | 🟢 feat | Theme Customizer / Typografie | `admin/customizer-schema.php`, `theme.json`, `includes/theme-assets-trait.php`, `style.css`, `assets/css/content-cards.css` und `assets/css/homepage-blog.css` machen jetzt auch globale H1–H4-, Small-/Meta-, Hero-/Label- sowie Sidebar-/Widget-Schriftgrößen im Theme-Customizer anpassbar; besonders die Widget-Bereiche lassen sich dadurch gezielt kleiner abstimmen. |
 | 🎨 style | Typografie / Header-Parität | `style.css`, `includes/theme-assets-trait.php`, `assets/css/homepage-blog.css`, `assets/css/post-detail.css`, `assets/css/page-detail.css` und `assets/css/page-special-pages.css` vereinheitlichen die Header-Typografie: Unterseiten nutzen für Titel und Untertitel jetzt denselben Größenmaßstab wie der Startseiten-Header. |
@@ -54,6 +59,56 @@
 | 🟢 feat | Startseite / Featured-Banner | `index.php`, `includes/theme-home-helpers.php`, `partials/home-featured-banner.php` und `admin/customizer-schema.php` ergänzen oben auf der Startseite einen dezent hervorgehobenen, per Customizer wählbaren Featured-Artikel-Banner. |
 | 🟢 feat | Startseite / Sidebar | `partials/home-article-list.php`, `includes/theme-home-helpers.php`, `admin/customizer-schema.php` und `assets/css/homepage-blog.css` ergänzen ein About-Me-Widget und eine Customizer-gesteuerte Reihenfolge für Sidebar-Bereiche. |
 | 🎨 style | Startseite / Cards | `partials/home-article-list.php`, `partials/home-post-grid.php`, `assets/css/homepage-blog.css` und `assets/css/content-cards.css` vereinheitlichen Abschnittstrenner im Themenbereiche-Design, begrenzen Sidebar-Artikelbilder auf maximal die Teaserhälfte und stellen „Weiter lesen“ als dezente Buttons dar. |
+
+---
+
+## v1.5.69 — 23. Mai 2026
+
+### Tabellen-Captions in HubSites wieder sichtbar
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Site Tables / Sanitizer | `CMS/core/Services/PurifierService.php` erlaubt `<caption>` nun in Default- und Hub-Profilen; `includes/theme-content-helpers.php` übernimmt denselben Fallback, damit zentral aktivierte Tabellen-Captions nicht mehr nach dem Rendern entfernt werden. |
+| 🎨 style | Site Tables / PHINIT-Theme | `assets/css/rich-content.css` und `assets/css/hub-sites.css` gestalten Tabellen-Captions sichtbar oberhalb der Tabelle, inklusive Dark-Mode-Kontrast für normale Seiten/Beiträge und HubSites. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.69` synchronisiert. |
+
+---
+
+## v1.5.68 — 22. Mai 2026
+
+### Startseiten-Buttons im Dark Mode aufgehellt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Button-Kontrast | `assets/css/homepage-blog.css` setzt Dark-Mode-Textfarben für Featured-Banner-CTA, Artikel-„Weiter lesen“, Sidebar-Quicklinks, Carousel-Pfeile, Widget-Buttons, Info-Card-CTAs und Suchbutton auf helle Blau-/Weißtöne. |
+| 🔴 fix | Startseite / Critical CSS | `assets/css/homepage-blog-critical.css` übernimmt die hellen Dark-Mode-Textfarben für Above-the-fold-Buttons, damit die Startseite schon vor dem nachgeladenen Haupt-CSS lesbar bleibt. |
+| 🔴 fix | Global / Buttons & Member | `style.css` ergänzt lesbare Dark-Mode-Zustände für globale `.btn-outline`-/`.btn-ghost`-Buttons; `assets/css/member-auth.css` nutzt sichere helle Fallbacks für Member-Navigation und Analytics-Link-Hover. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.68` synchronisiert. |
+
+---
+
+## v1.5.67 — 22. Mai 2026
+
+### Dark-Mode-Kontrast für Links und Favoriten korrigiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Dark Mode / Inhalts-Weblinks | `style.css` und `assets/css/rich-content.css` ergänzen kontrastreiche Link-Tokens und nutzen im Dark Mode helles Blau (`#93c5fd`/`#bfdbfe`) für normale Weblinks in Seiten- und Beitragsinhalten inklusive sichtbarer Unterstreichung. |
+| 🔴 fix | Dark Mode / Favoriten-Button | `assets/css/post-detail.css` und `assets/css/page-detail.css` geben dem Favoriten-Button im Seiten-/Beitragskopf dunkle Hintergründe und lesbare Hover-/Aktivzustände, sodass der Text nicht mehr weiß auf weißem Hintergrund steht. |
+| 🔴 fix | Dark Mode / Member-Favoriten | `assets/css/member-auth.css` korrigiert Favoritenkarten, Badges, Metatexte, Öffnen-Links und Entfernen-Buttons im Member-Bereich auf dunkle Karten mit ausreichendem Textkontrast. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.67` synchronisiert. |
+
+---
+
+## v1.5.66 — 22. Mai 2026
+
+### Public-TOC-Sprünge stabilisiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Inhaltsverzeichnis / Public-Anker | `includes/theme-content-helpers.php`, `post.php`, `post-wide.php`, `post-tech.php`, `page.php`, `page-wide.php` und `page-landing.php` geben bei TOC-fähigen Inhalten genau das vorbereitete HTML aus, aus dem zuvor die TOC-Einträge erzeugt wurden. Dadurch laufen Sidebar-, Inline- und Seiten-TOCs nicht mehr in IDs, die durch eine zweite Sanitizer-/Heading-ID-Runde abweichen. |
+| 🔴 fix | Inhaltsverzeichnis / Scroll-Verhalten | `assets/js/navigation.js` und `assets/js/content-interactions.js` laden die Content-Interaktionen auch bei rein Core-generierten TOCs, fangen PHINIT- und Core-TOC-Links ab, scrollen mit Sticky-Header-/Quicklink-/Memberbar-Offset zum Abschnitt, aktualisieren den Hash und setzen den aktiven TOC-Link. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.66` synchronisiert. |
 
 ---
 

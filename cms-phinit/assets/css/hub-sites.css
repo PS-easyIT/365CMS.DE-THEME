@@ -872,6 +872,18 @@
     min-width: 34rem;
 }
 
+.cms-hub-site .cms-site-table caption {
+    caption-side: top;
+    padding: .85rem .95rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--cms-hub-accent) 18%, var(--cms-hub-card-text) 12%);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 88%, var(--cms-hub-card-text) 12%);
+    color: var(--cms-hub-card-text);
+    font-size: .92rem;
+    font-weight: 800;
+    line-height: 1.35;
+    text-align: left;
+}
+
 .cms-hub-site__card--table .cms-site-table,
 .cms-hub-site__card-summary .cms-site-table {
     min-width: 100%;
@@ -1377,6 +1389,12 @@ body.dark-mode .cms-hub-site .cms-site-table-meta {
 }
 
 body.dark-mode .cms-hub-site .cms-site-table thead th {
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 84%, var(--cms-hub-card-text) 16%);
+    color: var(--cms-hub-card-text);
+}
+
+body.dark-mode .cms-hub-site .cms-site-table caption {
+    border-bottom-color: var(--border-dark);
     background: color-mix(in srgb, var(--cms-hub-card-bg) 84%, var(--cms-hub-card-text) 16%);
     color: var(--cms-hub-card-text);
 }

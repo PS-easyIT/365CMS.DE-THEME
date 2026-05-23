@@ -237,7 +237,7 @@ try {
             <?php include __DIR__ . '/partials/post-tech-card.php'; ?>
 
             <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
-                <?php phinit_render_sanitized_content($content, 'default'); ?>
+                <?php phinit_render_prepared_content($content); ?>
 
                 <?php if ($showUpdatedBadge): ?>
                 <div class="post-footer-meta" aria-label="Beitragsmetadaten">

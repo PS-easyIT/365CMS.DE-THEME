@@ -1,13 +1,51 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.65",
+  "version": "1.5.69",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.13",
-  "release_date": "2026-05-20",
+  "tested_up_to": "3.0.25",
+  "release_date": "2026-05-23",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.69",
+      "date": "2026-05-23",
+      "changes": [
+        "CMS/core/Services/PurifierService.php + includes/theme-content-helpers.php: Tabellen-Captions bleiben in Default- und HubSite-Inhalten erhalten, statt nach dem zentralen Site-Table-Rendering wieder durch die PHINIT-Sanitizer-Runde entfernt zu werden",
+        "assets/css/rich-content.css + assets/css/hub-sites.css: Tabellenüberschriften/Captions erhalten sichtbare, kontrastreiche Styles oberhalb der Tabelle inklusive Dark-Mode-Varianten",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.69 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.68",
+      "date": "2026-05-22",
+      "changes": [
+        "assets/css/homepage-blog.css + style.css: Dark-Mode-Texte von Startseiten-Buttons, Featured-Banner-CTA, Artikel-Weiterlesen, Sidebar-Quicklinks, Widget-Buttons, Info-Card-CTAs, Suchbutton sowie globale Outline-/Ghost-Buttons auf helle Blau-/Weißtöne gesetzt",
+        "assets/css/member-auth.css: Member-Navigation und Analytics-Link-Hover verwenden im Dark Mode sichere helle Link-Fallbacks statt potenziell undefiniertem accent-blue",
+        "assets/css/homepage-blog-critical.css: Above-the-fold-Startseitenbuttons erhalten dieselben hellen Dark-Mode-Textfarben bereits im Critical-CSS-Pfad",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.68 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.67",
+      "date": "2026-05-22",
+      "changes": [
+        "style.css + assets/css/rich-content.css + assets/css/post-detail.css: Dark-Mode-Inhaltslinks nutzen helle blaue Link-Tokens mit sichtbarer Unterstreichung statt geerbter zu dunkler Textfarbe",
+        "assets/css/page-detail.css + assets/css/post-detail.css: Favoriten-Buttons im Seiten-/Beitragskopf erhalten dunkle Hintergründe und lesbare aktive/hover Zustände, damit kein weißer Text mehr auf weißem Hintergrund steht",
+        "assets/css/member-auth.css: Member-Favoritenkarten, Badges, Metatexte, Öffnen-Links und Entfernen-Buttons haben im Dark Mode kontrastreiche Farben",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.67 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.66",
+      "date": "2026-05-22",
+      "changes": [
+        "includes/theme-content-helpers.php + post/page templates: Bereits sanitisiertes und mit Heading-IDs versehenes Content-HTML wird im Public-Renderpfad ohne zweite Sanitizer-/ID-Runde ausgegeben, damit TOC-Links exakt auf die finalen h2-h6-IDs zeigen",
+        "assets/js/navigation.js + assets/js/content-interactions.js: TOC-Klicks scrollen robust mit Sticky-Header-Offset zu vorhandenen Abschnitts-IDs, aktualisieren den Hash und markieren den aktiven Eintrag; die Interaktionslogik wird auch bei rein Core-generierten TOCs geladen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.66 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.65",
       "date": "2026-05-20",

@@ -623,6 +623,18 @@ body.dark-mode .home-featured-banner__label {
     color: rgba(226, 232, 240, .76);
 }
 
+body.dark-mode .home-featured-banner__button,
+body.dark-mode .article-meta__more,
+body.dark-mode .sb-carousel-btn {
+    color: var(--link-hover, #bfdbfe);
+}
+
+body.dark-mode .home-featured-banner__button,
+body.dark-mode .article-meta__more {
+    background: rgba(59, 130, 246, .14);
+    border-color: rgba(147, 197, 253, .34);
+}
+
 body.dark-mode .home-featured-banner__text,
 body.dark-mode .article-body p,
 body.dark-mode .article-meta,

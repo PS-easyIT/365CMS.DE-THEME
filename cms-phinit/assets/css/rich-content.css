@@ -236,6 +236,22 @@ body.dark-mode .post-body pre.code-block--powershell {
     border-collapse: collapse;
 }
 
+.page-content table caption,
+.post-body table caption,
+.page-content .cms-site-table caption,
+.post-body .cms-site-table caption {
+    caption-side: top;
+    padding: .75rem .9rem;
+    border: 1px solid var(--border-color);
+    border-bottom: 0;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: .95rem;
+    font-weight: 800;
+    line-height: 1.35;
+    text-align: left;
+}
+
 .page-content th,
 .page-content td,
 .page-content .editorjs-table th,
@@ -540,6 +556,34 @@ body.dark-mode .post-body {
     color: var(--text-primary);
 }
 
+body.dark-mode .page-content :where(p, li, td, blockquote) a:not([class]),
+body.dark-mode .post-body :where(p, li, td, blockquote) a:not([class]),
+body.dark-mode .page-content .editorjs-paragraph a,
+body.dark-mode .post-body .editorjs-paragraph a,
+body.dark-mode .page-content .editorjs-list__item a,
+body.dark-mode .post-body .editorjs-list__item a {
+    color: var(--link-color, #93c5fd);
+    text-decoration: underline;
+    text-decoration-color: var(--link-underline, rgba(147, 197, 253, .5));
+    text-underline-offset: .16em;
+}
+
+body.dark-mode .page-content :where(p, li, td, blockquote) a:not([class]):hover,
+body.dark-mode .page-content :where(p, li, td, blockquote) a:not([class]):focus-visible,
+body.dark-mode .post-body :where(p, li, td, blockquote) a:not([class]):hover,
+body.dark-mode .post-body :where(p, li, td, blockquote) a:not([class]):focus-visible,
+body.dark-mode .page-content .editorjs-paragraph a:hover,
+body.dark-mode .page-content .editorjs-paragraph a:focus-visible,
+body.dark-mode .post-body .editorjs-paragraph a:hover,
+body.dark-mode .post-body .editorjs-paragraph a:focus-visible,
+body.dark-mode .page-content .editorjs-list__item a:hover,
+body.dark-mode .page-content .editorjs-list__item a:focus-visible,
+body.dark-mode .post-body .editorjs-list__item a:hover,
+body.dark-mode .post-body .editorjs-list__item a:focus-visible {
+    color: var(--link-hover, #bfdbfe);
+    text-decoration-color: currentColor;
+}
+
 body.dark-mode .page-content code {
     background: rgba(255,255,255,.08);
     color: #f9a8d4;
@@ -579,6 +623,15 @@ body.dark-mode .post-body .editorjs-table table,
 body.dark-mode .page-content .cms-site-table,
 body.dark-mode .post-body .cms-site-table {
     background: transparent;
+}
+
+body.dark-mode .page-content table caption,
+body.dark-mode .post-body table caption,
+body.dark-mode .page-content .cms-site-table caption,
+body.dark-mode .post-body .cms-site-table caption {
+    border-color: var(--border-dark);
+    background: color-mix(in srgb, var(--bg-dark-3) 86%, #0f172a 14%);
+    color: var(--text-primary);
 }
 
 body.dark-mode .page-content th,

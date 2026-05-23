@@ -60,7 +60,7 @@ if (!$pageProvidedByRouter) {
 $landingContent = phinit_sanitize_renderable_content($landingContent, 'default');
 $landingHeadingData = phinit_with_heading_ids($landingContent, [2, 3, 4, 5, 6]);
 $landingContent = phinit_enhance_content_images($landingHeadingData['html']);
-$safeLandingContent = (string) sanitize_html($landingContent, 'default');
+$safeLandingContent = $landingContent;
 
 // Meta-Daten auslesen
 $meta       = is_array($page['meta'] ?? null) ? $page['meta'] : [];
@@ -175,7 +175,7 @@ $ctaBtnHref = function_exists('phinit_safe_public_url')
 <section class="landing-content">
     <div class="container">
         <div class="page-content page-content--wide" data-anim>
-            <?php phinit_render_sanitized_content($safeLandingContent, 'default'); ?>
+            <?php phinit_render_prepared_content($safeLandingContent); ?>
         </div>
     </div>
 </section>

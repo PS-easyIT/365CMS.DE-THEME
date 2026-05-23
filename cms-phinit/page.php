@@ -67,7 +67,7 @@ if ($isHubSitePage) {
     $pageContent = phinit_sanitize_renderable_content($pageContent, 'default');
     $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
     $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
-    $safePageContent = (string) sanitize_html($pageContent, 'default');
+    $safePageContent = $pageContent;
 }
 
 $favoriteControl = !$isHubSitePage
@@ -139,7 +139,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
             <?php $pageTocClass = ''; ?>
             <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
             <?php endif; ?>
-            <div class="page-content"><?php phinit_render_sanitized_content($safePageContent, 'default'); ?></div>
+            <div class="page-content"><?php phinit_render_prepared_content($safePageContent); ?></div>
             <?php echo $_pg_updatedPill; ?>
         </div>
 
@@ -159,7 +159,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
     <?php endif; ?>
     <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
-        <?php phinit_render_sanitized_content($safePageContent, 'default'); ?>
+        <?php phinit_render_prepared_content($safePageContent); ?>
     </div>
     <?php echo $_pg_updatedPill; ?>
     <?php endif; ?>

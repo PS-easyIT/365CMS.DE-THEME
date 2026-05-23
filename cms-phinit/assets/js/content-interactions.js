@@ -6,6 +6,7 @@
     'use strict';
 
     const boot = () => {
+        initTocAnchorLinks();
         initTocHighlight();
         initInlineToc();
         initPowerShellHighlighting();
@@ -17,6 +18,74 @@
         document.addEventListener('DOMContentLoaded', boot, { once: true });
     } else {
         boot();
+    }
+
+    function initTocAnchorLinks() {
+        const links = document.querySelectorAll('.toc-link[href^="#"], .toc-inline__link[href^="#"], .page-toc__link[href^="#"], [data-cms-toc-root] a[href^="#"]');
+        if (!links.length) return;
+
+        links.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                const href = link.getAttribute('href') || '';
+                const id = decodeHash(href);
+                if (!id) return;
+
+                const target = document.getElementById(id);
+                if (!target) return;
+
+                event.preventDefault();
+                scrollToHeading(target);
+                updateLocationHash(id);
+                markActiveTocLink(link);
+            });
+        });
+    }
+
+    function decodeHash(href) {
+        const raw = href.startsWith('#') ? href.slice(1) : '';
+        if (!raw) return '';
+
+        try {
+            return decodeURIComponent(raw);
+        } catch (_error) {
+            return raw;
+        }
+    }
+
+    function getStickyOffset() {
+        const header = document.querySelector('.site-header, #site-header');
+        const quicklinks = document.querySelector('.quicklinks-bar, .header-quicklinks');
+        const memberBar = document.querySelector('.member-bar, .site-member-bar');
+        const heightOf = (element) => element ? Math.ceil(element.getBoundingClientRect().height) : 0;
+
+        return heightOf(header) + heightOf(quicklinks) + heightOf(memberBar) + 18;
+    }
+
+    function scrollToHeading(target) {
+        const top = target.getBoundingClientRect().top + window.scrollY - getStickyOffset();
+        window.scrollTo({
+            top: Math.max(0, top),
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
+    }
+
+    function updateLocationHash(id) {
+        const encoded = '#' + encodeURIComponent(id);
+        if (window.location.hash === encoded) return;
+
+        if (history.pushState) {
+            history.pushState(null, '', encoded);
+            return;
+        }
+
+        window.location.hash = encoded;
+    }
+
+    function markActiveTocLink(activeLink) {
+        document.querySelectorAll('.toc-link.active, .toc-inline__link.active, .page-toc__link.active').forEach((link) => {
+            link.classList.remove('active');
+        });
+        activeLink.classList.add('active');
     }
 
     function initTocHighlight() {

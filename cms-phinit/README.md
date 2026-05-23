@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.65`
+- Version: `1.5.69`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.13`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.25`
 
 ## Enthaltene Kernbereiche
 
@@ -18,7 +18,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Member-Bereich mit Dashboard, Profil, Favoriten, Sicherheit und Feeds
 - locale-aware Seitenauflösung für EN-Custom-Slugs inkl. page-/landing-/special-page-CSS
 - JSON-LD-Breadcrumbs für Artikel und Seiten ohne sichtbare Public-Breadcrumb-Leiste
-- stabilisierte 365CMS-Inhaltsverzeichnis-Anker für EditorJS-/HTML-Überschriften inklusive leerer oder doppelter IDs
+- stabilisierte 365CMS-Inhaltsverzeichnis-Anker für EditorJS-/HTML-Überschriften inklusive leerer oder doppelter IDs; TOC-Links und final gerenderte Überschriften stammen aus demselben vorbereiteten HTML, sodass Public-Sprünge nicht durch eine zweite Sanitizer-/ID-Runde ins Leere laufen
+- nachgeschärfter Dark Mode mit hellblauen Inhalts-Weblinks sowie lesbaren Favoriten-, Startseiten- und Member-Buttons auf dunklem Hintergrund
+- Tabellen-Captions aus dem zentralen Site-Table-Renderer bleiben in Seiten und HubSites erhalten und werden oberhalb der Tabelle kontrastreich dargestellt.
 - EditorJS-Abstandsblöcke werden im Public-Frontend mit gespeicherter `data-height`-Höhe gerendert statt auf generische Inhaltsabstände zurückzufallen
 - kompakter Seiten-/Beitragsstart mit 25px Abstand nach dem sticky Header; HubSites starten bewusst mit 0px Abstand, weil ihr eigenes Markup den Abstand mitbringt
 - entlasteter Mobile-Head-Pfad mit inline Theme-Init, asynchronem UI-/Card-CSS auf Home-/Blog-Listings und intrinsischen Header-Logo-Dimensionen
@@ -47,7 +49,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Nicht-Bild-Performance: Scroll-Fortschritt vermeidet Layoutreads pro Scroll, Homepage-Rotatoren pausieren über Page-Lifecycle/BFCache-Hooks, Google Analytics lädt externes Third-Party-JS erst nach Load/Idle und dekorative Daueranimationen wurden entschärft
 - bereinigter Header-Active-State ohne `Undefined variable $_currentLocale`-Warning im Public-Frontend
 - locale-aware Homepage-Lead-Image-Abfrage ohne Alias-Mix im SQL-Filter
-- verwaltete Uploads/Featured Images werden im Public-Frontend über die `/media-file`-Delivery-Route normalisiert, damit ersetzte Bilder nicht an direkten `/uploads`-403 scheitern
+- öffentliche verwaltete Uploads/Featured Images folgen dem Core-3.0.24-Vertrag mit direkten, hostneutralen `/uploads/...`-Referenzen und webserverlesbaren Dateirechten; private, Hidden- und Member-Pfade bleiben weiterhin über die kontrollierte `/media-file`-Delivery-Route geschützt
 - Startseiten-kritisches Basis-/Header-/Homepage-CSS wird inline ausgeliefert, der Homepage-Customizer nutzt konsistente Keys und Hover-Animationen verzichten auf layout-/paintlastige `all`-/`box-shadow`-Transitions
 - Das Sidebar-Widget `Empfohlene Artikel` rotiert bereits bei zwei ausgewählten Artikeln wieder als ein einzelner vollflächiger Slide im 6-Sekunden-Intervall statt beide Beiträge untereinander zu zeigen
 

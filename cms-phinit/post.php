@@ -285,7 +285,7 @@ if ($sidebarPosition === 'left') {
 
             <!-- Artikel-Body -->
             <div class="post-body" itemprop="articleBody" data-photoswipe>
-                <?php phinit_render_sanitized_content($content, 'default'); ?>
+                <?php phinit_render_prepared_content($content); ?>
 
                 <?php if ($showUpdatedBadge): ?>
                 <div class="post-footer-meta" aria-label="Beitragsmetadaten">

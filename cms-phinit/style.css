@@ -1,7 +1,7 @@
 /*
 Theme Name: CMS Phinit
 Description: IT-Profi Theme inspiriert von phinit.de – Deep Navy, Gold-Akzente, professionelles Editorial-Layout für technische Blogs & Wissensseiten.
-Version: 1.5.65
+Version: 1.5.69
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phinit.de
 Tags: it, tech, editorial, blog, dark-mode, responsive, professional
@@ -33,6 +33,9 @@ Tags: it, tech, editorial, blog, dark-mode, responsive, professional
     --text-muted:     #64748b;
     --text-light:     #94a3b8;
     --text-white:     #f8fafc;
+    --link-color:     var(--accent-teal);
+    --link-hover:     var(--primary-color);
+    --link-underline: rgba(13, 148, 136, .36);
 
     --border-color:   #e2e8f0;
     --border-dark:    #1e2d3d;
@@ -106,6 +109,9 @@ html.dark-mode body {
     --text-nav:      rgba(241,245,249,.94);
     --text-nav-member: rgba(226,232,240,.9);
     --text-nav-quicklinks: #dbe5f1;
+    --link-color:    #93c5fd;
+    --link-hover:    #bfdbfe;
+    --link-underline: rgba(147, 197, 253, .5);
     --border-color:  #2a3a4d;
 }
 
@@ -278,6 +284,30 @@ body.is-hub-site .breadcrumb-nav {
 .btn-ghost:hover   { border-color: var(--accent-teal); color: var(--accent-teal); }
 .btn-sm { padding: 5px 12px; font-size: var(--fs-xs); }
 .btn-lg { padding: 12px 28px; font-size: calc(var(--fs-sm, 0.875rem) + 0.125rem); }
+
+body.dark-mode .btn-outline {
+    background: rgba(59, 130, 246, .12);
+    border-color: rgba(147, 197, 253, .34);
+    color: var(--link-hover, #bfdbfe);
+}
+
+body.dark-mode .btn-outline:hover,
+body.dark-mode .btn-outline:focus-visible {
+    background: rgba(37, 99, 235, .82);
+    border-color: rgba(147, 197, 253, .48);
+    color: #ffffff;
+}
+
+body.dark-mode .btn-ghost {
+    border-color: rgba(148, 163, 184, .24);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .btn-ghost:hover,
+body.dark-mode .btn-ghost:focus-visible {
+    border-color: rgba(147, 197, 253, .42);
+    color: var(--link-hover, #bfdbfe);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    7. BADGES
