@@ -14,6 +14,54 @@
 
 ---
 
+## v1.5.73 — 23. Mai 2026
+
+### SiteTable-Pagination erst nach 20 sichtbaren Zeilen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Site Tables / Pagination | `functions.php` und `CMS/core/Services/SiteTable/SiteTableTableRenderer.php` erzwingen für PHINIT-SiteTables mindestens 20 Zeilen pro Seite. Kleinere Tabellen-Seitengrößen wie `15` lösen dadurch keine frühe Pagination mehr aus; bei exakt 20 Zeilen bleibt Pagination aus. |
+| 🔴 fix | Site Tables / Meta-Infos | `assets/css/rich-content.css` und `assets/css/hub-sites.css` blenden die SiteTable-Toolbar im PHINIT-Frontend als zusätzliche Sichtbarkeitsabsicherung aus, sodass keine Zeilen-/Seitenstatus-Metainfo unter dem Tabellentitel sichtbar bleibt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.73` synchronisiert. |
+
+---
+
+## v1.5.72 — 23. Mai 2026
+
+### SiteTable-Pagination im PHINIT-Stil ohne Meta-Zeile
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Site Tables / Pagination | `assets/css/rich-content.css` und `assets/css/hub-sites.css` gestalten die SiteTable-Pagination passend zum PHINIT-Design für normale Inhalte und HubSites inklusive Dark-Mode-Zuständen. |
+| 🔴 fix | Site Tables / Toolbar | `CMS/core/Services/SiteTable/SiteTableTableRenderer.php` rendert den Toolbar-Block nur noch bei aktiver Suche. Reine Pagination erzeugt dadurch keine Zeilen-/Seitenstatus-Metainfo mehr direkt unterhalb des Tabellentitels. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.72` synchronisiert. |
+
+---
+
+## v1.5.71 — 23. Mai 2026
+
+### Ruhigere SiteTables ohne Suche und frühe Pagination
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Site Tables / PHINIT-Frontend | `functions.php` deaktiviert die SiteTable-Suchleiste für PHINIT über den neuen Core-Filter `site_table_interactive_config`, sodass über öffentlichen Tabellen keine Suche mehr erscheint. |
+| 🔴 fix | Site Tables / Pagination | `CMS/core/Services/SiteTable/SiteTableTableRenderer.php` aktiviert Pagination erst ab mindestens 20 Tabellenzeilen und nur, wenn die Zeilenzahl größer als die konfigurierte Seitengröße ist. Kleine Tabellen bleiben dadurch ohne unnötige Toolbar/Pagination. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.71` synchronisiert. |
+
+---
+
+## v1.5.70 — 23. Mai 2026
+
+### HubSite-Tabellentitel sichtbar gehalten
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / Site Tables | `page.php` gibt echte Core-HubSites (`content_type = hub`) nun über `phinit_render_prepared_content()` aus. Dadurch bleibt das bereits vom Core vorbereitete und sanitisiert aufgebaute HubSite-Markup inklusive sicherer Template-CSS-Variablen erhalten; Tabellen-Titel sind nicht mehr nur im Inhaltsverzeichnis vorhanden, sondern auch oberhalb der Tabelle sichtbar. Seiten, die nur zufällig `cms-hub-site` im Inhalt enthalten, laufen weiterhin durch das Hub-Sanitizer-Profil. |
+| 🎨 style | HubSites / Tabellenkopf | `assets/css/hub-sites.css` ergänzt Fallback-Variablen für `--cms-hub-table-head-start` und `--cms-hub-table-head-end`, damit Tabellenkopf und Meta-Titel auch ohne Template-Variable kontrastreich bleiben. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.70` synchronisiert. |
+
+---
+
 ## v1.5.69 — 23. Mai 2026
 
 ### Tabellen-Captions in HubSites wieder sichtbar

@@ -1,13 +1,49 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.69",
+  "version": "1.5.73",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.25",
+  "tested_up_to": "3.0.28",
   "release_date": "2026-05-23",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.73",
+      "date": "2026-05-23",
+      "changes": [
+        "functions.php: PHINIT erzwingt für SiteTables mindestens 20 Zeilen pro Seite und deaktiviert Pagination bei exakt 20 Zeilen",
+        "assets/css/rich-content.css + assets/css/hub-sites.css: Toolbar-/Statuszeilen werden im PHINIT-Frontend als Fallback ausgeblendet, damit keine Zeilen-/Seiten-Metainfo unter dem Tabellentitel sichtbar bleibt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.73 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.72",
+      "date": "2026-05-23",
+      "changes": [
+        "assets/css/rich-content.css + assets/css/hub-sites.css: SiteTable-Pagination erhält PHINIT-spezifische Styles für normale Inhalte und HubSites inklusive Dark Mode",
+        "CMS/core/Services/SiteTable/SiteTableTableRenderer.php: Reine Pagination erzeugt keine Toolbar-Metazeile mehr unterhalb des Tabellentitels; Zeilen-/Seitenstatusinfos bleiben damit ausgeblendet",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.72 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.71",
+      "date": "2026-05-23",
+      "changes": [
+        "functions.php: PHINIT deaktiviert die SiteTable-Suchleiste im Frontend über den neuen Core-Hook site_table_interactive_config, sodass über Tabellen keine Suche mehr erscheint",
+        "CMS/core/Services/SiteTable/SiteTableTableRenderer.php: Pagination wird erst ab mindestens 20 Tabellenzeilen und nur bei mehr Zeilen als Seitengröße aktiviert",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.71 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.70",
+      "date": "2026-05-23",
+      "changes": [
+        "page.php: Echte Core-HubSites (content_type=hub) geben das bereits vom Core vorbereitete HTML ohne zweite PHINIT-Sanitizer-Runde aus, damit sichere Inline-CSS-Variablen für Tabellenköpfe erhalten bleiben und Tabellen-Titel oberhalb der Tabelle sichtbar sind; nur textuell erkannte HubSite-Inhalte bleiben im Hub-Sanitizer",
+        "assets/css/hub-sites.css: HubSite-Tabellenköpfe erhalten Theme-Fallback-Variablen für Start-/Endfarbe, falls keine Template-Variablen gesetzt sind",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.70 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.69",
       "date": "2026-05-23",

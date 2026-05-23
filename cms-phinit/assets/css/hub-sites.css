@@ -78,6 +78,8 @@
     --cms-hub-card-text: var(--text-primary);
     --cms-hub-section-bg: var(--bg-primary);
     --cms-hub-frame: rgba(15, 34, 64, 0.08);
+    --cms-hub-table-head-start: var(--primary-color);
+    --cms-hub-table-head-end: var(--primary-dark);
     display: grid;
     gap: 1.35rem;
     width: 100%;
@@ -926,6 +928,52 @@
     background: transparent;
 }
 
+.cms-hub-site .cms-site-table-toolbar {
+    display: none;
+}
+
+.cms-hub-site .cms-site-table-pagination {
+    display: flex;
+    justify-content: flex-end;
+    padding: .85rem .95rem .95rem;
+    border-top: 1px solid color-mix(in srgb, var(--cms-hub-card-text) 10%, white 90%);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 94%, var(--cms-hub-card-text) 6%);
+}
+
+.cms-hub-site .cms-site-table-pagination__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .42rem;
+}
+
+.cms-hub-site .cms-site-table-pagination__button {
+    min-width: 2.2rem;
+    padding: .4rem .7rem;
+    border: 1px solid color-mix(in srgb, var(--cms-hub-accent) 26%, var(--cms-hub-card-text) 12%);
+    border-radius: .55rem;
+    background: var(--cms-hub-card-bg);
+    color: color-mix(in srgb, var(--cms-hub-card-text) 82%, white 18%);
+    cursor: pointer;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 800;
+}
+
+.cms-hub-site .cms-site-table-pagination__button:hover,
+.cms-hub-site .cms-site-table-pagination__button:focus-visible,
+.cms-hub-site .cms-site-table-pagination__button.is-active {
+    border-color: var(--cms-hub-accent);
+    background: color-mix(in srgb, var(--cms-hub-accent) 14%, var(--cms-hub-card-bg) 86%);
+    color: var(--cms-hub-accent);
+    outline: none;
+}
+
+.cms-hub-site .cms-site-table-pagination__button[disabled] {
+    cursor: not-allowed;
+    opacity: .48;
+}
+
 .cms-hub-site--general-it .cms-hub-site__hero-inner {
     background: linear-gradient(135deg, var(--cms-hub-hero-start) 0%, var(--cms-hub-hero-end) 100%);
 }
@@ -1435,6 +1483,25 @@ body.dark-mode .cms-hub-site .cms-site-table--stripe tbody tr:nth-child(even) td
 body.dark-mode .cms-hub-site .cms-site-table tbody tr:nth-child(odd) td,
 body.dark-mode .cms-hub-site .cms-site-table--stripe tbody tr:nth-child(odd) td {
     background: transparent;
+}
+
+body.dark-mode .cms-hub-site .cms-site-table-pagination {
+    border-top-color: var(--border-dark);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 92%, var(--cms-hub-card-text) 8%);
+}
+
+body.dark-mode .cms-hub-site .cms-site-table-pagination__button {
+    border-color: var(--border-dark);
+    background: color-mix(in srgb, var(--cms-hub-card-bg) 92%, white 8%);
+    color: var(--cms-hub-card-text);
+}
+
+body.dark-mode .cms-hub-site .cms-site-table-pagination__button:hover,
+body.dark-mode .cms-hub-site .cms-site-table-pagination__button:focus-visible,
+body.dark-mode .cms-hub-site .cms-site-table-pagination__button.is-active {
+    border-color: var(--cms-hub-accent);
+    background: color-mix(in srgb, var(--cms-hub-accent) 18%, var(--cms-hub-card-bg) 82%);
+    color: var(--cms-hub-accent);
 }
 
 @media (max-width: 720px) {

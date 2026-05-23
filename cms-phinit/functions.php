@@ -3,7 +3,7 @@
  * Theme-Funktionen – CMS Phinit Theme
  *
  * @package CMS_Phinit_Theme
- * @version 1.5.69
+ * @version 1.5.73
  */
 declare(strict_types=1);
 
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-defined('CMS_PHINIT_THEME_VERSION') || define('CMS_PHINIT_THEME_VERSION', '1.5.69');
+defined('CMS_PHINIT_THEME_VERSION') || define('CMS_PHINIT_THEME_VERSION', '1.5.73');
 defined('CMS_PHINIT_THEME_DIR') || define('CMS_PHINIT_THEME_DIR', THEME_PATH . 'cms-phinit/');
 defined('CMS_PHINIT_THEME_URL') || define('CMS_PHINIT_THEME_URL', rtrim(\CMS\ThemeManager::instance()->getThemeUrl(), '/') . '/');
 
@@ -20,6 +20,7 @@ require_once CMS_PHINIT_THEME_DIR . 'includes/theme-content-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-home-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-media-archive-helpers.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-special-pages-helpers.php';
+require_once CMS_PHINIT_THEME_DIR . 'includes/theme-services-hub-seed.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-assets-trait.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-head-trait.php';
 require_once CMS_PHINIT_THEME_DIR . 'includes/theme-navigation-trait.php';
@@ -81,17 +82,38 @@ final class CMS_Phinit_Theme
 
         // Standardmenüs beim ersten Start anlegen
         \CMS\Hooks::addAction('cms_init', [$this, 'seedDefaultMenus'], 20);
+        \CMS\Hooks::addAction('cms_init', [$this, 'seedServicesHubSite'], 30);
 
         // Body-Class für aktuelle Seite anreichern
         \CMS\Hooks::addFilter('body_class', [$this, 'bodyClass']);
 
         // Dynamischer Seitentitel
         \CMS\Hooks::addFilter('page_title', [$this, 'filterPageTitle']);
+
+        // PHINIT hält öffentliche SiteTables bewusst ruhig: keine Suchleiste über Tabellen.
+        \CMS\Hooks::addFilter('site_table_interactive_config', [$this, 'filterSiteTableInteractiveConfig']);
     }
 
     public function handleFavoriteToggleRequest(): void
     {
         phinit_handle_favorite_toggle_request();
+    }
+
+    public function seedServicesHubSite(): void
+    {
+        phinit_seed_services_hub_site();
+    }
+
+    public function filterSiteTableInteractiveConfig(array $config, array $settings = [], int $rowCount = 0): array
+    {
+        $config['pageSize'] = max(20, (int) ($config['pageSize'] ?? 20));
+        $config['searchEnabled'] = false;
+        if ($rowCount <= 20) {
+            $config['paginationEnabled'] = false;
+        }
+        $config['interactiveEnabled'] = !empty($config['sortingEnabled']) || !empty($config['paginationEnabled']);
+
+        return $config;
     }
 }
 }

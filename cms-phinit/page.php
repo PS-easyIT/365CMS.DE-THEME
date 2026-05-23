@@ -49,7 +49,8 @@ if (is_object($page)) {
 
 $pageId = (int)($page['id'] ?? 0);
 $pageContent = (string)($page['content'] ?? '');
-$isHubSitePage = (($page['content_type'] ?? '') === 'hub') || str_contains($pageContent, 'cms-hub-site');
+$isCoreHubSitePage = (($page['content_type'] ?? '') === 'hub');
+$isHubSitePage = $isCoreHubSitePage || str_contains($pageContent, 'cms-hub-site');
 $isCookieConsentPage = (($page['content_type'] ?? '') === 'cookie_consent') || (($page['slug'] ?? '') === 'cookie-einstellungen');
 $isImageArchivePage = is_array($page) && phinit_is_image_archive_page($page);
 $shouldPrepareRenderablePageContent = $pageContent !== '' && !$isHubSitePage && !$isCookieConsentPage && !$isImageArchivePage;
@@ -116,7 +117,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     </div>
 <?php elseif ($isHubSitePage): ?>
     <div class="page-content page-content--hub" data-anim>
-        <?php phinit_render_sanitized_content($safePageContent, 'hub'); ?>
+        <?php $isCoreHubSitePage ? phinit_render_prepared_content($safePageContent) : phinit_render_sanitized_content($safePageContent, 'hub'); ?>
     </div>
 <?php elseif ($isImageArchivePage): ?>
     <?php $imageArchive = phinit_build_image_archive_view_model($page); ?>

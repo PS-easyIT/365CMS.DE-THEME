@@ -252,6 +252,60 @@ body.dark-mode .post-body pre.code-block--powershell {
     text-align: left;
 }
 
+.page-content .cms-site-table-toolbar,
+.post-body .cms-site-table-toolbar {
+    display: none;
+}
+
+.page-content .cms-site-table-pagination,
+.post-body .cms-site-table-pagination {
+    display: flex;
+    justify-content: flex-end;
+    padding: .9rem 0 0;
+    border-top: 0;
+    background: transparent;
+}
+
+.page-content .cms-site-table-pagination__list,
+.post-body .cms-site-table-pagination__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .45rem;
+}
+
+.page-content .cms-site-table-pagination__button,
+.post-body .cms-site-table-pagination__button {
+    min-width: 2.25rem;
+    padding: .42rem .72rem;
+    border: 1px solid color-mix(in srgb, var(--accent-teal) 28%, var(--border-color));
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.page-content .cms-site-table-pagination__button:hover,
+.page-content .cms-site-table-pagination__button:focus-visible,
+.page-content .cms-site-table-pagination__button.is-active,
+.post-body .cms-site-table-pagination__button:hover,
+.post-body .cms-site-table-pagination__button:focus-visible,
+.post-body .cms-site-table-pagination__button.is-active {
+    border-color: var(--accent-teal);
+    background: color-mix(in srgb, var(--accent-teal) 10%, var(--bg-primary));
+    color: var(--accent-teal);
+    outline: none;
+}
+
+.page-content .cms-site-table-pagination__button[disabled],
+.post-body .cms-site-table-pagination__button[disabled] {
+    cursor: not-allowed;
+    opacity: .45;
+}
+
 .page-content th,
 .page-content td,
 .page-content .editorjs-table th,
@@ -632,6 +686,24 @@ body.dark-mode .post-body .cms-site-table caption {
     border-color: var(--border-dark);
     background: color-mix(in srgb, var(--bg-dark-3) 86%, #0f172a 14%);
     color: var(--text-primary);
+}
+
+body.dark-mode .page-content .cms-site-table-pagination__button,
+body.dark-mode .post-body .cms-site-table-pagination__button {
+    border-color: var(--border-dark);
+    background: color-mix(in srgb, var(--bg-dark-3) 92%, white 8%);
+    color: var(--text-secondary);
+}
+
+body.dark-mode .page-content .cms-site-table-pagination__button:hover,
+body.dark-mode .page-content .cms-site-table-pagination__button:focus-visible,
+body.dark-mode .page-content .cms-site-table-pagination__button.is-active,
+body.dark-mode .post-body .cms-site-table-pagination__button:hover,
+body.dark-mode .post-body .cms-site-table-pagination__button:focus-visible,
+body.dark-mode .post-body .cms-site-table-pagination__button.is-active {
+    border-color: var(--accent-teal-light);
+    background: color-mix(in srgb, var(--accent-teal) 18%, var(--bg-dark-3));
+    color: var(--accent-teal-light);
 }
 
 body.dark-mode .page-content th,
