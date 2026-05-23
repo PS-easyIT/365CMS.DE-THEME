@@ -982,6 +982,75 @@
     grid-template-columns: 1.3fr .9fr;
 }
 
+.cms-hub-site--services .cms-hub-site__hero-inner {
+    background:
+        radial-gradient(circle at top right, rgba(232,168,56,.32), transparent 30%),
+        linear-gradient(135deg, var(--cms-hub-hero-start) 0%, var(--cms-hub-hero-end) 100%);
+}
+
+.cms-hub-site--services .cms-hub-site__hero-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, transparent 1px 96px),
+        linear-gradient(180deg, rgba(255,255,255,.08), transparent 42%);
+    pointer-events: none;
+}
+
+.cms-hub-site--services .cms-hub-site__badge {
+    background: rgba(232,168,56,.18);
+    color: #fff7dd;
+}
+
+.cms-hub-site--services .cms-hub-site__quicklinks,
+.cms-hub-site--services .cms-hub-site__toc {
+    background: linear-gradient(135deg, rgba(232,168,56,.08), rgba(255,255,255,.97));
+    border-color: rgba(232,168,56,.2);
+    box-shadow: 0 18px 38px rgba(15,34,64,.08);
+}
+
+.cms-hub-site--services .cms-hub-site__toc-summary-icon,
+.cms-hub-site--services .cms-hub-site__card-arrow,
+.cms-hub-site--services .cms-hub-site__section-note {
+    color: var(--cms-hub-accent);
+}
+
+.cms-hub-site--services .cms-hub-site__sections {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cms-hub-site--services .cms-hub-site__section-card {
+    border-left: 4px solid var(--cms-hub-accent);
+    background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(248,250,252,.98));
+}
+
+.cms-hub-site--services .cms-hub-site__section-card--spotlight {
+    background: linear-gradient(135deg, rgba(232,168,56,.1), rgba(255,255,255,.98));
+}
+
+.cms-hub-site--services .cms-hub-site__card {
+    border-color: rgba(15,34,64,.1);
+    box-shadow: 0 20px 44px rgba(15,34,64,.1);
+}
+
+.cms-hub-site--services .cms-hub-site__card-badge {
+    background: color-mix(in srgb, var(--cms-hub-accent) 16%, white);
+    color: color-mix(in srgb, var(--cms-hub-accent) 72%, #0f2240);
+}
+
+.cms-hub-site--services .cms-hub-site__card-button,
+.cms-hub-site--services .cms-hub-site__cta {
+    background: var(--cms-hub-accent);
+    color: #0f2240;
+}
+
+.cms-hub-site--services .cms-hub-site__card-button:hover,
+.cms-hub-site--services .cms-hub-site__cta:hover {
+    background: color-mix(in srgb, var(--cms-hub-accent) 86%, white);
+    color: #0f2240;
+}
+
 .cms-hub-site--microsoft-365 .cms-hub-site__hero-inner::after {
     content: '';
     position: absolute;
@@ -1502,6 +1571,27 @@ body.dark-mode .cms-hub-site .cms-site-table-pagination__button.is-active {
     border-color: var(--cms-hub-accent);
     background: color-mix(in srgb, var(--cms-hub-accent) 18%, var(--cms-hub-card-bg) 82%);
     color: var(--cms-hub-accent);
+}
+
+body.dark-mode .cms-hub-site--services .cms-hub-site__quicklinks,
+body.dark-mode .cms-hub-site--services .cms-hub-site__toc,
+body.dark-mode .cms-hub-site--services .cms-hub-site__section-card,
+body.dark-mode .cms-hub-site--services .cms-hub-site__card {
+    background: color-mix(in srgb, var(--bg-dark-3) 92%, var(--cms-hub-accent) 8%);
+    border-color: rgba(232,168,56,.18);
+}
+
+body.dark-mode .cms-hub-site--services .cms-hub-site__section-title,
+body.dark-mode .cms-hub-site--services .cms-hub-site__card-title,
+body.dark-mode .cms-hub-site--services .cms-hub-site__toc-title,
+body.dark-mode .cms-hub-site--services .cms-hub-site__toc-label {
+    color: var(--text-white);
+}
+
+body.dark-mode .cms-hub-site--services .cms-hub-site__section-text,
+body.dark-mode .cms-hub-site--services .cms-hub-site__card-summary,
+body.dark-mode .cms-hub-site--services .cms-hub-site__card-meta {
+    color: var(--text-secondary);
 }
 
 @media (max-width: 720px) {

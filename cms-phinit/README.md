@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.73`
+- Version: `1.5.74`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.28`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.29`
 
 ## Enthaltene Kernbereiche
 
@@ -20,6 +20,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - JSON-LD-Breadcrumbs für Artikel und Seiten ohne sichtbare Public-Breadcrumb-Leiste
 - stabilisierte 365CMS-Inhaltsverzeichnis-Anker für EditorJS-/HTML-Überschriften inklusive leerer oder doppelter IDs; TOC-Links und final gerenderte Überschriften stammen aus demselben vorbereiteten HTML, sodass Public-Sprünge nicht durch eine zweite Sanitizer-/ID-Runde ins Leere laufen
 - HubSites rendern das bereits vom Core vorbereitete Markup ohne zweite Theme-Sanitizer-Runde, damit sichere Template-Farbvariablen erhalten bleiben und Tabellen-Titel oberhalb eingebetteter Tabellen sichtbar sind.
+- Dienstleistungs-HubSite: PHINIT legt einmalig einen Landing-Hub `it-dienstleistungen` mit Service-Kacheln, Kontakt-CTA und `services`-Template-Profil an.
 - PHINIT-SiteTables zeigen im Frontend keine Suchleiste über der Tabelle; Pagination erscheint erst ab mindestens 20 Zeilen und nur, wenn wirklich mehrere Seiten entstehen.
 - Tabellen-Pagination ist im PHINIT-Stil gestaltet, nutzt mindestens 20 Zeilen pro Seite und rendert ohne Zeilen-/Seitenstatus-Metainfo unterhalb des Tabellentitels.
 - nachgeschärfter Dark Mode mit hellblauen Inhalts-Weblinks sowie lesbaren Favoriten-, Startseiten- und Member-Buttons auf dunklem Hintergrund

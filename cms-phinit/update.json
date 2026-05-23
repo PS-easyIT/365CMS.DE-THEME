@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.73",
+  "version": "1.5.74",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.28",
+  "tested_up_to": "3.0.29",
   "release_date": "2026-05-23",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.74",
+      "date": "2026-05-23",
+      "changes": [
+        "includes/theme-services-hub-seed.php + functions.php: PHINIT legt einmalig eine Dienstleistungs-HubSite mit Slug it-dienstleistungen, Service-Kacheln, CTA und zweisprachigen Texten an, falls sie noch nicht existiert",
+        "assets/css/hub-sites.css: Das neue services-HubSite-Profil erhält PHINIT-spezifische Landingpage-Styles inklusive Dark Mode",
+        "CMS/admin/modules/hub/HubTemplateProfileCatalog.php + CMS/core/Services/SiteTable/SiteTableTemplateRegistry.php: Core-HubSites kennen das neue Template-Profil services für Dienstleistungs-/Landing-Hubs",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.74 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.73",
       "date": "2026-05-23",

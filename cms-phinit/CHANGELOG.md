@@ -14,6 +14,19 @@
 
 ---
 
+## v1.5.74 — 23. Mai 2026
+
+### Dienstleistungs-HubSite als PHINIT-Landingpage
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | HubSites / Services | `includes/theme-services-hub-seed.php` und `functions.php` legen beim `cms_init` einmalig eine Dienstleistungs-HubSite mit Slug `it-dienstleistungen`, Hero, Kontakt-CTA, zweisprachigen Texten und sechs Service-Kacheln an, sofern der Seed noch nicht existiert. |
+| 🟢 feat | HubSites / Template-Profil | `CMS/admin/modules/hub/HubTemplateProfileCatalog.php` und `CMS/core/Services/SiteTable/SiteTableTemplateRegistry.php` ergänzen das neue HubSite-Profil `services` für Dienstleistungs-/Landing-Hubs. |
+| 🎨 style | HubSites / PHINIT-Design | `assets/css/hub-sites.css` gestaltet `.cms-hub-site--services` im PHINIT-Look mit Navy/Gold-Hero, Service-Karten, CTA-Buttons und Dark-Mode-Kontrast. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.74` synchronisiert. |
+
+---
+
 ## v1.5.73 — 23. Mai 2026
 
 ### SiteTable-Pagination erst nach 20 sichtbaren Zeilen
