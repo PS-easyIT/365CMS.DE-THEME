@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.76`
+- Version: `1.5.77`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.31`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.32`
 
 ## Enthaltene Kernbereiche
 

@@ -226,6 +226,83 @@ body:not(.dark-mode) .tech-card {
 
 .tech-sidebar-info .toc-list { gap: 8px; }
 
+.post-template-meta-card {
+    background: var(--bg-dark-2);
+    border: 1px solid var(--border-dark);
+    border-left: 3px solid var(--accent-teal);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    padding: 16px;
+    color: var(--text-white);
+}
+
+body:not(.dark-mode) .post-template-meta-card {
+    background: #0f2d43;
+}
+
+.post-template-meta-card__title {
+    margin-bottom: 12px;
+    color: var(--accent-teal-light);
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.post-template-meta-card__list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+}
+
+.post-template-meta-card__item {
+    display: grid;
+    gap: 3px;
+}
+
+.post-template-meta-card__item dt {
+    color: var(--text-light);
+    font-size: var(--fs-xs);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.post-template-meta-card__item dd {
+    margin: 0;
+    color: #e2e8f0;
+    font-size: var(--fs-sm);
+    font-weight: 650;
+}
+
+.post-template-meta-card__item a {
+    color: var(--accent-teal-light);
+    text-decoration: none;
+}
+
+.post-template-meta-card__item a:hover,
+.post-template-meta-card__item a:focus-visible {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.post-template-meta-card__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.post-template-meta-card__chips li {
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 4px;
+    background: rgba(255,255,255,.07);
+    padding: 3px 8px;
+    color: #cbd5e1;
+    font-size: var(--fs-xs);
+}
+
 @media (max-width: 600px) {
     .tech-card__grid { grid-template-columns: 1fr 1fr; }
 }

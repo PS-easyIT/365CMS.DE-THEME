@@ -138,14 +138,15 @@ try {
     $commentCount = 0;
 }
 
-$meta = is_array($post['meta'] ?? null) ? $post['meta'] : [];
-$techOs = (string) ($meta['os'] ?? '');
+$meta = function_exists('phinit_decode_post_template_meta') ? phinit_decode_post_template_meta($post) : (is_array($post['meta'] ?? null) ? $post['meta'] : []);
+$post['meta'] = $meta;
+$techOs = (string) ($meta['os'] ?? $meta['tool'] ?? '');
 $techVersion = (string) ($meta['version'] ?? '');
 $techTested = (string) ($meta['last_tested'] ?? '');
 $techDiff = (string) ($meta['difficulty'] ?? '');
 $techPrereqs = is_array($meta['prerequisites'] ?? null) ? $meta['prerequisites'] : [];
 $techTime = (string) ($meta['time_needed'] ?? '');
-$hasTechData = $techOs !== '' || $techVersion !== '' || !empty($techPrereqs) || $techDiff !== '';
+$hasTechData = $techOs !== '' || $techVersion !== '' || !empty($techPrereqs) || $techDiff !== '' || trim((string) ($meta['website_url'] ?? '')) !== '' || trim((string) ($meta['github_url'] ?? '')) !== '';
 
 $diffLabels = [
     'beginner' => ['label' => 'Einsteiger', 'class' => 'badge--green'],
@@ -248,7 +249,6 @@ try {
     <div class="main-column">
         <article itemscope itemtype="https://schema.org/TechArticle">
             <?php include __DIR__ . '/partials/post-header.php'; ?>
-            <?php include __DIR__ . '/partials/post-tech-card.php'; ?>
 
             <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
                 <?php phinit_render_prepared_content($content); ?>
@@ -301,8 +301,8 @@ try {
     </div>
 
     <aside class="sidebar" aria-label="Seitenleiste">
+        <?php get_theme_part('partials/post-template-meta-card', ['post' => $post]); ?>
         <?php include __DIR__ . '/partials/post-sidebar-toc.php'; ?>
-        <?php include __DIR__ . '/partials/post-tech-sidebar-info.php'; ?>
 
         <?php if (!empty($catRows)): ?>
         <div class="toc toc--accent">

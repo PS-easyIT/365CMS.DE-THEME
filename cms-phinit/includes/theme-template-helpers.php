@@ -575,6 +575,189 @@ if (!function_exists('phinit_build_post_url')) {
     }
 }
 
+if (!function_exists('phinit_get_post_template_definitions')) {
+    /**
+     * @return array<string,array<string,mixed>>
+     */
+    function phinit_get_post_template_definitions(): array
+    {
+        static $definitions = null;
+
+        if (is_array($definitions)) {
+            return $definitions;
+        }
+
+        $definitions = [];
+        $themeJson = rtrim((string) (defined('CMS_PHINIT_THEME_DIR') ? CMS_PHINIT_THEME_DIR : __DIR__ . '/../'), "\\/") . DIRECTORY_SEPARATOR . 'theme.json';
+
+        try {
+            if (is_file($themeJson)) {
+                $decoded = json_decode((string) file_get_contents($themeJson), true, 512, JSON_THROW_ON_ERROR);
+                $templates = is_array($decoded['post_templates'] ?? null) ? $decoded['post_templates'] : [];
+
+                foreach ($templates as $template) {
+                    if (!is_array($template)) {
+                        continue;
+                    }
+
+                    $id = strtolower(trim((string) ($template['id'] ?? '')));
+                    $id = preg_replace('/[^a-z0-9_-]/', '', $id) ?? '';
+                    if ($id === '') {
+                        continue;
+                    }
+
+                    $definitions[$id] = $template;
+                    $definitions[$id]['id'] = $id;
+                }
+            }
+        } catch (\Throwable) {
+            $definitions = [];
+        }
+
+        if ($definitions === []) {
+            $definitions['default'] = [
+                'id' => 'default',
+                'label' => 'Standard',
+                'file' => 'post.php',
+                'meta_fields' => [],
+            ];
+        }
+
+        return $definitions;
+    }
+}
+
+if (!function_exists('phinit_read_post_field')) {
+    function phinit_read_post_field(array|object $post, string $field, mixed $default = ''): mixed
+    {
+        return is_array($post) ? ($post[$field] ?? $default) : ($post->{$field} ?? $default);
+    }
+}
+
+if (!function_exists('phinit_decode_post_template_meta')) {
+    /**
+     * @return array<string,mixed>
+     */
+    function phinit_decode_post_template_meta(array|object $post): array
+    {
+        $existingMeta = phinit_read_post_field($post, 'meta', null);
+        if (is_array($existingMeta)) {
+            return $existingMeta;
+        }
+
+        $rawJson = trim((string) phinit_read_post_field($post, 'post_meta_json', ''));
+        if ($rawJson === '') {
+            return [];
+        }
+
+        try {
+            $decoded = json_decode($rawJson, true, 512, JSON_THROW_ON_ERROR);
+
+            return is_array($decoded) ? $decoded : [];
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+}
+
+if (!function_exists('phinit_resolve_post_template')) {
+    /**
+     * @return array<string,mixed>
+     */
+    function phinit_resolve_post_template(array|object $post): array
+    {
+        $templates = phinit_get_post_template_definitions();
+        $templateId = strtolower(trim((string) phinit_read_post_field($post, 'post_template', 'default')));
+        $templateId = preg_replace('/[^a-z0-9_-]/', '', $templateId) ?? 'default';
+
+        return $templates[$templateId] ?? ($templates['default'] ?? reset($templates));
+    }
+}
+
+if (!function_exists('phinit_resolve_post_template_file')) {
+    function phinit_resolve_post_template_file(array|object $post): string
+    {
+        $template = phinit_resolve_post_template($post);
+        $file = trim((string) ($template['file'] ?? 'post.php'));
+        $file = str_replace(['\\', '/'], '', $file);
+
+        if ($file === '' || !str_ends_with($file, '.php') || $file === 'blog-single.php') {
+            $file = 'post.php';
+        }
+
+        $path = rtrim((string) (defined('CMS_PHINIT_THEME_DIR') ? CMS_PHINIT_THEME_DIR : __DIR__ . '/../'), "\\/") . DIRECTORY_SEPARATOR . $file;
+
+        return is_file($path) ? $file : 'post.php';
+    }
+}
+
+if (!function_exists('phinit_build_post_template_meta_items')) {
+    /**
+     * @return array{title:string,items:array<int,array{key:string,label:string,value:mixed,type:string,url:string}>}
+     */
+    function phinit_build_post_template_meta_items(array|object $post): array
+    {
+        $template = phinit_resolve_post_template($post);
+        $metaFields = is_array($template['meta_fields'] ?? null) ? $template['meta_fields'] : [];
+        $meta = phinit_decode_post_template_meta($post);
+        $items = [];
+
+        foreach ($metaFields as $key => $field) {
+            if (!is_array($field)) {
+                continue;
+            }
+
+            $fieldKey = strtolower(trim((string) $key));
+            $fieldKey = preg_replace('/[^a-z0-9_-]/', '', $fieldKey) ?? '';
+            if ($fieldKey === '' || !array_key_exists($fieldKey, $meta)) {
+                continue;
+            }
+
+            $type = strtolower(trim((string) ($field['type'] ?? 'text')));
+            $label = trim((string) ($field['label'] ?? $fieldKey));
+            $value = $meta[$fieldKey];
+            $url = '';
+
+            if (is_array($value)) {
+                $value = array_values(array_filter(array_map(static fn(mixed $entry): string => trim((string) $entry), $value), static fn(string $entry): bool => $entry !== ''));
+                if ($value === []) {
+                    continue;
+                }
+                $type = 'array';
+            } else {
+                $value = trim((string) $value);
+                if ($value === '') {
+                    continue;
+                }
+            }
+
+            if ($type === 'url') {
+                $url = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $value, defined('SITE_URL') ? (string) SITE_URL : null, ['http', 'https']) : (string) $value;
+                if ($url === '') {
+                    continue;
+                }
+            }
+
+            if ($type === 'date' && is_string($value) && function_exists('phinit_format_date')) {
+                $value = phinit_format_date($value, 'numeric');
+            }
+
+            $items[] = [
+                'key' => $fieldKey,
+                'label' => $label,
+                'value' => $value,
+                'type' => $type,
+                'url' => $url,
+            ];
+        }
+
+        return [
+            'title' => trim((string) ($template['card_label'] ?? $template['label'] ?? 'Zusatzinfos')),
+            'items' => $items,
+        ];
+    }
+}
+
 if (!function_exists('phinit_image_loading_attributes')) {
     /**
      * Prüft, ob browserbasiertes Image-Lazy-Loading per Customizer aktiv ist.

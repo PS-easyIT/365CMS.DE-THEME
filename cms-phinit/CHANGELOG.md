@@ -14,6 +14,19 @@
 
 ---
 
+## v1.5.77 — 24. Mai 2026
+
+### Beitrags-Templates mit Zusatzkarte
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Beitragseditor / Templates | Der Core-Beitragseditor kann das aktive PHINIT-`Beitrags-Template` speichern und zeigt templateabhängige Zusatzfelder aus `theme.json`; beim Tech-Template sind Tool, Version, Autor, Website, GitHub-Repo, Testdatum und Voraussetzungen verfügbar. |
+| 🟢 feat | Publicsite / Zusatzkarte | `blog-single.php` delegiert an das gespeicherte Post-Template; PHINIT rendert ausgefüllte Zusatzfelder als Karte oberhalb des TOC, leere Felder werden nicht ausgegeben. |
+| 🎨 style | Zusatzkarte / PHINIT-Design | `assets/css/templates.css` gestaltet die neue Zusatzkarte im vorhandenen Navy-/Teal-Card-Look inklusive Link- und Chip-Darstellung. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.77` synchronisiert. |
+
+---
+
 ## v1.5.76 — 24. Mai 2026
 
 ### Erweiterte Autorbox mit Dienstleistungs-HubSite

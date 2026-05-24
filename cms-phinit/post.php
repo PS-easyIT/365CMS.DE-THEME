@@ -385,6 +385,7 @@ if ($sidebarPosition === 'left') {
             'related_posts'  => $relatedPosts,
             'post_tags'      => $postTags,
             'site_url'       => $siteUrl,
+            'post'           => $post,
         ]);
     endif; /* sidebar_position !== 'none' */ ?>
 

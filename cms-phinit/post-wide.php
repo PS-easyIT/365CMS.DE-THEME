@@ -153,6 +153,8 @@ if ($showPostTags) {
     <!-- ── Post-Header ───────────────────────────────────────────────── -->
     <?php include __DIR__ . '/partials/post-header.php'; ?>
 
+    <?php get_theme_part('partials/post-template-meta-card', ['post' => $post]); ?>
+
     <!-- ── Inline-TOC (aufklappbar) ──────────────────────────────────── -->
     <?php include __DIR__ . '/partials/post-inline-toc.php'; ?>
 

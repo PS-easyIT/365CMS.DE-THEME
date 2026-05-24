@@ -83,6 +83,10 @@ $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use
 ?>
 <aside class="sidebar" aria-label="Seitenleiste">
 
+    <?php if (isset($post) && (is_array($post) || is_object($post))): ?>
+        <?php get_theme_part('partials/post-template-meta-card', ['post' => $post]); ?>
+    <?php endif; ?>
+
     <!-- TOC -->
     <?php if ($show_toc && !empty($toc_tree)): ?>
     <nav class="toc<?php echo $toc_sticky ? ' toc-sticky' : ''; ?>" aria-label="Inhaltsverzeichnis des Artikels">

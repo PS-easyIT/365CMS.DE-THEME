@@ -20,5 +20,9 @@ if (!defined('ABSPATH')) {
 }
 
 // $post (stdClass) wird von ThemeManager::render() im lokalen Scope bereitgestellt.
-// post.php normalisiert es zu einem Array und übernimmt das komplette Rendering.
-include __DIR__ . '/post.php';
+// Das gespeicherte Beitrags-Template wird fail-closed gegen theme.json aufgelöst.
+$postTemplateFile = function_exists('phinit_resolve_post_template_file')
+    ? phinit_resolve_post_template_file($post ?? [])
+    : 'post.php';
+
+include __DIR__ . '/' . $postTemplateFile;

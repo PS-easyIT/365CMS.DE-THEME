@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.76",
+  "version": "1.5.77",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.31",
+  "tested_up_to": "3.0.32",
   "release_date": "2026-05-24",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.77",
+      "date": "2026-05-24",
+      "changes": [
+        "CMS/admin/modules/posts/PostsModule.php + CMS/admin/views/posts/edit.php + CMS/assets/js/admin-content-editor.js: Der Beitragseditor speichert ein Beitrags-Template und zeigt templateabhängige Zusatzfelder aus theme.json an",
+        "blog-single.php + includes/theme-template-helpers.php + partials/post-template-meta-card.php + post.php + post-wide.php + post-tech.php + partials/sidebar.php: PHINIT löst das gespeicherte Beitrags-Template auf und rendert ausgefüllte Zusatzfelder als Karte oberhalb des TOC",
+        "theme.json + assets/css/templates.css: Das Tech-Template erhält Felder für Tool, Version, Autor, Website, GitHub-Repo, Testdatum und Voraussetzungen inklusive PHINIT-Card-Design",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.77 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.76",
       "date": "2026-05-24",

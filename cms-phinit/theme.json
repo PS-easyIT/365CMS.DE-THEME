@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.76",
+  "version": "1.5.77",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -42,16 +42,18 @@
     {
       "id":          "tech",
       "label":       "Tech-Artikel (mit Tech-Karte)",
-      "description": "Wie Standard, jedoch mit einer Tech-Karte vor dem Artikel-Body: Betriebssystem, Version, Voraussetzungen und Schwierigkeit. Metadaten aus post[meta].",
+      "description": "Wie Standard, jedoch mit einer Zusatzkarte oberhalb des TOC: Tool, Version, Autor und optionale Links. Leere Felder werden nicht angezeigt.",
       "file":        "post-tech.php",
       "features":    ["sidebar", "toc", "tech-card", "comments", "prev-next", "share-buttons"],
+      "card_label":  "Tool-Details",
       "meta_fields": {
-        "os":            { "label": "Betriebssystem",    "type": "text",    "placeholder": "Windows Server 2022" },
-        "version":       { "label": "Version",           "type": "text",    "placeholder": "PowerShell 7.4" },
-        "last_tested":   { "label": "Zuletzt getestet",  "type": "date"  },
-        "difficulty":    { "label": "Schwierigkeit",     "type": "select",  "options": ["beginner","intermediate","advanced","expert"] },
-        "prerequisites": { "label": "Voraussetzungen",   "type": "array",   "placeholder": "Admin-Rechte" },
-        "time_needed":   { "label": "Benötigte Zeit",    "type": "text",    "placeholder": "30 Minuten" }
+        "tool":          { "label": "Tool",              "type": "text",    "placeholder": "PowerShell" },
+        "version":       { "label": "Version",           "type": "text",    "placeholder": "5.1 / 7" },
+        "author":        { "label": "Autor",             "type": "text",    "placeholder": "Andreas Hepp" },
+        "website_url":   { "label": "Website",           "type": "url",     "placeholder": "https://example.com" },
+        "github_url":    { "label": "GitHub Repo",       "type": "url",     "placeholder": "https://github.com/org/repo" },
+        "last_tested":   { "label": "Zuletzt getestet",  "type": "date" },
+        "prerequisites": { "label": "Voraussetzungen",   "type": "array",   "placeholder": "Admin-Rechte" }
       }
     }
   ],
