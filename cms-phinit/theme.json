@@ -1660,13 +1660,13 @@
         },
         "author_about_width": {
           "label": "Autorbereich Breite",
-          "type": "select",
+          "type": "number",
           "default": "60",
-          "options": [
-            {"value": "50", "label": "50 % Autor / 50 % Dienstleistungen"},
-            {"value": "60", "label": "60 % Autor / 40 % Dienstleistungen"},
-            {"value": "75", "label": "75 % Autor / 25 % Dienstleistungen"}
-          ]
+          "min": 50,
+          "max": 75,
+          "step": 5,
+          "allowed_values": [50, 60, 75],
+          "description": "Erlaubte Werte: 50, 60 oder 75. Der Dienstleistungsbereich rechts nutzt automatisch den Rest."
         },
         "author_bio": {
           "label": "Autoren-Bio",
@@ -1774,13 +1774,13 @@
         },
         "page_author_about_width": {
           "label": "Seiten-Autorbereich Breite",
-          "type": "select",
+          "type": "number",
           "default": "60",
-          "options": [
-            {"value": "50", "label": "50 % Autor / 50 % Dienstleistungen"},
-            {"value": "60", "label": "60 % Autor / 40 % Dienstleistungen"},
-            {"value": "75", "label": "75 % Autor / 25 % Dienstleistungen"}
-          ]
+          "min": 50,
+          "max": 75,
+          "step": 5,
+          "allowed_values": [50, 60, 75],
+          "description": "Erlaubte Werte: 50, 60 oder 75. Der Dienstleistungsbereich rechts nutzt automatisch den Rest."
         },
         "page_author_bio": {
           "label": "Seiten-Autor Bio",

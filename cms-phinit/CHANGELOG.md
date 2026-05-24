@@ -20,9 +20,9 @@
 
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
-| 🟢 feat | Autorbox / Beiträge | `post.php`, `post-wide.php`, `post-tech.php` und `partials/post-author-box.php` zeigen eine erweiterte Autorbox mit konfigurierbarem Kicker, Über-mich-Label, Bio, Avatar und CTA zur Dienstleistungs-HubSite. |
+| 🟢 feat | Autorbox / Beiträge | `post.php`, `post-wide.php`, `post-tech.php` und `partials/post-author-box.php` zeigen eine erweiterte Autorbox mit konfigurierbarem Kicker, Name, Über-mich-Label, Bio, Avatar und CTA zur Dienstleistungs-HubSite; der Customizer-Name überschreibt den technischen Beitragsautor. |
 | 🟢 feat | Autorbox / Seiten | `page.php` rendert die Autorbox jetzt auch unter normalen Seitendetails; HubSites, Cookie-Consent- und Bildarchivseiten bleiben bewusst ausgenommen. |
-| 🎨 style | Autorbox / PHINIT-Design | `assets/css/post-detail.css` gestaltet die Autorbox als zweispaltiges Layout: links Autorinfos und rechts der Dienstleistungsbereich mit Hinweistext oberhalb des optionalen Buttons; Dark Mode und Mobile-Layout sind berücksichtigt. |
+| 🎨 style | Autorbox / PHINIT-Design | `assets/css/post-detail.css` gestaltet die Autorbox als echtes Grid-Layout: links Autorinfos und rechts der Dienstleistungsbereich mit Hinweistext oberhalb des optionalen Buttons; die linke Spalte wird beim Speichern robust auf 50 %, 60 % oder 75 % normalisiert. |
 | 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.76` synchronisiert. |
 
 ---

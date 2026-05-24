@@ -275,6 +275,25 @@ function phinit_normalize_customizer_post_value(string $fieldType, mixed $rawVal
             }
 
             $number = (float) $value;
+            $allowedNumberValues = $fieldConfig['allowed_values'] ?? null;
+            if (is_array($allowedNumberValues) && $allowedNumberValues !== []) {
+                $allowedValues = array_values(array_filter(
+                    array_map(static fn(mixed $allowedValue): ?float => is_numeric((string) $allowedValue) ? (float) $allowedValue : null, $allowedNumberValues),
+                    static fn(?float $allowedValue): bool => $allowedValue !== null
+                ));
+
+                if ($allowedValues !== []) {
+                    $closest = $allowedValues[0];
+                    foreach ($allowedValues as $allowedValue) {
+                        if (abs($allowedValue - $number) < abs($closest - $number)) {
+                            $closest = $allowedValue;
+                        }
+                    }
+
+                    return (string) (int) round($closest);
+                }
+            }
+
             if (isset($fieldConfig['min']) && is_numeric((string) $fieldConfig['min'])) {
                 $number = max((float) $fieldConfig['min'], $number);
             }

@@ -13,8 +13,8 @@
       "date": "2026-05-24",
       "changes": [
         "post.php + post-wide.php + post-tech.php + page.php: Beitrags- und Seitendetails nutzen eine gemeinsame erweiterte Autorbox inklusive konfigurierbarer Dienstleistungs-HubSite-Verknüpfung",
-        "partials/post-author-box.php + includes/theme-template-helpers.php: Autorbox-Daten werden zentral aus dem Customizer normalisiert; Avatar, Name, Über-mich-Text, Labels und CTA zur HubSite sind anpassbar",
-        "assets/css/post-detail.css: Die Autorbox nutzt ein zweispaltiges Layout mit Autorinfos links und einem Dienstleistungsbereich rechts, in dem der Hinweistext oberhalb des optionalen Buttons steht, inklusive Dark Mode und responsivem Layout",
+        "partials/post-author-box.php + includes/theme-template-helpers.php + admin/customizer-request-handler.php: Autorbox-Daten werden zentral aus dem Customizer normalisiert; der Customizer-Name überschreibt den technischen Beitragsautor und die Autor-/Dienstleistungs-Spaltenbreite wird beim Speichern robust auf 50/60/75 Prozent normalisiert",
+        "assets/css/post-detail.css: Die Autorbox nutzt ein echtes Grid-Layout mit Autorinfos links und einem Dienstleistungsbereich rechts, in dem der Hinweistext oberhalb des optionalen Buttons steht, inklusive Dark Mode und responsivem Layout",
         "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.76 aktualisiert"
       ]
     },
