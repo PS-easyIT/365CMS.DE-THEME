@@ -127,6 +127,14 @@ function phinit_get_homepage_view_model(): array
         '_sbIdentityTagline' => '',
         '_sbIdentityBadgeText' => '',
         '_sbIdentityLinkUrl' => '/',
+        '_sbIdentityShowService' => true,
+        '_sbIdentityServiceKicker' => 'Microsoft 365 Copilot',
+        '_sbIdentityServiceTitle' => 'Copilot-Beratung finden',
+        '_sbIdentityServiceText' => 'Sie planen Microsoft 365 Copilot oder suchen passende Unterstützung? Die kuratierte Beraterübersicht hilft bei der Orientierung nach Unternehmensgröße und PLZ – initiiert von MVP Alexander Eggers und MVP Michael Greth und ergänzt um praxisnahes Know-how für Ihre Einführung.',
+        '_sbIdentityServiceImageUrl' => '',
+        '_sbIdentityServiceImageAlt' => 'Microsoft 365 Copilot Beratung',
+        '_sbIdentityServiceButtonText' => 'Beraterübersicht öffnen',
+        '_sbIdentityServiceUrl' => '/it-dienstleistungen',
         '_sbProj1LogoUrl' => '',
         '_sbProj2LogoUrl' => '',
         '_sbStatusServices' => "Microsoft 365|https://status.office365.com|M365\nAzure|https://status.azure.com|AZ\nStarface|https://www.starface.com/support/|SF\nAnyDesk|https://status.anydesk.com|AD\nGitHub|https://githubstatus.com|GH\nCloudflare|https://www.cloudflarestatus.com|CF",
@@ -348,6 +356,18 @@ function phinit_get_homepage_view_model(): array
             '_sbIdentityLinkUrl' => function_exists('phinit_safe_public_url')
                 ? (phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_identity_link_url', '/'), $siteUrl, ['http', 'https']) ?: '/')
                 : $customizer->get('homepage', 'sidebar_identity_link_url', '/'),
+            '_sbIdentityShowService' => filter_var($customizer->get('homepage', 'sidebar_identity_show_service', true), FILTER_VALIDATE_BOOLEAN),
+            '_sbIdentityServiceKicker' => $customizer->get('homepage', 'sidebar_identity_service_kicker', $defaults['_sbIdentityServiceKicker']),
+            '_sbIdentityServiceTitle' => $customizer->get('homepage', 'sidebar_identity_service_title', $defaults['_sbIdentityServiceTitle']),
+            '_sbIdentityServiceText' => $customizer->get('homepage', 'sidebar_identity_service_text', $defaults['_sbIdentityServiceText']),
+            '_sbIdentityServiceImageUrl' => function_exists('phinit_safe_public_media_url')
+                ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_identity_service_image_url', ''), $siteUrl)
+                : $customizer->get('homepage', 'sidebar_identity_service_image_url', ''),
+            '_sbIdentityServiceImageAlt' => $customizer->get('homepage', 'sidebar_identity_service_image_alt', $defaults['_sbIdentityServiceImageAlt']),
+            '_sbIdentityServiceButtonText' => $customizer->get('homepage', 'sidebar_identity_service_button_text', $defaults['_sbIdentityServiceButtonText']),
+            '_sbIdentityServiceUrl' => function_exists('phinit_safe_public_url')
+                ? (phinit_safe_public_url((string) $customizer->get('homepage', 'sidebar_identity_service_url', '/it-dienstleistungen'), $siteUrl, ['http', 'https']) ?: '/it-dienstleistungen')
+                : $customizer->get('homepage', 'sidebar_identity_service_url', '/it-dienstleistungen'),
             '_sbProj1LogoUrl' => function_exists('phinit_safe_public_media_url')
                 ? phinit_safe_public_media_url((string) $customizer->get('homepage', 'sidebar_project1_logo_url', ''), $siteUrl)
                 : $customizer->get('homepage', 'sidebar_project1_logo_url', ''),

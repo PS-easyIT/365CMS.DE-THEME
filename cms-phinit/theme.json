@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.77",
+  "version": "1.5.78",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -979,6 +979,46 @@
           "label": "Site-Identity Link-URL",
           "type": "url",
           "default": "/"
+        },
+        "sidebar_identity_show_service": {
+          "label": "Site-Identity Dienstleistungscard anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_identity_service_kicker": {
+          "label": "Dienstleistung Kicker",
+          "type": "text",
+          "default": "Microsoft 365 Copilot"
+        },
+        "sidebar_identity_service_title": {
+          "label": "Dienstleistung Titel",
+          "type": "text",
+          "default": "Copilot-Beratung finden"
+        },
+        "sidebar_identity_service_text": {
+          "label": "Dienstleistung Text",
+          "type": "textarea",
+          "default": "Sie planen Microsoft 365 Copilot oder suchen passende Unterstützung? Die kuratierte Beraterübersicht hilft bei der Orientierung nach Unternehmensgröße und PLZ – initiiert von MVP Alexander Eggers und MVP Michael Greth und ergänzt um praxisnahes Know-how für Ihre Einführung."
+        },
+        "sidebar_identity_service_image_url": {
+          "label": "Dienstleistung Logo/Bild-URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_identity_service_image_alt": {
+          "label": "Dienstleistung Bild-Alt-Text",
+          "type": "text",
+          "default": "Microsoft 365 Copilot Beratung"
+        },
+        "sidebar_identity_service_button_text": {
+          "label": "Dienstleistung Button-Text",
+          "type": "text",
+          "default": "Beraterübersicht öffnen"
+        },
+        "sidebar_identity_service_url": {
+          "label": "Dienstleistung Link-URL",
+          "type": "url",
+          "default": "/it-dienstleistungen"
         },
         "sidebar_show_m365links": {
           "label": "Microsoft 365 Schnelllinks anzeigen",

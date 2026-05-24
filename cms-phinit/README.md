@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.77`
+- Version: `1.5.78`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.32`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.0.34`
 
 ## Enthaltene Kernbereiche
 
@@ -21,6 +21,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - stabilisierte 365CMS-Inhaltsverzeichnis-Anker für EditorJS-/HTML-Überschriften inklusive leerer oder doppelter IDs; TOC-Links und final gerenderte Überschriften stammen aus demselben vorbereiteten HTML, sodass Public-Sprünge nicht durch eine zweite Sanitizer-/ID-Runde ins Leere laufen
 - HubSites rendern das bereits vom Core vorbereitete Markup ohne zweite Theme-Sanitizer-Runde, damit sichere Template-Farbvariablen erhalten bleiben und Tabellen-Titel oberhalb eingebetteter Tabellen sichtbar sind.
 - Dienstleistungs-HubSite: PHINIT legt einmalig einen Landing-Hub `it-dienstleistungen` mit Service-Kacheln, Kontakt-CTA und `services`-Template-Profil an.
+- Die Startseiten-Sidebar kann in der Site-Identity eine konfigurierbare Dienstleistungscard mit Logo/Bild, Text und CTA ausgeben.
 - Autorenboxen auf Seiten- und Beitragsdetails lassen sich im Customizer inklusive Bild, Name, Über-mich-Text und Dienstleistungs-HubSite-CTA konfigurieren.
 - PHINIT-SiteTables zeigen im Frontend keine Suchleiste über der Tabelle; Pagination erscheint erst ab mindestens 20 Zeilen und nur, wenn wirklich mehrere Seiten entstehen.
 - Tabellen-Pagination ist im PHINIT-Stil gestaltet, nutzt mindestens 20 Zeilen pro Seite und rendert ohne Zeilen-/Seitenstatus-Metainfo unterhalb des Tabellentitels.

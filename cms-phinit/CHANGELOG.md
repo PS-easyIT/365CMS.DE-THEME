@@ -14,6 +14,19 @@
 
 ---
 
+## v1.5.78 — 24. Mai 2026
+
+### Site-Identity als Dienstleistungscard
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Startseite / Sidebar | `theme.json`, `admin/customizer-schema.php` und `includes/theme-home-helpers.php` ergänzen die Site-Identity um konfigurierbare Dienstleistungsfelder für Kicker, Titel, Text, Logo/Bild, Alt-Text, Button und Ziel-URL. |
+| 🟢 feat | Site-Identity / Publicsite | `partials/home-article-list.php` rendert unter Logo, Badge und Tagline optional eine Dienstleistungscard; Medien- und Link-Ziele laufen weiterhin über die PHINIT-Safe-URL- und Media-Helper. |
+| 🎨 style | Sidebar / PHINIT-Design | `assets/css/homepage-blog.css` und `assets/css/homepage-blog-critical.css` gestalten die Dienstleistungscard kompakt, lesbar und mit dezenter Vollbreiten-CTA inklusive Dark Mode. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.78` synchronisiert. |
+
+---
+
 ## v1.5.77 — 24. Mai 2026
 
 ### Beitrags-Templates mit Zusatzkarte

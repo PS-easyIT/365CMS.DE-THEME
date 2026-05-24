@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.77",
+  "version": "1.5.78",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.32",
+  "tested_up_to": "3.0.34",
   "release_date": "2026-05-24",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.78",
+      "date": "2026-05-24",
+      "changes": [
+        "admin/customizer-schema.php + theme.json + includes/theme-home-helpers.php: Die Site-Identity der Startseiten-Sidebar erhält konfigurierbare Dienstleistungsfelder für Kicker, Titel, Text, Bild/Logo, Alt-Text, Button und Ziel-URL",
+        "partials/home-article-list.php: Das Site-Identity-Widget rendert optional eine Dienstleistungscard unter Logo/Badge/Tagline, inklusive sicher normalisierter Medien- und Link-URLs",
+        "assets/css/homepage-blog.css + assets/css/homepage-blog-critical.css: Die Dienstleistungscard erhält PHINIT-Card-Styling mit dezenter CTA, Bildbereich und Dark-Mode-Kontrast",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.78 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.77",
       "date": "2026-05-24",

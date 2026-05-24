@@ -152,10 +152,22 @@ if (empty($_showList) || $featuredPosts === []) {
     </div><!-- /.homepage-list-main -->
     <aside class="<?php echo $_sbAsideClass; ?>">
 
-        <?php if ($_sbShowIdentity && (!empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline) || !empty($_sbIdentityBadgeText))): ?>
+        <?php
+        $_sbIdentityServiceEnabled = !empty($_sbIdentityShowService);
+        $_sbIdentityServiceHasContent = $_sbIdentityServiceEnabled && (
+            trim((string) ($_sbIdentityServiceKicker ?? '')) !== ''
+            || trim((string) ($_sbIdentityServiceTitle ?? '')) !== ''
+            || trim((string) ($_sbIdentityServiceText ?? '')) !== ''
+            || trim((string) ($_sbIdentityServiceImageUrl ?? '')) !== ''
+            || trim((string) ($_sbIdentityServiceButtonText ?? '')) !== ''
+        );
+        $_sbIdentityHasBaseContent = !empty($_sbIdentityLogoUrl) || !empty($_sbIdentityTagline) || !empty($_sbIdentityBadgeText);
+        ?>
+        <?php if ($_sbShowIdentity && ($_sbIdentityHasBaseContent || $_sbIdentityServiceHasContent)): ?>
         <div class="sb-widget sb-widget--identity"<?php echo $_sbWidgetOrderStyle('identity'); ?>>
             <?php $_idLink = !empty($_sbIdentityLinkUrl) ? (string) $_sbIdentityLinkUrl : '/'; ?>
             <?php $_idHref = function_exists('phinit_safe_public_url') ? (phinit_safe_public_url($_idLink, $siteUrl, ['http', 'https']) ?: '/') : $_idLink; ?>
+            <?php $_idIsExternal = preg_match('#^https?://#i', $_idHref) === 1; ?>
             <?php $_sbIdentitySiteName = trim((string) (defined('SITE_NAME') ? SITE_NAME : '')); ?>
             <?php $_sbIdentityAriaBase = $_sbIdentitySiteName !== '' ? $_sbIdentitySiteName : 'Startseite'; ?>
             <?php $_sbIdentityAriaLabel = empty($_sbIdentityTagline)
@@ -171,7 +183,21 @@ if (empty($_showList) || $featuredPosts === []) {
                     'url' => $_sbIdentityLogoSrc,
                     'height' => 42,
                 ]; ?>
-            <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity<?php echo !empty($_sbIdentityBadgeText) ? ' sb-identity--has-badge' : ''; ?>"<?php echo $_sbIdentityAriaLabel !== '' ? ' aria-label="' . htmlspecialchars($_sbIdentityAriaLabel, ENT_QUOTES) . '"' : ''; ?>>
+            <?php $_sbIdentityServiceHref = function_exists('phinit_safe_public_url')
+                ? (phinit_safe_public_url((string) ($_sbIdentityServiceUrl ?? '/it-dienstleistungen'), $siteUrl, ['http', 'https']) ?: '')
+                : (string) ($_sbIdentityServiceUrl ?? '/it-dienstleistungen'); ?>
+            <?php $_sbIdentityServiceIsExternal = preg_match('#^https?://#i', $_sbIdentityServiceHref) === 1; ?>
+            <?php $_sbIdentityServiceImageReference = (string) ($_sbIdentityServiceImageUrl ?? ''); ?>
+            <?php $_sbIdentityServiceImageSrc = function_exists('phinit_normalize_public_media_url') ? phinit_normalize_public_media_url($_sbIdentityServiceImageReference, false, $siteUrl) : $_sbIdentityServiceImageReference; ?>
+            <?php $_sbIdentityServiceImageSources = function_exists('phinit_get_picture_sources')
+                ? phinit_get_picture_sources($_sbIdentityServiceImageReference !== '' ? $_sbIdentityServiceImageReference : $_sbIdentityServiceImageSrc, $siteUrl, 220, 116)
+                : [
+                    'url' => $_sbIdentityServiceImageSrc,
+                    'height' => 116,
+                ]; ?>
+            <article class="sb-identity<?php echo !empty($_sbIdentityBadgeText) ? ' sb-identity--has-badge' : ''; ?><?php echo $_sbIdentityServiceHasContent ? ' sb-identity--service-card' : ''; ?>">
+                <?php if ($_sbIdentityHasBaseContent): ?>
+                <a href="<?php echo htmlspecialchars($_idHref, ENT_QUOTES); ?>" class="sb-identity-brand-link"<?php echo $_sbIdentityAriaLabel !== '' ? ' aria-label="' . htmlspecialchars($_sbIdentityAriaLabel, ENT_QUOTES) . '"' : ''; ?><?php echo $_idIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
                 <?php if ($_sbIdentityLogoSrc !== '' || !empty($_sbIdentityBadgeText)): ?>
                 <span class="sb-identity-brand">
                 <?php if ($_sbIdentityLogoSrc !== ''): ?>
@@ -191,7 +217,40 @@ if (empty($_showList) || $featuredPosts === []) {
                 <?php if (!empty($_sbIdentityTagline)): ?>
                 <span class="sb-identity-tagline"><?php echo htmlspecialchars($_sbIdentityTagline, ENT_QUOTES); ?></span>
                 <?php endif; ?>
-            </a>
+                </a>
+                <?php endif; ?>
+
+                <?php if ($_sbIdentityServiceHasContent): ?>
+                <div class="sb-identity-service">
+                    <?php if ($_sbIdentityServiceImageSrc !== ''): ?>
+                    <picture class="sb-identity-service__media">
+                        <?php if (($_sbIdentityServiceImageSources['webp_url'] ?? '') !== ''): ?>
+                        <source srcset="<?php echo htmlspecialchars((string) ($_sbIdentityServiceImageSources['webp_url'] ?? ''), ENT_QUOTES); ?>" type="image/webp">
+                        <?php endif; ?>
+                        <img src="<?php echo htmlspecialchars((string) ($_sbIdentityServiceImageSources['url'] ?? $_sbIdentityServiceImageSrc), ENT_QUOTES); ?>"
+                             alt="<?php echo htmlspecialchars((string) ($_sbIdentityServiceImageAlt ?? ''), ENT_QUOTES); ?>"
+                             class="sb-identity-service__image" <?php echo phinit_image_loading_attributes(); ?> <?php echo phinit_image_dimension_attributes($_sbIdentityServiceImageReference !== '' ? $_sbIdentityServiceImageReference : $_sbIdentityServiceImageSrc, 220, 116); ?>>
+                    </picture>
+                    <?php endif; ?>
+                    <div class="sb-identity-service__body">
+                        <?php if (!empty($_sbIdentityServiceKicker)): ?>
+                        <span class="sb-identity-service__kicker"><?php echo htmlspecialchars((string) $_sbIdentityServiceKicker, ENT_QUOTES); ?></span>
+                        <?php endif; ?>
+                        <?php if (!empty($_sbIdentityServiceTitle)): ?>
+                        <strong class="sb-identity-service__title"><?php echo htmlspecialchars((string) $_sbIdentityServiceTitle, ENT_QUOTES); ?></strong>
+                        <?php endif; ?>
+                        <?php if (!empty($_sbIdentityServiceText)): ?>
+                        <p class="sb-identity-service__text"><?php echo nl2br(htmlspecialchars((string) $_sbIdentityServiceText, ENT_QUOTES)); ?></p>
+                        <?php endif; ?>
+                        <?php if ($_sbIdentityServiceHref !== '' && !empty($_sbIdentityServiceButtonText)): ?>
+                        <a href="<?php echo htmlspecialchars($_sbIdentityServiceHref, ENT_QUOTES); ?>" class="sb-identity-service__button"<?php echo $_sbIdentityServiceIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                            <?php echo htmlspecialchars((string) $_sbIdentityServiceButtonText, ENT_QUOTES); ?>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </article>
         </div>
         <?php endif; ?>
 
