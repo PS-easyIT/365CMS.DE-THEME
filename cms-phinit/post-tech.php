@@ -182,6 +182,20 @@ $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_curre
 $publishedAt = (string) ($post['published_at'] ?? '');
 $updatedAt = (string) ($post['updated_at'] ?? '');
 $showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
+$authorId = (int) ($post['author_id'] ?? 0);
+$authorBoxUrl = $authorId > 0
+    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId)
+    : '';
+$authorBoxContext = function_exists('phinit_build_author_box_context')
+    ? phinit_build_author_box_context([
+        'category' => 'posts',
+        'show_key' => 'show_author_box',
+        'entity_name' => (string) ($post['author_name'] ?? ''),
+        'author_url' => $authorBoxUrl,
+        'site_url' => $siteUrl,
+        'locale' => $currentLocale,
+    ])
+    : [];
 
 try {
     $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0));
@@ -279,6 +293,9 @@ try {
             </div>
 
             <?php include __DIR__ . '/partials/post-navigation.php'; ?>
+            <?php if (!empty($authorBoxContext['show'])): ?>
+            <?php get_theme_part('partials/post-author-box', $authorBoxContext); ?>
+            <?php endif; ?>
             <?php include __DIR__ . '/partials/post-comments.php'; ?>
         </article>
     </div>

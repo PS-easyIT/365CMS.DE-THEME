@@ -1690,6 +1690,134 @@ if (!function_exists('phinit_format_date')) {
     }
 }
 
+if (!function_exists('phinit_customizer_value')) {
+    function phinit_customizer_value(string $category, string $key, mixed $default = ''): mixed
+    {
+        static $customizer = null;
+        static $resolved = false;
+
+        if (!$resolved) {
+            $resolved = true;
+            try {
+                $customizer = \CMS\Services\ThemeCustomizer::instance();
+            } catch (\Throwable) {
+                $customizer = null;
+            }
+        }
+
+        if (!$customizer) {
+            return $default;
+        }
+
+        try {
+            return $customizer->get($category, $key, $default);
+        } catch (\Throwable) {
+            return $default;
+        }
+    }
+}
+
+if (!function_exists('phinit_customizer_bool')) {
+    function phinit_customizer_bool(string $category, string $key, bool $default = true): bool
+    {
+        return filter_var(phinit_customizer_value($category, $key, $default), FILTER_VALIDATE_BOOLEAN);
+    }
+}
+
+if (!function_exists('phinit_author_service_hub_href')) {
+    function phinit_author_service_hub_href(?string $configuredUrl = null, ?string $locale = null, ?string $siteUrl = null): string
+    {
+        $candidate = trim((string) ($configuredUrl ?? ''));
+        if ($candidate === '') {
+            $candidate = '/it-dienstleistungen';
+        }
+
+        $safeUrl = function_exists('phinit_safe_public_url')
+            ? phinit_safe_public_url($candidate, $siteUrl, ['http', 'https'])
+            : $candidate;
+
+        if ($safeUrl === '') {
+            return '';
+        }
+
+        return function_exists('phinit_localized_href')
+            ? phinit_localized_href($safeUrl, $locale, $siteUrl)
+            : $safeUrl;
+    }
+}
+
+if (!function_exists('phinit_build_author_box_context')) {
+    /**
+     * Baut die Daten für die wiederverwendbare Autorbox auf Beitrags- und Seitendetails.
+     *
+     * @param array<string,mixed> $options
+     * @return array<string,mixed>
+     */
+    function phinit_build_author_box_context(array $options): array
+    {
+        $category = trim((string) ($options['category'] ?? 'posts')) ?: 'posts';
+        $siteUrl = (string) ($options['site_url'] ?? (defined('SITE_URL') ? SITE_URL : ''));
+        $locale = trim((string) ($options['locale'] ?? (function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de'))) ?: 'de';
+
+        $showKey = (string) ($options['show_key'] ?? 'show_author_box');
+        $nameKey = (string) ($options['name_key'] ?? 'author_name');
+        $bioKey = (string) ($options['bio_key'] ?? 'author_bio');
+        $avatarKey = (string) ($options['avatar_key'] ?? 'author_avatar_url');
+        $eyebrowKey = (string) ($options['eyebrow_key'] ?? 'author_eyebrow');
+        $aboutLabelKey = (string) ($options['about_label_key'] ?? 'author_about_label');
+        $aboutWidthKey = (string) ($options['about_width_key'] ?? 'author_about_width');
+        $showServiceKey = (string) ($options['show_service_key'] ?? 'show_author_service_hub');
+        $serviceUrlKey = (string) ($options['service_url_key'] ?? 'author_service_hub_url');
+        $serviceLabelKey = (string) ($options['service_label_key'] ?? 'author_service_hub_label');
+        $serviceTextKey = (string) ($options['service_text_key'] ?? 'author_service_hub_text');
+
+        $showAuthorBox = phinit_customizer_bool($category, $showKey, (bool) ($options['show_default'] ?? true));
+        $showService = phinit_customizer_bool($category, $showServiceKey, (bool) ($options['show_service_default'] ?? true));
+
+        $entityName = trim((string) ($options['entity_name'] ?? ''));
+        $configuredName = trim((string) phinit_customizer_value($category, $nameKey, (string) ($options['default_name'] ?? '')));
+        $authorName = $configuredName !== '' ? $configuredName : $entityName;
+
+        $authorBio = trim((string) phinit_customizer_value($category, $bioKey, (string) ($options['default_bio'] ?? '')));
+        $authorAvatar = trim((string) phinit_customizer_value($category, $avatarKey, (string) ($options['default_avatar'] ?? '')));
+        $authorAvatarUrl = function_exists('phinit_normalize_public_media_url')
+            ? phinit_normalize_public_media_url($authorAvatar, true, $siteUrl)
+            : (function_exists('phinit_safe_public_url') ? phinit_safe_public_url($authorAvatar, $siteUrl, ['http', 'https']) : $authorAvatar);
+        $authorAboutWidth = (int) phinit_customizer_value($category, $aboutWidthKey, (int) ($options['default_about_width'] ?? 60));
+        if (!in_array($authorAboutWidth, [50, 60, 75], true)) {
+            $authorAboutWidth = 60;
+        }
+
+        $serviceHubUrl = '';
+        if ($showService) {
+            $serviceHubUrl = phinit_author_service_hub_href(
+                (string) phinit_customizer_value($category, $serviceUrlKey, (string) ($options['default_service_url'] ?? '/it-dienstleistungen')),
+                $locale,
+                $siteUrl
+            );
+        }
+
+        $serviceHubLabel = trim((string) phinit_customizer_value($category, $serviceLabelKey, (string) ($options['default_service_label'] ?? 'Dienstleistungen ansehen')));
+        $serviceHubText = trim((string) phinit_customizer_value($category, $serviceTextKey, (string) ($options['default_service_text'] ?? 'Du suchst Unterstützung bei Microsoft 365, 365CMS oder IT-Automatisierung? Hier findest du passende Leistungen und Einstiegspakete.')));
+        $hasAuthorContent = $authorName !== '' || $authorBio !== '' || $authorAvatarUrl !== '';
+        $hasServiceContent = $serviceHubUrl !== '' && ($serviceHubLabel !== '' || $serviceHubText !== '');
+
+        return [
+            'show' => $showAuthorBox && ($hasAuthorContent || $hasServiceContent),
+            'authorName' => $authorName,
+            'authorBio' => $authorBio,
+            'authorAvatarUrl' => $authorAvatarUrl,
+            'authorUrl' => trim((string) ($options['author_url'] ?? '')),
+            'authorEyebrow' => trim((string) phinit_customizer_value($category, $eyebrowKey, (string) ($options['default_eyebrow'] ?? 'Autor'))),
+            'authorAboutLabel' => trim((string) phinit_customizer_value($category, $aboutLabelKey, (string) ($options['default_about_label'] ?? 'Über mich'))),
+            'authorAboutWidth' => $authorAboutWidth,
+            'serviceHubUrl' => $serviceHubUrl,
+            'serviceHubLabel' => $serviceHubLabel,
+            'serviceHubText' => $serviceHubText,
+        ];
+    }
+}
+
 if (!function_exists('phinit_get_member_edit_link')) {
     /**
      * @return array{show:bool,url:string,label:string,entity:string,entityId:int}

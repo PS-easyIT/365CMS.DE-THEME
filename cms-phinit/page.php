@@ -23,9 +23,10 @@ try {
     $_pg_showSidebar = filter_var($_pc->get('pages', 'show_page_sidebar',      true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_sidebarNav  = filter_var($_pc->get('pages', 'page_sidebar_show_nav',  true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_showToc     = filter_var($_pc->get('pages', 'show_page_toc',          false), FILTER_VALIDATE_BOOLEAN);
+    $_pg_showAuthor  = filter_var($_pc->get('pages', 'show_page_author_box',   true),  FILTER_VALIDATE_BOOLEAN);
 } catch (\Throwable $_e) {
     $_pg_showTitle = true; $_pg_showHero = true; $_pg_showDate = true; $_pg_layout = 'full';
-    $_pg_showSidebar = true; $_pg_sidebarNav = true; $_pg_showToc = false;
+    $_pg_showSidebar = true; $_pg_sidebarNav = true; $_pg_showToc = false; $_pg_showAuthor = true;
 }
 
 $pageProvidedByRouter = isset($page) && !empty($page);
@@ -83,6 +84,27 @@ $favoriteControl = !$isHubSitePage
 
 // Nicht gefunden → Fehlermeldung im Content-Bereich anzeigen (Header wurde bereits gesendet)
 $pageNotFound = empty($page);
+
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$pageAuthorBoxContext = (!$pageNotFound && !$isHubSitePage && !$isCookieConsentPage && !$isImageArchivePage && function_exists('phinit_build_author_box_context'))
+    ? phinit_build_author_box_context([
+        'category' => 'pages',
+        'show_key' => 'show_page_author_box',
+        'name_key' => 'page_author_name',
+        'bio_key' => 'page_author_bio',
+        'avatar_key' => 'page_author_avatar_url',
+        'eyebrow_key' => 'page_author_eyebrow',
+        'about_label_key' => 'page_author_about_label',
+        'about_width_key' => 'page_author_about_width',
+        'show_service_key' => 'show_page_author_service_hub',
+        'service_url_key' => 'page_author_service_hub_url',
+        'service_label_key' => 'page_author_service_hub_label',
+        'service_text_key' => 'page_author_service_hub_text',
+        'site_url' => $siteUrl,
+        'locale' => $currentLocale,
+        'show_default' => $_pg_showAuthor,
+    ])
+    : [];
 
 // TOC für Seiten generieren (wenn aktiviert)
 $_pg_toc = [];
@@ -142,6 +164,9 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
             <?php endif; ?>
             <div class="page-content"><?php phinit_render_prepared_content($safePageContent); ?></div>
             <?php echo $_pg_updatedPill; ?>
+            <?php if (!empty($pageAuthorBoxContext['show'])): ?>
+            <?php get_theme_part('partials/post-author-box', $pageAuthorBoxContext); ?>
+            <?php endif; ?>
         </div>
 
         <aside class="post-sidebar">
@@ -163,6 +188,9 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
         <?php phinit_render_prepared_content($safePageContent); ?>
     </div>
     <?php echo $_pg_updatedPill; ?>
+    <?php if (!empty($pageAuthorBoxContext['show'])): ?>
+    <?php get_theme_part('partials/post-author-box', $pageAuthorBoxContext); ?>
+    <?php endif; ?>
     <?php endif; ?>
 
 <?php endif; ?>

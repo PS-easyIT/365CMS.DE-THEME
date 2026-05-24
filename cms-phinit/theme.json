@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.75",
+  "version": "1.5.76",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -1643,10 +1643,30 @@
           "type": "checkbox",
           "default": true
         },
+        "author_eyebrow": {
+          "label": "Autoren-Box Kicker",
+          "type": "text",
+          "default": "Autor"
+        },
         "author_name": {
           "label": "Autoren-Name",
           "type": "text",
           "default": "Andreas Hepp"
+        },
+        "author_about_label": {
+          "label": "Über-mich Label",
+          "type": "text",
+          "default": "Über mich"
+        },
+        "author_about_width": {
+          "label": "Autorbereich Breite",
+          "type": "select",
+          "default": "60",
+          "options": [
+            {"value": "50", "label": "50 % Autor / 50 % Dienstleistungen"},
+            {"value": "60", "label": "60 % Autor / 40 % Dienstleistungen"},
+            {"value": "75", "label": "75 % Autor / 25 % Dienstleistungen"}
+          ]
         },
         "author_bio": {
           "label": "Autoren-Bio",
@@ -1657,6 +1677,26 @@
           "label": "Autoren-Avatar-URL",
           "type": "url",
           "default": ""
+        },
+        "show_author_service_hub": {
+          "label": "Dienstleistungs-HubSite in Autorbox anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "author_service_hub_url": {
+          "label": "Dienstleistungs-HubSite URL",
+          "type": "url",
+          "default": "/it-dienstleistungen"
+        },
+        "author_service_hub_label": {
+          "label": "Dienstleistungs-Link Text",
+          "type": "text",
+          "default": "Dienstleistungen ansehen"
+        },
+        "author_service_hub_text": {
+          "label": "Dienstleistungs-Hinweistext",
+          "type": "textarea",
+          "default": "Du suchst Unterstützung bei Microsoft 365, 365CMS oder IT-Automatisierung? Hier findest du passende Leistungen und Einstiegspakete."
         }
       }
     },
@@ -1711,6 +1751,66 @@
           "label": "Inhaltsverzeichnis auf Seiten erzeugen",
           "type": "checkbox",
           "default": false
+        },
+        "show_page_author_box": {
+          "label": "Autoren-Box auf Seiten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "page_author_eyebrow": {
+          "label": "Seiten-Autorenbox Kicker",
+          "type": "text",
+          "default": "Autor"
+        },
+        "page_author_name": {
+          "label": "Seiten-Autor Name",
+          "type": "text",
+          "default": "Andreas Hepp"
+        },
+        "page_author_about_label": {
+          "label": "Seiten-Autor Über-mich Label",
+          "type": "text",
+          "default": "Über mich"
+        },
+        "page_author_about_width": {
+          "label": "Seiten-Autorbereich Breite",
+          "type": "select",
+          "default": "60",
+          "options": [
+            {"value": "50", "label": "50 % Autor / 50 % Dienstleistungen"},
+            {"value": "60", "label": "60 % Autor / 40 % Dienstleistungen"},
+            {"value": "75", "label": "75 % Autor / 25 % Dienstleistungen"}
+          ]
+        },
+        "page_author_bio": {
+          "label": "Seiten-Autor Bio",
+          "type": "textarea",
+          "default": "IT-Administrator, Blogger und PowerShell-Enthusiast. Ich unterstütze Unternehmen bei Microsoft 365, 365CMS und moderner IT-Automatisierung."
+        },
+        "page_author_avatar_url": {
+          "label": "Seiten-Autor Avatar-URL",
+          "type": "url",
+          "default": ""
+        },
+        "show_page_author_service_hub": {
+          "label": "Dienstleistungs-HubSite auf Seiten anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "page_author_service_hub_url": {
+          "label": "Seiten-Dienstleistungs-HubSite URL",
+          "type": "url",
+          "default": "/it-dienstleistungen"
+        },
+        "page_author_service_hub_label": {
+          "label": "Seiten-Dienstleistungs-Link Text",
+          "type": "text",
+          "default": "Dienstleistungen ansehen"
+        },
+        "page_author_service_hub_text": {
+          "label": "Seiten-Dienstleistungs-Hinweistext",
+          "type": "textarea",
+          "default": "Passend zu dieser Seite findest du hier Dienstleistungen, Beratungspakete und konkrete Unterstützung für deine IT- oder 365CMS-Projekte."
         }
       }
     },

@@ -593,15 +593,37 @@ body.dark-mode .content-favorite--active {
 }
 
 .post-author-box {
+    --post-author-about-width: 60%;
     display: flex;
     align-items: flex-start;
-    gap: 18px;
+    justify-content: space-between;
+    gap: 24px;
     margin: 0 0 28px;
     padding: 22px 24px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     background: linear-gradient(180deg, rgba(248,250,252,.96) 0%, rgba(255,255,255,.99) 100%);
     box-shadow: 0 1px 3px rgba(15,23,42,.05), 0 14px 30px rgba(15,23,42,.04);
+}
+
+.post-author-box--about-50 {
+    --post-author-about-width: 50%;
+}
+
+.post-author-box--about-60 {
+    --post-author-about-width: 60%;
+}
+
+.post-author-box--about-75 {
+    --post-author-about-width: 75%;
+}
+
+.post-author-box__author {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    min-width: 0;
+    flex: 0 1 var(--post-author-about-width);
 }
 
 .post-author-box__avatar,
@@ -634,6 +656,7 @@ body.dark-mode .content-favorite--active {
     flex-direction: column;
     gap: 8px;
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .post-author-box__eyebrow {
@@ -660,10 +683,76 @@ body.dark-mode .content-favorite--active {
     color: var(--accent-teal);
 }
 
+.post-author-box__about {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.post-author-box__content-label {
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--primary-color);
+}
+
 .post-author-box__bio {
     margin: 0;
     color: var(--text-secondary);
     line-height: 1.75;
+}
+
+.post-author-box__service-text {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+}
+
+.post-author-box__service {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+    align-self: stretch;
+    min-width: 0;
+    flex: 1 1 0;
+    margin-left: auto;
+    padding-left: 22px;
+    border-left: 1px solid rgba(13,148,136,.16);
+}
+
+.post-author-box__service-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    flex: 0 0 auto;
+    padding: 7px 12px;
+    border: 1px solid rgba(13,148,136,.22);
+    border-radius: 2px;
+    background: rgba(13,148,136,.07);
+    color: var(--primary-color);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-decoration: none;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.post-author-box__service-link::after {
+    content: '→';
+    margin-left: 7px;
+    font-weight: 900;
+}
+
+.post-author-box__service-link:hover,
+.post-author-box__service-link:focus-visible {
+    background: rgba(13,148,136,.12);
+    border-color: rgba(13,148,136,.34);
+    color: var(--primary-dark);
 }
 
 body.dark-mode .post-author-box {
@@ -679,6 +768,31 @@ body.dark-mode .post-author-box__avatar {
 
 body.dark-mode .post-author-box__bio {
     color: var(--text-secondary);
+}
+
+body.dark-mode .post-author-box__content-label {
+    color: var(--accent-color);
+}
+
+body.dark-mode .post-author-box__service-text {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .post-author-box__service {
+    border-left-color: rgba(94,234,212,.18);
+}
+
+body.dark-mode .post-author-box__service-link {
+    background: rgba(94,234,212,.1);
+    border-color: rgba(94,234,212,.24);
+    color: #ccfbf1;
+}
+
+body.dark-mode .post-author-box__service-link:hover,
+body.dark-mode .post-author-box__service-link:focus-visible {
+    background: rgba(94,234,212,.16);
+    border-color: rgba(94,234,212,.38);
+    color: #f0fdfa;
 }
 
 .comments-section {
@@ -1466,6 +1580,20 @@ body.dark-mode .comment-submit-btn {
         gap: 14px;
     }
 
+    .post-author-box__service {
+        align-self: auto;
+        justify-content: flex-start;
+        width: 100%;
+        margin-left: 0;
+        padding: 12px 0 0;
+        border-left: 0;
+        border-top: 1px solid rgba(13,148,136,.16);
+    }
+
+    .post-author-box__service-link {
+        width: 100%;
+    }
+
     .post-author-box__avatar,
     .post-author-box__avatar-placeholder {
         width: 60px;
@@ -1605,5 +1733,14 @@ body.dark-mode .comment-submit-btn {
     .post-author-box {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .post-author-box__author {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .post-author-box__body {
+        width: 100%;
     }
 }

@@ -66,9 +66,6 @@ $showShareMastodon = $czBool('posts', 'show_share_mastodon', true);
 $showSharePrint    = $czBool('posts', 'show_share_print', true);
 $showPostNav       = $czBool('posts', 'show_post_nav', true);
 $showAuthorBox     = $czBool('posts', 'show_author_box', true);
-$authorBoxNameCfg  = trim((string)$czGet('posts', 'author_name', ''));
-$authorBoxBio      = trim((string)$czGet('posts', 'author_bio', ''));
-$authorBoxAvatar   = trim((string)$czGet('posts', 'author_avatar_url', ''));
 $showComments      = $czBool('posts', 'show_comments', true);
 $commentsHeader    = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
 $commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
@@ -236,17 +233,21 @@ $updatedAt = (string) ($post['updated_at'] ?? '');
 $showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
 
 $authorId = (int) ($post['author_id'] ?? 0);
-$authorBoxName = trim((string) ($post['author_name'] ?? ''));
-if ($authorBoxName === '') {
-    $authorBoxName = $authorBoxNameCfg;
-}
 $authorBoxUrl = $authorId > 0
     ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId)
     : '';
-$authorBoxAvatarUrl = function_exists('phinit_safe_public_url')
-    ? phinit_safe_public_url($authorBoxAvatar, $siteUrl, ['http', 'https'])
-    : $authorBoxAvatar;
-$renderAuthorBox = $showAuthorBox && ($authorBoxName !== '' || $authorBoxBio !== '' || $authorBoxAvatarUrl !== '');
+$authorBoxContext = function_exists('phinit_build_author_box_context')
+    ? phinit_build_author_box_context([
+        'category' => 'posts',
+        'show_key' => 'show_author_box',
+        'entity_name' => (string) ($post['author_name'] ?? ''),
+        'author_url' => $authorBoxUrl,
+        'site_url' => $siteUrl,
+        'locale' => $currentLocale,
+        'show_default' => $showAuthorBox,
+    ])
+    : [];
+$renderAuthorBox = !empty($authorBoxContext['show']);
 
 try {
     $csrfToken = \CMS\Security::instance()->generateToken('comment_' . ($post['id'] ?? 0));
@@ -346,12 +347,7 @@ if ($sidebarPosition === 'left') {
         <?php endif; ?>
 
         <?php if ($renderAuthorBox): ?>
-        <?php get_theme_part('partials/post-author-box', [
-            'authorName' => $authorBoxName,
-            'authorBio' => $authorBoxBio,
-            'authorAvatarUrl' => $authorBoxAvatarUrl,
-            'authorUrl' => $authorBoxUrl,
-        ]); ?>
+        <?php get_theme_part('partials/post-author-box', $authorBoxContext); ?>
         <?php endif; ?>
 
         <!-- Kommentare -->

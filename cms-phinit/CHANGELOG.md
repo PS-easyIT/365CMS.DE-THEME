@@ -14,6 +14,19 @@
 
 ---
 
+## v1.5.76 — 24. Mai 2026
+
+### Erweiterte Autorbox mit Dienstleistungs-HubSite
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Autorbox / Beiträge | `post.php`, `post-wide.php`, `post-tech.php` und `partials/post-author-box.php` zeigen eine erweiterte Autorbox mit konfigurierbarem Kicker, Über-mich-Label, Bio, Avatar und CTA zur Dienstleistungs-HubSite. |
+| 🟢 feat | Autorbox / Seiten | `page.php` rendert die Autorbox jetzt auch unter normalen Seitendetails; HubSites, Cookie-Consent- und Bildarchivseiten bleiben bewusst ausgenommen. |
+| 🎨 style | Autorbox / PHINIT-Design | `assets/css/post-detail.css` gestaltet die Autorbox als zweispaltiges Layout: links Autorinfos und rechts der Dienstleistungsbereich mit Hinweistext oberhalb des optionalen Buttons; Dark Mode und Mobile-Layout sind berücksichtigt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.76` synchronisiert. |
+
+---
+
 ## v1.5.75 — 24. Mai 2026
 
 ### Dienstleistungs-HubSite im Admin sichtbar und seed-stabil

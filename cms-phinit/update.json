@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.75",
+  "version": "1.5.76",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.29",
+  "tested_up_to": "3.0.31",
   "release_date": "2026-05-24",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.76",
+      "date": "2026-05-24",
+      "changes": [
+        "post.php + post-wide.php + post-tech.php + page.php: Beitrags- und Seitendetails nutzen eine gemeinsame erweiterte Autorbox inklusive konfigurierbarer Dienstleistungs-HubSite-Verknüpfung",
+        "partials/post-author-box.php + includes/theme-template-helpers.php: Autorbox-Daten werden zentral aus dem Customizer normalisiert; Avatar, Name, Über-mich-Text, Labels und CTA zur HubSite sind anpassbar",
+        "assets/css/post-detail.css: Die Autorbox nutzt ein zweispaltiges Layout mit Autorinfos links und einem Dienstleistungsbereich rechts, in dem der Hinweistext oberhalb des optionalen Buttons steht, inklusive Dark Mode und responsivem Layout",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.76 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.75",
       "date": "2026-05-24",
