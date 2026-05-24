@@ -14,6 +14,19 @@
 
 ---
 
+## v1.5.82 — 24. Mai 2026
+
+### Spezial-Templates für Microsoft 365, Windows und PowerShell
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Beiträge / Templates | `theme.json` ergänzt die neuen Beitragstemplates `microsoft-365`, `windows` und `powershell`. Die Metafelder sind logisch als Zweiergruppen angelegt: Workload/Scope, Plattform/Version, Modul/Edition, Verwaltung/Ausführung, Zielsystem/Teststand sowie Voraussetzungen. |
+| 🎨 style | Template-Meta-Card | `assets/css/templates.css` gestaltet die Zusatzkarte dezent mit hellem beziehungsweise dunklem Card-Hintergrund, zweispaltigem Grid, gleicher Feldhöhe und kleinen Abständen statt kräftigem Navy-Block. |
+| 🟢 feat | Website- und GitHub-Links | `partials/post-template-meta-card.php` rendert URL-Felder wie Website, Dokumentation und GitHub als kompakte Icon-Links mit zugänglichem `aria-label`; leere oder ungültige URLs bleiben weiterhin ausgeblendet. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md`, `CHANGELOG.md` und `DOC/TEMPLATES.md` wurden auf Version `1.5.82` synchronisiert. |
+
+---
+
 ## v1.5.81 — 24. Mai 2026
 
 ### EditorJS-Bilder und Bild-Text-Blöcke im Public-Layout stabilisiert

@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.81",
+  "version": "1.5.82",
   "requires_cms": "2.5.0",
   "tested_up_to": "3.3.5",
   "release_date": "2026-05-24",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.82",
+      "date": "2026-05-24",
+      "changes": [
+        "theme.json: Neue Beitrags-Templates microsoft-365, windows und powershell mit logisch gruppierten Metafeldern für Workloads, Plattformen, Module, Ausführungskontext, Teststand, Voraussetzungen sowie Website-/GitHub-Links ergänzt",
+        "partials/post-template-meta-card.php + includes/theme-template-helpers.php: Template-Zusatzfelder geben die Template-ID und Display-Hinweise weiter; URL-Felder wie Website und GitHub werden als kompakte Icon-Links gerendert",
+        "assets/css/templates.css: Die Template-Meta-Card nutzt jetzt ein dezentes helles/dunkles Card-Design mit zweispaltigem Grid, gleicher Feldhöhe, kleinen Abständen und unaufdringlichen Chips statt kräftigem Navy-Hintergrund",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md + DOC/TEMPLATES.md: Theme-Metadaten und Dokumentation auf Version 1.5.82 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.81",
       "date": "2026-05-24",

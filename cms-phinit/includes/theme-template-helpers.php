@@ -693,7 +693,7 @@ if (!function_exists('phinit_resolve_post_template_file')) {
 
 if (!function_exists('phinit_build_post_template_meta_items')) {
     /**
-     * @return array{title:string,items:array<int,array{key:string,label:string,value:mixed,type:string,url:string}>}
+     * @return array{title:string,template_id:string,items:array<int,array{key:string,label:string,value:mixed,type:string,url:string,display:string}>}
      */
     function phinit_build_post_template_meta_items(array|object $post): array
     {
@@ -715,6 +715,7 @@ if (!function_exists('phinit_build_post_template_meta_items')) {
 
             $type = strtolower(trim((string) ($field['type'] ?? 'text')));
             $label = trim((string) ($field['label'] ?? $fieldKey));
+            $display = strtolower(trim((string) ($field['display'] ?? '')));
             $value = $meta[$fieldKey];
             $url = '';
 
@@ -748,11 +749,13 @@ if (!function_exists('phinit_build_post_template_meta_items')) {
                 'value' => $value,
                 'type' => $type,
                 'url' => $url,
+                'display' => $display,
             ];
         }
 
         return [
             'title' => trim((string) ($template['card_label'] ?? $template['label'] ?? 'Zusatzinfos')),
+            'template_id' => trim((string) ($template['id'] ?? '')),
             'items' => $items,
         ];
     }

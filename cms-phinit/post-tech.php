@@ -1,22 +1,13 @@
 <?php
 /**
- * Einzelartikel – Tech-Artikel-Template (mit Tech-Karte)
+ * Einzelartikel – Tech-/Spezialartikel-Template (mit Meta-Steckbrief)
  *
- * Template-ID: post-tech
+ * Template-Datei: post-tech.php
+ * Verwendete Template-IDs in theme.json: tech, microsoft-365, windows, powershell
  * Unterschiede zu post.php:
- *  - .tech-card vor dem Artikel-Body mit technischen Metadaten
- *    (Betriebssystem, Version, Getestet am, Voraussetzungen, Schwierigkeit)
- *  - Metadaten werden aus $post['meta'] gelesen
- *  - Sidebar enthält zusätzlich eine kompakte Tech-Side-Info
+ *  - Sidebar enthält eine kompakte Template-Meta-Card mit technischen Metadaten
+ *  - Metadaten werden aus post_meta_json bzw. $post['meta'] gelesen
  *  - Ansonsten identisch mit dem Standard-Template
- *
- * Pflichtfeld-Schlüssel in post[meta]:
- *   os            – z. B. "Windows Server 2022", "Ubuntu 22.04"
- *   version       – z. B. "PowerShell 7.4"
- *   last_tested   – YYYY-MM-DD
- *   difficulty    – "beginner" | "intermediate" | "advanced" | "expert"
- *   prerequisites – String-Array, z. B. ["Admin-Rechte", ".NET 8"]
- *   time_needed   – z. B. "30 Minuten"
  *
  * @package CMS_Phinit_Theme
  */

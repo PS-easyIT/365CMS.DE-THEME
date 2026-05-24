@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.81",
+  "version": "1.5.82",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -45,15 +45,72 @@
       "description": "Wie Standard, jedoch mit einer Zusatzkarte oberhalb des TOC: Tool, Version, Autor und optionale Links. Leere Felder werden nicht angezeigt.",
       "file":        "post-tech.php",
       "features":    ["sidebar", "toc", "tech-card", "comments", "prev-next", "share-buttons"],
-      "card_label":  "Tool-Details",
+      "card_label":  "Tech-Steckbrief",
       "meta_fields": {
         "tool":          { "label": "Tool",              "type": "text",    "placeholder": "PowerShell" },
         "version":       { "label": "Version",           "type": "text",    "placeholder": "5.1 / 7" },
         "author":        { "label": "Autor",             "type": "text",    "placeholder": "Andreas Hepp" },
-        "website_url":   { "label": "Website",           "type": "url",     "placeholder": "https://example.com" },
-        "github_url":    { "label": "GitHub Repo",       "type": "url",     "placeholder": "https://github.com/org/repo" },
+        "website_url":   { "label": "Website",           "type": "url",     "placeholder": "https://example.com", "display": "icon" },
+        "github_url":    { "label": "GitHub Repo",       "type": "url",     "placeholder": "https://github.com/org/repo", "display": "icon" },
         "last_tested":   { "label": "Zuletzt getestet",  "type": "date" },
         "prerequisites": { "label": "Voraussetzungen",   "type": "array",   "placeholder": "Admin-Rechte" }
+      }
+    },
+    {
+      "id":          "microsoft-365",
+      "label":       "Microsoft 365 (Workload-Steckbrief)",
+      "description": "Spezialtemplate für Microsoft-365-Anleitungen mit Workload, Tenant-/Admin-Kontext, Lizenz, Graph/PowerShell-Bezug und dezenten Link-Icons.",
+      "file":        "post-tech.php",
+      "features":    ["sidebar", "toc", "m365-card", "comments", "prev-next", "share-buttons"],
+      "card_label":  "Microsoft-365-Steckbrief",
+      "meta_fields": {
+        "workload":      { "label": "Workload",          "type": "text",  "placeholder": "Exchange Online / Intune / Purview" },
+        "scope":         { "label": "Geltungsbereich",   "type": "text",  "placeholder": "Tenantweit / Benutzer / Gruppe" },
+        "admin_center":  { "label": "Admin Center",      "type": "text",  "placeholder": "Microsoft 365 Admin Center" },
+        "license_plan":  { "label": "Lizenz / Plan",     "type": "text",  "placeholder": "Business Premium / E3 / E5" },
+        "api_module":    { "label": "API / Modul",       "type": "text",  "placeholder": "Microsoft Graph / ExchangeOnlineManagement" },
+        "last_tested":   { "label": "Zuletzt getestet",  "type": "date" },
+        "prerequisites": { "label": "Voraussetzungen",   "type": "array", "placeholder": "Global Reader\nExchange Administrator\nMicrosoft Graph PowerShell" },
+        "website_url":   { "label": "Microsoft Docs",    "type": "url",   "placeholder": "https://learn.microsoft.com/...", "display": "icon" },
+        "github_url":    { "label": "GitHub / Script",   "type": "url",   "placeholder": "https://github.com/org/repo", "display": "icon" }
+      }
+    },
+    {
+      "id":          "windows",
+      "label":       "Windows Server / Client",
+      "description": "Spezialtemplate für Windows-Server- und Windows-Client-Beiträge mit Version, Rolle/Feature, Management-Werkzeug und Teststand.",
+      "file":        "post-tech.php",
+      "features":    ["sidebar", "toc", "windows-card", "comments", "prev-next", "share-buttons"],
+      "card_label":  "Windows-Steckbrief",
+      "meta_fields": {
+        "platform":      { "label": "Plattform",         "type": "text",  "placeholder": "Windows Server / Windows 11" },
+        "version":       { "label": "Version / Build",   "type": "text",  "placeholder": "2025 / 2022 / 24H2" },
+        "role_feature":  { "label": "Rolle / Feature",   "type": "text",  "placeholder": "AD DS / Hyper-V / Defender" },
+        "management":    { "label": "Verwaltung",        "type": "text",  "placeholder": "PowerShell / GPO / Intune / GUI" },
+        "environment":   { "label": "Umgebung",          "type": "text",  "placeholder": "Domäne / Entra ID / Workgroup" },
+        "last_tested":   { "label": "Zuletzt getestet",  "type": "date" },
+        "prerequisites": { "label": "Voraussetzungen",   "type": "array", "placeholder": "Lokale Adminrechte\nRSAT\nPowerShell 7" },
+        "website_url":   { "label": "Dokumentation",     "type": "url",   "placeholder": "https://learn.microsoft.com/windows/...", "display": "icon" },
+        "github_url":    { "label": "GitHub / Script",   "type": "url",   "placeholder": "https://github.com/org/repo", "display": "icon" }
+      }
+    },
+    {
+      "id":          "powershell",
+      "label":       "PowerShell (Script / Modul)",
+      "description": "Spezialtemplate für PowerShell-Skripte, Module und Automatisierungen mit Edition, Modulversion, Zielsystem und Ausführungskontext.",
+      "file":        "post-tech.php",
+      "features":    ["sidebar", "toc", "powershell-card", "comments", "prev-next", "share-buttons"],
+      "card_label":  "PowerShell-Steckbrief",
+      "meta_fields": {
+        "module":        { "label": "Modul / Script",    "type": "text",  "placeholder": "Microsoft.Graph / PS-easyIT" },
+        "version":       { "label": "Version",           "type": "text",  "placeholder": "1.0.0 / 2.26.1" },
+        "edition":       { "label": "PS-Edition",        "type": "text",  "placeholder": "Windows PowerShell 5.1 / PowerShell 7.4" },
+        "execution":     { "label": "Ausführung",        "type": "text",  "placeholder": "Admin-Konsole / Remote / Automation" },
+        "target_system": { "label": "Zielsystem",        "type": "text",  "placeholder": "Microsoft 365 / Azure / Windows" },
+        "last_tested":   { "label": "Zuletzt getestet",  "type": "date" },
+        "prerequisites": { "label": "Voraussetzungen",   "type": "array", "placeholder": "ExecutionPolicy RemoteSigned\nGraph-Berechtigungen\nAdminrechte" },
+        "website_url":   { "label": "Dokumentation",     "type": "url",   "placeholder": "https://learn.microsoft.com/powershell/...", "display": "icon" },
+        "github_url":    { "label": "GitHub Repo",       "type": "url",   "placeholder": "https://github.com/org/repo", "display": "icon" }
       }
     }
   ],

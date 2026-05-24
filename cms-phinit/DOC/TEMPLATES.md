@@ -107,30 +107,27 @@ Einzelspalte ohne Sidebar, TOC als aufklappbares `<details>`-Element vor dem Art
 
 ---
 
-### 3. `post-tech.php` – Tech-Artikel
+### 3. `post-tech.php` – Tech-Artikel und Spezial-Steckbriefe
 
 **ID:** `tech`
 
-Wie Standard, jedoch mit einer **Tech-Karte** direkt nach dem Post-Header. Außerdem wird in der Sidebar eine kompakte Umgebungsübersicht angezeigt.
+Wie Standard, jedoch mit einer **Template-Meta-Card** in der Sidebar. Sie zeigt nur ausgefüllte Zusatzfelder, nutzt ein dezentes Card-Design und ordnet normale Metafelder zweispaltig mit gleicher Feldhöhe an. Array-Felder wie Voraussetzungen laufen über die volle Breite; Website-, Dokumentations- und GitHub-Links erscheinen als kompakte Icon-Links.
 
 **Layout:**
 ```
 ┌─────────────────────────────────────────────────┐
 │ Post-Header                                      │
 │ ┌──────────────────────────────────────────────┐ │
-│ │ TECH-KARTE (OS, Version, Voraussetzungen)    │ │
-│ └──────────────────────────────────────────────┘ │
-├────────────────────────────┬────────────────────┤
 │ Artikel-Body               │ Sidebar             │
+│                            │  - Zusatzkarte       │
 │                            │  - TOC              │
-│                            │  - OS/Version-Info  │
 │                            │  - Kategorien       │
 ├────────────────────────────┴────────────────────┤
 │ Share / Prev-Next / Kommentare                   │
 └─────────────────────────────────────────────────┘
 ```
 
-**Features:** Tech-Karte, Sidebar, TOC, Kommentare, Umgebungs-Widget in Sidebar
+**Features:** Zusatzkarte, Sidebar, TOC, Kommentare, Metadaten-Widget in Sidebar
 
 **Tech-Karte – Metadaten (gespeichert in `post[meta]`):**
 
@@ -142,6 +139,8 @@ Wie Standard, jedoch mit einer **Tech-Karte** direkt nach dem Post-Header. Auße
 | `difficulty` | enum | Schwierigkeit | `"beginner"`, `"intermediate"`, `"advanced"`, `"expert"` |
 | `prerequisites` | string[] | Voraussetzungen-Liste | `["Admin-Rechte", ".NET 8"]` |
 | `time_needed` | string | Geschätzte Durchführungszeit | `"30 Minuten"` |
+| `website_url` | url | Website oder Dokumentation | `"https://learn.microsoft.com/..."` |
+| `github_url` | url | GitHub-Repository oder Script | `"https://github.com/org/repo"` |
 
 **Schwierigkeits-Badges:**
 
@@ -152,9 +151,26 @@ Wie Standard, jedoch mit einer **Tech-Karte** direkt nach dem Post-Header. Auße
 | `advanced` | Experte | Orange |
 | `expert` | Profi | Rot |
 
-**CSS-Klassen:** `.tech-card`, `.tech-card__header`, `.tech-card__grid`, `.tech-card__item`, `.tech-card__prereqs`, `.badge--green/yellow/orange/red`, `.inline-code`
+**CSS-Klassen:** `.post-template-meta-card`, `.post-template-meta-card__list`, `.post-template-meta-card__item`, `.post-template-meta-card__icon-link`, `.post-template-meta-card__chips`, `.inline-code`
 
 **Geeignet für:** Schritt-für-Schritt-Anleitungen mit klaren Systemvoraussetzungen, PowerShell-Tutorials, Linux-Howtos, Intune-Konfigurationen
+
+#### Spezial-Templates auf Basis von `post-tech.php`
+
+Alle folgenden Templates verwenden dieselbe dezente Sidebar-Zusatzkarte und das `TechArticle`-Schema des `post-tech.php`-Layouts.
+
+| Template-ID | Bereich | Logische Metafelder |
+|---|---|---|
+| `microsoft-365` | Microsoft 365 Workloads | `workload` + `scope`, `admin_center` + `license_plan`, `api_module` + `last_tested`, danach `prerequisites`, `website_url`, `github_url` |
+| `windows` | Windows Server oder Client | `platform` + `version`, `role_feature` + `management`, `environment` + `last_tested`, danach `prerequisites`, `website_url`, `github_url` |
+| `powershell` | Scripts, Module und Automatisierung | `module` + `version`, `edition` + `execution`, `target_system` + `last_tested`, danach `prerequisites`, `website_url`, `github_url` |
+
+**Darstellungsregeln:**
+
+- Normale Text-/Datumsfelder werden möglichst paarweise in einer Reihe angezeigt.
+- Felder haben gleiche Mindesthöhe und nur kleine Zwischenräume, damit die Sidebar kompakt bleibt.
+- `prerequisites` wird als Chip-Liste über volle Breite gerendert.
+- `website_url` und `github_url` werden als Icon-Links gerendert; der sichtbare URL-Text wird zugunsten der ruhigen Card-Optik ausgeblendet, bleibt aber per `aria-label` zugänglich.
 
 ---
 

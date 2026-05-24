@@ -4,7 +4,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.81`
+- Version: `1.5.82`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
 - Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.5`
 
@@ -12,7 +12,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 - Blog- und Archiv-Templates (`index.php`, `blog.php`, `category.php`, `tag.php`)
 - Seiten-Templates inkl. `page.php`, `page-wide.php`, `page-landing.php`
-- Post-Templates inkl. Standard-, Wide- und Tech-Variante
+- Post-Templates inkl. Standard-, Wide-, Tech-, Microsoft-365-, Windows- und PowerShell-Variante
 - Theme-Customizer mit Import/Export und Preview-Drawer
 - Header-Optionen für Suche, Quicklinks, Member-Bar und ausblendbaren Login-/Account-Button
 - Member-Bereich mit Dashboard, Profil, Favoriten, Sicherheit und Feeds
@@ -24,6 +24,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Die Startseiten-Sidebar kann in der Site-Identity eine konfigurierbare Dienstleistungscard mit Logo/Bild, Text und CTA ausgeben.
 - Normale Seiten- und verzögerte Beitrags-Content-Wrapper sind serverseitig als sichtbar markiert, damit Inhalte auch ohne erfolgreiche Scroll-Reveal-Initialisierung lesbar bleiben.
 - EditorJS-Bilder und Bild-Text-Blöcke respektieren im PHINIT-Public-Frontend die Core-/Editor-Vorschau-Breiten; globale `figure`-/`img`-Regeln ziehen MediaText-Blöcke nicht mehr auseinander.
+- Die Beitrags-Templates `microsoft-365`, `windows` und `powershell` liefern dezente zweispaltige Meta-Steckbriefe mit kompakten Website-/GitHub-Icon-Links.
 - Autorenboxen auf Seiten- und Beitragsdetails lassen sich im Customizer inklusive Bild, Name, Über-mich-Text und Dienstleistungs-HubSite-CTA konfigurieren.
 - PHINIT-SiteTables zeigen im Frontend keine Suchleiste über der Tabelle; Pagination erscheint erst ab mindestens 20 Zeilen und nur, wenn wirklich mehrere Seiten entstehen.
 - Tabellen-Pagination ist im PHINIT-Stil gestaltet, nutzt mindestens 20 Zeilen pro Seite und rendert ohne Zeilen-/Seitenstatus-Metainfo unterhalb des Tabellentitels.

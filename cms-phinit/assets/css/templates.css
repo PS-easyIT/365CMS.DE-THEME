@@ -130,16 +130,17 @@
 ═══════════════════════════════════════════════════════════════════════════ */
 
 .tech-card {
-    background: var(--bg-dark-2);
-    border: 1px solid var(--border-dark);
-    border-left: 4px solid var(--accent-teal);
+    background: var(--bg-primary);
+    border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent 12%);
+    border-left: 2px solid color-mix(in srgb, var(--accent-teal) 42%, var(--border-color) 58%);
     border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
     margin-bottom: 28px;
     overflow: hidden;
-    color: var(--text-white);
+    color: var(--text-primary);
 }
 body:not(.dark-mode) .tech-card {
-    background: #0f2d43;
+    background: var(--bg-primary);
     border-left-color: var(--accent-teal);
 }
 .tech-card__header {
@@ -147,8 +148,8 @@ body:not(.dark-mode) .tech-card {
     align-items: center;
     gap: 10px;
     padding: 14px 20px;
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    background: rgba(0,0,0,.18);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent 12%);
+    background: color-mix(in srgb, var(--bg-secondary) 42%, var(--bg-primary) 58%);
 }
 .tech-card__icon { font-size: 1.2rem; }
 .tech-card__title {
@@ -156,7 +157,7 @@ body:not(.dark-mode) .tech-card {
     font-size: var(--fs-sm);
     text-transform: uppercase;
     letter-spacing: .06em;
-    color: var(--accent-teal-light);
+    color: var(--text-secondary);
     flex: 1;
 }
 .tech-card__diff { margin-left: auto; }
@@ -169,12 +170,12 @@ body:not(.dark-mode) .tech-card {
 }
 .tech-card__item {
     padding: 12px 20px;
-    border-right: 1px solid rgba(255,255,255,.06);
-    border-bottom: 1px solid rgba(255,255,255,.06);
+    border-right: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent 12%);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent 12%);
 }
 .tech-card__item dt {
     font-size: var(--fs-xs);
-    color: var(--text-light);
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: .04em;
     margin-bottom: 4px;
@@ -182,12 +183,12 @@ body:not(.dark-mode) .tech-card {
 .tech-card__item dd {
     font-size: var(--fs-sm);
     font-weight: 600;
-    color: #e2e8f0;
+    color: var(--text-primary);
     margin: 0;
 }
 .tech-card__prereqs {
     padding: 14px 20px;
-    border-top: 1px solid rgba(255,255,255,.08);
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent 12%);
     font-size: var(--fs-sm);
 }
 .tech-card__prereqs strong { color: var(--accent-color); }
@@ -200,12 +201,18 @@ body:not(.dark-mode) .tech-card {
     gap: 6px;
 }
 .tech-card__prereqs ul li {
-    background: rgba(255,255,255,.07);
-    border: 1px solid rgba(255,255,255,.1);
+    background: color-mix(in srgb, var(--accent-teal) 8%, var(--bg-primary) 92%);
+    border: 1px solid color-mix(in srgb, var(--accent-teal) 18%, var(--border-color) 82%);
     border-radius: 4px;
     padding: 3px 10px;
     font-size: var(--fs-xs);
-    color: #cbd5e1;
+    color: var(--text-secondary);
+}
+
+.tech-card .inline-code {
+    background: color-mix(in srgb, var(--accent-teal) 10%, var(--bg-primary) 90%);
+    border: 1px solid color-mix(in srgb, var(--accent-teal) 18%, var(--border-color) 82%);
+    color: var(--primary-color);
 }
 
 /* Schwierigkeits-Badges */
@@ -227,22 +234,19 @@ body:not(.dark-mode) .tech-card {
 .tech-sidebar-info .toc-list { gap: 8px; }
 
 .post-template-meta-card {
-    background: var(--bg-dark-2);
-    border: 1px solid var(--border-dark);
-    border-left: 3px solid var(--accent-teal);
+    background: var(--bg-primary);
+    border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent 12%);
+    border-left: 2px solid color-mix(in srgb, var(--accent-teal) 42%, var(--border-color) 58%);
     border-radius: var(--radius);
-    margin-bottom: 20px;
-    padding: 16px;
-    color: var(--text-white);
-}
-
-body:not(.dark-mode) .post-template-meta-card {
-    background: #0f2d43;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+    padding: 12px;
+    color: var(--text-primary);
 }
 
 .post-template-meta-card__title {
-    margin-bottom: 12px;
-    color: var(--accent-teal-light);
+    margin-bottom: 10px;
+    color: var(--text-secondary);
     font-size: var(--fs-xs);
     font-weight: 800;
     letter-spacing: .08em;
@@ -251,38 +255,96 @@ body:not(.dark-mode) .post-template-meta-card {
 
 .post-template-meta-card__list {
     display: grid;
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
     margin: 0;
 }
 
 .post-template-meta-card__item {
     display: grid;
-    gap: 3px;
+    align-content: center;
+    gap: 4px;
+    min-height: 58px;
+    padding: 8px 9px;
+    border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent 14%);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--bg-secondary) 42%, var(--bg-primary) 58%);
+}
+
+.post-template-meta-card__item--array {
+    grid-column: 1 / -1;
+    align-content: start;
+    min-height: auto;
+}
+
+.post-template-meta-card__item--url dd {
+    display: flex;
+    align-items: center;
 }
 
 .post-template-meta-card__item dt {
-    color: var(--text-light);
+    color: var(--text-muted);
     font-size: var(--fs-xs);
     letter-spacing: .04em;
     text-transform: uppercase;
+    line-height: 1.25;
 }
 
 .post-template-meta-card__item dd {
     margin: 0;
-    color: #e2e8f0;
+    color: var(--text-primary);
     font-size: var(--fs-sm);
     font-weight: 650;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
 .post-template-meta-card__item a {
-    color: var(--accent-teal-light);
+    color: var(--link-color);
     text-decoration: none;
 }
 
 .post-template-meta-card__item a:hover,
 .post-template-meta-card__item a:focus-visible {
-    color: #fff;
+    color: var(--link-hover);
     text-decoration: underline;
+}
+
+.post-template-meta-card .inline-code {
+    background: color-mix(in srgb, var(--accent-teal) 10%, var(--bg-primary) 90%);
+    border: 1px solid color-mix(in srgb, var(--accent-teal) 18%, var(--border-color) 82%);
+    color: var(--primary-color);
+}
+
+.post-template-meta-card__icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid color-mix(in srgb, var(--accent-teal) 22%, var(--border-color) 78%);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--accent-teal) 8%, var(--bg-primary) 92%);
+    color: var(--accent-teal);
+    text-decoration: none;
+}
+
+.post-template-meta-card__icon-link:hover,
+.post-template-meta-card__icon-link:focus-visible {
+    background: color-mix(in srgb, var(--accent-teal) 14%, var(--bg-primary) 86%);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.post-template-meta-card__icon-link--github {
+    color: var(--text-secondary);
+}
+
+.post-template-meta-card__url-icon {
+    font-size: .85rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .post-template-meta-card__chips {
@@ -295,16 +357,37 @@ body:not(.dark-mode) .post-template-meta-card {
 }
 
 .post-template-meta-card__chips li {
-    border: 1px solid rgba(255,255,255,.1);
+    border: 1px solid color-mix(in srgb, var(--accent-teal) 18%, var(--border-color) 82%);
     border-radius: 4px;
-    background: rgba(255,255,255,.07);
+    background: color-mix(in srgb, var(--accent-teal) 8%, var(--bg-primary) 92%);
     padding: 3px 8px;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     font-size: var(--fs-xs);
+}
+
+body.dark-mode .post-template-meta-card,
+html.dark-mode body .post-template-meta-card {
+    background: color-mix(in srgb, var(--bg-primary) 88%, #ffffff 4%);
+    border-color: color-mix(in srgb, var(--border-color) 82%, #ffffff 6%);
+}
+
+body.dark-mode .post-template-meta-card__item,
+html.dark-mode body .post-template-meta-card__item {
+    background: color-mix(in srgb, var(--bg-secondary) 68%, var(--bg-primary) 32%);
+    border-color: color-mix(in srgb, var(--border-color) 84%, #ffffff 6%);
+}
+
+body.dark-mode .post-template-meta-card .inline-code,
+html.dark-mode body .post-template-meta-card .inline-code {
+    color: var(--accent-teal-light);
 }
 
 @media (max-width: 600px) {
     .tech-card__grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 380px) {
+    .post-template-meta-card__list { grid-template-columns: 1fr; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
