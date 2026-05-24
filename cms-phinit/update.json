@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.74",
+  "version": "1.5.75",
   "requires_cms": "2.5.0",
   "tested_up_to": "3.0.29",
-  "release_date": "2026-05-23",
+  "release_date": "2026-05-24",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.75",
+      "date": "2026-05-24",
+      "changes": [
+        "includes/theme-services-hub-seed.php: Der Dienstleistungs-HubSite-Seed prüft table_slug nur noch, wenn die Spalte tatsächlich existiert, sodass ältere Installationen ohne table_slug die PHINIT-Service-HubSite trotzdem anlegen können",
+        "CMS/admin/views/hub/edit.php + CMS/assets/js/admin-hub-site-edit.js + CMS/assets/js/admin-hub-template-editor.js: Das services/Dienstleistungen-Profil ist im HubSite-Admin sichtbar, unterstützt Feature-Kacheln und erhält eine passende Template-Vorschau",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.75 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.74",
       "date": "2026-05-23",

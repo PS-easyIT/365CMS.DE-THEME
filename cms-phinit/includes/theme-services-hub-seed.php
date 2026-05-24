@@ -41,11 +41,11 @@ function phinit_seed_services_hub_site(): void
             return;
         }
 
-        $slug = phinit_services_hub_unique_slug($db, $prefix, 'it-dienstleistungen');
+        $hasTableSlugColumn = phinit_services_hub_has_table_slug_column($db, $prefix);
+        $slug = phinit_services_hub_unique_slug($db, $prefix, 'it-dienstleistungen', $hasTableSlugColumn);
         $settings = phinit_services_hub_settings($slug, $seedKey);
         $cards = phinit_services_hub_cards();
         $description = '<p>Landing-Hub für Beratungs-, Umsetzungs- und Betriebsleistungen rund um Microsoft 365, 365CMS, Automatisierung, Security und laufenden IT-Betrieb.</p>';
-        $hasTableSlugColumn = phinit_services_hub_has_table_slug_column($db, $prefix);
 
         $columns = ['table_name', 'description', 'columns_json', 'rows_json', 'settings_json'];
         $placeholders = ['?', '?', "'[]'", '?', '?'];
@@ -249,11 +249,12 @@ function phinit_services_hub_cards(): array
     ];
 }
 
-function phinit_services_hub_unique_slug(\CMS\Database $db, string $prefix, string $baseSlug): string
+function phinit_services_hub_unique_slug(\CMS\Database $db, string $prefix, string $baseSlug, ?bool $hasTableSlugColumn = null): string
 {
     $slug = $baseSlug;
     $suffix = 2;
-    while (phinit_services_hub_slug_exists($db, $prefix, $slug)) {
+    $hasTableSlugColumn ??= phinit_services_hub_has_table_slug_column($db, $prefix);
+    while (phinit_services_hub_slug_exists($db, $prefix, $slug, $hasTableSlugColumn)) {
         $slug = $baseSlug . '-' . $suffix;
         $suffix++;
     }
@@ -261,13 +262,19 @@ function phinit_services_hub_unique_slug(\CMS\Database $db, string $prefix, stri
     return $slug;
 }
 
-function phinit_services_hub_slug_exists(\CMS\Database $db, string $prefix, string $slug): bool
+function phinit_services_hub_slug_exists(\CMS\Database $db, string $prefix, string $slug, ?bool $hasTableSlugColumn = null): bool
 {
+    $hasTableSlugColumn ??= phinit_services_hub_has_table_slug_column($db, $prefix);
+    $slugWhere = $hasTableSlugColumn
+        ? "(table_slug = ? OR JSON_UNQUOTE(JSON_EXTRACT(settings_json, '$.hub_slug')) = ?)"
+        : "JSON_UNQUOTE(JSON_EXTRACT(settings_json, '$.hub_slug')) = ?";
+    $params = $hasTableSlugColumn ? [$slug, $slug] : [$slug];
+
     $hubCount = (int) ($db->get_var(
         "SELECT COUNT(*) FROM {$prefix}site_tables
          WHERE COALESCE(JSON_UNQUOTE(JSON_EXTRACT(settings_json, '$.content_mode')), 'table') = 'hub'
-           AND (table_slug = ? OR JSON_UNQUOTE(JSON_EXTRACT(settings_json, '$.hub_slug')) = ?)",
-        [$slug, $slug]
+           AND {$slugWhere}",
+        $params
     ) ?? 0);
     if ($hubCount > 0) {
         return true;

@@ -14,6 +14,18 @@
 
 ---
 
+## v1.5.75 — 24. Mai 2026
+
+### Dienstleistungs-HubSite im Admin sichtbar und seed-stabil
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / Services-Seed | `includes/theme-services-hub-seed.php` prüft `table_slug` nur noch, wenn die Spalte tatsächlich existiert. Dadurch kann die PHINIT-Dienstleistungs-HubSite auch auf älteren Installationen ohne `table_slug` angelegt werden. |
+| 🔴 fix | HubSites / Admin-Editor | `CMS/admin/views/hub/edit.php`, `CMS/assets/js/admin-hub-site-edit.js` und `CMS/assets/js/admin-hub-template-editor.js` machen das `services`-/Dienstleistungen-Profil im HubSite-Admin sichtbar, aktivieren Feature-Kacheln für services-basierte Templates und zeigen eine passende Dienstleistungs-Vorschau. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.75` synchronisiert. |
+
+---
+
 ## v1.5.74 — 23. Mai 2026
 
 ### Dienstleistungs-HubSite als PHINIT-Landingpage
