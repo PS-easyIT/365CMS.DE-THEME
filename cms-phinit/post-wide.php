@@ -159,7 +159,7 @@ if ($showPostTags) {
     <?php include __DIR__ . '/partials/post-inline-toc.php'; ?>
 
     <!-- ── Artikel-Body ──────────────────────────────────────────────── -->
-    <div class="post-body" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
+    <div class="post-body is-visible" itemprop="articleBody" data-photoswipe data-anim data-anim-delay="2">
         <?php phinit_render_prepared_content($content); ?>
 
         <?php if ($showUpdatedBadge): ?>

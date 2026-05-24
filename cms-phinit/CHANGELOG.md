@@ -14,6 +14,41 @@
 
 ---
 
+## v1.5.81 — 24. Mai 2026
+
+### EditorJS-Bilder und Bild-Text-Blöcke im Public-Layout stabilisiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / EditorJS-Bilder | `assets/css/rich-content.css` übernimmt die Core-Deckelung für normale und breite EditorJS-Bildblöcke, damit Bilder im PHINIT-Frontend nicht größer als in der Editor-Vorschau erscheinen. |
+| 🔴 fix | Publicsite / Bild + Text | `assets/css/rich-content.css` schirmt `.editorjs-media-text` gegen globale PHINIT-Regeln für `figure`, `figure > img` und `.post-body img` ab. Bild und Text bleiben dadurch auf Desktop sauber nebeneinander und stapeln mobil kontrolliert. |
+| 🔵 docs | Release | `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.81` und Core-Teststand `3.3.5` synchronisiert. |
+
+---
+
+## v1.5.80 — 24. Mai 2026
+
+### Seiten- und Beitragsinhalte serverseitig sichtbar
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Importseiten | `page.php`, `page-wide.php` und `page-landing.php` markieren die eigentlichen Content-Wrapper direkt mit `is-visible`. Dadurch bleiben importierte WordPress-Seiten wie `/organisationsprofil` auch dann lesbar, wenn das Scroll-Reveal-JavaScript nicht läuft oder alte CSS/JS-Assets im Browsercache liegen. |
+| 🔴 fix | Publicsite / Beiträge | `post-wide.php` und `post-tech.php` erhalten denselben Fallback für verzögert animierte Artikelkörper, damit auch Template-Beiträge nicht transparent bleiben. |
+| 🔵 docs | Release | `page.php`, `page-wide.php`, `page-landing.php`, `post-wide.php`, `post-tech.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.80` synchronisiert. |
+
+---
+
+## v1.5.79 — 24. Mai 2026
+
+### Seiteninhalte ohne Reveal-JS sichtbar
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Seiteninhalt | `style.css` lässt zentrale `.page-content`-Bereiche sichtbar, selbst wenn die Scroll-Reveal-Initialisierung durch zwischengespeicherte oder fehlerhafte Assets nicht ausgeführt wird. Alte importierte WordPress-Seiten bleiben dadurch unterhalb des Content-Headers lesbar statt transparent zu bleiben. |
+| 🔵 docs | Release | `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.79` synchronisiert. |
+
+---
+
 ## v1.5.78 — 24. Mai 2026
 
 ### Site-Identity als Dienstleistungscard

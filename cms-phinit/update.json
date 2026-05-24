@@ -1,13 +1,39 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.78",
+  "version": "1.5.81",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.0.34",
+  "tested_up_to": "3.3.5",
   "release_date": "2026-05-24",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.81",
+      "date": "2026-05-24",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS-Bilder in normalen und breiten Bildblöcken übernehmen die Core-Deckelung statt im PHINIT-Content-Container zu groß zu werden",
+        "assets/css/rich-content.css: Bild-Text-Blöcke werden gegen globale figure/img-Regeln abgeschirmt und bleiben auf Desktop nebeneinander sowie mobil sauber gestapelt",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.81 und Core-Teststand 3.3.5 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.80",
+      "date": "2026-05-24",
+      "changes": [
+        "page.php, page-wide.php und page-landing.php: Public-Content-Wrapper erhalten serverseitig is-visible, damit alte importierte Seiten wie /organisationsprofil auch bei ausbleibendem Scroll-Reveal sofort sichtbar bleiben",
+        "post-wide.php und post-tech.php: Verzögert animierte Artikelinhalte bekommen denselben sicheren Sichtbarkeits-Fallback",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.80 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.79",
+      "date": "2026-05-24",
+      "changes": [
+        "style.css: Normale Seiteninhalte bleiben sichtbar, auch wenn das Scroll-Reveal-JavaScript wegen Browser-/Asset-Problemen nicht rechtzeitig initialisiert wird",
+        "theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.79 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.78",
       "date": "2026-05-24",

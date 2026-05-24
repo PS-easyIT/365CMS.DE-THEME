@@ -73,7 +73,7 @@ $safePageContent = $pageContent;
     </div>
 
     <!-- Seiteninhalt volle Breite -->
-    <div class="page-content page-content--full" data-anim data-anim-delay="1">
+    <div class="page-content page-content--full is-visible" data-anim data-anim-delay="1">
         <?php phinit_render_prepared_content($safePageContent); ?>
     </div>
 

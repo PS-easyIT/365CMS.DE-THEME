@@ -157,7 +157,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <!-- 2-spaltig: Inhalt + Sidebar -->
     <div class="post-layout page-layout-grid">
 
-        <div data-anim data-anim-delay="1">
+        <div class="is-visible" data-anim data-anim-delay="1">
             <?php if ($_pg_showToc && count($_pg_toc) >= 2): ?>
             <?php $pageTocClass = ''; ?>
             <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
@@ -184,7 +184,7 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <?php $pageTocClass = $pageContentClass; ?>
     <?php include __DIR__ . '/partials/page-inline-toc.php'; ?>
     <?php endif; ?>
-    <div class="page-content<?php echo $pageContentClass; ?>" data-anim data-anim-delay="1">
+    <div class="page-content<?php echo $pageContentClass; ?> is-visible" data-anim data-anim-delay="1">
         <?php phinit_render_prepared_content($safePageContent); ?>
     </div>
     <?php echo $_pg_updatedPill; ?>
