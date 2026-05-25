@@ -820,12 +820,16 @@ trait CMS_Phinit_Theme_Head_Trait
         }
         $templatePage = is_array($templatePage) ? $templatePage : null;
 
-        if ($isBlogListingRequest && !$this->isHeadHubPagePayload($templatePage)) {
-            return false;
-        }
-
         if ($this->isHeadHubPagePayload($templatePage)) {
             return true;
+        }
+
+        if (method_exists($this, 'isHubSiteRequestPath') && $this->isHubSiteRequestPath($baseUri, $templatePage)) {
+            return true;
+        }
+
+        if ($isBlogListingRequest) {
+            return false;
         }
 
         if (function_exists('phinit_get_page_by_request_path')) {

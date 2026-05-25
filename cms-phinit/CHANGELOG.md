@@ -14,6 +14,43 @@
 
 ---
 
+## v1.5.96 — 25. Mai 2026
+
+### HubSite-Assets und M365-/Datenschutz-Design stabilisiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / Asset Loading | `includes/theme-assets-trait.php` erkennt HubSite-Anfragen jetzt über den Core-Hub-Router inklusive lokalisierter Pfade und Hub-Domain-Startseite. Dadurch laden `hub-sites.css`, `rich-content.css` und die Template-Styles auch dann, wenn die Seite im Head noch nicht als `$GLOBALS['page']` verfügbar ist. |
+| 🔴 fix | HubSites / Body Class | `includes/theme-head-trait.php` nutzt dieselbe robuste HubSite-Erkennung, sodass `is-hub-site` und Head-Kontext mit dem tatsächlich gerenderten Hub übereinstimmen. |
+| 🎨 style | HubSites / M365 & Datenschutz | `assets/css/hub-sites.css` zieht Microsoft-365-, `m365-table`-, Datenschutz- und Datenschutz-Compliance-Templates auf PHINIT-/Customizer-nahe Flächen, Akzente, Tabellen und Karten nach, statt auf Core- oder alte Profil-Fallbacks zu fallen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.96` sowie Core-Teststand `3.3.33` synchronisiert. |
+
+---
+
+## v1.5.95 — 25. Mai 2026
+
+### EditorJS-H4 und unnummerierte TOC-Marker
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | EditorJS / Text+Bild | `assets/css/rich-content.css` behandelt `.editorjs-media-text__heading` im PHINIT-Frontend jetzt wie eine H4-Überschrift und überschreibt ältere Core-Inline-Reste robust auf den H4-Maßstab. |
+| 🎨 style | Inhaltsverzeichnis | `partials/page-inline-toc.php`, `assets/css/page-detail.css` und `assets/css/templates.css` rendern Seiten- und Inline-TOCs als ungeordnete Listen mit Punkten, Pfeilen und dezenteren Markern je Einrückungsebene statt nummerierter Listen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.95` sowie Core-Teststand `3.3.32` synchronisiert. |
+
+---
+
+## v1.5.94 — 25. Mai 2026
+
+### HubSites an PHINIT- und Customizer-Design angeglichen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Customizer | `assets/css/hub-sites.css` führt Hero, Quicklinks, TOC, Karten, Feature-Cards, Buttons und SiteTables auf PHINIT-Design-Tokens und Theme-Customizer-Variablen zurück. Harte Profilfarben wurden durch Akzent-Variablen ersetzt; Sonderprofile wie Services, Microsoft 365, Datenschutz, PowerShell und Linux setzen nur noch Akzente statt eigene Flächenwelten zu erzwingen. |
+| 🎨 style | HubSites / Tabellen & Responsive | HubSite-SiteTables nutzen jetzt PHINIT-Kartenradius, dezente Schatten, Customizer-konforme Tabellenköpfe, konsistente Zeilen-/Pagination-Flächen und horizontales Overflow statt abgeschnittener breiter Tabellen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.94` sowie Core-Teststand `3.3.31` synchronisiert. |
+
+---
+
 ## v1.5.93 — 25. Mai 2026
 
 ### EditorJS Text+Bild-Titel an H3 angeglichen

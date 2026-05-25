@@ -1,13 +1,40 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.93",
+  "version": "1.5.96",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.29",
+  "tested_up_to": "3.3.33",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.96",
+      "date": "2026-05-25",
+      "changes": [
+        "includes/theme-assets-trait.php + includes/theme-head-trait.php: HubSites werden im PHINIT-Head jetzt auch über den Core-Hub-Router inklusive Hub-Domain-Startseite zuverlässig erkannt; dadurch laden hub-sites.css, rich-content.css und Template-Styles konsistent",
+        "assets/css/hub-sites.css: Microsoft-365-, M365-Table-, Datenschutz- und Datenschutz-Compliance-HubSites erhalten PHINIT-/Customizer-nahe Flächen, Akzente, Tabellen- und Kartenregeln statt auf Core- oder Profil-Fallbacks zu fallen",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.96 und Core-Teststand 3.3.33 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.95",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS Text+Bild-Überschriften (.editorjs-media-text__heading) folgen im PHINIT-Frontend jetzt dem H4-Maßstab statt H3",
+        "partials/page-inline-toc.php + assets/css/page-detail.css + assets/css/templates.css: Seiten- und Inline-TOCs rendern als ungeordnete Listen und nutzen Punkte, Pfeile und dezente Marker je Einrückungsebene",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.95 und Core-Teststand 3.3.32 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.94",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hub-sites.css: HubSites nutzen Hero-, Karten-, TOC-, Tabellen- und Buttonflächen wieder konsequent aus PHINIT-/Customizer-Tokens statt harter Profilfarben",
+        "assets/css/hub-sites.css: Services-, Microsoft-365-, Datenschutz-, PowerShell- und Linux-HubSites setzen nur noch Akzente; Flächen, Schatten, Radius, Dark Mode und SiteTables bleiben im CMS-PHINIT-Design konsistent",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.94 und Core-Teststand 3.3.31 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.93",
       "date": "2026-05-25",

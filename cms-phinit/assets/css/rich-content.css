@@ -45,7 +45,7 @@
 
 .page-content .editorjs-media-text__heading,
 .post-body .editorjs-media-text__heading {
-    font-size: var(--fs-h3) !important;
+    font-size: var(--fs-h4) !important;
     font-weight: 700;
     line-height: 1.3;
 }

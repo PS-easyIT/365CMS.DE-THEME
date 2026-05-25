@@ -31,12 +31,15 @@ trait CMS_Phinit_Theme_Assets_Trait
             return null;
         }
 
-        $slug = trim($path, '/');
-        if ($slug === '' || str_contains($slug, '/')) {
+        try {
+            $resolvedPage = phinit_get_page_by_request_path($path);
+        } catch (\Throwable) {
             return null;
         }
 
-        $resolvedPage = phinit_get_page_by_request_path($path);
+        if (is_object($resolvedPage)) {
+            $resolvedPage = (array) $resolvedPage;
+        }
 
         return is_array($resolvedPage) ? $resolvedPage : null;
     }
@@ -55,6 +58,63 @@ trait CMS_Phinit_Theme_Assets_Trait
         $content = (string) ($page['content'] ?? '');
 
         return $content !== '' && str_contains($content, 'cms-hub-site');
+    }
+
+    private function isHubSiteRequestPath(string $path, ?array $page = null): bool
+    {
+        if ($this->isHubPagePayload($page)) {
+            return true;
+        }
+
+        $templatePage = $this->getCurrentTemplatePagePayload();
+        if ($this->isHubPagePayload($templatePage)) {
+            return true;
+        }
+
+        try {
+            if (class_exists('CMS\\Services\\SiteTable\\SiteTableHubRenderer')) {
+                $requestUri = (string) (strtok($_SERVER['REQUEST_URI'] ?? $path, '?') ?: $path);
+                if (\CMS\Services\SiteTable\SiteTableHubRenderer::isHubRequestUri($requestUri)) {
+                    return true;
+                }
+
+                if ($requestUri !== $path && \CMS\Services\SiteTable\SiteTableHubRenderer::isHubRequestUri($path)) {
+                    return true;
+                }
+            }
+        } catch (\Throwable) {
+        }
+
+        $path = '/' . trim($path, '/');
+        if ($path === '//') {
+            $path = '/';
+        }
+
+        if (function_exists('phinit_get_page_by_request_path')) {
+            try {
+                $resolvedPage = phinit_get_page_by_request_path($path);
+                if (is_object($resolvedPage)) {
+                    $resolvedPage = (array) $resolvedPage;
+                }
+                if ($this->isHubPagePayload(is_array($resolvedPage) ? $resolvedPage : null)) {
+                    return true;
+                }
+            } catch (\Throwable) {
+            }
+        }
+
+        if ($path === '/') {
+            return false;
+        }
+
+        try {
+            $slug = trim($path, '/');
+            return $slug !== ''
+                && !str_contains($slug, '/')
+                && \CMS\Services\SiteTableService::getInstance()->hubExistsBySlug($slug);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     private function getCustomizerSettingWithFallback(string $category, string $key, mixed $default = null, array $legacyKeys = []): mixed
@@ -108,7 +168,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $isRootHubDomain = $path === '/'
             && !$isAuthOrMember
             && !$isPageExtras
-            && $this->isHubPagePayload($currentTemplatePage);
+            && $this->isHubSiteRequestPath($path, $currentTemplatePage);
 
         $isBlogListing = !$isRootHubDomain && $this->isBlogListingRequest($path);
         $postSlug = null;
@@ -154,22 +214,11 @@ trait CMS_Phinit_Theme_Assets_Trait
             }
         }
 
-        $isHubSite = !$isBlogListing && $this->isHubPagePayload($currentTemplatePage);
-        if (!$isPost && !$isBlogListing && !$isAuthOrMember && !$isPageExtras) {
-            if (!$isHubSite) {
-                try {
-                    $siteTableService = \CMS\Services\SiteTableService::getInstance();
-                    if ($path !== '/') {
-                        $slug = trim($path, '/');
-                        if ($slug !== '' && !str_contains($slug, '/')) {
-                            $isHubSite = $siteTableService->hubExistsBySlug($slug);
-                        }
-                    }
-                } catch (\Throwable) {
-                    $isHubSite = false;
-                }
-            }
-        }
+        $isHubSite = !$isPost
+            && !$isBlogListing
+            && !$isAuthOrMember
+            && !$isPageExtras
+            && $this->isHubSiteRequestPath($path, $currentTemplatePage);
 
         $isPageDetail = false;
         if (!$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && !$isPost) {
@@ -186,7 +235,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             'isHubSite' => $isHubSite,
             'isPageDetail' => $isPageDetail,
             'isRichContent' => !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail || $isHubSite || trim($path, '/') !== ''),
-            'isTemplateStyles' => !$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail),
+            'isTemplateStyles' => !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail || $isHubSite),
             'postSlug' => is_string($postSlug) && $postSlug !== '' ? $postSlug : null,
         ];
 

@@ -19,7 +19,7 @@ $renderPageTocTree = static function (array $nodes, bool $nested = false) use (&
         return;
     }
     ?>
-    <ol class="page-toc__list<?php echo $nested ? ' page-toc__list--nested' : ''; ?>">
+    <ul class="page-toc__list<?php echo $nested ? ' page-toc__list--nested' : ''; ?>" role="list">
         <?php foreach ($nodes as $node): ?>
         <?php $level = max(1, (int) ($node['level'] ?? 2)); ?>
         <li class="page-toc__item page-toc__item--level-<?php echo $level; ?>">
@@ -29,7 +29,7 @@ $renderPageTocTree = static function (array $nodes, bool $nested = false) use (&
             <?php endif; ?>
         </li>
         <?php endforeach; ?>
-    </ol>
+    </ul>
     <?php
 };
 ?>
