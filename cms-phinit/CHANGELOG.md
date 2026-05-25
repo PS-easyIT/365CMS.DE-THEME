@@ -14,6 +14,30 @@
 
 ---
 
+## v1.5.84 — 25. Mai 2026
+
+### EditorJS-Rich-Content im Live/Public-Bereich zuverlässig geladen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Asset Loading | `includes/theme-assets-trait.php` lädt `assets/css/rich-content.css` jetzt auch für HubSites und nicht eindeutig erkannte dynamische Detailrouten. Dadurch fallen EditorJS-Blöcke im Live/Public-Bereich nicht mehr auf unformatierte Core-Inline-Styles zurück. |
+| 🔴 fix | Publicsite / Text+Bild | `assets/css/rich-content.css` enthält zusätzlich wrapper-unabhängige `.editorjs-media-text`-Regeln. Bild und Text bleiben damit auch außerhalb klassischer `.page-content`-/`.post-body`-Wrapper auf Desktop nebeneinander; Listen, Absätze und Inline-Formatierungen im Textbereich erhalten sichtbare Abstände und Listenmarker. |
+| 🔵 docs | Release | `includes/theme-assets-trait.php`, `assets/css/rich-content.css`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.84` synchronisiert. |
+
+---
+
+## v1.5.83 — 25. Mai 2026
+
+### EditorJS-Text+Bild-Blöcke im Public-Layout korrigiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Text+Bild | `assets/css/rich-content.css` rendert `.editorjs-media-text` im PHINIT-Frontend per Grid statt sich auf den inline gesetzten Flex-Wrap des Core-Renderers zu verlassen. Bild und Text bleiben dadurch auf Desktop nebeneinander; `image-right` und optionale Überschriften werden sauber abgebildet. |
+| 🔴 fix | Publicsite / Bildskalierung | Text+Bild-Bilder nutzen jetzt `--cms-editorjs-media-text-image-fit` und respektieren damit die im Editor gespeicherte Skalierung wie `cover`, `contain`, `fill`, `scale-down` oder `none`. |
+| 🔵 docs | Release | `assets/css/rich-content.css`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.83` und Core-Teststand `3.3.22` synchronisiert. |
+
+---
+
 ## v1.5.82 — 24. Mai 2026
 
 ### Spezial-Templates für Microsoft 365, Windows und PowerShell

@@ -376,8 +376,9 @@ body.dark-mode .post-body pre.code-block--powershell {
 
 .page-content .editorjs-media-text,
 .post-body .editorjs-media-text {
-    display: flex;
-    flex-wrap: nowrap;
+    display: grid !important;
+    grid-template-columns: minmax(0, var(--cms-editorjs-media-text-image-width, 40%)) minmax(0, 1fr);
+    grid-template-areas: "media content";
     align-items: flex-start;
     gap: clamp(1rem, 2.4vw, 1.5rem);
     width: 100%;
@@ -386,11 +387,37 @@ body.dark-mode .post-body pre.code-block--powershell {
     box-sizing: border-box;
 }
 
+.page-content .editorjs-media-text--image-right,
+.post-body .editorjs-media-text--image-right {
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--cms-editorjs-media-text-image-width, 40%));
+    grid-template-areas: "content media";
+}
+
+.page-content .editorjs-media-text--has-heading,
+.post-body .editorjs-media-text--has-heading {
+    grid-template-areas:
+        "heading heading"
+        "media content";
+}
+
+.page-content .editorjs-media-text--has-heading.editorjs-media-text--image-right,
+.post-body .editorjs-media-text--has-heading.editorjs-media-text--image-right {
+    grid-template-areas:
+        "heading heading"
+        "content media";
+}
+
+.page-content .editorjs-media-text__heading,
+.post-body .editorjs-media-text__heading {
+    grid-area: heading;
+}
+
 .page-content .editorjs-media-text__media,
 .post-body .editorjs-media-text__media {
-    flex: 0 0 var(--cms-editorjs-media-text-image-width, 40%) !important;
-    width: var(--cms-editorjs-media-text-image-width, 40%) !important;
-    max-width: var(--cms-editorjs-media-text-image-width, 40%) !important;
+    grid-area: media;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
     min-width: 0;
     margin: 0 !important;
     box-sizing: border-box;
@@ -404,11 +431,12 @@ body.dark-mode .post-body pre.code-block--powershell {
     height: auto !important;
     margin: 0 !important;
     aspect-ratio: 4 / 3;
-    object-fit: cover;
+    object-fit: var(--cms-editorjs-media-text-image-fit, cover) !important;
 }
 
 .page-content .editorjs-media-text__content,
 .post-body .editorjs-media-text__content {
+    grid-area: content;
     flex: 1 1 0;
     min-width: 0;
     box-sizing: border-box;
@@ -424,14 +452,113 @@ body.dark-mode .post-body pre.code-block--powershell {
     margin-bottom: 0;
 }
 
+/* Wrapper-unabhängiger EditorJS-Fallback für HubSites und dynamische Public-Routen. */
+.editorjs-media-text {
+    display: grid !important;
+    grid-template-columns: minmax(0, var(--cms-editorjs-media-text-image-width, 40%)) minmax(0, 1fr);
+    grid-template-areas: "media content";
+    align-items: flex-start;
+    gap: clamp(1rem, 2.4vw, 1.5rem);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.editorjs-media-text--image-right {
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--cms-editorjs-media-text-image-width, 40%));
+    grid-template-areas: "content media";
+}
+
+.editorjs-media-text--has-heading {
+    grid-template-areas:
+        "heading heading"
+        "media content";
+}
+
+.editorjs-media-text--has-heading.editorjs-media-text--image-right {
+    grid-template-areas:
+        "heading heading"
+        "content media";
+}
+
+.editorjs-media-text__heading {
+    grid-area: heading;
+}
+
+.editorjs-media-text__media {
+    grid-area: media;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+.editorjs-media-text__media > img {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    aspect-ratio: 4 / 3;
+    object-fit: var(--cms-editorjs-media-text-image-fit, cover) !important;
+}
+
+.editorjs-media-text__content {
+    grid-area: content;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.editorjs-media-text__content p {
+    margin: 0 0 1em;
+    line-height: 1.75;
+}
+
+.editorjs-media-text__content ul,
+.editorjs-media-text__content ol {
+    margin: .7em 0 1em 1.35rem;
+    padding-left: 1rem;
+}
+
+.editorjs-media-text__content ul {
+    list-style: disc outside;
+}
+
+.editorjs-media-text__content ol {
+    list-style: decimal outside;
+}
+
+.editorjs-media-text__content li {
+    margin-bottom: .4rem;
+}
+
+.editorjs-media-text__content > :first-child {
+    margin-top: 0;
+}
+
+.editorjs-media-text__content > :last-child {
+    margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
+    .editorjs-media-text,
+    .editorjs-media-text--image-right,
     .page-content .editorjs-media-text,
     .post-body .editorjs-media-text,
     .page-content .editorjs-media-text--image-right,
     .post-body .editorjs-media-text--image-right {
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "heading"
+            "media"
+            "content";
     }
 
+            .editorjs-media-text__media,
+            .editorjs-media-text__content,
     .page-content .editorjs-media-text__media,
     .post-body .editorjs-media-text__media,
     .page-content .editorjs-media-text__content,

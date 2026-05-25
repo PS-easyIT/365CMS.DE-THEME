@@ -1,13 +1,31 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.82",
+  "version": "1.5.84",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.5",
-  "release_date": "2026-05-24",
+  "tested_up_to": "3.3.22",
+  "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.84",
+      "date": "2026-05-25",
+      "changes": [
+        "includes/theme-assets-trait.php: rich-content.css wird für alle nicht-listingartigen Public-Detailrouten inklusive HubSites und nicht eindeutig erkannter verschachtelter Detailpfade geladen",
+        "assets/css/rich-content.css: EditorJS-Text+Bild-Regeln greifen zusätzlich wrapper-unabhängig, damit Bild/Text-Layout und Textformatierungen auch außerhalb klassischer page-content/post-body-Wrapper stabil bleiben",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.84 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.83",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS-Text+Bild-Blöcke werden im PHINIT-Public-Frontend per Grid gerendert, damit Bild und Text auf Desktop nebeneinander bleiben und image-right sowie optionale Überschriften stabil funktionieren",
+        "assets/css/rich-content.css: Text+Bild-Bilder respektieren den vom Core gespeicherten object-fit-/imageFit-Wert statt im PHINIT-Frontend pauschal cover zu erzwingen",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.83 und Core-Teststand 3.3.22 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.82",
       "date": "2026-05-24",

@@ -185,7 +185,7 @@ trait CMS_Phinit_Theme_Assets_Trait
             'isPost' => $isPost,
             'isHubSite' => $isHubSite,
             'isPageDetail' => $isPageDetail,
-            'isRichContent' => !$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail),
+            'isRichContent' => !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail || $isHubSite || trim($path, '/') !== ''),
             'isTemplateStyles' => !$isHubSite && !$isAuthOrMember && !$isPageExtras && !$isBlogListing && ($isPost || $isPageDetail),
             'postSlug' => is_string($postSlug) && $postSlug !== '' ? $postSlug : null,
         ];

@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.82`
+- Version: `1.5.84`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.5`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.22`
 
 ## Enthaltene Kernbereiche
 
@@ -23,7 +23,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Dienstleistungs-HubSite: PHINIT legt einmalig einen Landing-Hub `it-dienstleistungen` mit Service-Kacheln, Kontakt-CTA und `services`-Template-Profil an.
 - Die Startseiten-Sidebar kann in der Site-Identity eine konfigurierbare Dienstleistungscard mit Logo/Bild, Text und CTA ausgeben.
 - Normale Seiten- und verzögerte Beitrags-Content-Wrapper sind serverseitig als sichtbar markiert, damit Inhalte auch ohne erfolgreiche Scroll-Reveal-Initialisierung lesbar bleiben.
-- EditorJS-Bilder und Bild-Text-Blöcke respektieren im PHINIT-Public-Frontend die Core-/Editor-Vorschau-Breiten; globale `figure`-/`img`-Regeln ziehen MediaText-Blöcke nicht mehr auseinander.
+- EditorJS-Bilder und Bild-Text-Blöcke respektieren im PHINIT-Public-Frontend die Core-/Editor-Vorschau-Breiten; Text+Bild nutzt ein stabiles Grid für Desktop-Nebeneinander, mobile Stapelung, `image-right`, Überschriften und gespeicherte Skalierungsmodi. Das Rich-Content-CSS wird auch auf HubSites und dynamischen Detailrouten geladen, damit Live/Public-Ausgaben nicht auf unformatierte Core-Inline-Fallbacks zurückfallen.
 - Die Beitrags-Templates `microsoft-365`, `windows` und `powershell` liefern dezente zweispaltige Meta-Steckbriefe mit kompakten Website-/GitHub-Icon-Links.
 - Autorenboxen auf Seiten- und Beitragsdetails lassen sich im Customizer inklusive Bild, Name, Über-mich-Text und Dienstleistungs-HubSite-CTA konfigurieren.
 - PHINIT-SiteTables zeigen im Frontend keine Suchleiste über der Tabelle; Pagination erscheint erst ab mindestens 20 Zeilen und nur, wenn wirklich mehrere Seiten entstehen.
