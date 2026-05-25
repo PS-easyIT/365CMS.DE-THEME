@@ -1,13 +1,40 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.6.9",
+  "version": "1.7.2",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.37",
+  "tested_up_to": "3.3.40",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.2",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Featured-Bilder nutzen object-position center center und werden in der Kachel mittig ausgerichtet",
+        "assets/css/hubsite.css: --hubsite-feature-image-height steuert die Featured-Mindesthöhe, während --hubsite-feature-image-width weiterhin die Bildbreite steuert",
+        "update.json: Theme-Teststand auf Core 3.3.40 aktualisiert, der hub_feature_image_height bereitstellt"
+      ]
+    },
+    {
+      "version": "1.7.1",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Kacheln-pro-Reihe wird für 1/2/3 Spalten sauber ausgewertet; 1er-Layouts bleiben auch ab Tablet einspaltig, 2er-Layouts bleiben am Desktop zweispaltig",
+        "assets/css/hubsite.css: Card-Layout feature nutzt Bildposition links/rechts mit prozentualem Bildbereich; Card-Layout compact erhält sichtbar kompaktere Abstände und Typografie",
+        "update.json: Theme-Teststand auf Core 3.3.39 aktualisiert, der pro Card Layoutklassen ausgibt"
+      ]
+    },
+    {
+      "version": "1.7.0",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Featured-Kachelbilder nutzen --hubsite-feature-image-width als prozentuale Desktop-Breite und strecken sich über die volle Kachelhöhe",
+        "update.json: Theme-Teststand auf Core 3.3.38 aktualisiert, der hub_feature_image_width und die reparierte Template-Vererbung bereitstellt",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.7.0 aktualisiert"
+      ]
+    },
     {
       "version": "1.6.9",
       "date": "2026-05-25",

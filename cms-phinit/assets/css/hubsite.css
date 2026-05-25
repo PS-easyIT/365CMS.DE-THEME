@@ -34,6 +34,7 @@
     --hubsite-hero-text: rgba(255,255,255,0.85);
     --hubsite-card-row-gap: 30px;
     --hubsite-feature-image-width: 34%;
+    --hubsite-feature-image-height: 260px;
 }
 
 .page-shell--hub {
@@ -365,6 +366,13 @@ body.is-hub-site {
     min-height: 100%;
 }
 
+.cms-hub-site__card-media-link {
+    display: block;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
 .hubsite-card:hover,
 .cms-hub-site__card:hover,
 .cms-hub-site__section-card:hover,
@@ -612,6 +620,7 @@ body.is-hub-site {
     height: 100%;
     border-radius: 6px;
     object-fit: cover;
+    object-position: center center;
 }
 
 .cms-hub-site__card-media img {
@@ -884,6 +893,11 @@ body.is-hub-site {
     .cms-hub-site__sections {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .hubsite-grid--cols-1,
+    .cms-hub-site__grid--cols-1 {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 @media (min-width: 900px) {
@@ -892,7 +906,7 @@ body.is-hub-site {
         display: flex;
         flex-direction: row;
         align-items: stretch;
-        min-height: 220px;
+        min-height: var(--hubsite-feature-image-height, 260px);
     }
 
     .hubsite-card--featured .hubsite-card__media,
@@ -919,6 +933,58 @@ body.is-hub-site {
         border-radius: 0;
         object-fit: cover;
     }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left,
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right {
+        display: grid;
+        grid-template-columns: minmax(0, var(--hubsite-feature-image-width, 34%)) minmax(0, 1fr);
+        align-items: stretch;
+        min-height: var(--hubsite-feature-image-height, 260px);
+    }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature {
+        min-height: var(--hubsite-feature-image-height, 260px);
+    }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right {
+        grid-template-columns: minmax(0, 1fr) minmax(0, var(--hubsite-feature-image-width, 34%));
+    }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media-link,
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media-link,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media {
+        order: 2;
+    }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media-link,
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media-link,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media-link,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media-link,
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media {
+        height: 100%;
+        min-height: 100%;
+    }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media {
+        aspect-ratio: auto;
+    }
+
+    .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-media img,
+    .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-media img,
+    .cms-hub-site__feature-card .cms-hub-site__feature-card-media img {
+        object-position: center center;
+    }
 }
 
 @media (min-width: 1025px) {
@@ -932,9 +998,39 @@ body.is-hub-site {
         grid-template-columns: minmax(0, 1fr);
     }
 
+    .hubsite-grid--cols-2,
+    .cms-hub-site__grid--cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hubsite-grid--cols-3,
+    .cms-hub-site__grid--cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .cms-hub-site__sections {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+}
+
+.page-content--hub .hubsite-grid--compact .cms-hub-site__card-content,
+.page-content--hub .cms-hub-site__grid--compact .cms-hub-site__card-content {
+    gap: 8px;
+    padding: 12px 14px 18px;
+}
+
+.page-content--hub .hubsite-grid--compact .cms-hub-site__card-title,
+.page-content--hub .cms-hub-site__grid--compact .cms-hub-site__card-title {
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.page-content--hub .hubsite-grid--compact .cms-hub-site__card-summary,
+.page-content--hub .cms-hub-site__grid--compact .cms-hub-site__card-summary,
+.page-content--hub .hubsite-grid--compact .cms-hub-site__card-meta,
+.page-content--hub .cms-hub-site__grid--compact .cms-hub-site__card-meta {
+    font-size: 13px;
 }
 
 @media (max-width: 599px) {

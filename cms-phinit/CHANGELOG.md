@@ -14,6 +14,40 @@
 
 ---
 
+## v1.7.2 — 25. Mai 2026
+
+### Featured-Bilder mittig und mit steuerbarer Höhe
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Featured-Kacheln | `assets/css/hubsite.css` richtet Featured-Bilder per `object-position: center center` mittig aus und nutzt `--hubsite-feature-image-height` als Mindesthöhe der Featured-Kachel. Zusammen mit `--hubsite-feature-image-width` werden Höhe und Breite aus den HubSite-/Template-Einstellungen sichtbar umgesetzt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.2` sowie Core-Teststand `3.3.40` synchronisiert. |
+
+---
+
+## v1.7.1 — 25. Mai 2026
+
+### Kachel-Schema und Card-Layout sichtbar umgesetzt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / Kacheln pro Reihe | `assets/css/hubsite.css` wertet `hubsite-grid--cols-1/2/3` und `cms-hub-site__grid--cols-1/2/3` jetzt vollständig aus. Dadurch bleiben 1er-Layouts auch ab Tablet einspaltig, 2er-Layouts am Desktop zweispaltig und 3er-Layouts dreispaltig. |
+| 🔴 fix | HubSites / Card-Layout | `assets/css/hubsite.css` macht `feature` und `compact` sichtbar: Feature-Karten nutzen bei Bildposition links/rechts eine echte Side-by-Side-Struktur mit prozentualem Bildbereich; Compact-Karten erhalten reduzierte Abstände und kleinere Meta-/Summary-Typografie. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.1` sowie Core-Teststand `3.3.39` synchronisiert. |
+
+---
+
+## v1.7.0 — 25. Mai 2026
+
+### Featured-Kacheln mit steuerbarer Bildbreite
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Featured-Kacheln | `assets/css/hubsite.css` nutzt `--hubsite-feature-image-width` für die Desktop-Breite des Bildbereichs in Featured-Kacheln. Das Bildfeld streckt sich über die volle Kachelhöhe und cropt sauber per `object-fit: cover`, statt mit fixer 200px-Spalte zu arbeiten. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.0` sowie Core-Teststand `3.3.38` synchronisiert. |
+
+---
+
 ## v1.6.9 — 25. Mai 2026
 
 ### Tabellen-HubSites mit höherem Titelband
