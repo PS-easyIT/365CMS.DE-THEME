@@ -6,24 +6,28 @@
     'use strict';
 
     try {
-        var storageKey = 'cms365-theme';
-        var legacyStorageKey = 'cms-phinit-theme';
+        var storageKey = 'phinit_theme';
+        var legacyStorageKeys = ['cms365-theme', 'cms-phinit-theme'];
         var storedTheme = localStorage.getItem(storageKey);
 
-        if (storedTheme === null) {
-            storedTheme = localStorage.getItem(legacyStorageKey);
-            if (storedTheme !== null) {
-                localStorage.setItem(storageKey, storedTheme);
+        if (storedTheme !== 'dark' && storedTheme !== 'light') {
+            storedTheme = null;
+            for (var index = 0; index < legacyStorageKeys.length; index++) {
+                var legacyTheme = localStorage.getItem(legacyStorageKeys[index]);
+                if (legacyTheme === 'dark' || legacyTheme === 'light') {
+                    storedTheme = legacyTheme;
+                    localStorage.setItem(storageKey, legacyTheme);
+                    break;
+                }
             }
         }
 
         if (storedTheme === 'dark') {
             document.documentElement.classList.add('dark-mode');
-            document.addEventListener('DOMContentLoaded', function () {
-                if (document.body) {
-                    document.body.classList.add('dark-mode');
-                }
-            }, { once: true });
+            document.documentElement.classList.remove('light-mode');
+        } else if (storedTheme === 'light') {
+            document.documentElement.classList.remove('dark-mode');
+            document.documentElement.classList.add('light-mode');
         }
     } catch (error) {
         // Storage kann im Privacy-Kontext gesperrt sein – dann still abbrechen.

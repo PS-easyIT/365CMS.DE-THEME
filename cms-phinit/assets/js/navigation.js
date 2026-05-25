@@ -395,40 +395,43 @@
 
     /* ── Dark Mode ─────────────────────────────────────────────── */
     function initDarkMode() {
-        const STORAGE_KEY = 'cms365-theme';
-        const LEGACY_STORAGE_KEY = 'cms-phinit-theme';
-        const body        = document.body;
+        const STORAGE_KEY = 'phinit_theme';
+        const LEGACY_STORAGE_KEYS = ['cms365-theme', 'cms-phinit-theme'];
+        const root = document.documentElement;
+        const buttons = document.querySelectorAll('.util-dark-toggle, [data-dark-toggle]');
 
-        // System-Präferenz auslesen
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const legacy      = localStorage.getItem(LEGACY_STORAGE_KEY);
-        const stored      = localStorage.getItem(STORAGE_KEY) ?? legacy;
-        const dark        = stored ? stored === 'dark' : prefersDark;
+        const readStoredTheme = () => {
+            let stored = localStorage.getItem(STORAGE_KEY);
+            if (stored === 'dark' || stored === 'light') return stored;
+            stored = LEGACY_STORAGE_KEYS.map(key => localStorage.getItem(key)).find(value => value === 'dark' || value === 'light') || 'light';
+            localStorage.setItem(STORAGE_KEY, stored);
+            return stored;
+        };
 
-        if (legacy !== null && localStorage.getItem(STORAGE_KEY) === null) {
-            localStorage.setItem(STORAGE_KEY, legacy);
-        }
+        const applyTheme = (isDark) => {
+            root.classList.toggle('dark-mode', isDark);
+            root.classList.toggle('light-mode', !isDark);
+            localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light');
+            buttons.forEach(button => updateDarkToggle(button, isDark));
+        };
 
-        if (dark) body.classList.add('dark-mode');
-        document.documentElement.classList.toggle('dark-mode', dark);
+        applyTheme(readStoredTheme() === 'dark');
 
-        // Toggle-Buttons (kann mehrere geben)
-        document.querySelectorAll('.util-dark-toggle, [data-dark-toggle]').forEach(btn => {
-            updateDarkToggle(btn, dark);
-            btn.addEventListener('click', () => {
-                const isDark = body.classList.toggle('dark-mode');
-                document.documentElement.classList.toggle('dark-mode', isDark);
-                localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light');
-                document.querySelectorAll('.util-dark-toggle, [data-dark-toggle]')
-                    .forEach(b => updateDarkToggle(b, isDark));
-            });
+        buttons.forEach(button => {
+            button.addEventListener('click', () => applyTheme(!root.classList.contains('dark-mode')));
         });
     }
 
     function updateDarkToggle(btn, isDark) {
         btn.setAttribute('aria-pressed', String(isDark));
         btn.setAttribute('title', isDark ? 'Light Mode aktivieren' : 'Dark Mode aktivieren');
-        btn.textContent = isDark ? '☀' : '🌙';
+        const icon = btn.querySelector('[data-dark-toggle-icon]');
+        if (icon) {
+            icon.textContent = isDark ? '☀' : '☾';
+            return;
+        }
+
+        btn.textContent = isDark ? '☀' : '☾';
     }
 
     /* ── Reading Progress Bar ──────────────────────────────────── */

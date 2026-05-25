@@ -500,7 +500,7 @@ if ($_showLanguageSwitch) {
                 <?php if ($_showDarkMode || ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== '')): ?>
                 <div class="hdr-tools__toggles" aria-label="<?php echo htmlspecialchars(phinit_t('header_controls', [], $_currentLocale), ENT_QUOTES); ?>">
                     <?php if ($_showDarkMode): ?>
-                    <button class="util-link util-dark-toggle" aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode">🌙</button>
+                    <button type="button" class="util-link util-dark-toggle" data-dark-toggle aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode aktivieren"><span data-dark-toggle-icon aria-hidden="true">☾</span></button>
                     <?php endif; ?>
 
                     <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchHeaderDisplay !== ''): ?>

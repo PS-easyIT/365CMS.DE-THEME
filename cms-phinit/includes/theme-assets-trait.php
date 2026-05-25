@@ -433,6 +433,7 @@ trait CMS_Phinit_Theme_Assets_Trait
         $richContentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/rich-content.css';
         $homepageBlogCriticalCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog-critical.css';
         $homepageBlogCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/homepage-blog.css';
+        $hubsiteCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hubsite.css';
         $hubSitesCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/hub-sites.css';
         $knowledgebaseCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/page-knowledgebase.css';
         $footerConsentCssFile = CMS_PHINIT_THEME_DIR . 'assets/css/footer-consent.css';
@@ -539,7 +540,10 @@ trait CMS_Phinit_Theme_Assets_Trait
             );
         }
 
-        if ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
+        if ($isHubSiteRequest && file_exists($hubsiteCssFile)) {
+            $hubsiteVersion = $assetVersion($hubsiteCssFile);
+            $this->emitStylesheet($this->themeAssetUrl('assets/css/hubsite.css', $hubsiteVersion));
+        } elseif ($isHubSiteRequest && file_exists($hubSitesCssFile)) {
             $hubSitesVersion = $assetVersion($hubSitesCssFile);
             $this->emitStylesheet($this->themeAssetUrl('assets/css/hub-sites.css', $hubSitesVersion));
         }

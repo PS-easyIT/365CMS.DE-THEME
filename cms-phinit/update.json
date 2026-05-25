@@ -1,13 +1,81 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.96",
+  "version": "1.6.3",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.33",
+  "tested_up_to": "3.3.35",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.6.3",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/js/theme-init.js: Dark Mode wird vor dem ersten Paint über localStorage-Key phinit_theme gelesen und als html.dark-mode gesetzt",
+        "assets/js/navigation.js und header.php: Toggle nutzt phinit_theme mit Werten dark/light, schaltet html.dark-mode und zeigt ☾ im Light Mode sowie ☀ im Dark Mode",
+        "assets/css/hubsite.css: zentrale html.dark-mode Token-Overrides für die PHINIT Dark-Mode-Palette, 200ms Farbtransitionen, dunkle HubSite-Cards, Hero #0A1020 und Card-Header #1E2F48",
+        "assets/css/hubsite.css: HubSite-Inhaltsverzeichnis als kompakte Pfeilliste gestaltet und Dark-Mode-Tabellenstreifen mit eigenen Kontrast-Tokens abgesichert",
+        "style.css: alte prefers-color-scheme-Regel greift nur noch bei aktivem html.dark-mode und übersteuert keinen gespeicherten Light Mode mehr"
+      ]
+    },
+    {
+      "version": "1.6.2",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Tabellen in HubSite-Table-Cards haben links und rechts keine eigenen Innen-/Zellränder mehr; die Card bleibt der einzige äußere Rahmen",
+        "assets/css/hubsite.css: Table-Card-Header wurden in der Höhe halbiert, ohne die 15px-Titeltypografie zu verkleinern; verschachtelte Titel bekommen kein doppeltes Header-Padding mehr",
+        "update.json: Theme-Teststand auf Core 3.3.35 aktualisiert, der HubSite-Hero-Beschreibungen zusätzlich über die Template-Profil-Beschreibung absichert"
+      ]
+    },
+    {
+      "version": "1.6.1",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Neuer gemeinsamer HubSite-BEM-Refactor nach festem PHINIT-Designsystem mit Navy-Headern, weißen Cards, Gold-Akzenten, Poppins-Typografie, 3/2/1-Spalten-Breakpoints und gestalteter Pagination",
+        "assets/css/hubsite.css: Finaler Designsystem-Lock verhindert Dark-on-Dark-Kontraste; Cards, Listen und Tabellen bleiben auch im Dark Mode hell mit navy/muted Text, während nur Hero und Card-Header dunkel sind",
+        "includes/theme-assets-trait.php: HubSites laden bevorzugt assets/css/hubsite.css; assets/css/hub-sites.css bleibt als Legacy-Einstiegspunkt erhalten und verweist auf den neuen Refactor",
+        "assets/css/hub-sites.css: Alte widersprüchliche HubSite-Layer wurden entfernt; die Datei ist jetzt nur noch ein kleiner Kompatibilitäts-Shim auf hubsite.css",
+        "HUBSITE-BEM.md: Dokumentiert Default Card, Featured Card, Hero und Grid-Struktur für PHP-kompatible HubSite-Ausgaben"
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hub-sites.css: Alle Core-HubSite-Templates wurden mit einem finalen PHINIT Template-QA-Layer vereinheitlicht, damit Typografie, Textbreiten, Cards, Sections und Tables konsistent zum CMS-PHINIT Theme passen",
+        "assets/css/hub-sites.css: Beschreibungen in Hero, Cards, Feature-Cards, Sections und eingebetteten SiteTables werden sichtbar, korrekt eingefärbt und mit voller Inhaltsbreite dargestellt",
+        "assets/css/hub-sites.css: Tabellen in Table-Cards verlieren doppelte linke/rechte Ränder, nutzen die bestehende Card als Rahmen und erhalten kompakte Zellen, sichtbare Meta-Beschreibungen und saubere Dark-Mode-Farben",
+        "assets/css/hub-sites.css: Grids und Table-Templates für general-it, services, general-table, microsoft-365, m365-table, powershell-table, datenschutz, compliance, datenschutz-compliance-table, linux und linux-table wurden gegen künstliche Höhen und unpassende Spezialstyles abgesichert"
+      ]
+    },
+    {
+      "version": "1.5.99",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hub-sites.css: HubSite-Buttons nutzen im Light- und Dark-Mode kontraststarken weißen Text auf PHINIT-Navy statt zu dunkler Textfarben",
+        "assets/css/hub-sites.css: HubSite-Tabellen und Tabellenkarten wurden kompakter gestaltet; Zellen-Paddings, Schriftgrößen und Footer-Mindesthöhen wurden reduziert",
+        "assets/css/hub-sites.css: HubSite-Grids, Sections und Cards strecken nicht mehr künstlich auf volle Zeilenhöhe, wodurch Listen-/Tabellenkarten deutlich weniger Leerfläche erzeugen"
+      ]
+    },
+    {
+      "version": "1.5.98",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hub-sites.css: Der PHINIT-HubSite-Design-Layer wurde auf professionelle, kompakte UX/UI-Proportionen korrigiert; übergroße Hero-Titel, Flächen und Abstände wurden entfernt",
+        "assets/css/hub-sites.css: HubSite-Header, Meta-Chips, Quicklinks, TOC, Sections, Cards, Feature-Cards und SiteTable-Header nutzen jetzt ruhigere Typografie, kleinere Paddings und dezente Shadows",
+        "assets/css/hub-sites.css: Mobile HubSites skalieren ohne riesige Überschriften und behalten saubere Lesbarkeit, kompakte Karten und PHINIT-konforme Akzente"
+      ]
+    },
+    {
+      "version": "1.5.97",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hub-sites.css: Ein dominanter PHINIT-HubSite-Design-Layer am Dateiende überstimmt Core-/Profil-Fallbacks gezielt nur für HubSites",
+        "assets/css/hub-sites.css: HubSite-Hero/Content-Header, Quicklinks, TOC, Sections, Cards, Feature-Cards und SiteTable-Content-Header nutzen jetzt konsistent PHINIT-Farben, Radien, Schatten, Typografie und Dark-Mode-Tokens",
+        "assets/css/hub-sites.css: Microsoft-365-, M365-Table-, Datenschutz- und Compliance-HubSites folgen dem CMS-PHINIT Theme-Design statt eigenständigen Profilflächen"
+      ]
+    },
     {
       "version": "1.5.96",
       "date": "2026-05-25",
