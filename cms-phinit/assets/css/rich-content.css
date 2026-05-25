@@ -397,11 +397,17 @@ body.dark-mode .post-body pre.code-block--powershell {
 
 .page-content .editorjs-media-text,
 .post-body .editorjs-media-text {
+    --cms-editorjs-media-text-spacing-top: var(--cms-editorjs-space-before, 10px);
+    --cms-editorjs-media-text-spacing-bottom: var(--cms-editorjs-space-after, 10px);
     display: grid !important;
     grid-template-columns: minmax(0, var(--cms-editorjs-media-text-image-width, 40%)) minmax(0, 1fr);
     grid-template-areas: "media content";
     align-items: flex-start;
     gap: clamp(1rem, 2.4vw, 1.5rem);
+    margin-block-start: var(--cms-editorjs-media-text-spacing-top) !important;
+    margin-block-end: var(--cms-editorjs-media-text-spacing-bottom) !important;
+    margin-top: var(--cms-editorjs-media-text-spacing-top) !important;
+    margin-bottom: var(--cms-editorjs-media-text-spacing-bottom) !important;
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -475,16 +481,44 @@ body.dark-mode .post-body pre.code-block--powershell {
 
 /* Wrapper-unabhängiger EditorJS-Fallback für HubSites und dynamische Public-Routen. */
 .editorjs-media-text {
+    --cms-editorjs-media-text-spacing-top: var(--cms-editorjs-space-before, 10px);
+    --cms-editorjs-media-text-spacing-bottom: var(--cms-editorjs-space-after, 10px);
     display: grid !important;
     grid-template-columns: minmax(0, var(--cms-editorjs-media-text-image-width, 40%)) minmax(0, 1fr);
     grid-template-areas: "media content";
     align-items: flex-start;
     gap: clamp(1rem, 2.4vw, 1.5rem);
+    margin-block-start: var(--cms-editorjs-media-text-spacing-top) !important;
+    margin-block-end: var(--cms-editorjs-media-text-spacing-bottom) !important;
+    margin-top: var(--cms-editorjs-media-text-spacing-top) !important;
+    margin-bottom: var(--cms-editorjs-media-text-spacing-bottom) !important;
     width: 100%;
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
 }
+
+.editorjs-media-text[data-spacing-top="0"] { --cms-editorjs-space-before: 0px; --cms-editorjs-media-text-spacing-top: 0px; }
+.editorjs-media-text[data-spacing-top="5"] { --cms-editorjs-space-before: 5px; --cms-editorjs-media-text-spacing-top: 5px; }
+.editorjs-media-text[data-spacing-top="10"] { --cms-editorjs-space-before: 10px; --cms-editorjs-media-text-spacing-top: 10px; }
+.editorjs-media-text[data-spacing-top="15"] { --cms-editorjs-space-before: 15px; --cms-editorjs-media-text-spacing-top: 15px; }
+.editorjs-media-text[data-spacing-top="20"] { --cms-editorjs-space-before: 20px; --cms-editorjs-media-text-spacing-top: 20px; }
+.editorjs-media-text[data-spacing-top="30"] { --cms-editorjs-space-before: 30px; --cms-editorjs-media-text-spacing-top: 30px; }
+.editorjs-media-text[data-spacing-top="40"] { --cms-editorjs-space-before: 40px; --cms-editorjs-media-text-spacing-top: 40px; }
+.editorjs-media-text[data-spacing-top="60"] { --cms-editorjs-space-before: 60px; --cms-editorjs-media-text-spacing-top: 60px; }
+.editorjs-media-text[data-spacing-top="80"] { --cms-editorjs-space-before: 80px; --cms-editorjs-media-text-spacing-top: 80px; }
+.editorjs-media-text[data-spacing-top="100"] { --cms-editorjs-space-before: 100px; --cms-editorjs-media-text-spacing-top: 100px; }
+
+.editorjs-media-text[data-spacing-bottom="0"] { --cms-editorjs-space-after: 0px; --cms-editorjs-media-text-spacing-bottom: 0px; }
+.editorjs-media-text[data-spacing-bottom="5"] { --cms-editorjs-space-after: 5px; --cms-editorjs-media-text-spacing-bottom: 5px; }
+.editorjs-media-text[data-spacing-bottom="10"] { --cms-editorjs-space-after: 10px; --cms-editorjs-media-text-spacing-bottom: 10px; }
+.editorjs-media-text[data-spacing-bottom="15"] { --cms-editorjs-space-after: 15px; --cms-editorjs-media-text-spacing-bottom: 15px; }
+.editorjs-media-text[data-spacing-bottom="20"] { --cms-editorjs-space-after: 20px; --cms-editorjs-media-text-spacing-bottom: 20px; }
+.editorjs-media-text[data-spacing-bottom="30"] { --cms-editorjs-space-after: 30px; --cms-editorjs-media-text-spacing-bottom: 30px; }
+.editorjs-media-text[data-spacing-bottom="40"] { --cms-editorjs-space-after: 40px; --cms-editorjs-media-text-spacing-bottom: 40px; }
+.editorjs-media-text[data-spacing-bottom="60"] { --cms-editorjs-space-after: 60px; --cms-editorjs-media-text-spacing-bottom: 60px; }
+.editorjs-media-text[data-spacing-bottom="80"] { --cms-editorjs-space-after: 80px; --cms-editorjs-media-text-spacing-bottom: 80px; }
+.editorjs-media-text[data-spacing-bottom="100"] { --cms-editorjs-space-after: 100px; --cms-editorjs-media-text-spacing-bottom: 100px; }
 
 .editorjs-media-text--image-width-33 {
     --cms-editorjs-media-text-image-width: 33%;

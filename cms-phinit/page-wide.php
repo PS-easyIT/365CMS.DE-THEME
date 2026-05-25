@@ -46,7 +46,7 @@ if ($pageProvidedByRouter) {
 }
 
 $pageContent = (string)($page['content'] ?? '');
-if (!$pageProvidedByRouter) {
+if ($pageContent !== '') {
     $pageContent = phinit_prepare_renderable_content($pageContent, 'page', (int)($page['id'] ?? 0));
 }
 $pageContent = phinit_sanitize_renderable_content($pageContent, 'default');

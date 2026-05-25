@@ -1,13 +1,41 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.85",
+  "version": "1.5.88",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.24",
+  "tested_up_to": "3.3.25",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.88",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/rich-content.css: Text+Bild-Blöcke übernehmen spacingTop/spacingBottom im PHINIT-Public-Frontend jetzt über Core-Variablen und data-spacing-Fallbacks als margin-block-start/end",
+        "Die gespeicherten EditorJS-Abstände nach oben und unten bleiben auch dann erhalten, wenn Inline-Styles durch Theme-/Sanitizer-Pfade reduziert werden oder globale .editorjs-block-Margins greifen",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.88 und Core-Teststand 3.3.25 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.87",
+      "date": "2026-05-25",
+      "changes": [
+        "includes/theme-content-helpers.php: phinit_prepare_renderable_content() ist jetzt idempotent und rendert bereits vom Core vorbereitete EditorJS-Public-HTML-Blöcke nicht erneut",
+        "Seiten verlieren dadurch fertige editorjs-media-text-Strukturen nicht mehr durch eine zweite Normalisierung; Text+Bild bleibt auf Seiten im Live/Public-Bereich nebeneinander statt Bild-oben/Text-unten",
+        "includes/theme-content-helpers.php: Dateinamenartige figcaption-Ausgaben werden im finalen Theme-HTML entfernt, damit Grafik-/Dateinamen nicht sichtbar bleiben",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.87 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.86",
+      "date": "2026-05-25",
+      "changes": [
+        "page-wide.php und page-landing.php: Router-gelieferte Seiteninhalte laufen jetzt ebenfalls durch phinit_prepare_renderable_content(), damit EditorJS-Blöcke auf Seiten denselben Public-Renderer wie normale page.php-Seiten nutzen",
+        "Text+Bild-, Listen-, Absatz- und Inline-Formatierungen bleiben dadurch auch in Vollbreite- und Landing-Seitentemplates im Live/Public-Bereich erhalten",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.86 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.85",
       "date": "2026-05-25",

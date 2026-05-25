@@ -14,6 +14,43 @@
 
 ---
 
+## v1.5.88 — 25. Mai 2026
+
+### Text+Bild-Abstände im Public-Frontend respektiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Text+Bild | `assets/css/rich-content.css` übernimmt `spacingTop` und `spacingBottom` für `.editorjs-media-text` jetzt über `--cms-editorjs-space-before`, `--cms-editorjs-space-after` und eigene PHINIT-Fallbackvariablen als `margin-block-start/end`. |
+| 🔴 fix | Publicsite / Abstände | `data-spacing-top` und `data-spacing-bottom` setzen sichere Pixel-Fallbacks für alle EditorJS-Presets von `0` bis `100`, damit die gespeicherten Text+Bild-Abstände auch ohne erhaltene Inline-Styles greifen. |
+| 🔵 docs | Release | `assets/css/rich-content.css`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.88` synchronisiert. |
+
+---
+
+## v1.5.87 — 25. Mai 2026
+
+### Doppelte EditorJS-Normalisierung auf Seiten verhindert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Seiten | `includes/theme-content-helpers.php` macht `phinit_prepare_renderable_content()` idempotent: Bereits vom Core-Router vorbereitetes EditorJS-Public-HTML wird nicht noch einmal durch `EditorService::renderContent()` geschickt. Dadurch werden fertige `.editorjs-media-text`-Blöcke auf Seiten nicht mehr in einzelne Bild- und Textblöcke zerlegt. |
+| 🔴 fix | Publicsite / Text+Bild | Text+Bild-Blöcke bleiben auf Seiten im Live/Public-Bereich als Bild/Text-Layout erhalten, statt nach einer zweiten Normalisierung Bild oben und Text unten zu erscheinen. |
+| 🔴 fix | Publicsite / Bildunterschriften | `includes/theme-content-helpers.php` entfernt dateinamenartige `<figcaption>`-Ausgaben im finalen Theme-HTML, damit Grafik-/Dateinamen auch bei bereits gerendertem oder importiertem Seiten-HTML nicht sichtbar bleiben. |
+| 🔵 docs | Release | `includes/theme-content-helpers.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.87` synchronisiert. |
+
+---
+
+## v1.5.86 — 25. Mai 2026
+
+### EditorJS-Seiteninhalte in Wide-/Landing-Templates korrigiert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Seiten | `page-wide.php` und `page-landing.php` schicken Router-gelieferte Seiteninhalte jetzt ebenfalls durch `phinit_prepare_renderable_content()`. Damit werden EditorJS-Blöcke auf Vollbreite- und Landing-Seiten genauso gerendert wie in `page.php`, statt als schlecht formatierter Roh-/Fallback-Inhalt zu erscheinen. |
+| 🔴 fix | Publicsite / Text+Bild | Text+Bild-Blöcke, Listen, Absätze und Inline-Formatierungen bleiben dadurch auch in speziellen Seitentemplates im Live/Public-Bereich erhalten. |
+| 🔵 docs | Release | `page-wide.php`, `page-landing.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.86` synchronisiert. |
+
+---
+
 ## v1.5.85 — 25. Mai 2026
 
 ### EditorJS-Text+Bild nach Sanitizer-Stufe stabil gerendert

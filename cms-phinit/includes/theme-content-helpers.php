@@ -56,6 +56,16 @@ if (!function_exists('phinit_content_contains_editorjs_markup')) {
     }
 }
 
+if (!function_exists('phinit_content_is_prepared_editorjs_html')) {
+    /**
+     * Prüft, ob der Core-Router den Inhalt bereits in EditorJS-Public-HTML gerendert hat.
+     */
+    function phinit_content_is_prepared_editorjs_html(string $html): bool
+    {
+        return preg_match('/<[^>]+\bclass\s*=\s*(["\'])[^"\']*\beditorjs-(?:block|media-text|image|gallery|list|quote|table|warning|accordion)\b[^"\']*\1/isu', $html) === 1;
+    }
+}
+
 if (!function_exists('phinit_prepare_renderable_content')) {
     /**
      * Bereitet gespeicherten Seiten-/Beitragsinhalt für das Frontend auf.
@@ -65,6 +75,10 @@ if (!function_exists('phinit_prepare_renderable_content')) {
         $content = trim($content);
         if ($content === '') {
             return '';
+        }
+
+        if (phinit_content_is_prepared_editorjs_html($content)) {
+            return phinit_enhance_content_images($content);
         }
 
         try {
@@ -302,7 +316,103 @@ if (!function_exists('phinit_enhance_content_images')) {
             $html
         );
 
-        return is_string($enhanced) ? $enhanced : $html;
+        $enhanced = is_string($enhanced) ? $enhanced : $html;
+
+        return function_exists('phinit_remove_generated_filename_figcaptions')
+            ? phinit_remove_generated_filename_figcaptions($enhanced)
+            : $enhanced;
+    }
+}
+
+if (!function_exists('phinit_remove_generated_filename_figcaptions')) {
+    /**
+     * Entfernt automatisch erzeugte Bildunterschriften, die nur den Datei-/Grafiknamen wiederholen.
+     */
+    function phinit_remove_generated_filename_figcaptions(string $html): string
+    {
+        if (trim($html) === '' || stripos($html, '<figcaption') === false || stripos($html, '<img') === false) {
+            return $html;
+        }
+
+        $cleaned = preg_replace_callback(
+            '/<figure\b([^>]*)>(.*?)<\/figure>/isu',
+            static function (array $matches): string {
+                $figure = (string) ($matches[0] ?? '');
+                $inner = (string) ($matches[2] ?? '');
+
+                if (preg_match('/<img\b[^>]*\bsrc\s*=\s*(["\'])(.*?)\1[^>]*>/isu', $inner, $imageMatch) !== 1) {
+                    return $figure;
+                }
+
+                $src = html_entity_decode((string) ($imageMatch[2] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if ($src === '') {
+                    return $figure;
+                }
+
+                return preg_replace_callback(
+                    '/<figcaption\b[^>]*>(.*?)<\/figcaption>/isu',
+                    static function (array $captionMatch) use ($src): string {
+                        $caption = trim(html_entity_decode(strip_tags((string) ($captionMatch[1] ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+                        return phinit_is_generated_filename_caption($caption, $src) ? '' : (string) ($captionMatch[0] ?? '');
+                    },
+                    $figure
+                ) ?? $figure;
+            },
+            $html
+        );
+
+        return is_string($cleaned) ? $cleaned : $html;
+    }
+}
+
+if (!function_exists('phinit_is_generated_filename_caption')) {
+    /**
+     * Vergleicht eine Caption mit dem Bild-Dateinamen inklusive Varianten ohne Extension/Trennzeichen.
+     */
+    function phinit_is_generated_filename_caption(string $caption, string $assetUrl): bool
+    {
+        $caption = trim($caption);
+        if ($caption === '' || $assetUrl === '') {
+            return false;
+        }
+
+        $path = (string) (parse_url($assetUrl, PHP_URL_PATH) ?: $assetUrl);
+        $basename = rawurldecode((string) basename($path));
+        if ($basename === '' || $basename === '.' || $basename === '..') {
+            return false;
+        }
+
+        $filename = pathinfo($basename, PATHINFO_FILENAME);
+        $candidates = array_filter(array_unique([
+            $basename,
+            $filename,
+            str_replace(['-', '_'], ' ', $filename),
+        ]), static fn(string $value): bool => trim($value) !== '');
+
+        $normalizedCaption = phinit_normalize_filename_caption_comparison($caption);
+        foreach ($candidates as $candidate) {
+            if ($normalizedCaption === phinit_normalize_filename_caption_comparison($candidate)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('phinit_normalize_filename_caption_comparison')) {
+    /**
+     * Normalisiert Dateinamen-/Caption-Vergleiche ohne redaktionelle Captions zu treffen.
+     */
+    function phinit_normalize_filename_caption_comparison(string $value): string
+    {
+        $value = trim(html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $value = preg_replace('/\.[a-z0-9]{2,5}$/iu', '', $value) ?? $value;
+        $value = preg_replace('/[-_]+/u', ' ', $value) ?? $value;
+        $value = preg_replace('/\s+/u', ' ', $value) ?? $value;
+
+        return function_exists('mb_strtolower') ? mb_strtolower($value, 'UTF-8') : strtolower($value);
     }
 }
 
