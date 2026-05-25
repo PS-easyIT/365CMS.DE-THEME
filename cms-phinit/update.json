@@ -3,7 +3,7 @@
   "slug": "cms-phinit",
   "version": "1.7.4",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.40",
+  "tested_up_to": "3.3.41",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
@@ -13,6 +13,7 @@
       "date": "2026-05-25",
       "changes": [
         "assets/css/hubsite.css: Featured-Bildhöhe wirkt direkt auf Medienfeld und Bild statt Text-/Card-Stretch; Bilder skalieren höhenbasiert, zentriert und ohne Zoom im konfigurierten Bildbereich",
+        "update.json und README.md: Theme-Kompatibilität nach dem Core-Audit-Fix für stabile HubSite-Bilddimensionen bis 365CMS 3.3.41 bestätigt",
         "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.7.4 aktualisiert"
       ]
     },
