@@ -1,13 +1,29 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.2",
+  "version": "1.7.4",
   "requires_cms": "2.5.0",
   "tested_up_to": "3.3.40",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.4",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Featured-Bildhöhe wirkt direkt auf Medienfeld und Bild statt Text-/Card-Stretch; Bilder skalieren höhenbasiert, zentriert und ohne Zoom im konfigurierten Bildbereich",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.7.4 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.7.3",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Featured-Bildfelder nutzen die eingestellte Höhe als feste Medienhöhe, richten sich vertikal mittig in der Card aus und zeigen Bilder per object-fit: contain ohne Cover-Zoom",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.7.3 aktualisiert"
+      ]
+    },
     {
       "version": "1.7.2",
       "date": "2026-05-25",

@@ -905,17 +905,22 @@ body.is-hub-site {
     .cms-hub-site__feature-card {
         display: flex;
         flex-direction: row;
-        align-items: stretch;
-        min-height: var(--hubsite-feature-image-height, 260px);
+        align-items: center;
+        min-height: 0;
     }
 
     .hubsite-card--featured .hubsite-card__media,
     .cms-hub-site__feature-card .cms-hub-site__feature-card-media {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         flex: 0 0 var(--hubsite-feature-image-width, 34%);
         width: var(--hubsite-feature-image-width, 34%);
+        height: var(--hubsite-feature-image-height, 260px);
         min-width: 0;
+        min-height: 0;
         max-width: 60%;
-        align-self: stretch;
+        align-self: center;
         padding: 0;
         background: var(--hubsite-surface-hover);
     }
@@ -924,14 +929,17 @@ body.is-hub-site {
     .cms-hub-site__feature-card .cms-hub-site__feature-card-content {
         flex: 1 1 auto;
         min-width: 0;
+        align-self: center;
     }
 
     .hubsite-card--featured .hubsite-card__image,
     .cms-hub-site__feature-card .cms-hub-site__feature-card-media img {
+        width: auto;
+        max-width: 100%;
         height: 100%;
-        min-height: 100%;
         border-radius: 0;
-        object-fit: cover;
+        object-fit: contain;
+        object-position: center center;
     }
 
     .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left,
@@ -940,13 +948,13 @@ body.is-hub-site {
     .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right {
         display: grid;
         grid-template-columns: minmax(0, var(--hubsite-feature-image-width, 34%)) minmax(0, 1fr);
-        align-items: stretch;
-        min-height: var(--hubsite-feature-image-height, 260px);
+        align-items: center;
+        min-height: 0;
     }
 
     .hubsite-grid--feature .cms-hub-site__card--layout-feature,
     .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature {
-        min-height: var(--hubsite-feature-image-height, 260px);
+        min-height: 0;
     }
 
     .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right,
@@ -969,8 +977,12 @@ body.is-hub-site {
     .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media,
     .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
     .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-right .cms-hub-site__card-media {
-        height: 100%;
-        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--hubsite-feature-image-height, 260px);
+        min-height: 0;
+        align-self: center;
     }
 
     .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-link--image-left .cms-hub-site__card-media,
@@ -983,6 +995,10 @@ body.is-hub-site {
     .hubsite-grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-media img,
     .cms-hub-site__grid--feature .cms-hub-site__card--layout-feature .cms-hub-site__card-media img,
     .cms-hub-site__feature-card .cms-hub-site__feature-card-media img {
+        width: auto;
+        max-width: 100%;
+        height: 100%;
+        object-fit: contain;
         object-position: center center;
     }
 }

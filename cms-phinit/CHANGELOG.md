@@ -14,6 +14,28 @@
 
 ---
 
+## v1.7.4 — 25. Mai 2026
+
+### Featured-Bildhöhe steuert jetzt wirklich das Bild
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / Featured-Kacheln | `assets/css/hubsite.css` entkoppelt die Einstellung `--hubsite-feature-image-height` von Text- und Card-Stretch. Die Höhe liegt jetzt direkt auf Medienfeld und Bild; das Bild skaliert mit `height: 100%`, `width: auto`, `max-width: 100%` und `object-fit: contain` mittig im konfigurierten Bildbereich. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.4` synchronisiert. |
+
+---
+
+## v1.7.3 — 25. Mai 2026
+
+### Featured-Bilder ohne Zoom mittig eingepasst
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / Featured-Kacheln | `assets/css/hubsite.css` zieht Featured-Bildfelder nicht mehr über die komplette Card-Höhe. Das Medienfeld nutzt die eingestellte `--hubsite-feature-image-height`, sitzt vertikal mittig in der Kachel und zeigt das Bild per `object-fit: contain` mit `object-position: center center` vollständig und zentriert statt gezoomt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.3` synchronisiert. |
+
+---
+
 ## v1.7.2 — 25. Mai 2026
 
 ### Featured-Bilder mittig und mit steuerbarer Höhe
