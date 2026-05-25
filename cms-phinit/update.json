@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.84",
+  "version": "1.5.85",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.22",
+  "tested_up_to": "3.3.24",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.85",
+      "date": "2026-05-25",
+      "changes": [
+        "includes/theme-content-helpers.php: EditorJS-/Rich-Content-Markup wird vor der finalen Theme-Sanitizer-Stufe mit dem strukturerhaltenden Profil bereinigt, damit mediaText-Wrapper-Klassen im Public-HTML erhalten bleiben",
+        "assets/css/rich-content.css: Beitragsinhalte erhalten dieselben Überschrift-/Listen-/Blockabstände wie Seiten; Text+Bild-Breite und object-fit funktionieren über Klassen auch ohne inline Styles",
+        "Kompatibilität mit Core 3.3.24: Dateinamen aus der Mediathek werden nicht mehr als sichtbare Bildunterschriften im Public-Bereich ausgegeben",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.85 und Core-Teststand 3.3.24 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.84",
       "date": "2026-05-25",

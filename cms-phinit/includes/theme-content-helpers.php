@@ -17,9 +17,14 @@ if (!function_exists('phinit_sanitize_renderable_content')) {
             return '';
         }
 
+        $effectiveProfile = $profile;
+        if ($profile === 'default' && function_exists('phinit_content_contains_editorjs_markup') && phinit_content_contains_editorjs_markup($html)) {
+            $effectiveProfile = 'hub';
+        }
+
         try {
             if (class_exists('\\CMS\\Services\\PurifierService')) {
-                return (string) \CMS\Services\PurifierService::getInstance()->purify($html, $profile);
+                return (string) \CMS\Services\PurifierService::getInstance()->purify($html, $effectiveProfile);
             }
         } catch (\Throwable) {
             // Fällt bewusst auf die WordPress-Kompat-Sanitizer zurück.
@@ -31,13 +36,23 @@ if (!function_exists('phinit_sanitize_renderable_content')) {
 
         $sanitized = strip_tags(
             $html,
-            '<p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><caption><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
+            '<section><article><nav><aside><header><footer><main><p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><caption><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
         );
 
         $sanitized = preg_replace('/\s+on[a-z0-9_-]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $sanitized) ?? $sanitized;
         $sanitized = preg_replace('/\s+(href|src|xlink:href)\s*=\s*(["\'])\s*(?:javascript|data:text\/html)\s*:[^"\']*\2/i', ' $1="#"', $sanitized) ?? $sanitized;
 
         return $sanitized;
+    }
+}
+
+if (!function_exists('phinit_content_contains_editorjs_markup')) {
+    /**
+     * Erkennt Core-gerendertes EditorJS-/Rich-Content-Markup vor der finalen Theme-Sanitizer-Stufe.
+     */
+    function phinit_content_contains_editorjs_markup(string $html): bool
+    {
+        return preg_match('/\b(?:editorjs-[a-z0-9_-]+|cms-site-table|cms-hub-site)\b/i', $html) === 1;
     }
 }
 

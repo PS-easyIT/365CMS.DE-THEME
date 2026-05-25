@@ -14,6 +14,19 @@
 
 ---
 
+## v1.5.85 — 25. Mai 2026
+
+### EditorJS-Text+Bild nach Sanitizer-Stufe stabil gerendert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Text+Bild | `includes/theme-content-helpers.php` erkennt gerendertes EditorJS-/Rich-Content-Markup und nutzt dafür das strukturerhaltende Sanitizer-Profil. Dadurch bleibt die zentrale `.editorjs-media-text`-Klasse nach der finalen PHINIT-Sanitizer-Runde erhalten und Text+Bild-Blöcke werden im Live/Public-Bereich wieder als Desktop-Grid statt Bild-oben/Text-unten gerendert. |
+| 🔴 fix | Publicsite / Bildunterschriften | In Kombination mit Core `3.3.24` werden Dateinamen aus der Mediathek nicht mehr als sichtbare Bildunterschriften im Public-Bereich ausgegeben. |
+| 🎨 style | Publicsite / Rich Content | `assets/css/rich-content.css` gibt `.post-body` dieselben Basisabstände für Überschriften, Absätze, Listen, Tabellen und Blockquotes wie `.page-content`; außerdem steuern die Text+Bild-Klassen `image-width-*` und `image-fit-*` die Darstellung auch dann, wenn inline Styles durch Sanitizer entfernt wurden. |
+| 🔵 docs | Release | `includes/theme-content-helpers.php`, `assets/css/rich-content.css`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.85` und Core-Teststand `3.3.24` synchronisiert. |
+
+---
+
 ## v1.5.84 — 25. Mai 2026
 
 ### EditorJS-Rich-Content im Live/Public-Bereich zuverlässig geladen
