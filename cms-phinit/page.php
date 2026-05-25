@@ -101,6 +101,21 @@ if ($pageTitleTocEnabled && !$isHubSitePage && !$isCookieConsentPage && !$isImag
 }
 
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$hubSettings = is_array($page['hub_settings'] ?? null) ? $page['hub_settings'] : [];
+$hubAuthorBoxEnabled = $isHubSitePage && filter_var($hubSettings['hub_show_author_box'] ?? false, FILTER_VALIDATE_BOOLEAN);
+$hubAuthorBoxContext = (!$pageNotFound && $hubAuthorBoxEnabled && function_exists('phinit_build_author_box_context'))
+    ? phinit_build_author_box_context([
+        'category' => 'posts',
+        'show_key' => 'hub_author_box_enabled',
+        'entity_name' => (string) ($page['author_name'] ?? ($page['author_display_name'] ?? '')),
+        'site_url' => $siteUrl,
+        'locale' => $currentLocale,
+        'show_default' => true,
+        'show_service_default' => true,
+        'authorBoxModifierClass' => 'post-author-box--hubsite hubsite-author-box',
+        'default_eyebrow' => 'PHINIT Expertise',
+    ])
+    : [];
 $pageAuthorBoxContext = (!$pageNotFound && !$isHubSitePage && !$isCookieConsentPage && !$isImageArchivePage && function_exists('phinit_build_author_box_context'))
     ? phinit_build_author_box_context([
         'category' => 'posts',
@@ -147,6 +162,9 @@ if ($_pg_showDate && !empty($page['updated_at'])) {
     <div class="page-content page-content--hub" data-anim>
         <?php $isCoreHubSitePage ? phinit_render_prepared_content($safePageContent) : phinit_render_sanitized_content($safePageContent, 'hub'); ?>
     </div>
+    <?php if (!empty($hubAuthorBoxContext['show'])): ?>
+    <?php get_theme_part('partials/post-author-box', $hubAuthorBoxContext); ?>
+    <?php endif; ?>
 <?php elseif ($isImageArchivePage): ?>
     <?php $imageArchive = phinit_build_image_archive_view_model($page); ?>
     <?php include __DIR__ . '/partials/page-image-archive.php'; ?>

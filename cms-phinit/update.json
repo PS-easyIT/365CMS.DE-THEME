@@ -1,13 +1,64 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.6.3",
+  "version": "1.6.9",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.35",
+  "tested_up_to": "3.3.37",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.6.9",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Tabellen-HubSite-Card-Titelbänder erhalten mindestens 60px Höhe und zentrieren den Titeltext sauber im Band",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.6.9 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.6.8",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: HubSite-Grid- und Section-Reihen verwenden den vom Core gelieferten Wert --hubsite-card-row-gap mit 30px Fallback für ruhigere Abstände nach Full-Width-Cards",
+        "update.json: Theme-Teststand auf Core 3.3.37 aktualisiert, der hub_card_row_gap im HubSite-Editor und Template-Customizer bereitstellt",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.6.8 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.6.7",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: HubSite-Karten und Section-Cards strecken sich innerhalb einer Grid-Reihe auf die Höhe der höchsten Card, damit obere und untere Kanten ruhiger bündig abschließen",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.6.7 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.6.6",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Datenschutz-HubSite-Karten mit Bildposition oben zeigen das Titelband direkt unter dem Bild und full-bleed von Card-Rand zu Card-Rand",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.6.6 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.6.5",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/hubsite.css: Dienstleistungsbutton der HubSite-Autorenbox wird innerhalb der rechten Service-Card unten rechts platziert",
+        "functions.php, style.css, theme.json, update.json und README.md: Theme-Metadaten auf Version 1.6.5 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.6.4",
+      "date": "2026-05-25",
+      "changes": [
+        "page.php: Rendert unter HubSites optional die bestehende Autorenbox, wenn hub_show_author_box in der jeweiligen HubSite aktiv ist",
+        "partials/post-author-box.php und includes/theme-template-helpers.php: Authorbox-Partial unterstützt eine optionale Modifier-Klasse für HubSite-spezifisches Styling",
+        "assets/css/hubsite.css: HubSite-Autorenbox optisch an HubSite-Cards angepasst, inklusive dunklem Dienstleistungsbereich und Dark-Mode-Token-Kompatibilität",
+        "update.json: Theme-Teststand auf Core 3.3.36 aktualisiert, der die HubSite-Option hub_show_author_box bereitstellt"
+      ]
+    },
     {
       "version": "1.6.3",
       "date": "2026-05-25",

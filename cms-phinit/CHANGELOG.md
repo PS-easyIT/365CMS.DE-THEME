@@ -14,6 +14,74 @@
 
 ---
 
+## v1.6.9 — 25. Mai 2026
+
+### Tabellen-HubSites mit höherem Titelband
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Tabellen-Cards | `assets/css/hubsite.css` setzt Table-Card-Titelbänder auf mindestens 60 px Höhe. Titel und verlinkte Titel werden im Band vertikal zentriert und behalten sauberen Umbruch, damit die Tabellen-HubSites optisch ruhiger und näher an den Datenschutz-Karten wirken. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.6.9` synchronisiert. |
+
+---
+
+## v1.6.8 — 25. Mai 2026
+
+### Anpassbarer HubSite-Card-Reihenabstand
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Card-Abstände | `assets/css/hubsite.css` nutzt `--hubsite-card-row-gap` für den vertikalen Abstand zwischen HubSite-Card-Reihen. Der Fallback liegt bei 30 px und verbessert insbesondere den Abstand zwischen Full-Width-Cards und den darunterliegenden mehrspaltigen Cards. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.6.8` sowie Core-Teststand `3.3.37` synchronisiert. |
+
+---
+
+## v1.6.7 — 25. Mai 2026
+
+### HubSite-Cards mit gleicher Reihenhöhe
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Cards | `assets/css/hubsite.css` stellt HubSite-Grids und Section-Grids auf Stretching um. Karten, Tabellenkarten, Datenschutz-Karten und Section-Cards enden dadurch innerhalb einer Reihe bündig auf Höhe der höchsten Card. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.6.7` synchronisiert. |
+
+---
+
+## v1.6.6 — 25. Mai 2026
+
+### Datenschutz-HubSite Titelband unter Top-Bildern
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Datenschutz | `assets/css/hubsite.css` setzt bei Datenschutz-HubSite-Karten mit `image-top` das Titelband direkt unter das Bild. Das Band läuft per Full-Bleed von linkem bis rechtem Card-Rand und wird vor Badge/Content einsortiert. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.6.6` synchronisiert. |
+
+---
+
+## v1.6.5 — 25. Mai 2026
+
+### HubSite-Autorenbox CTA-Position
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | HubSites / Autorenbox | `assets/css/hubsite.css` platziert den Dienstleistungsbutton der HubSite-Autorenbox in der rechten unteren Ecke der Service-Card. Der Button nutzt dafür das bestehende Flex-Layout und betrifft nur `.hubsite-author-box`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.6.5` synchronisiert. |
+
+---
+
+## v1.6.4 — 25. Mai 2026
+
+### Optionale HubSite-Autorenbox mit Dienstleistungsbereich
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| ✨ feature | HubSites / Autorenbox | `page.php` rendert unter Core-HubSites optional die bestehende PHINIT-Autorenbox, wenn `hub_show_author_box` in der jeweiligen HubSite aktiviert ist. Die Inhalte kommen aus den Beitrags-Autorenbox-Einstellungen. |
+| 🎨 style | HubSites / Dienstleistungsbereich | `assets/css/hubsite.css` passt die Autorenbox optisch an HubSites an: helle Card, kompakte Autoren-Spalte und dunkler Dienstleistungsbereich mit Gold-CTA. |
+| 🔵 refactor | Authorbox-Partial | `partials/post-author-box.php` und `includes/theme-template-helpers.php` unterstützen eine optionale Modifier-Klasse, ohne die bestehende Beitrags-/Seiten-Ausgabe zu verändern. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.6.4` sowie Core-Teststand `3.3.36` synchronisiert. |
+
+---
+
 ## v1.6.3 — 25. Mai 2026
 
 ### Persistenter PHINIT Dark Mode für HubSites

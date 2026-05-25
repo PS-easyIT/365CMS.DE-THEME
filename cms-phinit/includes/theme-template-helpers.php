@@ -1997,6 +1997,7 @@ if (!function_exists('phinit_build_author_box_context')) {
             'authorEyebrow' => trim((string) phinit_customizer_value($category, $eyebrowKey, (string) ($options['default_eyebrow'] ?? 'Autor'))),
             'authorAboutLabel' => trim((string) phinit_customizer_value($category, $aboutLabelKey, (string) ($options['default_about_label'] ?? 'Über mich'))),
             'authorAboutWidth' => $authorAboutWidth,
+            'authorBoxModifierClass' => trim((string) ($options['authorBoxModifierClass'] ?? '')),
             'serviceHubUrl' => $serviceHubUrl,
             'serviceHubLabel' => $serviceHubLabel,
             'serviceHubText' => $serviceHubText,

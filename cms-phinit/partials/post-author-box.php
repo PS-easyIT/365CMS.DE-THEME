@@ -12,6 +12,7 @@ $authorUrl = trim((string) ($authorUrl ?? ''));
 $authorEyebrow = trim((string) ($authorEyebrow ?? 'Autor'));
 $authorAboutLabel = trim((string) ($authorAboutLabel ?? 'Über mich'));
 $authorAboutWidth = (int) ($authorAboutWidth ?? 60);
+$authorBoxModifierClass = trim((string) ($authorBoxModifierClass ?? ''));
 $serviceHubUrl = trim((string) ($serviceHubUrl ?? ''));
 $serviceHubLabel = trim((string) ($serviceHubLabel ?? 'Dienstleistungen ansehen'));
 $serviceHubText = trim((string) ($serviceHubText ?? ''));
@@ -34,6 +35,8 @@ if ($authorName !== '') {
     }
 }
 
+$authorBoxClass = trim('post-author-box post-author-box--about-' . (int) $authorAboutWidth . ' ' . $authorBoxModifierClass);
+
 if ($authorInitials === '') {
     $authorInitials = 'A';
 }
@@ -45,7 +48,7 @@ if ($serviceHubUrl !== '' && preg_match('#^https?://#i', $serviceHubUrl) === 1) 
     $serviceIsExternal = $serviceHost !== '' && $siteHost !== '' && $serviceHost !== $siteHost;
 }
 ?>
-<section class="post-author-box post-author-box--about-<?php echo (int) $authorAboutWidth; ?>" aria-label="Autorinnen- und Autorenbox">
+<section class="<?php echo htmlspecialchars($authorBoxClass, ENT_QUOTES); ?>" aria-label="Autorinnen- und Autorenbox">
     <div class="post-author-box__author">
     <?php if ($authorAvatarUrl !== ''): ?>
     <img class="post-author-box__avatar"
