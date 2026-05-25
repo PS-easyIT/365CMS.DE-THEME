@@ -14,6 +14,54 @@
 
 ---
 
+## v1.5.92 — 25. Mai 2026
+
+### Core-Header-TOC für Seiten kompatibel gemacht
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Seiten / Header-TOC | `page.php` respektiert die neue Core-Seitenoption `show_title_toc` für ein eingeklapptes Inhaltsverzeichnis direkt unter dem Seitentitel. |
+| 🔴 fix | Seiten / TOC-Duplikate | Ist das Core-Header-TOC aktiv, unterdrückt PHINIT das separate Customizer-gesteuerte Seiten-TOC, damit keine doppelte Schnellnavigation erscheint. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.92` synchronisiert. |
+
+---
+
+## v1.5.91 — 25. Mai 2026
+
+### Metainfos im Seiten-Content-Header ergänzt
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Seiten / Header | `partials/page-header-block.php` zeigt unterhalb des Seitentitels jetzt eine beitragsähnliche Meta-Zeile mit Aktualisierungs-/Veröffentlichungsdatum, Seitenautor und optionaler Lesedauer. |
+| 🎨 style | Seiten / Meta | `assets/css/page-detail.css` gestaltet `.page-meta` analog zur Beitrags-Meta mit Trennlinie, Icons, Labels, Links, Dark-Mode-Kontrast und responsivem Umbruch. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.91` synchronisiert. |
+
+---
+
+## v1.5.90 — 25. Mai 2026
+
+### Seiten-Autorenbox an Beitragsdesign angeglichen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Seiten / Autorenbox | `page.php` baut die Autorenbox auf normalen Seiten jetzt mit den gleichen Customizer-Werten aus `Beiträge → Autorenbox & Navigation` wie Beitragsseiten auf. Separate Seiten-Autorenbox-Felder werden nicht mehr verwendet. |
+| 🎨 style | Publicsite / Authorbox | `assets/css/ui-chrome.css` enthält die Authorbox als gemeinsame Cross-Route-Komponente, sodass das Card-Design inklusive Dienstleistungsbereich, Dark Mode und Responsive-Verhalten auch unter Seiteninhalten geladen wird. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.90` synchronisiert. |
+
+---
+
+## v1.5.89 — 25. Mai 2026
+
+### Text+Bild-30px-Abstände gegen Core-Critical-CSS abgesichert
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Publicsite / Text+Bild | `assets/css/rich-content.css` setzt die gespeicherten Text+Bild-Abstände jetzt direkt als `margin-block-start/end` und klassische `margin-top/bottom` für `data-spacing-*` sowie die neuen Core-Klassen `editorjs-media-text--spacing-top-*` und `editorjs-media-text--spacing-bottom-*`. |
+| 🔴 fix | Publicsite / Abstände | Dadurch überschreibt PHINIT das globale EditorJS-Critical-CSS (`.editorjs-block + .editorjs-block` / `:first-child`) zuverlässig, sodass ein gespeichertes `30px`-Preset nicht mehr als `0px` im Frontend endet. |
+| 🔵 docs | Release | `assets/css/rich-content.css`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.89` und Core-Teststand `3.3.26` synchronisiert. |
+
+---
+
 ## v1.5.88 — 25. Mai 2026
 
 ### Text+Bild-Abstände im Public-Frontend respektiert

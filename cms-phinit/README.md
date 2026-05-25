@@ -4,14 +4,16 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.5.88`
+- Version: `1.5.92`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.25`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.28`
 
 ## Enthaltene Kernbereiche
 
 - Blog- und Archiv-Templates (`index.php`, `blog.php`, `category.php`, `tag.php`)
 - Seiten-Templates inkl. `page.php`, `page-wide.php`, `page-landing.php`
+- Normale Seiten zeigen im Content-Header unterhalb des Titels eine beitragsähnliche Meta-Zeile mit Datum, Autor und optionaler Lesedauer.
+- Die Core-Option für ein seitenspezifisches, eingeklapptes Header-TOC unter dem Titel wird respektiert; PHINIT unterdrückt dabei sein eigenes Customizer-TOC, damit keine doppelten Inhaltsverzeichnisse entstehen.
 - Post-Templates inkl. Standard-, Wide-, Tech-, Microsoft-365-, Windows- und PowerShell-Variante
 - Theme-Customizer mit Import/Export und Preview-Drawer
 - Header-Optionen für Suche, Quicklinks, Member-Bar und ausblendbaren Login-/Account-Button
@@ -24,12 +26,12 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Die Startseiten-Sidebar kann in der Site-Identity eine konfigurierbare Dienstleistungscard mit Logo/Bild, Text und CTA ausgeben.
 - Normale Seiten- und verzögerte Beitrags-Content-Wrapper sind serverseitig als sichtbar markiert, damit Inhalte auch ohne erfolgreiche Scroll-Reveal-Initialisierung lesbar bleiben.
 - EditorJS-Bilder und Bild-Text-Blöcke respektieren im PHINIT-Public-Frontend die Core-/Editor-Vorschau-Breiten; Text+Bild nutzt ein stabiles Grid für Desktop-Nebeneinander, mobile Stapelung, `image-right`, Überschriften und gespeicherte Skalierungsmodi. PHINIT erhält die EditorJS-Strukturklassen auch nach der finalen Sanitizer-Stufe, sodass Live/Public-Ausgaben nicht mehr als Bild-oben/Text-unten ohne Listen-/Absatzformatierung erscheinen.
-- Text+Bild-Blöcke übernehmen gespeicherte Abstände nach oben und unten über Core-Variablen sowie `data-spacing-top`/`data-spacing-bottom`, sodass PHINIT-Blockmargins die EditorJS-Einstellung nicht mehr ersetzen.
+- Text+Bild-Blöcke übernehmen gespeicherte Abstände nach oben und unten über Core-Variablen, `data-spacing-top`/`data-spacing-bottom` und robuste Abstandsklassen wie `editorjs-media-text--spacing-top-30`; dadurch gewinnen PHINIT-Regeln auch gegen das globale EditorJS-Critical-CSS, das normale Nachbarblöcke auf `0px` Startabstand setzt.
 - Bereits vom Core vorbereitete EditorJS-Public-HTML-Blöcke werden im PHINIT-Seitenpfad nicht mehr ein zweites Mal normalisiert; dadurch bleiben `.editorjs-media-text`-Strukturen auf Seiten erhalten.
 - Vollbreite Seiten (`page-wide`) und Landing-Seiten (`page-landing`) verwenden denselben EditorJS-Renderpfad wie normale Seiten, auch wenn sie direkt vom Router mit Seitendaten versorgt werden.
 - In Kombination mit Core `3.3.24` werden Dateinamen aus der Mediathek nicht mehr als sichtbare Bildunterschriften im Public-Content ausgegeben.
 - Die Beitrags-Templates `microsoft-365`, `windows` und `powershell` liefern dezente zweispaltige Meta-Steckbriefe mit kompakten Website-/GitHub-Icon-Links.
-- Autorenboxen auf Seiten- und Beitragsdetails lassen sich im Customizer inklusive Bild, Name, Über-mich-Text und Dienstleistungs-HubSite-CTA konfigurieren.
+- Autorenboxen auf Seiten- und Beitragsdetails verwenden gemeinsam die Einstellungen aus `Beiträge → Autorenbox & Navigation`, inklusive Bild, Name, Über-mich-Text und Dienstleistungs-HubSite-CTA.
 - PHINIT-SiteTables zeigen im Frontend keine Suchleiste über der Tabelle; Pagination erscheint erst ab mindestens 20 Zeilen und nur, wenn wirklich mehrere Seiten entstehen.
 - Tabellen-Pagination ist im PHINIT-Stil gestaltet, nutzt mindestens 20 Zeilen pro Seite und rendert ohne Zeilen-/Seitenstatus-Metainfo unterhalb des Tabellentitels.
 - nachgeschärfter Dark Mode mit hellblauen Inhalts-Weblinks sowie lesbaren Favoriten-, Startseiten- und Member-Buttons auf dunklem Hintergrund

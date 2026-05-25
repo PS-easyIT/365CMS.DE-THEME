@@ -1,13 +1,50 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.88",
+  "version": "1.5.92",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.25",
+  "tested_up_to": "3.3.28",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.5.92",
+      "date": "2026-05-25",
+      "changes": [
+        "page.php: Die neue Core-Seitenoption show_title_toc für ein eingeklapptes Inhaltsverzeichnis unter dem Seitentitel wird respektiert",
+        "page.php: Bei aktivem Core-Header-TOC wird das PHINIT-Customizer-TOC für Seiten unterdrückt, damit keine doppelte Schnellnavigation entsteht",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.92 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.91",
+      "date": "2026-05-25",
+      "changes": [
+        "partials/page-header-block.php: Normale Seiten zeigen unter dem Titel eine beitragsähnliche Meta-Zeile mit Aktualisierungs-/Veröffentlichungsdatum, Autor und optionaler Lesedauer",
+        "assets/css/page-detail.css: Die neue page-meta-Komponente nutzt PHINIT-Header-Typografie, Trennlinie, Icons, Links, Dark Mode und responsive Umbrüche analog zur Beitrags-Meta",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.91 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.90",
+      "date": "2026-05-25",
+      "changes": [
+        "page.php: Normale Seiten bauen die Autorenbox jetzt mit denselben Customizer-Werten aus Beiträge → Autorenbox & Navigation wie Beitragsseiten auf",
+        "assets/css/ui-chrome.css: Die Authorbox-Styles sind als routeübergreifende Komponente verfügbar, sodass Seiten unterhalb des Contents dasselbe Design inklusive Dark Mode und Responsive-Verhalten erhalten",
+        "admin/customizer-schema.php + theme.json: Separate Seiten-Autorenbox-Felder wurden aus der Customizer-Oberfläche entfernt, damit die Konfiguration eindeutig im Bereich Beiträge liegt",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.90 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.5.89",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/rich-content.css: Text+Bild-Abstandspresets setzen margin-block-start/end jetzt direkt über data-spacing-* und die neuen Core-Klassen editorjs-media-text--spacing-top/bottom-*",
+        "Die PHINIT-Regeln gewinnen dadurch gegen das globale EditorJS-Critical-CSS, das normale EditorJS-Nachbarblöcke bewusst auf 0px Startabstand setzt",
+        "style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.89 und Core-Teststand 3.3.26 aktualisiert"
+      ]
+    },
     {
       "version": "1.5.88",
       "date": "2026-05-25",
