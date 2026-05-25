@@ -85,11 +85,16 @@ $favoriteControl = !$isHubSitePage
 $pageNotFound = empty($page);
 
 $pageTitleTocEnabled = !$pageNotFound && !empty($page['show_title_toc']);
-if ($pageTitleTocEnabled && !$isHubSitePage && !$isCookieConsentPage && !$isImageArchivePage && class_exists('\CMS\TableOfContents') && !str_contains($safePageContent, 'data-cms-page-title-toc')) {
+$pageHasCoreTitleToc = str_contains($safePageContent, 'cms-page-title-toc') || str_contains($safePageContent, 'data-cms-page-title-toc');
+if ($pageTitleTocEnabled && !$isHubSitePage && !$isCookieConsentPage && !$isImageArchivePage && class_exists('\CMS\TableOfContents')) {
     try {
-        $pageTitleTocResult = \CMS\TableOfContents::instance()->buildPageTitleToc($safePageContent);
+        $pageTitleTocSource = function_exists('phinit_remove_page_title_toc')
+            ? phinit_remove_page_title_toc($safePageContent)
+            : $safePageContent;
+        $pageTitleTocResult = \CMS\TableOfContents::instance()->buildPageTitleToc($pageTitleTocSource);
         $safePageContent = (string)($pageTitleTocResult['toc'] ?? '') . (string)($pageTitleTocResult['content'] ?? $safePageContent);
         $pageContent = $safePageContent;
+        $pageHasCoreTitleToc = str_contains($safePageContent, 'cms-page-title-toc') || str_contains($safePageContent, 'data-cms-page-title-toc');
     } catch (\Throwable) {
         // Die seitenspezifische TOC-Option darf die eigentliche Seitenanzeige nicht blockieren.
     }
@@ -109,7 +114,7 @@ $pageAuthorBoxContext = (!$pageNotFound && !$isHubSitePage && !$isCookieConsentP
 
 // TOC für Seiten generieren (wenn aktiviert)
 $_pg_toc = [];
-if (!$pageNotFound && $_pg_showToc && !$pageTitleTocEnabled && !str_contains($safePageContent, 'data-cms-page-title-toc')) {
+if (!$pageNotFound && $_pg_showToc && !$pageTitleTocEnabled && !$pageHasCoreTitleToc) {
     $_pg_toc = $pageHeadingData['toc'];
 }
 

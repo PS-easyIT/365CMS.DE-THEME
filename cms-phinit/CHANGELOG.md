@@ -14,6 +14,17 @@
 
 ---
 
+## v1.5.93 — 25. Mai 2026
+
+### EditorJS Text+Bild-Titel an H3 angeglichen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | EditorJS / Text+Bild | `assets/css/rich-content.css` behandelt `.editorjs-media-text__heading` im PHINIT-Frontend wie eine H3-Überschrift und überschreibt alte Core-Inline-Reste robust auf den H3-Maßstab. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.93` sowie Core-Teststand `3.3.29` synchronisiert. |
+
+---
+
 ## v1.5.92 — 25. Mai 2026
 
 ### Core-Header-TOC für Seiten kompatibel gemacht
@@ -21,7 +32,8 @@
 | Typ | Bereich | Beschreibung |
 |-----|---------|-------------|
 | 🟢 feat | Seiten / Header-TOC | `page.php` respektiert die neue Core-Seitenoption `show_title_toc` für ein eingeklapptes Inhaltsverzeichnis direkt unter dem Seitentitel. |
-| 🔴 fix | Seiten / TOC-Duplikate | Ist das Core-Header-TOC aktiv, unterdrückt PHINIT das separate Customizer-gesteuerte Seiten-TOC, damit keine doppelte Schnellnavigation erscheint. |
+| 🔴 fix | Seiten / TOC-Duplikate & Anker | Ist das Core-Header-TOC aktiv, erkennt PHINIT vorhandene `cms-page-title-toc`-Ausgaben zuverlässig, baut das TOC nach der finalen Heading-ID-Vergabe neu auf und unterdrückt das separate Customizer-gesteuerte Seiten-TOC. Dadurch entstehen keine doppelten TOCs und die Links springen wieder zu den passenden Seitenabschnitten. |
+| 🔴 fix | Seiten / TOC-Scroll | `assets/js/navigation.js` lädt die Content-Interaktionen jetzt auch bei `.cms-page-title-toc`; `assets/js/content-interactions.js` behandelt `.cms-page-title-toc__link` mit Sticky-Header-Offset wie die bestehenden TOC-Links. |
 | 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.5.92` synchronisiert. |
 
 ---

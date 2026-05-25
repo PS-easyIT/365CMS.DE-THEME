@@ -21,7 +21,7 @@
     }
 
     function initTocAnchorLinks() {
-        const links = document.querySelectorAll('.toc-link[href^="#"], .toc-inline__link[href^="#"], .page-toc__link[href^="#"], [data-cms-toc-root] a[href^="#"]');
+        const links = document.querySelectorAll('.toc-link[href^="#"], .toc-inline__link[href^="#"], .page-toc__link[href^="#"], .cms-page-title-toc__link[href^="#"], [data-cms-toc-root] a[href^="#"]');
         if (!links.length) return;
 
         links.forEach((link) => {
@@ -82,7 +82,7 @@
     }
 
     function markActiveTocLink(activeLink) {
-        document.querySelectorAll('.toc-link.active, .toc-inline__link.active, .page-toc__link.active').forEach((link) => {
+        document.querySelectorAll('.toc-link.active, .toc-inline__link.active, .page-toc__link.active, .cms-page-title-toc__link.active').forEach((link) => {
             link.classList.remove('active');
         });
         activeLink.classList.add('active');

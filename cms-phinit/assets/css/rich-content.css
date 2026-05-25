@@ -43,6 +43,13 @@
     margin: 1.7em 0 .65em;
 }
 
+.page-content .editorjs-media-text__heading,
+.post-body .editorjs-media-text__heading {
+    font-size: var(--fs-h3) !important;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
 .page-content h4,
 .page-content h5,
 .page-content h6,

@@ -66,6 +66,28 @@ if (!function_exists('phinit_content_is_prepared_editorjs_html')) {
     }
 }
 
+if (!function_exists('phinit_remove_page_title_toc')) {
+    /**
+     * Entfernt ein bereits vom Core eingefügtes Seiten-Header-TOC aus vorbereitetem HTML.
+     * PHINIT baut es nach Sanitizing/Heading-ID-Vergabe neu auf, damit TOC-Links und
+     * tatsächliche Überschriften-IDs garantiert synchron bleiben.
+     */
+    function phinit_remove_page_title_toc(string $html): string
+    {
+        if (!str_contains($html, 'cms-page-title-toc')) {
+            return $html;
+        }
+
+        $cleaned = preg_replace(
+            '/<details\b(?=[^>]*\bclass\s*=\s*(["\'])(?:(?!\1).)*\bcms-page-title-toc\b(?:(?!\1).)*\1)[^>]*>.*?<\/details>/isu',
+            '',
+            $html
+        );
+
+        return is_string($cleaned) ? ltrim($cleaned) : $html;
+    }
+}
+
 if (!function_exists('phinit_prepare_renderable_content')) {
     /**
      * Bereitet gespeicherten Seiten-/Beitragsinhalt für das Frontend auf.
@@ -77,7 +99,7 @@ if (!function_exists('phinit_prepare_renderable_content')) {
             return '';
         }
 
-        if (phinit_content_is_prepared_editorjs_html($content)) {
+        if (phinit_content_is_prepared_editorjs_html($content) || str_contains($content, 'cms-page-title-toc')) {
             return phinit_enhance_content_images($content);
         }
 

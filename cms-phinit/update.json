@@ -1,19 +1,28 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.5.92",
+  "version": "1.5.93",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.28",
+  "tested_up_to": "3.3.29",
   "release_date": "2026-05-25",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
     {
+      "version": "1.5.93",
+      "date": "2026-05-25",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS Text+Bild-Überschriften (.editorjs-media-text__heading) werden im PHINIT-Frontend wie H3-Überschriften skaliert und alte Inline-Reste robust überschrieben",
+        "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.93 und Core-Teststand 3.3.29 aktualisiert"
+      ]
+    },
+    {
       "version": "1.5.92",
       "date": "2026-05-25",
       "changes": [
         "page.php: Die neue Core-Seitenoption show_title_toc für ein eingeklapptes Inhaltsverzeichnis unter dem Seitentitel wird respektiert",
-        "page.php: Bei aktivem Core-Header-TOC wird das PHINIT-Customizer-TOC für Seiten unterdrückt, damit keine doppelte Schnellnavigation entsteht",
+        "page.php + includes/theme-content-helpers.php: Vorhandene cms-page-title-toc-Ausgaben werden nach der finalen Heading-ID-Vergabe neu aufgebaut; bei aktivem Core-Header-TOC wird das PHINIT-Customizer-TOC für Seiten unterdrückt, damit keine doppelte Schnellnavigation entsteht und TOC-Links wieder zu den passenden Abschnitten springen",
+        "assets/js/navigation.js + assets/js/content-interactions.js: Das Content-Interaktionsmodul lädt auch bei .cms-page-title-toc und behandelt .cms-page-title-toc__link mit Sticky-Header-Offset wie bestehende TOC-Links",
         "functions.php + style.css + theme.json + update.json + README.md + CHANGELOG.md: Theme-Metadaten auf Version 1.5.92 aktualisiert"
       ]
     },
