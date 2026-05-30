@@ -1067,6 +1067,46 @@
     "homepage": {
       "label": "Startseite",
       "settings": {
+        "show_home_featured_banner": {
+          "label": "Featured-Banner anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "home_featured_banner_post": {
+          "label": "Featured-Banner Beitrag 1",
+          "type": "post_picker",
+          "default": ""
+        },
+        "home_featured_banner_post_2": {
+          "label": "Featured-Banner Beitrag 2",
+          "type": "post_picker",
+          "default": ""
+        },
+        "home_featured_banner_post_3": {
+          "label": "Featured-Banner Beitrag 3",
+          "type": "post_picker",
+          "default": ""
+        },
+        "home_featured_banner_label": {
+          "label": "Featured-Banner Label",
+          "type": "text",
+          "default": "Featured"
+        },
+        "home_featured_banner_title": {
+          "label": "Featured-Banner Titel (optional)",
+          "type": "text",
+          "default": ""
+        },
+        "home_featured_banner_text": {
+          "label": "Featured-Banner Text (optional)",
+          "type": "textarea",
+          "default": ""
+        },
+        "home_featured_banner_button_text": {
+          "label": "Featured-Banner Button",
+          "type": "text",
+          "default": "Weiter lesen"
+        },
         "show_repo_card": {
           "label": "Repo-Card anzeigen",
           "type": "checkbox",
@@ -1185,6 +1225,77 @@
           "type": "textarea",
           "default": ""
         },
+        "sidebar_widget_order": {
+          "label": "Sidebar Widget-Reihenfolge",
+          "type": "widget_order",
+          "default": "identity\ncarousel\nquicklinks\nm365links\ncontact\nabout\nprojects\nfeatured\nstatus\ndownloads\nnewsletter\nsocial\nnotice\ncustom",
+          "description": "Mit den Pfeil-Buttons sortieren, keine internen Schlüssel mehr nötig.",
+          "options": {
+            "identity": "Site-Identity",
+            "carousel": "Artikel-Karussell",
+            "quicklinks": "Schnelllinks",
+            "m365links": "Microsoft 365 Schnelllinks",
+            "contact": "Kontakt",
+            "about": "About Me",
+            "projects": "Projekt-Hinweise",
+            "featured": "Empfohlene Artikel",
+            "status": "Dienst-Status",
+            "downloads": "Downloads & Checklisten",
+            "newsletter": "Newsletter / Updates",
+            "social": "Social-Links",
+            "notice": "Hinweis / Ankündigung",
+            "custom": "Eigener Sidebar-Inhalt"
+          }
+        },
+        "sidebar_show_article_carousel": {
+          "label": "Artikel-Karussell anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_article_carousel_label": {
+          "label": "Artikel-Karussell Titel",
+          "type": "text",
+          "default": "Artikel-Karussell"
+        },
+        "sidebar_article_carousel_count": {
+          "label": "Artikel-Karussell Anzahl",
+          "type": "number",
+          "default": 4,
+          "min": 2,
+          "max": 6,
+          "step": 1
+        },
+        "sidebar_article_carousel_image_height": {
+          "label": "Artikel-Karussell Bildhöhe (px)",
+          "type": "number",
+          "default": 96,
+          "min": 72,
+          "max": 150,
+          "step": 1
+        },
+        "sidebar_article_carousel_rotate_seconds": {
+          "label": "Artikel-Karussell Wechselintervall (Sekunden)",
+          "type": "number",
+          "default": 7,
+          "min": 3,
+          "max": 30,
+          "step": 1
+        },
+        "sidebar_show_quicklinks": {
+          "label": "Schnelllinks Widget anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_quicklinks_label": {
+          "label": "Schnelllinks Titel",
+          "type": "text",
+          "default": "Schnelllinks"
+        },
+        "sidebar_quicklinks_items": {
+          "label": "Schnelllinks (Titel|URL|Icon optional)",
+          "type": "textarea",
+          "default": "Alle Beiträge|/blog|📰\nKontakt|/contact|✉️\nDownloads|/downloads|📥"
+        },
         "sidebar_show_identity": {
           "label": "Site-Identity Widget anzeigen",
           "type": "checkbox",
@@ -1264,6 +1375,91 @@
           "label": "Microsoft 365 Links (Titel|URL|Icon optional)",
           "type": "textarea",
           "default": "Alle Beiträge|/blog|📰\nGlossar|/m365-glossar|📖\nLINUX|/tutorials-linux|\nM365 Analyse|/m365-analyse|🔍\nM365 Blogs|/m365-blogs|📝\nAdmin Links|/m365-admin-links|🔗"
+        },
+        "sidebar_show_contact": {
+          "label": "Kontakt-Widget anzeigen",
+          "type": "checkbox",
+          "default": true
+        },
+        "sidebar_contact_title": {
+          "label": "Kontakt Titel",
+          "type": "text",
+          "default": "Kontakt"
+        },
+        "sidebar_contact_text": {
+          "label": "Kontakt Text",
+          "type": "textarea",
+          "default": "Fragen, Feedback oder Projektidee? Schreib mir kurz – ich melde mich zurück."
+        },
+        "sidebar_contact_button_text": {
+          "label": "Kontakt Button",
+          "type": "text",
+          "default": "Kontakt aufnehmen"
+        },
+        "sidebar_contact_url": {
+          "label": "Kontakt URL",
+          "type": "url",
+          "default": "/contact"
+        },
+        "sidebar_show_newsletter": {
+          "label": "Newsletter/Updates Widget anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "sidebar_newsletter_title": {
+          "label": "Newsletter Titel",
+          "type": "text",
+          "default": "Updates abonnieren"
+        },
+        "sidebar_newsletter_text": {
+          "label": "Newsletter Text",
+          "type": "textarea",
+          "default": "Neue Artikel, Tools und 365CMS-Updates direkt verfolgen."
+        },
+        "sidebar_newsletter_button_text": {
+          "label": "Newsletter Button",
+          "type": "text",
+          "default": "Newsletter öffnen"
+        },
+        "sidebar_newsletter_url": {
+          "label": "Newsletter URL",
+          "type": "url",
+          "default": "/newsletter"
+        },
+        "sidebar_show_about_me": {
+          "label": "About Me Widget anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
+        "sidebar_about_title": {
+          "label": "About Me Titel",
+          "type": "text",
+          "default": "About Me"
+        },
+        "sidebar_about_name": {
+          "label": "About Me Name",
+          "type": "text",
+          "default": ""
+        },
+        "sidebar_about_image_url": {
+          "label": "About Me Bild-URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_about_text": {
+          "label": "About Me Text",
+          "type": "textarea",
+          "default": ""
+        },
+        "sidebar_about_link_url": {
+          "label": "About Me Link URL",
+          "type": "url",
+          "default": ""
+        },
+        "sidebar_about_link_text": {
+          "label": "About Me Link Text",
+          "type": "text",
+          "default": "Mehr über mich"
         },
         "sidebar_show_projects": {
           "label": "Projekt-Widget anzeigen",
