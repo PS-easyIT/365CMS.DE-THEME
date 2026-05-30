@@ -1,7 +1,7 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "author": "phinIT – Andreas Hepp",
   "author_uri": "https://phinit.de",
   "description": "Professionelles IT-Blog-Theme für 365CMS. Dunkles Navy-Design mit Gold-Akzenten, Sticky-Header, Dark-Mode, TOC-Sidebar und responsivem Layout.",
@@ -290,20 +290,65 @@
           "type": "color",
           "default": "#e2e8f0"
         },
+        "text_nav_member_hover": {
+          "label": "Member-Bar Hover Text",
+          "type": "color",
+          "default": "#ffffff"
+        },
         "text_nav_main": {
           "label": "Hauptnavigation Text",
           "type": "color",
           "default": "#e2e8f0"
+        },
+        "text_nav_main_hover": {
+          "label": "Hauptnavigation Hover Text",
+          "type": "color",
+          "default": "#ffffff"
         },
         "text_nav_quicklinks": {
           "label": "Quicklinks Text",
           "type": "color",
           "default": "#b0bec5"
         },
+        "text_nav_quicklinks_hover": {
+          "label": "Quicklinks Hover Text",
+          "type": "color",
+          "default": "#1e3a5f"
+        },
         "text_nav_dropdown": {
           "label": "Dropdown Text",
           "type": "color",
           "default": "#e2e8f0"
+        },
+        "text_nav_dropdown_hover": {
+          "label": "Dropdown Hover Text",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        "text_nav_mobile_hover": {
+          "label": "Mobiles Menü Hover Text",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        "text_nav_footer_hover": {
+          "label": "Footer-Menü Hover Text",
+          "type": "color",
+          "default": "#14b8a6"
+        },
+        "text_nav_footer_bottom_hover": {
+          "label": "Footer-Bottom Hover Text",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        "text_nav_network_hover": {
+          "label": "Network-Bar Hover Text",
+          "type": "color",
+          "default": "#14b8a6"
+        },
+        "text_nav_member_sidebar_hover": {
+          "label": "Member-Sidebar Hover Text",
+          "type": "color",
+          "default": "#1e3a5f"
         },
         "page_edge_tint_color": {
           "label": "Seitenrand-Tönung",
@@ -691,12 +736,60 @@
           "min": 28,
           "max": 64
         },
+        "member_bar_font_size": {
+          "label": "Member-Bar Schriftgröße (px)",
+          "type": "number",
+          "default": 12.25,
+          "min": 10,
+          "max": 18,
+          "step": 0.25
+        },
+        "member_bar_item_spacing": {
+          "label": "Member-Bar Eintragsabstand (px)",
+          "type": "number",
+          "default": 2,
+          "min": 0,
+          "max": 24,
+          "step": 1
+        },
         "main_nav_height": {
           "label": "Hauptnavigation Höhe (px)",
           "type": "number",
           "default": 40,
           "min": 36,
           "max": 80
+        },
+        "main_nav_font_size": {
+          "label": "Hauptnav Schriftgröße (px)",
+          "type": "number",
+          "default": 14,
+          "min": 11,
+          "max": 24,
+          "step": 0.25
+        },
+        "main_nav_item_spacing": {
+          "label": "Hauptnav Linkabstand X (px)",
+          "type": "number",
+          "default": 16,
+          "min": 6,
+          "max": 40,
+          "step": 1
+        },
+        "dropdown_nav_font_size": {
+          "label": "Dropdown Schriftgröße (px)",
+          "type": "number",
+          "default": 13.25,
+          "min": 11,
+          "max": 22,
+          "step": 0.25
+        },
+        "dropdown_nav_item_spacing": {
+          "label": "Dropdown Innenabstand Y (px)",
+          "type": "number",
+          "default": 9,
+          "min": 4,
+          "max": 24,
+          "step": 1
         },
         "show_quicklinks": {
           "label": "Quicklinks-Leiste anzeigen",
@@ -709,6 +802,38 @@
           "default": 30,
           "min": 24,
           "max": 56
+        },
+        "quicklinks_font_size": {
+          "label": "Quicklinks Schriftgröße (px)",
+          "type": "number",
+          "default": 12,
+          "min": 10,
+          "max": 20,
+          "step": 0.25
+        },
+        "quicklinks_item_spacing": {
+          "label": "Quicklinks Linkabstand X (px)",
+          "type": "number",
+          "default": 12,
+          "min": 0,
+          "max": 28,
+          "step": 1
+        },
+        "mobile_menu_font_size": {
+          "label": "Mobiles Menü Schriftgröße (px)",
+          "type": "number",
+          "default": 14,
+          "min": 11,
+          "max": 24,
+          "step": 0.25
+        },
+        "mobile_menu_item_spacing": {
+          "label": "Mobiles Menü Innenabstand Y (px)",
+          "type": "number",
+          "default": 13,
+          "min": 8,
+          "max": 28,
+          "step": 1
         },
         "show_language_switcher": {
           "label": "Sprachschalter anzeigen",
@@ -794,6 +919,38 @@
           "type": "checkbox",
           "default": true
         },
+        "footer_menu_font_size": {
+          "label": "Footer-Menü Schriftgröße (px)",
+          "type": "number",
+          "default": 14,
+          "min": 11,
+          "max": 22,
+          "step": 0.25
+        },
+        "footer_menu_item_spacing": {
+          "label": "Footer-Menü Eintragsabstand (px)",
+          "type": "number",
+          "default": 7,
+          "min": 0,
+          "max": 24,
+          "step": 1
+        },
+        "footer_bottom_font_size": {
+          "label": "Footer-Bottom Schriftgröße (px)",
+          "type": "number",
+          "default": 12,
+          "min": 10,
+          "max": 20,
+          "step": 0.25
+        },
+        "footer_bottom_item_spacing": {
+          "label": "Footer-Bottom Linkabstand (px)",
+          "type": "number",
+          "default": 16,
+          "min": 0,
+          "max": 32,
+          "step": 1
+        },
         "show_consent_banner": {
           "label": "Cookie-Consent-Banner anzeigen (nur wenn CMS-Admin aktiviert)",
           "type": "checkbox",
@@ -813,6 +970,22 @@
           "label": "Partner-Netzwerk-Leiste anzeigen",
           "type": "checkbox",
           "default": false
+        },
+        "network_bar_font_size": {
+          "label": "Network-Bar Schriftgröße (px)",
+          "type": "number",
+          "default": 12,
+          "min": 10,
+          "max": 20,
+          "step": 0.25
+        },
+        "network_bar_item_spacing": {
+          "label": "Network-Bar Linkabstand (px)",
+          "type": "number",
+          "default": 18,
+          "min": 0,
+          "max": 32,
+          "step": 1
         },
         "network_bar_link1_label": { "label": "Netzwerk-Link 1 – Label", "type": "text", "default": "" },
         "network_bar_link1_url":   { "label": "Netzwerk-Link 1 – URL",   "type": "url",  "default": "" },
