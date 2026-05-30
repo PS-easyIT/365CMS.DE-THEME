@@ -67,7 +67,7 @@ function phinit_get_homepage_view_model(): array
         '_listSidebarWidth' => 260,
         '_listSidebarTitle' => '',
         '_listSidebarContent' => '',
-        '_sbWidgetOrder' => "identity\ncarousel\nquicklinks\nm365links\ncontact\nabout\nprojects\nfeatured\nstatus\ndownloads\nnewsletter\nsocial\nnotice\ncustom",
+        '_sbWidgetOrder' => "identity\ncarousel\nquicklinks\nm365links\nlinkcollection\ncontact\nabout\nprojects\nfeatured\nstatus\ndownloads\nnewsletter\nsocial\nnotice\ncustom",
         '_sbShowArticleCarousel' => true,
         '_sbArticleCarouselLabel' => 'Artikel-Karussell',
         '_sbArticleCarouselCount' => 4,

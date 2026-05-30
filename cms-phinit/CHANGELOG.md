@@ -14,6 +14,17 @@
 
 ---
 
+## v1.7.6 — 30. Mai 2026
+
+### M365-Linkcollection in der Startseiten-Sidebar
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Startseiten-Sidebar | PHINIT kennt jetzt den Sidebar-Widget-Key `linkcollection` und rendert bei aktivem `cms-m365linkcollection` Plugin ein rotierendes Link-Widget mit Bild oder Platzhalter. |
+| 🔵 docs | Release | Theme-Metadaten und Manifest wurden auf Version `1.7.6` synchronisiert. |
+
+---
+
 ## v1.7.5 — 30. Mai 2026
 
 ### Theme-Customizer ohne Unknown-Setting-Warnungen

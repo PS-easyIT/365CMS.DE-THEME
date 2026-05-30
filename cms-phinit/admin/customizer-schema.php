@@ -213,13 +213,14 @@ return [
                 'sidebar_widget_order'       => [
                     'label' => 'Sidebar Widget-Reihenfolge',
                     'type' => 'widget_order',
-                    'default' => "identity\ncarousel\nquicklinks\nm365links\ncontact\nabout\nprojects\nfeatured\nstatus\ndownloads\nnewsletter\nsocial\nnotice\ncustom",
+                    'default' => "identity\ncarousel\nquicklinks\nm365links\nlinkcollection\ncontact\nabout\nprojects\nfeatured\nstatus\ndownloads\nnewsletter\nsocial\nnotice\ncustom",
                     'description' => 'Mit den Pfeil-Buttons sortieren – keine internen Schlüssel mehr nötig.',
                     'options' => [
                         'identity' => 'Site-Identity',
                         'carousel' => 'Artikel-Karussell',
                         'quicklinks' => 'Schnelllinks',
                         'm365links' => 'Microsoft 365 Schnelllinks',
+                        'linkcollection' => 'M365 Linkcollection',
                         'contact' => 'Kontakt',
                         'about' => 'About Me',
                         'projects' => 'Projekt-Hinweise',
