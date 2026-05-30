@@ -14,6 +14,17 @@
 
 ---
 
+## v1.7.5 — 30. Mai 2026
+
+### Theme-Customizer ohne Unknown-Setting-Warnungen
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Theme-Customizer / Schema | `theme.json` enthält jetzt alle im PHINIT-Admin-Customizer sichtbaren Settings aus Farben, Header, Footer, Startseite, Seiten und Memberdashboard. Dadurch stuft der Core diese Felder beim Speichern nicht mehr als unbekannte Theme-Customizer-Keys ein. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.5` synchronisiert. |
+
+---
+
 ## v1.7.4 — 25. Mai 2026
 
 ### Featured-Bildhöhe steuert jetzt wirklich das Bild

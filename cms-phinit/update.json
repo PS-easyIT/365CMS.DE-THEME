@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "requires_cms": "2.5.0",
   "tested_up_to": "3.3.41",
-  "release_date": "2026-05-25",
+  "release_date": "2026-05-30",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.5",
+      "date": "2026-05-30",
+      "changes": [
+        "theme.json: alle im PHINIT-Admin-Customizer sichtbaren Settings aus Farben, Header, Footer, Startseite, Seiten und Memberdashboard sind jetzt auch als Theme-Customization deklariert",
+        "Theme-Customizer-Saves erzeugen dadurch keine Unknown-Setting-Warnungen mehr für bekannte PHINIT-Felder",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.5 aktualisiert"
+      ]
+    },
     {
       "version": "1.7.4",
       "date": "2026-05-25",
