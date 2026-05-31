@@ -68,7 +68,7 @@ $buildMenuGroups = static function (array $config, array $fallbackNavGroups) use
         'memberdashboard',
     ];
     $mediaTabs = ['colors', 'typography', 'social'];
-    $layoutTabs = ['layout', 'header', 'footer', 'homepage-sidebar'];
+    $layoutTabs = ['layout', 'header', 'menus', 'footer', 'homepage-sidebar'];
     $settingsTabs = ['language', 'seo', 'performance', 'advanced'];
 
     foreach ($orderedTabs as $tabKey) {

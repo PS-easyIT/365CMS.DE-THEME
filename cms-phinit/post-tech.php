@@ -20,14 +20,15 @@ if (!defined('ABSPATH')) {
 $siteUrl = SITE_URL;
 $db      = \CMS\Database::instance();
 $prefix  = $db->getPrefix();
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 try {
-    $cz = \CMS\Services\ThemeCustomizer::instance();
+    $cz = phinit_customizer_locale_proxy(\CMS\Services\ThemeCustomizer::instance(), $currentLocale);
 } catch (\Throwable) {
     $cz = null;
 }
 
-$czGet = function (string $cat, string $key, mixed $default = '') use ($cz): mixed {
+$czGet = function (string $cat, string $key, mixed $default = '') use ($cz, $currentLocale): mixed {
     if (!$cz) {
         return $default;
     }
@@ -35,7 +36,7 @@ $czGet = function (string $cat, string $key, mixed $default = '') use ($cz): mix
     try {
         return $cz->get($cat, $key, $default);
     } catch (\Throwable) {
-        return $default;
+        return phinit_customizer_value($cat, $key, $default, $currentLocale);
     }
 };
 
@@ -170,7 +171,6 @@ if (phinit_input_int($_GET, 'commented', 0, 0, 1) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $publishedAt = (string) ($post['published_at'] ?? '');
 $updatedAt = (string) ($post['updated_at'] ?? '');
 $showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;

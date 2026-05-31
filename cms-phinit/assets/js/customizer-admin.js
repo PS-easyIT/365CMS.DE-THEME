@@ -102,6 +102,320 @@
             markChanged();
         }
 
+        const menuEditors = new Map();
+
+        function createMenuItem(label, url, nextIdRef) {
+            const id = 'menu-item-' + nextIdRef.value++;
+            return {
+                id,
+                label: label || '',
+                url: url || '',
+                children: []
+            };
+        }
+
+        function parseMenuTree(rawValue, nextIdRef) {
+            const root = [];
+            const stack = [{ depth: -1, children: root }];
+            const lines = String(rawValue || '').replace(/\t/g, '  ').split(/\r?\n/);
+
+            lines.forEach((lineRaw) => {
+                const line = String(lineRaw || '').replace(/\s+$/, '');
+                if (!line.trim()) {
+                    return;
+                }
+
+                const leadingSpaces = line.length - line.trimStart().length;
+                const depth = Math.max(0, Math.floor(leadingSpaces / 2));
+                const content = line.trim();
+                const separatorIndex = content.indexOf('|');
+                const label = (separatorIndex >= 0 ? content.slice(0, separatorIndex) : content).trim();
+                const url = (separatorIndex >= 0 ? content.slice(separatorIndex + 1) : '').trim();
+                if (!label) {
+                    return;
+                }
+
+                while (stack.length > 1 && stack[stack.length - 1].depth >= depth) {
+                    stack.pop();
+                }
+
+                const parent = stack[stack.length - 1];
+                const item = createMenuItem(label, url, nextIdRef);
+                parent.children.push(item);
+                stack.push({ depth, children: item.children });
+            });
+
+            return root;
+        }
+
+        function serializeMenuTreeLines(items, depth) {
+            const lines = [];
+            const indent = '  '.repeat(Math.max(0, depth));
+            items.forEach((item) => {
+                if (!item || !String(item.label || '').trim()) {
+                    return;
+                }
+                lines.push(indent + String(item.label).trim() + ' | ' + String(item.url || '').trim());
+                if (Array.isArray(item.children) && item.children.length > 0) {
+                    lines.push(...serializeMenuTreeLines(item.children, depth + 1));
+                }
+            });
+            return lines;
+        }
+
+        function serializeMenuTree(items) {
+            return serializeMenuTreeLines(items, 0).join('\n');
+        }
+
+        function findMenuItemContext(items, id, parentList = null, parentItem = null) {
+            for (let index = 0; index < items.length; index += 1) {
+                const item = items[index];
+                if (!item) {
+                    continue;
+                }
+                if (item.id === id) {
+                    return { item, index, list: items, parentList, parentItem };
+                }
+                if (Array.isArray(item.children) && item.children.length > 0) {
+                    const found = findMenuItemContext(item.children, id, items, item);
+                    if (found) {
+                        return found;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function syncMenuEditorHiddenInput(editorState) {
+            editorState.hiddenInput.value = serializeMenuTree(editorState.items);
+        }
+
+        function focusMenuRow(editorState, itemId) {
+            if (!itemId) {
+                return;
+            }
+            const row = editorState.listElement.querySelector('[data-menu-row-id="' + itemId + '"]');
+            if (row instanceof HTMLElement) {
+                row.focus({ preventScroll: true });
+            }
+        }
+
+        function buildMenuTreeDom(editorState, items, depth) {
+            const fragment = document.createDocumentFragment();
+            const levelLabel = editorState.text.levelLabel;
+
+            items.forEach((item, index) => {
+                const listItem = document.createElement('div');
+                listItem.className = 'phinit-menu-editor__item';
+                listItem.dataset.menuItemId = item.id;
+                listItem.setAttribute('role', 'treeitem');
+                listItem.setAttribute('aria-level', String(depth + 1));
+                listItem.setAttribute('aria-setsize', String(items.length));
+                listItem.setAttribute('aria-posinset', String(index + 1));
+
+                const row = document.createElement('div');
+                row.className = 'phinit-menu-editor__row';
+                row.dataset.menuRowId = item.id;
+                row.setAttribute('tabindex', '0');
+                row.setAttribute('aria-label', levelLabel + ' ' + (depth + 1) + ': ' + (item.label || editorState.text.labelField));
+                listItem.appendChild(row);
+
+                const meta = document.createElement('div');
+                meta.className = 'phinit-menu-editor__meta';
+                meta.textContent = levelLabel + ' ' + (depth + 1);
+                row.appendChild(meta);
+
+                const labelInput = document.createElement('input');
+                labelInput.type = 'text';
+                labelInput.className = 'form-control form-control-sm phinit-menu-editor__input';
+                labelInput.value = item.label || '';
+                labelInput.placeholder = editorState.text.labelField;
+                labelInput.dataset.menuInput = 'label';
+                labelInput.dataset.menuId = item.id;
+                labelInput.setAttribute('aria-label', editorState.text.labelField);
+                row.appendChild(labelInput);
+
+                const urlInput = document.createElement('input');
+                urlInput.type = 'text';
+                urlInput.inputMode = 'url';
+                urlInput.className = 'form-control form-control-sm phinit-menu-editor__input';
+                urlInput.value = item.url || '';
+                urlInput.placeholder = editorState.text.urlField;
+                urlInput.dataset.menuInput = 'url';
+                urlInput.dataset.menuId = item.id;
+                urlInput.setAttribute('aria-label', editorState.text.urlField);
+                row.appendChild(urlInput);
+
+                const actions = document.createElement('div');
+                actions.className = 'phinit-menu-editor__actions';
+                actions.setAttribute('role', 'group');
+                actions.setAttribute('aria-label', editorState.text.reorderGroup);
+                row.appendChild(actions);
+
+                const actionSpecs = [
+                    ['up', '↑', editorState.text.moveUpLabel],
+                    ['down', '↓', editorState.text.moveDownLabel],
+                    ['indent', '⇥', editorState.text.indentLabel],
+                    ['outdent', '⇤', editorState.text.outdentLabel],
+                    ['add-after', '+', editorState.text.addAfterLabel],
+                    ['add-child', '↳', editorState.text.addChildLabel],
+                    ['remove', '✕', editorState.text.removeLabel]
+                ];
+
+                actionSpecs.forEach(([action, label, ariaLabel]) => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'btn btn-sm btn-outline-secondary phinit-menu-editor__action-btn';
+                    button.dataset.menuAction = action;
+                    button.dataset.menuId = item.id;
+                    button.textContent = label;
+                    button.setAttribute('aria-label', ariaLabel);
+                    actions.appendChild(button);
+                });
+
+                if (Array.isArray(item.children) && item.children.length > 0) {
+                    const childContainer = document.createElement('div');
+                    childContainer.className = 'phinit-menu-editor__children';
+                    childContainer.setAttribute('role', 'group');
+                    childContainer.appendChild(buildMenuTreeDom(editorState, item.children, depth + 1));
+                    listItem.appendChild(childContainer);
+                }
+
+                fragment.appendChild(listItem);
+            });
+
+            return fragment;
+        }
+
+        function renderMenuEditor(editorState, focusItemId) {
+            editorState.listElement.innerHTML = '';
+            syncMenuEditorHiddenInput(editorState);
+
+            if (!Array.isArray(editorState.items) || editorState.items.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'phinit-menu-editor__empty';
+                empty.textContent = editorState.text.emptyLabel;
+                editorState.listElement.appendChild(empty);
+                return;
+            }
+
+            editorState.listElement.appendChild(buildMenuTreeDom(editorState, editorState.items, 0));
+            if (focusItemId) {
+                focusMenuRow(editorState, focusItemId);
+            }
+        }
+
+        function executeMenuAction(editorState, action, menuId) {
+            if (!action) {
+                return;
+            }
+
+            const context = menuId ? findMenuItemContext(editorState.items, menuId) : null;
+            let focusItemId = menuId;
+            let changedStructure = false;
+
+            if (action === 'add-root') {
+                const newItem = createMenuItem('', '', editorState.nextIdRef);
+                editorState.items.push(newItem);
+                focusItemId = newItem.id;
+                changedStructure = true;
+            } else if (!context) {
+                return;
+            } else if (action === 'add-after') {
+                const newItem = createMenuItem('', '', editorState.nextIdRef);
+                context.list.splice(context.index + 1, 0, newItem);
+                focusItemId = newItem.id;
+                changedStructure = true;
+            } else if (action === 'add-child') {
+                const newItem = createMenuItem('', '', editorState.nextIdRef);
+                context.item.children = Array.isArray(context.item.children) ? context.item.children : [];
+                context.item.children.push(newItem);
+                focusItemId = newItem.id;
+                changedStructure = true;
+            } else if (action === 'remove') {
+                context.list.splice(context.index, 1);
+                const replacement = context.list[Math.max(0, context.index - 1)] || context.list[context.index] || null;
+                focusItemId = replacement ? replacement.id : null;
+                changedStructure = true;
+            } else if (action === 'up' && context.index > 0) {
+                const previous = context.list[context.index - 1];
+                context.list[context.index - 1] = context.item;
+                context.list[context.index] = previous;
+                changedStructure = true;
+            } else if (action === 'down' && context.index < context.list.length - 1) {
+                const next = context.list[context.index + 1];
+                context.list[context.index + 1] = context.item;
+                context.list[context.index] = next;
+                changedStructure = true;
+            } else if (action === 'indent' && context.index > 0) {
+                const previousSibling = context.list[context.index - 1];
+                previousSibling.children = Array.isArray(previousSibling.children) ? previousSibling.children : [];
+                context.list.splice(context.index, 1);
+                previousSibling.children.push(context.item);
+                changedStructure = true;
+            } else if (action === 'outdent' && Array.isArray(context.parentList)) {
+                const parentContext = findMenuItemContext(editorState.items, context.parentItem ? context.parentItem.id : '');
+                if (parentContext) {
+                    context.list.splice(context.index, 1);
+                    parentContext.list.splice(parentContext.index + 1, 0, context.item);
+                    changedStructure = true;
+                }
+            }
+
+            if (changedStructure) {
+                renderMenuEditor(editorState, focusItemId);
+                markChanged();
+            }
+        }
+
+        function initMenuEditors() {
+            document.querySelectorAll('[data-menu-editor]').forEach((editorElement) => {
+                if (!(editorElement instanceof HTMLElement) || menuEditors.has(editorElement)) {
+                    return;
+                }
+
+                const hiddenInput = editorElement.parentElement
+                    ? editorElement.parentElement.querySelector('[data-menu-source]')
+                    : null;
+                const listElement = editorElement.querySelector('[data-menu-tree]');
+                if (!(hiddenInput instanceof HTMLTextAreaElement) || !(listElement instanceof HTMLElement)) {
+                    return;
+                }
+
+                const nextIdRef = { value: 1 };
+                const state = {
+                    editorElement,
+                    hiddenInput,
+                    listElement,
+                    nextIdRef,
+                    items: parseMenuTree(hiddenInput.value, nextIdRef),
+                    text: {
+                        levelLabel: editorElement.dataset.menuLevelLabel || 'Level',
+                        emptyLabel: editorElement.dataset.menuEmptyLabel || 'No menu items yet.',
+                        addAfterLabel: editorElement.dataset.menuAddAfterLabel || 'Add below',
+                        addChildLabel: editorElement.dataset.menuAddChildLabel || 'Add child',
+                        removeLabel: editorElement.dataset.menuRemoveLabel || 'Remove item',
+                        moveUpLabel: editorElement.dataset.menuUpLabel || 'Move up',
+                        moveDownLabel: editorElement.dataset.menuDownLabel || 'Move down',
+                        indentLabel: editorElement.dataset.menuIndentLabel || 'Move deeper',
+                        outdentLabel: editorElement.dataset.menuOutdentLabel || 'Move higher',
+                        labelField: editorElement.dataset.menuLabelField || 'Label',
+                        urlField: editorElement.dataset.menuUrlField || 'URL',
+                        reorderGroup: editorElement.dataset.menuReorderGroupLabel || 'Menu item actions'
+                    }
+                };
+
+                menuEditors.set(editorElement, state);
+                renderMenuEditor(state);
+            });
+        }
+
+        function syncAllMenuEditors() {
+            menuEditors.forEach((editorState) => {
+                syncMenuEditorHiddenInput(editorState);
+            });
+        }
+
         window.syncColor = syncColor;
         window.syncColorTxt = syncColorTxt;
 
@@ -179,6 +493,7 @@
         }
 
         initWidgetOrderControls();
+        initMenuEditors();
 
         function closeConfirmModal() {
             if (!confirmOverlay) {
@@ -232,6 +547,7 @@
                 }
             });
             form.addEventListener('submit', function () {
+                syncAllMenuEditors();
                 syncAllWidgetOrderControls();
                 changed = false;
                 hint?.classList.remove('is-visible');
@@ -313,9 +629,77 @@
                 pxClose();
             }
         });
+        document.addEventListener('keydown', function (event) {
+            if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+                return;
+            }
+
+            const target = event.target instanceof HTMLElement ? event.target : null;
+            if (!target) {
+                return;
+            }
+
+            const row = target.closest('[data-menu-row-id]');
+            if (!(row instanceof HTMLElement)) {
+                return;
+            }
+
+            const editorElement = row.closest('[data-menu-editor]');
+            if (!(editorElement instanceof HTMLElement)) {
+                return;
+            }
+            const editorState = menuEditors.get(editorElement);
+            if (!editorState) {
+                return;
+            }
+
+            const itemId = row.dataset.menuRowId || '';
+            let action = '';
+            if (event.key === 'ArrowUp') {
+                action = 'up';
+            } else if (event.key === 'ArrowDown') {
+                action = 'down';
+            } else if (event.key === 'ArrowRight') {
+                action = 'indent';
+            } else if (event.key === 'ArrowLeft') {
+                action = 'outdent';
+            }
+
+            if (!action) {
+                return;
+            }
+
+            event.preventDefault();
+            executeMenuAction(editorState, action, itemId);
+        });
         document.addEventListener('input', function (event) {
             const target = event.target instanceof HTMLElement ? event.target : null;
             if (!target) {
+                return;
+            }
+
+            if (target instanceof HTMLInputElement && target.matches('[data-menu-input][data-menu-id]')) {
+                const editorElement = target.closest('[data-menu-editor]');
+                if (!(editorElement instanceof HTMLElement)) {
+                    return;
+                }
+                const editorState = menuEditors.get(editorElement);
+                if (!editorState) {
+                    return;
+                }
+                const itemId = target.dataset.menuId || '';
+                const inputType = target.dataset.menuInput || '';
+                const context = findMenuItemContext(editorState.items, itemId);
+                if (!context) {
+                    return;
+                }
+                if (inputType === 'label') {
+                    context.item.label = target.value;
+                } else if (inputType === 'url') {
+                    context.item.url = target.value;
+                }
+                syncMenuEditorHiddenInput(editorState);
+                markChanged();
                 return;
             }
 
@@ -332,6 +716,21 @@
         document.addEventListener('click', function (event) {
             const clickTarget = event.target instanceof Element ? event.target : null;
             if (!clickTarget) {
+                return;
+            }
+
+            const menuActionButton = clickTarget.closest('[data-menu-action]');
+            if (menuActionButton instanceof HTMLElement) {
+                const editorElement = menuActionButton.closest('[data-menu-editor]');
+                if (!(editorElement instanceof HTMLElement)) {
+                    return;
+                }
+                const editorState = menuEditors.get(editorElement);
+                if (!editorState) {
+                    return;
+                }
+                event.preventDefault();
+                executeMenuAction(editorState, menuActionButton.dataset.menuAction || '', menuActionButton.dataset.menuId || '');
                 return;
             }
 

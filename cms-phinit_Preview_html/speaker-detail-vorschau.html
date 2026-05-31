@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vorschau – Speaker-Detailseite (cms-phinit, v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#0a1626; --navy-800:#0d1d33; --navy-700:#14283f;
+    --body-bg:#e8edf3; --card:#ffffff;
+    --ink:#16202e; --ink-soft:#475262; --ink-muted:#7b8696;
+    --line:#e3e8ef; --line-soft:#eef1f6;
+    --accent:#d6951a; --accent-soft:#fbf3e2; --accent-ink:#8a5e08;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(16,32,55,.04),0 8px 24px rgba(16,32,55,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--body-bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.brand{font-family:'Sora',sans-serif;letter-spacing:-.01em}
+  a{color:inherit;text-decoration:none}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+  svg{display:block}
+
+  /* HEADER */
+  .topbar{background:var(--navy-900);color:#fff}
+  .topbar-inner{max-width:1180px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;gap:28px}
+  .brand{font-size:21px;font-weight:700;letter-spacing:.02em}
+  .brand span{color:var(--accent)}
+  .brand small{display:block;font-family:'IBM Plex Sans';font-size:11px;font-weight:400;color:#9fb0c4;margin-top:1px}
+  .top-tools{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .search{display:flex;align-items:center;background:#102139;border:1px solid #1d3450;border-radius:8px;padding:7px 12px;gap:8px;min-width:240px}
+  .search input{background:none;border:0;color:#fff;font-size:14px;width:100%;font-family:inherit}
+  .search input::placeholder{color:#6c7e94}
+  .icon-btn{width:34px;height:34px;display:grid;place-items:center;border-radius:8px;color:#aebccd;background:#102139;border:1px solid #1d3450}
+  .icon-btn:hover{color:#fff;border-color:var(--accent)}
+  .navbar{background:var(--navy-800);border-top:1px solid #14263d}
+  .nav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:4px}
+  .nav-inner a{padding:14px 16px;font-size:14px;font-weight:500;color:#cdd8e5;border-bottom:2px solid transparent}
+  .nav-inner a:hover{color:#fff;border-bottom-color:var(--accent)}
+  .nav-inner a .caret{font-size:10px;opacity:.6;margin-left:4px}
+
+  /* LAYOUT */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .crumb{font-size:13px;color:var(--ink-muted);padding:22px 0 6px}
+  .crumb a{color:var(--accent-ink);font-weight:500}
+  .crumb a:hover{text-decoration:underline}
+  .crumb .sep{margin:0 8px;color:#b9c2cf}
+  .grid{display:grid;grid-template-columns:1fr 340px;gap:26px;padding:14px 0 60px;align-items:start}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .card+.card{margin-top:24px}
+  .card-pad{padding:24px 26px}
+  .card-title{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);display:flex;align-items:center;gap:9px;margin-bottom:18px}
+  .card-title .ti{width:18px;height:18px;color:var(--accent)}
+  .card-title .badge{margin-left:auto;background:var(--accent-soft);color:var(--accent-ink);border:1px solid #f0dcb4;font-size:12px;font-weight:600;border-radius:999px;min-width:22px;height:22px;padding:0 7px;display:grid;place-items:center}
+
+  /* HERO */
+  .hero{position:relative;overflow:hidden;border:0;border-radius:var(--radius);margin:14px 0 0;
+        background:linear-gradient(135deg,#16304d 0%,#0d1d33 60%,#0a1626 100%);color:#fff;box-shadow:0 14px 40px rgba(10,22,38,.28)}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(520px 200px at 12% -20%,rgba(214,149,26,.22),transparent 70%);pointer-events:none}
+  .hero-body{position:relative;padding:34px 36px;display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center}
+  .avatar{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;font-family:'Sora';font-weight:600;font-size:36px;
+          background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(2px)}
+  .name-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hero h1{font-size:36px;font-weight:700;line-height:1.05}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px}
+  .pill svg{width:14px;height:14px}
+  .role{margin-top:10px;font-size:16px;color:#c4d2e2}
+  .role b{color:#fff;font-weight:600}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .tag-light{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#eaf1f8;padding:6px 13px;border-radius:999px}
+  .tag-light svg{width:14px;height:14px;color:var(--accent)}
+  .status{position:absolute;top:22px;right:24px;display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-ink);border:1px solid #f0dcb4;font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:#2bb673;box-shadow:0 0 0 3px rgba(43,182,115,.2)}
+
+  /* TYPO blocks */
+  .lead{font-size:15.5px;color:var(--ink-soft);line-height:1.7}
+  .lead+.lead{margin-top:12px}
+  .sub-label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);font-weight:600;margin:18px 0 9px}
+  .sub-label:first-child{margin-top:0}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;background:var(--accent-soft);color:var(--accent-ink);border:1px solid #f0dcb4;padding:6px 13px;border-radius:999px}
+  .chip .d{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .chip-plain{background:#f6f8fb;color:var(--ink);border:1px solid var(--line)}
+
+  /* DETAILS list */
+  .dl{display:flex;flex-direction:column}
+  .dl .row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-top:1px solid var(--line-soft);font-size:14px}
+  .dl .row:first-child{border-top:0}
+  .dl .k{color:var(--ink-muted);letter-spacing:.04em;text-transform:uppercase;font-size:11.5px;font-weight:600;align-self:center}
+  .dl .v{font-weight:600;color:var(--ink);text-align:right}
+
+  /* EVENTS */
+  .events{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .event{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fcfdff;display:flex;flex-direction:column;gap:10px}
+  .event .date{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+  .event h3{font-size:16px;font-weight:600}
+  .event .loc{font-size:13px;color:var(--ink-muted);display:flex;align-items:center;gap:6px}
+  .event .etags{display:flex;gap:7px}
+  .etag{font-size:11.5px;font-weight:500;background:#f3f5f9;color:var(--ink-soft);border:1px solid var(--line);padding:3px 10px;border-radius:6px}
+  .btn{font-family:inherit;font-size:13.5px;font-weight:600;border-radius:9px;padding:10px 18px;cursor:pointer;border:1px solid transparent;white-space:nowrap;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn svg{width:15px;height:15px}
+  .btn-primary{background:var(--accent);color:#2c1d02}
+  .btn-primary:hover{background:#c2850f}
+  .btn-ghost{background:#fff;color:var(--accent-ink);border-color:#ecd7ad}
+  .btn-ghost:hover{background:var(--accent-soft)}
+  .btn-block{width:100%}
+  .event .btn{margin-top:auto}
+
+  /* CTA card */
+  .cta-card{background:linear-gradient(160deg,var(--navy-800),var(--navy-900));color:#fff;border:0}
+  .cta-card .card-title{color:#9fb0c4}.cta-card .card-title .ti{color:var(--accent)}
+  .cta-card h3{font-size:18px;font-weight:600;margin-bottom:8px}
+  .cta-card p{font-size:14px;color:#aebdce;margin-bottom:18px}
+
+  /* SOCIAL card – website is the first ICON, no text */
+  .social{display:flex;flex-wrap:wrap;gap:10px}
+  .social a{width:40px;height:40px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:var(--ink-soft);background:#fafbfd}
+  .social a:hover{color:var(--accent-ink);border-color:var(--accent);background:var(--accent-soft)}
+  .social a.web{color:var(--accent-ink);border-color:#ecd7ad;background:var(--accent-soft)}
+  .social a.web:hover{background:#f6e9cc}
+  .social-hero{margin-top:18px;display:none}
+
+  /* WEITERE SPEAKER */
+  .spk{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line-soft)}
+  .spk:first-of-type{border-top:0}
+  .spk-av{width:42px;height:42px;border-radius:50%;background:var(--navy-700);color:#fff;display:grid;place-items:center;font-family:'Sora';font-weight:600;font-size:14px;flex:none}
+  .spk .nm{font-size:14.5px;font-weight:600}
+  .spk .rl{font-size:12.5px;color:var(--ink-muted)}
+  .spk:hover .nm{color:var(--accent-ink)}
+
+  /* FOOTER */
+  footer{background:var(--navy-900);color:#aebdce}
+  .footer-top{height:4px;background:var(--accent)}
+  .footer-grid{max-width:1180px;margin:0 auto;padding:46px 24px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
+  .footer-grid h4{font-family:'IBM Plex Sans';font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6c7e94;margin-bottom:16px}
+  .footer-grid .name{color:#fff;font-weight:600;font-family:'Sora'}
+  .footer-grid p{font-size:14px;line-height:1.65;margin-top:8px}
+  .footer-grid ul{list-style:none}.footer-grid li{margin-bottom:10px}.footer-grid a{font-size:14px}.footer-grid a:hover{color:var(--accent)}
+  .footer-social{display:flex;gap:10px;margin-top:18px}
+  .footer-social a{width:34px;height:34px;border:1px solid #1d3450;border-radius:8px;display:grid;place-items:center;color:#aebdce}
+  .footer-social a:hover{color:#fff;border-color:var(--accent)}
+  .footer-bar{border-top:1px solid #14263d}
+  .footer-bar-inner{max-width:1180px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:13px;color:#6c7e94;gap:18px;flex-wrap:wrap}
+  .footer-bar a:hover{color:var(--accent)}
+
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr}
+    .hero-body{grid-template-columns:1fr;text-align:center}
+    .avatar{margin:0 auto}
+    .name-row,.tags,.role{justify-content:center}
+    .events{grid-template-columns:1fr}
+    .footer-grid{grid-template-columns:1fr}
+    .search{min-width:0}.nav-inner{overflow-x:auto}
+    .status{position:static;display:inline-flex;margin-bottom:14px}
+    .social-hero{display:flex;justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">PHIN<span>IT</span>.DE<small>IT-Blog für Microsoft 365, Exchange &amp; PowerShell</small></a>
+    <div class="top-tools">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6c7e94" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+        <input type="search" placeholder="Beiträge durchsuchen…" aria-label="Suche">
+      </div>
+      <button class="icon-btn" aria-label="Sprache: Deutsch / Englisch">🇩🇪</button>
+      <button class="icon-btn" aria-label="Dunkelmodus umschalten"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg></button>
+    </div>
+  </div>
+  <nav class="navbar"><div class="nav-inner">
+    <a href="#">HOME <span class="caret">▾</span></a><a href="#">TUTORIALS</a><a href="#">LINUX</a>
+    <a href="#">POWERSHELL <span class="caret">▾</span></a><a href="#">MICROSOFT 365 <span class="caret">▾</span></a><a href="#">MS365 PRIVACY <span class="caret">▾</span></a>
+  </div></nav>
+</header>
+
+<div class="wrap">
+  <nav class="crumb" aria-label="Brotkrümel"><a href="#">Home</a><span class="sep">›</span><a href="#">Speaker</a><span class="sep">›</span>Olaf Kaiser</nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="status"><span class="dot"></span>Verfügbar</span>
+    <div class="hero-body">
+      <div class="avatar" aria-hidden="true">OK</div>
+      <div>
+        <div class="name-row">
+          <h1>Olaf Kaiser</h1>
+          <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3zM7 19v-5"/></svg>2 Auftritte</span>
+        </div>
+        <div class="role"><b>MSP-Geschäftsmodelle</b> · Systemhaus-Coach</div>
+        <!-- social icons appear here only on mobile -->
+        <div class="social social-hero">
+          <a class="web" href="#" aria-label="Website"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM0 8h5v16H0V8Zm7.5 0h4.8v2.2h.07c.67-1.2 2.3-2.46 4.73-2.46 5.06 0 6 3.33 6 7.66V24h-5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.77 1.87-2.77 3.8V24h-5V8Z"/></svg></a>
+          <a href="#" aria-label="GitHub"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a11 11 0 0 0-3.48 21.44c.55.1.75-.24.75-.53v-1.86c-3.06.67-3.7-1.47-3.7-1.47-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.1.08 1.69 1.14 1.69 1.14.98 1.69 2.58 1.2 3.21.92.1-.71.39-1.2.7-1.47-2.44-.28-5-1.22-5-5.44 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.92 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.56 0c2.12-1.43 3.04-1.13 3.04-1.13.6 1.52.22 2.64.11 2.92.7.77 1.13 1.75 1.13 2.95 0 4.23-2.57 5.16-5.02 5.43.4.34.75 1.01.75 2.04v3.03c0 .29.2.64.76.53A11 11 0 0 0 12 1Z"/></svg></a>
+          <a href="#" aria-label="Mastodon"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 13.7c-.3 1.5-2.6 3.2-5.3 3.5-1.4.2-2.8.3-4.2.2-2.3-.1-4.1-.5-4.1-.5v.6c.3 2.3 2.3 2.4 4.1 2.5 1.9.1 3.5-.5 3.5-.5l.1 1.7s-1.3.7-3.6.8c-1.2.1-2.8 0-4.6-.5C3.2 20.7 2.5 16.6 2.4 12.5c0-1.2 0-2.4.1-3.3C2.7 5 5.5 4 5.5 4 7-.3 16.9-.3 18.4 4c0 0 1.4 1.4 1.5 4.9.1 1.4 0 3-.3 4.8Z"/></svg></a>
+          <a href="#" aria-label="RSS-Feed"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="19" r="2.5"/><path d="M3 9.5a11 11 0 0 1 11 11h3A14 14 0 0 0 3 6.5v3Z"/><path d="M3 4a17 17 0 0 1 17 17h3A20 20 0 0 0 3 1v3Z"/></svg></a>
+        </div>
+        <div class="tags">
+          <span class="tag-light">MSP-Geschäftsmodelle</span>
+          <span class="tag-light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v4"/></svg>Keynote</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+    <main>
+      <!-- ÜBER -->
+      <section class="card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Über Olaf</h2>
+          <p class="lead">Olaf Kaiser begleitet Systemhäuser und Managed-Service-Provider beim Aufbau tragfähiger Geschäftsmodelle. In seinen Vorträgen zeigt er praxisnah, wie aus klassischem IT-Vertrieb planbares, wiederkehrendes Umsatzwachstum wird.</p>
+          <p class="lead">Schwerpunkte sind Pricing-Strategien, Service-Standardisierung und skalierbare MSP-Strukturen.</p>
+        </div>
+      </section>
+
+      <!-- THEMEN & FORMATE -->
+      <section class="card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6 12 21l-9-9V3h9l8.6 8.6a1.4 1.4 0 0 1 0 2zM7.5 7.5h.01"/></svg>Themen &amp; Formate</h2>
+          <div class="sub-label">Themen</div>
+          <div class="chips"><span class="chip"><span class="d"></span>MSP-Geschäftsmodelle</span></div>
+          <div class="sub-label">Vortragsformate</div>
+          <div class="chips"><span class="chip chip-plain">Keynote</span></div>
+          <div class="sub-label">Speaker-Skills</div>
+          <div class="chips"><span class="chip chip-plain">MSP-Geschäftsmodelle</span></div>
+        </div>
+      </section>
+
+      <!-- EVENTS -->
+      <section class="card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Vorträge &amp; Sessions<span class="badge">2</span></h2>
+          <div class="sub-label">Vergangene Auftritte</div>
+          <div class="events">
+            <article class="event">
+              <div class="date">01. März 2026</div>
+              <h3>Sophos MSP Community Days</h3>
+              <div class="loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>München · Essen</div>
+              <div class="etags"><span class="etag">Event</span><span class="etag">Präsenz</span></div>
+              <button class="btn btn-ghost btn-block">Zum Event</button>
+            </article>
+            <article class="event">
+              <div class="date">14. Januar 2026</div>
+              <h3>Sophos Partner Roadshow</h3>
+              <div class="loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>München · Hamburg · Frankfurt</div>
+              <div class="etags"><span class="etag">Event</span><span class="etag">Präsenz</span></div>
+              <button class="btn btn-ghost btn-block">Zum Event</button>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside>
+      <!-- CTA / Buchung -->
+      <section class="card cta-card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="m4 6 8 6 8-6M4 6v12h16V6Z"/></svg>Vortrag anfragen</h2>
+          <h3>Olaf Kaiser buchen</h3>
+          <p>Für Keynote, Workshop, Panel oder Moderation anfragen — kurze Nachricht genügt.</p>
+          <button class="btn btn-primary btn-block">✉ Kontakt aufnehmen</button>
+        </div>
+      </section>
+
+      <!-- SOCIAL MEDIA (website = first icon) -->
+      <section class="card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Social Media</h2>
+          <div class="social">
+            <a class="web" href="#" aria-label="Website von Olaf Kaiser"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM0 8h5v16H0V8Zm7.5 0h4.8v2.2h.07c.67-1.2 2.3-2.46 4.73-2.46 5.06 0 6 3.33 6 7.66V24h-5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.77 1.87-2.77 3.8V24h-5V8Z"/></svg></a>
+            <a href="#" aria-label="GitHub"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a11 11 0 0 0-3.48 21.44c.55.1.75-.24.75-.53v-1.86c-3.06.67-3.7-1.47-3.7-1.47-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.1.08 1.69 1.14 1.69 1.14.98 1.69 2.58 1.2 3.21.92.1-.71.39-1.2.7-1.47-2.44-.28-5-1.22-5-5.44 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.92 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.56 0c2.12-1.43 3.04-1.13 3.04-1.13.6 1.52.22 2.64.11 2.92.7.77 1.13 1.75 1.13 2.95 0 4.23-2.57 5.16-5.02 5.43.4.34.75 1.01.75 2.04v3.03c0 .29.2.64.76.53A11 11 0 0 0 12 1Z"/></svg></a>
+            <a href="#" aria-label="Mastodon"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 13.7c-.3 1.5-2.6 3.2-5.3 3.5-1.4.2-2.8.3-4.2.2-2.3-.1-4.1-.5-4.1-.5v.6c.3 2.3 2.3 2.4 4.1 2.5 1.9.1 3.5-.5 3.5-.5l.1 1.7s-1.3.7-3.6.8c-1.2.1-2.8 0-4.6-.5C3.2 20.7 2.5 16.6 2.4 12.5c0-1.2 0-2.4.1-3.3C2.7 5 5.5 4 5.5 4 7-.3 16.9-.3 18.4 4c0 0 1.4 1.4 1.5 4.9.1 1.4 0 3-.3 4.8Z"/></svg></a>
+            <a href="#" aria-label="RSS-Feed"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="19" r="2.5"/><path d="M3 9.5a11 11 0 0 1 11 11h3A14 14 0 0 0 3 6.5v3Z"/><path d="M3 4a17 17 0 0 1 17 17h3A20 20 0 0 0 3 1v3Z"/></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- DETAILS -->
+      <section class="card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Details</h2>
+          <div class="dl">
+            <div class="row"><span class="k">Position</span><span class="v">MSP-Geschäftsmodelle</span></div>
+            <div class="row"><span class="k">Unternehmen</span><span class="v">Systemhaus-Coach</span></div>
+            <div class="row"><span class="k">Verfügbarkeit</span><span class="v">Verfügbar</span></div>
+            <div class="row"><span class="k">Reisebereitschaft</span><span class="v">National</span></div>
+            <div class="row"><span class="k">Themen</span><span class="v">1</span></div>
+            <div class="row"><span class="k">Auftritte</span><span class="v">2</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEITERE SPEAKER -->
+      <section class="card">
+        <div class="card-pad">
+          <h2 class="card-title"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 19v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11"/></svg>Weitere Speaker</h2>
+          <a class="spk" href="#"><div class="spk-av">KA</div><div><div class="nm">Keith Atherton</div><div class="rl">Power Platform Architecture</div></div></a>
+          <a class="spk" href="#"><div class="spk-av">EB</div><div><div class="nm">Eric Berg</div><div class="rl">Azure / Cloud</div></div></a>
+          <a class="spk" href="#"><div class="spk-av">KB</div><div><div class="nm">Kathrin Borchert</div><div class="rl">Power BI &amp; Fabric Administration</div></div></a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top"></div>
+  <div class="footer-grid">
+    <div>
+      <h4>About me</h4>
+      <div class="name">Andreas Hepp</div>
+      <p>IT mit Herz seit über 20 Jahren. Als IT Lead &amp; Researcher teile ich mein Wissen. Feedback erwünscht!</p>
+      <div class="footer-social">
+        <a href="#" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM0 8h5v16H0V8Zm7.5 0h4.8v2.2h.07c.67-1.2 2.3-2.46 4.73-2.46 5.06 0 6 3.33 6 7.66V24h-5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.77 1.87-2.77 3.8V24h-5V8Z"/></svg></a>
+        <a href="#" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a11 11 0 0 0-3.48 21.44c.55.1.75-.24.75-.53v-1.86c-3.06.67-3.7-1.47-3.7-1.47-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.1.08 1.69 1.14 1.69 1.14.98 1.69 2.58 1.2 3.21.92.1-.71.39-1.2.7-1.47-2.44-.28-5-1.22-5-5.44 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.92 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.56 0c2.12-1.43 3.04-1.13 3.04-1.13.6 1.52.22 2.64.11 2.92.7.77 1.13 1.75 1.13 2.95 0 4.23-2.57 5.16-5.02 5.43.4.34.75 1.01.75 2.04v3.03c0 .29.2.64.76.53A11 11 0 0 0 12 1Z"/></svg></a>
+        <a href="#" aria-label="Mastodon"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 13.7c-.3 1.5-2.6 3.2-5.3 3.5-1.4.2-2.8.3-4.2.2-2.3-.1-4.1-.5-4.1-.5v.6c.3 2.3 2.3 2.4 4.1 2.5 1.9.1 3.5-.5 3.5-.5l.1 1.7s-1.3.7-3.6.8c-1.2.1-2.8 0-4.6-.5C3.2 20.7 2.5 16.6 2.4 12.5c0-1.2 0-2.4.1-3.3C2.7 5 5.5 4 5.5 4 7-.3 16.9-.3 18.4 4c0 0 1.4 1.4 1.5 4.9.1 1.4 0 3-.3 4.8Z"/></svg></a>
+        <a href="#" aria-label="RSS"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="19" r="2.5"/><path d="M3 9.5a11 11 0 0 1 11 11h3A14 14 0 0 0 3 6.5v3Z"/><path d="M3 4a17 17 0 0 1 17 17h3A20 20 0 0 0 3 1v3Z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Themen</h4><ul><li><a href="#">Linux</a></li><li><a href="#">PowerShell</a></li><li><a href="#">Microsoft 365</a></li></ul></div>
+    <div><h4>Seiten</h4><ul><li><a href="#">Über mich</a></li><li><a href="#">Kontakt</a></li><li><a href="#">RSS-Feed</a></li></ul></div>
+  </div>
+  <div class="footer-bar"><div class="footer-bar-inner">
+    <div>© 2026 PhinIT.DE — Powered by 365CMS.DE</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap"><a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#">Cookie Consent Manager</a></div>
+  </div></div>
+</footer>
+
+</body>
+</html>

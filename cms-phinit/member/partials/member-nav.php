@@ -17,7 +17,8 @@ use CMS\Services\ThemeCustomizer;
 
 $activePage = $activePage ?? 'dashboard';
 $siteUrl    = SITE_URL;
-$themeCustomizer = ThemeCustomizer::instance();
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$themeCustomizer = phinit_customizer_locale_proxy(ThemeCustomizer::instance(), $currentLocale);
 
 $getMemberToggle = static function (string $key, bool $default = true) use ($themeCustomizer): bool {
     return filter_var($themeCustomizer->get('memberdashboard', $key, $default), FILTER_VALIDATE_BOOLEAN);

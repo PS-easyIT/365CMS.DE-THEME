@@ -19,7 +19,24 @@ $isLoggedIn = function_exists('theme_is_logged_in') ? theme_is_logged_in() : fal
 
 // Customizer
 try {
-    $c = \CMS\Services\ThemeCustomizer::instance();
+    $customizerInstance = \CMS\Services\ThemeCustomizer::instance();
+    $c = new class($customizerInstance, $currentLocale) {
+        public function __construct(
+            private readonly object $inner,
+            private readonly string $locale
+        ) {
+        }
+
+        public function get(string $category, string $key, mixed $default = ''): mixed
+        {
+            return phinit_customizer_value($category, $key, $default, $this->locale);
+        }
+
+        public function __call(string $method, array $arguments): mixed
+        {
+            return $this->inner->{$method}(...$arguments);
+        }
+    };
 
     // Brand
     $_brandName     = $c->get('footer', 'footer_brand_name', 'PHINIT.DE');
@@ -132,7 +149,7 @@ try {
         // CMS aktiviert → Customizer-Toggle zusätzlich auswerten
         try {
             $_showConsent = filter_var(
-                \CMS\Services\ThemeCustomizer::instance()->get('footer', 'show_consent_banner', true),
+                phinit_customizer_value('footer', 'show_consent_banner', true, $currentLocale),
                 FILTER_VALIDATE_BOOLEAN
             );
         } catch (\Throwable $_e2) {

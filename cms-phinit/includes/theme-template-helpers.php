@@ -793,7 +793,7 @@ if (!function_exists('phinit_image_loading_attributes')) {
         $lazyLoadingEnabled = true;
 
         try {
-            $setting = \CMS\Services\ThemeCustomizer::instance()->get('performance', 'lazyload_images', true);
+            $setting = phinit_customizer_value('performance', 'lazyload_images', true);
             $lazyLoadingEnabled = filter_var($setting, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if ($lazyLoadingEnabled === null) {
                 $lazyLoadingEnabled = true;
@@ -2141,7 +2141,7 @@ if (!function_exists('phinit_format_date')) {
 }
 
 if (!function_exists('phinit_customizer_value')) {
-    function phinit_customizer_value(string $category, string $key, mixed $default = ''): mixed
+    function phinit_customizer_value(string $category, string $key, mixed $default = '', ?string $locale = null): mixed
     {
         static $customizer = null;
         static $resolved = false;
@@ -2160,7 +2160,32 @@ if (!function_exists('phinit_customizer_value')) {
         }
 
         try {
-            return $customizer->get($category, $key, $default);
+            $supportedLocales = ['de', 'en'];
+            $configuredDefaultLocale = function_exists('phinit_default_locale')
+                ? strtolower(trim((string) phinit_default_locale()))
+                : 'de';
+            $defaultLocale = in_array($configuredDefaultLocale, $supportedLocales, true) ? $configuredDefaultLocale : 'de';
+
+            $resolvedLocale = strtolower(trim((string) ($locale ?? (function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : $defaultLocale))));
+            if (!in_array($resolvedLocale, $supportedLocales, true)) {
+                $resolvedLocale = $defaultLocale;
+            }
+
+            if ($resolvedLocale === $defaultLocale) {
+                return $customizer->get($category, $key, $default);
+            }
+
+            $localizedValueKey = '__locale_' . $resolvedLocale . '__' . $key;
+            $localizedStateKey = '__locale_' . $resolvedLocale . '__set__' . $key;
+            $isCustomizedRaw = $customizer->get($category, $localizedStateKey, null);
+            $isCustomized = filter_var($isCustomizedRaw, FILTER_VALIDATE_BOOLEAN);
+
+            if (!$isCustomized) {
+                return $customizer->get($category, $key, $default);
+            }
+
+            $fallback = $customizer->get($category, $key, $default);
+            return $customizer->get($category, $localizedValueKey, $fallback);
         } catch (\Throwable) {
             return $default;
         }
@@ -2171,6 +2196,34 @@ if (!function_exists('phinit_customizer_bool')) {
     function phinit_customizer_bool(string $category, string $key, bool $default = true): bool
     {
         return filter_var(phinit_customizer_value($category, $key, $default), FILTER_VALIDATE_BOOLEAN);
+    }
+}
+
+if (!function_exists('phinit_customizer_locale_proxy')) {
+    function phinit_customizer_locale_proxy(object $customizer, ?string $locale = null): object
+    {
+        $resolvedLocale = strtolower(trim((string) ($locale ?? (function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de'))));
+        if (!in_array($resolvedLocale, ['de', 'en'], true)) {
+            $resolvedLocale = 'de';
+        }
+
+        return new class($customizer, $resolvedLocale) {
+            public function __construct(
+                private readonly object $inner,
+                private readonly string $locale
+            ) {
+            }
+
+            public function get(string $category, string $key, mixed $default = ''): mixed
+            {
+                return phinit_customizer_value($category, $key, $default, $this->locale);
+            }
+
+            public function __call(string $method, array $arguments): mixed
+            {
+                return $this->inner->{$method}(...$arguments);
+            }
+        };
     }
 }
 

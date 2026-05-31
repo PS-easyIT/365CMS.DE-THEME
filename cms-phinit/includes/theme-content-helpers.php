@@ -652,7 +652,7 @@ if (!function_exists('phinit_reading_time')) {
     {
         if ($wpm <= 0) {
             try {
-                $wpm = (int)\CMS\Services\ThemeCustomizer::instance()->get('posts', 'reading_time_wpm', 220);
+                $wpm = (int) phinit_customizer_value('posts', 'reading_time_wpm', 220);
             } catch (\Throwable) {
             }
             if ($wpm <= 0) {

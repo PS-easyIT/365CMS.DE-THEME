@@ -48,7 +48,15 @@ if (!defined('ABSPATH')) {
                     }
                     $f = $tabSections[$fk];
                     $valueTab = (string) ($f['storageTab'] ?? $activeTab);
-                    $val = $customizer->get($valueTab, $fk, $f['default'] ?? '');
+                    if (($f['type'] ?? 'text') === 'menu_tree' && function_exists('phinit_get_customizer_menu_field_value')) {
+                        $val = phinit_get_customizer_menu_field_value(
+                            (string) $fk,
+                            (string) ($editorUiLocale ?? 'de'),
+                            (string) ($f['default'] ?? '')
+                        );
+                    } else {
+                        $val = phinit_customizer_value($valueTab, $fk, $f['default'] ?? '', (string) ($editorUiLocale ?? 'de'));
+                    }
                     phinit_render_field($activeTab, $fk, $f, $val);
                 endforeach; ?>
             </div>

@@ -120,15 +120,14 @@ trait CMS_Phinit_Theme_Assets_Trait
     private function getCustomizerSettingWithFallback(string $category, string $key, mixed $default = null, array $legacyKeys = []): mixed
     {
         try {
-            $customizer = \CMS\Services\ThemeCustomizer::instance();
-            $value = $customizer->get($category, $key, null);
+            $value = phinit_customizer_value($category, $key, null);
 
             if ($value !== null && $value !== '') {
                 return $value;
             }
 
             foreach ($legacyKeys as $legacyKey) {
-                $legacyValue = $customizer->get($category, (string) $legacyKey, null);
+                $legacyValue = phinit_customizer_value($category, (string) $legacyKey, null);
                 if ($legacyValue !== null && $legacyValue !== '') {
                     return $legacyValue;
                 }
@@ -440,7 +439,7 @@ trait CMS_Phinit_Theme_Assets_Trait
 
         $cbVersion = '';
         try {
-            $cbVersion = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'cache_buster_css', '');
+            $cbVersion = phinit_customizer_value('advanced', 'cache_buster_css', '');
         } catch (\Throwable $e) {
         }
 
@@ -634,11 +633,10 @@ trait CMS_Phinit_Theme_Assets_Trait
         $requestedSlugs = [];
 
         try {
-            $customizer = \CMS\Services\ThemeCustomizer::instance();
             $requestedSlugs = [
-                (string) $customizer->get('typography', 'font_family_ui', 'inter'),
-                (string) $customizer->get('typography', 'font_family_brand', 'space-grotesk'),
-                (string) $customizer->get('typography', 'font_family_code', 'jetbrains-mono'),
+                (string) phinit_customizer_value('typography', 'font_family_ui', 'inter'),
+                (string) phinit_customizer_value('typography', 'font_family_brand', 'space-grotesk'),
+                (string) phinit_customizer_value('typography', 'font_family_code', 'jetbrains-mono'),
             ];
         } catch (\Throwable $e) {
             $requestedSlugs = ['inter', 'space-grotesk', 'jetbrains-mono'];
@@ -817,10 +815,9 @@ trait CMS_Phinit_Theme_Assets_Trait
         }
 
         try {
-            $c = \CMS\Services\ThemeCustomizer::instance();
-            $ui = $c->get('typography', 'font_family_ui', 'inter');
-            $brand = $c->get('typography', 'font_family_brand', 'space-grotesk');
-            $code = $c->get('typography', 'font_family_code', 'jetbrains-mono');
+            $ui = phinit_customizer_value('typography', 'font_family_ui', 'inter');
+            $brand = phinit_customizer_value('typography', 'font_family_brand', 'space-grotesk');
+            $code = phinit_customizer_value('typography', 'font_family_code', 'jetbrains-mono');
             $fontMap = [
                 'barlow' => 'Barlow:wght@400;500;600;700',
                 'barlow-condensed' => 'Barlow+Condensed:wght@500;600;700;800',
@@ -860,10 +857,9 @@ trait CMS_Phinit_Theme_Assets_Trait
     public function outputCustomHeaderCode(): void
     {
         try {
-            $customizer = \CMS\Services\ThemeCustomizer::instance();
-            $code = $customizer->get('advanced', 'custom_head_code', '');
+            $code = phinit_customizer_value('advanced', 'custom_head_code', '');
             if (trim((string) $code) === '') {
-                $code = $customizer->get('advanced', 'custom_header_code', '');
+                $code = phinit_customizer_value('advanced', 'custom_header_code', '');
             }
             if (!empty(trim((string) $code))) {
                 echo "\n" . (string) $code . "\n";
@@ -881,12 +877,12 @@ trait CMS_Phinit_Theme_Assets_Trait
         $this->footerCodeOutput = true;
 
         try {
-            $code = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'custom_footer_code', '');
+            $code = phinit_customizer_value('advanced', 'custom_footer_code', '');
             if (!empty(trim((string) $code))) {
                 echo "\n" . (string) $code . "\n";
             }
 
-            $gaId = \CMS\Services\ThemeCustomizer::instance()->get('advanced', 'google_analytics_id', '');
+            $gaId = phinit_customizer_value('advanced', 'google_analytics_id', '');
             if (!empty(trim((string) $gaId)) && preg_match('/^G-[A-Z0-9]{6,}$/', trim((string) $gaId))) {
                 $gaId = trim((string) $gaId);
                 $analyticsLoaderFile = CMS_PHINIT_THEME_DIR . 'assets/js/analytics-loader.js';
@@ -902,7 +898,17 @@ trait CMS_Phinit_Theme_Assets_Trait
 
     private function generatePhinitCSS(): string
     {
-        $c = \CMS\Services\ThemeCustomizer::instance();
+        $locale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+        $c = new class($locale) {
+            public function __construct(private readonly string $locale)
+            {
+            }
+
+            public function get(string $category, string $key, mixed $default = ''): mixed
+            {
+                return phinit_customizer_value($category, $key, $default, $this->locale);
+            }
+        };
         $css = "/* CMS Phinit – Customizer CSS */\n:root {\n";
 
         $formatNumber = static function (float|int|string $value): string {
@@ -1287,8 +1293,7 @@ trait CMS_Phinit_Theme_Assets_Trait
     public function outputCustomStyles(): void
     {
         try {
-            $c = \CMS\Services\ThemeCustomizer::instance();
-            $custom = $c->get('advanced', 'custom_css', '');
+            $custom = phinit_customizer_value('advanced', 'custom_css', '');
             if (!empty(trim((string) $custom))) {
                 echo '<style id="cms-phinit-custom-css">' . "\n";
                 echo strip_tags((string) $custom);

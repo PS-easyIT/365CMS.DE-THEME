@@ -187,6 +187,73 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             <textarea id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                       class="form-control" rows="<?php echo (int) ($field['rows'] ?? 3); ?>"><?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?></textarea>
 
+        <?php elseif (($field['type'] ?? 'text') === 'menu_tree'): ?>
+            <?php
+            $menuSlugMap = function_exists('phinit_get_customizer_menu_field_slug_map')
+                ? phinit_get_customizer_menu_field_slug_map($uiLocale)
+                : [];
+            $targetMenuSlug = (string) ($menuSlugMap[$fieldKey] ?? '');
+            $menuAriaLabel = $isEnglish ? 'Menu item list' : 'Menüeintragsliste';
+            ?>
+            <div class="phinit-menu-editor"
+                 data-menu-editor
+                 data-menu-editor-id="<?php echo $idAttr; ?>"
+                 data-menu-aria-label="<?php echo htmlspecialchars($menuAriaLabel, ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-level-label="<?php echo htmlspecialchars($isEnglish ? 'Level' : 'Ebene', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-empty-label="<?php echo htmlspecialchars($isEnglish ? 'No menu items yet.' : 'Noch keine Menüeinträge vorhanden.', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-add-root-label="<?php echo htmlspecialchars($isEnglish ? 'Add item' : 'Eintrag hinzufügen', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-add-child-label="<?php echo htmlspecialchars($isEnglish ? 'Add child' : 'Unterpunkt hinzufügen', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-add-after-label="<?php echo htmlspecialchars($isEnglish ? 'Add below' : 'Darunter hinzufügen', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-remove-label="<?php echo htmlspecialchars($isEnglish ? 'Remove item' : 'Eintrag entfernen', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-up-label="<?php echo htmlspecialchars($isEnglish ? 'Move up' : 'Nach oben', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-down-label="<?php echo htmlspecialchars($isEnglish ? 'Move down' : 'Nach unten', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-indent-label="<?php echo htmlspecialchars($isEnglish ? 'Move deeper' : 'Eine Ebene tiefer', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-outdent-label="<?php echo htmlspecialchars($isEnglish ? 'Move higher' : 'Eine Ebene höher', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-reorder-group-label="<?php echo htmlspecialchars($isEnglish ? 'Menu item actions' : 'Aktionen für Menüeintrag', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-label-field="<?php echo htmlspecialchars($isEnglish ? 'Label' : 'Bezeichnung', ENT_QUOTES, 'UTF-8'); ?>"
+                 data-menu-url-field="<?php echo htmlspecialchars($isEnglish ? 'URL' : 'URL', ENT_QUOTES, 'UTF-8'); ?>">
+                <div class="phinit-menu-editor__header">
+                    <label class="form-label mb-0" for="<?php echo $idAttr; ?>_list"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            data-menu-action="add-root"
+                            aria-label="<?php echo htmlspecialchars($isEnglish ? 'Add top-level menu item' : 'Menüeintrag auf oberster Ebene hinzufügen', ENT_QUOTES, 'UTF-8'); ?>">
+                        <?php echo htmlspecialchars($isEnglish ? '+ Add item' : '+ Eintrag hinzufügen', ENT_QUOTES, 'UTF-8'); ?>
+                    </button>
+                </div>
+                <?php if ($targetMenuSlug !== ''): ?>
+                    <p class="phinit-menu-editor__target mb-2">
+                        <span><?php echo htmlspecialchars($isEnglish ? 'Target slug' : 'Ziel-Slug', ENT_QUOTES, 'UTF-8'); ?>:</span>
+                        <code><?php echo htmlspecialchars($targetMenuSlug, ENT_QUOTES, 'UTF-8'); ?></code>
+                    </p>
+                <?php endif; ?>
+                <div id="<?php echo $idAttr; ?>_list"
+                     class="phinit-menu-editor__list"
+                     data-menu-tree
+                     role="tree"
+                     tabindex="0"
+                     aria-label="<?php echo htmlspecialchars($menuAriaLabel, ENT_QUOTES, 'UTF-8'); ?>">
+                </div>
+                <p class="form-text phinit-menu-editor__hint" id="<?php echo $idAttr; ?>_hint">
+                    <?php echo htmlspecialchars(
+                        $isEnglish
+                            ? 'Use buttons to add, nest, remove, and reorder items. Shortcut: Alt + Arrow keys on focused row.'
+                            : 'Mit den Buttons kannst du Einträge hinzufügen, verschachteln, löschen und sortieren. Shortcut: Alt + Pfeiltasten auf fokussierter Zeile.',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ); ?>
+                </p>
+            </div>
+            <textarea id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
+                      class="visually-hidden"
+                      rows="<?php echo (int) ($field['rows'] ?? 8); ?>"
+                      spellcheck="false"
+                      autocapitalize="off"
+                      aria-hidden="true"
+                      tabindex="-1"
+                      data-menu-source
+                      hidden><?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?></textarea>
+
         <?php elseif (($field['type'] ?? 'text') === 'widget_order'): ?>
             <?php
             $widgetOptions = is_array($field['options'] ?? null) ? $field['options'] : [];
@@ -227,11 +294,11 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
 
         <?php elseif (($field['type'] ?? 'text') === 'url'): ?>
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
-            <input type="url" id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
+            <input type="text" id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>"
                    value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                    class="form-control"
                    inputmode="url"
-                   placeholder="<?php echo htmlspecialchars($isEnglish ? 'https://example.com/ or /internal-path' : 'https://example.com/ oder /interner-pfad', ENT_QUOTES); ?>">
+                   placeholder="<?php echo htmlspecialchars($isEnglish ? 'https://example.com, contact, /contact, en/contact' : 'https://example.com, kontakt, /kontakt, en/contact', ENT_QUOTES); ?>">
 
         <?php elseif (($field['type'] ?? 'text') === 'number'): ?>
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>

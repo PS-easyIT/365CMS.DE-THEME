@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>365network.de – Hub (Vorschau)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#0a1626; --navy-800:#0d1d33; --navy-700:#14283f;
+    --body-bg:#eef1f6; --card:#ffffff;
+    --ink:#16202e; --ink-soft:#475262; --ink-muted:#7b8696;
+    --line:#e3e8ef; --line-soft:#eef1f6;
+    --accent:#d6951a; --accent-soft:#fbf3e2; --accent-ink:#8a5e08;
+    --radius:14px; --shadow:0 1px 2px rgba(16,32,55,.04),0 8px 24px rgba(16,32,55,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--body-bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.brand{font-family:'Sora',sans-serif;letter-spacing:-.01em}
+  a{color:inherit;text-decoration:none}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+  svg{display:block}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* HEADER + HUB LOGO */
+  .topbar{background:var(--navy-900);color:#fff;position:sticky;top:0;z-index:20;border-bottom:1px solid #14263d}
+  .topbar-inner{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:24px}
+  .hublogo{display:flex;align-items:center;gap:12px}
+  .glyph{width:40px;height:40px;flex:none}
+  .wordmark{display:flex;flex-direction:column;line-height:1}
+  .wordmark .w1{font-family:'Sora';font-weight:800;font-size:20px;letter-spacing:.02em}
+  .wordmark .w1 b{color:var(--accent)}
+  .wordmark .w2{font-size:10px;letter-spacing:.34em;color:#9fb0c4;margin-top:3px;font-weight:600}
+  .nav{margin-left:14px;display:flex;gap:2px}
+  .nav a{padding:9px 14px;font-size:14px;font-weight:500;color:#cdd8e5;border-radius:8px}
+  .nav a:hover{color:#fff;background:#102139}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .search{display:flex;align-items:center;background:#102139;border:1px solid #1d3450;border-radius:8px;padding:8px 12px;gap:8px;min-width:230px}
+  .search input{background:none;border:0;color:#fff;font-size:14px;width:100%;font-family:inherit}
+  .search input::placeholder{color:#6c7e94}
+  .btn{font-family:inherit;font-size:13.5px;font-weight:600;border-radius:9px;padding:10px 18px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn-primary{background:var(--accent);color:#2c1d02}.btn-primary:hover{background:#c2850f}
+  .btn-line{background:transparent;color:#fff;border-color:rgba(255,255,255,.22)}.btn-line:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm{padding:8px 14px;font-size:12.5px}
+
+  /* HERO (Content Header) */
+  .hero{background:linear-gradient(135deg,#16304d 0%,#0d1d33 58%,#0a1626 100%);color:#fff;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(620px 260px at 80% -10%,rgba(214,149,26,.18),transparent 70%);pointer-events:none}
+  .hero-in{position:relative;max-width:1180px;margin:0 auto;padding:60px 24px 48px;text-align:center}
+  .kick{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#dfe8f2;font-size:12.5px;font-weight:600;letter-spacing:.04em;padding:6px 14px;border-radius:999px}
+  .kick .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .hero h1{font-size:46px;font-weight:800;line-height:1.05;margin:20px auto 14px;max-width:760px}
+  .hero h1 .hl{color:var(--accent)}
+  .hero p{font-size:18px;color:#bccadb;max-width:600px;margin:0 auto 28px}
+  .hsearch{max-width:580px;margin:0 auto;display:flex;gap:10px}
+  .hsearch .box{flex:1;display:flex;align-items:center;gap:10px;background:#fff;border-radius:11px;padding:13px 16px}
+  .hsearch input{flex:1;border:0;font-size:15px;font-family:inherit;color:var(--ink)}
+  .hsearch input:focus{outline:none}
+
+  /* PARTNER BAND — seamless, directly below the content header */
+  .partnerband{background:var(--navy-900);color:#fff;border-top:1px solid rgba(255,255,255,.07)}
+  .partnerband-in{max-width:1180px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .partnerband .lbl{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#7e90a6;font-weight:600}
+  .partnerband .logos{display:flex;gap:12px;flex-wrap:wrap}
+  .plogo{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:7px 13px;border-radius:9px}
+  .plogo .sq{width:24px;height:24px;border-radius:6px;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center;font-family:'Sora';font-weight:700;font-size:11px}
+  .plogo span{font-size:13px;color:#dfe8f2;font-weight:500}
+
+  /* SECTIONS */
+  section.block{padding:50px 0}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
+  .sec-head h2{font-size:25px;font-weight:700}
+  .sec-head p{font-size:14.5px;color:var(--ink-muted);margin-top:5px}
+  .sec-head a.more{font-size:14px;font-weight:600;color:var(--accent-ink);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .sec-head a.more:hover{text-decoration:underline}
+
+  /* 4 AREA CARDS */
+  .areas{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .area{display:block;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;transition:transform .15s,box-shadow .15s,border-color .15s}
+  .area:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(16,32,55,.12);border-color:#ecd7ad}
+  .area .ic{width:48px;height:48px;border-radius:12px;background:linear-gradient(160deg,var(--navy-700),var(--navy-900));color:var(--accent);display:grid;place-items:center;margin-bottom:16px}
+  .area .ic svg{width:24px;height:24px}
+  .area h3{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .area .cnt{font-size:12px;font-weight:600;color:var(--accent-ink);background:var(--accent-soft);border:1px solid #f0dcb4;border-radius:999px;padding:1px 9px}
+  .area p{font-size:13.5px;color:var(--ink-muted);margin-top:7px}
+  .area .go{margin-top:14px;font-size:13.5px;font-weight:600;color:var(--accent-ink);display:inline-flex;align-items:center;gap:6px}
+  .area:hover .go{gap:10px}
+
+  /* NÄCHSTE EVENTS */
+  .nextgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .nev{display:flex;gap:15px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;transition:transform .15s,border-color .15s}
+  .nev:hover{transform:translateY(-2px);border-color:#ecd7ad}
+  .nev .date{width:62px;flex:none;text-align:center;border-radius:11px;overflow:hidden;border:1px solid var(--line)}
+  .nev .date .mo{background:var(--navy-800);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.06em;padding:5px 0}
+  .nev .date .dy{font-family:'Sora';font-weight:700;font-size:24px;padding:7px 0 2px}
+  .nev .date .yr{font-size:10.5px;color:var(--ink-muted);padding-bottom:6px}
+  .nev h3{font-size:15.5px;font-weight:600;line-height:1.25}
+  .nev .loc{font-size:12.5px;color:var(--ink-muted);display:flex;align-items:center;gap:5px;margin-top:6px}
+  .nev .loc svg{width:13px;height:13px}
+  .nev .etag{display:inline-block;font-size:11px;font-weight:500;background:#f3f5f9;color:var(--ink-soft);border:1px solid var(--line);padding:2px 9px;border-radius:6px;margin-top:9px}
+
+  /* ROTATING SPOTLIGHT — compact */
+  .rotator{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .slides{position:relative}
+  .slide{display:none;grid-template-columns:200px 1fr;min-height:172px}
+  .slide.active{display:grid}
+  @media(max-width:680px){.slide.active{grid-template-columns:120px 1fr}}
+  .slide .visual{background:linear-gradient(135deg,#16304d,#0a1626);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;position:relative;overflow:hidden}
+  .slide .visual::after{content:"";position:absolute;inset:0;background:radial-gradient(180px 120px at 70% 10%,rgba(214,149,26,.25),transparent 70%)}
+  .slide .vmark{position:relative;width:74px;height:74px;border-radius:18px;display:grid;place-items:center;font-family:'Sora';font-weight:700;font-size:24px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
+  .slide .vmark.round{border-radius:50%}
+  .slide .vdate{position:relative;text-align:center}
+  .slide .vdate .d{font-family:'Sora';font-weight:800;font-size:38px;line-height:1}
+  .slide .vdate .m{font-size:12px;letter-spacing:.1em;color:var(--accent);margin-top:3px}
+  .slide .content{padding:22px 26px;display:flex;flex-direction:column;justify-content:center}
+  .stype{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px}
+  .stype .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .slide h3{font-size:21px;font-weight:700;line-height:1.15}
+  .slide .role{font-size:14px;color:var(--ink-soft);margin-top:5px}
+  .slide .meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:9px;font-size:13px;color:var(--ink-muted)}
+  .slide .meta span{display:inline-flex;align-items:center;gap:6px}
+  .slide .meta svg{width:14px;height:14px;color:var(--accent-ink)}
+  .slide .tags{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+  .slide .tag{font-size:12px;font-weight:500;background:var(--accent-soft);color:var(--accent-ink);border:1px solid #f0dcb4;padding:4px 11px;border-radius:999px}
+  .slide .cta{margin-top:15px}
+  .rot-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);display:grid;place-items:center;cursor:pointer;z-index:3;color:var(--ink-soft)}
+  .rot-nav:hover{color:var(--accent-ink);border-color:var(--accent)}
+  .rot-prev{left:12px}.rot-next{right:12px}
+  .dots{display:flex;justify-content:center;gap:8px;padding:13px 0 3px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:0;cursor:pointer;padding:0}
+  .dot.active{background:var(--accent);width:22px;border-radius:99px}
+
+  /* PARTNER COLUMNS — Unternehmen & Experts side by side */
+  .partner-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .pcol .sec-head{margin-bottom:16px}
+  .pcol .sec-head h2{font-size:21px}
+  .pstack{display:flex;flex-direction:column;gap:14px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;display:flex;gap:14px;align-items:center;transition:transform .15s,border-color .15s}
+  .pcard:hover{transform:translateY(-2px);border-color:#ecd7ad}
+  .pcard .sq{width:50px;height:50px;border-radius:13px;background:linear-gradient(160deg,var(--navy-700),var(--navy-900));color:#fff;display:grid;place-items:center;font-family:'Sora';font-weight:700;font-size:17px;flex:none}
+  .pcard .rnd{border-radius:50%}
+  .pcard .nm{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pcard .rl{font-size:12.5px;color:var(--ink-muted);margin-top:2px}
+  .pcard .pb{font-size:10px;font-weight:600;letter-spacing:.04em;background:var(--accent-soft);color:var(--accent-ink);border:1px solid #f0dcb4;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+  .pcard .pb svg{width:10px;height:10px}
+  .pcard .chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .pcard .chip{font-size:11px;background:#f3f5f9;color:var(--ink-soft);border:1px solid var(--line);padding:2px 9px;border-radius:6px}
+
+  /* FOOTER */
+  footer{background:var(--navy-900);color:#aebdce;margin-top:20px}
+  .footer-top{height:4px;background:var(--accent)}
+  .footer-grid{max-width:1180px;margin:0 auto;padding:46px 24px;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:36px}
+  .footer-grid h4{font-family:'IBM Plex Sans';font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6c7e94;margin-bottom:16px}
+  .footer-grid p{font-size:14px;line-height:1.65;margin-top:10px;max-width:280px}
+  .footer-grid ul{list-style:none}.footer-grid li{margin-bottom:10px}.footer-grid a{font-size:14px}.footer-grid a:hover{color:var(--accent)}
+  .footer-bar{border-top:1px solid #14263d}
+  .footer-bar-inner{max-width:1180px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:13px;color:#6c7e94;gap:18px;flex-wrap:wrap}
+  .footer-bar a:hover{color:var(--accent)}
+
+  @media(max-width:980px){
+    .areas{grid-template-columns:1fr 1fr}
+    .nextgrid{grid-template-columns:1fr}
+    .partner-cols{grid-template-columns:1fr;gap:36px}
+    .footer-grid{grid-template-columns:1fr 1fr}
+    .nav{display:none}.search{min-width:0}
+  }
+  @media(max-width:620px){
+    .areas{grid-template-columns:1fr}
+    .hero h1{font-size:34px}.hero p{font-size:16px}
+    .footer-grid{grid-template-columns:1fr}
+    .partnerband-in{gap:12px}.top-right .btn-line{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER with HUB logo (nav only) -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="hublogo" href="#" aria-label="365network Hub – Startseite">
+      <svg class="glyph" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" stroke="#1d3450" stroke-width="2"/>
+        <line x1="24" y1="24" x2="24" y2="8"  stroke="#3a5170" stroke-width="2"/>
+        <line x1="24" y1="24" x2="38" y2="32" stroke="#3a5170" stroke-width="2"/>
+        <line x1="24" y1="24" x2="10" y2="32" stroke="#3a5170" stroke-width="2"/>
+        <circle cx="24" cy="8"  r="4" fill="#d6951a"/>
+        <circle cx="38" cy="32" r="4" fill="#cdd8e5"/>
+        <circle cx="10" cy="32" r="4" fill="#cdd8e5"/>
+        <circle cx="24" cy="24" r="6" fill="#d6951a"/>
+        <circle cx="24" cy="24" r="2.5" fill="#0a1626"/>
+      </svg>
+      <span class="wordmark"><span class="w1">365<b>NETWORK</b></span><span class="w2">HUB</span></span>
+    </a>
+    <nav class="nav">
+      <a href="#areas">Übersicht</a>
+      <a href="#speaker">Speaker</a>
+      <a href="#experts">Experts</a>
+      <a href="#companies">Unternehmen</a>
+      <a href="#events">Events</a>
+    </nav>
+    <div class="top-right">
+      <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6c7e94" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg><input type="search" placeholder="Netzwerk durchsuchen…" aria-label="Suche"></div>
+      <a class="btn btn-line" href="#">Anmelden</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO (Content Header) -->
+<section class="hero">
+  <div class="hero-in">
+    <span class="kick"><span class="pulse"></span>Das Microsoft-365-Netzwerk im DACH-Raum</span>
+    <h1>Finde <span class="hl">Speaker</span>, <span class="hl">Experts</span>, <span class="hl">Unternehmen</span> und <span class="hl">Events</span></h1>
+    <p>Ein zentraler Hub, der die Microsoft-365-Community verbindet — gebündelt, durchsuchbar, an einem Ort.</p>
+    <div class="hsearch">
+      <div class="box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7b8696" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg><input placeholder="Name, Thema oder Unternehmen suchen…" aria-label="Hub-Suche"></div>
+      <button class="btn btn-primary">Suchen</button>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER BAND — seamless, directly below the content header -->
+<div class="partnerband"><div class="partnerband-in">
+  <span class="lbl">Partner im Netzwerk</span>
+  <div class="logos">
+    <span class="plogo"><span class="sq">NC</span><span>NorthCloud Systems</span></span>
+    <span class="plogo"><span class="sq">CS</span><span>CloudSphere AG</span></span>
+    <span class="plogo"><span class="sq">DX</span><span>Datawerk Experts</span></span>
+    <span class="plogo"><span class="sq">SH</span><span>Secure Hub GmbH</span></span>
+  </div>
+</div></div>
+
+<!-- 4 AREAS -->
+<section class="block" id="areas"><div class="wrap">
+  <div class="sec-head"><div><h2>Vier Bereiche, ein Netzwerk</h2><p>Direkter Einstieg in die Verzeichnisse.</p></div></div>
+  <div class="areas">
+    <a class="area" id="speaker" href="#">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div>
+      <h3>Speaker <span class="cnt">28</span></h3>
+      <p>Vortragende für Keynotes, Workshops und Panels.</p>
+      <span class="go">Speaker entdecken <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="area" id="experts" href="#">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <h3>Experts <span class="cnt">41</span></h3>
+      <p>Fachexperten für M365, Azure, Security und mehr.</p>
+      <span class="go">Experts entdecken <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="area" id="companies" href="#">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/></svg></div>
+      <h3>Unternehmen <span class="cnt">16</span></h3>
+      <p>Systemhäuser und Partner aus dem Netzwerk.</p>
+      <span class="go">Unternehmen entdecken <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="area" id="events" href="#">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
+      <h3>Events <span class="cnt">12</span></h3>
+      <p>Konferenzen, Roadshows und Community-Tage.</p>
+      <span class="go">Events entdecken <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+</div></section>
+
+<!-- NÄCHSTE EVENTS (next 3) -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <div><h2>Nächste Events</h2><p>Die nächsten drei Termine im Netzwerk.</p></div>
+    <a class="more" href="#">Alle Events <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+  <div class="nextgrid">
+    <a class="nev" href="#">
+      <div class="date"><div class="mo">MÄR</div><div class="dy">01</div><div class="yr">2026</div></div>
+      <div><h3>Sophos MSP Community Days</h3><div class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>ICM München</div><span class="etag">Präsenz</span></div>
+    </a>
+    <a class="nev" href="#">
+      <div class="date"><div class="mo">APR</div><div class="dy">22</div><div class="yr">2026</div></div>
+      <div><h3>M365 Security Summit</h3><div class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Online</div><span class="etag">Online</span></div>
+    </a>
+    <a class="nev" href="#">
+      <div class="date"><div class="mo">JUN</div><div class="dy">09</div><div class="yr">2026</div></div>
+      <div><h3>PowerShell Community Day</h3><div class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Stuttgart</div><span class="etag">Präsenz</span></div>
+    </a>
+  </div>
+</div></section>
+
+<!-- IM FOKUS — compact rotator, all four types, any status -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head"><div><h2>Im Fokus</h2><p>Rotierend aus Events, Speakern, Experts und Unternehmen.</p></div></div>
+  <div class="rotator" id="rotator">
+    <button class="rot-nav rot-prev" aria-label="Zurück"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="rot-nav rot-next" aria-label="Weiter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+    <div class="slides">
+
+      <article class="slide active">
+        <div class="visual"><div class="vdate"><div class="d">01</div><div class="m">MÄR 2026</div></div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Event</span>
+          <h3>Sophos MSP Community Days 2026</h3>
+          <div class="meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>ICM München</span></div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Zum Event</a></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="visual"><div class="vmark">NC</div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Unternehmen</span>
+          <h3>NorthCloud Systems GmbH</h3>
+          <div class="role">Managed Service Provider · Microsoft Solutions Partner</div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Profil ansehen</a></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="visual"><div class="vmark round">OK</div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Speaker</span>
+          <h3>Olaf Kaiser</h3>
+          <div class="role">MSP-Geschäftsmodelle · Systemhaus-Coach</div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Profil ansehen</a></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="visual"><div class="vmark round">JR</div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Expert</span>
+          <h3>Jonas Reinhardt</h3>
+          <div class="role">Senior M365 Architect · Cloud Security</div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Profil ansehen</a></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="visual"><div class="vdate"><div class="d">22</div><div class="m">APR 2026</div></div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Event</span>
+          <h3>M365 Security Summit</h3>
+          <div class="meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Online</span></div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Zum Event</a></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="visual"><div class="vmark">CS</div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Unternehmen</span>
+          <h3>CloudSphere AG</h3>
+          <div class="role">Azure Consulting · Cloud-Architektur</div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Profil ansehen</a></div>
+        </div>
+      </article>
+
+      <article class="slide">
+        <div class="visual"><div class="vmark round">KB</div></div>
+        <div class="content">
+          <span class="stype"><span class="dot"></span>Expert</span>
+          <h3>Kathrin Borchert</h3>
+          <div class="role">Power BI &amp; Fabric Administration</div>
+          <div class="cta"><a class="btn btn-primary btn-sm" href="#">Profil ansehen</a></div>
+        </div>
+      </article>
+
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</div></section>
+
+<!-- UNTERNEHMEN & EXPERTS — side by side in one row (only partner status shown) -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="partner-cols">
+
+    <!-- nur Einträge mit status=partner werden gerendert -->
+    <div class="pcol">
+      <div class="sec-head"><div><h2>Unternehmen im Netzwerk</h2></div><a class="more" href="#">Alle <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="pstack">
+        <a class="pcard" href="#"><div class="sq">NC</div><div><div class="nm">NorthCloud Systems <span class="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m20 6-11 11-5-5"/></svg>Partner</span></div><div class="rl">Managed Service Provider</div><div class="chips"><span class="chip">M365</span><span class="chip">Security</span></div></div></a>
+        <a class="pcard" href="#"><div class="sq">CS</div><div><div class="nm">CloudSphere AG <span class="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m20 6-11 11-5-5"/></svg>Partner</span></div><div class="rl">Azure Consulting</div><div class="chips"><span class="chip">Azure</span><span class="chip">Cloud</span></div></div></a>
+        <a class="pcard" href="#"><div class="sq">SH</div><div><div class="nm">Secure Hub GmbH <span class="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m20 6-11 11-5-5"/></svg>Partner</span></div><div class="rl">IT-Security &amp; Compliance</div><div class="chips"><span class="chip">ISO 27001</span><span class="chip">Defender</span></div></div></a>
+      </div>
+    </div>
+
+    <!-- nur Einträge mit status=partner werden gerendert -->
+    <div class="pcol">
+      <div class="sec-head"><div><h2>Experts im Netzwerk</h2></div><a class="more" href="#">Alle <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="pstack">
+        <a class="pcard" href="#"><div class="sq rnd">JR</div><div><div class="nm">Jonas Reinhardt <span class="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m20 6-11 11-5-5"/></svg>Partner</span></div><div class="rl">M365 Architect · Security</div><div class="chips"><span class="chip">M365</span><span class="chip">Azure</span></div></div></a>
+        <a class="pcard" href="#"><div class="sq rnd">EB</div><div><div class="nm">Eric Berg <span class="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m20 6-11 11-5-5"/></svg>Partner</span></div><div class="rl">Azure / Cloud</div><div class="chips"><span class="chip">Azure</span><span class="chip">DevOps</span></div></div></a>
+        <a class="pcard" href="#"><div class="sq rnd">KA</div><div><div class="nm">Keith Atherton <span class="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m20 6-11 11-5-5"/></svg>Partner</span></div><div class="rl">Power Platform Architecture</div><div class="chips"><span class="chip">Power Platform</span></div></div></a>
+      </div>
+    </div>
+
+  </div>
+</div></section>
+
+<footer>
+  <div class="footer-top"></div>
+  <div class="footer-grid">
+    <div>
+      <div class="hublogo"><svg class="glyph" viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22" stroke="#1d3450" stroke-width="2"/><line x1="24" y1="24" x2="24" y2="8" stroke="#3a5170" stroke-width="2"/><line x1="24" y1="24" x2="38" y2="32" stroke="#3a5170" stroke-width="2"/><line x1="24" y1="24" x2="10" y2="32" stroke="#3a5170" stroke-width="2"/><circle cx="24" cy="8" r="4" fill="#d6951a"/><circle cx="38" cy="32" r="4" fill="#cdd8e5"/><circle cx="10" cy="32" r="4" fill="#cdd8e5"/><circle cx="24" cy="24" r="6" fill="#d6951a"/><circle cx="24" cy="24" r="2.5" fill="#0a1626"/></svg><span class="wordmark"><span class="w1" style="color:#fff">365<b>NETWORK</b></span><span class="w2">HUB</span></span></div>
+      <p>Der zentrale Hub für die Microsoft-365-Community im DACH-Raum.</p>
+    </div>
+    <div><h4>Bereiche</h4><ul><li><a href="#">Speaker</a></li><li><a href="#">Experts</a></li><li><a href="#">Unternehmen</a></li><li><a href="#">Events</a></li></ul></div>
+    <div><h4>Netzwerk</h4><ul><li><a href="#">Mitmachen</a></li><li><a href="#">Partner werden</a></li><li><a href="#">phinit.de</a></li></ul></div>
+    <div><h4>Rechtliches</h4><ul><li><a href="#">Impressum</a></li><li><a href="#">Datenschutz</a></li><li><a href="#">AGB</a></li></ul></div>
+  </div>
+  <div class="footer-bar"><div class="footer-bar-inner">
+    <div>© 2026 365network.de — Powered by 365CMS.DE</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap"><a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">Cookie Consent Manager</a></div>
+  </div></div>
+</footer>
+
+<script>
+(function(){
+  var rot = document.getElementById('rotator');
+  var slides = Array.prototype.slice.call(rot.querySelectorAll('.slide'));
+  var dotsWrap = document.getElementById('dots');
+  var i = 0, timer = null, DELAY = 4500;
+
+  slides.forEach(function(_, idx){
+    var b = document.createElement('button');
+    b.className = 'dot' + (idx===0?' active':'');
+    b.setAttribute('aria-label','Slide ' + (idx+1));
+    b.addEventListener('click', function(){ go(idx); reset(); });
+    dotsWrap.appendChild(b);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  function go(n){
+    slides[i].classList.remove('active'); dots[i].classList.remove('active');
+    i = (n + slides.length) % slides.length;
+    slides[i].classList.add('active'); dots[i].classList.add('active');
+  }
+  function next(){ go(i+1); }
+  function prev(){ go(i-1); }
+  function start(){ timer = setInterval(next, DELAY); }
+  function reset(){ clearInterval(timer); start(); }
+
+  rot.querySelector('.rot-next').addEventListener('click', function(){ next(); reset(); });
+  rot.querySelector('.rot-prev').addEventListener('click', function(){ prev(); reset(); });
+  rot.addEventListener('mouseenter', function(){ clearInterval(timer); });
+  rot.addEventListener('mouseleave', start);
+
+  start();
+})();
+</script>
+
+</body>
+</html>

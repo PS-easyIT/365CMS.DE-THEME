@@ -20,13 +20,20 @@ if (!defined('ABSPATH')) {
 $siteUrl = SITE_URL;
 $db      = \CMS\Database::instance();
 $pfx     = $db->getPrefix();
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 // ── Customizer ─────────────────────────────────────────────────────────
 $cz = null;
-try { $cz = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable) {}
-$czGet = function (string $cat, string $key, mixed $default = '') use ($cz): mixed {
-    if (!$cz) return $default;
-    try { return $cz->get($cat, $key, $default); } catch (\Throwable) { return $default; }
+try { $cz = phinit_customizer_locale_proxy(\CMS\Services\ThemeCustomizer::instance(), $currentLocale); } catch (\Throwable) {}
+$czGet = function (string $cat, string $key, mixed $default = '') use ($cz, $currentLocale): mixed {
+    if (!$cz) {
+        return $default;
+    }
+    try {
+        return $cz->get($cat, $key, $default);
+    } catch (\Throwable) {
+        return phinit_customizer_value($cat, $key, $default, $currentLocale);
+    }
 };
 $czBool = function (string $cat, string $key, bool $default = true) use ($czGet): bool {
     return filter_var($czGet($cat, $key, $default), FILTER_VALIDATE_BOOLEAN);
@@ -39,7 +46,6 @@ $showReadingTime  = $czBool('posts', 'show_reading_time', true);
 $readingTimeWpm   = max(100, (int)$czGet('posts', 'reading_time_wpm', 200));
 $showToc          = $czBool('posts', 'show_toc', true);
 $tocMinHeadings   = max(1, (int)$czGet('posts', 'toc_min_headings', 3));
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $tocHeaderText    = (string)$czGet('posts', 'toc_header_text', phinit_t('toc_title', [], $currentLocale));
 $showShareButtons = $czBool('posts', 'show_share_buttons', true);
 $showShareLinkedin = $czBool('posts', 'show_share_linkedin', true);

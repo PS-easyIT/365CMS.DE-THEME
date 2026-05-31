@@ -55,7 +55,8 @@ if ($filter !== '') {
 }
 
 try {
-    $_searchCustomizer = \CMS\Services\ThemeCustomizer::instance();
+    $_searchLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+    $_searchCustomizer = phinit_customizer_locale_proxy(\CMS\Services\ThemeCustomizer::instance(), $_searchLocale);
     $_searchExcerptLen = max(10, (int) $_searchCustomizer->get('typography', 'article_excerpt_length', 180));
 } catch (\Throwable $_searchE) {
     $_searchExcerptLen = 180;

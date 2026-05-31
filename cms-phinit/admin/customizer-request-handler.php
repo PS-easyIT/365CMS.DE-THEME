@@ -10,6 +10,7 @@ use CMS\Auth;
 use CMS\Database;
 use CMS\Security;
 use CMS\Services\ThemeCustomizer;
+use CMS\ThemeManager;
 
 /**
  * @return list<string>
@@ -173,6 +174,71 @@ function phinit_customizer_can_manage_advanced_code(): bool
     }
 
     return Auth::instance()->isAdmin();
+}
+
+function phinit_normalize_customizer_slug_path(string $value): ?string
+{
+    if ($value === '' || str_starts_with($value, '//')) {
+        return null;
+    }
+
+    if (preg_match('/[\x00-\x1F\x7F]/', $value) === 1) {
+        return null;
+    }
+
+    if (preg_match('/\s/', $value) === 1 || str_contains($value, '\\')) {
+        return null;
+    }
+
+    $parsed = parse_url($value);
+    if (!is_array($parsed)) {
+        return null;
+    }
+
+    if (isset($parsed['scheme']) || isset($parsed['host']) || isset($parsed['user']) || isset($parsed['pass'])) {
+        return null;
+    }
+
+    $path = trim((string) ($parsed['path'] ?? ''));
+    if ($path === '' || str_starts_with($path, '//')) {
+        return null;
+    }
+
+    $path = '/' . ltrim($path, '/');
+    $path = preg_replace('#/+#', '/', $path) ?? '';
+    if ($path === '' || $path === '//') {
+        return null;
+    }
+
+    $query = isset($parsed['query']) && $parsed['query'] !== '' ? '?' . $parsed['query'] : '';
+    $fragment = isset($parsed['fragment']) && $parsed['fragment'] !== '' ? '#' . $parsed['fragment'] : '';
+
+    return $path . $query . $fragment;
+}
+
+function phinit_normalize_customizer_link_value(string $value): ?string
+{
+    if ($value === '') {
+        return '';
+    }
+
+    $scheme = strtolower((string) parse_url($value, PHP_URL_SCHEME));
+    if ($scheme === 'mailto') {
+        $email = preg_replace('/^mailto:/i', '', $value) ?? '';
+        $email = trim($email);
+
+        return filter_var($email, FILTER_VALIDATE_EMAIL) ? 'mailto:' . $email : null;
+    }
+
+    if (in_array($scheme, ['http', 'https'], true)) {
+        return filter_var($value, FILTER_VALIDATE_URL) ? $value : null;
+    }
+
+    if ($scheme !== '') {
+        return null;
+    }
+
+    return phinit_normalize_customizer_slug_path($value);
 }
 
 function phinit_customizer_has_advanced_code_acknowledgement(): bool
@@ -348,30 +414,17 @@ function phinit_normalize_customizer_post_value(string $fieldType, mixed $rawVal
             return implode("\n", $tokens);
 
         case 'url':
-            if ($value === '') {
-                return '';
-            }
+            $normalizedLink = phinit_normalize_customizer_link_value($value);
 
-            if (str_starts_with($value, '/')) {
-                return str_starts_with($value, '//') ? '' : $value;
-            }
-
-            $scheme = strtolower((string) parse_url($value, PHP_URL_SCHEME));
-            if ($scheme === 'mailto') {
-                $email = preg_replace('/^mailto:/i', '', $value) ?? '';
-                return filter_var($email, FILTER_VALIDATE_EMAIL) ? 'mailto:' . $email : (string) $default;
-            }
-
-            if (!in_array($scheme, ['http', 'https'], true)) {
-                return (string) $default;
-            }
-
-            return filter_var($value, FILTER_VALIDATE_URL) ? $value : (string) $default;
+            return $normalizedLink !== null ? $normalizedLink : (string) $default;
 
         case 'textarea':
             return !empty($fieldConfig['allow_raw'])
                 ? (string) $rawValue
                 : strip_tags((string) $rawValue);
+
+        case 'menu_tree':
+            return strip_tags((string) $rawValue);
 
         default:
             return $value;
@@ -383,6 +436,27 @@ function phinit_normalize_customizer_post_value(string $fieldType, mixed $rawVal
  * @param array<string, mixed> $importData
  * @return array<string, array<string, string>>
  */
+function phinit_parse_customizer_locale_storage_key(string $key): ?array
+{
+    if (preg_match('/^__locale_(de|en)__set__([a-z0-9_]+)$/i', $key, $matches) === 1) {
+        return [
+            'type' => 'state',
+            'locale' => strtolower((string) $matches[1]),
+            'fieldKey' => (string) $matches[2],
+        ];
+    }
+
+    if (preg_match('/^__locale_(de|en)__([a-z0-9_]+)$/i', $key, $matches) === 1) {
+        return [
+            'type' => 'value',
+            'locale' => strtolower((string) $matches[1]),
+            'fieldKey' => (string) $matches[2],
+        ];
+    }
+
+    return null;
+}
+
 function phinit_normalize_customizer_import_data(array $config, array $importData, ThemeCustomizer $customizer): array
 {
     $importTheme = $importData['theme'] ?? null;
@@ -410,6 +484,28 @@ function phinit_normalize_customizer_import_data(array $config, array $importDat
 
         foreach ($categoryValues as $fieldKey => $rawValue) {
             $sourceFieldKey = (string) $fieldKey;
+            $localizedStorageKey = phinit_parse_customizer_locale_storage_key($sourceFieldKey);
+            if (is_array($localizedStorageKey)) {
+                $baseFieldKey = (string) ($localizedStorageKey['fieldKey'] ?? '');
+                $fieldConfig = $categoryConfig[$baseFieldKey] ?? null;
+                if (!is_array($fieldConfig)) {
+                    continue;
+                }
+
+                if (($localizedStorageKey['type'] ?? '') === 'state') {
+                    $normalized[$category][$sourceFieldKey] = !empty($rawValue) ? '1' : '0';
+                    continue;
+                }
+
+                if ($category === 'advanced' && in_array($baseFieldKey, ['custom_css', 'custom_head_code', 'custom_footer_code'], true)) {
+                    $fieldConfig['allow_raw'] = true;
+                }
+
+                $fieldType = (string) ($fieldConfig['type'] ?? 'text');
+                $normalized[$category][$sourceFieldKey] = phinit_normalize_customizer_post_value($fieldType, $rawValue, $fieldConfig);
+                continue;
+            }
+
             $normalizedFieldKey = $sourceFieldKey;
             if ($category === 'advanced' && $normalizedFieldKey === 'custom_header_code') {
                 $normalizedFieldKey = 'custom_head_code';
@@ -442,7 +538,7 @@ function phinit_normalize_customizer_import_data(array $config, array $importDat
  * @param array<string, array<string, string>> $normalizedSettings
  * @return array<string, array{before: string, after: string}>
  */
-function phinit_collect_advanced_import_changes(array $normalizedSettings, ThemeCustomizer $customizer): array
+function phinit_collect_advanced_import_changes(array $normalizedSettings, ThemeCustomizer $customizer, string $editorLocale = 'de'): array
 {
     $changes = [];
 
@@ -456,7 +552,7 @@ function phinit_collect_advanced_import_changes(array $normalizedSettings, Theme
             continue;
         }
 
-        $before = (string) $customizer->get('advanced', $fieldKey, '');
+        $before = (string) phinit_customizer_value('advanced', $fieldKey, '', $editorLocale);
         $after = (string) $advancedSettings[$fieldKey];
         if ($before === $after) {
             continue;
@@ -778,6 +874,337 @@ function phinit_get_customizer_storage_tab(array $config, string $activeSection,
     return $fallbackTab;
 }
 
+function phinit_normalize_customizer_editor_locale(string $locale, string $fallback = 'de'): string
+{
+    $resolved = strtolower(trim($locale));
+    if (in_array($resolved, ['de', 'en'], true)) {
+        return $resolved;
+    }
+
+    return in_array($fallback, ['de', 'en'], true) ? $fallback : 'de';
+}
+
+function phinit_get_customizer_default_content_locale(): string
+{
+    $configured = function_exists('phinit_default_locale')
+        ? strtolower(trim((string) phinit_default_locale()))
+        : 'de';
+
+    return in_array($configured, ['de', 'en'], true) ? $configured : 'de';
+}
+
+function phinit_get_customizer_locale_value_key(string $locale, string $fieldKey): string
+{
+    return '__locale_' . $locale . '__' . $fieldKey;
+}
+
+function phinit_get_customizer_locale_state_key(string $locale, string $fieldKey): string
+{
+    return '__locale_' . $locale . '__set__' . $fieldKey;
+}
+
+function phinit_customizer_is_menu_editor_locale(string $editorLocale): bool
+{
+    return phinit_normalize_customizer_editor_locale($editorLocale) === 'en';
+}
+
+/**
+ * @return list<string>
+ */
+function phinit_get_customizer_menu_field_keys(): array
+{
+    return [
+        'primary_menu_items',
+        'quicklinks_menu_items',
+        'footer_topics_menu_items',
+        'footer_pages_menu_items',
+        'footer_legal_menu_items',
+    ];
+}
+
+function phinit_is_customizer_menu_field_key(string $fieldKey): bool
+{
+    return in_array($fieldKey, phinit_get_customizer_menu_field_keys(), true);
+}
+
+/**
+ * @param array<string, mixed> $fieldConfig
+ */
+function phinit_is_customizer_menu_field_config(array $fieldConfig): bool
+{
+    return (string) ($fieldConfig['type'] ?? 'text') === 'menu_tree';
+}
+
+/**
+ * @return array<string, string>
+ */
+function phinit_get_customizer_menu_field_slug_map(string $editorLocale): array
+{
+    if (!phinit_customizer_is_menu_editor_locale($editorLocale)) {
+        return [];
+    }
+
+    return [
+        'primary_menu_items' => 'primary_en',
+        'quicklinks_menu_items' => 'quicklinks_en',
+        'footer_topics_menu_items' => 'footer-topics_en',
+        'footer_pages_menu_items' => 'footer-pages_en',
+        'footer_legal_menu_items' => 'footer_en',
+    ];
+}
+
+/**
+ * @param array<int, mixed> $items
+ * @return array<int, mixed>
+ */
+function phinit_normalize_customizer_menu_tree(array $items): array
+{
+    $normalized = [];
+
+    foreach ($items as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+
+        $label = trim(strip_tags((string) ($item['label'] ?? '')));
+        if ($label === '') {
+            continue;
+        }
+
+        $url = trim((string) ($item['url'] ?? ''));
+        $normalizedLink = phinit_normalize_customizer_link_value($url);
+        if ($normalizedLink === null) {
+            $normalizedLink = '';
+        }
+
+        $entry = [
+            'label' => $label,
+            'url' => $normalizedLink,
+        ];
+
+        $childrenRaw = $item['children'] ?? null;
+        if (is_array($childrenRaw)) {
+            $children = phinit_normalize_customizer_menu_tree($childrenRaw);
+            if ($children !== []) {
+                $entry['children'] = $children;
+            }
+        }
+
+        $normalized[] = $entry;
+    }
+
+    return $normalized;
+}
+
+/**
+ * @param array<int, mixed> $items
+ * @return list<string>
+ */
+function phinit_serialize_customizer_menu_tree_lines(array $items, int $depth = 0): array
+{
+    $lines = [];
+    $indent = str_repeat('  ', max(0, $depth));
+
+    foreach ($items as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+
+        $label = trim((string) ($item['label'] ?? ''));
+        if ($label === '') {
+            continue;
+        }
+
+        $url = trim((string) ($item['url'] ?? ''));
+        $lines[] = $indent . $label . ' | ' . $url;
+
+        if (isset($item['children']) && is_array($item['children'])) {
+            $lines = array_merge($lines, phinit_serialize_customizer_menu_tree_lines($item['children'], $depth + 1));
+        }
+    }
+
+    return $lines;
+}
+
+/**
+ * @param array<int, mixed> $items
+ */
+function phinit_serialize_customizer_menu_tree(array $items): string
+{
+    $normalizedItems = phinit_normalize_customizer_menu_tree($items);
+
+    return implode("\n", phinit_serialize_customizer_menu_tree_lines($normalizedItems));
+}
+
+/**
+ * @return array<int, mixed>
+ */
+function phinit_parse_customizer_menu_tree(string $rawValue): array
+{
+    $root = [];
+    $stack = [
+        ['depth' => -1, 'children' => &$root],
+    ];
+
+    $lines = preg_split('/\R/u', str_replace("\t", '  ', $rawValue)) ?: [];
+    foreach ($lines as $line) {
+        $line = rtrim((string) $line);
+        if ($line === '') {
+            continue;
+        }
+
+        $leadingSpaces = strlen($line) - strlen(ltrim($line, ' '));
+        $depth = max(0, intdiv($leadingSpaces, 2));
+        $content = trim((string) substr($line, $leadingSpaces));
+        if ($content === '') {
+            continue;
+        }
+
+        $parts = explode('|', $content, 2);
+        $label = trim(strip_tags((string) ($parts[0] ?? '')));
+        if ($label === '') {
+            continue;
+        }
+
+        $urlInput = trim((string) ($parts[1] ?? ''));
+        $normalizedLink = phinit_normalize_customizer_link_value($urlInput);
+        if ($normalizedLink === null) {
+            $normalizedLink = '';
+        }
+
+        while (count($stack) > 1 && (int) ($stack[count($stack) - 1]['depth'] ?? 0) >= $depth) {
+            array_pop($stack);
+        }
+
+        $parentIndex = count($stack) - 1;
+        $parentChildren = &$stack[$parentIndex]['children'];
+        $parentChildren[] = [
+            'label' => $label,
+            'url' => $normalizedLink,
+            'children' => [],
+        ];
+
+        $newIndex = count($parentChildren) - 1;
+        $stack[] = [
+            'depth' => $depth,
+            'children' => &$parentChildren[$newIndex]['children'],
+        ];
+    }
+
+    return phinit_normalize_customizer_menu_tree($root);
+}
+
+/**
+ * @return array<int, mixed>
+ */
+function phinit_get_customizer_menu_items_by_slug(string $menuSlug): array
+{
+    try {
+        $items = ThemeManager::instance()->getMenu($menuSlug);
+    } catch (\Throwable) {
+        $items = [];
+    }
+
+    return is_array($items) ? phinit_normalize_customizer_menu_tree($items) : [];
+}
+
+function phinit_get_customizer_menu_field_value(string $fieldKey, string $editorLocale, string $default = ''): string
+{
+    if (!phinit_customizer_is_menu_editor_locale($editorLocale)) {
+        return $default;
+    }
+
+    $slugMap = phinit_get_customizer_menu_field_slug_map($editorLocale);
+    $menuSlug = $slugMap[$fieldKey] ?? '';
+    if ($menuSlug === '') {
+        return $default;
+    }
+
+    $serialized = phinit_serialize_customizer_menu_tree(phinit_get_customizer_menu_items_by_slug($menuSlug));
+
+    return $serialized !== '' ? $serialized : $default;
+}
+
+function phinit_save_customizer_menus_for_locale(string $editorLocale): bool
+{
+    if (!phinit_customizer_is_menu_editor_locale($editorLocale)) {
+        return true;
+    }
+
+    $slugMap = phinit_get_customizer_menu_field_slug_map($editorLocale);
+    if ($slugMap === []) {
+        return true;
+    }
+
+    try {
+        $themeManager = ThemeManager::instance();
+    } catch (\Throwable) {
+        return false;
+    }
+
+    $allSaved = true;
+    foreach ($slugMap as $fieldKey => $menuSlug) {
+        $rawValue = phinit_input_string($_POST, 'menus_' . $fieldKey, '', 20000);
+        $parsedItems = phinit_parse_customizer_menu_tree((string) $rawValue);
+
+        try {
+            $saved = $themeManager->saveMenu($menuSlug, $parsedItems);
+            if (!$saved) {
+                $allSaved = false;
+            }
+        } catch (\Throwable) {
+            $allSaved = false;
+        }
+    }
+
+    return $allSaved;
+}
+
+function phinit_import_customizer_menu_field_for_locale(string $fieldKey, string $rawValue, string $editorLocale): bool
+{
+    if (!phinit_customizer_is_menu_editor_locale($editorLocale)) {
+        return true;
+    }
+
+    $slugMap = phinit_get_customizer_menu_field_slug_map($editorLocale);
+    $menuSlug = $slugMap[$fieldKey] ?? '';
+    if ($menuSlug === '') {
+        return true;
+    }
+
+    try {
+        $themeManager = ThemeManager::instance();
+        $parsedItems = phinit_parse_customizer_menu_tree($rawValue);
+
+        return (bool) $themeManager->saveMenu($menuSlug, $parsedItems);
+    } catch (\Throwable) {
+        return false;
+    }
+}
+
+function phinit_set_customizer_field_for_locale(
+    ThemeCustomizer $customizer,
+    string $storageTab,
+    string $fieldKey,
+    string $value,
+    string $defaultValue,
+    string $editorLocale
+): bool {
+    $defaultLocale = phinit_get_customizer_default_content_locale();
+    if ($editorLocale === $defaultLocale) {
+        return $customizer->set($storageTab, $fieldKey, $value);
+    }
+
+    $stateKey = phinit_get_customizer_locale_state_key($editorLocale, $fieldKey);
+    $valueKey = phinit_get_customizer_locale_value_key($editorLocale, $fieldKey);
+    $isCustomized = $value !== $defaultValue;
+
+    $ok = $customizer->set($storageTab, $stateKey, $isCustomized ? '1' : '0');
+    $ok = $customizer->set($storageTab, $valueKey, $value) && $ok;
+
+    return $ok;
+}
+
 function phinit_get_customizer_posted_field_value(string $postedSection, string $storageSection, string $fieldKey, string $fieldType): mixed
 {
     $postedFieldName = $postedSection . '_' . $fieldKey;
@@ -830,10 +1257,11 @@ function phinit_verify_customizer_csrf_token(mixed $token): bool
  * @param array<string, mixed> $config
  * @return array{alertMsg: ?string, alertType: string, activeTab: string}
  */
-function phinit_handle_customizer_post(array $config, ThemeCustomizer $customizer, string $activeTab): array
+function phinit_handle_customizer_post(array $config, ThemeCustomizer $customizer, string $activeTab, string $editorLocale = 'de'): array
 {
     $alertMsg = null;
     $alertType = 'success';
+    $resolvedEditorLocale = phinit_normalize_customizer_editor_locale($editorLocale, phinit_get_customizer_default_content_locale());
 
     if (phinit_request_method() !== 'POST') {
         return [
@@ -863,7 +1291,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
         $advancedChanges = [];
         if ($resetTab === 'advanced') {
             foreach (phinit_get_advanced_raw_code_fields() as $fieldKey) {
-                $before = (string) $customizer->get('advanced', $fieldKey, '');
+                $before = (string) phinit_customizer_value('advanced', $fieldKey, '', $resolvedEditorLocale);
                 $defaultValue = (string) (($config[$resetTab]['sections'][$fieldKey]['default'] ?? ''));
                 if ($before === $defaultValue) {
                     continue;
@@ -878,12 +1306,23 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
 
         $ok = true;
         foreach ($config[$resetTab]['sections'] as $fieldKey => $fieldConfig) {
+            if (is_array($fieldConfig) && phinit_is_customizer_menu_field_config($fieldConfig)) {
+                continue;
+            }
+
             $defaultValue = $fieldConfig['default'] ?? '';
             $storageTab = (string) ($fieldConfig['storageTab'] ?? $resetStorageTab);
             if (is_bool($defaultValue)) {
                 $defaultValue = $defaultValue ? '1' : '0';
             }
-            if (!$customizer->set($storageTab, (string) $fieldKey, (string) $defaultValue)) {
+            if (!phinit_set_customizer_field_for_locale(
+                $customizer,
+                $storageTab,
+                (string) $fieldKey,
+                (string) $defaultValue,
+                (string) $defaultValue,
+                $resolvedEditorLocale
+            )) {
                 $ok = false;
             }
         }
@@ -894,7 +1333,8 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
 
         return [
             'alertMsg' => $ok
-                ? 'Tab &bdquo;' . htmlspecialchars((string) ($config[$resetTab]['title'] ?? $resetTab), ENT_QUOTES) . '&ldquo; auf Standardwerte zurückgesetzt.'
+                ? 'Tab &bdquo;' . htmlspecialchars((string) ($config[$resetTab]['title'] ?? $resetTab), ENT_QUOTES) . '&ldquo; für '
+                    . strtoupper($resolvedEditorLocale) . ' auf Standardwerte zurückgesetzt.'
                 : 'Einige Felder konnten nicht zurückgesetzt werden.',
             'alertType' => $ok ? 'success' : 'danger',
             'activeTab' => $resetTab,
@@ -925,7 +1365,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             $value = phinit_normalize_customizer_post_value($fieldType, $rawValue, is_array($fieldConfig) ? $fieldConfig : []);
 
             if (phinit_is_advanced_raw_code_field($saveTab, (string) $fieldKey)) {
-                $before = (string) $customizer->get($storageTab, (string) $fieldKey, '');
+                $before = (string) phinit_customizer_value($storageTab, (string) $fieldKey, '', $resolvedEditorLocale);
                 if ($before !== $value) {
                     $advancedChanges[(string) $fieldKey] = [
                         'before' => $before,
@@ -957,8 +1397,15 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             }
         }
 
+        if ($saveTab === 'menus' && !phinit_save_customizer_menus_for_locale($resolvedEditorLocale)) {
+            $ok = false;
+        }
+
         foreach ($config[$saveTab]['sections'] as $fieldKey => $fieldConfig) {
             $fieldType = (string) ($fieldConfig['type'] ?? 'text');
+            if (is_array($fieldConfig) && phinit_is_customizer_menu_field_config($fieldConfig)) {
+                continue;
+            }
             $storageTab = (string) ($fieldConfig['storageTab'] ?? $saveStorageTab);
 
             if (phinit_is_advanced_raw_code_field($saveTab, (string) $fieldKey)) {
@@ -967,8 +1414,19 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
 
             $rawValue = phinit_get_customizer_posted_field_value($saveTab, $storageTab, (string) $fieldKey, $fieldType);
             $value = phinit_normalize_customizer_post_value($fieldType, $rawValue, is_array($fieldConfig) ? $fieldConfig : []);
+            $defaultValue = $fieldConfig['default'] ?? '';
+            if (is_bool($defaultValue)) {
+                $defaultValue = $defaultValue ? '1' : '0';
+            }
 
-            if (!$customizer->set($storageTab, (string) $fieldKey, $value)) {
+            if (!phinit_set_customizer_field_for_locale(
+                $customizer,
+                $storageTab,
+                (string) $fieldKey,
+                $value,
+                (string) $defaultValue,
+                $resolvedEditorLocale
+            )) {
                 $ok = false;
             }
         }
@@ -979,7 +1437,8 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
 
         return [
             'alertMsg' => $ok
-                ? 'Einstellungen für &bdquo;' . htmlspecialchars((string) ($config[$saveTab]['title'] ?? $saveTab), ENT_QUOTES) . '&ldquo; gespeichert.'
+                ? 'Einstellungen für &bdquo;' . htmlspecialchars((string) ($config[$saveTab]['title'] ?? $saveTab), ENT_QUOTES)
+                    . '&ldquo; in ' . strtoupper($resolvedEditorLocale) . ' gespeichert.'
                 : 'Einige Einstellungen konnten nicht gespeichert werden.',
             'alertType' => $ok ? 'success' : 'danger',
             'activeTab' => $saveTab,
@@ -1038,7 +1497,7 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
             $normalizedImport = is_array($data)
                 ? phinit_normalize_customizer_import_data($config, $data, $customizer)
                 : [];
-            $advancedImportChanges = phinit_collect_advanced_import_changes($normalizedImport, $customizer);
+            $advancedImportChanges = phinit_collect_advanced_import_changes($normalizedImport, $customizer, $resolvedEditorLocale);
 
             if ($advancedImportChanges !== []) {
                 if (!phinit_customizer_can_manage_advanced_code()) {
@@ -1062,7 +1521,60 @@ function phinit_handle_customizer_post(array $config, ThemeCustomizer $customize
                 }
             }
 
-            $importOk = $normalizedImport !== [] && $customizer->setMultiple($normalizedImport);
+            $importOk = $normalizedImport !== [];
+            if ($importOk) {
+                foreach ($normalizedImport as $category => $fields) {
+                    if (!is_array($fields)) {
+                        continue;
+                    }
+
+                    foreach ($fields as $fieldKey => $value) {
+                        $storageKey = (string) $fieldKey;
+                        $storageValue = (string) $value;
+                        $parsedLocaleStorageKey = phinit_parse_customizer_locale_storage_key($storageKey);
+                        if (is_array($parsedLocaleStorageKey)) {
+                            $localeStorageFieldKey = (string) ($parsedLocaleStorageKey['fieldKey'] ?? '');
+                            if (phinit_is_customizer_menu_field_key($localeStorageFieldKey)) {
+                                continue;
+                            }
+
+                            if (!$customizer->set((string) $category, $storageKey, $storageValue)) {
+                                $importOk = false;
+                            }
+                            continue;
+                        }
+
+                        $fieldConfig = $config[(string) $category]['sections'][$storageKey] ?? null;
+                        if (!is_array($fieldConfig)) {
+                            continue;
+                        }
+
+                        if (phinit_is_customizer_menu_field_config($fieldConfig)) {
+                            if (!phinit_import_customizer_menu_field_for_locale($storageKey, $storageValue, $resolvedEditorLocale)) {
+                                $importOk = false;
+                            }
+                            continue;
+                        }
+
+                        $storageTab = (string) ($fieldConfig['storageTab'] ?? $category);
+                        $defaultValue = $fieldConfig['default'] ?? '';
+                        if (is_bool($defaultValue)) {
+                            $defaultValue = $defaultValue ? '1' : '0';
+                        }
+
+                        if (!phinit_set_customizer_field_for_locale(
+                            $customizer,
+                            $storageTab,
+                            $storageKey,
+                            $storageValue,
+                            (string) $defaultValue,
+                            $resolvedEditorLocale
+                        )) {
+                            $importOk = false;
+                        }
+                    }
+                }
+            }
 
             if ($importOk && $advancedImportChanges !== []) {
                 phinit_log_advanced_code_event('import', $customizer, $advancedImportChanges);

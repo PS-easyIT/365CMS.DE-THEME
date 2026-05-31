@@ -26,8 +26,8 @@ $db          = \CMS\Database::instance();
 $prefix      = $db->getPrefix();
 $siteUrl     = SITE_URL;
 $activePage  = 'dashboard';
-$themeCustomizer = ThemeCustomizer::instance();
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$themeCustomizer = phinit_customizer_locale_proxy(ThemeCustomizer::instance(), $currentLocale);
 
 $coreMemberSettings = [];
 try {

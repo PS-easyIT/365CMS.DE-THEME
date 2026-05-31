@@ -12,10 +12,11 @@ if (!defined('ABSPATH')) {
 
 $siteUrl = SITE_URL;
 $pageContent = '';
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 // ── Customizer-Einstellungen (Seiten-Ansicht) ──────────────────────────────
 try {
-    $_pc = \CMS\Services\ThemeCustomizer::instance();
+    $_pc = phinit_customizer_locale_proxy(\CMS\Services\ThemeCustomizer::instance(), $currentLocale);
     $_pg_showTitle   = filter_var($_pc->get('pages', 'show_page_title',        true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_showHero    = filter_var($_pc->get('pages', 'show_page_hero',         true),  FILTER_VALIDATE_BOOLEAN);
     $_pg_showDate    = filter_var($_pc->get('pages', 'show_page_updated_date', true),  FILTER_VALIDATE_BOOLEAN);
@@ -100,7 +101,6 @@ if ($pageTitleTocEnabled && !$isHubSitePage && !$isCookieConsentPage && !$isImag
     }
 }
 
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $hubSettings = is_array($page['hub_settings'] ?? null) ? $page['hub_settings'] : [];
 $hubAuthorBoxEnabled = $isHubSitePage && filter_var($hubSettings['hub_show_author_box'] ?? false, FILTER_VALIDATE_BOOLEAN);
 $hubAuthorBoxContext = (!$pageNotFound && $hubAuthorBoxEnabled && function_exists('phinit_build_author_box_context'))

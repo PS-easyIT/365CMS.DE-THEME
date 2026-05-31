@@ -202,7 +202,8 @@ function phinit_get_homepage_view_model(): array
     ];
 
     try {
-        $customizer = ThemeCustomizer::instance();
+        $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+        $customizer = phinit_customizer_locale_proxy(ThemeCustomizer::instance(), $currentLocale);
         $siteUrl = defined('SITE_URL') ? (string) SITE_URL : '';
 
         $featuredSectionTitle = $customizer->get('homepage', 'article_list_label', null);
@@ -850,7 +851,8 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
 function phinit_get_homepage_feed_sections(): array
 {
     try {
-        $customizer = ThemeCustomizer::instance();
+        $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+        $customizer = phinit_customizer_locale_proxy(ThemeCustomizer::instance(), $currentLocale);
         $showFeeds = filter_var($customizer->get('homepage', 'show_feed_section', true), FILTER_VALIDATE_BOOLEAN);
         $feed1Id = (int) $customizer->get('homepage', 'feed1_channel_id', 0);
         $feed2Id = (int) $customizer->get('homepage', 'feed2_channel_id', 0);

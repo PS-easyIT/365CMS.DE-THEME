@@ -124,6 +124,25 @@ $customizerConfig = new CMS_Phinit_Customizer_Config_Snapshot($config, is_array(
 $config = $customizerConfig->categories;
 $tabGroups = $customizerConfig->tabGroups;
 
+if ($editorUiLocale !== 'en') {
+    unset($config['menus'], $tabGroups['menus']);
+
+    $filteredNavGroups = [];
+    foreach (($schema['navGroups'] ?? []) as $groupLabel => $tabs) {
+        if (!is_array($tabs)) {
+            $filteredNavGroups[$groupLabel] = $tabs;
+            continue;
+        }
+
+        $filteredTabs = array_values(array_filter(
+            array_map('strval', $tabs),
+            static fn(string $tab): bool => $tab !== 'menus'
+        ));
+        $filteredNavGroups[$groupLabel] = $filteredTabs;
+    }
+    $schema['navGroups'] = $filteredNavGroups;
+}
+
 if ($editorUiLocale === 'en') {
     $tabTitleMap = [
         'colors' => '🎨 Colors',
@@ -131,6 +150,7 @@ if ($editorUiLocale === 'en') {
         'layout' => '📐 General layout',
         'language' => '🌐 Language',
         'header' => '🖥️ Header & navigation',
+        'menus' => '🧭 Menus',
         'footer' => '🔻 Footer',
         'homepage-sidebar' => '📚 Homepage sidebar',
         'homepage-layout' => '🏠 Homepage · Structure',
@@ -180,7 +200,7 @@ if (!$customizerConfig->hasTab($activeTab)) {
 }
 
 // ── 3. POST-Handler ──────────────────────────────────────────────────────────
-$postResult = phinit_handle_customizer_post($config, $customizer, $activeTab);
+$postResult = phinit_handle_customizer_post($config, $customizer, $activeTab, (string) $editorUiLocale);
 $alertMsg = $postResult['alertMsg'];
 $alertType = $postResult['alertType'];
 $activeTab = $postResult['activeTab'];

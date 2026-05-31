@@ -77,7 +77,7 @@ try {
 
 // Customizer-Einstellungen
 try {
-    $_bc  = \CMS\Services\ThemeCustomizer::instance();
+    $_bc  = phinit_customizer_locale_proxy(\CMS\Services\ThemeCustomizer::instance(), $currentLocale);
     $_bShowExcerpt = filter_var($_bc->get('homepage', 'show_article_excerpt', true), FILTER_VALIDATE_BOOLEAN);
     $_bShowMeta    = filter_var($_bc->get('homepage', 'show_article_meta', true), FILTER_VALIDATE_BOOLEAN);
     $_bThumbW      = max(80, (int)$_bc->get('homepage', 'article_thumb_width', 190));

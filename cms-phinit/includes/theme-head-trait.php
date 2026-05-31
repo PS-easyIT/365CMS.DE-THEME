@@ -189,7 +189,8 @@ trait CMS_Phinit_Theme_Head_Trait
         $resolved = true;
 
         try {
-            $cz = \CMS\Services\ThemeCustomizer::instance();
+            $locale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+            $cz = phinit_customizer_locale_proxy(\CMS\Services\ThemeCustomizer::instance(), $locale);
         } catch (\Throwable) {
             return $settings;
         }

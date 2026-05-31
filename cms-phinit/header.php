@@ -147,7 +147,24 @@ if ($isLoggedIn && $currentUser !== null) {
 }
 
 try {
-    $customizer    = \CMS\Services\ThemeCustomizer::instance();
+    $customizerInstance = \CMS\Services\ThemeCustomizer::instance();
+    $customizer = new class($customizerInstance, $_currentLocale) {
+        public function __construct(
+            private readonly object $inner,
+            private readonly string $locale
+        ) {
+        }
+
+        public function get(string $category, string $key, mixed $default = ''): mixed
+        {
+            return phinit_customizer_value($category, $key, $default, $this->locale);
+        }
+
+        public function __call(string $method, array $arguments): mixed
+        {
+            return $this->inner->{$method}(...$arguments);
+        }
+    };
 
     $_logoUrl       = $customizer->get('header', 'logo_url', '');
     $_logoPart1     = $customizer->get('header', 'logo_text_part1', 'PHIN');

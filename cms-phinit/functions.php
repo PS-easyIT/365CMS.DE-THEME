@@ -78,9 +78,12 @@ final class CMS_Phinit_Theme
 
         // Menüpositionen
         \CMS\Hooks::addFilter('register_menu_locations', [$this, 'registerMenuLocations']);
+        \CMS\Hooks::addAction('init', [$this, 'registerNavMenus'], 10);
+        \CMS\Hooks::addAction('cms_init', [$this, 'registerNavMenus'], 10);
         \CMS\Hooks::addFilter('local_font_slugs', [$this, 'registerRequiredLocalFonts']);
 
-        // Standardmenüs beim ersten Start anlegen
+        // Standardmenüs und EN-Backfill defensiv anlegen (idempotent)
+        \CMS\Hooks::addAction('init', [$this, 'seedDefaultMenus'], 20);
         \CMS\Hooks::addAction('cms_init', [$this, 'seedDefaultMenus'], 20);
         \CMS\Hooks::addAction('cms_init', [$this, 'seedServicesHubSite'], 30);
 
