@@ -3,10 +3,44 @@
 .phinit-customizer__color-text { max-width: 130px; }
 .phinit-customizer__number-input { max-width: 140px; }
 .phinit-customizer__sticky-card { top: 1rem; }
+.phinit-customizer__sidebar-nav-card .card-body { max-height: calc(100vh - 14rem); overflow: auto; }
 .phinit-customizer__nav-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; background: #f8fafc; border: none; }
-.phinit-customizer__nav-link { font-size: .875rem; }
+.phinit-customizer__group-nav { display: grid; gap: 0; }
+.phinit-customizer__menu-group { border-top: 1px solid #e2e8f0; }
+.phinit-customizer__menu-group:first-child { border-top: 0; }
+.phinit-customizer__menu-toggle {
+    width: 100%;
+    border: 0;
+    background: #f8fafc;
+    color: #334155;
+    font-size: .78rem;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: .58rem .75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.phinit-customizer__menu-toggle[aria-expanded="true"] .phinit-customizer__menu-group-icon { transform: rotate(0); }
+.phinit-customizer__menu-toggle[aria-expanded="false"] .phinit-customizer__menu-group-icon { transform: rotate(-90deg); }
+.phinit-customizer__menu-group-icon, .phinit-customizer__group-toggle-icon { transition: transform .16s ease; }
+.phinit-customizer__menu-body { border-top: 1px solid #e2e8f0; background: #fff; }
+.phinit-customizer__menu-list { list-style: none; margin: 0; padding: .4rem 0; }
+.phinit-customizer__menu-list li { margin: 0; }
+.phinit-customizer__nav-link {
+    font-size: .865rem;
+    display: block;
+    padding: .42rem .78rem;
+    color: #334155;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+}
+.phinit-customizer__nav-link:hover { background: #f8fafc; color: #0f172a; }
+.phinit-customizer__nav-link.active { background: #e2e8f0; color: #0f172a; border-left-color: #2563eb; font-weight: 600; }
 .phinit-customizer__export-title { font-size: .85rem; }
 .phinit-customizer__unsaved-hint { display: none; font-size: .85rem; }
+.phinit-customizer__unsaved-hint.is-visible { display: inline; }
 .phinit-customizer__shortcut-hint { font-size: .8rem; }
 .phinit-customizer__preset-card { background: #1e293b; border-color: #334155; }
 .phinit-customizer__preset-label { font-size: .8rem; font-weight: 600; color: #94a3b8; }
@@ -39,3 +73,27 @@
 .phinit-widget-order__label { font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .phinit-widget-order__actions { display: flex; gap: .35rem; }
 .phinit-widget-order__actions .btn:disabled { opacity: .38; cursor: not-allowed; }
+.phinit-customizer__group-card .card-header { background: #f8fafc; }
+.phinit-customizer__group-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    padding: .15rem 0;
+    font-weight: 700;
+    color: #0f172a;
+}
+.phinit-customizer__group-toggle[aria-expanded="false"] .phinit-customizer__group-toggle-icon { transform: rotate(-90deg); }
+.phinit-customizer__group-panel[hidden] { display: none !important; }
+.phinit-customizer__menu-toggle:focus-visible,
+.phinit-customizer__group-toggle:focus-visible,
+.phinit-customizer__nav-link:focus-visible,
+.phinit-customizer__toolbar-btn:focus-visible,
+.phinit-customizer__toolbar-link:focus-visible,
+.phinit-customizer__device-btn:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 4px;
+}

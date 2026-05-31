@@ -11,8 +11,25 @@ if (!function_exists('get_theme_part')) {
      */
     function get_theme_part(string $part, array $vars = []): void
     {
-        $file = CMS_PHINIT_THEME_DIR . $part . '.php';
-        if (!file_exists($file)) {
+        $normalizedPart = trim(str_replace('\\', '/', $part));
+        if ($normalizedPart === '' || str_contains($normalizedPart, '..') || preg_match('#^[a-z0-9/_-]+$#i', $normalizedPart) !== 1) {
+            return;
+        }
+
+        $themeRoot = realpath(CMS_PHINIT_THEME_DIR);
+        if ($themeRoot === false) {
+            return;
+        }
+
+        $file = $themeRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $normalizedPart) . '.php';
+        $resolvedFile = realpath($file);
+        if ($resolvedFile === false || !is_file($resolvedFile)) {
+            return;
+        }
+
+        $normalizedThemeRoot = rtrim(str_replace('\\', '/', $themeRoot), '/');
+        $normalizedResolvedFile = str_replace('\\', '/', $resolvedFile);
+        if (!str_starts_with($normalizedResolvedFile, $normalizedThemeRoot . '/')) {
             return;
         }
 
@@ -32,7 +49,7 @@ if (!function_exists('get_theme_part')) {
             include $__phinitFile;
         };
 
-        $render($file, $vars);
+        $render($resolvedFile, $vars);
     }
 }
 
@@ -1398,25 +1415,42 @@ if (!function_exists('phinit_resolve_request_context')) {
     {
         $path = trim((string) ($requestPath ?? phinit_current_request_path()));
         $path = $path !== '' ? $path : '/';
+        $defaultLocale = function_exists('phinit_default_locale') ? phinit_default_locale() : 'de';
 
         $fallback = [
             'base_uri' => $path,
-            'locale' => 'de',
+            'locale' => $defaultLocale,
             'is_localized' => false,
         ];
 
         try {
             $context = \CMS\Services\ContentLocalizationService::getInstance()->resolveRequestContext($path);
             $baseUri = trim((string) ($context['base_uri'] ?? $path));
-            $locale = strtolower(trim((string) ($context['locale'] ?? 'de')));
+            $locale = strtolower(trim((string) ($context['locale'] ?? $defaultLocale)));
 
             return [
                 'base_uri' => $baseUri !== '' ? $baseUri : '/',
-                'locale' => $locale !== '' ? $locale : 'de',
+                'locale' => $locale !== '' ? $locale : $defaultLocale,
                 'is_localized' => !empty($context['is_localized']),
             ];
         } catch (\Throwable) {
-            return $fallback;
+            $detectedLocale = function_exists('phinit_detect_locale_from_path')
+                ? phinit_detect_locale_from_path($path, $defaultLocale)
+                : $defaultLocale;
+            $normalizedPath = '/' . ltrim((string) (parse_url($path, PHP_URL_PATH) ?? $path), '/');
+            $normalizedPath = preg_replace('#/+#', '/', $normalizedPath) ?? '/';
+            $baseUri = $normalizedPath;
+
+            if ($detectedLocale === 'en' && preg_match('#^/en(?:/|$)#i', $normalizedPath) === 1) {
+                $baseUri = (string) preg_replace('#^/en(?=/|$)#i', '', $normalizedPath);
+                $baseUri = $baseUri !== '' ? $baseUri : '/';
+            }
+
+            return [
+                'base_uri' => $baseUri,
+                'locale' => $detectedLocale,
+                'is_localized' => $detectedLocale !== $defaultLocale,
+            ];
         }
     }
 }
@@ -1510,11 +1544,11 @@ if (!function_exists('phinit_get_current_locale')) {
             return $locale;
         }
 
-        $locale = 'de';
+        $locale = function_exists('phinit_default_locale') ? phinit_default_locale() : 'de';
 
         try {
             $context = phinit_resolve_request_context(phinit_current_request_path());
-            $resolvedLocale = strtolower(trim((string) ($context['locale'] ?? 'de')));
+            $resolvedLocale = strtolower(trim((string) ($context['locale'] ?? $locale)));
             if ($resolvedLocale !== '') {
                 $locale = $resolvedLocale;
             }
@@ -1522,6 +1556,43 @@ if (!function_exists('phinit_get_current_locale')) {
         }
 
         return $locale;
+    }
+}
+
+if (!function_exists('phinit_default_locale')) {
+    function phinit_default_locale(): string
+    {
+        static $defaultLocale = null;
+
+        if (is_string($defaultLocale) && $defaultLocale !== '') {
+            return $defaultLocale;
+        }
+
+        $defaultLocale = 'de';
+
+        try {
+            $configuredLocale = strtolower(trim((string) phinit_customizer_value('language', 'default_locale', 'de')));
+            if (in_array($configuredLocale, ['de', 'en'], true)) {
+                $defaultLocale = $configuredLocale;
+            }
+        } catch (\Throwable) {
+        }
+
+        return $defaultLocale;
+    }
+}
+
+if (!function_exists('phinit_detect_locale_from_path')) {
+    function phinit_detect_locale_from_path(string $path, string $fallback = 'de'): string
+    {
+        $normalizedPath = '/' . ltrim((string) (parse_url($path, PHP_URL_PATH) ?? $path), '/');
+        $normalizedPath = preg_replace('#/+#', '/', $normalizedPath) ?? '/';
+
+        if (preg_match('#^/en(?:/|$)#i', $normalizedPath) === 1) {
+            return 'en';
+        }
+
+        return in_array($fallback, ['de', 'en'], true) ? $fallback : 'de';
     }
 }
 
@@ -1556,6 +1627,115 @@ if (!function_exists('phinit_is_english_locale')) {
     function phinit_is_english_locale(?string $locale = null): bool
     {
         return strtolower(trim((string) ($locale ?? phinit_get_current_locale()))) === 'en';
+    }
+}
+
+if (!function_exists('phinit_localize_menu_label')) {
+    function phinit_localize_menu_label(string $label, ?string $locale = null): string
+    {
+        $resolvedLocale = strtolower(trim((string) ($locale ?? phinit_get_current_locale())));
+        $normalized = trim($label);
+        if ($normalized === '' || $resolvedLocale !== 'en') {
+            return $normalized;
+        }
+
+        if (str_contains($normalized, '|')) {
+            $parts = array_map(static fn(string $part): string => trim($part), explode('|', $normalized, 2));
+            if (count($parts) === 2 && $parts[1] !== '') {
+                return $parts[1];
+            }
+        }
+
+        $dictionary = [
+            'Startseite' => 'Home',
+            'Datenschutz' => 'Privacy',
+            'Datenschutz & DSGVO' => 'Privacy & GDPR',
+            'Über mich' => 'About me',
+            'Kontakt' => 'Contact',
+            'News' => 'News',
+            'IT-News' => 'IT news',
+            'Grundlagen' => 'Basics',
+            'Glossar' => 'Glossary',
+            'Rechtliches' => 'Legal',
+            'Themen' => 'Topics',
+            'Seiten' => 'Pages',
+            'Impressum' => 'Imprint',
+            'Schnelllinks' => 'Quick links',
+            'Quicklinks' => 'Quick links',
+            'Alle Beiträge' => 'All posts',
+            'Mehr erfahren' => 'Learn more',
+            'RSS-Feed' => 'RSS feed',
+            'AGB' => 'Terms',
+        ];
+
+        return $dictionary[$normalized] ?? $normalized;
+    }
+}
+
+if (!function_exists('phinit_localize_menu_items')) {
+    /**
+     * @param array<int,mixed> $items
+     * @return array<int,mixed>
+     */
+    function phinit_localize_menu_items(array $items, ?string $locale = null): array
+    {
+        $resolvedLocale = strtolower(trim((string) ($locale ?? phinit_get_current_locale())));
+        if (!in_array($resolvedLocale, ['de', 'en'], true)) {
+            $resolvedLocale = 'de';
+        }
+
+        foreach ($items as $index => $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $label = trim((string) ($item['label'] ?? ''));
+            $localizedLabelKey = 'label_' . $resolvedLocale;
+            if (isset($item[$localizedLabelKey]) && trim((string) $item[$localizedLabelKey]) !== '') {
+                $item['label'] = trim((string) $item[$localizedLabelKey]);
+            } elseif ($label !== '') {
+                $item['label'] = phinit_localize_menu_label($label, $resolvedLocale);
+            }
+
+            if (isset($item['children']) && is_array($item['children'])) {
+                $item['children'] = phinit_localize_menu_items($item['children'], $resolvedLocale);
+            }
+
+            $items[$index] = $item;
+        }
+
+        return $items;
+    }
+}
+
+if (!function_exists('phinit_get_menu_for_locale')) {
+    /**
+     * @return array<int,mixed>
+     */
+    function phinit_get_menu_for_locale(string $baseSlug, ?string $locale = null): array
+    {
+        $resolvedLocale = strtolower(trim((string) ($locale ?? phinit_get_current_locale())));
+        if (!in_array($resolvedLocale, ['de', 'en'], true)) {
+            $resolvedLocale = 'de';
+        }
+
+        $candidates = $resolvedLocale === 'en'
+            ? [$baseSlug . '_en', $baseSlug]
+            : [$baseSlug];
+
+        foreach ($candidates as $candidate) {
+            try {
+                $items = \CMS\ThemeManager::instance()->getMenu($candidate);
+            } catch (\Throwable) {
+                $items = [];
+            }
+
+            if (is_array($items) && $items !== []) {
+                return phinit_localize_menu_items($items, $resolvedLocale);
+            }
+        }
+
+        return [];
     }
 }
 
@@ -1703,12 +1883,54 @@ if (!function_exists('phinit_translation_catalog')) {
                 'menu_open' => 'Menü öffnen',
                 'mobile_navigation' => 'Mobile Navigation',
                 'mobile_search' => 'Mobilsuche',
+                'skip_to_content' => 'Zum Inhalt springen',
                 'switch_language' => 'Sprache wechseln',
                 'quicklinks' => 'Quicklinks',
+                'header_controls' => 'Header-Steuerung',
+                'editor_language' => 'Editor-Sprache',
+                'close' => 'Schließen',
                 'back_to_top' => 'Zum Seitenanfang',
                 'learn_more' => 'Mehr erfahren',
                 'consent_accept' => 'Einwilligen',
                 'consent_decline' => 'Ablehnen',
+                'toc_title' => 'Inhaltsverzeichnis',
+                'related_articles' => 'Ähnliche Artikel',
+                'follow_us' => 'Folge uns',
+                'tags' => 'Tags',
+                'sidebar' => 'Seitenleiste',
+                'article_toc_navigation' => 'Inhaltsverzeichnis des Artikels',
+                'share' => 'Teilen',
+                'comments' => 'Kommentare',
+                'leave_comment' => 'Kommentar hinterlassen',
+                'page_navigation' => 'Seitennavigation',
+                'menu_location_primary' => 'Hauptnavigation',
+                'menu_location_primary_en' => 'Hauptnavigation (Englisch)',
+                'menu_location_quicklinks' => 'Quicklinks (Sub-Navigation)',
+                'menu_location_quicklinks_en' => 'Quicklinks (Englisch)',
+                'menu_location_footer_topics' => 'Footer – Themen',
+                'menu_location_footer_topics_en' => 'Footer – Themen (Englisch)',
+                'menu_location_footer_pages' => 'Footer – Seiten',
+                'menu_location_footer_pages_en' => 'Footer – Seiten (Englisch)',
+                'menu_location_footer_legal' => 'Footer – Rechtliches',
+                'menu_location_footer_legal_en' => 'Footer – Rechtliches (Englisch)',
+                'theme_editor_pretitle' => 'Theme-Editor',
+                'theme_customizer_title' => 'Theme Customizer – CMS Phinit',
+                'theme_editor_live_preview' => 'Live-Vorschau',
+                'theme_editor_save' => 'Speichern',
+                'theme_editor_reset_tab' => 'Tab zurücksetzen',
+                'theme_editor_unsaved_changes' => 'Ungespeicherte Änderungen',
+                'theme_editor_save_shortcut' => 'Strg+S zum Speichern',
+                'theme_editor_confirm_change_title' => 'Änderung bestätigen',
+                'theme_editor_confirm_continue' => 'Möchtest du fortfahren?',
+                'theme_editor_cancel' => 'Abbrechen',
+                'theme_editor_continue' => 'Fortfahren',
+                'theme_editor_export_import' => 'Export / Import',
+                'theme_editor_export' => 'Exportieren',
+                'theme_editor_import' => 'Importieren',
+                'theme_editor_advanced_import_ack' => 'Import mit enthaltenem Custom-Code bewusst freigeben',
+                'theme_editor_menu_entries_title' => 'Menü-Einträge',
+                'theme_editor_menu_entries_note' => 'Menü-Einträge (Hauptmenü, Quicklinks, Footer-Menüs) werden im Menü-Editor verwaltet – hier nur Aussehen (Höhen, Farben, Sichtbarkeit).',
+                'theme_editor_open_menu_editor' => 'Menü-Editor öffnen',
                 'edit' => 'Bearbeiten',
                 'edit_hubsite' => 'Diese HubSite bearbeiten',
                 'edit_post' => 'Diesen Beitrag bearbeiten',
@@ -1777,12 +1999,54 @@ if (!function_exists('phinit_translation_catalog')) {
                 'menu_open' => 'Open menu',
                 'mobile_navigation' => 'Mobile navigation',
                 'mobile_search' => 'Mobile search',
+                'skip_to_content' => 'Skip to content',
                 'switch_language' => 'Switch language',
                 'quicklinks' => 'Quick links',
+                'header_controls' => 'Header controls',
+                'editor_language' => 'Editor language',
+                'close' => 'Close',
                 'back_to_top' => 'Back to top',
                 'learn_more' => 'Learn more',
                 'consent_accept' => 'Accept',
                 'consent_decline' => 'Decline',
+                'toc_title' => 'Table of contents',
+                'related_articles' => 'Related articles',
+                'follow_us' => 'Follow us',
+                'tags' => 'Tags',
+                'sidebar' => 'Sidebar',
+                'article_toc_navigation' => 'Table of contents for this article',
+                'share' => 'Share',
+                'comments' => 'Comments',
+                'leave_comment' => 'Leave a comment',
+                'page_navigation' => 'Page navigation',
+                'menu_location_primary' => 'Main navigation',
+                'menu_location_primary_en' => 'Main navigation (English)',
+                'menu_location_quicklinks' => 'Quick links (sub-navigation)',
+                'menu_location_quicklinks_en' => 'Quick links (English)',
+                'menu_location_footer_topics' => 'Footer - Topics',
+                'menu_location_footer_topics_en' => 'Footer - Topics (English)',
+                'menu_location_footer_pages' => 'Footer - Pages',
+                'menu_location_footer_pages_en' => 'Footer - Pages (English)',
+                'menu_location_footer_legal' => 'Footer - Legal',
+                'menu_location_footer_legal_en' => 'Footer - Legal (English)',
+                'theme_editor_pretitle' => 'Theme editor',
+                'theme_customizer_title' => 'Theme customizer - CMS Phinit',
+                'theme_editor_live_preview' => 'Live preview',
+                'theme_editor_save' => 'Save',
+                'theme_editor_reset_tab' => 'Reset tab',
+                'theme_editor_unsaved_changes' => 'Unsaved changes',
+                'theme_editor_save_shortcut' => 'Ctrl+S to save',
+                'theme_editor_confirm_change_title' => 'Confirm change',
+                'theme_editor_confirm_continue' => 'Do you want to continue?',
+                'theme_editor_cancel' => 'Cancel',
+                'theme_editor_continue' => 'Continue',
+                'theme_editor_export_import' => 'Export / Import',
+                'theme_editor_export' => 'Export',
+                'theme_editor_import' => 'Import',
+                'theme_editor_advanced_import_ack' => 'Allow importing included custom code',
+                'theme_editor_menu_entries_title' => 'Menu entries',
+                'theme_editor_menu_entries_note' => 'Menu entries (main menu, quick links, footer menus) are managed in the menu editor - only appearance (heights, colors, visibility) is configured here.',
+                'theme_editor_open_menu_editor' => 'Open menu editor',
                 'edit' => 'Edit',
                 'edit_hubsite' => 'Edit this hub site',
                 'edit_post' => 'Edit this post',

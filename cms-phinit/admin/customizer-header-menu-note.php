@@ -15,11 +15,10 @@ if (!defined('ABSPATH')) {
     <div class="card-body d-flex align-items-center gap-3">
         <div class="text-primary phinit-customizer__menu-icon">📋</div>
         <div>
-            <strong>Menü-Einträge</strong> (Hauptmenü, Quicklinks, Footer-Menüs) werden im
-            <a href="<?php echo htmlspecialchars(SITE_URL . '/admin/menu-editor'); ?>">Menü-Editor</a>
-            verwaltet – hier nur Aussehen (Höhen, Farben, Sichtbarkeit).
+            <strong><?php echo htmlspecialchars(phinit_t('theme_editor_menu_entries_title', [], $editorUiLocale ?? 'de'), ENT_QUOTES); ?></strong>
+            <?php echo htmlspecialchars(phinit_t('theme_editor_menu_entries_note', [], $editorUiLocale ?? 'de'), ENT_QUOTES); ?>
         </div>
         <a href="<?php echo htmlspecialchars(SITE_URL . '/admin/menu-editor'); ?>"
-           class="btn btn-sm btn-primary ms-auto">Menü-Editor →</a>
+           class="btn btn-sm btn-primary ms-auto"><?php echo htmlspecialchars(phinit_t('theme_editor_open_menu_editor', [], $editorUiLocale ?? 'de'), ENT_QUOTES); ?> →</a>
     </div>
 </div>

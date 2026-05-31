@@ -112,7 +112,9 @@ try {
 $_footerAccountPath = $isLoggedIn && function_exists('theme_account_path')
     ? theme_account_path()
     : '/member/dashboard';
-$_footerAccountUrl = $isLoggedIn ? rtrim($siteUrl, '/') . $_footerAccountPath : theme_login_url(null, $currentLocale);
+$_footerAccountUrl = $isLoggedIn
+    ? phinit_localized_href($_footerAccountPath, $currentLocale, $siteUrl)
+    : theme_login_url(null, $currentLocale);
 $_footerAccountLabel = $isLoggedIn
     ? phinit_t('account', [], $currentLocale)
     : phinit_t('login', [], $currentLocale);
@@ -159,13 +161,19 @@ $_footerContactUrl = function_exists('phinit_localized_href')
 $_footerContactLabel = phinit_is_english_locale($currentLocale) ? 'Contact' : 'Kontakt';
 $_footerSocialNavLabel = phinit_is_english_locale($currentLocale) ? 'Contact and social media' : 'Kontakt und Social Media';
 try {
-    $footerTopicsMenu = \CMS\ThemeManager::instance()->getMenu('footer-topics');
+    $footerTopicsMenu = function_exists('phinit_get_menu_for_locale')
+        ? phinit_get_menu_for_locale('footer-topics', $currentLocale)
+        : [];
 } catch (\Throwable $e) {}
 try {
-    $footerPagesMenu = \CMS\ThemeManager::instance()->getMenu('footer-pages');
+    $footerPagesMenu = function_exists('phinit_get_menu_for_locale')
+        ? phinit_get_menu_for_locale('footer-pages', $currentLocale)
+        : [];
 } catch (\Throwable $e) {}
 try {
-    $footerLegalMenu = \CMS\ThemeManager::instance()->getMenu('footer');
+    $footerLegalMenu = function_exists('phinit_get_menu_for_locale')
+        ? phinit_get_menu_for_locale('footer', $currentLocale)
+        : [];
 } catch (\Throwable $e) {}
 
 $_footerRepoViewModel = [];
@@ -282,15 +290,15 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
                     <ul>
                         <?php if (!empty($footerTopicsMenu)): ?>
                             <?php foreach ($footerTopicsMenu as $_fItem): ?>
-                            <li><a href="<?php echo htmlspecialchars($_fItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fItem['label'] ?? '', ENT_QUOTES); ?></a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href((string) ($_fItem['url'] ?? '#'), $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars((string) ($_fItem['label'] ?? ''), ENT_QUOTES); ?></a></li>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/linux">Linux &amp; BASH</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/powershell">PowerShell</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/microsoft-365">Microsoft 365</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/intune">Intune &amp; MDM</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/datenschutz">Datenschutz &amp; DSGVO</a></li>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/news">IT-News</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/linux', $currentLocale, $siteUrl), ENT_QUOTES); ?>">Linux &amp; BASH</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/powershell', $currentLocale, $siteUrl), ENT_QUOTES); ?>">PowerShell</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/microsoft-365', $currentLocale, $siteUrl), ENT_QUOTES); ?>">Microsoft 365</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/intune', $currentLocale, $siteUrl), ENT_QUOTES); ?>">Intune &amp; MDM</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/datenschutz', $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Datenschutz & DSGVO', $currentLocale), ENT_QUOTES); ?></a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/news', $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('IT-News', $currentLocale), ENT_QUOTES); ?></a></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -301,12 +309,12 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
                     <ul>
                         <?php if (!empty($footerPagesMenu)): ?>
                             <?php foreach ($footerPagesMenu as $_fItem): ?>
-                            <li><a href="<?php echo htmlspecialchars($_fItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_fItem['label'] ?? '', ENT_QUOTES); ?></a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href((string) ($_fItem['url'] ?? '#'), $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars((string) ($_fItem['label'] ?? ''), ENT_QUOTES); ?></a></li>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <li><a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/ueber-uns">Über mich</a></li>
-                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/contact', $currentLocale, $siteUrl), ENT_QUOTES); ?>">Kontakt</a></li>
-                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $currentLocale, $siteUrl), ENT_QUOTES); ?>" target="_blank" rel="noopener">RSS-Feed</a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/ueber-uns', $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Über mich', $currentLocale), ENT_QUOTES); ?></a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/contact', $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Kontakt', $currentLocale), ENT_QUOTES); ?></a></li>
+                            <li><a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $currentLocale, $siteUrl), ENT_QUOTES); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars(phinit_localize_menu_label('RSS-Feed', $currentLocale), ENT_QUOTES); ?></a></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -333,12 +341,12 @@ $_footerShowRepoBanner = !empty($_footerRepoViewModel['_showRepo']) && !empty($_
             <div class="footer-bottom-links">
                 <?php if (!empty($footerLegalMenu)): ?>
                     <?php foreach ($footerLegalMenu as $_lItem): ?>
-                    <a href="<?php echo htmlspecialchars($_lItem['url'] ?? '#', ENT_QUOTES); ?>"><?php echo htmlspecialchars($_lItem['label'] ?? '', ENT_QUOTES); ?></a>
+                    <a href="<?php echo htmlspecialchars(phinit_localized_href((string) ($_lItem['url'] ?? '#'), $currentLocale, $siteUrl), ENT_QUOTES); ?>"><?php echo htmlspecialchars((string) ($_lItem['label'] ?? ''), ENT_QUOTES); ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <a href="<?php echo htmlspecialchars($imprintUrl, ENT_QUOTES); ?>">Impressum</a>
-                    <a href="<?php echo htmlspecialchars($privacyUrl, ENT_QUOTES); ?>">Datenschutz</a>
-                    <a href="<?php echo htmlspecialchars($termsUrl, ENT_QUOTES); ?>">AGB</a>
+                    <a href="<?php echo htmlspecialchars($imprintUrl, ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Impressum', $currentLocale), ENT_QUOTES); ?></a>
+                    <a href="<?php echo htmlspecialchars($privacyUrl, ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Datenschutz', $currentLocale), ENT_QUOTES); ?></a>
+                    <a href="<?php echo htmlspecialchars($termsUrl, ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('AGB', $currentLocale), ENT_QUOTES); ?></a>
                 <?php endif; ?>
             </div>
         </div>

@@ -24,6 +24,7 @@ if (!defined('ABSPATH')) {
 $siteUrl = SITE_URL;
 $db      = \CMS\Database::instance();
 $prefix  = $db->getPrefix();
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 
 // ── Customizer-Einstellungen laden ──────────────────────────────────────────
 try {
@@ -51,11 +52,11 @@ $readingTimeWpm    = max(50, (int)$czGet('posts', 'reading_time_wpm', 220));
 $showToc           = $czBool('posts', 'show_toc', true);
 $tocSticky         = $czBool('posts', 'toc_sticky', true);
 $tocMinHeadings    = max(1, (int)$czGet('posts', 'toc_min_headings', 2));
-$tocHeaderText     = (string)$czGet('posts', 'toc_header_text', '📋 Inhaltsverzeichnis');
+$tocHeaderText     = (string)$czGet('posts', 'toc_header_text', '📋 ' . phinit_t('toc_title', [], $currentLocale));
 $showSidebarSocial = $czBool('posts', 'show_sidebar_social', true);
-$sidebarSocialHdr  = (string)$czGet('posts', 'sidebar_social_header', 'Folge uns');
+$sidebarSocialHdr  = (string)$czGet('posts', 'sidebar_social_header', phinit_t('follow_us', [], $currentLocale));
 $showSidebarRelated= $czBool('posts', 'show_sidebar_related', true);
-$sidebarRelatedHdr = (string)$czGet('posts', 'sidebar_related_header', 'Ähnliche Artikel');
+$sidebarRelatedHdr = (string)$czGet('posts', 'sidebar_related_header', phinit_t('related_articles', [], $currentLocale));
 $relatedCount      = max(1, min(10, (int)$czGet('posts', 'related_count', 4)));
 $showShareButtons  = $czBool('posts', 'show_share_buttons', true);
 $showShareLinkedin = $czBool('posts', 'show_share_linkedin', true);
@@ -67,8 +68,8 @@ $showSharePrint    = $czBool('posts', 'show_share_print', true);
 $showPostNav       = $czBool('posts', 'show_post_nav', true);
 $showAuthorBox     = $czBool('posts', 'show_author_box', true);
 $showComments      = $czBool('posts', 'show_comments', true);
-$commentsHeader    = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
-$commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
+$commentsHeader    = (string)$czGet('posts', 'comments_header', '💬 ' . phinit_t('comments', [], $currentLocale));
+$commentFormHeader = (string)$czGet('posts', 'comment_form_header', phinit_t('leave_comment', [], $currentLocale));
 $showPostTags      = $czBool('posts', 'show_post_tags', true);
 
 // Social URLs (aus social-Kategorie)
@@ -216,8 +217,6 @@ if ($showComments && phinit_input_int($_GET, 'commented', 0, 0, 1) === 1) {
     $commentSuccess = '✅ Danke! Dein Kommentar wurde gespeichert und wartet auf Freigabe.';
 }
 
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
-
 $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0), [
     'title' => (string) ($post['title'] ?? 'Beitrag'),
     'url' => (string) (parse_url(function_exists('phinit_build_post_url') ? phinit_build_post_url($post, $currentLocale) : ('/blog/' . rawurlencode((string) ($post['slug'] ?? ''))), PHP_URL_PATH) ?: '/'),
@@ -303,7 +302,7 @@ if ($sidebarPosition === 'left') {
                 <!-- Share-Buttons -->
                 <?php if ($showShareButtons): ?>
                 <div class="post-share">
-                    <span>Teilen:</span>
+                    <span><?php echo htmlspecialchars(phinit_t('share', [], $currentLocale), ENT_QUOTES); ?>:</span>
                     <?php $postUrlRaw = rtrim($siteUrl, '/') . phinit_current_request_path(); ?>
                     <?php $postTitleRaw = (string) ($post['title'] ?? ''); ?>
                     <?php $linkedinShareHref = 'https://www.linkedin.com/shareArticle?' . http_build_query(['url' => $postUrlRaw, 'title' => $postTitleRaw], '', '&', PHP_QUERY_RFC3986); ?>

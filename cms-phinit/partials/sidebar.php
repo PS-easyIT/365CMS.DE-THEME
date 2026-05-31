@@ -50,6 +50,7 @@ $related_header = $related_header ?? 'Ähnliche Artikel';
 $related_posts  = $related_posts  ?? [];
 $post_tags      = $post_tags      ?? [];
 $site_url       = $site_url       ?? (defined('SITE_URL') ? SITE_URL : '');
+$currentLocale  = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $toc_tree       = function_exists('phinit_build_toc_tree') ? phinit_build_toc_tree(is_array($toc_items) ? $toc_items : []) : [];
 
 $social_linkedin = function_exists('phinit_safe_public_url') ? phinit_safe_public_url((string) $social_linkedin, $site_url, ['http', 'https']) : (string) $social_linkedin;
@@ -81,7 +82,7 @@ $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use
     <?php
 };
 ?>
-<aside class="sidebar" aria-label="Seitenleiste">
+<aside class="sidebar" aria-label="<?php echo htmlspecialchars(phinit_t('sidebar', [], $currentLocale), ENT_QUOTES); ?>">
 
     <?php if (isset($post) && (is_array($post) || is_object($post))): ?>
         <?php get_theme_part('partials/post-template-meta-card', ['post' => $post]); ?>
@@ -89,7 +90,7 @@ $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use
 
     <!-- TOC -->
     <?php if ($show_toc && !empty($toc_tree)): ?>
-    <nav class="toc<?php echo $toc_sticky ? ' toc-sticky' : ''; ?>" aria-label="Inhaltsverzeichnis des Artikels">
+    <nav class="toc<?php echo $toc_sticky ? ' toc-sticky' : ''; ?>" aria-label="<?php echo htmlspecialchars(phinit_t('article_toc_navigation', [], $currentLocale), ENT_QUOTES); ?>">
         <div class="toc-title"><?php echo htmlspecialchars($toc_header, ENT_QUOTES); ?></div>
         <div class="toc-panel">
             <?php $renderSidebarTocTree($toc_tree); ?>
@@ -168,7 +169,7 @@ $renderSidebarTocTree = static function (array $nodes, bool $nested = false) use
     <!-- Tags-Widget -->
     <?php if (!empty($post_tags)): ?>
     <div class="toc toc--primary">
-        <div class="toc-title">🏷 Tags</div>
+        <div class="toc-title">🏷 <?php echo htmlspecialchars(phinit_t('tags', [], $currentLocale), ENT_QUOTES); ?></div>
         <ul class="toc-list" role="list">
             <?php foreach ($post_tags as $_sb_tag): ?>
             <li class="toc-item">

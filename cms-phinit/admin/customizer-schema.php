@@ -113,6 +113,25 @@ return [
                 'enable_scroll_animations' => ['label' => 'Scroll-Animationen',          'type' => 'checkbox', 'default' => true],
             ],
         ],
+        'language' => [
+            'title' => '🌐 Sprache / Language',
+            'sections' => [
+                'default_locale' => [
+                    'label' => 'Standard-Sprache / Default language',
+                    'type' => 'select',
+                    'default' => 'de',
+                    'options' => ['de' => 'Deutsch (de)', 'en' => 'English (en)'],
+                    'description' => 'Fallback ohne Sprach-Präfix. / Fallback locale when no URL prefix is present.',
+                ],
+                'editor_ui_locale' => [
+                    'label' => 'Theme-Editor Sprache / Theme editor language',
+                    'type' => 'select',
+                    'default' => 'auto',
+                    'options' => ['auto' => 'Auto', 'de' => 'Deutsch', 'en' => 'English'],
+                    'description' => 'Steuert Labels im Theme-Editor. / Controls labels shown in the theme editor UI.',
+                ],
+            ],
+        ],
         'header' => [
             'title' => '🖥️ Header',
             'sections' => [
@@ -483,6 +502,7 @@ return [
         'colors'     => ['🎨 Markenfarben' => ['primary_color','primary_dark','primary_mid','primary_light','accent_color','accent_hover'], '💻 Tech-Akzente' => ['accent_blue','accent_blue2','accent_teal','accent_teal_light'], '🖼️ Header-BGs' => ['bg_header1','bg_header2','bg_header3'], '📄 Seite & Dark' => ['bg_primary','bg_secondary','bg_dark','page_edge_tint_color'], '📝 Textfarben' => ['text_primary','text_secondary','text_muted'], '🧭 Navigation' => ['text_nav','text_nav_member','text_nav_member_hover','text_nav_main','text_nav_main_hover','text_nav_quicklinks','text_nav_quicklinks_hover','text_nav_dropdown','text_nav_dropdown_hover','text_nav_mobile_hover','text_nav_footer_hover','text_nav_footer_bottom_hover','text_nav_network_hover','text_nav_member_sidebar_hover','logo_suffix_color'], '🔲 Rahmen & Footer' => ['border_light','footer_bg','footer_bottom_bg','footer_border'], '✅ Status & Progress' => ['success_color','error_color','progress_bar_start','progress_bar_end']],
         'typography' => ['🔤 Schriftarten' => ['font_family_ui','font_family_brand','font_family_code'], '🔠 Headlines & Basis' => ['font_size_base','font_size_post','heading_h1_fontsize','heading_h2_fontsize','heading_h3_fontsize','heading_h4_fontsize','font_size_small','font_size_xsmall','line_height_base','line_height_post','font_weight_heading','font_weight_nav'], '🏷️ Hero, Labels & Widgets' => ['hero_title_fontsize','hero_subtitle_fontsize','section_label_fontsize','widget_title_fontsize','widget_body_fontsize','widget_link_fontsize','widget_meta_fontsize'], '📝 Card-Texte' => ['article_title_fontsize','tile_title_fontsize','article_excerpt_fontsize','article_excerpt_length','tile_excerpt_fontsize','tile_excerpt_length']],
         'layout'     => ['📐 Maße' => ['container_width','page_edge_tint_opacity','sidebar_width','border_radius','border_radius_md','content_gap','spacing_header_content','spacing_content_footer','spacing_sections'], '🍞 Breadcrumb' => ['show_breadcrumb','breadcrumb_on_posts','breadcrumb_on_pages'], '⚙️ Funktionen' => ['sidebar_position','enable_sticky_header','enable_progress_bar','enable_back_to_top','enable_dark_mode_toggle','enable_scroll_animations']],
+        'language'   => ['🌐 Spracheinstellungen' => ['default_locale','editor_ui_locale']],
         'header'     => ['🏷️ Logo & Marke' => ['logo_text_part1','logo_text_part2','logo_text_suffix','logo_url','show_logo_text_with_image','logo_max_height','logo_title_font_size','logo_accent_color'], '👤 Member-Bar' => ['show_member_bar','member_bar_height','member_bar_font_size','member_bar_item_spacing'], '🧭 Hauptnav' => ['main_nav_height','main_nav_font_size','main_nav_item_spacing','dropdown_nav_font_size','dropdown_nav_item_spacing','show_search_bar','search_placeholder','show_rss_link','show_login_button'], '⚡ Quicklinks' => ['show_quicklinks','sub_bar_height','quicklinks_font_size','quicklinks_item_spacing','mobile_menu_font_size','mobile_menu_item_spacing'], '🌍 Sprache' => ['show_language_switcher','language_switcher_mode','language_switcher_label','language_switcher_slug','language_switcher_flag','language_switcher_aria_label']],
         'footer'     => ['🏷️ Brand & Text' => ['footer_brand_name','footer_tagline','footer_col2_title','footer_col3_title','footer_col4_title','copyright_text','show_footer_social','footer_menu_font_size','footer_menu_item_spacing','footer_bottom_font_size','footer_bottom_item_spacing'], '🍪 Cookie-Consent' => ['show_consent_banner','consent_text','consent_privacy_url'], '🔗 Network-Bar' => ['show_network_bar','network_bar_font_size','network_bar_item_spacing','network_bar_link1_label','network_bar_link1_url','network_bar_link2_label','network_bar_link2_url','network_bar_link3_label','network_bar_link3_url','network_bar_link4_label','network_bar_link4_url','network_bar_link5_label','network_bar_link5_url']],
         'homepage'   => ['⭐ Featured-Banner' => ['show_home_featured_banner','home_featured_banner_post','home_featured_banner_post_2','home_featured_banner_post_3','home_featured_banner_label','home_featured_banner_title','home_featured_banner_text','home_featured_banner_button_text'], '📌 Repo-Card' => ['show_repo_card','repo_card_title','repo_card_description','repo_card_badge','repo_card_btn_text','repo_card_btn_url'], '📰 Artikel-Liste' => ['show_article_list','article_list_label','article_list_count','article_list_link_url','article_thumb_width','article_thumb_height','show_article_excerpt','show_article_meta','show_article_badge','show_meta_category','show_meta_date','show_meta_readtime'], '🗂️ Kategorie-Cards' => ['show_info_grid','info_card1_title','info_card1_text','info_card1_link_text','info_card1_link_url','info_card1_style','info_card2_title','info_card2_text','info_card2_link_text','info_card2_link_url','info_card2_style','show_info_card3','info_card3_title','info_card3_text','info_card3_link_text','info_card3_link_url','info_card3_link_text_2','info_card3_link_url_2','info_card3_link_text_3','info_card3_link_url_3','info_card3_badge','info_card3_style'], '🧱 Kachel-Grid & Bildhöhe' => ['show_tile_grid','tile_grid_label','tile_grid_count','tile_grid_columns','show_tile_excerpt','show_tile_category','show_tile_date','tile_grid_image_height','tile_grid_link_url'], '📡 RSS-Feeds' => ['show_feed_section','feed1_channel_id','feed1_count','feed2_channel_id','feed2_count'], '📏 Sektionen-Abstände' => ['home_header_content_spacing','spacing_repo_card','spacing_article_list','spacing_info_cards','spacing_tile_grid','spacing_rss_feeds']],
@@ -756,9 +776,9 @@ return [
         ],
     ],
     'navGroups' => [
-        null        => ['colors', 'typography', 'layout'],
-        '🖥️ Design' => ['header', 'footer'],
-        '📝 Inhalte' => ['homepage-layout', 'homepage-list', 'homepage-sidebar', 'homepage-featured', 'homepage-cards', 'homepage-grid-feeds', 'posts', 'posts-sidebar', 'pages', 'memberdashboard'],
+        null        => ['language', 'layout', 'header', 'homepage-sidebar', 'footer'],
+        '🎨 Design' => ['colors', 'typography'],
+        '📝 Inhalte' => ['homepage-layout', 'homepage-list', 'homepage-featured', 'homepage-cards', 'homepage-grid-feeds', 'posts', 'posts-sidebar', 'pages', 'memberdashboard'],
         '⚙️ Sonstiges' => ['social', 'advanced', 'seo', 'performance'],
     ],
 ];

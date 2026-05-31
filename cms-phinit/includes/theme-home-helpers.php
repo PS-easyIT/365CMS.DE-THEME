@@ -34,6 +34,7 @@ if (!function_exists('phinit_is_probable_mobile_request')) {
  */
 function phinit_get_homepage_view_model(): array
 {
+    $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
     $defaults = [
         '_showFeaturedBanner' => true,
         '_featuredBannerLabel' => 'Featured',
@@ -229,7 +230,7 @@ function phinit_get_homepage_view_model(): array
             $gridPostsPerPage = $customizer->get('homepage', 'grid_posts_per_page', 6);
         }
 
-        return array_merge($defaults, [
+        $viewModel = array_merge($defaults, [
             '_showFeaturedBanner' => filter_var($customizer->get('homepage', 'show_home_featured_banner', true), FILTER_VALIDATE_BOOLEAN),
             '_featuredBannerLabel' => $customizer->get('homepage', 'home_featured_banner_label', 'Featured'),
             '_featuredBannerPostId' => (int) $customizer->get('homepage', 'home_featured_banner_post', 0),
@@ -454,9 +455,73 @@ function phinit_get_homepage_view_model(): array
             '_spGrid' => max(0, (int) $customizer->get('homepage', 'spacing_tile_grid', 32)),
             '_spRss' => max(0, (int) $customizer->get('homepage', 'spacing_rss_feeds', 0)),
         ]);
+
+        return phinit_localize_homepage_view_model($viewModel, $currentLocale);
     } catch (\Throwable $_e) {
-        return $defaults;
+        return phinit_localize_homepage_view_model($defaults, $currentLocale);
     }
+}
+
+/**
+ * @param array<string, mixed> $viewModel
+ * @return array<string, mixed>
+ */
+function phinit_localize_homepage_view_model(array $viewModel, string $locale): array
+{
+    if (!function_exists('phinit_is_english_locale') || !phinit_is_english_locale($locale)) {
+        return $viewModel;
+    }
+
+    $fallbackReplacements = [
+        '_featuredBannerButtonText' => ['Weiter lesen' => 'Continue reading'],
+        '_listLabel' => ['Aktuell' => 'Latest'],
+        '_sbArticleCarouselLabel' => ['Artikel-Karussell' => 'Article carousel'],
+        '_sbQuicklinksLabel' => ['Schnelllinks' => 'Quick links'],
+        '_sbShowM365Links' => [],
+        '_sbContactTitle' => ['Kontakt' => 'Contact'],
+        '_sbContactButtonText' => ['Kontakt aufnehmen' => 'Contact me'],
+        '_sbNewsletterTitle' => ['Updates abonnieren' => 'Subscribe to updates'],
+        '_sbNewsletterButtonText' => ['Newsletter öffnen' => 'Open newsletter'],
+        '_sbAboutLinkText' => ['Mehr über mich' => 'More about me'],
+        '_sbProj1Desc' => ['Das eigene CMS – modular & flexibel' => 'The own CMS - modular and flexible'],
+        '_sbProj2Desc' => ['Business-Netzwerk-Plattform' => 'Business network platform'],
+        '_sbStatusLabel' => ['Dienst-Status' => 'Service status'],
+        '_sbDownloadsLabel' => ['Downloads & Checklisten' => 'Downloads & checklists'],
+        '_sbSocialLabel' => ['Folge uns' => 'Follow us'],
+        '_sbNoticeTitle' => ['💡 Aktueller Hinweis' => '💡 Current note'],
+        '_sbNoticeUrlText' => ['Mehr erfahren →' => 'Learn more →'],
+        '_sbFeaturedPostsLabel' => ['📌 Empfohlene Artikel' => '📌 Featured posts'],
+        '_c1Title' => ['🖥️ Admin Anleitungen' => '🖥️ Admin guides'],
+        '_c1LinkText' => ['Anleitungen →' => 'Guides →'],
+        '_c2Title' => ['🔒 DSGVO & Compliance' => '🔒 GDPR & compliance'],
+        '_c2LinkText' => ['Compliance →' => 'Compliance →'],
+        '_tileLabel' => ['Weitere Beiträge' => 'More posts'],
+    ];
+
+    foreach ($fallbackReplacements as $key => $mapping) {
+        if (!array_key_exists($key, $viewModel) || !is_string($viewModel[$key])) {
+            continue;
+        }
+
+        $currentValue = trim((string) $viewModel[$key]);
+        if ($currentValue === '' || $mapping === []) {
+            continue;
+        }
+
+        if (isset($mapping[$currentValue])) {
+            $viewModel[$key] = $mapping[$currentValue];
+        }
+    }
+
+    if (isset($viewModel['_sbQuicklinksItems']) && is_string($viewModel['_sbQuicklinksItems'])) {
+        $viewModel['_sbQuicklinksItems'] = str_replace(
+            ['Alle Beiträge|', 'Kontakt|', 'Downloads|'],
+            ['All posts|', 'Contact|', 'Downloads|'],
+            $viewModel['_sbQuicklinksItems']
+        );
+    }
+
+    return $viewModel;
 }
 
 /**

@@ -149,7 +149,7 @@ $sidebarAdminIcon = $getMemberText('sidebar_admin_icon', '⚙️');
                  width="44"
                  height="44">
             <?php else: ?>
-            <?php echo strtoupper(mb_substr($memberDisplayName !== '' ? $memberDisplayName : (string) ($currentUser->username ?? 'U'), 0, 2)); ?>
+            <?php echo htmlspecialchars(strtoupper(mb_substr($memberDisplayName !== '' ? $memberDisplayName : (string) ($currentUser->username ?? 'U'), 0, 2)), ENT_QUOTES); ?>
             <?php endif; ?>
         </div>
         <div class="member-user-info">
@@ -162,7 +162,7 @@ $sidebarAdminIcon = $getMemberText('sidebar_admin_icon', '⚙️');
         <a href="<?php echo htmlspecialchars($siteUrl . $item['url'], ENT_QUOTES); ?>"
            class="member-nav-link<?php echo $activePage === $item['slug'] ? ' active' : ''; ?>"
            <?php echo $activePage === $item['slug'] ? 'aria-current="page"' : ''; ?>>
-            <span class="member-nav-icon"><?php echo $item['icon']; ?></span>
+            <span class="member-nav-icon"><?php echo htmlspecialchars((string) ($item['icon'] ?? ''), ENT_QUOTES); ?></span>
             <?php echo htmlspecialchars($item['label']); ?>
         </a>
         <?php endforeach; ?>

@@ -39,7 +39,8 @@ $showReadingTime  = $czBool('posts', 'show_reading_time', true);
 $readingTimeWpm   = max(100, (int)$czGet('posts', 'reading_time_wpm', 200));
 $showToc          = $czBool('posts', 'show_toc', true);
 $tocMinHeadings   = max(1, (int)$czGet('posts', 'toc_min_headings', 3));
-$tocHeaderText    = (string)$czGet('posts', 'toc_header_text', 'Inhaltsverzeichnis');
+$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+$tocHeaderText    = (string)$czGet('posts', 'toc_header_text', phinit_t('toc_title', [], $currentLocale));
 $showShareButtons = $czBool('posts', 'show_share_buttons', true);
 $showShareLinkedin = $czBool('posts', 'show_share_linkedin', true);
 $showShareTwitter = $czBool('posts', 'show_share_twitter', true);
@@ -48,8 +49,8 @@ $showShareCopy = $czBool('posts', 'show_share_copy', true);
 $showShareMastodon = $czBool('posts', 'show_share_mastodon', true);
 $showSharePrint = $czBool('posts', 'show_share_print', true);
 $showComments     = $czBool('posts', 'show_comments', true);
-$commentsHeader   = (string)$czGet('posts', 'comments_header', '💬 Kommentare');
-$commentFormHeader = (string)$czGet('posts', 'comment_form_header', 'Kommentar hinterlassen');
+$commentsHeader   = (string)$czGet('posts', 'comments_header', '💬 ' . phinit_t('comments', [], $currentLocale));
+$commentFormHeader = (string)$czGet('posts', 'comment_form_header', phinit_t('leave_comment', [], $currentLocale));
 $showPostTags     = $czBool('posts', 'show_post_tags', true);
 
 // ── Daten laden ────────────────────────────────────────────────────────
@@ -91,7 +92,6 @@ try {
     $comments     = array_map(fn($c) => (array)$c, $commentRows);
     $commentCount = count($comments);
 } catch (\Throwable) { $comments = []; $commentCount = 0; }
-$currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $publishedAt = (string) ($post['published_at'] ?? '');
 $updatedAt = (string) ($post['updated_at'] ?? '');
 $showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
@@ -177,7 +177,7 @@ if ($showPostTags) {
         <!-- Share-Buttons -->
         <?php if ($showShareButtons): ?>
         <div class="post-share">
-            <span>Teilen:</span>
+            <span><?php echo htmlspecialchars(phinit_t('share', [], $currentLocale), ENT_QUOTES); ?>:</span>
             <?php
             $postUrlRaw = rtrim($siteUrl, '/') . phinit_current_request_path();
             $postTitleRaw = (string) ($post['title'] ?? '');

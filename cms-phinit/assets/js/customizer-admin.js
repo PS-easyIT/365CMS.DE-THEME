@@ -69,7 +69,7 @@
             if (!changed) {
                 changed = true;
                 if (hint) {
-                    hint.style.display = 'inline';
+                    hint.classList.add('is-visible');
                 }
             }
         }
@@ -105,25 +105,30 @@
         window.syncColor = syncColor;
         window.syncColorTxt = syncColorTxt;
 
-        document.querySelectorAll('[data-color-picker]').forEach((element) => {
-            element.addEventListener('input', function () {
-                syncColor(
-                    element.id,
-                    element.dataset.syncTargetText || '',
-                    element.dataset.syncTargetHidden || ''
-                );
-            });
-        });
+        function toggleCollapseByTarget(targetId, forceExpanded) {
+            if (!targetId) {
+                return;
+            }
 
-        document.querySelectorAll('[data-color-text]').forEach((element) => {
-            element.addEventListener('input', function () {
-                syncColorTxt(
-                    element.dataset.syncTargetPicker || '',
-                    element.id,
-                    element.dataset.syncTargetHidden || ''
-                );
+            const panel = document.getElementById(targetId);
+            if (!(panel instanceof HTMLElement)) {
+                return;
+            }
+
+            const toggleButtons = document.querySelectorAll('[data-collapse-target="' + targetId + '"]');
+            const isExpanded = forceExpanded !== undefined ? forceExpanded : panel.hidden;
+            panel.hidden = !isExpanded;
+
+            if (isExpanded && panel.hasAttribute('data-lazy-panel')) {
+                panel.removeAttribute('data-lazy-panel');
+            }
+
+            toggleButtons.forEach((button) => {
+                if (button instanceof HTMLElement) {
+                    button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                }
             });
-        });
+        }
 
         function initWidgetOrderControls() {
             document.querySelectorAll('[data-widget-order-control]').forEach((control) => {
@@ -152,29 +157,6 @@
                         }
                     });
                 };
-
-                list.addEventListener('click', (event) => {
-                    const target = event.target instanceof Element ? event.target : null;
-                    const button = target?.closest('[data-widget-order-action]');
-                    const item = button?.closest('[data-widget-order-item]');
-
-                    if (!(button instanceof HTMLElement) || !(item instanceof HTMLElement)) {
-                        return;
-                    }
-
-                    const action = button.dataset.widgetOrderAction || '';
-                    if (action === 'up' && item.previousElementSibling) {
-                        list.insertBefore(item, item.previousElementSibling);
-                    } else if (action === 'down' && item.nextElementSibling) {
-                        list.insertBefore(item.nextElementSibling, item);
-                    } else {
-                        return;
-                    }
-
-                    syncOrder();
-                    markChanged();
-                    item.focus({preventScroll: true});
-                });
 
                 syncOrder();
             });
@@ -220,13 +202,6 @@
             confirmAccept?.focus();
         }
 
-        document.querySelectorAll('[data-confirm-message][data-confirm-submit-target]').forEach((element) => {
-            element.addEventListener('click', function (event) {
-                event.preventDefault();
-                openConfirmModal(element);
-            });
-        });
-
         confirmCancel?.addEventListener('click', closeConfirmModal);
         confirmOverlay?.addEventListener('click', function (event) {
             if (event.target === confirmOverlay) {
@@ -246,13 +221,20 @@
         });
 
         if (form) {
-            form.querySelectorAll('input, select, textarea').forEach((element) => {
-                element.addEventListener('change', markChanged);
-                element.addEventListener('input', markChanged);
+            form.addEventListener('change', function (event) {
+                if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
+                    markChanged();
+                }
+            });
+            form.addEventListener('input', function (event) {
+                if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
+                    markChanged();
+                }
             });
             form.addEventListener('submit', function () {
                 syncAllWidgetOrderControls();
                 changed = false;
+                hint?.classList.remove('is-visible');
             });
         }
 
@@ -326,24 +308,127 @@
             });
         }
 
-        document.getElementById('preview-toggle-btn')?.addEventListener('click', pxOpen);
-        document.getElementById('px-close-btn')?.addEventListener('click', pxClose);
-        document.getElementById('px-refresh-btn')?.addEventListener('click', pxRefresh);
-        pxDevBtns.forEach((button) => {
-            button.addEventListener('click', function () {
-                pxSetDevice(Number(button.dataset.width || '1280'));
-            });
-        });
-
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape' && pxDrawer && pxDrawer.style.display !== 'none') {
                 pxClose();
             }
         });
+        document.addEventListener('input', function (event) {
+            const target = event.target instanceof HTMLElement ? event.target : null;
+            if (!target) {
+                return;
+            }
 
-        document.querySelectorAll('.color-preset-btn').forEach((button) => {
-            button.addEventListener('click', function () {
-                const preset = COLOR_PRESETS[button.dataset.preset || ''];
+            if (target.matches('[data-color-picker]')) {
+                syncColor(target.id, target.dataset.syncTargetText || '', target.dataset.syncTargetHidden || '');
+                return;
+            }
+
+            if (target.matches('[data-color-text]')) {
+                syncColorTxt(target.dataset.syncTargetPicker || '', target.id, target.dataset.syncTargetHidden || '');
+            }
+        });
+
+        document.addEventListener('click', function (event) {
+            const clickTarget = event.target instanceof Element ? event.target : null;
+            if (!clickTarget) {
+                return;
+            }
+
+            const collapseToggle = clickTarget.closest('[data-collapse-toggle]');
+            if (collapseToggle instanceof HTMLElement) {
+                const targetId = collapseToggle.dataset.collapseTarget || '';
+                if (targetId) {
+                    event.preventDefault();
+                    const isExpanded = collapseToggle.getAttribute('aria-expanded') === 'true';
+                    toggleCollapseByTarget(targetId, !isExpanded);
+                }
+                return;
+            }
+
+            const confirmTrigger = clickTarget.closest('[data-confirm-message][data-confirm-submit-target]');
+            if (confirmTrigger instanceof HTMLElement) {
+                event.preventDefault();
+                openConfirmModal(confirmTrigger);
+                return;
+            }
+
+            const widgetActionButton = clickTarget.closest('[data-widget-order-action]');
+            if (widgetActionButton instanceof HTMLElement) {
+                const item = widgetActionButton.closest('[data-widget-order-item]');
+                const list = widgetActionButton.closest('[data-widget-order-list]');
+                if (!(item instanceof HTMLElement) || !(list instanceof HTMLElement)) {
+                    return;
+                }
+
+                const action = widgetActionButton.dataset.widgetOrderAction || '';
+                if (action === 'up' && item.previousElementSibling) {
+                    list.insertBefore(item, item.previousElementSibling);
+                } else if (action === 'down' && item.nextElementSibling) {
+                    list.insertBefore(item.nextElementSibling, item);
+                } else {
+                    return;
+                }
+
+                const control = list.closest('[data-widget-order-control]');
+                if (!(control instanceof HTMLElement)) {
+                    return;
+                }
+                const input = control.querySelector('[data-widget-order-input]');
+                if (!(input instanceof HTMLInputElement)) {
+                    return;
+                }
+
+                const orderedItems = Array.from(list.querySelectorAll('[data-widget-order-item]'));
+                input.value = orderedItems
+                    .map((orderedItem) => orderedItem instanceof HTMLElement ? (orderedItem.dataset.widgetKey || '') : '')
+                    .filter(Boolean)
+                    .join('\n');
+
+                orderedItems.forEach((orderedItem, index) => {
+                    const upButton = orderedItem.querySelector('[data-widget-order-action="up"]');
+                    const downButton = orderedItem.querySelector('[data-widget-order-action="down"]');
+                    if (upButton instanceof HTMLButtonElement) {
+                        upButton.disabled = index === 0;
+                    }
+                    if (downButton instanceof HTMLButtonElement) {
+                        downButton.disabled = index === orderedItems.length - 1;
+                    }
+                });
+
+                markChanged();
+                item.focus({preventScroll: true});
+                return;
+            }
+
+            if (clickTarget.closest('#preview-toggle-btn') || clickTarget.closest('#preview-toggle-btn-secondary')) {
+                event.preventDefault();
+                pxOpen();
+                return;
+            }
+
+            if (clickTarget.closest('#px-close-btn')) {
+                event.preventDefault();
+                pxClose();
+                return;
+            }
+
+            if (clickTarget.closest('#px-refresh-btn')) {
+                event.preventDefault();
+                pxRefresh();
+                return;
+            }
+
+            const deviceButton = clickTarget.closest('.px-dev-btn');
+            if (deviceButton instanceof HTMLElement) {
+                event.preventDefault();
+                pxSetDevice(Number(deviceButton.dataset.width || '1280'));
+                return;
+            }
+
+            const presetButton = clickTarget.closest('.color-preset-btn');
+            if (presetButton instanceof HTMLElement) {
+                const preset = COLOR_PRESETS[presetButton.dataset.preset || ''];
                 if (!preset) {
                     return;
                 }
@@ -352,19 +437,19 @@
                     const cp = document.getElementById('f_colors_' + key);
                     const txt = document.getElementById('f_colors_' + key + '_txt');
                     const hid = document.getElementById('colors_' + key);
-                    if (cp) {
+                    if (cp instanceof HTMLInputElement) {
                         cp.value = value;
                     }
-                    if (txt) {
+                    if (txt instanceof HTMLInputElement) {
                         txt.value = value;
                     }
-                    if (hid) {
+                    if (hid instanceof HTMLInputElement) {
                         hid.value = value;
                     }
                 });
 
                 markChanged();
-            });
+            }
         });
 
         function loadFont(slug) {

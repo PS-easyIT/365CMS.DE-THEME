@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
 function phinit_get_customizer_post_picker_rows(): array
 {
     static $postRows = null;
+    $uiLocale = (string) ($GLOBALS['phinit_customizer_editor_locale'] ?? 'de');
+    $isEnglish = strtolower($uiLocale) === 'en';
 
     if (is_array($postRows)) {
         return $postRows;
@@ -43,19 +45,19 @@ function phinit_get_customizer_post_picker_rows(): array
             $post = (array) $row;
             $status = (string) ($post['status'] ?? 'draft');
             $publishedAt = trim((string) ($post['published_at'] ?? ''));
-            $statusLabel = 'Entwurf';
+            $statusLabel = $isEnglish ? 'Draft' : 'Entwurf';
 
             if ($status === 'private') {
-                $statusLabel = 'Privat';
+                $statusLabel = $isEnglish ? 'Private' : 'Privat';
             } elseif ($status === 'published') {
                 $statusLabel = ($publishedAt !== '' && $publishedAt > $currentDateTime)
-                    ? 'Geplant'
-                    : 'Veröffentlicht';
+                    ? ($isEnglish ? 'Scheduled' : 'Geplant')
+                    : ($isEnglish ? 'Published' : 'Veröffentlicht');
             }
 
             $title = trim((string) ($post['title'] ?? ''));
             if ($title === '') {
-                $title = 'Beitrag #' . (int) ($post['id'] ?? 0);
+                $title = ($isEnglish ? 'Post #' : 'Beitrag #') . (int) ($post['id'] ?? 0);
             }
 
             $postRows[] = [
@@ -121,6 +123,8 @@ function phinit_merge_widget_order(array $configuredOrder, array $defaultOrder):
  */
 function phinit_render_field(string $tab, string $fieldKey, array $field, mixed $value): void
 {
+    $uiLocale = strtolower((string) ($GLOBALS['phinit_customizer_editor_locale'] ?? 'de'));
+    $isEnglish = $uiLocale === 'en';
     $id = 'f_' . $tab . '_' . $fieldKey;
     $name = $tab . '_' . $fieldKey;
     $idAttr = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
@@ -212,9 +216,9 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                     <div class="phinit-widget-order__item" data-widget-order-item data-widget-key="<?php echo htmlspecialchars($widgetKey, ENT_QUOTES); ?>">
                         <span class="phinit-widget-order__handle" aria-hidden="true">↕</span>
                         <span class="phinit-widget-order__label"><?php echo htmlspecialchars((string) ($widgetOptions[$widgetKey] ?? $widgetKey), ENT_QUOTES); ?></span>
-                        <div class="phinit-widget-order__actions" aria-label="Reihenfolge ändern">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-widget-order-action="up" aria-label="Nach oben">↑</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-widget-order-action="down" aria-label="Nach unten">↓</button>
+                        <div class="phinit-widget-order__actions" aria-label="<?php echo htmlspecialchars($isEnglish ? 'Change order' : 'Reihenfolge ändern', ENT_QUOTES); ?>">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-widget-order-action="up" aria-label="<?php echo htmlspecialchars($isEnglish ? 'Move up' : 'Nach oben', ENT_QUOTES); ?>">↑</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-widget-order-action="down" aria-label="<?php echo htmlspecialchars($isEnglish ? 'Move down' : 'Nach unten', ENT_QUOTES); ?>">↓</button>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -227,7 +231,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
                    value="<?php echo htmlspecialchars($currentValue, ENT_QUOTES); ?>"
                    class="form-control"
                    inputmode="url"
-                   placeholder="https://example.com/ oder /interner-pfad">
+                   placeholder="<?php echo htmlspecialchars($isEnglish ? 'https://example.com/ or /internal-path' : 'https://example.com/ oder /interner-pfad', ENT_QUOTES); ?>">
 
         <?php elseif (($field['type'] ?? 'text') === 'number'): ?>
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
@@ -242,7 +246,7 @@ function phinit_render_field(string $tab, string $fieldKey, array $field, mixed 
             <label class="form-label" for="<?php echo $idAttr; ?>"><?php echo htmlspecialchars((string) ($field['label'] ?? ''), ENT_QUOTES); ?></label>
             <?php $postRows = phinit_get_customizer_post_picker_rows(); ?>
             <select id="<?php echo $idAttr; ?>" name="<?php echo $nameAttr; ?>" class="form-select">
-                <option value="">— Kein Beitrag —</option>
+                <option value=""><?php echo htmlspecialchars($isEnglish ? '— No post —' : '— Kein Beitrag —', ENT_QUOTES); ?></option>
                 <?php foreach ($postRows as $postRow): ?>
                 <option value="<?php echo (int) ($postRow['id'] ?? 0); ?>"
                     <?php echo $currentValue === (string) ($postRow['id'] ?? '') ? 'selected' : ''; ?>>

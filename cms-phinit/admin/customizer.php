@@ -49,6 +49,17 @@ require_once CMS_PHINIT_THEME_DIR . 'admin/customizer-field-renderer.php';
 $customizer = ThemeCustomizer::instance();
 $customizer->setTheme('cms-phinit');
 
+$requestedEditorLocale = strtolower(phinit_input_string($_GET, 'editor_lang', '', 10));
+$configuredEditorLocale = strtolower(trim((string) $customizer->get('language', 'editor_ui_locale', 'auto')));
+$editorUiLocale = in_array($requestedEditorLocale, ['de', 'en'], true) ? $requestedEditorLocale : $configuredEditorLocale;
+if (!in_array($editorUiLocale, ['de', 'en'], true)) {
+    $editorUiLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
+}
+if (!in_array($editorUiLocale, ['de', 'en'], true)) {
+    $editorUiLocale = 'de';
+}
+$GLOBALS['phinit_customizer_editor_locale'] = $editorUiLocale;
+
 $baseConfig = phinit_merge_customizer_config(
     phinit_build_customizer_base_config($customizer),
     phinit_strip_customizer_legacy_aliases(is_array($legacyConfig) ? $legacyConfig : [])
@@ -112,6 +123,55 @@ foreach (($schema['tabViews'] ?? []) as $viewKey => $viewConfig) {
 $customizerConfig = new CMS_Phinit_Customizer_Config_Snapshot($config, is_array($tabGroups) ? $tabGroups : []);
 $config = $customizerConfig->categories;
 $tabGroups = $customizerConfig->tabGroups;
+
+if ($editorUiLocale === 'en') {
+    $tabTitleMap = [
+        'colors' => '🎨 Colors',
+        'typography' => '🔤 Typography',
+        'layout' => '📐 General layout',
+        'language' => '🌐 Language',
+        'header' => '🖥️ Header & navigation',
+        'footer' => '🔻 Footer',
+        'homepage-sidebar' => '📚 Homepage sidebar',
+        'homepage-layout' => '🏠 Homepage · Structure',
+        'homepage-list' => '📰 Homepage · Article list',
+        'homepage-featured' => '📌 Homepage · Featured posts',
+        'homepage-cards' => '🗂️ Homepage · Topic cards',
+        'homepage-grid-feeds' => '🧱 Homepage · Grid & feeds',
+        'posts' => '📝 Posts',
+        'posts-sidebar' => '📝 Post sidebar',
+        'pages' => '📄 Pages',
+        'social' => '🌐 Social media',
+        'advanced' => '🔧 Advanced',
+        'seo' => '🔍 SEO',
+        'performance' => '⚡ Performance',
+        'memberdashboard' => '👤 Member dashboard',
+    ];
+    foreach ($tabTitleMap as $tabKey => $tabTitle) {
+        if (isset($config[$tabKey])) {
+            $config[$tabKey]['title'] = $tabTitle;
+        }
+    }
+
+    $navGroups = $schema['navGroups'] ?? [];
+    $translatedNavGroups = [];
+    foreach ($navGroups as $groupLabel => $tabs) {
+        if ($groupLabel === null) {
+            $translatedNavGroups[$groupLabel] = $tabs;
+            continue;
+        }
+        $label = (string) $groupLabel;
+        $translatedNavGroups[
+            match ($label) {
+                '🎨 Design' => '🎨 Design',
+                '📝 Inhalte' => '📝 Content',
+                '⚙️ Sonstiges' => '⚙️ Other',
+                default => $label,
+            }
+        ] = $tabs;
+    }
+    $schema['navGroups'] = $translatedNavGroups;
+}
 
 // Aktiver Tab
 $activeTab = phinit_input_string($_GET, 'tab', 'colors', 80);

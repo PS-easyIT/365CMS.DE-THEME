@@ -66,5 +66,5 @@ if (defined('CMS_PHINIT_THEME_DIR') && defined('CMS_PHINIT_THEME_URL')) {
 echo json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 ?></script>
 <?php if ($customizerAdminScriptUrl !== ''): ?>
-<script src="<?php echo htmlspecialchars($customizerAdminScriptUrl, ENT_QUOTES, 'UTF-8'); ?>"></script>
+<script src="<?php echo htmlspecialchars($customizerAdminScriptUrl, ENT_QUOTES, 'UTF-8'); ?>" defer></script>
 <?php endif; ?>

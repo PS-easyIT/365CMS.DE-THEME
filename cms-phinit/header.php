@@ -194,15 +194,13 @@ if ($_headerSearchPlaceholder === '' || $_headerSearchPlaceholder === 'Suchen �
     $_headerSearchPlaceholder = phinit_t('search_posts_placeholder', [], $_currentLocale);
 }
 
-$mainMenuItems = [];
-try {
-    $mainMenuItems = \CMS\ThemeManager::instance()->getMenu('primary');
-} catch (\Throwable $e) {}
+$mainMenuItems = function_exists('phinit_get_menu_for_locale')
+    ? phinit_get_menu_for_locale('primary', $_currentLocale)
+    : [];
 
-$quicklinkItems = [];
-try {
-    $quicklinkItems = \CMS\ThemeManager::instance()->getMenu('quicklinks');
-} catch (\Throwable $e) {}
+$quicklinkItems = function_exists('phinit_get_menu_for_locale')
+    ? phinit_get_menu_for_locale('quicklinks', $_currentLocale)
+    : [];
 
 $_languageSwitchUrl = '';
 $_languageSwitchDisplay = '';
@@ -271,7 +269,7 @@ if ($_showLanguageSwitch) {
 <?php if ($_enableProgressBar): ?>
 <div id="scroll-progress" aria-hidden="true"></div>
 <?php endif; ?>
-<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+<a href="#main-content" class="skip-link"><?php echo htmlspecialchars(phinit_t('skip_to_content', [], $_currentLocale), ENT_QUOTES); ?></a>
 
 <?php \CMS\Hooks::doAction('body_start'); ?>
 
@@ -301,18 +299,18 @@ if ($_showLanguageSwitch) {
                     <span class="member-bar__icon">✏️</span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? phinit_t('edit', [], $_currentLocale)), ENT_QUOTES); ?>
                 </a>
                 <?php endif; ?>
-                <a href="<?php echo htmlspecialchars(rtrim($siteUrl, '/'), ENT_QUOTES) . htmlspecialchars($accountPath, ENT_QUOTES); ?>" class="member-bar__link">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href($accountPath, $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
                     <span class="member-bar__icon">📊</span> <?php echo htmlspecialchars(phinit_t('dashboard', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/profile" class="member-bar__link">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/profile', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
                     <span class="member-bar__icon">👤</span> <?php echo htmlspecialchars(phinit_t('profile', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/notifications" class="member-bar__link">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/notifications', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
                     <span class="member-bar__icon">🔔</span> <?php echo htmlspecialchars(phinit_t('notifications', [], $_currentLocale), ENT_QUOTES); ?>                    <?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>                </a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/favorites" class="member-bar__link">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/favorites', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
                     <span class="member-bar__icon">⭐</span> <?php echo htmlspecialchars(phinit_t('favorites', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/member/security" class="member-bar__link">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/security', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
                     <span class="member-bar__icon">🔒</span> <?php echo htmlspecialchars(phinit_t('security', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
             </nav>
@@ -323,7 +321,7 @@ if ($_showLanguageSwitch) {
                     <svg class="rss-svg-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
                 </a>
                 <?php endif; ?>
-                <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES); ?>/logout" class="member-bar__link member-bar__logout" title="<?php echo htmlspecialchars(phinit_t('logout_title', [], $_currentLocale), ENT_QUOTES); ?>">
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/logout', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link member-bar__logout" title="<?php echo htmlspecialchars(phinit_t('logout_title', [], $_currentLocale), ENT_QUOTES); ?>">
                     <span class="member-bar__icon">🚪</span> <?php echo htmlspecialchars(phinit_t('logout', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
             </div>
@@ -500,7 +498,7 @@ if ($_showLanguageSwitch) {
                 <?php if ($_showDarkMode || ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchDisplay !== '')): ?>
                 <div class="hdr-tools__toggles" aria-label="<?php echo htmlspecialchars(phinit_t('header_controls', [], $_currentLocale), ENT_QUOTES); ?>">
                     <?php if ($_showDarkMode): ?>
-                    <button type="button" class="util-link util-dark-toggle" data-dark-toggle aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="Dark Mode aktivieren"><span data-dark-toggle-icon aria-hidden="true">☾</span></button>
+                    <button type="button" class="util-link util-dark-toggle" data-dark-toggle aria-label="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>" aria-pressed="false" title="<?php echo htmlspecialchars(phinit_t('darkmode_toggle', [], $_currentLocale), ENT_QUOTES); ?>"><span data-dark-toggle-icon aria-hidden="true">☾</span></button>
                     <?php endif; ?>
 
                     <?php if ($_showLanguageSwitch && $_languageSwitchUrl !== '' && $_languageSwitchHeaderDisplay !== ''): ?>
@@ -563,12 +561,12 @@ if ($_showLanguageSwitch) {
                                 </button>
                             </div>
                             <div class="dropdown" id="main-nav-dropdown-fallback-powershell">
-                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/grundlagen', $_currentLocale), ENT_QUOTES); ?>">Grundlagen</a>
-                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/glossar', $_currentLocale), ENT_QUOTES); ?>">Glossar</a>
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/grundlagen', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Grundlagen', $_currentLocale), ENT_QUOTES); ?></a>
+                                <a href="<?php echo htmlspecialchars($_localizedHref('/powershell/glossar', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Glossar', $_currentLocale), ENT_QUOTES); ?></a>
                             </div>
                         </div>
                         <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/microsoft-365') ? ' active' : ''; ?>"<?php echo $navIsActive('/microsoft-365') ? ' aria-current="page"' : ''; ?>>Microsoft 365</a>
-                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/datenschutz') ? ' active' : ''; ?>"<?php echo $navIsActive('/datenschutz') ? ' aria-current="page"' : ''; ?>>Datenschutz</a>
+                        <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/datenschutz') ? ' active' : ''; ?>"<?php echo $navIsActive('/datenschutz') ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars(phinit_localize_menu_label('Datenschutz', $_currentLocale), ENT_QUOTES); ?></a>
                         <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/news') ? ' active' : ''; ?>"<?php echo $navIsActive('/news') ? ' aria-current="page"' : ''; ?>>News</a>
                     <?php endif; ?>
                     <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
@@ -590,7 +588,7 @@ if ($_showLanguageSwitch) {
                 <a href="<?php echo htmlspecialchars($_localizedHref('/linux', $_currentLocale), ENT_QUOTES); ?>">Linux / BASH</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/powershell', $_currentLocale), ENT_QUOTES); ?>">PowerShell</a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/microsoft-365', $_currentLocale), ENT_QUOTES); ?>">Microsoft 365</a>
-                <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>">Datenschutz</a>
+                <a href="<?php echo htmlspecialchars($_localizedHref('/datenschutz', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Datenschutz', $_currentLocale), ENT_QUOTES); ?></a>
                 <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>">News</a>
                 <?php if (!$isLoggedIn && $_showLoginButton): ?>
                 <a href="<?php echo htmlspecialchars(theme_login_url(null, $_currentLocale), ENT_QUOTES); ?>" class="mobile-menu__login">🔑 <?php echo htmlspecialchars(phinit_t('login', [], $_currentLocale), ENT_QUOTES); ?></a>
@@ -615,13 +613,13 @@ if ($_showLanguageSwitch) {
                             <a href="<?php echo htmlspecialchars($_localizedHref((string) ($ql['url'] ?? '#')), ENT_QUOTES); ?>"><?php echo htmlspecialchars($normalizeNavLabel($ql['label'] ?? ''), ENT_QUOTES); ?></a>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/entra-id', $_currentLocale), ENT_QUOTES); ?>">Entra ID</a>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/intune', $_currentLocale), ENT_QUOTES); ?>">Intune</a>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/compliance', $_currentLocale), ENT_QUOTES); ?>">Compliance</a>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/graph-api', $_currentLocale), ENT_QUOTES); ?>">Graph API</a>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/powershell', $_currentLocale), ENT_QUOTES); ?>">PowerShell</a>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/security', $_currentLocale), ENT_QUOTES); ?>">Security</a>
-                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/exchange', $_currentLocale), ENT_QUOTES); ?>">Exchange</a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/entra-id', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Entra ID', $_currentLocale), ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/intune', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Intune', $_currentLocale), ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/compliance', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Compliance', $_currentLocale), ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/graph-api', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Graph API', $_currentLocale), ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/powershell', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('PowerShell', $_currentLocale), ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/security', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Security', $_currentLocale), ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($_localizedHref('/kategorie/exchange', $_currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_localize_menu_label('Exchange', $_currentLocale), ENT_QUOTES); ?></a>
                         <?php endif; ?>
                     </nav>
         </div>
