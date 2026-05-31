@@ -463,30 +463,61 @@ trait CMS_Phinit_Theme_Head_Trait
 
         $ogSiteFinal = !empty($settings['og_site_name']) ? $settings['og_site_name'] : $siteTitle;
 
-        echo '<meta name="description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
-        echo '<meta name="robots" content="' . htmlspecialchars($metaRobots, ENT_QUOTES) . '">' . "\n";
-        echo '<meta name="theme-color" content="' . htmlspecialchars($themeColor, ENT_QUOTES) . '">' . "\n";
-        if ($canonicalSelf) {
-            echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
-        }
-        echo '<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($siteTitle, ENT_QUOTES) . ' RSS" href="' . htmlspecialchars($siteUrl . '/feed', ENT_QUOTES) . '">' . "\n";
-
-        echo '<meta property="og:type" content="' . htmlspecialchars($ogType, ENT_QUOTES) . '">' . "\n";
-        echo '<meta property="og:site_name" content="' . htmlspecialchars($ogSiteFinal, ENT_QUOTES) . '">' . "\n";
-        echo '<meta property="og:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
-        echo '<meta property="og:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
-        echo '<meta property="og:url" content="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n";
-        if (!empty($ogImg)) {
-            echo '<meta property="og:image" content="' . htmlspecialchars($ogImg, ENT_QUOTES) . '">' . "\n";
-        }
-
         $twitterCard = $settings['twitter_card_type'];
         $twitterCardFinal = (!empty($ogImg) && $twitterCard === 'summary_large_image') ? 'summary_large_image' : $twitterCard;
-        echo '<meta name="twitter:card" content="' . htmlspecialchars($twitterCardFinal, ENT_QUOTES) . '">' . "\n";
-        echo '<meta name="twitter:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n";
-        echo '<meta name="twitter:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n";
-        if (!empty($ogImg)) {
-            echo '<meta name="twitter:image" content="' . htmlspecialchars($ogImg, ENT_QUOTES) . '">' . "\n";
+        $metaData = [
+            'description' => $ogDesc,
+            'robots' => $metaRobots,
+            'theme_color' => $themeColor,
+            'canonical_url' => $canonical,
+            'canonical_self' => (bool) $canonicalSelf,
+            'rss_url' => $siteUrl . '/feed',
+            'og_type' => $ogType,
+            'og_site_name' => $ogSiteFinal,
+            'og_title' => $ogTitle,
+            'og_description' => $ogDesc,
+            'og_url' => $canonical,
+            'og_image' => $ogImg,
+            'twitter_card' => $twitterCardFinal,
+            'twitter_title' => $ogTitle,
+            'twitter_description' => $ogDesc,
+            'twitter_image' => $ogImg,
+        ];
+
+        try {
+            $filteredMetaData = \CMS\Hooks::applyFilters('phinit_head_meta_data', $metaData, [
+                'uri' => $uri,
+                'current_page' => $currentPage,
+                'current_post' => $currentPost,
+            ]);
+            if (is_array($filteredMetaData)) {
+                $metaData = array_merge($metaData, $filteredMetaData);
+            }
+        } catch (\Throwable) {
+        }
+
+        echo '<meta name="description" content="' . htmlspecialchars((string) ($metaData['description'] ?? ''), ENT_QUOTES) . '">' . "\n";
+        echo '<meta name="robots" content="' . htmlspecialchars((string) ($metaData['robots'] ?? 'index,follow'), ENT_QUOTES) . '">' . "\n";
+        echo '<meta name="theme-color" content="' . htmlspecialchars((string) ($metaData['theme_color'] ?? $themeColor), ENT_QUOTES) . '">' . "\n";
+        if (!empty($metaData['canonical_self']) && !empty($metaData['canonical_url'])) {
+            echo '<link rel="canonical" href="' . htmlspecialchars((string) $metaData['canonical_url'], ENT_QUOTES) . '">' . "\n";
+        }
+        echo '<link rel="alternate" type="application/rss+xml" title="' . htmlspecialchars($siteTitle, ENT_QUOTES) . ' RSS" href="' . htmlspecialchars((string) ($metaData['rss_url'] ?? ($siteUrl . '/feed')), ENT_QUOTES) . '">' . "\n";
+
+        echo '<meta property="og:type" content="' . htmlspecialchars((string) ($metaData['og_type'] ?? 'website'), ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:site_name" content="' . htmlspecialchars((string) ($metaData['og_site_name'] ?? $siteTitle), ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:title" content="' . htmlspecialchars((string) ($metaData['og_title'] ?? $siteTitle), ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:description" content="' . htmlspecialchars((string) ($metaData['og_description'] ?? ''), ENT_QUOTES) . '">' . "\n";
+        echo '<meta property="og:url" content="' . htmlspecialchars((string) ($metaData['og_url'] ?? ($metaData['canonical_url'] ?? $canonical)), ENT_QUOTES) . '">' . "\n";
+        if (!empty($metaData['og_image'])) {
+            echo '<meta property="og:image" content="' . htmlspecialchars((string) $metaData['og_image'], ENT_QUOTES) . '">' . "\n";
+        }
+
+        echo '<meta name="twitter:card" content="' . htmlspecialchars((string) ($metaData['twitter_card'] ?? 'summary_large_image'), ENT_QUOTES) . '">' . "\n";
+        echo '<meta name="twitter:title" content="' . htmlspecialchars((string) ($metaData['twitter_title'] ?? ($metaData['og_title'] ?? $siteTitle)), ENT_QUOTES) . '">' . "\n";
+        echo '<meta name="twitter:description" content="' . htmlspecialchars((string) ($metaData['twitter_description'] ?? ($metaData['og_description'] ?? '')), ENT_QUOTES) . '">' . "\n";
+        if (!empty($metaData['twitter_image'])) {
+            echo '<meta name="twitter:image" content="' . htmlspecialchars((string) $metaData['twitter_image'], ENT_QUOTES) . '">' . "\n";
         }
     }
 
