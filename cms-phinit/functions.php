@@ -99,7 +99,9 @@ final class CMS_Phinit_Theme
 
     public function handleFavoriteToggleRequest(): void
     {
-        phinit_handle_favorite_toggle_request();
+        if (function_exists('phinit_handle_favorite_toggle_request')) {
+            phinit_handle_favorite_toggle_request();
+        }
     }
 
     public function seedServicesHubSite(): void

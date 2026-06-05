@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M365 Tools – phinit.de (Redesign-Beispiel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   DESIGN TOKENS  –  hier zentral ans PHINIT-Theme anpassen
+   ========================================================================= */
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Markenfarben */
+  --navy:        #0b1b34;   /* Header / Footer */
+  --navy-soft:   #13294d;
+  --accent:      #1f6feb;   /* M365-nahes Blau, Akzent / Links */
+  --accent-dark: #1656bd;
+  --accent-soft: #e8f1fe;
+
+  /* Flächen */
+  --bg:          #f5f7fa;   /* Seitenhintergrund */
+  --surface:     #ffffff;   /* Karten */
+  --surface-2:   #eef2f7;   /* sekundäre Flächen / Pills */
+
+  /* Text */
+  --ink:         #14213d;
+  --ink-soft:    #4b5a72;
+  --ink-faint:   #8493a8;
+
+  /* Linien */
+  --line:        #e2e8f0;
+  --line-strong: #cdd6e2;
+
+  /* Kategoriefarben (für Icon-Chips im Kompass) */
+  --c-lizenz:    #1f6feb;
+  --c-identitaet:#6c4adb;
+  --c-schutz:    #0f9d72;
+  --c-service:   #c2602f;
+  --c-speicher:  #2563eb;
+  --c-netzwerk:  #0d9488;
+  --c-copilot:   #7c3aed;
+  --c-power:     #c2602f;
+  --c-migration: #1f6feb;
+
+  --radius:    10px;
+  --radius-lg: 14px;
+  --radius-pill: 100px;
+  --shadow-card: 0 1px 2px rgba(11,27,52,.04), 0 4px 14px rgba(11,27,52,.05);
+  --shadow-hover: 0 6px 24px rgba(11,27,52,.10);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+/* ============================== HEADER ================================== */
+.site-header {
+  background: var(--navy);
+  color: #fff;
+  position: sticky; top: 0; z-index: 50;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.site-header .wrap { display: flex; align-items: center; gap: 28px; height: 60px; }
+.brand { font-weight: 700; letter-spacing: .02em; font-size: 17px; }
+.brand small { display: block; font-size: 10px; font-weight: 400; color: #9fb2cf; letter-spacing: .03em; }
+.main-nav { display: flex; gap: 22px; margin-left: 8px; }
+.main-nav a { color: #c7d4e6; font-size: 14px; font-weight: 500; transition: color .15s; }
+.main-nav a:hover, .main-nav a.active { color: #fff; }
+.header-search { margin-left: auto; }
+.header-search input {
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  color: #fff; border-radius: var(--radius-pill); padding: 7px 16px; font-size: 13px;
+  font-family: inherit; width: 200px; outline: none;
+}
+.header-search input::placeholder { color: #9fb2cf; }
+
+/* =============================== HERO =================================== */
+.hero { padding: 48px 0 36px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+}
+.eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; }
+.hero h1 { font-size: 40px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 12px; }
+.hero p.lead { font-size: 17px; color: var(--ink-soft); max-width: 56ch; margin: 0 0 28px; }
+
+.hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; }
+.stats { display: flex; gap: 14px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 16px 22px; min-width: 110px;
+}
+.stat .num { font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+.stat .lbl { font-size: 12px; color: var(--ink-faint); margin-top: 6px; text-transform: uppercase; letter-spacing: .06em; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff; font-weight: 600; font-size: 14px;
+  padding: 11px 22px; border-radius: var(--radius-pill); border: none; cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.cta-btn:hover { background: var(--accent-dark); }
+.cta-btn:active { transform: scale(.98); }
+
+/* ============================ TOOLBAR / FILTER ========================= */
+.toolbar { padding: 8px 0 4px; }
+.search-box {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 0 16px; height: 50px; margin-bottom: 16px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.search-box svg { width: 20px; height: 20px; color: var(--ink-faint); flex-shrink: 0; }
+.search-box input { border: none; outline: none; flex: 1; font-size: 15px; font-family: inherit; background: none; color: var(--ink); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 8px; }
+.chip {
+  border: 1px solid var(--line-strong); background: var(--surface);
+  border-radius: var(--radius-pill); padding: 7px 16px; font-size: 13.5px; font-weight: 500;
+  color: var(--ink-soft); cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip .cnt { font-family: var(--font-mono); font-size: 11px; opacity: .55; margin-left: 5px; }
+.chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip.active .cnt { opacity: .8; }
+
+/* ============================== KOMPASS ================================ */
+.section { padding: 40px 0; }
+.section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.section-head h2 { font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+.section-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.section-sub { color: var(--ink-soft); margin: 0 0 22px; font-size: 15px; }
+
+.compass {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.compass-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 16px; transition: border-color .15s, transform .15s;
+}
+.compass-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.compass-card .ico {
+  width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+}
+.compass-card .ico svg { width: 19px; height: 19px; }
+.compass-card .t { font-weight: 600; font-size: 14.5px; margin: 0 0 4px; }
+.compass-card .d { font-size: 12.5px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+
+/* ============================ KATEGORIE / TOOLS ======================== */
+.cat-block { padding: 38px 0 8px; scroll-margin-top: 80px; }
+.cat-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.cat-head .badge {
+  width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.cat-head .badge svg { width: 18px; height: 18px; }
+.cat-head h2 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+.cat-head .modcount { margin-left: auto; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+.cat-sub { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 20px; padding-left: 44px; }
+
+.tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+
+.tool-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 22px; display: flex; flex-direction: column;
+  transition: border-color .15s, box-shadow .15s, transform .15s; position: relative;
+}
+.tool-card:hover { border-color: var(--line-strong); box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+.tool-card .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.tool-card .card-ico {
+  width: 38px; height: 38px; border-radius: var(--radius); background: var(--accent-soft);
+  color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.tool-card .card-ico svg { width: 20px; height: 20px; }
+.tool-card h3 { font-size: 16px; font-weight: 600; margin: 0; line-height: 1.35; }
+.tool-card .desc { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 16px; line-height: 1.55; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.tag { background: var(--surface-2); color: var(--ink-soft); font-size: 11px; font-weight: 500; border-radius: var(--radius-pill); padding: 4px 11px; }
+
+.tool-card .open-link {
+  margin-top: auto; display: inline-flex; align-items: center; gap: 7px;
+  font-size: 14px; font-weight: 600; color: var(--accent);
+}
+.tool-card .open-link svg { width: 16px; height: 16px; transition: transform .15s; }
+.tool-card:hover .open-link svg { transform: translateX(3px); }
+
+.flag {
+  position: absolute; top: 18px; right: 18px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  border-radius: var(--radius-pill); padding: 4px 10px;
+}
+.flag.neu     { background: #fff4e0; color: #b76e00; }
+.flag.beliebt { background: #e6f9f0; color: #0a7d54; }
+
+.no-results { display: none; text-align: center; color: var(--ink-faint); padding: 60px 0; font-size: 15px; }
+.no-results.show { display: block; }
+
+/* ============================== FOOTER ================================= */
+.site-footer { background: var(--navy); color: #c7d4e6; margin-top: 64px; padding: 44px 0 28px; }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; }
+.site-footer h4 { color: #fff; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; margin: 0 0 14px; }
+.site-footer p { font-size: 13.5px; line-height: 1.7; margin: 0 0 8px; }
+.site-footer ul { list-style: none; padding: 0; margin: 0; }
+.site-footer li { margin-bottom: 9px; }
+.site-footer li a { color: #c7d4e6; font-size: 13.5px; }
+.site-footer li a:hover { color: #fff; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.08); margin-top: 32px; padding-top: 18px; font-size: 12px; color: #7f93b3; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+/* ============================ RESPONSIVE =============================== */
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 32px; }
+  .main-nav, .header-search { display: none; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================================ HEADER ============================== -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">PHINIT.DE<small>IT-Blog für Microsoft 365, Exchange &amp; PowerShell</small></div>
+    <nav class="main-nav">
+      <a href="#">Home</a>
+      <a href="#">How-Tos</a>
+      <a href="#">Microsoft 365</a>
+      <a href="#" class="active">M365 Tools</a>
+      <a href="#">Linux</a>
+    </nav>
+    <div class="header-search"><input type="text" placeholder="phinit.de durchsuchen…"></div>
+  </div>
+</header>
+
+<!-- ================================= HERO =============================== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Rechner &amp; Tools</div>
+    <div class="hero-grid">
+      <div>
+        <h1>M365 Tools</h1>
+        <p class="lead">Eine kuratierte Sammlung für Microsoft-365-Lizenzierung, Kosten, Speicher, Copilot, Telefonie, Migration und Betrieb.</p>
+        <button class="cta-btn">
+          Kontakt aufnehmen
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">19</div><div class="lbl">Module</div></div>
+        <div class="stat"><div class="num">19</div><div class="lbl">Live</div></div>
+        <div class="stat"><div class="num">9</div><div class="lbl">Review</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== TOOLBAR ============================== -->
+<div class="toolbar">
+  <div class="wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Nach Tool, Thema oder Kategorie suchen …">
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip active" data-cat="all">Alle</button>
+      <button class="chip" data-cat="copilot">Copilot <span class="cnt">3</span></button>
+      <button class="chip" data-cat="exchange">Exchange <span class="cnt">2</span></button>
+      <button class="chip" data-cat="lizenzen">Lizenzen <span class="cnt">9</span></button>
+      <button class="chip" data-cat="migration">Migration <span class="cnt">1</span></button>
+      <button class="chip" data-cat="power">Power Platform <span class="cnt">1</span></button>
+      <button class="chip" data-cat="speicher">Speicher <span class="cnt">2</span></button>
+      <button class="chip" data-cat="teams">Teams <span class="cnt">1</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== KOMPASS ============================== -->
+<section class="section" id="kompass">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Best-Practice-Kompass</h2>
+      <span class="section-tag">Querschnittsüberblick</span>
+    </div>
+    <p class="section-sub">Quereinstieg für Lizenzierung, Zugriff, Schutz, Servicegrenzen, Netzwerk, Performance, Copilot, Power Platform, Backup und Migration, gegen offizielle Microsoft-Quellen geprüft.</p>
+    <div class="compass">
+      <div class="compass-card"><div class="ico" style="background:#e8f1fe;color:var(--c-lizenz)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></div><p class="t">Lizenz &amp; Kosten</p><p class="d">Nutzerbasierte Add-ons und Renewal-Fenster prüfen.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#eee9fc;color:var(--c-identitaet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div><p class="t">Identität &amp; Zugriff</p><p class="d">Rechte, MFA und Conditional Access planen.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#e6f6ef;color:var(--c-schutz)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/></svg></div><p class="t">Schutz &amp; Compliance</p><p class="d">Defender, Purview und Aufbewahrung verbinden.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#fbeee4;color:var(--c-service)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/></svg></div><p class="t">Servicegrenzen</p><p class="d">Mailbox- und Speicher-Limits gegenprüfen.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#e7eefe;color:var(--c-speicher)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div><p class="t">Speicher &amp; Backup</p><p class="d">Pool, Schutzumfang und Restore-Ziele klären.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#e3f4f1;color:var(--c-netzwerk)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div><p class="t">Netzwerk &amp; Performance</p><p class="d">Latenz, WSS und Basiswerte messen.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#f0e9fd;color:var(--c-copilot)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg></div><p class="t">Copilot &amp; KI</p><p class="d">Datenzugriff und Pilotumfang absichern.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#fbeee4;color:var(--c-power)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><p class="t">Power Platform Betrieb</p><p class="d">ALM, Monitoring und Request-Kontingente.</p></div>
+      <div class="compass-card"><div class="ico" style="background:#e8f1fe;color:var(--c-migration)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></div><p class="t">Migration &amp; Betrieb</p><p class="d">Cutover, Hypercare und Rollback planen.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== TOOLS =============================== -->
+<div class="wrap" id="catalog">
+
+  <!-- ----- COPILOT ----- -->
+  <section class="cat-block" data-cat="copilot">
+    <div class="cat-head">
+      <span class="badge" style="background:#f0e9fd;color:var(--c-copilot)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z"/></svg></span>
+      <h2>Copilot</h2>
+      <span class="modcount">3 Module</span>
+    </div>
+    <p class="cat-sub">Copilot-Eignung, Pilotierung, ROI und KI-Angebote bewerten.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="ai pack copilot pro vergleich" data-tags="lizenz kosten copilot ki">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3l4 4-4 4M8 21l-4-4 4-4M20 7H8M4 17h12"/></svg></span><h3>AI Pack vs. Copilot Pro Vergleich</h3></div>
+        <p class="desc">Vergleicht Copilot Chat, Microsoft 365 Copilot, Special-Copilots und Copilot Studio nach Use Case.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Copilot &amp; KI</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="copilot pilot phase rechner" data-tags="identitaet zugriff netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span><h3>Copilot Pilot-Phase-Rechner</h3></div>
+        <p class="desc">Erstellt Pilotgröße, Dauer, Budgetrahmen, Champion-Bedarf und Governance-Schritte für M365 Copilot.</p>
+        <div class="tags"><span class="tag">Identität &amp; Zugriff</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="copilot roi rechner" data-tags="copilot ki lizenz kosten migration betrieb">
+        <span class="flag neu">Neu</span>
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V9M16 16v-8"/></svg></span><h3>Copilot ROI-Rechner</h3></div>
+        <p class="desc">Berechnet Business Case, Break-even-Minuten und eine Pilot- oder Rollout-Empfehlung für M365 Copilot.</p>
+        <div class="tags"><span class="tag">Copilot &amp; KI</span><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Migration &amp; Betrieb</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ----- EXCHANGE ----- -->
+  <section class="cat-block" data-cat="exchange">
+    <div class="cat-head">
+      <span class="badge" style="background:#e8f1fe;color:var(--c-lizenz)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+      <h2>Exchange</h2>
+      <span class="modcount">2 Module</span>
+    </div>
+    <p class="cat-sub">Mailboxen, Archivierung und Exchange-Modernisierung sauber planen.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="on-prem exchange online roi" data-tags="migration betrieb servicegrenzen netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></span><h3>On-Prem Exchange zu Exchange Online ROI</h3></div>
+        <p class="desc">Berechnet Vollkosten, Break-even, Migrationspfad und Management-Fact für die Migration nach Exchange Online.</p>
+        <div class="tags"><span class="tag">Migration &amp; Betrieb</span><span class="tag">Servicegrenzen</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="archive mailbox rechner" data-tags="servicegrenzen speicher backup schutz compliance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9M10 13h4"/></svg></span><h3>Archive Mailbox Rechner</h3></div>
+        <p class="desc">Prüft Archivgröße, Auto-expanding Archive, Shared-Mailbox-Sonderfälle, Hold und passende Lizenzpfade.</p>
+        <div class="tags"><span class="tag">Servicegrenzen</span><span class="tag">Speicher &amp; Backup</span><span class="tag">Schutz &amp; Compliance</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ----- LIZENZEN ----- -->
+  <section class="cat-block" data-cat="lizenzen">
+    <div class="cat-head">
+      <span class="badge" style="background:#e8f1fe;color:var(--c-lizenz)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></span>
+      <h2>Lizenzen</h2>
+      <span class="modcount">9 Module</span>
+    </div>
+    <p class="cat-sub">Lizenzmodelle, Add-ons, Audits und Sparpfade schnell einordnen.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="lizenz audit checkliste" data-tags="lizenz kosten netzwerk performance">
+        <span class="flag beliebt">Beliebt</span>
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg></span><h3>Lizenz-Audit-Checkliste</h3></div>
+        <p class="desc">Interaktive Microsoft-365-Auditliste für Lizenzbestand, Offboarding, Shared Mailboxes, Copilot und Renewal.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Checkliste laden <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="m365 lizenzvergleich" data-tags="lizenz kosten servicegrenzen copilot ki">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M9 16V8M14 16v-4M19 16V6"/></svg></span><h3>M365-Lizenzvergleich</h3></div>
+        <p class="desc">Vergleicht M365-Pläne nach Desktop-Apps, Mail, Teams, Copilot, Security und Zusatzdiensten.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Servicegrenzen</span><span class="tag">Copilot &amp; KI</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="m365 add-on konfigurator" data-tags="lizenz kosten schutz compliance speicher backup">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><h3>M365 Add-On-Konfigurator</h3></div>
+        <p class="desc">Prüft Add-ons, Prerequisites, Redundanzen, Verbrauchsanteile und Upgrade-Alternativen für M365.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Schutz &amp; Compliance</span><span class="tag">Speicher &amp; Backup</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="m365 lizenz berater" data-tags="lizenz kosten identitaet zugriff">
+        <span class="flag beliebt">Beliebt</span>
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M5 21v-1a7 7 0 0114 0v1"/></svg></span><h3>M365-Lizenz-Berater</h3></div>
+        <p class="desc">Empfiehlt Basislizenzen, Add-ons und Mischmodelle für konkrete Microsoft-365-Anforderungen.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Identität &amp; Zugriff</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="annual vs monthly commitment rechner" data-tags="lizenz kosten migration betrieb">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><h3>Annual vs. Monthly Commitment Rechner</h3></div>
+        <p class="desc">Vergleicht Monatslaufzeit, Jahresbindung, jährliche Abrechnung und Split-Strategie für variable M365-Seats.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Migration &amp; Betrieb</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="frontline worker lizenz eignung check" data-tags="identitaet zugriff schutz compliance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a6 6 0 0112 0M8 4a4 4 0 110 8 4 4 0 010-8M16 14a5 5 0 016 6"/></svg></span><h3>Frontline Worker Lizenz-Eignung-Check</h3></div>
+        <p class="desc">Prüft F1, F3, Mischmodell oder Enterprise-Bedarf für mobile, schichtbasierte und deskless Nutzergruppen.</p>
+        <div class="tags"><span class="tag">Identität &amp; Zugriff</span><span class="tag">Schutz &amp; Compliance</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="microsoft preiserhoehung tracker" data-tags="lizenz kosten migration betrieb">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 7-7M14 8h6v6"/></svg></span><h3>Microsoft-Preiserhöhung-Tracker</h3></div>
+        <p class="desc">Bewertet offizielle Microsoft-Preis-, Packaging- und Renewal-Ereignisse mit Budget- und Forecast-Trennung.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Migration &amp; Betrieb</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="shared mailbox vs lizenz rechner" data-tags="lizenz kosten servicegrenzen schutz compliance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><h3>Shared-Mailbox vs. Lizenz-Rechner</h3></div>
+        <p class="desc">Prüft Eignung, Lizenzpflicht und Kostenanteil für Shared Mailboxes, inkl. 50-GB-Grenze und Hold-Sonderfällen.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Servicegrenzen</span><span class="tag">Schutz &amp; Compliance</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="copilot lizenz pflicht checker" data-tags="copilot ki identitaet zugriff netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><h3>Copilot Lizenz-Pflicht-Checker</h3></div>
+        <p class="desc">Prüft Basislizenz, Copilot-Chat-Status und technische Readiness für Microsoft 365 Copilot.</p>
+        <div class="tags"><span class="tag">Copilot &amp; KI</span><span class="tag">Identität &amp; Zugriff</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ----- MIGRATION ----- -->
+  <section class="cat-block" data-cat="migration">
+    <div class="cat-head">
+      <span class="badge" style="background:#e8f1fe;color:var(--c-migration)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></span>
+      <h2>Migration</h2>
+      <span class="modcount">1 Modul</span>
+    </div>
+    <p class="cat-sub">Umzugs- und TCO-Szenarien mit Kosten, Aufwand und Break-even bewerten.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="google workspace m365 tco rechner" data-tags="lizenz kosten netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></span><h3>Google Workspace → M365 TCO-Rechner</h3></div>
+        <p class="desc">Vergleicht Google Workspace und Microsoft 365 über Lizenzkosten, Migration, Schulung und Aufwand.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ----- POWER PLATFORM ----- -->
+  <section class="cat-block" data-cat="power">
+    <div class="cat-head">
+      <span class="badge" style="background:#fbeee4;color:var(--c-power)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>
+      <h2>Power Platform</h2>
+      <span class="modcount">1 Modul</span>
+    </div>
+    <p class="cat-sub">Power Apps, Automate, Dataverse, Credits und Governance realistisch kalkulieren.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="power platform kosten kalkulator" data-tags="power platform betrieb identitaet zugriff schutz compliance netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><h3>Power Platform Kosten-Kalkulator</h3></div>
+        <p class="desc">Bewertet Power Apps, Power Automate, Dataverse, Power Pages, Copilot Studio, Credits, Capacity und Governance.</p>
+        <div class="tags"><span class="tag">Power Platform Betrieb</span><span class="tag">Identität &amp; Zugriff</span><span class="tag">Schutz &amp; Compliance</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ----- SPEICHER ----- -->
+  <section class="cat-block" data-cat="speicher">
+    <div class="cat-head">
+      <span class="badge" style="background:#e7eefe;color:var(--c-speicher)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></span>
+      <h2>Speicher</h2>
+      <span class="modcount">2 Module</span>
+    </div>
+    <p class="cat-sub">SharePoint, OneDrive, Exchange und Backup-Speicherbedarf greifbar machen.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="m365 storage bedarf rechner" data-tags="speicher backup servicegrenzen netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span><h3>M365 Storage-Bedarf-Rechner</h3></div>
+        <p class="desc">Berechnet SharePoint-Pool, OneDrive-Quotas, Exchange-Postfächer, Archivbedarf, Wachstum und Change-Potenzial.</p>
+        <div class="tags"><span class="tag">Speicher &amp; Backup</span><span class="tag">Servicegrenzen</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+
+      <article class="tool-card" data-name="m365 backup kosten rechner" data-tags="speicher backup schutz compliance servicegrenzen">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-3-6.7M21 3v5h-5"/></svg></span><h3>M365 Backup-Kosten-Rechner</h3></div>
+        <p class="desc">Berechnet Microsoft-365-Backup-Kosten pro geschütztem GB und vergleicht Provider nach Schutzklassen.</p>
+        <div class="tags"><span class="tag">Speicher &amp; Backup</span><span class="tag">Schutz &amp; Compliance</span><span class="tag">Servicegrenzen</span></div>
+        <a class="open-link" href="#">Rechner starten <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ----- TEAMS ----- -->
+  <section class="cat-block" data-cat="teams">
+    <div class="cat-head">
+      <span class="badge" style="background:#f0e9fd;color:var(--c-copilot)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a6 6 0 0112 0M8 4a4 4 0 110 8 4 4 0 010-8M17 11a3 3 0 100-6M16 20a5 5 0 016 0"/></svg></span>
+      <h2>Teams</h2>
+      <span class="modcount">1 Modul</span>
+    </div>
+    <p class="cat-sub">Telefonie, PSTN-Modelle und Teams-Phone-Optionen vergleichen.</p>
+    <div class="tool-grid">
+
+      <article class="tool-card" data-name="teams phone lizenz berater" data-tags="lizenz kosten servicegrenzen netzwerk performance">
+        <div class="card-head"><span class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span><h3>Teams Phone-Lizenz-Berater</h3></div>
+        <p class="desc">Vergleicht Calling Plan, Operator Connect, Direct Routing, Mischmodell und Sonderfälle für Teams Phone.</p>
+        <div class="tags"><span class="tag">Lizenz &amp; Kosten</span><span class="tag">Servicegrenzen</span><span class="tag">Netzwerk &amp; Performance</span></div>
+        <a class="open-link" href="#">Tool öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <div class="no-results" id="noResults">Keine Tools für deine Auswahl gefunden.</div>
+</div>
+
+<!-- =============================== FOOTER ============================== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>About me · Andreas Hepp</h4>
+        <p>Senior IT-Admin aus Baiersbronn, 20+ Jahre Microsoft. Fokus: Datenschutz/Compliance M365, Azure, Exchange, PowerShell, IT-Security, Enterprise AI/RAG. Feedback erwünscht.</p>
+      </div>
+      <div>
+        <h4>Themen</h4>
+        <ul><li><a href="#">Microsoft 365</a></li><li><a href="#">Exchange</a></li><li><a href="#">PowerShell</a></li><li><a href="#">Linux</a></li></ul>
+      </div>
+      <div>
+        <h4>Seiten</h4>
+        <ul><li><a href="#">Über mich</a></li><li><a href="#">Kontakt</a></li><li><a href="#">RSS-Feed</a></li><li><a href="#">Impressum</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PhinIT.de · Powered by 365CMS</span>
+      <span>Impressum · Datenschutz · AGB · Cookie Consent</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- Kategorie-Filter + Live-Suche ---- */
+const chips   = document.querySelectorAll('.chip');
+const blocks  = document.querySelectorAll('.cat-block');
+const cards   = document.querySelectorAll('.tool-card');
+const search  = document.getElementById('searchInput');
+const noRes   = document.getElementById('noResults');
+let activeCat = 'all';
+
+function apply() {
+  const q = search.value.trim().toLowerCase();
+  let anyVisible = false;
+
+  blocks.forEach(block => {
+    const cat = block.dataset.cat;
+    const catMatch = activeCat === 'all' || activeCat === cat;
+    let blockHasVisible = false;
+
+    block.querySelectorAll('.tool-card').forEach(card => {
+      const hay = (card.dataset.name + ' ' + card.dataset.tags + ' ' +
+                   card.querySelector('h3').textContent + ' ' +
+                   card.querySelector('.desc').textContent).toLowerCase();
+      const textMatch = q === '' || hay.includes(q);
+      const show = catMatch && textMatch;
+      card.style.display = show ? 'flex' : 'none';
+      if (show) { blockHasVisible = true; anyVisible = true; }
+    });
+
+    block.style.display = (catMatch && blockHasVisible) ? '' : 'none';
+  });
+
+  noRes.classList.toggle('show', !anyVisible);
+}
+
+chips.forEach(chip => chip.addEventListener('click', () => {
+  chips.forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  activeCat = chip.dataset.cat;
+  apply();
+}));
+
+search.addEventListener('input', apply);
+</script>
+</body>
+</html>
