@@ -2345,6 +2345,82 @@ if (!function_exists('phinit_get_member_edit_link')) {
             return $default;
         }
 
+        $extractId = static function (array|object|null $entity): int {
+            if (is_array($entity)) {
+                return max(
+                    0,
+                    (int) ($entity['id'] ?? 0),
+                    (int) ($entity['post_id'] ?? 0),
+                    (int) ($entity['page_id'] ?? 0),
+                    (int) ($entity['hub_id'] ?? 0)
+                );
+            }
+
+            if (is_object($entity)) {
+                return max(
+                    0,
+                    (int) ($entity->id ?? 0),
+                    (int) ($entity->post_id ?? 0),
+                    (int) ($entity->page_id ?? 0),
+                    (int) ($entity->hub_id ?? 0)
+                );
+            }
+
+            return 0;
+        };
+
+        $readField = static function (array|object|null $entity, string $field): string {
+            if (is_array($entity)) {
+                return trim((string) ($entity[$field] ?? ''));
+            }
+
+            if (is_object($entity)) {
+                return trim((string) ($entity->{$field} ?? ''));
+            }
+
+            return '';
+        };
+
+        $currentPost = $GLOBALS['post'] ?? null;
+        if (is_array($currentPost) || is_object($currentPost)) {
+            $postId = $extractId($currentPost);
+            if ($postId > 0) {
+                return [
+                    'show' => true,
+                    'url' => rtrim((string) SITE_URL, '/') . '/admin/posts?action=edit&id=' . $postId,
+                    'label' => phinit_t('edit_post'),
+                    'entity' => 'post',
+                    'entityId' => $postId,
+                ];
+            }
+        }
+
+        $currentPage = $GLOBALS['page'] ?? null;
+        if (is_array($currentPage) || is_object($currentPage)) {
+            $pageId = $extractId($currentPage);
+            $contentType = strtolower($readField($currentPage, 'content_type'));
+
+            if ($pageId > 0 && in_array($contentType, ['hub', 'hubsite', 'hub_site'], true)) {
+                return [
+                    'show' => true,
+                    'url' => rtrim((string) SITE_URL, '/') . '/admin/hub-sites?action=edit&id=' . $pageId,
+                    'label' => phinit_t('edit_hubsite'),
+                    'entity' => 'hub',
+                    'entityId' => $pageId,
+                ];
+            }
+
+            if ($pageId > 0) {
+                return [
+                    'show' => true,
+                    'url' => rtrim((string) SITE_URL, '/') . '/admin/pages?action=edit&id=' . $pageId,
+                    'label' => phinit_t('edit_page'),
+                    'entity' => 'page',
+                    'entityId' => $pageId,
+                ];
+            }
+        }
+
         $path = trim((string) ($requestPath ?? phinit_current_request_path()));
         $path = $path !== '' ? $path : '/';
         $resolvedLocale = trim((string) ($locale ?? 'de'));
@@ -2417,14 +2493,24 @@ if (!function_exists('phinit_get_member_edit_link')) {
         }
 
         try {
-            $db = \CMS\Database::instance();
-            $pageRow = $db->get_row(
-                "SELECT id FROM {$db->getPrefix()}pages WHERE slug = ? AND " . phinit_page_visibility_where() . " LIMIT 1",
-                [$slug]
-            );
-            $pageId = (int) ($pageRow->id ?? 0);
+            $page = \CMS\PageManager::instance()->getPageBySlug($slug, $resolvedLocale !== '' ? $resolvedLocale : 'de');
+            if (is_object($page)) {
+                $page = (array) $page;
+            }
 
+            $pageId = $extractId(is_array($page) ? $page : null);
             if ($pageId > 0) {
+                $contentType = strtolower($readField(is_array($page) ? $page : null, 'content_type'));
+                if (in_array($contentType, ['hub', 'hubsite', 'hub_site'], true)) {
+                    return [
+                        'show' => true,
+                        'url' => rtrim((string) SITE_URL, '/') . '/admin/hub-sites?action=edit&id=' . $pageId,
+                        'label' => phinit_t('edit_hubsite'),
+                        'entity' => 'hub',
+                        'entityId' => $pageId,
+                    ];
+                }
+
                 return [
                     'show' => true,
                     'url' => rtrim((string) SITE_URL, '/') . '/admin/pages?action=edit&id=' . $pageId,

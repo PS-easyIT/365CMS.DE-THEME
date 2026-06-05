@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.12",
+  "version": "1.7.13",
   "requires_cms": "2.5.0",
   "tested_up_to": "3.3.47",
   "release_date": "2026-06-05",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.13",
+      "date": "2026-06-05",
+      "changes": [
+        "includes/theme-template-helpers.php: phinit_get_member_edit_link() erkennt aktuelle Detailseiten zuerst über die geladene Post-/Page-Payload ($GLOBALS['post'] / $GLOBALS['page']) und zeigt den passenden Admin-Edit-Link für Beitrag, Seite oder HubSite an",
+        "includes/theme-template-helpers.php: locale-aware Seiten-Fallback auf PageManager umgestellt; Hub-Content-Type wird auch in Fallback-Pfaden korrekt auf /admin/hub-sites geroutet",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.13 synchronisiert"
+      ]
+    },
     {
       "version": "1.7.12",
       "date": "2026-06-05",

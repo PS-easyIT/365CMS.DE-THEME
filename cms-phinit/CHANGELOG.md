@@ -14,6 +14,18 @@
 
 ---
 
+## v1.7.13 — 05. Juni 2026
+
+### Kontextabhängiger „… bearbeiten“-Direktlink für Detailseiten, Beiträge und HubSites
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Header / Member-Bar | `includes/theme-template-helpers.php` erweitert `phinit_get_member_edit_link()` um einen priorisierten Kontext-Fallback über die aktuell geladene Seite bzw. den aktuell geladenen Beitrag (`$GLOBALS['page']` / `$GLOBALS['post']`). Damit erscheint der Bearbeiten-Link zuverlässig direkt auf Detailseiten, Beiträgen und HubSites. |
+| 🔴 fix | Routing / Edit-Resolver | Der Seiten-Fallback nutzt jetzt `\CMS\PageManager::instance()->getPageBySlug(..., $locale)` statt einer reinen `slug`-DB-Abfrage, sodass lokalisierte Seiten-Aufrufe konsistenter auf den passenden Admin-Editor aufgelöst werden. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.13` synchronisiert. |
+
+---
+
 ## v1.7.12 — 05. Juni 2026
 
 ### Member-Bar visuell überarbeitet (flache Schwarz/Weiß-Icons + Trenner)
