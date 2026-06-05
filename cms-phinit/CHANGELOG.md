@@ -14,6 +14,30 @@
 
 ---
 
+## v1.7.11 — 05. Juni 2026
+
+### EditorJS Bild+Text vertikal bündig
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | EditorJS / Bild+Text | `assets/css/rich-content.css` übernimmt die neue Core-Vertikalausrichtung `top`, `center` und `bottom` für Text+Bild-Blöcke in das PHINIT-Grid-Layout, damit der Text oben, mittig oder unten bündig zum Bild sitzt. |
+| 🎨 style | EditorJS / Mobile | Mobile Text+Bild-Ausgaben bleiben trotz gespeicherter Vertikalausrichtung einspaltig, vollbreit und sauber gestapelt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.11` synchronisiert und für Core `3.3.47` freigegeben. |
+
+---
+
+## v1.7.10 — 05. Juni 2026
+
+### HubSite-TOC mit stabilem Dark Mode
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | HubSites / TOC Dark Mode | `assets/css/hubsite.css` setzt für HubSite-Inhaltsverzeichnisse eigene Dark-Mode-Tokens bei `body.dark-mode` und `html.dark-mode body`, damit lokale HubSite-Profilvariablen keine hellen TOC-Flächen mehr erzwingen. |
+| 🎨 style | HubSites / TOC-Kontrast | TOC-Container, Titel, Labels, Pfeilmarker, Summary-Icon, Hover- und Empty-Zustände nutzen dunkle Flächen mit hellen Texten und goldenen Akzenten. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.10` synchronisiert. |
+
+---
+
 ## v1.7.9 — 05. Juni 2026
 
 ### Dark-Mode-Kontrast für Startseite, Details und HubSites

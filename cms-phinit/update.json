@@ -1,13 +1,31 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.9",
+  "version": "1.7.11",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.45",
+  "tested_up_to": "3.3.47",
   "release_date": "2026-06-05",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.11",
+      "date": "2026-06-05",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS-Bild+Text-Blöcke respektieren die neue Core-Vertikalausrichtung top/center/bottom auch im PHINIT-Grid-Layout",
+        "assets/css/rich-content.css: Mobile Text+Bild-Layouts bleiben trotz Vertikal-Ausrichtung wieder einspaltig und vollbreit",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.11 aktualisiert und Kompatibilität mit 365CMS 3.3.47 bestätigt"
+      ]
+    },
+    {
+      "version": "1.7.10",
+      "date": "2026-06-05",
+      "changes": [
+        "assets/css/hubsite.css: HubSite-TOC erhält einen eigenen Dark-Mode-Lock für body.dark-mode und html.dark-mode inklusive lokaler Token-Overrides gegen HubSite-Profilvariablen",
+        "assets/css/hubsite.css: TOC-Container, Titel, Labels, Pfeile, Icon, Hover- und Empty-Zustände bleiben im Dark Mode kontrastreich",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.10 aktualisiert"
+      ]
+    },
     {
       "version": "1.7.9",
       "date": "2026-06-05",
