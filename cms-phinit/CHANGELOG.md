@@ -14,6 +14,18 @@
 
 ---
 
+## v1.7.12 — 05. Juni 2026
+
+### Member-Bar visuell überarbeitet (flache Schwarz/Weiß-Icons + Trenner)
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Header / Member-Bar | `header.php` ersetzt die bisherigen Emoji-Icons durch monochrome SVG-Line-Icons für Bearbeiten, Dashboard, Profil, Benachrichtigungen, Favoriten, Sicherheit, RSS und Logout. |
+| 🎨 style | Header / Navigation | `assets/css/header-navigation.css` richtet die Member-Bar-Links ruhiger aus, setzt flache Icon-Geometrien und ergänzt dezente vertikale Trenner zwischen den Menüpunkten. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.12` synchronisiert. |
+
+---
+
 ## v1.7.11 — 05. Juni 2026
 
 ### EditorJS Bild+Text vertikal bündig

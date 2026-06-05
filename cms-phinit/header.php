@@ -272,6 +272,20 @@ if ($_showLanguageSwitch) {
         $_languageSwitchHeaderDisplay = $flagToEmoji($_languageFlag);
     }
 }
+
+$_memberIconSvg = static function (string $icon): string {
+    return match ($icon) {
+        'edit' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 21l3.75-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L3 21Z"/><path d="M13.5 5.5l5 5"/></svg>',
+        'dashboard' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+        'profile' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.25"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+        'notifications' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 10a6 6 0 1 1 12 0v4l2 2H4l2-2Z"/><path d="M10 18a2 2 0 0 0 4 0"/></svg>',
+        'favorites' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3.8 2.7 5.47 6.03.88-4.36 4.25 1.03 6-5.4-2.84-5.4 2.84 1.03-6-4.36-4.25 6.03-.88L12 3.8Z"/></svg>',
+        'security' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l7 3v5.2c0 4.2-2.56 8.12-7 9.8-4.44-1.68-7-5.6-7-9.8V6l7-3Z"/><path d="m9.2 12.2 1.9 1.9 3.9-3.9"/></svg>',
+        'logout' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4H5v16h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+        'rss' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5" cy="19" r="1.5"/><path d="M4.5 11a8.5 8.5 0 0 1 8.5 8.5"/><path d="M4.5 4A15.5 15.5 0 0 1 20 19.5"/></svg>',
+        default => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/></svg>',
+    };
+};
 ?>
 <body<?php
     $bodyClasses = \CMS\Hooks::applyFilters('body_class', '');
@@ -299,7 +313,7 @@ if ($_showLanguageSwitch) {
         <div class="hdr-inner hdr-member">
 
             <span class="member-bar__greeting">
-                👋 Hallo, <strong><?php
+                Hallo, <strong><?php
                     $displayName = 'User';
                     if (is_object($currentUser)) {
                         $displayName = $currentUser->display_name ?? $currentUser->username ?? 'User';
@@ -313,33 +327,35 @@ if ($_showLanguageSwitch) {
             <nav class="member-bar__nav" aria-label="<?php echo htmlspecialchars(phinit_t('member_navigation', [], $_currentLocale), ENT_QUOTES); ?>">
                 <?php if (!empty($memberEditLink['show'])): ?>
                 <a href="<?php echo htmlspecialchars((string) ($memberEditLink['url'] ?? '#'), ENT_QUOTES); ?>" class="member-bar__link member-bar__link--edit">
-                    <span class="member-bar__icon">✏️</span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? phinit_t('edit', [], $_currentLocale)), ENT_QUOTES); ?>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('edit'); ?></span> <?php echo htmlspecialchars((string) ($memberEditLink['label'] ?? phinit_t('edit', [], $_currentLocale)), ENT_QUOTES); ?>
                 </a>
                 <?php endif; ?>
                 <a href="<?php echo htmlspecialchars(phinit_localized_href($accountPath, $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
-                    <span class="member-bar__icon">📊</span> <?php echo htmlspecialchars(phinit_t('dashboard', [], $_currentLocale), ENT_QUOTES); ?>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('dashboard'); ?></span> <?php echo htmlspecialchars(phinit_t('dashboard', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/profile', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
-                    <span class="member-bar__icon">👤</span> <?php echo htmlspecialchars(phinit_t('profile', [], $_currentLocale), ENT_QUOTES); ?>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('profile'); ?></span> <?php echo htmlspecialchars(phinit_t('profile', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/notifications', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
-                    <span class="member-bar__icon">🔔</span> <?php echo htmlspecialchars(phinit_t('notifications', [], $_currentLocale), ENT_QUOTES); ?>                    <?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>                </a>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('notifications'); ?></span> <?php echo htmlspecialchars(phinit_t('notifications', [], $_currentLocale), ENT_QUOTES); ?><?php if ($notifCount > 0): ?><span class="notif-badge"><?php echo $notifCount > 99 ? '99+' : $notifCount; ?></span><?php endif; ?>
+                </a>
                 <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/favorites', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
-                    <span class="member-bar__icon">⭐</span> <?php echo htmlspecialchars(phinit_t('favorites', [], $_currentLocale), ENT_QUOTES); ?>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('favorites'); ?></span> <?php echo htmlspecialchars(phinit_t('favorites', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
                 <a href="<?php echo htmlspecialchars(phinit_localized_href('/member/security', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link">
-                    <span class="member-bar__icon">🔒</span> <?php echo htmlspecialchars(phinit_t('security', [], $_currentLocale), ENT_QUOTES); ?>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('security'); ?></span> <?php echo htmlspecialchars(phinit_t('security', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
             </nav>
 
             <div class="member-bar__actions">
                 <?php if ($_showRss): ?>
-                <a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link" aria-label="<?php echo htmlspecialchars(phinit_t('rss_subscribe', [], $_currentLocale), ENT_QUOTES); ?>" title="RSS Feed">
-                    <svg class="rss-svg-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="2.5" cy="11.5" r="1.5"/><path d="M1 7.5C3.72 7.5 6.07 9.28 6.77 11.5H8.97C8.18 8.17 5.33 5.5 1 5.5V7.5Z"/><path d="M1 3.5C5.97 3.5 10 7.53 10 12.5H12C12 6.43 7.07 1.5 1 1.5V3.5Z"/></svg>
+                <a href="<?php echo htmlspecialchars(phinit_localized_href('/feed', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link member-bar__link--icon" aria-label="<?php echo htmlspecialchars(phinit_t('rss_subscribe', [], $_currentLocale), ENT_QUOTES); ?>" title="RSS Feed">
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('rss'); ?></span>
+                    <span class="visually-hidden"><?php echo htmlspecialchars(phinit_t('rss_subscribe', [], $_currentLocale), ENT_QUOTES); ?></span>
                 </a>
                 <?php endif; ?>
                 <a href="<?php echo htmlspecialchars(phinit_localized_href('/logout', $_currentLocale, $siteUrl), ENT_QUOTES); ?>" class="member-bar__link member-bar__logout" title="<?php echo htmlspecialchars(phinit_t('logout_title', [], $_currentLocale), ENT_QUOTES); ?>">
-                    <span class="member-bar__icon">🚪</span> <?php echo htmlspecialchars(phinit_t('logout', [], $_currentLocale), ENT_QUOTES); ?>
+                    <span class="member-bar__icon" aria-hidden="true"><?php echo $_memberIconSvg('logout'); ?></span> <?php echo htmlspecialchars(phinit_t('logout', [], $_currentLocale), ENT_QUOTES); ?>
                 </a>
             </div>
 

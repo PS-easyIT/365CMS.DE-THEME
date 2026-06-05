@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.11",
+  "version": "1.7.12",
   "requires_cms": "2.5.0",
   "tested_up_to": "3.3.47",
   "release_date": "2026-06-05",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.12",
+      "date": "2026-06-05",
+      "changes": [
+        "header.php: Member-Bar-Navigationsicons von Emoji auf monochrome SVG-Line-Icons umgestellt (Dashboard, Profil, Benachrichtigungen, Favoriten, Sicherheit, Bearbeiten, Logout, RSS)",
+        "assets/css/header-navigation.css: Member-Bar-Links neu ausgerichtet, dezente vertikale Trenner zwischen Menüpunkten ergänzt und neutrale Schwarz/Weiß-Optik für Icons/Hover vereinheitlicht",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.12 synchronisiert"
+      ]
+    },
     {
       "version": "1.7.11",
       "date": "2026-06-05",
