@@ -4,9 +4,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 
 ## Aktueller Stand
 
-- Version: `1.7.6`
+- Version: `1.7.9`
 - Letzter Security-Stand: **PHP-8.4-Theme-Audit + Syntaxprüfung ohne Fehler** am `14.05.2026`
-- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.41`
+- Kompatibilität laut Manifest: `requires_cms: 2.5.0`, getestet bis `365CMS 3.3.45`
 
 ## Enthaltene Kernbereiche
 
@@ -26,6 +26,7 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - Die Startseiten-Sidebar kann in der Site-Identity eine konfigurierbare Dienstleistungscard mit Logo/Bild, Text und CTA ausgeben.
 - Normale Seiten- und verzögerte Beitrags-Content-Wrapper sind serverseitig als sichtbar markiert, damit Inhalte auch ohne erfolgreiche Scroll-Reveal-Initialisierung lesbar bleiben.
 - EditorJS-Bilder und Bild-Text-Blöcke respektieren im PHINIT-Public-Frontend die Core-/Editor-Vorschau-Breiten; Text+Bild nutzt ein stabiles Grid für Desktop-Nebeneinander, mobile Stapelung, `image-right`, echte H4-Überschriften und gespeicherte Skalierungsmodi. PHINIT erhält die EditorJS-Strukturklassen auch nach der finalen Sanitizer-Stufe, sodass Live/Public-Ausgaben nicht mehr als Bild-oben/Text-unten ohne Listen-/Absatzformatierung erscheinen.
+- EditorJS-Hinweisboxen nutzen im Public-Frontend einen farbigen Titelbalken mit heller Schrift und heller Inhaltsfläche mit dunklem Text; Info ist blau, Warnung gelb/orange, Erfolg grün und Kritisch rot gestaltet. Diese Kontraste bleiben auch im Dark Mode erhalten.
 - Text+Bild-Blöcke übernehmen gespeicherte Abstände nach oben und unten über Core-Variablen, `data-spacing-top`/`data-spacing-bottom` und robuste Abstandsklassen wie `editorjs-media-text--spacing-top-30`; dadurch gewinnen PHINIT-Regeln auch gegen das globale EditorJS-Critical-CSS, das normale Nachbarblöcke auf `0px` Startabstand setzt.
 - Bereits vom Core vorbereitete EditorJS-Public-HTML-Blöcke werden im PHINIT-Seitenpfad nicht mehr ein zweites Mal normalisiert; dadurch bleiben `.editorjs-media-text`-Strukturen auf Seiten erhalten.
 - Vollbreite Seiten (`page-wide`) und Landing-Seiten (`page-landing`) verwenden denselben EditorJS-Renderpfad wie normale Seiten, auch wenn sie direkt vom Router mit Seitendaten versorgt werden.
@@ -35,8 +36,9 @@ Professionelles IT-Blog-Theme für `365CMS` mit dunklem Navy-Design, Gold-Akzent
 - PHINIT-SiteTables zeigen im Frontend keine Suchleiste über der Tabelle; Pagination erscheint erst ab mindestens 20 Zeilen und nur, wenn wirklich mehrere Seiten entstehen.
 - Tabellen-Pagination ist im PHINIT-Stil gestaltet, nutzt mindestens 20 Zeilen pro Seite und rendert ohne Zeilen-/Seitenstatus-Metainfo unterhalb des Tabellentitels.
 - nachgeschärfter Dark Mode mit hellblauen Inhalts-Weblinks sowie lesbaren Favoriten-, Startseiten- und Member-Buttons auf dunklem Hintergrund
+- Dark-Mode-Kompatibilität für `html.dark-mode`: Startseiten-Featured-Banner, Sidebar-Hover, Detailseiten-TOC, About-Me/Autorbox, Kommentarbereich und HubSite-Button-Hover bleiben kontrastreich, auch wenn die Theme-Init-Klasse bereits am `<html>` sitzt.
 - Tabellen-Captions aus dem zentralen Site-Table-Renderer bleiben in Seiten und HubSites erhalten und werden oberhalb der Tabelle kontrastreich dargestellt.
-- EditorJS-Abstandsblöcke werden im Public-Frontend mit gespeicherter `data-height`-Höhe gerendert statt auf generische Inhaltsabstände zurückzufallen
+- EditorJS-Abstandsblöcke werden im Public-Frontend mit gespeicherter `data-height`-Höhe gerendert; Core `3.3.45` sichert dabei insbesondere `10px`, `100px` und `150px` auch als CSS-Fallback ab
 - kompakter Seiten-/Beitragsstart mit 25px Abstand nach dem sticky Header; HubSites starten bewusst mit 0px Abstand, weil ihr eigenes Markup den Abstand mitbringt
 - entlasteter Mobile-Head-Pfad mit inline Theme-Init, asynchronem UI-/Card-CSS auf Home-/Blog-Listings und intrinsischen Header-Logo-Dimensionen
 - Startseite rendert oberhalb der Falz jetzt über ein eigenes `homepage-blog-critical.css`; das große Home-Stylesheet wird dort erst nach dem First Paint asynchron nachgeladen

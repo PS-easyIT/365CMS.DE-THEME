@@ -483,6 +483,97 @@ body.dark-mode .page-meta__link:focus-visible {
     color: var(--text-secondary);
 }
 
+/* Dark Mode compatibility: PHINIT initialisiert den Modus am html-Element. */
+html.dark-mode body .page-header-block,
+html.dark-mode body .page-content,
+html.dark-mode body .page-sidebar-nav,
+html.dark-mode body .page-toc,
+html.dark-mode body .page-toc--inline {
+    background: var(--bg-dark-2);
+    border-color: var(--border-dark);
+    color: var(--text-secondary);
+    box-shadow: none;
+}
+
+html.dark-mode body .page-toc__body {
+    background: linear-gradient(180deg, rgba(17, 24, 39, .96) 0%, rgba(15, 23, 42, .96) 100%);
+    border-top-color: var(--border-dark);
+    color: var(--text-secondary);
+}
+
+html.dark-mode body .page-toc__link {
+    background: color-mix(in srgb, var(--bg-dark-3) 84%, var(--bg-dark-2) 16%);
+    border-color: color-mix(in srgb, var(--border-dark) 84%, rgba(148, 163, 184, .18) 16%);
+    color: var(--text-secondary);
+}
+
+html.dark-mode body .page-toc__link:hover,
+html.dark-mode body .page-toc__link:focus-visible,
+html.dark-mode body .page-toc__link.active,
+html.dark-mode body .page-toc__link[aria-current="true"],
+html.dark-mode body .page-toc__link[aria-current="page"] {
+    background: color-mix(in srgb, var(--accent-teal) 18%, var(--bg-dark-3) 82%);
+    border-color: color-mix(in srgb, var(--accent-teal) 36%, var(--border-dark) 64%);
+    color: #f8fafc;
+    text-decoration: none;
+}
+
+html.dark-mode body .page-toc__summary-icon,
+html.dark-mode body .page-toc__count {
+    background: rgba(255, 255, 255, .06);
+    color: var(--text-secondary);
+    box-shadow: none;
+}
+
+html.dark-mode body .page-toc__list--nested {
+    border-left-color: color-mix(in srgb, var(--border-dark) 85%, transparent 15%);
+}
+
+html.dark-mode body .page-header-block h1,
+html.dark-mode body .page-meta strong,
+html.dark-mode body .page-sidebar-nav__title,
+html.dark-mode body .page-toc__summary-text,
+html.dark-mode body .page-toc__item--level-2 > .page-toc__link {
+    color: var(--text-primary);
+}
+
+html.dark-mode body .page-header-block .breadcrumbs,
+html.dark-mode body .page-meta,
+html.dark-mode body .page-meta__label,
+html.dark-mode body .page-content,
+html.dark-mode body .page-empty-state__text,
+html.dark-mode body .page-sidebar-nav__link,
+html.dark-mode body .page-toc__hint,
+html.dark-mode body .page-toc__chevron {
+    color: var(--text-secondary);
+}
+
+html.dark-mode body .page-meta,
+html.dark-mode body .page-hero-img,
+html.dark-mode body .page-sidebar-nav__link {
+    border-color: var(--border-dark);
+}
+
+html.dark-mode body .page-header-block .content-favorite {
+    background: linear-gradient(180deg, rgba(30, 41, 59, .98) 0%, rgba(15, 23, 42, .96) 100%);
+    border-color: rgba(148, 163, 184, .24);
+    color: var(--link-hover, #bfdbfe);
+    box-shadow: 0 2px 8px rgba(2, 6, 23, .24);
+}
+
+html.dark-mode body .page-header-block .content-favorite:hover,
+html.dark-mode body .page-header-block .content-favorite:focus-visible {
+    background: linear-gradient(180deg, rgba(37, 99, 235, .22) 0%, rgba(15, 23, 42, .98) 100%);
+    border-color: rgba(147, 197, 253, .38);
+    color: #dbeafe;
+}
+
+html.dark-mode body .page-header-block .content-favorite--active {
+    background: linear-gradient(180deg, rgba(13, 148, 136, .24) 0%, rgba(15, 23, 42, .98) 100%);
+    border-color: rgba(45, 212, 191, .36);
+    color: #99f6e4;
+}
+
 @media (max-width: 768px) {
     .page-header-block--with-image {
         flex-direction: column;

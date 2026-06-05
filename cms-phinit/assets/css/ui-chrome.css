@@ -336,6 +336,47 @@ body.dark-mode .post-author-box__service-link:focus-visible {
     color: #f0fdfa;
 }
 
+html.dark-mode body .post-author-box {
+    background: linear-gradient(180deg, rgba(17,24,39,.95) 0%, rgba(15,23,42,.96) 100%);
+    border-color: var(--border-dark);
+    box-shadow: none;
+}
+
+html.dark-mode body .post-author-box__name {
+    color: var(--text-primary);
+}
+
+html.dark-mode body .post-author-box__avatar {
+    border-color: rgba(148,163,184,.18);
+    background: rgba(15,23,42,.8);
+}
+
+html.dark-mode body .post-author-box__bio,
+html.dark-mode body .post-author-box__service-text {
+    color: var(--text-secondary);
+}
+
+html.dark-mode body .post-author-box__content-label {
+    color: var(--accent-color);
+}
+
+html.dark-mode body .post-author-box__service {
+    border-left-color: rgba(94,234,212,.18);
+}
+
+html.dark-mode body .post-author-box__service-link {
+    background: rgba(94,234,212,.1);
+    border-color: rgba(94,234,212,.24);
+    color: #ccfbf1;
+}
+
+html.dark-mode body .post-author-box__service-link:hover,
+html.dark-mode body .post-author-box__service-link:focus-visible {
+    background: rgba(94,234,212,.16);
+    border-color: rgba(94,234,212,.38);
+    color: #f0fdfa;
+}
+
 /* ── Code Copy Button ─────────────────────────────────────────────────── */
 pre {
     position: relative;

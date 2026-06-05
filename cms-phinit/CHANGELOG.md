@@ -14,6 +14,43 @@
 
 ---
 
+## v1.7.9 — 05. Juni 2026
+
+### Dark-Mode-Kontrast für Startseite, Details und HubSites
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Startseite / Dark Mode | `assets/css/homepage-blog.css` und `assets/css/homepage-blog-critical.css` wenden Featured-Banner-, Sidebar- und Hover-Kontraste jetzt auch bei `html.dark-mode` an. |
+| 🔴 fix | Detailseiten / TOC & Kommentare | `assets/css/post-sidebar.css`, `assets/css/post-detail.css`, `assets/css/page-detail.css` und `assets/css/ui-chrome.css` setzen aktive Inhaltsverzeichnis-Links hell und ziehen About-Me/Autorbox sowie Kommentarbereich auf dunkle Flächen mit hellen Texten. |
+| 🔴 fix | HubSites / Button-Hover | `assets/css/hubsite.css` verhindert Gold-auf-Gold im Dark-Mode-Hover und nutzt dunklen Text auf goldener Buttonfläche. |
+| 🔵 docs | Release | `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.9` synchronisiert. |
+
+---
+
+## v1.7.8 — 05. Juni 2026
+
+### EditorJS Hinweisbox-Kontrast im Titelband und Body
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | EditorJS / Hinweisboxen | `assets/css/rich-content.css` setzt den Text im dunklen Titelbalken der Info-, Warn-, Erfolgs- und Kritisch-Boxen konsequent hell. |
+| 🔴 fix | EditorJS / Dark Mode | Die helle Inhaltsfläche der Hinweisboxen behält auch im Dark Mode dunkle variantenspezifische Text- und Linkfarben, statt auf helle Dark-Mode-Texttokens umzuschalten. |
+| 🔵 docs | Release | `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.8` synchronisiert. |
+
+---
+
+## v1.7.7 — 05. Juni 2026
+
+### EditorJS Public-Hinweisboxen und Spacer-Kompatibilität
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | EditorJS / Hinweisboxen | `assets/css/rich-content.css` rendert Info-, Warn-, Erfolgs- und Kritisch-Boxen im Public-Frontend mit farbigem Titelbalken und heller Inhaltsfläche passend zur Variante. |
+| 🔴 fix | EditorJS / Spacer | PHINIT ist auf Core `3.3.45` getestet; die Core-Fallbacks erhalten EditorJS-Spacer mit `10px`, `100px` und `150px` im Public-Rendering auch dann, wenn Theme-/Sanitizer-Pfade Inline-Styles reduzieren. |
+| 🔵 docs | Release | `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.7` synchronisiert. |
+
+---
+
 ## v1.7.6 — 30. Mai 2026
 
 ### M365-Linkcollection in der Startseiten-Sidebar

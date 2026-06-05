@@ -732,17 +732,107 @@ body.dark-mode .post-body pre.code-block--powershell {
 
 .page-content .editorjs-warning,
 .post-body .editorjs-warning {
-    padding: 16px 18px;
-    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, var(--border-color));
-    border-left: 4px solid var(--accent-color);
-    background: color-mix(in srgb, var(--accent-color) 9%, white);
+    --phinit-warning-accent: #1d4ed8;
+    --phinit-warning-border: #bfdbfe;
+    --phinit-warning-bg: #eff6ff;
+    --phinit-warning-title: #f8fafc;
+    --phinit-warning-text: var(--text-primary);
+    padding: 0;
+    border: 1px solid var(--phinit-warning-border);
+    border-left: 0;
+    background: var(--phinit-warning-bg);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .05);
+}
+
+.page-content .editorjs-warning--info,
+.page-content .editorjs-warning[data-variant="info"],
+.post-body .editorjs-warning--info,
+.post-body .editorjs-warning[data-variant="info"] {
+    --phinit-warning-accent: #1d4ed8;
+    --phinit-warning-border: #bfdbfe;
+    --phinit-warning-bg: #eff6ff;
+    --phinit-warning-title: #ffffff;
+    --phinit-warning-text: #1e3a8a;
+}
+
+.page-content .editorjs-warning--warning,
+.page-content .editorjs-warning[data-variant="warning"],
+.post-body .editorjs-warning--warning,
+.post-body .editorjs-warning[data-variant="warning"] {
+    --phinit-warning-accent: #b45309;
+    --phinit-warning-border: #fde68a;
+    --phinit-warning-bg: #fffbeb;
+    --phinit-warning-title: #fff7ed;
+    --phinit-warning-text: #713f12;
+}
+
+.page-content .editorjs-warning--success,
+.page-content .editorjs-warning[data-variant="success"],
+.post-body .editorjs-warning--success,
+.post-body .editorjs-warning[data-variant="success"] {
+    --phinit-warning-accent: #15803d;
+    --phinit-warning-border: #bbf7d0;
+    --phinit-warning-bg: #f0fdf4;
+    --phinit-warning-title: #f0fdf4;
+    --phinit-warning-text: #14532d;
+}
+
+.page-content .editorjs-warning--danger,
+.page-content .editorjs-warning[data-variant="danger"],
+.post-body .editorjs-warning--danger,
+.post-body .editorjs-warning[data-variant="danger"] {
+    --phinit-warning-accent: #b91c1c;
+    --phinit-warning-border: #fecaca;
+    --phinit-warning-bg: #fef2f2;
+    --phinit-warning-title: #fff1f2;
+    --phinit-warning-text: #7f1d1d;
 }
 
 .page-content .editorjs-warning .warning-title,
 .post-body .editorjs-warning .warning-title {
-    color: var(--text-primary);
-    font-weight: 700;
-    margin-bottom: .35rem;
+    display: block;
+    margin: 0;
+    padding: .72rem 1rem;
+    background: var(--phinit-warning-accent);
+    color: var(--phinit-warning-title, #fff);
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.page-content .editorjs-warning .warning-title :where(a, span, strong, b, em),
+.post-body .editorjs-warning .warning-title :where(a, span, strong, b, em) {
+    color: inherit;
+}
+
+.page-content .editorjs-warning .warning-message,
+.post-body .editorjs-warning .warning-message {
+    padding: .95rem 1rem 1rem;
+    color: var(--phinit-warning-text, var(--text-primary));
+    line-height: 1.7;
+}
+
+.page-content .editorjs-warning .warning-message :where(p, li, span, strong, b, em),
+.post-body .editorjs-warning .warning-message :where(p, li, span, strong, b, em) {
+    color: inherit;
+}
+
+.page-content .editorjs-warning .warning-message a:not([class]),
+.post-body .editorjs-warning .warning-message a:not([class]) {
+    color: color-mix(in srgb, var(--phinit-warning-accent) 82%, #0f172a);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+    text-underline-offset: .16em;
+}
+
+.page-content .editorjs-warning .warning-message > :first-child,
+.post-body .editorjs-warning .warning-message > :first-child {
+    margin-top: 0;
+}
+
+.page-content .editorjs-warning .warning-message > :last-child,
+.post-body .editorjs-warning .warning-message > :last-child {
+    margin-bottom: 0;
 }
 
 .page-content .editorjs-link a,
@@ -867,6 +957,12 @@ body.dark-mode .post-body pre.code-block--powershell {
     overflow: hidden;
 }
 
+.page-content .editorjs-spacer[data-height="0"],
+.post-body .editorjs-spacer[data-height="0"] { --cms-phinit-editorjs-spacer-height: 0px; }
+.page-content .editorjs-spacer[data-height="8"],
+.post-body .editorjs-spacer[data-height="8"] { --cms-phinit-editorjs-spacer-height: 8px; }
+.page-content .editorjs-spacer[data-height="10"],
+.post-body .editorjs-spacer[data-height="10"] { --cms-phinit-editorjs-spacer-height: 10px; }
 .page-content .editorjs-spacer[data-height="15"],
 .post-body .editorjs-spacer[data-height="15"] { --cms-phinit-editorjs-spacer-height: 15px; }
 .page-content .editorjs-spacer[data-height="16"],
@@ -901,6 +997,8 @@ body.dark-mode .post-body pre.code-block--powershell {
 .post-body .editorjs-spacer[data-height="120"] { --cms-phinit-editorjs-spacer-height: 120px; }
 .page-content .editorjs-spacer[data-height="140"],
 .post-body .editorjs-spacer[data-height="140"] { --cms-phinit-editorjs-spacer-height: 140px; }
+.page-content .editorjs-spacer[data-height="150"],
+.post-body .editorjs-spacer[data-height="150"] { --cms-phinit-editorjs-spacer-height: 150px; }
 .page-content .editorjs-spacer[data-height="160"],
 .post-body .editorjs-spacer[data-height="160"] { --cms-phinit-editorjs-spacer-height: 160px; }
 .page-content .editorjs-spacer[data-height="180"],
@@ -952,8 +1050,6 @@ body.dark-mode .page-content .editorjs-quote blockquote {
     color: var(--text-secondary);
 }
 
-body.dark-mode .page-content .editorjs-warning,
-body.dark-mode .post-body .editorjs-warning,
 body.dark-mode .page-content .editorjs-link a,
 body.dark-mode .post-body .editorjs-link a,
 body.dark-mode .page-content .editorjs-attaches a,
@@ -962,6 +1058,75 @@ body.dark-mode .page-content .editorjs-accordion details,
 body.dark-mode .post-body .editorjs-accordion details {
     background: var(--bg-dark-3);
     border-color: var(--border-dark);
+}
+
+body.dark-mode .page-content .editorjs-warning,
+body.dark-mode .post-body .editorjs-warning,
+html.dark-mode body .page-content .editorjs-warning,
+html.dark-mode body .post-body .editorjs-warning {
+    --phinit-warning-border: color-mix(in srgb, var(--phinit-warning-accent, var(--accent-color)) 42%, #ffffff);
+    --phinit-warning-bg: color-mix(in srgb, var(--phinit-warning-accent, var(--accent-color)) 10%, #ffffff);
+    --phinit-warning-title: #f8fafc;
+    --phinit-warning-text: #1e293b;
+    background: var(--phinit-warning-bg);
+    border-color: var(--phinit-warning-border);
+    box-shadow: 0 12px 28px rgba(2, 6, 23, .28);
+}
+
+body.dark-mode .page-content .editorjs-warning--info,
+body.dark-mode .page-content .editorjs-warning[data-variant="info"],
+body.dark-mode .post-body .editorjs-warning--info,
+body.dark-mode .post-body .editorjs-warning[data-variant="info"],
+html.dark-mode body .page-content .editorjs-warning--info,
+html.dark-mode body .page-content .editorjs-warning[data-variant="info"],
+html.dark-mode body .post-body .editorjs-warning--info,
+html.dark-mode body .post-body .editorjs-warning[data-variant="info"] {
+    --phinit-warning-accent: #1d4ed8;
+    --phinit-warning-border: #93c5fd;
+    --phinit-warning-bg: #dbeafe;
+    --phinit-warning-text: #1e3a8a;
+}
+
+body.dark-mode .page-content .editorjs-warning--warning,
+body.dark-mode .page-content .editorjs-warning[data-variant="warning"],
+body.dark-mode .post-body .editorjs-warning--warning,
+body.dark-mode .post-body .editorjs-warning[data-variant="warning"],
+html.dark-mode body .page-content .editorjs-warning--warning,
+html.dark-mode body .page-content .editorjs-warning[data-variant="warning"],
+html.dark-mode body .post-body .editorjs-warning--warning,
+html.dark-mode body .post-body .editorjs-warning[data-variant="warning"] {
+    --phinit-warning-accent: #b45309;
+    --phinit-warning-border: #fbbf24;
+    --phinit-warning-bg: #fef3c7;
+    --phinit-warning-text: #713f12;
+}
+
+body.dark-mode .page-content .editorjs-warning--success,
+body.dark-mode .page-content .editorjs-warning[data-variant="success"],
+body.dark-mode .post-body .editorjs-warning--success,
+body.dark-mode .post-body .editorjs-warning[data-variant="success"],
+html.dark-mode body .page-content .editorjs-warning--success,
+html.dark-mode body .page-content .editorjs-warning[data-variant="success"],
+html.dark-mode body .post-body .editorjs-warning--success,
+html.dark-mode body .post-body .editorjs-warning[data-variant="success"] {
+    --phinit-warning-accent: #15803d;
+    --phinit-warning-border: #86efac;
+    --phinit-warning-bg: #dcfce7;
+    --phinit-warning-text: #14532d;
+}
+
+body.dark-mode .page-content .editorjs-warning--danger,
+body.dark-mode .page-content .editorjs-warning[data-variant="danger"],
+body.dark-mode .post-body .editorjs-warning--danger,
+body.dark-mode .post-body .editorjs-warning[data-variant="danger"],
+html.dark-mode body .page-content .editorjs-warning--danger,
+html.dark-mode body .page-content .editorjs-warning[data-variant="danger"],
+html.dark-mode body .post-body .editorjs-warning--danger,
+html.dark-mode body .post-body .editorjs-warning[data-variant="danger"] {
+    --phinit-warning-accent: #b91c1c;
+    --phinit-warning-border: #fca5a5;
+    --phinit-warning-bg: #fee2e2;
+    --phinit-warning-text: #7f1d1d;
 }
 
 body.dark-mode .page-content .editorjs-link__content p,

@@ -1289,6 +1289,19 @@ body.dark-mode .page-content--hub .cms-hub-site__cta:hover {
     color: var(--color-navy);
 }
 
+html.dark-mode body .page-content--hub .hubsite-card__cta:hover,
+html.dark-mode body .page-content--hub .hubsite-card__cta:focus-visible,
+html.dark-mode body .page-content--hub .cms-hub-site__card-button:hover,
+html.dark-mode body .page-content--hub .cms-hub-site__card-button:focus-visible,
+html.dark-mode body .page-content--hub .cms-hub-site__cta:hover,
+html.dark-mode body .page-content--hub .cms-hub-site__cta:focus-visible,
+html.dark-mode body .hubsite-author-box .post-author-box__service-link:hover,
+html.dark-mode body .hubsite-author-box .post-author-box__service-link:focus-visible {
+    background: var(--dm-gold, #F0B535);
+    color: #0A1020;
+    border-color: var(--dm-gold, #F0B535);
+}
+
 .page-content--hub .cms-site-table-wrap,
 .page-content--hub .cms-site-table,
 body.dark-mode .page-content--hub .cms-site-table-wrap,

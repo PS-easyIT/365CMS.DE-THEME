@@ -1471,6 +1471,152 @@ body.dark-mode .comment-submit-btn {
     box-shadow: none;
 }
 
+/* Dark Mode compatibility: Theme-Init setzt html.dark-mode vor dem ersten Paint. */
+html.dark-mode body .post-header,
+html.dark-mode body .post-body,
+html.dark-mode body .post-nav a,
+html.dark-mode body .comments-section,
+html.dark-mode body .comment-profile-card,
+html.dark-mode body .post-author-box {
+    background: var(--bg-dark-2);
+    border-color: var(--border-dark);
+    box-shadow: none;
+}
+
+html.dark-mode body .post-hero-media,
+html.dark-mode body .post-meta,
+html.dark-mode body .post-share,
+html.dark-mode body .post-nav a,
+html.dark-mode body .comments-section__meta {
+    border-color: var(--border-dark);
+}
+
+html.dark-mode body .post-title,
+html.dark-mode body .post-body h2,
+html.dark-mode body .post-body h3,
+html.dark-mode body .post-body h4,
+html.dark-mode body .post-body strong,
+html.dark-mode body .post-nav .nav-title,
+html.dark-mode body .post-author-box__name,
+html.dark-mode body .comment-author,
+html.dark-mode body .comment-author--link,
+html.dark-mode body .comment-form-wrap h4,
+html.dark-mode body .comment-profile-card__name,
+html.dark-mode body .comment-anonymous-toggle__text strong,
+html.dark-mode body .comment-empty-state__content strong {
+    color: var(--text-primary);
+}
+
+html.dark-mode body .post-meta,
+html.dark-mode body .post-meta__label,
+html.dark-mode body .post-share,
+html.dark-mode body .share-btn,
+html.dark-mode body .post-alt-language,
+html.dark-mode body .post-body,
+html.dark-mode body .post-author-box__bio,
+html.dark-mode body .post-author-box__service-text,
+html.dark-mode body .comment-text,
+html.dark-mode body .comment-form-wrap__intro,
+html.dark-mode body .comment-profile-card__email,
+html.dark-mode body .comment-profile-card__meta,
+html.dark-mode body .comment-anonymous-toggle__text,
+html.dark-mode body .comment-empty-state,
+html.dark-mode body .comment-empty-state__content p,
+html.dark-mode body .field-optional,
+html.dark-mode body .form-helper-text {
+    color: var(--text-secondary);
+}
+
+html.dark-mode body .post-author-box__content-label,
+html.dark-mode body .comment-form-wrap__notice-icon {
+    color: var(--accent-color);
+}
+
+html.dark-mode body .post-author-box__avatar {
+    background: rgba(15, 23, 42, .8);
+    border-color: rgba(148, 163, 184, .18);
+}
+
+html.dark-mode body .post-author-box__service {
+    border-left-color: rgba(94,234,212,.18);
+}
+
+html.dark-mode body .post-author-box__service-link {
+    background: rgba(94,234,212,.1);
+    border-color: rgba(94,234,212,.24);
+    color: #ccfbf1;
+}
+
+html.dark-mode body .post-author-box__service-link:hover,
+html.dark-mode body .post-author-box__service-link:focus-visible {
+    background: rgba(94,234,212,.16);
+    border-color: rgba(94,234,212,.38);
+    color: #f0fdfa;
+}
+
+html.dark-mode body .comments-section__count {
+    background: linear-gradient(180deg, rgba(51,65,85,.5) 0%, rgba(15,23,42,.35) 100%);
+    border-color: rgba(232,168,56,.28);
+    color: #f8fafc;
+}
+
+html.dark-mode body .comment-item {
+    background: linear-gradient(180deg, rgba(17,24,39,.96) 0%, rgba(15,23,42,.96) 100%);
+    border-color: rgba(51,65,85,.75);
+}
+
+html.dark-mode body .comment-item--reply::before,
+html.dark-mode body .comment-item--reply::after {
+    border-color: rgba(232,168,56,.28);
+    background: linear-gradient(180deg, rgba(148,163,184,.2) 0%, rgba(232,168,56,.28) 100%);
+}
+
+html.dark-mode body .comment-form-wrap {
+    background: linear-gradient(180deg, rgba(17,24,39,.94) 0%, rgba(15,23,42,.92) 100%);
+    border-color: var(--border-dark);
+}
+
+html.dark-mode body .comment-form-wrap__notice {
+    background: linear-gradient(180deg, rgba(51,65,85,.35) 0%, rgba(15,23,42,.3) 100%);
+    border-color: rgba(232,168,56,.24);
+}
+
+html.dark-mode body .comment-profile-card {
+    background: rgba(15, 23, 42, .28);
+}
+
+html.dark-mode body .comment-profile-card__status {
+    background: rgba(20, 184, 166, .16);
+    color: #7dd3fc;
+}
+
+html.dark-mode body .comment-empty-state {
+    background: rgba(15,23,42,.32);
+    border-color: rgba(71,85,105,.75);
+}
+
+html.dark-mode body .comment-empty-state__icon {
+    background: rgba(125,211,252,.08);
+    color: #7dd3fc;
+}
+
+html.dark-mode body .form-control {
+    background: rgba(15,23,42,.45);
+    border-color: rgba(71,85,105,.75);
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+html.dark-mode body .comment-anonymous-toggle {
+    background: rgba(15,23,42,.32);
+    border-color: rgba(71,85,105,.72);
+}
+
+html.dark-mode body .share-btn {
+    background: var(--bg-dark-3);
+    border-color: var(--border-dark);
+}
+
 .post-alt-language {
     font-size: .85rem;
     color: var(--text-muted);

@@ -1,13 +1,41 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.6",
+  "version": "1.7.9",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.41",
-  "release_date": "2026-05-30",
+  "tested_up_to": "3.3.45",
+  "release_date": "2026-06-05",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.9",
+      "date": "2026-06-05",
+      "changes": [
+        "assets/css/homepage-blog.css und homepage-blog-critical.css: Startseiten-Featured-Banner und Sidebar-Hover-Zustände greifen im Dark Mode auch bei html.dark-mode",
+        "assets/css/post-sidebar.css, post-detail.css, page-detail.css und ui-chrome.css: Detailseiten-TOC, About-Me/Autorbox und Kommentarbereich erhalten kontrastreiche Dark-Mode-Flächen und helle aktive TOC-Links",
+        "assets/css/hubsite.css: HubSite-Button-Hover nutzt im Dark Mode dunklen Text auf Gold statt Gold-auf-Gold",
+        "style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.9 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.7.8",
+      "date": "2026-06-05",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS-Hinweisboxen nutzen im Titelbalken konsequent helle Schrift auf dunklem Variantenband",
+        "assets/css/rich-content.css: Die helle Inhaltsfläche behält in Light Mode und Dark Mode dunkle, variantenspezifische Text- und Linkfarben",
+        "style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.8 aktualisiert"
+      ]
+    },
+    {
+      "version": "1.7.7",
+      "date": "2026-06-05",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS-Hinweisboxen werden im PHINIT-Public-Frontend mit farbigem Titelbalken und heller Inhaltsfläche für Info, Warnung, Erfolg und Kritisch dargestellt",
+        "Theme-Kompatibilität mit 365CMS 3.3.45 bestätigt, dessen EditorJS-Spacer-Fallbacks 10px, 100px und 150px im Public-Rendering absichern",
+        "style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.7 aktualisiert"
+      ]
+    },
     {
       "version": "1.7.6",
       "date": "2026-05-30",

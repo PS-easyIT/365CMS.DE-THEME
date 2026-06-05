@@ -727,6 +727,69 @@ body.dark-mode .sb-identity-service__text {
     color: #cbd5e1;
 }
 
+html.dark-mode body .home-featured-banner {
+    background:
+        radial-gradient(circle at 10% 14%, rgba(45, 212, 191, .045), transparent 30%),
+        linear-gradient(135deg, rgba(15, 23, 42, .98), rgba(30, 41, 59, .94));
+    border-color: rgba(226, 232, 240, .12);
+}
+
+html.dark-mode body .home-featured-banner--no-media {
+    background:
+        radial-gradient(circle at 12% 18%, rgba(45, 212, 191, .055), transparent 34%),
+        linear-gradient(135deg, rgba(15, 23, 42, .98), rgba(30, 41, 59, .94));
+}
+
+html.dark-mode body .home-featured-banner__title,
+html.dark-mode body .home-featured-banner--no-media .home-featured-banner__title,
+html.dark-mode body .article-body h3,
+html.dark-mode body .article-body h4,
+html.dark-mode body .sb-carousel-title,
+html.dark-mode body .sb-identity-service__title {
+    color: var(--text-primary);
+}
+
+html.dark-mode body .home-featured-banner__label {
+    border-bottom-color: rgba(226, 232, 240, .24);
+    color: rgba(226, 232, 240, .76);
+}
+
+html.dark-mode body .home-featured-banner__button,
+html.dark-mode body .article-meta__more,
+html.dark-mode body .sb-carousel-btn {
+    color: var(--link-hover, #bfdbfe);
+}
+
+html.dark-mode body .home-featured-banner__button,
+html.dark-mode body .article-meta__more {
+    background: rgba(59, 130, 246, .14);
+    border-color: rgba(147, 197, 253, .34);
+}
+
+html.dark-mode body .home-featured-banner__text,
+html.dark-mode body .article-body p,
+html.dark-mode body .article-meta,
+html.dark-mode body .article-footer,
+html.dark-mode body .sb-identity-tagline,
+html.dark-mode body .sb-identity-service__text {
+    color: #cbd5e1;
+}
+
+html.dark-mode body .article-list,
+html.dark-mode body .article-card,
+html.dark-mode body .sb-widget,
+html.dark-mode body .homepage-list-sidebar .sb-widget > .sb-widget-title,
+html.dark-mode body .sb-carousel-controls {
+    border-color: var(--border-dark);
+}
+
+html.dark-mode body .article-card,
+html.dark-mode body .sb-widget,
+html.dark-mode body .sb-carousel-track,
+html.dark-mode body .sb-carousel-btn {
+    background: var(--bg-dark-2);
+}
+
 body.dark-mode .article-list,
 body.dark-mode .article-card,
 body.dark-mode .sb-widget,

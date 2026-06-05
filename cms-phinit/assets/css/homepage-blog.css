@@ -2937,6 +2937,175 @@ body.dark-mode .feed-dual-col {
     border-color: var(--border-dark);
 }
 
+/* Dark Mode compatibility: PHINIT setzt den Modus früh auf html.dark-mode. */
+html.dark-mode body .home-featured-banner {
+    background:
+        radial-gradient(circle at 10% 14%, rgba(45, 212, 191, .045), transparent 30%),
+        linear-gradient(135deg, rgba(15, 23, 42, .98), rgba(30, 41, 59, .94));
+    border-color: rgba(226, 232, 240, .12);
+}
+
+html.dark-mode body .home-featured-banner--no-media {
+    background:
+        radial-gradient(circle at 12% 18%, rgba(45, 212, 191, .055), transparent 34%),
+        linear-gradient(135deg, rgba(15, 23, 42, .98), rgba(30, 41, 59, .94));
+}
+
+html.dark-mode body .home-featured-banner__title,
+html.dark-mode body .home-featured-banner--no-media .home-featured-banner__title,
+html.dark-mode body .article-body h3,
+html.dark-mode body .article-body h4,
+html.dark-mode body .sb-carousel-title,
+html.dark-mode body .sb-identity-service__title,
+html.dark-mode body .sb-featured-title,
+html.dark-mode body .sb-featured-title-badge__text {
+    color: var(--text-primary);
+}
+
+html.dark-mode body .home-featured-banner__label {
+    border-bottom-color: rgba(226, 232, 240, .24);
+    color: rgba(226, 232, 240, .76);
+}
+
+html.dark-mode body .home-featured-banner__text,
+html.dark-mode body .home-featured-banner--no-media .home-featured-banner__text,
+html.dark-mode body .home-featured-banner__footer,
+html.dark-mode body .article-body p,
+html.dark-mode body .article-meta,
+html.dark-mode body .article-meta__primary,
+html.dark-mode body .article-meta__date,
+html.dark-mode body .article-footer,
+html.dark-mode body .article-meta .read,
+html.dark-mode body .homepage-sidebar-body,
+html.dark-mode body .sb-identity-tagline,
+html.dark-mode body .sb-status-service,
+html.dark-mode body .sb-status-empty-text,
+html.dark-mode body .sb-featured-meta,
+html.dark-mode body .sb-contact-text,
+html.dark-mode body .sb-newsletter-text,
+html.dark-mode body .sb-identity-service__text {
+    color: var(--text-secondary);
+}
+
+html.dark-mode body .home-featured-banner__button,
+html.dark-mode body .article-meta__more,
+html.dark-mode body .homepage-sidebar-body a,
+html.dark-mode body .sb-download-list a,
+html.dark-mode body .blog-archive-back,
+html.dark-mode body .sb-carousel-btn,
+html.dark-mode body .sb-quicklink,
+html.dark-mode body .sb-widget-button,
+html.dark-mode body .info-card-cta,
+html.dark-mode body .home-shell .btn-outline {
+    color: var(--link-hover, #bfdbfe);
+}
+
+html.dark-mode body .home-featured-banner__button,
+html.dark-mode body .article-meta__more,
+html.dark-mode body .sb-widget-button--primary,
+html.dark-mode body .sb-widget--contact .sb-widget-button,
+html.dark-mode body .home-shell .btn-outline,
+html.dark-mode body .info-card-cta {
+    background: rgba(59, 130, 246, .14);
+    border-color: rgba(147, 197, 253, .34);
+}
+
+html.dark-mode body .home-featured-banner__button:hover,
+html.dark-mode body .home-featured-banner__button:focus-visible,
+html.dark-mode body .article-meta__more:hover,
+html.dark-mode body .article-meta__more:focus-visible,
+html.dark-mode body .sb-carousel-btn:hover,
+html.dark-mode body .sb-carousel-btn:focus-visible,
+html.dark-mode body .sb-quicklink:hover,
+html.dark-mode body .sb-quicklink:focus-visible,
+html.dark-mode body .sb-widget-button:hover,
+html.dark-mode body .sb-widget-button:focus-visible,
+html.dark-mode body .info-card-cta:hover,
+html.dark-mode body .info-card-cta:focus-visible,
+html.dark-mode body .home-shell .btn-outline:hover,
+html.dark-mode body .home-shell .btn-outline:focus-visible {
+    background: rgba(37, 99, 235, .82);
+    border-color: rgba(147, 197, 253, .48);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+html.dark-mode body .homepage-sidebar-body a:hover,
+html.dark-mode body .homepage-sidebar-body a:focus-visible,
+html.dark-mode body .sb-download-list a:hover,
+html.dark-mode body .sb-download-list a:focus-visible,
+html.dark-mode body .blog-archive-back:hover,
+html.dark-mode body .blog-archive-back:focus-visible,
+html.dark-mode body .sb-carousel-link:hover .sb-carousel-title,
+html.dark-mode body .sb-carousel-link:focus-visible .sb-carousel-title,
+html.dark-mode body .sb-featured-post:hover .sb-featured-title,
+html.dark-mode body .sb-featured-post:focus-visible .sb-featured-title,
+html.dark-mode body .sb-identity:hover .sb-identity-tagline,
+html.dark-mode body .sb-identity:focus-visible .sb-identity-tagline {
+    color: var(--link-hover, #bfdbfe);
+}
+
+html.dark-mode body .article-list,
+html.dark-mode body .article-card,
+html.dark-mode body .sb-widget,
+html.dark-mode body .homepage-list-sidebar .sb-widget > .sb-widget-title,
+html.dark-mode body .sb-carousel-controls,
+html.dark-mode body .sb-status-row,
+html.dark-mode body .sb-download-list li,
+html.dark-mode body .homepage-list-sidebar--feat .sb-widget--identity,
+html.dark-mode body .homepage-list-sidebar--feat .sb-widget--social,
+html.dark-mode body .homepage-list-sidebar--feat-proj .sb-widget--projects-top {
+    border-color: var(--border-dark);
+}
+
+html.dark-mode body .article-card,
+html.dark-mode body .sb-widget,
+html.dark-mode body .sb-carousel-track,
+html.dark-mode body .homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media,
+html.dark-mode body .homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-rotator,
+html.dark-mode body .homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-post {
+    background: var(--bg-dark-2);
+}
+
+html.dark-mode body .article-card:hover,
+html.dark-mode body .sb-identity:hover,
+html.dark-mode body .sb-featured-post:hover,
+html.dark-mode body .homepage-list-sidebar--feat .sb-widget--featured.sb-widget--featured-custom-media .sb-featured-post:hover {
+    background: var(--bg-dark-3);
+}
+
+html.dark-mode body .homepage-list-sidebar .sb-widget > .sb-widget-title {
+    background: linear-gradient(90deg, rgba(30, 41, 59, .96) 0%, rgba(71, 85, 105, .92) 100%);
+    border-bottom-color: rgba(148, 163, 184, .24);
+    color: rgba(248, 250, 252, .96);
+}
+
+html.dark-mode body .sb-quicklink,
+html.dark-mode body .sb-carousel-controls {
+    background: var(--bg-secondary);
+}
+
+html.dark-mode body .sb-quicklink:hover,
+html.dark-mode body .sb-quicklink:focus-visible {
+    background: var(--bg-dark-3);
+}
+
+html.dark-mode body .sb-quicklink__icon,
+html.dark-mode body .sb-carousel-kicker,
+html.dark-mode body .sb-identity-service__kicker,
+html.dark-mode body .sb-identity-service__button {
+    color: var(--accent-teal-light);
+}
+
+html.dark-mode body .sb-notice-body {
+    border-color: var(--border-dark);
+    background: rgba(245, 158, 11, .12);
+}
+
+html.dark-mode body .sb-notice-body p {
+    color: rgba(254, 243, 199, .92);
+}
+
 .feed-list {
     list-style: none;
     display: flex;

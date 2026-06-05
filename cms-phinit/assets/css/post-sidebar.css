@@ -281,6 +281,13 @@ body.dark-mode .toc-link {
     color: var(--text-secondary);
 }
 
+html.dark-mode body .toc-title__chevron,
+html.dark-mode body .toc-muted-count,
+html.dark-mode body .toc-count,
+html.dark-mode body .toc-link {
+    color: var(--text-secondary);
+}
+
 body.dark-mode .toc-list--nested {
     border-left-color: color-mix(in srgb, var(--border-dark) 85%, transparent 15%);
 }
@@ -306,7 +313,22 @@ body.dark-mode .social-widget-title {
     body.dark-mode .sidebar .toc--primary .toc-link.active {
         background: color-mix(in srgb, var(--accent-teal) 14%, var(--bg-dark-3) 86%);
         border-color: color-mix(in srgb, var(--accent-teal) 28%, var(--border-dark) 72%);
-        color: var(--text-primary);
+        color: #f8fafc;
+    }
+
+    html.dark-mode body .sidebar .toc--primary .toc-link {
+        background: color-mix(in srgb, var(--bg-dark-3) 84%, var(--bg-dark-2) 16%);
+        border-color: color-mix(in srgb, var(--border-dark) 84%, rgba(148, 163, 184, .18) 16%);
+        color: var(--text-secondary);
+        box-shadow: none;
+    }
+
+    html.dark-mode body .sidebar .toc--primary .toc-link:hover,
+    html.dark-mode body .sidebar .toc--primary .toc-link:focus-visible,
+    html.dark-mode body .sidebar .toc--primary .toc-link.active {
+        background: color-mix(in srgb, var(--accent-teal) 18%, var(--bg-dark-3) 82%);
+        border-color: color-mix(in srgb, var(--accent-teal) 36%, var(--border-dark) 64%);
+        color: #f8fafc;
     }
 }
 
