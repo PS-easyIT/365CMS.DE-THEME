@@ -2375,20 +2375,54 @@ body.dark-mode .sb-notice-body p {
     flex-shrink: 0;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
+    padding: 0;
+    overflow: hidden;
+}
+
+.homepage-list-sidebar--feat-proj .sb-widget--projects-top > .sb-widget-title {
+    margin: 0;
     padding: 10px 12px;
 }
 
+.homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-cards-grid {
+    gap: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 86%, var(--accent-teal) 14%);
+}
+
 .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card {
-    height: 42px;
-    min-height: 42px;
+    height: 58px;
+    min-height: 58px;
+    border-radius: 0;
+    border: 0;
+    border-right: 1px solid color-mix(in srgb, var(--border-color) 86%, var(--accent-teal) 14%);
+    box-shadow: none;
+}
+
+.homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:nth-child(2n) {
+    border-right: 0;
+}
+
+.homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:hover,
+.homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:focus-visible {
+    transform: none;
+    box-shadow: none;
+    background-color: color-mix(in srgb, var(--bg-secondary) 72%, var(--accent-teal) 28%);
+    text-decoration: none;
+}
+
+.homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-body {
+    padding: 8px 9px 9px;
 }
 
 .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-name {
     font-size: 12px;
+    line-height: 1.18;
 }
 
 .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-desc {
-    font-size: 8px;
+    font-size: 9px;
+    line-height: 1.15;
 }
 
 /* ── Info-Grid (Kategorie-Cards) ───────────────────────────────── */
@@ -2759,6 +2793,19 @@ body.dark-mode .homepage-list-sidebar--feat-proj .sb-widget--projects-top {
     border-color: var(--border-dark);
 }
 
+body.dark-mode .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-cards-grid {
+    border-top-color: var(--border-dark);
+}
+
+body.dark-mode .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card {
+    border-right-color: var(--border-dark);
+}
+
+body.dark-mode .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:hover,
+body.dark-mode .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:focus-visible {
+    background-color: color-mix(in srgb, var(--bg-dark-2) 70%, var(--accent-teal) 30%);
+}
+
 body.dark-mode .sb-identity {
     background: linear-gradient(160deg, rgba(30, 41, 59, .96) 0%, rgba(17, 24, 39, .98) 100%);
 }
@@ -3056,6 +3103,19 @@ html.dark-mode body .homepage-list-sidebar--feat .sb-widget--identity,
 html.dark-mode body .homepage-list-sidebar--feat .sb-widget--social,
 html.dark-mode body .homepage-list-sidebar--feat-proj .sb-widget--projects-top {
     border-color: var(--border-dark);
+}
+
+html.dark-mode body .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-cards-grid {
+    border-top-color: var(--border-dark);
+}
+
+html.dark-mode body .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card {
+    border-right-color: var(--border-dark);
+}
+
+html.dark-mode body .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:hover,
+html.dark-mode body .homepage-list-sidebar--feat-proj .sb-widget--projects-top .sb-project-card:focus-visible {
+    background-color: color-mix(in srgb, var(--bg-dark-2) 70%, var(--accent-teal) 30%);
 }
 
 html.dark-mode body .article-card,
