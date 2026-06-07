@@ -366,6 +366,9 @@ body.dark-mode .post-body pre.code-block--powershell {
 .post-body .editorjs-gallery img,
 .post-body .editorjs-carousel img,
 .post-body .editorjs-drawing img {
+    display: block;
+    vertical-align: top;
+    margin-bottom: 0;
     border-radius: var(--radius-sm);
     max-width: 100%;
     height: auto;
@@ -400,6 +403,21 @@ body.dark-mode .post-body pre.code-block--powershell {
 .page-content .editorjs-image[data-size="wide"] > img,
 .post-body .editorjs-image[data-size="wide"] > img {
     width: min(100%, var(--cms-editorjs-image-wide-width, 760px)) !important;
+}
+
+.page-content .editorjs-image.editorjs-image--border-thin > img,
+.post-body .editorjs-image.editorjs-image--border-thin > img {
+    border: 1px solid var(--border-color) !important;
+}
+
+.page-content .editorjs-image.editorjs-image--border-medium > img,
+.post-body .editorjs-image.editorjs-image--border-medium > img {
+    border: 2px solid var(--border-color) !important;
+}
+
+.page-content .editorjs-image.editorjs-image--border-thick > img,
+.post-body .editorjs-image.editorjs-image--border-thick > img {
+    border: 4px solid var(--border-color) !important;
 }
 
 .page-content .editorjs-media-text,
@@ -965,7 +983,78 @@ body.dark-mode .post-body pre.code-block--powershell {
 }
 
 .page-content .editorjs-gallery,
-.post-body .editorjs-gallery,
+.post-body .editorjs-gallery {
+    --cms-editorjs-gallery-gap: 5px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--cms-editorjs-gallery-gap);
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--cols-2,
+.post-body .editorjs-gallery.editorjs-gallery--cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--cols-3,
+.post-body .editorjs-gallery.editorjs-gallery--cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--cols-4,
+.post-body .editorjs-gallery.editorjs-gallery--cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--cols-5,
+.post-body .editorjs-gallery.editorjs-gallery--cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--cols-6,
+.post-body .editorjs-gallery.editorjs-gallery--cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--border-thin,
+.post-body .editorjs-gallery.editorjs-gallery--border-thin {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 0 8px 8px;
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--border-medium,
+.post-body .editorjs-gallery.editorjs-gallery--border-medium {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 0 8px 8px;
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--border-thick,
+.post-body .editorjs-gallery.editorjs-gallery--border-thick {
+    border: 4px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1px 6px 6px;
+}
+
+.page-content .editorjs-gallery.editorjs-gallery--border-thin,
+.post-body .editorjs-gallery.editorjs-gallery--border-thin,
+.page-content .editorjs-gallery.editorjs-gallery--border-medium,
+.post-body .editorjs-gallery.editorjs-gallery--border-medium,
+.page-content .editorjs-gallery.editorjs-gallery--border-thick,
+.post-body .editorjs-gallery.editorjs-gallery--border-thick {
+    background: color-mix(in srgb, var(--bg-secondary) 55%, #fff);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85);
+}
+
+.page-content .editorjs-gallery > figure,
+.post-body .editorjs-gallery > figure,
+.page-content .editorjs-gallery > .editorjs-gallery__item,
+.post-body .editorjs-gallery > .editorjs-gallery__item,
+.page-content .editorjs-gallery .editorjs-gallery__item,
+.post-body .editorjs-gallery .editorjs-gallery__item {
+    margin: 0 !important;
+}
+
 .page-content .editorjs-carousel,
 .post-body .editorjs-carousel {
     display: grid;
@@ -1248,6 +1337,11 @@ body.dark-mode .post-body .cms-site-table td {
     .page-content,
     .post-body {
         padding: 22px 20px;
+    }
+
+    .page-content .editorjs-gallery,
+    .post-body .editorjs-gallery {
+        --cms-editorjs-gallery-gap: 4px;
     }
 
     .page-content .editorjs-columns,
