@@ -2251,6 +2251,40 @@ if (!function_exists('phinit_author_service_hub_href')) {
 
 if (!function_exists('phinit_build_author_box_context')) {
     /**
+     * Lädt das im Member-Profil gepflegte Avatarbild eines Autors für Frontend-Autorboxen.
+     */
+    function phinit_resolve_author_profile_avatar_url(int $authorId, ?string $siteUrl = null): string
+    {
+        if ($authorId <= 0) {
+            return '';
+        }
+
+        try {
+            $db = \CMS\Database::instance();
+            $prefix = method_exists($db, 'getPrefix') ? $db->getPrefix() : $db->prefix();
+            $avatar = $db->get_var(
+                "SELECT meta_value
+                 FROM {$prefix}user_meta
+                 WHERE user_id = ? AND meta_key IN ('avatar', 'avatar_url', 'profile_avatar')
+                 ORDER BY FIELD(meta_key, 'avatar', 'avatar_url', 'profile_avatar')
+                 LIMIT 1",
+                [$authorId]
+            );
+        } catch (\Throwable) {
+            $avatar = '';
+        }
+
+        $avatar = trim((string) $avatar);
+        if ($avatar === '') {
+            return '';
+        }
+
+        return function_exists('phinit_normalize_public_media_url')
+            ? phinit_normalize_public_media_url($avatar, false, $siteUrl)
+            : (function_exists('phinit_safe_public_url') ? phinit_safe_public_url($avatar, $siteUrl, ['http', 'https']) : $avatar);
+    }
+
+    /**
      * Baut die Daten für die wiederverwendbare Autorbox auf Beitrags- und Seitendetails.
      *
      * @param array<string,mixed> $options
@@ -2283,6 +2317,9 @@ if (!function_exists('phinit_build_author_box_context')) {
 
         $authorBio = trim((string) phinit_customizer_value($category, $bioKey, (string) ($options['default_bio'] ?? '')));
         $authorAvatar = trim((string) phinit_customizer_value($category, $avatarKey, (string) ($options['default_avatar'] ?? '')));
+        if ($authorAvatar === '' && isset($options['author_id'])) {
+            $authorAvatar = phinit_resolve_author_profile_avatar_url((int) $options['author_id'], $siteUrl);
+        }
         $authorAvatarUrl = function_exists('phinit_normalize_public_media_url')
             ? phinit_normalize_public_media_url($authorAvatar, true, $siteUrl)
             : (function_exists('phinit_safe_public_url') ? phinit_safe_public_url($authorAvatar, $siteUrl, ['http', 'https']) : $authorAvatar);

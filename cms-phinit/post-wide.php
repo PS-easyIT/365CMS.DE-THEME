@@ -109,6 +109,7 @@ $authorBoxContext = function_exists('phinit_build_author_box_context')
     ? phinit_build_author_box_context([
         'category' => 'posts',
         'show_key' => 'show_author_box',
+        'author_id' => $authorId,
         'entity_name' => (string) ($post['author_name'] ?? ''),
         'author_url' => $authorBoxUrl,
         'site_url' => $siteUrl,

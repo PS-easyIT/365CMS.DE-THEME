@@ -102,11 +102,13 @@ if ($pageTitleTocEnabled && !$isHubSitePage && !$isCookieConsentPage && !$isImag
 }
 
 $hubSettings = is_array($page['hub_settings'] ?? null) ? $page['hub_settings'] : [];
+$pageAuthorId = (int) ($page['author_id'] ?? 0);
 $hubAuthorBoxEnabled = $isHubSitePage && filter_var($hubSettings['hub_show_author_box'] ?? false, FILTER_VALIDATE_BOOLEAN);
 $hubAuthorBoxContext = (!$pageNotFound && $hubAuthorBoxEnabled && function_exists('phinit_build_author_box_context'))
     ? phinit_build_author_box_context([
         'category' => 'posts',
         'show_key' => 'hub_author_box_enabled',
+        'author_id' => $pageAuthorId,
         'entity_name' => (string) ($page['author_name'] ?? ($page['author_display_name'] ?? '')),
         'site_url' => $siteUrl,
         'locale' => $currentLocale,
@@ -120,6 +122,7 @@ $pageAuthorBoxContext = (!$pageNotFound && !$isHubSitePage && !$isCookieConsentP
     ? phinit_build_author_box_context([
         'category' => 'posts',
         'show_key' => 'show_author_box',
+        'author_id' => $pageAuthorId,
         'entity_name' => (string) ($page['author_name'] ?? ($page['author_display_name'] ?? '')),
         'site_url' => $siteUrl,
         'locale' => $currentLocale,
