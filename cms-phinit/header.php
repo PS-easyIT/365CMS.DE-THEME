@@ -219,6 +219,9 @@ $quicklinkItems = function_exists('phinit_get_menu_for_locale')
     ? phinit_get_menu_for_locale('quicklinks', $_currentLocale)
     : [];
 
+$_consultingNavUrl = '/beratung/microsoft-365-und-copilot-beratung';
+$_consultingNavLabel = 'M365 CONSULTING';
+
 $_languageSwitchUrl = '';
 $_languageSwitchDisplay = '';
 $_languageSwitchHeaderDisplay = '';
@@ -603,6 +606,7 @@ $_memberIconSvg = static function (string $icon): string {
                         <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/news') ? ' active' : ''; ?>"<?php echo $navIsActive('/news') ? ' aria-current="page"' : ''; ?>>News</a>
                     <?php endif; ?>
                     <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
+                    <a href="<?php echo htmlspecialchars($_localizedHref($_consultingNavUrl, $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link main-nav__link--consulting<?php echo $navIsActive($_consultingNavUrl) ? ' active' : ''; ?>"<?php echo $navIsActive($_consultingNavUrl) ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars($_consultingNavLabel, ENT_QUOTES); ?></a>
                 </nav>
             </div>
         </div>
@@ -634,6 +638,7 @@ $_memberIconSvg = static function (string $icon): string {
                 <span><?php echo htmlspecialchars(phinit_t('switch_language', [], $_currentLocale), ENT_QUOTES); ?></span>
             </a>
             <?php endif; ?>
+            <a href="<?php echo htmlspecialchars($_localizedHref($_consultingNavUrl, $_currentLocale), ENT_QUOTES); ?>" class="mobile-menu__consulting<?php echo $navIsActive($_consultingNavUrl) ? ' active' : ''; ?>"<?php echo $navIsActive($_consultingNavUrl) ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars($_consultingNavLabel, ENT_QUOTES); ?></a>
         </nav>
 
     <!-- Ebene 4: Quicklinks -->
