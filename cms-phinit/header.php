@@ -631,7 +631,9 @@ $_memberIconSvg = static function (string $icon): string {
                     <?php endif; ?>
                     <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
                     <?php if ($_showConsultingNav): ?>
-                    <a href="<?php echo htmlspecialchars($_localizedHref($_consultingNavUrl, $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link main-nav__link--consulting<?php echo $navIsActive($_consultingNavUrl) ? ' active' : ''; ?>"<?php echo $navIsActive($_consultingNavUrl) ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars($_consultingNavLabel, ENT_QUOTES); ?></a>
+                    <span class="main-nav__consulting-slot">
+                        <a href="<?php echo htmlspecialchars($_localizedHref($_consultingNavUrl, $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link main-nav__link--consulting<?php echo $navIsActive($_consultingNavUrl) ? ' active' : ''; ?>"<?php echo $navIsActive($_consultingNavUrl) ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars($_consultingNavLabel, ENT_QUOTES); ?></a>
+                    </span>
                     <?php endif; ?>
                 </nav>
             </div>
