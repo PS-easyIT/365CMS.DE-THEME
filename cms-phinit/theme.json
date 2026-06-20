@@ -724,6 +724,23 @@
           "type": "checkbox",
           "default": true
         },
+        "show_consulting_nav_item": {
+          "label": "M365 Consulting Menüpunkt anzeigen",
+          "type": "checkbox",
+          "default": false,
+          "description": "Zeigt einen rechts angepinnten CTA-Menüpunkt in der Hauptnavigation. Standardmäßig ausgeblendet."
+        },
+        "consulting_nav_label": {
+          "label": "M365 Consulting Menüpunkt Label",
+          "type": "text",
+          "default": "M365 CONSULTING"
+        },
+        "consulting_nav_url": {
+          "label": "M365 Consulting Ziel / Slug",
+          "type": "url",
+          "default": "microsoft-365-und-copilot-beratung",
+          "description": "Akzeptiert einen reinen Landingpage-Slug (wird zu /beratung/{slug}), einen relativen Pfad oder eine vollständige URL."
+        },
         "show_member_bar": {
           "label": "Member-Bar anzeigen (für eingeloggte User)",
           "type": "checkbox",
