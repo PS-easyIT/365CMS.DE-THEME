@@ -178,6 +178,9 @@ try {
     $_showDarkMode  = filter_var($customizer->get('layout', 'enable_dark_mode_toggle', true), FILTER_VALIDATE_BOOLEAN);
     $_showRss       = filter_var($customizer->get('header', 'show_rss_link', true), FILTER_VALIDATE_BOOLEAN);
     $_showLoginButton = filter_var($customizer->get('header', 'show_login_button', true), FILTER_VALIDATE_BOOLEAN);
+    $_showConsultingNav = filter_var($customizer->get('header', 'show_consulting_nav_item', false), FILTER_VALIDATE_BOOLEAN);
+    $_consultingNavLabel = trim((string) $customizer->get('header', 'consulting_nav_label', 'M365 CONSULTING'));
+    $_consultingNavTarget = trim((string) $customizer->get('header', 'consulting_nav_url', 'microsoft-365-und-copilot-beratung'));
     $_showMemberBar = filter_var($customizer->get('header', 'show_member_bar', true), FILTER_VALIDATE_BOOLEAN);
     $_showQuicklinks = filter_var($customizer->get('header', 'show_quicklinks', true), FILTER_VALIDATE_BOOLEAN);
     $_showLanguageSwitch = filter_var($customizer->get('header', 'show_language_switcher', false), FILTER_VALIDATE_BOOLEAN);
@@ -199,7 +202,7 @@ try {
     $_logoUrl = ''; $_logoPart1 = 'PHIN'; $_logoPart2 = 'IT'; $_logoSuffix = '.DE';
     $_showLogoText = false; $_logoMaxH = 28;
     $_showSearch = true; $_searchPH = 'Suchen …'; $_showDarkMode = true;
-    $_showRss = true; $_showLoginButton = true; $_showMemberBar = true; $_showQuicklinks = true;
+    $_showRss = true; $_showLoginButton = true; $_showConsultingNav = false; $_consultingNavLabel = 'M365 CONSULTING'; $_consultingNavTarget = 'microsoft-365-und-copilot-beratung'; $_showMemberBar = true; $_showQuicklinks = true;
     $_showLanguageSwitch = false; $_languageMode = 'text'; $_languageLabel = 'EN'; $_languageSlug = '/en'; $_languageFlag = 'gb'; $_languageAriaLabel = 'Zur englischen Version wechseln';
     $_enableStickyHeader = true; $_enableProgressBar = true;
     $_enableBackToTop = true; $_enableScrollAnimations = true;
@@ -219,8 +222,29 @@ $quicklinkItems = function_exists('phinit_get_menu_for_locale')
     ? phinit_get_menu_for_locale('quicklinks', $_currentLocale)
     : [];
 
-$_consultingNavUrl = '/beratung/microsoft-365-und-copilot-beratung';
-$_consultingNavLabel = 'M365 CONSULTING';
+$_normalizeConsultingNavTarget = static function (string $target): string {
+    $target = trim($target);
+    if ($target === '' || $target === '#') {
+        return $target;
+    }
+
+    if (preg_match('#^https?://#i', $target) === 1) {
+        return $target;
+    }
+
+    if (str_starts_with($target, '/')) {
+        return '/' . trim((string) preg_replace('#/+#', '/', $target), '/');
+    }
+
+    if (str_contains($target, '/')) {
+        return '/' . trim((string) preg_replace('#/+#', '/', $target), '/');
+    }
+
+    $slug = strtolower(trim((string) preg_replace('/[^a-z0-9_-]+/i', '-', $target), '-'));
+    return $slug !== '' ? '/beratung/' . $slug : '';
+};
+$_consultingNavUrl = $_normalizeConsultingNavTarget((string) ($_consultingNavTarget ?? ''));
+$_showConsultingNav = !empty($_showConsultingNav) && $_consultingNavLabel !== '' && $_consultingNavUrl !== '';
 
 $_languageSwitchUrl = '';
 $_languageSwitchDisplay = '';
@@ -606,7 +630,9 @@ $_memberIconSvg = static function (string $icon): string {
                         <a href="<?php echo htmlspecialchars($_localizedHref('/news', $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link<?php echo $navIsActive('/news') ? ' active' : ''; ?>"<?php echo $navIsActive('/news') ? ' aria-current="page"' : ''; ?>>News</a>
                     <?php endif; ?>
                     <?php \CMS\Hooks::doAction('main_nav', 'desktop'); ?>
+                    <?php if ($_showConsultingNav): ?>
                     <a href="<?php echo htmlspecialchars($_localizedHref($_consultingNavUrl, $_currentLocale), ENT_QUOTES); ?>" class="main-nav__link main-nav__link--consulting<?php echo $navIsActive($_consultingNavUrl) ? ' active' : ''; ?>"<?php echo $navIsActive($_consultingNavUrl) ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars($_consultingNavLabel, ENT_QUOTES); ?></a>
+                    <?php endif; ?>
                 </nav>
             </div>
         </div>
@@ -638,7 +664,9 @@ $_memberIconSvg = static function (string $icon): string {
                 <span><?php echo htmlspecialchars(phinit_t('switch_language', [], $_currentLocale), ENT_QUOTES); ?></span>
             </a>
             <?php endif; ?>
+            <?php if ($_showConsultingNav): ?>
             <a href="<?php echo htmlspecialchars($_localizedHref($_consultingNavUrl, $_currentLocale), ENT_QUOTES); ?>" class="mobile-menu__consulting<?php echo $navIsActive($_consultingNavUrl) ? ' active' : ''; ?>"<?php echo $navIsActive($_consultingNavUrl) ? ' aria-current="page"' : ''; ?>><?php echo htmlspecialchars($_consultingNavLabel, ENT_QUOTES); ?></a>
+            <?php endif; ?>
         </nav>
 
     <!-- Ebene 4: Quicklinks -->
