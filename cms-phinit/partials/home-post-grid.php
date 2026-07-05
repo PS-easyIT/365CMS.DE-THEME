@@ -93,11 +93,19 @@ if (empty($_showTileGrid) || $gridPosts === []) {
         <article class="post-card">
             <?php
             $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? '');
+            $tileAuthorName = !empty($_showTileAuthor) ? trim((string) ($post['author_name'] ?? '')) : '';
+            $tileAuthorId = $tileAuthorName !== '' ? (int) ($post['author_id'] ?? 0) : 0;
+            $tileAuthorUrl = $tileAuthorId > 0
+                ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $tileAuthorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $tileAuthorId)
+                : '';
             $tileReadTime = !empty($post['read_time']) ? (int) $post['read_time'] : 0;
                 if ($tileReadTime < 1 && $displayContentSource !== '') {
+                $tileReadTimeSource = function_exists('phinit_excerpt_plain_text')
+                    ? phinit_excerpt_plain_text($displayContentSource)
+                    : strip_tags($displayContentSource);
                 $tileReadTime = function_exists('phinit_reading_time')
-                    ? phinit_reading_time($displayContentSource)
-                    : max(1, (int) round(str_word_count(strip_tags($displayContentSource)) / 220));
+                    ? phinit_reading_time($tileReadTimeSource)
+                    : max(1, (int) round(str_word_count($tileReadTimeSource) / 220));
             }
             ?>
 
@@ -120,6 +128,15 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                         <?php echo phinit_escape_text($displayTitle !== '' ? $displayTitle : 'Ohne Titel'); ?>
                     </a>
                 </h3>
+                <?php if ($tileAuthorName !== ''): ?>
+                <div class="post-card-top-meta post-card-top-meta--author">
+                    <?php if ($tileAuthorUrl !== ''): ?>
+                    <a href="<?php echo htmlspecialchars($tileAuthorUrl, ENT_QUOTES); ?>" class="post-card-top-meta__author"><?php echo phinit_escape_text($tileAuthorName); ?></a>
+                    <?php else: ?>
+                    <span class="post-card-top-meta__author"><?php echo phinit_escape_text($tileAuthorName); ?></span>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
                 <?php if (!empty($_showTileDate) && !empty($postDateRaw)): ?>
                 <div class="post-card-top-meta">
                     <span class="post-card-top-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $postDateRaw, 'long', $currentLocale), ENT_QUOTES); ?></span>

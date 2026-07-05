@@ -10,6 +10,7 @@
  *   @var bool   $show_meta    Meta-Zeile anzeigen (default: true)
  *   @var int    $exc_len      Maximale Excerpt-Länge (default: 180)
  *   @var bool   $show_cat     Kategorie in Meta anzeigen (default: true)
+ *   @var bool   $show_author  Autor in Meta anzeigen (default: false)
  *   @var bool   $show_date    Datum in Meta anzeigen (default: true)
  *   @var bool   $show_rt      Lesezeit in Meta anzeigen (default: true)
  *
@@ -35,6 +36,7 @@ $show_excerpt = isset($show_excerpt) ? (bool)$show_excerpt : true;
 $show_meta    = isset($show_meta)    ? (bool)$show_meta    : true;
 $exc_len      = max(10, (int)($exc_len ?? 180));
 $show_cat     = isset($show_cat)     ? (bool)$show_cat     : true;
+$show_author  = isset($show_author)  ? (bool)$show_author  : false;
 $show_date    = isset($show_date)    ? (bool)$show_date    : true;
 $show_rt      = isset($show_rt)      ? (bool)$show_rt      : true;
 $above_the_fold_image = isset($above_the_fold_image) ? (bool) $above_the_fold_image : false;
@@ -118,14 +120,24 @@ if (empty(trim($_pc_excerpt)) && $displayContentSource !== '') {
 }
 $_pc_excerpt = mb_strimwidth($_pc_excerpt, 0, $exc_len, '…');
 
+// Autor auflösen (nur wenn aktiviert)
+$_pc_author = $show_author ? trim((string) ($card['author_name'] ?? '')) : '';
+$_pc_authorId = $show_author ? (int) ($card['author_id'] ?? 0) : 0;
+$_pc_authorUrl = $_pc_authorId > 0
+    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $_pc_authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $_pc_authorId)
+    : '';
+
 // Lesezeit berechnen
 $_pc_rt = 0;
 if ($show_rt && $show_meta) {
     $_pc_rt = !empty($card['read_time']) ? (int)$card['read_time'] : 0;
     if ($_pc_rt < 1 && $displayContentSource !== '') {
+        $_pc_rtSource = function_exists('phinit_excerpt_plain_text')
+            ? phinit_excerpt_plain_text($displayContentSource)
+            : strip_tags($displayContentSource);
         $_pc_rt = function_exists('phinit_reading_time')
-            ? phinit_reading_time($displayContentSource)
-            : max(1, (int)round(str_word_count(strip_tags($displayContentSource)) / 220));
+            ? phinit_reading_time($_pc_rtSource)
+            : max(1, (int)round(str_word_count($_pc_rtSource) / 220));
     }
 }
 ?>
@@ -159,9 +171,16 @@ if ($show_rt && $show_meta) {
         <?php endif; ?>
         <?php if ($show_meta): ?>
         <div class="article-meta">
-            <?php if (($show_date && !empty($displayDate)) || ($show_rt && $_pc_rt > 0)): ?>
+            <?php if (($show_author && $_pc_author !== '') || ($show_date && !empty($displayDate)) || ($show_rt && $_pc_rt > 0)): ?>
             <span class="article-meta__primary">
                 <span class="article-meta__timing">
+                    <?php if ($show_author && $_pc_author !== ''): ?>
+                    <?php if ($_pc_authorUrl !== ''): ?>
+                    <a href="<?php echo htmlspecialchars($_pc_authorUrl, ENT_QUOTES); ?>" class="article-meta__author"><?php echo phinit_escape_text($_pc_author); ?></a>
+                    <?php else: ?>
+                    <span class="article-meta__author"><?php echo phinit_escape_text($_pc_author); ?></span>
+                    <?php endif; ?>
+                    <?php endif; ?>
                     <?php if ($show_date && !empty($displayDate)): ?>
                     <span class="article-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $displayDate, 'long', $currentLocale), ENT_QUOTES); ?></span>
                     <?php endif; ?>

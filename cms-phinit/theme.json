@@ -1210,6 +1210,11 @@
           "type": "checkbox",
           "default": true
         },
+        "show_meta_author": {
+          "label": "Metadatum Autor anzeigen",
+          "type": "checkbox",
+          "default": false
+        },
         "show_meta_date": {
           "label": "Metadatum Datum anzeigen",
           "type": "checkbox",
@@ -1860,6 +1865,11 @@
           "label": "Grid-Kategorie anzeigen",
           "type": "checkbox",
           "default": true
+        },
+        "show_tile_author": {
+          "label": "Grid-Autor anzeigen",
+          "type": "checkbox",
+          "default": false
         },
         "show_tile_date": {
           "label": "Grid-Datum anzeigen",

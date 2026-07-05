@@ -29,11 +29,10 @@ $activeFilters = isset($activeFilters) && is_array($activeFilters) ? $activeFilt
 
                 <select name="type" class="search-select" aria-label="Typ filtern">
                     <option value="">Alle Typen</option>
-                    <option value="post" <?php echo $type === 'post' ? 'selected' : ''; ?>>Beiträge</option>
-                    <option value="page" <?php echo $type === 'page' ? 'selected' : ''; ?>>Seiten</option>
-                    <option value="company" <?php echo $type === 'company' ? 'selected' : ''; ?>>Firmen</option>
-                    <option value="event" <?php echo $type === 'event' ? 'selected' : ''; ?>>Events</option>
-                    <option value="speakers" <?php echo $type === 'speakers' ? 'selected' : ''; ?>>Speakers</option>
+                    <option value="posts" <?php echo $type === 'posts' ? 'selected' : ''; ?>>Beiträge</option>
+                    <option value="pages" <?php echo $type === 'pages' ? 'selected' : ''; ?>>Seiten</option>
+                    <option value="categories" <?php echo $type === 'categories' ? 'selected' : ''; ?>>Kategorien</option>
+                    <option value="tags" <?php echo $type === 'tags' ? 'selected' : ''; ?>>Tags</option>
                 </select>
 
                 <?php if ($queryTrimmed !== '' || $type !== ''): ?>

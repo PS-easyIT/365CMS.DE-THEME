@@ -26,7 +26,6 @@ $authorProfilePath = (string) ($author['profile_url'] ?? ('/author/' . rawurlenc
 $authorProfileUrl = function_exists('phinit_localized_href')
     ? phinit_localized_href($authorProfilePath, $currentLocale, $siteUrl)
     : rtrim($siteUrl, '/') . $authorProfilePath;
-$authorPaginationSeparator = str_contains($authorProfileUrl, '?') ? '&' : '?';
 $displayNameLabel = $currentLocale === 'en' ? 'Display name' : 'Anzeigename';
 
 $authorBioNormalized = preg_replace('/\s+/u', ' ', mb_strtolower($authorBio, 'UTF-8'));
@@ -178,15 +177,15 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
         </div>
 
         <?php if ($totalPages > 1): ?>
-        <nav class="blog-pagination" aria-label="<?php echo htmlspecialchars(phinit_t('author_nav', [], $currentLocale), ENT_QUOTES); ?>">
-            <?php for ($page = 1; $page <= $totalPages; $page++): ?>
-                <?php if ($page === $currentPage): ?>
-                <span class="current" aria-current="page"><?php echo (int) $page; ?></span>
-                <?php else: ?>
-                <a href="<?php echo htmlspecialchars($authorProfileUrl . $authorPaginationSeparator . 'page=' . (int) $page, ENT_QUOTES); ?>"><?php echo (int) $page; ?></a>
-                <?php endif; ?>
-            <?php endfor; ?>
-        </nav>
+        <?php
+        get_theme_part('partials/blog-archive-pagination', [
+            'siteUrl' => $siteUrl,
+            'blogPage' => $currentPage,
+            'blogPages' => $totalPages,
+            'blogBaseUrl' => $authorProfileUrl,
+            'queryParams' => [],
+        ]);
+        ?>
         <?php endif; ?>
         <?php else: ?>
         <p class="author-profile-posts__empty"><?php echo htmlspecialchars(phinit_t('author_no_posts', ['name' => $authorName], $currentLocale), ENT_QUOTES); ?></p>

@@ -30,15 +30,16 @@ $queryTrimmed = trim($query);
 $resultCount = count($results);
 $querySummary = $queryTrimmed !== '' ? '„' . $queryTrimmed . '“' : 'Noch kein Begriff';
 $typeLabels = [
-    'post' => 'Beiträge',
-    'page' => 'Seiten',
-    'company' => 'Firmen',
-    'event' => 'Events',
-    'speakers' => 'Speakers',
+    'posts' => 'Beiträge',
+    'pages' => 'Seiten',
+    'categories' => 'Kategorien',
+    'tags' => 'Tags',
 ];
 $typeIcons = [
     'post' => '📝',
     'page' => '📄',
+    'category' => '🏷️',
+    'tag' => '🔖',
     'company' => '🏢',
     'event' => '📅',
     'speakers' => '🎤',

@@ -61,6 +61,7 @@ if (empty($_showList) || $featuredPosts === []) {
                 'show_meta' => $_showMeta,
                 'exc_len' => $_listExcLen,
                 'show_cat' => $_showMetaCat,
+                'show_author' => $_showMetaAuthor,
                 'show_date' => $_showMetaDate,
                 'show_rt' => $_showMetaRT,
                 'above_the_fold_image' => $_articleImageEager,

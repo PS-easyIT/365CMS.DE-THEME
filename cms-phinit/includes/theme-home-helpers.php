@@ -60,6 +60,7 @@ function phinit_get_homepage_view_model(): array
         '_showMeta' => true,
         '_showBadge' => true,
         '_showMetaCat' => true,
+        '_showMetaAuthor' => false,
         '_showMetaDate' => true,
         '_showMetaRT' => true,
         '_listExcLen' => 180,
@@ -191,6 +192,7 @@ function phinit_get_homepage_view_model(): array
         '_tileCols' => 3,
         '_showTileExc' => true,
         '_showTileCat' => true,
+        '_showTileAuthor' => false,
         '_showTileDate' => true,
         '_tileImageH' => 161,
         '_tileLinkUrl' => '/archiv',
@@ -258,6 +260,7 @@ function phinit_get_homepage_view_model(): array
             '_showMeta' => filter_var($customizer->get('homepage', 'show_article_meta', true), FILTER_VALIDATE_BOOLEAN),
             '_showBadge' => filter_var($customizer->get('homepage', 'show_article_badge', true), FILTER_VALIDATE_BOOLEAN),
             '_showMetaCat' => filter_var($customizer->get('homepage', 'show_meta_category', true), FILTER_VALIDATE_BOOLEAN),
+            '_showMetaAuthor' => filter_var($customizer->get('homepage', 'show_meta_author', false), FILTER_VALIDATE_BOOLEAN),
             '_showMetaDate' => filter_var($customizer->get('homepage', 'show_meta_date', true), FILTER_VALIDATE_BOOLEAN),
             '_showMetaRT' => filter_var($customizer->get('homepage', 'show_meta_readtime', true), FILTER_VALIDATE_BOOLEAN),
             '_listExcLen' => max(60, (int) $customizer->get('typography', 'article_excerpt_length', 180)),
@@ -445,6 +448,7 @@ function phinit_get_homepage_view_model(): array
             '_tileCols' => max(2, min(4, (int) $customizer->get('homepage', 'tile_grid_columns', 3))),
             '_showTileExc' => filter_var($customizer->get('homepage', 'show_tile_excerpt', true), FILTER_VALIDATE_BOOLEAN),
             '_showTileCat' => filter_var($customizer->get('homepage', 'show_tile_category', true), FILTER_VALIDATE_BOOLEAN),
+            '_showTileAuthor' => filter_var($customizer->get('homepage', 'show_tile_author', false), FILTER_VALIDATE_BOOLEAN),
             '_showTileDate' => filter_var($customizer->get('homepage', 'show_tile_date', true), FILTER_VALIDATE_BOOLEAN),
             '_tileImageH' => max(161, min(300, (int) $customizer->get('homepage', 'tile_grid_image_height', 161))),
             '_tileLinkUrl' => function_exists('phinit_safe_public_url')
@@ -741,9 +745,12 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             ? ($db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
                     p.title_en, p.excerpt_en, p.content_en,
+                    p.author_id,
+                    COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name,
                     c.name AS category_name,
                     c.slug AS category_slug
                  FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}users u ON u.id = p.author_id
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                  WHERE " . phinit_post_publication_where('p') . "
                  {$localeCondition}
@@ -763,9 +770,12 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
             ? ($db->get_results(
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
                     p.title_en, p.excerpt_en, p.content_en,
+                        p.author_id,
+                        COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name,
                         c.name AS category_name,
                         c.slug AS category_slug
                  FROM {$prefix}posts p
+                 LEFT JOIN {$prefix}users u ON u.id = p.author_id
                  LEFT JOIN {$prefix}post_categories c ON c.id = p.category_id
                  WHERE " . phinit_post_publication_where('p') . "
                  {$localeCondition}
