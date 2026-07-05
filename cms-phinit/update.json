@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.13",
+  "version": "1.7.14",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.47",
-  "release_date": "2026-06-05",
+  "tested_up_to": "3.3.56",
+  "release_date": "2026-07-05",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.14",
+      "date": "2026-07-05",
+      "changes": [
+        "includes/theme-head-trait.php: getCurrentHeadPage() erkennt HubSites (SiteTableService::getHubPageBySlug()) jetzt auch als Fallback, wenn die reguläre PageManager-Abfrage keinen Treffer liefert – dadurch bekommt jede HubSite wieder ihren eigenen <title> statt des generischen Standard-Titels.",
+        "includes/theme-head-trait.php: filterPageTitle() vertauscht die Reihenfolge auf 'Standard-Sitename – Spezifischer Titel' (Beitrag/Seite/HubSite/Kategorie/Tag/Member-Bereich/Blog/Suche) statt umgekehrt.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.14 synchronisiert"
+      ]
+    },
     {
       "version": "1.7.13",
       "date": "2026-06-05",

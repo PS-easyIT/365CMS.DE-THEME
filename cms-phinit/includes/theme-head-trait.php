@@ -377,9 +377,18 @@ trait CMS_Phinit_Theme_Head_Trait
                 $page = (array) $page;
             }
 
-            $cache = is_array($page) ? $page : null;
+            $cache = is_array($page) && $page !== [] ? $page : null;
         } catch (\Throwable) {
             $cache = null;
+        }
+
+        if ($cache === null && class_exists('CMS\\Services\\SiteTableService')) {
+            try {
+                $hubPage = \CMS\Services\SiteTableService::getInstance()->getHubPageBySlug($slug, $resolvedLocale);
+                $cache = is_array($hubPage) && $hubPage !== [] ? $hubPage : null;
+            } catch (\Throwable) {
+                // Kein Hub-Site unter diesem Slug gefunden – $cache bleibt null.
+            }
         }
 
         return $cache;
@@ -760,7 +769,7 @@ trait CMS_Phinit_Theme_Head_Trait
 
         try {
             if (($currentPost = $this->getCurrentHeadPost()) !== null) {
-                return phinit_display_text((string) ($currentPost['title'] ?? '')) . ' – ' . $siteTitle;
+                return $siteTitle . ' – ' . phinit_display_text((string) ($currentPost['title'] ?? ''));
             }
 
             $skipRoutes = ['', '/', 'blog', 'login', 'register', 'logout', 'search', 'feed', 'member'];
@@ -768,14 +777,14 @@ trait CMS_Phinit_Theme_Head_Trait
             if (!empty($slug) && !in_array($slug, $skipRoutes, true) && !str_contains($slug, '/')) {
                 $pageTitle = $this->getCurrentHeadPageTitle();
                 if ($pageTitle !== null && $pageTitle !== '') {
-                    return $pageTitle . ' – ' . $siteTitle;
+                    return $siteTitle . ' – ' . $pageTitle;
                 }
             }
 
             $archiveRequest = function_exists('cms_parse_archive_request_path') ? cms_parse_archive_request_path($uri) : null;
             if (is_array($archiveRequest)) {
                 $label = ucwords(str_replace('-', ' ', rawurldecode((string) ($archiveRequest['tail'] ?? ''))));
-                return $label . ' – ' . $siteTitle;
+                return $siteTitle . ' – ' . $label;
             }
 
             if (str_starts_with($uri, '/member')) {
@@ -792,21 +801,21 @@ trait CMS_Phinit_Theme_Head_Trait
                 ];
                 $memberTitle = array_find($memberTitles, static fn(string $_label, string $route): bool => str_starts_with($uri, $route));
                 if (is_string($memberTitle)) {
-                    return $memberTitle . ' – ' . $siteTitle;
+                    return $siteTitle . ' – ' . $memberTitle;
                 }
-                return 'Member-Bereich – ' . $siteTitle;
+                return $siteTitle . ' – Member-Bereich';
             }
 
             if ($uri === '/blog') {
-                return 'Blog – ' . $siteTitle;
+                return $siteTitle . ' – Blog';
             }
 
             if ($uri === '/search') {
                 $q = phinit_input_string($_GET, 'q', '', 200);
                 if ($q) {
-                    return 'Suche: ' . phinit_display_text($q) . ' – ' . $siteTitle;
+                    return $siteTitle . ' – Suche: ' . phinit_display_text($q);
                 }
-                return 'Suche – ' . $siteTitle;
+                return $siteTitle . ' – Suche';
             }
         } catch (\Throwable $e) {
         }

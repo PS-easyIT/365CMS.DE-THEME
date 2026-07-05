@@ -14,6 +14,18 @@
 
 ---
 
+## v1.7.14 — 05. Juli 2026
+
+### Individueller Seiten-Titel für jede HubSite + Reihenfolge „Sitename – Spezifischer Titel“
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | SEO / `<title>` | `getCurrentHeadPage()` in `includes/theme-head-trait.php` prüfte bislang nur `PageManager::getPageBySlug()`. HubSites (verwaltet über `SiteTableService`) wurden dabei nie gefunden, wodurch `filterPageTitle()` für JEDE HubSite auf den generischen Fallback-Titel zurückfiel – alle HubSites zeigten denselben Browser-Titel. Neuer Fallback auf `SiteTableService::getHubPageBySlug()` behebt das. |
+| 🟡 refactor | SEO / `<title>` | `filterPageTitle()` liefert die Titel-Reihenfolge jetzt konsistent als „{Sitename} – {Spezifischer Titel}“ (Beitrag, Seite, HubSite, Kategorie/Tag-Archiv, Member-Bereich, Blog, Suche) statt umgekehrt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.14` synchronisiert. |
+
+---
+
 ## v1.7.13 — 05. Juni 2026
 
 ### Kontextabhängiger „… bearbeiten“-Direktlink für Detailseiten, Beiträge und HubSites
