@@ -14,6 +14,19 @@
 
 ---
 
+## v1.7.15 — 06. Juli 2026
+
+### „Über mich“ nutzt den Block-Editor + saubere Bio-Darstellung auf Autorenseiten
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Member / Profil | `member/profile.php` rendert das Feld „Über mich“ jetzt über `\CMS\Services\EditorService::render()` (EditorJS-Block-Editor) statt eines einfachen `<textarea>` — das Theme hat den Member-Profilbereich als eigenes Template implementiert und überschrieb damit bislang die Core-Editor-Integration aus 365CMS 3.3.61. |
+| 🔴 fix | Public / Autorenseite | `author.php` gibt die Biografie jetzt über `EditorService::renderContent()` als formatiertes HTML aus statt sie nur `htmlspecialchars()`-escaped als Rohtext (inkl. sichtbarem Editor.js-JSON) anzuzeigen. |
+| 🔴 fix | Public / Autoren-Übersicht | `authors.php` nutzt für die Bio-Vorschau auf der Autoren-Karte jetzt `phinit_excerpt_plain_text()` und kürzt auf 160 Zeichen, statt rohes Editor.js-JSON unverarbeitet auszugeben. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.15` synchronisiert. |
+
+---
+
 ## v1.7.14 — 05. Juli 2026
 
 ### Individueller Seiten-Titel für jede HubSite + Reihenfolge „Sitename – Spezifischer Titel“

@@ -46,7 +46,13 @@ foreach ($authors as $authorEntry) {
         <?php foreach ($authors as $author): ?>
         <?php
             $authorName = trim((string) ($author['display_name'] ?? 'Autor'));
-            $authorBio = trim((string) ($author['bio'] ?? ''));
+            $authorBioRaw = trim((string) ($author['bio'] ?? ''));
+            $authorBio = $authorBioRaw !== '' && function_exists('phinit_excerpt_plain_text')
+                ? phinit_excerpt_plain_text($authorBioRaw)
+                : $authorBioRaw;
+            if (function_exists('mb_strlen') && mb_strlen($authorBio, 'UTF-8') > 160) {
+                $authorBio = rtrim(mb_substr($authorBio, 0, 160, 'UTF-8')) . '…';
+            }
             $authorAvatar = function_exists('phinit_normalize_public_media_url')
                 ? phinit_normalize_public_media_url((string) ($author['avatar_url'] ?? ''), false, $siteUrl)
                 : trim((string) ($author['avatar_url'] ?? ''));
@@ -108,7 +114,7 @@ foreach ($authors as $authorEntry) {
                     <?php if ($detailType === 'url'): ?>
                     <?php $safeDetailUrl = phinit_safe_public_url($detailValue, $siteUrl); ?>
                     <?php if ($safeDetailUrl !== ''): ?>
-                    <a href="<?php echo htmlspecialchars($safeDetailUrl, ENT_QUOTES); ?>"<?php echo preg_match('/^mailto:/i', $safeDetailUrl) === 1 ? '' : ' target="_blank" rel="noopener noreferrer"'; ?>><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
+                    <a href="<?php echo htmlspecialchars($safeDetailUrl, ENT_QUOTES); ?>"<?php echo preg_match('/^mailto:/i', $safeDetailUrl) === 1 ? '' : ' target="_blank" rel="noopener noreferrer"'; ?>><span aria-hidden="true">🌐</span> <?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
                     <?php else: ?>
                     <span><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></span>
                     <?php endif; ?>

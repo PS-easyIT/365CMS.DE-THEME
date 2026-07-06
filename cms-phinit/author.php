@@ -13,7 +13,7 @@ $currentPage = isset($currentPage) ? (int) $currentPage : 1;
 $totalPages = isset($totalPages) ? (int) $totalPages : 1;
 
 $authorName = trim((string) ($author['display_name'] ?? 'Autor'));
-$authorBio = trim((string) ($author['bio'] ?? ''));
+$authorBioRaw = trim((string) ($author['bio'] ?? ''));
 $authorAvatar = function_exists('phinit_normalize_public_media_url')
     ? phinit_normalize_public_media_url((string) ($author['avatar_url'] ?? ''), false, $siteUrl)
     : trim((string) ($author['avatar_url'] ?? ''));
@@ -28,7 +28,8 @@ $authorProfileUrl = function_exists('phinit_localized_href')
     : rtrim($siteUrl, '/') . $authorProfilePath;
 $displayNameLabel = $currentLocale === 'en' ? 'Display name' : 'Anzeigename';
 
-$authorBioNormalized = preg_replace('/\s+/u', ' ', mb_strtolower($authorBio, 'UTF-8'));
+$authorBioPlainForCheck = function_exists('phinit_excerpt_plain_text') ? phinit_excerpt_plain_text($authorBioRaw) : $authorBioRaw;
+$authorBioNormalized = preg_replace('/\s+/u', ' ', mb_strtolower($authorBioPlainForCheck, 'UTF-8'));
 $authorBioPlaceholders = [
     'öffentliche profilangaben dieses accounts, freigegeben über den datenschutz-bereich im member-dashboard.',
     'öffentliche profilangaben dieses accounts, freigegeben über den datenschutz-bereich im member dashboard.',
@@ -36,8 +37,12 @@ $authorBioPlaceholders = [
 ];
 
 if (is_string($authorBioNormalized) && in_array(trim($authorBioNormalized), $authorBioPlaceholders, true)) {
-    $authorBio = '';
+    $authorBioRaw = '';
 }
+
+$authorBio = $authorBioRaw !== '' && class_exists('\CMS\Services\EditorService')
+    ? \CMS\Services\EditorService::getInstance()->renderContent($authorBioRaw)
+    : '';
 
 if ($authorName !== '') {
     $parts = preg_split('/\s+/u', $authorName) ?: [];
@@ -70,7 +75,7 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                     <div class="author-profile-card__eyebrow"><?php echo htmlspecialchars(phinit_t('authors', [], $currentLocale), ENT_QUOTES); ?></div>
                     <h1><?php echo htmlspecialchars($authorName, ENT_QUOTES); ?></h1>
                     <?php if ($authorBio !== ''): ?>
-                    <p class="author-profile-card__bio"><?php echo htmlspecialchars($authorBio, ENT_QUOTES); ?></p>
+                    <div class="author-profile-card__bio editorjs-content"><?php echo $authorBio; ?></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -89,11 +94,23 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                 <?php foreach ($authorDetails as $detail): ?>
                 <?php
                     $detail = is_array($detail) ? $detail : [];
+                    $detailKey = trim((string) ($detail['key'] ?? ''));
                     $detailLabel = trim((string) ($detail['label'] ?? '')); 
                     $detailValue = trim((string) ($detail['value'] ?? ''));
                     $detailType = trim((string) ($detail['type'] ?? 'text'));
                     if ($detailLabel === '' || $detailValue === '' || $detailType === 'email') {
                         continue;
+                    }
+
+                    $detailIcon = '';
+                    if ($detailType === 'url') {
+                        if ($detailKey === 'website') {
+                            $detailIcon = '🌐';
+                        } elseif ($detailKey === 'social' && function_exists('phinit_social_platform_icon')) {
+                            $detailIcon = (string) (phinit_social_platform_icon($detailValue)['icon'] ?? '🔗');
+                        } else {
+                            $detailIcon = '🔗';
+                        }
                     }
                 ?>
                 <div class="author-profile-detail">
@@ -102,7 +119,7 @@ $permalinkService = \CMS\Services\PermalinkService::getInstance();
                         <?php if ($detailType === 'url'): ?>
                             <?php $href = phinit_safe_public_url($detailValue, $siteUrl); ?>
                             <?php if ($href !== ''): ?>
-                            <a href="<?php echo htmlspecialchars($href, ENT_QUOTES); ?>"<?php echo preg_match('/^mailto:/i', $href) === 1 ? '' : ' target="_blank" rel="noopener noreferrer"'; ?>><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
+                            <a href="<?php echo htmlspecialchars($href, ENT_QUOTES); ?>"<?php echo preg_match('/^mailto:/i', $href) === 1 ? '' : ' target="_blank" rel="noopener noreferrer"'; ?>><?php if ($detailIcon !== ''): ?><span class="author-profile-detail__icon" aria-hidden="true"><?php echo $detailIcon; ?></span> <?php endif; ?><?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?></a>
                             <?php else: ?>
                             <?php echo htmlspecialchars($detailValue, ENT_QUOTES); ?>
                             <?php endif; ?>

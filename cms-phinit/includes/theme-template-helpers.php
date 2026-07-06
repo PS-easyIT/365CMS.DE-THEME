@@ -294,6 +294,52 @@ if (!function_exists('phinit_safe_public_url')) {
     }
 }
 
+if (!function_exists('phinit_social_platform_icon')) {
+    /**
+     * Erkennt die Social-Media-Plattform anhand des Hosts einer URL und liefert
+     * ein passendes Emoji-Icon plus sprechendes Label für Frontend-Ausgaben.
+     *
+     * @return array{icon:string,label:string}
+     */
+    function phinit_social_platform_icon(string $url): array
+    {
+        $host = strtolower((string) parse_url(trim($url), PHP_URL_HOST));
+        $host = preg_replace('/^www\./', '', $host ?? '') ?? '';
+
+        $map = [
+            'linkedin.com' => ['icon' => '💼', 'label' => 'LinkedIn'],
+            'x.com' => ['icon' => '✕', 'label' => 'X (Twitter)'],
+            'twitter.com' => ['icon' => '✕', 'label' => 'X (Twitter)'],
+            'facebook.com' => ['icon' => '📘', 'label' => 'Facebook'],
+            'instagram.com' => ['icon' => '📷', 'label' => 'Instagram'],
+            'youtube.com' => ['icon' => '▶️', 'label' => 'YouTube'],
+            'youtu.be' => ['icon' => '▶️', 'label' => 'YouTube'],
+            'github.com' => ['icon' => '🐙', 'label' => 'GitHub'],
+            'gitlab.com' => ['icon' => '🦊', 'label' => 'GitLab'],
+            'xing.com' => ['icon' => '👔', 'label' => 'Xing'],
+            'tiktok.com' => ['icon' => '🎵', 'label' => 'TikTok'],
+            'threads.net' => ['icon' => '🧵', 'label' => 'Threads'],
+            'bsky.app' => ['icon' => '🦋', 'label' => 'Bluesky'],
+            'pinterest.com' => ['icon' => '📌', 'label' => 'Pinterest'],
+            'discord.com' => ['icon' => '🎮', 'label' => 'Discord'],
+            'discord.gg' => ['icon' => '🎮', 'label' => 'Discord'],
+            't.me' => ['icon' => '✈️', 'label' => 'Telegram'],
+            'telegram.org' => ['icon' => '✈️', 'label' => 'Telegram'],
+            'mastodon.social' => ['icon' => '🐘', 'label' => 'Mastodon'],
+        ];
+
+        if ($host !== '' && isset($map[$host])) {
+            return $map[$host];
+        }
+
+        if ($host !== '' && str_contains($host, 'mastodon')) {
+            return ['icon' => '🐘', 'label' => 'Mastodon'];
+        }
+
+        return ['icon' => '🔗', 'label' => 'Profil-Link'];
+    }
+}
+
 if (!function_exists('phinit_safe_public_media_url')) {
     /**
      * Normalisiert öffentliche Medien-URLs für Frontend-Bilder/Backgrounds.

@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.14",
+  "version": "1.7.15",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.56",
-  "release_date": "2026-07-05",
+  "tested_up_to": "3.3.61",
+  "release_date": "2026-07-06",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.15",
+      "date": "2026-07-06",
+      "changes": [
+        "member/profile.php: Feld \u201eÜber mich\u201c nutzt jetzt den EditorJS-Block-Editor (\\CMS\\Services\\EditorService::render()) statt eines einfachen <textarea>, passend zum neuen Core-Feldtyp `wysiwyg` von `bio`.",
+        "author.php: Biografie auf der öffentlichen Autorenseite wird jetzt über EditorService::renderContent() als formatiertes HTML gerendert statt nur htmlspecialchars-escaped als reiner Text.",
+        "authors.php: Bio-Vorschau auf der Autoren-Übersichtskarte nutzt jetzt phinit_excerpt_plain_text() für einen sauberen, auf 160 Zeichen gekürzten Klartext-Auszug statt rohem Editor.js-JSON."
+      ]
+    },
     {
       "version": "1.7.14",
       "date": "2026-07-05",

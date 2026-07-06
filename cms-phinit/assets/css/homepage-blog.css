@@ -4574,6 +4574,11 @@ body.dark-mode .blog-search-form button:hover {
     color: var(--accent-teal);
 }
 
+.author-profile-detail__icon {
+    display: inline-block;
+    margin-right: 4px;
+}
+
 .author-profile-posts {
     padding: 28px 32px;
 }

@@ -158,8 +158,12 @@ include $themeDir . 'header.php';
                     <div class="member-card-header"><h3>📝 Über dich</h3></div>
                     <div class="member-form-group">
                         <label class="member-label" for="bio">Über mich</label>
-                        <textarea id="bio" name="bio" class="member-input member-textarea"
-                                  rows="5" placeholder="Kurze Beschreibung …"><?php echo htmlspecialchars($userMeta['bio'] ?? '', ENT_QUOTES); ?></textarea>
+                        <?php echo \CMS\Services\EditorService::getInstance()->render('bio', (string) ($userMeta['bio'] ?? ''), [
+                            'height' => 300,
+                            'context' => 'member_bio',
+                            'content_width' => 700,
+                            'aria_label' => 'Über mich Editor',
+                        ]); ?>
                     </div>
                     <div class="member-form-info">
                         <p>📅 Mitglied seit: <strong><?php echo htmlspecialchars($formatProfileDate((string) ($currentUser->created_at ?? '')), ENT_QUOTES); ?></strong></p>
