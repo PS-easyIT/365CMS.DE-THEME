@@ -9,6 +9,7 @@ $authorName = trim((string) ($authorName ?? ''));
 $authorBio = trim((string) ($authorBio ?? ''));
 $authorAvatarUrl = trim((string) ($authorAvatarUrl ?? ''));
 $authorUrl = trim((string) ($authorUrl ?? ''));
+$authorUrlIsExternal = !empty($authorUrlIsExternal);
 $authorEyebrow = trim((string) ($authorEyebrow ?? 'Autor'));
 $authorAboutLabel = trim((string) ($authorAboutLabel ?? 'Über mich'));
 $authorAboutWidth = (int) ($authorAboutWidth ?? 60);
@@ -65,7 +66,7 @@ if ($serviceHubUrl !== '' && preg_match('#^https?://#i', $serviceHubUrl) === 1) 
         <?php endif; ?>
         <h3 class="post-author-box__name">
             <?php if ($authorUrl !== ''): ?>
-            <a class="post-author-box__name-link" href="<?php echo htmlspecialchars($authorUrl, ENT_QUOTES); ?>"><?php echo phinit_escape_text($authorName !== '' ? $authorName : 'Autor'); ?></a>
+            <a class="post-author-box__name-link" href="<?php echo htmlspecialchars($authorUrl, ENT_QUOTES); ?>"<?php echo $authorUrlIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo phinit_escape_text($authorName !== '' ? $authorName : 'Autor'); ?></a>
             <?php else: ?>
             <?php echo phinit_escape_text($authorName !== '' ? $authorName : 'Autor'); ?>
             <?php endif; ?>

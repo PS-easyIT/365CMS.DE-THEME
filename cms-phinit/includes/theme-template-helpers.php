@@ -2388,12 +2388,22 @@ if (!function_exists('phinit_build_author_box_context')) {
         $hasAuthorContent = $authorName !== '' || $authorBio !== '' || $authorAvatarUrl !== '';
         $hasServiceContent = $serviceHubUrl !== '' && ($serviceHubLabel !== '' || $serviceHubText !== '');
 
+        $resolvedAuthorLink = function_exists('phinit_resolve_post_author_link')
+            ? phinit_resolve_post_author_link(
+                ['author_id' => $options['author_id'] ?? 0, 'author_display_url' => $options['author_display_url'] ?? ''],
+                $locale,
+                $siteUrl
+            )
+            : ['url' => '', 'isExternal' => false];
+        $resolvedAuthorUrl = $resolvedAuthorLink['url'] !== '' ? $resolvedAuthorLink['url'] : trim((string) ($options['author_url'] ?? ''));
+
         return [
             'show' => $showAuthorBox && ($hasAuthorContent || $hasServiceContent),
             'authorName' => $authorName,
             'authorBio' => $authorBio,
             'authorAvatarUrl' => $authorAvatarUrl,
-            'authorUrl' => trim((string) ($options['author_url'] ?? '')),
+            'authorUrl' => $resolvedAuthorUrl,
+            'authorUrlIsExternal' => $resolvedAuthorLink['isExternal'],
             'authorEyebrow' => trim((string) phinit_customizer_value($category, $eyebrowKey, (string) ($options['default_eyebrow'] ?? 'Autor'))),
             'authorAboutLabel' => trim((string) phinit_customizer_value($category, $aboutLabelKey, (string) ($options['default_about_label'] ?? 'Über mich'))),
             'authorAboutWidth' => $authorAboutWidth,
@@ -2402,6 +2412,35 @@ if (!function_exists('phinit_build_author_box_context')) {
             'serviceHubLabel' => $serviceHubLabel,
             'serviceHubText' => $serviceHubText,
         ];
+    }
+}
+
+if (!function_exists('phinit_resolve_post_author_link')) {
+    /**
+     * Ermittelt Ziel-URL und Ziel-Attribut für den (ggf. alternativen) Autorennamen eines Beitrags.
+     * Ist eine externe Autoren-Website hinterlegt (`author_display_url`), wird auf diese statt auf die
+     * interne Autoren-Info-Seite verlinkt – und im neuen Tab geöffnet.
+     *
+     * @param array<string,mixed> $post
+     * @return array{url:string,isExternal:bool}
+     */
+    function phinit_resolve_post_author_link(array $post, string $currentLocale, string $siteUrl): array
+    {
+        $displayUrl = trim((string) ($post['author_display_url'] ?? ''));
+        if ($displayUrl !== '' && preg_match('#^https?://#i', $displayUrl) === 1) {
+            return ['url' => $displayUrl, 'isExternal' => true];
+        }
+
+        $authorId = (int) ($post['author_id'] ?? 0);
+        if ($authorId <= 0) {
+            return ['url' => '', 'isExternal' => false];
+        }
+
+        $internalUrl = function_exists('phinit_localized_href')
+            ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl)
+            : rtrim($siteUrl, '/') . '/author/user-' . $authorId;
+
+        return ['url' => $internalUrl, 'isExternal' => false];
     }
 }
 

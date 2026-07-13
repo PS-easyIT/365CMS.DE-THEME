@@ -95,9 +95,11 @@ if (empty($_showTileGrid) || $gridPosts === []) {
             $postDateRaw = $post['published_at'] ?? ($post['created_at'] ?? '');
             $tileAuthorName = !empty($_showTileAuthor) ? trim((string) ($post['author_name'] ?? '')) : '';
             $tileAuthorId = $tileAuthorName !== '' ? (int) ($post['author_id'] ?? 0) : 0;
-            $tileAuthorUrl = $tileAuthorId > 0
-                ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $tileAuthorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $tileAuthorId)
-                : '';
+            $tileAuthorLink = $tileAuthorName !== '' && function_exists('phinit_resolve_post_author_link')
+                ? phinit_resolve_post_author_link($post, $currentLocale, $siteUrl)
+                : ['url' => '', 'isExternal' => false];
+            $tileAuthorUrl = $tileAuthorLink['url'];
+            $tileAuthorUrlIsExternal = $tileAuthorLink['isExternal'];
             $tileReadTime = !empty($post['read_time']) ? (int) $post['read_time'] : 0;
                 if ($tileReadTime < 1 && $displayContentSource !== '') {
                 $tileReadTimeSource = function_exists('phinit_excerpt_plain_text')
@@ -131,7 +133,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 <?php if ($tileAuthorName !== ''): ?>
                 <div class="post-card-top-meta post-card-top-meta--author">
                     <?php if ($tileAuthorUrl !== ''): ?>
-                    <a href="<?php echo htmlspecialchars($tileAuthorUrl, ENT_QUOTES); ?>" class="post-card-top-meta__author"><?php echo phinit_escape_text($tileAuthorName); ?></a>
+                    <a href="<?php echo htmlspecialchars($tileAuthorUrl, ENT_QUOTES); ?>" class="post-card-top-meta__author"<?php echo $tileAuthorUrlIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo phinit_escape_text($tileAuthorName); ?></a>
                     <?php else: ?>
                     <span class="post-card-top-meta__author"><?php echo phinit_escape_text($tileAuthorName); ?></span>
                     <?php endif; ?>

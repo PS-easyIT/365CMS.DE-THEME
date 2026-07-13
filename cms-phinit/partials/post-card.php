@@ -123,9 +123,11 @@ $_pc_excerpt = mb_strimwidth($_pc_excerpt, 0, $exc_len, '…');
 // Autor auflösen (nur wenn aktiviert)
 $_pc_author = $show_author ? trim((string) ($card['author_name'] ?? '')) : '';
 $_pc_authorId = $show_author ? (int) ($card['author_id'] ?? 0) : 0;
-$_pc_authorUrl = $_pc_authorId > 0
-    ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $_pc_authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $_pc_authorId)
-    : '';
+$_pc_authorLink = $show_author && function_exists('phinit_resolve_post_author_link')
+    ? phinit_resolve_post_author_link($card, $currentLocale, $siteUrl)
+    : ['url' => '', 'isExternal' => false];
+$_pc_authorUrl = $_pc_authorLink['url'];
+$_pc_authorUrlIsExternal = $_pc_authorLink['isExternal'];
 
 // Lesezeit berechnen
 $_pc_rt = 0;
@@ -176,7 +178,7 @@ if ($show_rt && $show_meta) {
                 <span class="article-meta__timing">
                     <?php if ($show_author && $_pc_author !== ''): ?>
                     <?php if ($_pc_authorUrl !== ''): ?>
-                    <a href="<?php echo htmlspecialchars($_pc_authorUrl, ENT_QUOTES); ?>" class="article-meta__author"><?php echo phinit_escape_text($_pc_author); ?></a>
+                    <a href="<?php echo htmlspecialchars($_pc_authorUrl, ENT_QUOTES); ?>" class="article-meta__author"<?php echo $_pc_authorUrlIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo phinit_escape_text($_pc_author); ?></a>
                     <?php else: ?>
                     <span class="article-meta__author"><?php echo phinit_escape_text($_pc_author); ?></span>
                     <?php endif; ?>

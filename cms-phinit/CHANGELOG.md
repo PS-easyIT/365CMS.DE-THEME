@@ -14,6 +14,19 @@
 
 ---
 
+## v1.7.16 — 06. Juli 2026
+
+### Passende Icons für Website- und Social-Media-Einträge im öffentlichen Autorenprofil
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Public / Autorenprofil | Neue Funktion `phinit_social_platform_icon()` in `includes/theme-template-helpers.php` erkennt die Plattform (LinkedIn, X/Twitter, Facebook, Instagram, YouTube, GitHub, GitLab, Xing, TikTok, Threads, Bluesky, Pinterest, Discord, Telegram, Mastodon) anhand des Hosts einer Social-URL und liefert ein passendes Emoji-Icon. |
+| 🟢 feat | Public / Autorenprofil | `author.php` zeigt vor dem Website-Link jetzt 🌐 und vor dem Social-Link das erkannte Plattform-Icon an, statt nur reinen Linktext. |
+| 🟢 feat | Public / Autoren-Übersicht | `authors.php` zeigt auf der Autoren-Karte ebenfalls das Website-Icon vor dem Link. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.16` synchronisiert. |
+
+---
+
 ## v1.7.15 — 06. Juli 2026
 
 ### „Über mich“ nutzt den Block-Editor + saubere Bio-Darstellung auf Autorenseiten

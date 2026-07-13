@@ -20,7 +20,11 @@ $updatedAt = (string) ($post['updated_at'] ?? '');
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $categorySlug = rawurlencode(phinit_display_text($post['category_slug'] ?? $post['category_name'] ?? ''));
 $authorId = (int) ($post['author_id'] ?? 0);
-$authorUrl = $authorId > 0 ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId) : '';
+$authorLink = function_exists('phinit_resolve_post_author_link')
+    ? phinit_resolve_post_author_link($post, $currentLocale, $siteUrl)
+    : ['url' => '', 'isExternal' => false];
+$authorUrl = $authorLink['url'];
+$authorUrlIsExternal = $authorLink['isExternal'];
 $categoryUrl = !empty($post['category_name'])
     ? (function_exists('phinit_localized_href') ? phinit_localized_href('/kategorie/' . $categorySlug, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/kategorie/' . $categorySlug)
     : '';
@@ -79,7 +83,7 @@ $publishedTimestamp = $publishedAt !== '' ? strtotime($publishedAt) : false;
                 <span class="post-meta__icon" aria-hidden="true">👤</span>
                 <strong itemprop="author">
                 <?php if ($authorUrl !== ''): ?>
-                <a href="<?php echo htmlspecialchars($authorUrl, ENT_QUOTES); ?>" class="post-meta__link"><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></a>
+                <a href="<?php echo htmlspecialchars($authorUrl, ENT_QUOTES); ?>" class="post-meta__link"<?php echo $authorUrlIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo phinit_escape_text($post['author_name'] ?? ''); ?></a>
                 <?php else: ?>
                 <?php echo phinit_escape_text($post['author_name'] ?? ''); ?>
                 <?php endif; ?>
