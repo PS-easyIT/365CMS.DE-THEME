@@ -746,6 +746,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at, p.views,
                     p.title_en, p.excerpt_en, p.content_en,
                     p.author_id,
+                    p.author_display_url,
                     COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name,
                     c.name AS category_name,
                     c.slug AS category_slug
@@ -771,6 +772,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                 "SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.featured_image, p.published_at, p.created_at,
                     p.title_en, p.excerpt_en, p.content_en,
                         p.author_id,
+                        p.author_display_url,
                         COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name,
                         c.name AS category_name,
                         c.slug AS category_slug
