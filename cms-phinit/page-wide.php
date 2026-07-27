@@ -53,6 +53,9 @@ $pageContent = phinit_sanitize_renderable_content($pageContent, 'default');
 $pageHeadingData = phinit_with_heading_ids($pageContent, [2, 3, 4, 5, 6]);
 $pageContent = phinit_enhance_content_images($pageHeadingData['html']);
 $safePageContent = $pageContent;
+$pageContentUpdatedTimestamp = !empty($page['content_updated_at'])
+    ? strtotime((string) ($page['content_updated_at'] ?? ''))
+    : false;
 ?>
 
 <div class="container page-shell page-shell--wide">
@@ -65,9 +68,9 @@ $safePageContent = $pageContent;
             <span><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></span>
         </div>
         <h1><?php echo htmlspecialchars($page['title'] ?? '', ENT_QUOTES); ?></h1>
-        <?php if (!empty($page['updated_at'])): ?>
+        <?php if ($pageContentUpdatedTimestamp !== false): ?>
         <p class="page-last-updated">
-            Zuletzt aktualisiert: <?php echo htmlspecialchars($formatPageWideDate((string) ($page['updated_at'] ?? '')), ENT_QUOTES); ?>
+            Zuletzt aktualisiert: <?php echo htmlspecialchars($formatPageWideDate((string) ($page['content_updated_at'] ?? '')), ENT_QUOTES); ?>
         </p>
         <?php endif; ?>
     </div>

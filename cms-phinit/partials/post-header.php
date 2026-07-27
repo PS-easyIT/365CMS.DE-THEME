@@ -16,7 +16,10 @@ $commentLinkTarget = isset($commentLinkTarget) ? trim((string) $commentLinkTarge
 $extraMetaItems = isset($extraMetaItems) && is_array($extraMetaItems) ? $extraMetaItems : [];
 $favoriteControl = isset($favoriteControl) && is_array($favoriteControl) ? $favoriteControl : [];
 $publishedAt = (string) ($post['published_at'] ?? '');
-$updatedAt = (string) ($post['updated_at'] ?? '');
+$contentUpdatedAt = trim((string) ($post['content_updated_at'] ?? ''));
+$contentUpdatedTimestamp = $contentUpdatedAt !== '' ? strtotime($contentUpdatedAt) : false;
+$hasContentUpdate = $contentUpdatedTimestamp !== false;
+$contentUpdateBadgeDate = $hasContentUpdate ? date('d.m.y', $contentUpdatedTimestamp) : '';
 $currentLocale = function_exists('phinit_get_current_locale') ? phinit_get_current_locale() : 'de';
 $categorySlug = rawurlencode(phinit_display_text($post['category_slug'] ?? $post['category_name'] ?? ''));
 $authorId = (int) ($post['author_id'] ?? 0);
@@ -45,10 +48,15 @@ $publishedTimestamp = $publishedAt !== '' ? strtotime($publishedAt) : false;
                              <?php echo phinit_image_loading_attributes(true); ?>
                              <?php echo phinit_image_dimension_attributes($postHeroImage); ?>
              itemprop="image">
-        <?php if ($showReadingTime && $readingTime > 0): ?>
-        <span class="post-hero-reading-badge" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>">
-            <?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>
-        </span>
+                        <?php if ($showReadingTime && $readingTime > 0): ?>
+                        <span class="post-hero-reading-badge" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $readingTime], $currentLocale), ENT_QUOTES); ?>
+                        </span>
+                        <?php endif; ?>
+                        <?php if ($hasContentUpdate): ?>
+                        <span class="post-hero-update-badge" aria-label="<?php echo htmlspecialchars(phinit_t('updated_label', [], $currentLocale) . ' ' . $contentUpdateBadgeDate, ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars(phinit_t('updated_badge_label', [], $currentLocale) . ' | ' . $contentUpdateBadgeDate, ENT_QUOTES); ?>
+                        </span>
         <?php endif; ?>
     </div>
     <?php endif; ?>

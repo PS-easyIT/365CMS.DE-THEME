@@ -100,6 +100,7 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                 : ['url' => '', 'isExternal' => false];
             $tileAuthorUrl = $tileAuthorLink['url'];
             $tileAuthorUrlIsExternal = $tileAuthorLink['isExternal'];
+            $tileShowUpdateBadge = trim((string) ($post['content_updated_at'] ?? '')) !== '';
             $tileReadTime = !empty($post['read_time']) ? (int) $post['read_time'] : 0;
                 if ($tileReadTime < 1 && $displayContentSource !== '') {
                 $tileReadTimeSource = function_exists('phinit_excerpt_plain_text')
@@ -139,16 +140,17 @@ if (empty($_showTileGrid) || $gridPosts === []) {
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
-                <?php if (!empty($_showTileDate) && !empty($postDateRaw)): ?>
+                <?php if ((!empty($_showTileDate) && !empty($postDateRaw)) || $tileReadTime > 0 || $tileShowUpdateBadge): ?>
                 <div class="post-card-top-meta">
+                    <?php if (!empty($_showTileDate) && !empty($postDateRaw)): ?>
                     <span class="post-card-top-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $postDateRaw, 'long', $currentLocale), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
                     <?php if ($tileReadTime > 0): ?>
                     <span class="post-card-top-meta__read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?></span>
                     <?php endif; ?>
-                </div>
-                <?php elseif ($tileReadTime > 0): ?>
-                <div class="post-card-top-meta">
-                    <span class="post-card-top-meta__read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $tileReadTime], $currentLocale), ENT_QUOTES); ?></span>
+                    <?php if ($tileShowUpdateBadge): ?>
+                    <span class="post-card-update-badge"><?php echo htmlspecialchars(phinit_t('updated_badge_label', [], $currentLocale), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
                 <?php

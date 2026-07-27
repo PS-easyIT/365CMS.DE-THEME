@@ -128,6 +128,7 @@ $_pc_authorLink = $show_author && function_exists('phinit_resolve_post_author_li
     : ['url' => '', 'isExternal' => false];
 $_pc_authorUrl = $_pc_authorLink['url'];
 $_pc_authorUrlIsExternal = $_pc_authorLink['isExternal'];
+$_pc_showUpdateBadge = trim((string) ($card['content_updated_at'] ?? '')) !== '';
 
 // Lesezeit berechnen
 $_pc_rt = 0;
@@ -171,28 +172,32 @@ if ($show_rt && $show_meta) {
         <?php if ($show_excerpt && !empty(trim($_pc_excerpt))): ?>
         <p><?php echo htmlspecialchars($_pc_excerpt, ENT_QUOTES); ?></p>
         <?php endif; ?>
-        <?php if ($show_meta): ?>
+        <?php if ($show_meta || $_pc_showUpdateBadge): ?>
         <div class="article-meta">
-            <?php if (($show_author && $_pc_author !== '') || ($show_date && !empty($displayDate)) || ($show_rt && $_pc_rt > 0)): ?>
+            <?php if (($show_meta && $show_author && $_pc_author !== '') || ($show_meta && $show_date && !empty($displayDate)) || ($show_meta && $show_rt && $_pc_rt > 0) || $_pc_showUpdateBadge): ?>
             <span class="article-meta__primary">
                 <span class="article-meta__timing">
-                    <?php if ($show_author && $_pc_author !== ''): ?>
+                    <?php if ($show_meta && $show_author && $_pc_author !== ''): ?>
                     <?php if ($_pc_authorUrl !== ''): ?>
                     <a href="<?php echo htmlspecialchars($_pc_authorUrl, ENT_QUOTES); ?>" class="article-meta__author"<?php echo $_pc_authorUrlIsExternal ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo phinit_escape_text($_pc_author); ?></a>
                     <?php else: ?>
                     <span class="article-meta__author"><?php echo phinit_escape_text($_pc_author); ?></span>
                     <?php endif; ?>
                     <?php endif; ?>
-                    <?php if ($show_date && !empty($displayDate)): ?>
+                    <?php if ($show_meta && $show_date && !empty($displayDate)): ?>
                     <span class="article-meta__date"><?php echo htmlspecialchars(phinit_format_date((string) $displayDate, 'long', $currentLocale), ENT_QUOTES); ?></span>
                     <?php endif; ?>
-                    <?php if ($show_rt && $_pc_rt > 0): ?>
+                    <?php if ($show_meta && $show_rt && $_pc_rt > 0): ?>
                     <span class="read" aria-label="<?php echo htmlspecialchars(phinit_t('read_time_aria', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?>"><?php echo htmlspecialchars(phinit_t('read_time_short', ['minutes' => $_pc_rt], $currentLocale), ENT_QUOTES); ?></span>
+                    <?php endif; ?>
+                    <?php if ($_pc_showUpdateBadge): ?>
+                    <span class="article-meta__update-badge"><?php echo htmlspecialchars(phinit_t('updated_badge_label', [], $currentLocale), ENT_QUOTES); ?></span>
                     <?php endif; ?>
                 </span>
             </span>
             <?php endif; ?>
         </div>
+        <?php if ($show_meta): ?>
         <div class="article-footer">
             <?php if ($show_cat && $categoryLabel !== ''): ?>
                 <?php if ($categoryUrl !== ''): ?>
@@ -207,6 +212,7 @@ if ($show_rt && $show_meta) {
                 <?php echo htmlspecialchars(phinit_t('continue_reading', [], $currentLocale), ENT_QUOTES); ?>
             </a>
         </div>
+        <?php endif; ?>
         <?php endif; ?>
     </div>
 

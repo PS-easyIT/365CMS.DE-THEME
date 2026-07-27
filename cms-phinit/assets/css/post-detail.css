@@ -51,15 +51,15 @@
 
 .post-hero-reading-badge {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 0;
+    left: 0;
     z-index: 2;
     display: inline-flex;
     align-items: center;
     gap: 3px;
     padding: 2px 9px;
-    border: 1px solid rgba(15, 23, 42, .14);
-    border-radius: 20px;
+    border: 0;
+    border-radius: 0;
     background: rgba(255, 255, 255, .94);
     color: var(--text-primary);
     font-size: var(--fs-xs);
@@ -67,11 +67,31 @@
     line-height: 1.7;
     letter-spacing: .4px;
     white-space: nowrap;
-    box-shadow: 0 1px 5px rgba(0,0,0,.18);
+    box-shadow: none;
 }
 
 .post-hero-reading-badge strong {
     color: inherit;
+}
+
+.post-hero-update-badge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border: 0;
+    border-radius: 0;
+    background: rgba(248, 250, 252, .9);
+    color: #8a5a05;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    line-height: 1.7;
+    white-space: nowrap;
+    box-shadow: none;
 }
 
 .post-header:not(:has(.post-hero-media)) .post-header-body,
@@ -1407,8 +1427,12 @@ body.dark-mode .comment-profile-card__status {
 
 body.dark-mode .post-hero-reading-badge {
     background: rgba(15, 23, 42, .88);
-    border-color: rgba(148, 163, 184, .24);
     color: #f8fafc;
+}
+
+body.dark-mode .post-hero-update-badge {
+    background: rgba(255, 248, 235, .92);
+    color: #8a5a05;
 }
 
 body.dark-mode .comments-section {
@@ -1660,10 +1684,13 @@ html.dark-mode body .share-btn {
     }
 
     .post-hero-reading-badge {
-        top: 10px;
-        left: 10px;
-        padding: 2px 9px;
-        font-size: var(--fs-xs);
+        top: 0;
+        left: 0;
+    }
+
+    .post-hero-update-badge {
+        right: 0;
+        bottom: 0;
     }
 
     .post-meta span,
@@ -1826,10 +1853,13 @@ html.dark-mode body .share-btn {
     }
 
     .post-hero-reading-badge {
-        top: 8px;
-        left: 8px;
-        padding: 4px 9px;
-        font-size: .7rem;
+        top: 0;
+        left: 0;
+    }
+
+    .post-hero-update-badge {
+        right: 0;
+        bottom: 0;
     }
 
     .comments-section__meta {

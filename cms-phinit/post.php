@@ -228,8 +228,8 @@ $favoriteControl = phinit_get_favorite_control('post', (int) ($post['id'] ?? 0),
 $commentError = $commentError ?? '';
 $commentSuccess = $commentSuccess ?? '';
 $publishedAt = (string) ($post['published_at'] ?? '');
-$updatedAt = (string) ($post['updated_at'] ?? '');
-$showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
+$updatedAt = (string) ($post['content_updated_at'] ?? '');
+$showUpdatedBadge = $updatedAt !== '';
 
 $authorId = (int) ($post['author_id'] ?? 0);
 $authorBoxUrl = $authorId > 0

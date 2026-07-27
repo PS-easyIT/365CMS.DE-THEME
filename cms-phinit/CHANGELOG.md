@@ -14,6 +14,63 @@
 
 ---
 
+## v1.7.21 — 18. Juli 2026
+
+### Kategorie-Badge bündig im Listcard-Vorschaubild
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Startseite / Artikel-Listcards | `assets/css/homepage-blog.css` und `homepage-blog-critical.css` positionieren das türkise Kategorie-Badge ohne Abstand bei `top: 0; left: 0`; Rundung, weißer Rand und Schatten wurden entfernt, sodass die Kachel bündig am Vorschaubildrand anschließt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.21` und Core-Teststand `3.3.71` synchronisiert. |
+
+---
+
+## v1.7.20 — 18. Juli 2026
+
+### Dunkler Goldton für den Update-Badge-Text
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Beitragsdetail / Update-Badge | `assets/css/post-detail.css` verwendet für `[UPDATE | dd.MM.YY]` den dunklen Goldton `#8a5a05`. Im Dark Mode erhält die kantige Badge-Fläche einen warmen hellen Hintergrund, damit der dunkle Text lesbar bleibt. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.20` und Core-Teststand `3.3.70` synchronisiert. |
+
+---
+
+## v1.7.19 — 18. Juli 2026
+
+### Kantige Header-Badges direkt am Bildrand
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | Beitragsdetail / Headerbild | `assets/css/post-detail.css` setzt die Lesezeit als kantige Kachel ohne Schatten bei `top: 0; left: 0`; das goldfarbene `[UPDATE | dd.MM.YY]`-Badge liegt ohne Abstand bei `right: 0; bottom: 0`. Die Positionen gelten auch auf Tablet und Mobilgeräten. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.19` und Core-Teststand `3.3.69` synchronisiert. |
+
+---
+
+## v1.7.18 — 18. Juli 2026
+
+### Lesezeit links, Update-Badge rechts im Beitrags-Header
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Beitragsdetail / Headerbild | `assets/css/post-detail.css` positioniert die Lesezeit wieder fest oben links. Das optionale `[UPDATE]`-Badge nutzt die rechte Seite desselben Overlays und bleibt auch ohne vorhandene Lesezeit rechts ausgerichtet. |
+| 🎨 style | Beitragsdetail / Update-Badge | Der `[UPDATE]`-Text verwendet im hellen und dunklen Headerbild den Theme-Goldton `--accent-color`. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.18` und Core-Teststand `3.3.68` synchronisiert. |
+
+---
+
+## v1.7.17 — 18. Juli 2026
+
+### Manuelles Update-Badge im Beitrags-Content-Header
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | Beitragsdetail / Headerbild | `partials/post-header.php` prüft das optionale Feld `content_updated_at` und zeigt bei gefülltem Aktualisierungsdatum `[UPDATE]` direkt rechts neben der Lesezeit im Headerbild. Standard-, Wide- und Tech-Beitragslayouts nutzen dieselbe Partial und erhalten die Anzeige automatisch. |
+| 🎨 style | Beitragsdetail / Headerbild | `assets/css/post-detail.css` bündelt Lesezeit und Update-Badge in einer Leiste oben rechts im Content-Headerbild; das Badge bleibt bewusst dezent und besitzt passende Dark-Mode-Kontraste. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.17` und Core-Teststand `3.3.67` synchronisiert. |
+
+---
+
 ## v1.7.16 — 06. Juli 2026
 
 ### Passende Icons für Website- und Social-Media-Einträge im öffentlichen Autorenprofil

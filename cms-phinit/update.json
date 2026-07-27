@@ -1,13 +1,63 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.15",
+  "version": "1.7.21",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.61",
-  "release_date": "2026-07-06",
+  "tested_up_to": "3.3.71",
+  "release_date": "2026-07-18",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.21",
+      "date": "2026-07-18",
+      "changes": [
+        "assets/css/homepage-blog.css und homepage-blog-critical.css: Kategorie-Badge der sichtbaren Listcards ist kantig, ohne Schatten und ohne Abstand direkt oben links am Vorschaubild positioniert.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.21 und Core-Teststand 3.3.71 synchronisiert."
+      ]
+    },
+    {
+      "version": "1.7.20",
+      "date": "2026-07-18",
+      "changes": [
+        "assets/css/post-detail.css: Der Text des Update-Badges verwendet #8a5a05 als dunklen Goldton. Im Dark Mode sorgt eine warme helle Badge-Fläche für guten Kontrast.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.20 und Core-Teststand 3.3.70 synchronisiert."
+      ]
+    },
+    {
+      "version": "1.7.19",
+      "date": "2026-07-18",
+      "changes": [
+        "assets/css/post-detail.css: Lesezeit und Update-Badge sind kantig, ohne Schatten und ohne Außenabstand direkt an den oberen linken bzw. unteren rechten Contentheader-Bildrand gesetzt.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.19 und Core-Teststand 3.3.69 synchronisiert."
+      ]
+    },
+    {
+      "version": "1.7.18",
+      "date": "2026-07-18",
+      "changes": [
+        "assets/css/post-detail.css: Lesezeit bleibt im Headerbild oben links; das optionale [UPDATE]-Badge steht oben rechts. Bei fehlender Lesezeit bleibt das Update-Badge per margin-left:auto rechts ausgerichtet.",
+        "assets/css/post-detail.css: Der Text des Update-Badges verwendet jetzt im Hell- und Dark-Mode den Gold-Akzent --accent-color.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.18 und Core-Teststand 3.3.68 synchronisiert."
+      ]
+    },
+    {
+      "version": "1.7.17",
+      "date": "2026-07-18",
+      "changes": [
+        "partials/post-header.php: Das optionale [UPDATE]-Badge wird bei gefülltem content_updated_at im Content-Headerbild neben der Lesezeit ausgegeben; die gemeinsame Partial-Abdeckung gilt für Standard-, Wide- und Tech-Beitragsdetailseiten.",
+        "assets/css/post-detail.css: Neue Badge-Leiste oben rechts im Headerbild gruppiert Lesezeit und Update-Badge, inklusive dezenter Kontraste für Hell- und Dark-Mode.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.17 und Core-Teststand 3.3.67 synchronisiert."
+      ]
+    },
+    {
+      "version": "1.7.16",
+      "date": "2026-07-06",
+      "changes": [
+        "author.php und authors.php: Öffentliche Autorenprofile zeigen für Website- und Social-Media-Einträge passende Plattform-Icons.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.16 synchronisiert."
+      ]
+    },
     {
       "version": "1.7.15",
       "date": "2026-07-06",

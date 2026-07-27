@@ -86,6 +86,9 @@ $heroCta2Href = function_exists('phinit_safe_public_url')
 $ctaBtnHref = function_exists('phinit_safe_public_url')
     ? phinit_safe_public_url($ctaBtnUrl, $siteUrl, ['http', 'https'])
     : $ctaBtnUrl;
+$landingContentUpdatedTimestamp = !empty($page['content_updated_at'])
+    ? strtotime((string) ($page['content_updated_at'] ?? ''))
+    : false;
 ?>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -204,4 +207,12 @@ $ctaBtnHref = function_exists('phinit_safe_public_url')
         <?php endif; ?>
     </div>
 </section>
+<?php endif; ?>
+
+<?php if ($landingContentUpdatedTimestamp !== false): ?>
+<div class="container">
+    <div class="page-updated-pill-wrap landing-updated-pill">
+        <span class="page-updated-pill">🕒 Zuletzt aktualisiert: <?php echo htmlspecialchars(date('j. F Y', $landingContentUpdatedTimestamp), ENT_QUOTES); ?></span>
+    </div>
+</div>
 <?php endif; ?>

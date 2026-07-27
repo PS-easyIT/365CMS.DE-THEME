@@ -146,10 +146,12 @@ if ($_pg_layout === 'two-col' && $_pg_sidebarNav) {
 <?php
 // Aktualisierungs-Pill (wird in beiden Layouts ans Ende des Contents gehängt)
 $_pg_updatedPill = '';
-if ($_pg_showDate && !empty($page['updated_at'])) {
-    $_pg_pageTimestamp = strtotime((string) ($page['updated_at'] ?? ''));
-    $_pg_dateFormatted = htmlspecialchars($_pg_pageTimestamp !== false ? date('j. F Y', $_pg_pageTimestamp) : '—', ENT_QUOTES);
-    $_pg_updatedPill = '<div class="page-updated-pill-wrap"><span class="page-updated-pill">🕒 Zuletzt aktualisiert: ' . $_pg_dateFormatted . '</span></div>';
+if (!empty($page['content_updated_at'])) {
+    $_pg_pageTimestamp = strtotime((string) ($page['content_updated_at'] ?? ''));
+    $_pg_dateFormatted = $_pg_pageTimestamp !== false ? htmlspecialchars(date('j. F Y', $_pg_pageTimestamp), ENT_QUOTES) : '';
+    if ($_pg_dateFormatted !== '') {
+        $_pg_updatedPill = '<div class="page-updated-pill-wrap"><span class="page-updated-pill">🕒 Zuletzt aktualisiert: ' . $_pg_dateFormatted . '</span></div>';
+    }
 }
 ?>
 <div class="container page-shell<?php echo $isHubSitePage ? ' page-shell--hub' : ' page-shell--compact'; ?>">

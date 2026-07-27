@@ -172,8 +172,8 @@ if (phinit_input_int($_GET, 'commented', 0, 0, 1) === 1) {
 }
 
 $publishedAt = (string) ($post['published_at'] ?? '');
-$updatedAt = (string) ($post['updated_at'] ?? '');
-$showUpdatedBadge = $updatedAt !== '' && $updatedAt !== $publishedAt;
+$updatedAt = (string) ($post['content_updated_at'] ?? '');
+$showUpdatedBadge = $updatedAt !== '';
 $authorId = (int) ($post['author_id'] ?? 0);
 $authorBoxUrl = $authorId > 0
     ? (function_exists('phinit_localized_href') ? phinit_localized_href('/author/user-' . $authorId, $currentLocale, $siteUrl) : rtrim($siteUrl, '/') . '/author/user-' . $authorId)

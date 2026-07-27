@@ -689,6 +689,14 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
         $contentLocale = phinit_get_request_content_locale();
         $localization = \CMS\Services\ContentLocalizationService::getInstance();
         $localeCondition = phinit_build_homepage_post_locale_condition($contentLocale, $localization);
+            try {
+                $contentUpdatedAtSelect = $db->columnExists($prefix . 'posts', 'content_updated_at')
+                    ? 'p.content_updated_at AS content_updated_at'
+                    : 'NULL AS content_updated_at';
+            } catch (\Throwable) {
+                // Beim ersten Theme-Aufruf vor der Schema-Migration bleiben Startseiten-Posts sichtbar.
+                $contentUpdatedAtSelect = 'NULL AS content_updated_at';
+            }
 
         $_showList = !empty($viewModel['_showList']);
         $_showTileGrid = !empty($viewModel['_showTileGrid']);
@@ -747,6 +755,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                     p.title_en, p.excerpt_en, p.content_en,
                     p.author_id,
                     p.author_display_url,
+                        {$contentUpdatedAtSelect},
                     COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name,
                     c.name AS category_name,
                     c.slug AS category_slug
@@ -773,6 +782,7 @@ function phinit_get_homepage_posts_payload(array $viewModel): array
                     p.title_en, p.excerpt_en, p.content_en,
                         p.author_id,
                         p.author_display_url,
+                            {$contentUpdatedAtSelect},
                         COALESCE(NULLIF(p.author_display_name, ''), NULLIF(u.display_name, ''), NULLIF(u.username, ''), 'Autor') AS author_name,
                         c.name AS category_name,
                         c.slug AS category_slug

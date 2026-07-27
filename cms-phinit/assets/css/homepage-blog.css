@@ -400,15 +400,16 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
 
 .thumb-badge {
     position: absolute;
-    top: 6px;
-    left: 6px;
+    top: 0;
+    left: 0;
     display: inline-flex;
     align-items: center;
     font-size: .75rem;
     font-weight: 700;
     padding: 2px 7px;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, .68);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     letter-spacing: .03em;
     text-decoration: none;
     transition: none;
@@ -524,6 +525,21 @@ body.dark-mode .footer-repo-banner .repo-card--footer {
 .article-meta__author:hover {
     color: var(--accent-teal);
     text-decoration: underline;
+}
+
+.article-meta__update-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(100, 116, 139, .12);
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    white-space: nowrap;
 }
 
 .article-meta__timing {
