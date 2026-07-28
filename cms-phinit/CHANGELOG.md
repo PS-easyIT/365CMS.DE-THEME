@@ -22,7 +22,7 @@
 |-----|---------|-------------|
 | 🎨 style | EditorJS / Zitat-Block | `assets/css/rich-content.css` gestaltet den Standard-Balken des Zitat-Blocks ("Balken"-Design) dünner und abgeschwächt (Farb-/Hintergrundmischung über `color-mix()` mit Theme-Variablen statt vollgesättigter Akzentfarbe auf Weiß) und bleibt dadurch auch im Dark Mode stimmig. |
 | 🟢 feat | EditorJS / Zitat-Block | `assets/css/rich-content.css` ergänzt drei neue Zitat-Designs — **Karte**, **Minimal** und **Anführungszeichen** — zusätzlich zum bestehenden Balken-Design; auswählbar direkt über die Block-Einstellungen im Editor (Core: `CmsQuoteTool` in `editor-init.js`). |
-| 🔴 fix | EditorJS / Trennstrich | `assets/css/rich-content.css` respektiert jetzt die im Editor gewählte Liniendicke des Trennstrich-Blocks (`--cms-editorjs-delimiter-thickness`) statt sie hart auf `1px` zu setzen. |
+| 🔴 fix | EditorJS / Trennstrich | `assets/css/rich-content.css` setzt die im Editor gewählte Breite (8/15/25/35/50/60/100 %) und Dicke (1–6 px) aus sanitizer-festen Renderer-Klassen, statt von entfernbaren Inline-Styles bzw. einer festen 1-px-Dicke abhängig zu sein. Dadurch bleibt die Auswahl im PHINIT-Live-Frontend erhalten. |
 | 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.22` und Core-Teststand `3.3.76` synchronisiert. |
 
 ---

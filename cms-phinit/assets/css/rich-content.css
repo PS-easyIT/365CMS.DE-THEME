@@ -1118,9 +1118,39 @@ body.dark-mode .post-body pre.code-block--powershell {
 
 .page-content .editorjs-delimiter hr,
 .post-body .editorjs-delimiter hr {
+    width: min(100%, var(--cms-editorjs-delimiter-width, 35%));
+    margin-inline: auto;
     border: 0;
     border-top: var(--cms-editorjs-delimiter-thickness, 2px) solid var(--border-color);
 }
+
+.page-content .editorjs-delimiter--width-8,
+.post-body .editorjs-delimiter--width-8 { --cms-editorjs-delimiter-width: 8%; }
+.page-content .editorjs-delimiter--width-15,
+.post-body .editorjs-delimiter--width-15 { --cms-editorjs-delimiter-width: 15%; }
+.page-content .editorjs-delimiter--width-25,
+.post-body .editorjs-delimiter--width-25 { --cms-editorjs-delimiter-width: 25%; }
+.page-content .editorjs-delimiter--width-35,
+.post-body .editorjs-delimiter--width-35 { --cms-editorjs-delimiter-width: 35%; }
+.page-content .editorjs-delimiter--width-50,
+.post-body .editorjs-delimiter--width-50 { --cms-editorjs-delimiter-width: 50%; }
+.page-content .editorjs-delimiter--width-60,
+.post-body .editorjs-delimiter--width-60 { --cms-editorjs-delimiter-width: 60%; }
+.page-content .editorjs-delimiter--width-100,
+.post-body .editorjs-delimiter--width-100 { --cms-editorjs-delimiter-width: 100%; }
+
+.page-content .editorjs-delimiter--thickness-1,
+.post-body .editorjs-delimiter--thickness-1 { --cms-editorjs-delimiter-thickness: 1px; }
+.page-content .editorjs-delimiter--thickness-2,
+.post-body .editorjs-delimiter--thickness-2 { --cms-editorjs-delimiter-thickness: 2px; }
+.page-content .editorjs-delimiter--thickness-3,
+.post-body .editorjs-delimiter--thickness-3 { --cms-editorjs-delimiter-thickness: 3px; }
+.page-content .editorjs-delimiter--thickness-4,
+.post-body .editorjs-delimiter--thickness-4 { --cms-editorjs-delimiter-thickness: 4px; }
+.page-content .editorjs-delimiter--thickness-5,
+.post-body .editorjs-delimiter--thickness-5 { --cms-editorjs-delimiter-thickness: 5px; }
+.page-content .editorjs-delimiter--thickness-6,
+.post-body .editorjs-delimiter--thickness-6 { --cms-editorjs-delimiter-thickness: 6px; }
 
 .page-content .editorjs-spacer,
 .post-body .editorjs-spacer {
