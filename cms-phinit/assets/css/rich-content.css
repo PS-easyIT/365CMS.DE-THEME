@@ -864,6 +864,36 @@ body.dark-mode .post-body pre.code-block--powershell {
     text-align: center;
 }
 
+.page-content .editorjs-image__source,
+.post-body .editorjs-image__source {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-top: .35rem;
+    color: var(--text-muted);
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: .08em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.page-content .editorjs-image__source:hover,
+.page-content .editorjs-image__source:focus-visible,
+.post-body .editorjs-image__source:hover,
+.post-body .editorjs-image__source:focus-visible {
+    color: var(--link-hover, var(--accent-teal));
+    text-decoration: underline;
+    text-underline-offset: .16em;
+}
+
+.page-content .editorjs-image__source-icon,
+.post-body .editorjs-image__source-icon {
+    font-size: 1.05em;
+    line-height: 1;
+}
+
 .page-content .editorjs-list__items,
 .post-body .editorjs-list__items {
     margin: 0 0 0 1.4rem;

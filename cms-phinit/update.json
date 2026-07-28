@@ -16,6 +16,8 @@
         "assets/css/rich-content.css: Drei neue Zitat-Designs 'Karte', 'Minimal' und 'Anführungszeichen' ergänzt, auswählbar direkt über die Block-Einstellungen im Editor (Core: CmsQuoteTool).",
         "assets/css/rich-content.css: Der Trennstrich-Block respektiert Breite (8/15/25/35/50/60/100 %) und Dicke (1–6 px) aus sanitizer-festen Renderer-Klassen, selbst wenn Inline-Styles entfernt werden.",
         "assets/css/rich-content.css: Bilder übernehmen Breite, Ausrichtung, Skalierung und Maximalhöhe über sanitizer-feste Renderer-Klassen zuverlässig ins Public-Frontend.",
+        "assets/css/rich-content.css: Einzelbilder zeigen optional nach der Bildunterschrift die sichere externe Quellenzeile QUELLE ↗ an.",
+        "includes/theme-content-helpers.php: Sicherer DOM-Fallback erhält erlaubte EditorJS-Bilder und Quellenlinks bei fehlendem Purifier/KSES, statt den gesamten Bildinhalt zu escapen.",
         "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.22 und Core-Teststand 3.3.76 synchronisiert."
       ]
     },

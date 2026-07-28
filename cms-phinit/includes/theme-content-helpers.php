@@ -34,15 +34,152 @@ if (!function_exists('phinit_sanitize_renderable_content')) {
             return (string) wp_kses_post($html);
         }
 
-        $sanitized = strip_tags(
-            $html,
-            '<section><article><nav><aside><header><footer><main><p><a><strong><b><em><i><u><ul><ol><li><br><h1><h2><h3><h4><h5><h6><blockquote><pre><code><img><table><caption><thead><tbody><tfoot><tr><th><td><hr><span><div><figure><figcaption><dl><dt><dd><sub><sup><abbr><mark><del><ins><details><summary><video><source><audio>'
-        );
+        return phinit_sanitize_renderable_content_fallback($html);
+    }
+}
 
-        $sanitized = preg_replace('/\s+on[a-z0-9_-]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $sanitized) ?? $sanitized;
-        $sanitized = preg_replace('/\s+(href|src|xlink:href)\s*=\s*(["\'])\s*(?:javascript|data:text\/html)\s*:[^"\']*\2/i', ' $1="#"', $sanitized) ?? $sanitized;
+if (!function_exists('phinit_sanitize_renderable_content_fallback')) {
+    /**
+     * DOM-basierter Sicherheitsfallback, falls weder Core-Purifier noch KSES verfügbar sind.
+     * Er hält EditorJS-/Rich-Content-Markup nutzbar, entfernt aber konsequent nicht erlaubte
+     * Tags, Attribute und URL-Schemata.
+     */
+    function phinit_sanitize_renderable_content_fallback(string $html): string
+    {
+        if (!class_exists(\DOMDocument::class)) {
+            return htmlspecialchars(strip_tags($html), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
 
-        return $sanitized;
+        $allowedTags = array_fill_keys([
+            'section', 'article', 'nav', 'aside', 'header', 'footer', 'main', 'p', 'a', 'strong', 'b', 'em', 'i', 'u',
+            'ul', 'ol', 'li', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre', 'code', 'img', 'table',
+            'caption', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'hr', 'span', 'div', 'figure', 'figcaption', 'dl',
+            'dt', 'dd', 'sub', 'sup', 'abbr', 'mark', 'del', 'ins', 'details', 'summary', 'video', 'source', 'audio', 'small',
+        ], true);
+        $allowedAttributes = [
+            '*' => ['class', 'id'],
+            'a' => ['href', 'title', 'target', 'rel', 'aria-label', 'aria-current'],
+            'img' => ['src', 'alt', 'width', 'height', 'loading', 'fetchpriority', 'decoding', 'sizes', 'srcset'],
+            'span' => ['aria-hidden'],
+            'div' => ['role', 'aria-hidden', 'data-height', 'data-cms-editorjs-spacing', 'data-cms-editorjs-align'],
+            'details' => ['open'],
+            'video' => ['src', 'controls', 'width', 'height'],
+            'source' => ['src', 'type'],
+            'audio' => ['src', 'controls'],
+            'td' => ['colspan', 'rowspan'],
+            'th' => ['colspan', 'rowspan'],
+        ];
+        $document = new \DOMDocument('1.0', 'UTF-8');
+        $previousErrors = libxml_use_internal_errors(true);
+        $rootId = 'cms-phinit-sanitize-root';
+        $wrapper = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><div id="' . $rootId . '">' . $html . '</div></body></html>';
+        @$document->loadHTML($wrapper, LIBXML_HTML_NODEFDTD | LIBXML_COMPACT);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousErrors);
+
+        $xpath = new \DOMXPath($document);
+        $root = $xpath->query('//*[@id="' . $rootId . '"]')->item(0);
+        if (!$root instanceof \DOMElement) {
+            return htmlspecialchars(strip_tags($html), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+
+        $sanitizeUrl = static function (string $value, bool $allowDataImage = false): string {
+            $value = html_entity_decode(trim($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $value = preg_replace('/[\x00-\x1F\x7F\s]+/u', '', $value) ?? '';
+            if ($value === '') {
+                return '';
+            }
+            if (preg_match('~^(?:/|\./|\.\./|#)~', $value) === 1) {
+                return $value;
+            }
+            if ($allowDataImage && preg_match('#^data:image/(?:png|gif|jpe?g|webp|bmp|x-icon|vnd\.microsoft\.icon);base64,[a-z0-9+/=]+$#i', $value) === 1) {
+                return $value;
+            }
+            if (filter_var($value, FILTER_VALIDATE_URL) === false) {
+                return '';
+            }
+            $scheme = strtolower((string) parse_url($value, PHP_URL_SCHEME));
+            return in_array($scheme, ['http', 'https', 'mailto', 'tel'], true) ? $value : '';
+        };
+
+        $sanitizeNode = null;
+        $sanitizeNode = static function (\DOMNode $node) use (&$sanitizeNode, $allowedTags, $allowedAttributes, $sanitizeUrl): void {
+            $children = [];
+            foreach ($node->childNodes as $child) {
+                $children[] = $child;
+            }
+
+            foreach ($children as $child) {
+                if ($child instanceof \DOMComment || $child instanceof \DOMProcessingInstruction) {
+                    $node->removeChild($child);
+                    continue;
+                }
+                if (!$child instanceof \DOMElement) {
+                    continue;
+                }
+
+                $sanitizeNode($child);
+                $tagName = strtolower($child->tagName);
+                if (!isset($allowedTags[$tagName])) {
+                    while ($child->firstChild) {
+                        $node->insertBefore($child->firstChild, $child);
+                    }
+                    $node->removeChild($child);
+                    continue;
+                }
+
+                $original = [];
+                foreach ($child->attributes as $attribute) {
+                    $original[strtolower($attribute->name)] = $attribute->value;
+                }
+                while ($child->attributes->length > 0) {
+                    $child->removeAttributeNode($child->attributes->item(0));
+                }
+
+                $permitted = array_merge($allowedAttributes['*'] ?? [], $allowedAttributes[$tagName] ?? []);
+                foreach ($permitted as $attributeName) {
+                    if (!array_key_exists($attributeName, $original)) {
+                        continue;
+                    }
+                    $value = (string) $original[$attributeName];
+                    if (in_array($attributeName, ['href', 'src'], true)) {
+                        $value = $sanitizeUrl($value, $tagName === 'img' && $attributeName === 'src');
+                        if ($value === '') {
+                            continue;
+                        }
+                    } elseif ($attributeName === 'class') {
+                        $tokens = preg_split('/\s+/', $value) ?: [];
+                        $value = implode(' ', array_filter($tokens, static fn(string $token): bool => preg_match('/^[a-z0-9_-]{1,80}$/i', $token) === 1));
+                        if ($value === '') {
+                            continue;
+                        }
+                    } elseif (in_array($attributeName, ['width', 'height', 'colspan', 'rowspan'], true)) {
+                        $value = (string) max(1, min(10000, (int) $value));
+                    } elseif ($attributeName === 'target') {
+                        $value = in_array(strtolower($value), ['_blank', '_self'], true) ? strtolower($value) : '';
+                        if ($value === '') {
+                            continue;
+                        }
+                    }
+                    $child->setAttribute($attributeName, $value);
+                }
+
+                if ($tagName === 'a' && !$child->hasAttribute('href')) {
+                    while ($child->firstChild) {
+                        $node->insertBefore($child->firstChild, $child);
+                    }
+                    $node->removeChild($child);
+                }
+            }
+        };
+
+        $sanitizeNode($root);
+        $parts = [];
+        foreach ($root->childNodes as $child) {
+            $parts[] = $document->saveHTML($child) ?: '';
+        }
+
+        return trim(implode('', $parts));
     }
 }
 
