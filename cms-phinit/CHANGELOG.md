@@ -14,6 +14,18 @@
 
 ---
 
+## v1.7.23 — 28. Juli 2026
+
+### EditorJS-Audit: sichere Bildquelle und robuster Public-Fallback
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🟢 feat | EditorJS / Einzelbild-Quelle | `assets/css/rich-content.css` gestaltet die neue Quellenzeile **„QUELLE ↗“** nach einer optionalen Bildunterschrift als dezenten, sicheren externen Link im Light- und Dark-Mode. |
+| 🔴 fix | Public-Content / Bilder | `includes/theme-content-helpers.php` ersetzt den früheren HTML-escapenden Notfallpfad durch einen DOM-basierten Allowlist-Sanitizer. Dadurch bleiben erlaubte EditorJS-Bilder, Figuren, Bildunterschriften und Quellenlinks sichtbar, während gefährliche Tags, Event-Attribute und URL-Schemata entfernt werden. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.23` und Core-Teststand `3.3.77` synchronisiert. |
+
+---
+
 ## v1.7.22 — 28. Juli 2026
 
 ### Zitat-Block: abgeschwächter Balken + 3 neue Designs, Trennstrich-Dicke-Fix

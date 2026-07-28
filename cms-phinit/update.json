@@ -1,13 +1,22 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.22",
+  "version": "1.7.23",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.76",
+  "tested_up_to": "3.3.77",
   "release_date": "2026-07-28",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.23",
+      "date": "2026-07-28",
+      "changes": [
+        "includes/theme-content-helpers.php: Der Notfall-Sanitizer für bereits gerenderten Content ist DOM-basiert und allowlistgesteuert. Sichere EditorJS-Bilder, Figuren, Bildunterschriften und Quellenlinks bleiben sichtbar; gefährliche Tags, Event-Attribute und URL-Schemata werden entfernt.",
+        "assets/css/rich-content.css: Einzelbilder zeigen nach der optionalen Bildunterschrift die sichere externe Quellenzeile QUELLE ↗ an; der Link bleibt im Light- und Dark-Mode klar erkennbar.",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.23 und Core-Teststand 3.3.77 synchronisiert."
+      ]
+    },
     {
       "version": "1.7.22",
       "date": "2026-07-28",

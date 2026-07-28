@@ -59,7 +59,7 @@ if (!function_exists('phinit_sanitize_renderable_content_fallback')) {
         $allowedAttributes = [
             '*' => ['class', 'id'],
             'a' => ['href', 'title', 'target', 'rel', 'aria-label', 'aria-current'],
-            'img' => ['src', 'alt', 'width', 'height', 'loading', 'fetchpriority', 'decoding', 'sizes', 'srcset'],
+            'img' => ['src', 'alt', 'width', 'height', 'loading', 'fetchpriority', 'decoding'],
             'span' => ['aria-hidden'],
             'div' => ['role', 'aria-hidden', 'data-height', 'data-cms-editorjs-spacing', 'data-cms-editorjs-align'],
             'details' => ['open'],
@@ -169,6 +169,17 @@ if (!function_exists('phinit_sanitize_renderable_content_fallback')) {
                         $node->insertBefore($child->firstChild, $child);
                     }
                     $node->removeChild($child);
+                    continue;
+                }
+
+                if ($tagName === 'a' && $child->getAttribute('target') === '_blank') {
+                    $relTokens = preg_split('/\s+/', strtolower($child->getAttribute('rel'))) ?: [];
+                    foreach (['noopener', 'noreferrer'] as $requiredToken) {
+                        if (!in_array($requiredToken, $relTokens, true)) {
+                            $relTokens[] = $requiredToken;
+                        }
+                    }
+                    $child->setAttribute('rel', trim(implode(' ', array_filter($relTokens))));
                 }
             }
         };
