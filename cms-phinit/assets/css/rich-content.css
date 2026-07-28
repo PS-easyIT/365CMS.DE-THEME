@@ -140,6 +140,8 @@
 
 .page-content blockquote,
 .page-content .editorjs-quote blockquote,
+.post-body blockquote,
+.post-body .editorjs-quote blockquote,
 .post-body .editorjs-warning,
 .page-content .editorjs-warning {
     border-radius: var(--radius);
@@ -149,11 +151,59 @@
 .page-content .editorjs-quote blockquote,
 .post-body blockquote,
 .post-body .editorjs-quote blockquote {
-    border-left: 4px solid var(--accent-teal);
-    background: color-mix(in srgb, var(--accent-teal) 8%, white);
+    border-left: 3px solid color-mix(in srgb, var(--accent-teal) 45%, var(--border-color));
+    background: color-mix(in srgb, var(--accent-teal) 6%, var(--bg-primary));
     padding: 12px 20px;
     color: var(--text-secondary);
     font-style: italic;
+}
+
+.page-content .editorjs-quote--center blockquote,
+.post-body .editorjs-quote--center blockquote {
+    border-left: 0;
+    border-top: 3px solid color-mix(in srgb, var(--accent-teal) 45%, var(--border-color));
+}
+
+.page-content .editorjs-quote--design-card blockquote,
+.post-body .editorjs-quote--design-card blockquote {
+    border-left: 0;
+    border-top: 0;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    box-shadow: var(--shadow-sm);
+    padding: 20px 24px;
+}
+
+.page-content .editorjs-quote--design-minimal blockquote,
+.post-body .editorjs-quote--design-minimal blockquote {
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    font-size: 1.08em;
+}
+
+.page-content .editorjs-quote--design-mark blockquote,
+.post-body .editorjs-quote--design-mark blockquote {
+    position: relative;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    padding: 2.5rem 1rem .2rem;
+}
+
+.page-content .editorjs-quote--design-mark blockquote::before,
+.post-body .editorjs-quote--design-mark blockquote::before {
+    content: '\201C';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3.2rem;
+    font-style: normal;
+    line-height: 1;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: color-mix(in srgb, var(--accent-teal) 55%, var(--border-color));
 }
 
 .page-content code,
@@ -1069,7 +1119,7 @@ body.dark-mode .post-body pre.code-block--powershell {
 .page-content .editorjs-delimiter hr,
 .post-body .editorjs-delimiter hr {
     border: 0;
-    border-top: 1px solid var(--border-color);
+    border-top: var(--cms-editorjs-delimiter-thickness, 2px) solid var(--border-color);
 }
 
 .page-content .editorjs-spacer,
@@ -1174,12 +1224,6 @@ body.dark-mode .post-body .editorjs-list__item a:focus-visible {
 body.dark-mode .page-content code {
     background: rgba(255,255,255,.08);
     color: #f9a8d4;
-}
-
-body.dark-mode .page-content blockquote,
-body.dark-mode .page-content .editorjs-quote blockquote {
-    background: rgba(13,148,136,.14);
-    color: var(--text-secondary);
 }
 
 body.dark-mode .page-content .editorjs-link a,

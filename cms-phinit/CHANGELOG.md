@@ -14,6 +14,19 @@
 
 ---
 
+## v1.7.22 — 28. Juli 2026
+
+### Zitat-Block: abgeschwächter Balken + 3 neue Designs, Trennstrich-Dicke-Fix
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🎨 style | EditorJS / Zitat-Block | `assets/css/rich-content.css` gestaltet den Standard-Balken des Zitat-Blocks ("Balken"-Design) dünner und abgeschwächt (Farb-/Hintergrundmischung über `color-mix()` mit Theme-Variablen statt vollgesättigter Akzentfarbe auf Weiß) und bleibt dadurch auch im Dark Mode stimmig. |
+| 🟢 feat | EditorJS / Zitat-Block | `assets/css/rich-content.css` ergänzt drei neue Zitat-Designs — **Karte**, **Minimal** und **Anführungszeichen** — zusätzlich zum bestehenden Balken-Design; auswählbar direkt über die Block-Einstellungen im Editor (Core: `CmsQuoteTool` in `editor-init.js`). |
+| 🔴 fix | EditorJS / Trennstrich | `assets/css/rich-content.css` respektiert jetzt die im Editor gewählte Liniendicke des Trennstrich-Blocks (`--cms-editorjs-delimiter-thickness`) statt sie hart auf `1px` zu setzen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.22` und Core-Teststand `3.3.76` synchronisiert. |
+
+---
+
 ## v1.7.21 — 18. Juli 2026
 
 ### Kategorie-Badge bündig im Listcard-Vorschaubild

@@ -1,13 +1,23 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.21",
+  "version": "1.7.22",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.71",
-  "release_date": "2026-07-18",
+  "tested_up_to": "3.3.76",
+  "release_date": "2026-07-28",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.22",
+      "date": "2026-07-28",
+      "changes": [
+        "assets/css/rich-content.css: EditorJS-Zitat-Block erhält einen dünneren, abgeschwächten Standard-Balken (Design 'Balken') statt eines vollgesättigten 4px-Akzentbalkens; Farben/Hintergrund laufen über Theme-Variablen und bleiben dadurch auch im Dark Mode stimmig.",
+        "assets/css/rich-content.css: Drei neue Zitat-Designs 'Karte', 'Minimal' und 'Anführungszeichen' ergänzt, auswählbar direkt über die Block-Einstellungen im Editor (Core: CmsQuoteTool).",
+        "assets/css/rich-content.css: Der Trennstrich-Block (Delimiter) respektiert jetzt die im Editor gewählte Liniendicke (vorher hartkodiert auf 1px, unabhängig von der Einstellung).",
+        "functions.php, style.css, theme.json, update.json, README.md und CHANGELOG.md: Theme-Metadaten auf Version 1.7.22 und Core-Teststand 3.3.76 synchronisiert."
+      ]
+    },
     {
       "version": "1.7.21",
       "date": "2026-07-18",
