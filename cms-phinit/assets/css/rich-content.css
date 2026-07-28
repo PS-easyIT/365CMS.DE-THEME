@@ -441,19 +441,94 @@ body.dark-mode .post-body pre.code-block--powershell {
 .post-body figure,
 .page-content .editorjs-image,
 .post-body .editorjs-image {
+    --cms-editorjs-image-normal-width: auto;
+    --cms-editorjs-image-wide-width: 1000px;
     width: 100%;
     max-width: 100%;
 }
 
 .page-content .editorjs-image[data-size="normal"] > img,
-.post-body .editorjs-image[data-size="normal"] > img {
-    width: min(100%, var(--cms-editorjs-image-normal-width, 760px)) !important;
+.post-body .editorjs-image[data-size="normal"] > img,
+.page-content .editorjs-image--normal > img,
+.post-body .editorjs-image--normal > img {
+    width: var(--cms-editorjs-image-normal-width, auto) !important;
 }
 
 .page-content .editorjs-image[data-size="wide"] > img,
-.post-body .editorjs-image[data-size="wide"] > img {
-    width: min(100%, var(--cms-editorjs-image-wide-width, 760px)) !important;
+.post-body .editorjs-image[data-size="wide"] > img,
+.page-content .editorjs-image--wide > img,
+.post-body .editorjs-image--wide > img {
+    width: min(100%, var(--cms-editorjs-image-wide-width, 1000px)) !important;
 }
+
+.page-content .editorjs-image[data-size="full"] > img,
+.post-body .editorjs-image[data-size="full"] > img,
+.page-content .editorjs-image--full > img,
+.post-body .editorjs-image--full > img {
+    width: 100% !important;
+}
+
+.page-content .editorjs-image--align-left > img,
+.post-body .editorjs-image--align-left > img { margin-inline: 0 auto !important; }
+.page-content .editorjs-image--align-center > img,
+.post-body .editorjs-image--align-center > img { margin-inline: auto !important; }
+.page-content .editorjs-image--align-right > img,
+.post-body .editorjs-image--align-right > img { margin-inline: auto 0 !important; }
+
+.page-content .editorjs-image--fit-contain > img,
+.post-body .editorjs-image--fit-contain > img { object-fit: contain !important; }
+.page-content .editorjs-image--fit-cover > img,
+.post-body .editorjs-image--fit-cover > img { object-fit: cover !important; }
+.page-content .editorjs-image--fit-fill > img,
+.post-body .editorjs-image--fit-fill > img { object-fit: fill !important; }
+.page-content .editorjs-image--fit-none > img,
+.post-body .editorjs-image--fit-none > img { object-fit: none !important; }
+.page-content .editorjs-image--fit-scale-down > img,
+.post-body .editorjs-image--fit-scale-down > img { object-fit: scale-down !important; }
+
+.page-content .editorjs-image--max-height-200 > img,
+.post-body .editorjs-image--max-height-200 > img { max-height: 200px !important; }
+.page-content .editorjs-image--max-height-300 > img,
+.post-body .editorjs-image--max-height-300 > img { max-height: 300px !important; }
+.page-content .editorjs-image--max-height-400 > img,
+.post-body .editorjs-image--max-height-400 > img { max-height: 400px !important; }
+.page-content .editorjs-image--max-height-500 > img,
+.post-body .editorjs-image--max-height-500 > img { max-height: 500px !important; }
+.page-content .editorjs-image--max-height-600 > img,
+.post-body .editorjs-image--max-height-600 > img { max-height: 600px !important; }
+.page-content .editorjs-image--max-height-800 > img,
+.post-body .editorjs-image--max-height-800 > img { max-height: 800px !important; }
+.page-content .editorjs-image--max-height-1000 > img,
+.post-body .editorjs-image--max-height-1000 > img { max-height: 1000px !important; }
+
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-200 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-200 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-200 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-200 > img { height: 200px !important; }
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-300 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-300 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-300 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-300 > img { height: 300px !important; }
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-400 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-400 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-400 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-400 > img { height: 400px !important; }
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-500 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-500 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-500 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-500 > img { height: 500px !important; }
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-600 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-600 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-600 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-600 > img { height: 600px !important; }
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-800 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-800 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-800 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-800 > img { height: 800px !important; }
+.page-content .editorjs-image--fit-cover.editorjs-image--max-height-1000 > img,
+.post-body .editorjs-image--fit-cover.editorjs-image--max-height-1000 > img,
+.page-content .editorjs-image--fit-fill.editorjs-image--max-height-1000 > img,
+.post-body .editorjs-image--fit-fill.editorjs-image--max-height-1000 > img { height: 1000px !important; }
 
 .page-content .editorjs-image.editorjs-image--border-thin > img,
 .post-body .editorjs-image.editorjs-image--border-thin > img {
