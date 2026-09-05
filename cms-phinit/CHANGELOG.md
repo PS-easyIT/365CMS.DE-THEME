@@ -14,6 +14,17 @@
 
 ---
 
+## v1.7.24 — 05. September 2026
+
+### Runtime-Warnungsfix für Windows-Medienpfade
+
+| Typ | Bereich | Beschreibung |
+|-----|---------|-------------|
+| 🔴 fix | Medien / Pfadvalidierung | `includes/theme-template-helpers.php` nutzt für die Windows-Pfadprüfung einen sicheren Regex-Delimiter. Dadurch führen lokale Pfadangaben nicht mehr zu `preg_match(): Unknown modifier ']'`-Warnungen. |
+| 🔵 docs | Release | `functions.php`, `style.css`, `theme.json`, `update.json`, `README.md` und `CHANGELOG.md` wurden auf Version `1.7.24` und den tatsächlich geprüften Core-Stand `3.4.00` synchronisiert. |
+
+---
+
 ## v1.7.23 — 28. Juli 2026
 
 ### EditorJS-Audit: sichere Bildquelle und robuster Public-Fallback

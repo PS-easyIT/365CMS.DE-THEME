@@ -393,7 +393,7 @@ if (!function_exists('phinit_extract_upload_relative_path')) {
     function phinit_extract_upload_relative_path(?string $value): string
     {
         $rawValue = trim(html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-        if ($rawValue === '' || preg_match('/^[A-Za-z]:[\\\/]/', $rawValue) === 1) {
+        if ($rawValue === '' || preg_match('~^[A-Za-z]:[\\\\/]~', $rawValue) === 1) {
             return '';
         }
 

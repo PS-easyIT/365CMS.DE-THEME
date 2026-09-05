@@ -1,13 +1,21 @@
 {
   "name": "CMS Phinit",
   "slug": "cms-phinit",
-  "version": "1.7.23",
+  "version": "1.7.24",
   "requires_cms": "2.5.0",
-  "tested_up_to": "3.3.77",
-  "release_date": "2026-07-28",
+  "tested_up_to": "3.4.00",
+  "release_date": "2026-09-05",
   "download_url": "",
   "details_url": "https://phinit.de",
   "changelog": [
+    {
+      "version": "1.7.24",
+      "date": "2026-09-05",
+      "changes": [
+        "includes/theme-template-helpers.php: Die Windows-Pfadprüfung verwendet einen sicheren Regex-Delimiter; öffentliche Medienreferenzen erzeugen dadurch keine preg_match()-Warnung mehr.",
+        "Kompatibilität mit 365CMS 3.4.00 einschließlich der EditorJS- und Runtime-Warnungsfixes geprüft."
+      ]
+    },
     {
       "version": "1.7.23",
       "date": "2026-07-28",
