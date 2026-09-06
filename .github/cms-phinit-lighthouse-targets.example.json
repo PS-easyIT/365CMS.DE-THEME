@@ -1,7 +1,0 @@
-{
-  "baseUrl": "https://staging.example.com",
-  "homePath": "/",
-  "blogPath": "/blog",
-  "postPath": "/blog/example-post",
-  "memberSecurityPath": "/member/security"
-}
