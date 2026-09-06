@@ -3,11 +3,6 @@
   "updated": "2026-05-22",
   "themes": [
     {
-      "slug": "365network",
-      "name": "365Network",
-      "manifest": "THEMES/365Network/update.json"
-    },
-    {
       "slug": "academy365",
       "name": "Academy365",
       "manifest": "THEMES/academy365/update.json"
@@ -56,11 +51,6 @@
       "slug": "cms-newspaper",
       "name": "CMS Newspaper",
       "manifest": "THEMES/cms-newspaper/update.json"
-    },
-    {
-      "slug": "cms-phinit",
-      "name": "CMS Phinit",
-      "manifest": "THEMES/cms-phinit/update.json"
     }
   ]
 }
