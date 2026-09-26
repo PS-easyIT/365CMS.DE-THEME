@@ -10,6 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Footer in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_FOOTER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_FOOTER_RENDERED', true);
+
 $siteUrl   = ptc_site_url();
 $siteTitle = ptc_site_title();
 

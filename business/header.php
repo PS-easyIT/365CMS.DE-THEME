@@ -11,6 +11,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Header in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_HEADER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_HEADER_RENDERED', true);
+
 $title    = biz_site_title();
 $siteUrl  = biz_site_url();
 $bodyCls  = biz_body_class();
@@ -27,6 +33,7 @@ $logoUrl = biz_safe_url($_logoUrl);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
     <title><?php echo $title; ?></title>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>

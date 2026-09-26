@@ -1,6 +1,6 @@
 # PTC – Personalvermittlung & Schulungen
 
-**Slug:** `PTC` · **Version:** 3.0.0 · **PHP:** 8.4 · **365CMS:** v3.x.x
+**Slug:** `PTC` · **Version:** 3.1.0 · **PHP:** 8.4 · **365CMS:** 3.4.00+
 
 Branchentheme für Anbieter von **Personalvermittlung**, **Arbeitnehmerüberlassung** und **beruflicher Weiterbildung**. Es richtet sich an Vermittler und Bildungsträger – nicht an ein einzelnes Unternehmen.
 

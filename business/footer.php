@@ -11,6 +11,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Footer in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_FOOTER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_FOOTER_RENDERED', true);
+
 $siteUrl   = biz_site_url();
 $siteTitle = biz_site_title();
 $tagline   = (string) biz_config('footer_tagline', 'Ihr Partner für digitale Innovation.');
@@ -98,7 +104,12 @@ $copyText = htmlspecialchars(
 
 </div><!-- /.biz-site -->
 
-<?php \CMS\Hooks::doAction('before_footer'); ?>
+<?php
+// before_footer (Theme-Scripts) und body_end (Core-Cookie-Consent, Web-Vitals, PhotoSwipe)
+// laufen pro Request nur einmal – der Core löst sie ebenfalls aus.
+\CMS\Hooks::doAction('before_footer');
+\CMS\Hooks::doAction('body_end');
+?>
 
 </body>
 </html>

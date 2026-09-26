@@ -13,7 +13,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe    = static fn(mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
@@ -40,22 +39,10 @@ $normalizeResultUrl = static function (mixed $value, string $fallback): string {
     return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 };
 
-if (empty($results)) {
-    try {
-        $results    = [];
-        $total      = 0;
-        $totalPages = 1;
-        if ($query !== '') {
-            $results    = \CMS\Services\PostService::search($query, ['per_page' => 12, 'page' => $page]);
-            $total      = \CMS\Services\PostService::searchCount($query);
-            $totalPages = (int) ceil($total / 12);
-        }
-    } catch (\Throwable) {
-        $results = [];
-        $total = 0;
-        $totalPages = 1;
-    }
-}
+// Der Core übergibt die Treffer ($results, Arrays mit _type/slug/title/meta_description).
+$results    = isset($results) && is_array($results) ? $results : [];
+$total      = (int) ($total ?? count($results));
+$totalPages = max(1, (int) ($totalPages ?? 1));
 ?>
 <main id="main" class="mc-main mc-search-page" role="main">
     <div class="mc-container">
@@ -93,11 +80,12 @@ if (empty($results)) {
         <?php if (!empty($results)) : ?>
         <div class="mc-search-results__list" aria-live="polite">
             <?php foreach ($results as $r) :
+                $r = is_array($r) ? (object) $r : $r;
                 $fallbackUrl = mc_href('/' . rawurlencode((string) ($r->slug ?? $r->id ?? '')));
-                $url     = $normalizeResultUrl($r->url ?? $fallbackUrl, $fallbackUrl);
+                $url     = $normalizeResultUrl(theme_search_result_url($r), $fallbackUrl);
                 $title   = $safe((string) ($r->title ?? ''));
-                $excerpt = $safe((string) ($r->excerpt ?? ''));
-                $type    = (string) ($r->type ?? '');
+                $excerpt = $safe((string) ($r->excerpt ?? $r->meta_description ?? ''));
+                $type    = (string) ($r->_type ?? $r->type ?? '');
                 $typeEsc = $safe($type);
                 $date    = isset($r->created_at) ? date('d.m.Y', strtotime((string) $r->created_at)) : '';
                 $imgUrl  = $safe((string) ($r->thumbnail_url ?? ''));
@@ -167,4 +155,3 @@ if (empty($results)) {
 
     </div>
 </main>
-<?php get_footer(); ?>

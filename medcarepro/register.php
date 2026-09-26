@@ -73,7 +73,6 @@ $privText   = (string) mc_get_setting('dsgvo_medical', 'privacy_form_text', 'Ihr
 $loginUrl   = $safe(theme_route_url('login'));
 $privacyUrl = $safe(theme_route_url('privacy'));
 
-get_header();
 ?>
 <main id="main" class="mc-main mc-auth-page" role="main">
     <div class="mc-container">
@@ -236,4 +235,3 @@ get_header();
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

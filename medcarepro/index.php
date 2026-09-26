@@ -9,15 +9,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 
-try {
-    $posts = \CMS\Services\PostService::getPosts(['per_page' => 12]);
-} catch (\Throwable) {
-    $posts = [];
-}
+// Der Core übergibt die Beiträge ($posts, Objekte) samt Pagination-Daten an das Template.
+$posts = isset($posts) && is_array($posts) ? $posts : [];
 ?>
 <main id="main" class="mc-main mc-page" role="main">
     <div class="mc-container mc-page__container">
@@ -26,7 +22,7 @@ try {
         <?php if (!empty($posts)) : ?>
         <div class="mc-grid mc-grid--blog">
             <?php foreach ($posts as $p) :
-                $url     = $safe((string) ($p->url ?? mc_href('/')));
+                $url     = $safe(theme_post_url($p));
                 $title   = $safe((string) ($p->title ?? ''));
                 $excerpt = $safe((string) ($p->excerpt ?? ''));
             ?>
@@ -45,4 +41,3 @@ try {
         <?php endif; ?>
     </div>
 </main>
-<?php get_footer(); ?>

@@ -1,7 +1,7 @@
 # Business Presentation Theme
 
-**Version:** 3.0.2
-**Ziel:** 365CMS v3.x.x · PHP 8.4
+**Version:** 3.1.0
+**Ziel:** 365CMS 3.4.00+ · PHP 8.4
 **Slug:** `business`
 **Text-Domain:** `biz-theme`
 

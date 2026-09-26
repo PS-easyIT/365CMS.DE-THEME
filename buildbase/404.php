@@ -5,7 +5,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $siteUrl = rtrim(buildbase_safe_url((string) SITE_URL, '/'), '/');
@@ -22,4 +21,3 @@ $siteUrl = $siteUrl !== '' ? $siteUrl : '/';
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

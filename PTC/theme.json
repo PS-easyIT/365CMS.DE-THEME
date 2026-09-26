@@ -1,7 +1,8 @@
 {
     "name": "PTC – Personalvermittlung & Schulungen",
     "slug": "PTC",
-    "version": "3.0.0",
+    "version": "3.1.0",
+    "requires_cms": "3.4.00",
     "author": "365CMS",
     "description": "Branchentheme für Personalvermittlung und berufliche Weiterbildung. Vertrauen, Kompetenz, Entwicklung – anpassbar über zentrale Design-Tokens.",
     "tags": [

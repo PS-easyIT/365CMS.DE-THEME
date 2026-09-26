@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 ?>
 
 <main id="main" class="site-main error-page tn-section" role="main">
@@ -28,4 +27,3 @@ get_header();
     </div>
 </main>
 
-<?php get_footer(); ?>

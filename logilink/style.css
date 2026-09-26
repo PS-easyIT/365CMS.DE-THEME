@@ -4,9 +4,10 @@ Theme URI: https://phin.network
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phin.network
 Description: Logistik & Transport Theme – operative Klarheit, Status-System, Tracking-ID-Typografie. Für Speditionen, Kurierdienste, Lagerdienstleister und Last-Mile-Operatoren.
-Version: 1.0.2
+Version: 1.1.0
 Requires PHP: 8.4
-Tested up to CMS: 3.x
+Requires CMS: 3.4.00
+Tested up to CMS: 3.4.00
 License: GPL-2.0-or-later
 Text Domain: logilink
 Tags: logistik, transport, tracking, dashboard, status-system, responsive

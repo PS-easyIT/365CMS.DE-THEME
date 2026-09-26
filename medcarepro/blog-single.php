@@ -13,20 +13,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe    = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $blogUrl    = $safe(theme_route_url('blog'));
 $homeUrl    = $safe(theme_route_url('home'));
 $doctorsUrl = $safe(theme_route_url('doctors'));
 
-if (empty($post)) {
-    try {
-        $post = \CMS\Services\PostService::getCurrent();
-    } catch (\Throwable) {
-        $post = null;
-    }
-}
+// Der Core übergibt den Beitrag als Objekt ($post); 'content' ist bereits gerendertes, sanitiertes HTML.
+$post = isset($post) && is_array($post) ? (object) $post : ($post ?? null);
 ?>
 <main id="main" class="mc-main mc-blog-single" role="main">
     <div class="mc-container mc-blog-single__container">
@@ -37,7 +31,7 @@ if (empty($post)) {
             $date     = isset($post->created_at) ? date('d. F Y', strtotime((string) $post->created_at)) : '';
             $author   = $safe((string) ($post->author_name ?? ''));
             $category = $safe((string) ($post->category_name ?? ''));
-            $imgUrl   = $safe((string) ($post->thumbnail_url ?? ''));
+            $imgUrl   = $safe((string) ($post->thumbnail_url ?? $post->featured_image ?? ''));
             $showPriv = filter_var(mc_get_setting('dsgvo_medical', 'show_privacy_on_forms', true), FILTER_VALIDATE_BOOLEAN);
             $privacyNote = $showPriv
                 ? (string) mc_get_setting('dsgvo_medical', 'privacy_form_text', '')
@@ -79,7 +73,7 @@ if (empty($post)) {
 
             <?php if ($content !== '') : ?>
             <div class="mc-card mc-blog-single__content prose">
-                <?php echo \CMS\Helpers\ContentHelper::processContent($content); ?>
+                <?php echo $content; ?>
             </div>
             <?php endif; ?>
 
@@ -114,4 +108,3 @@ if (empty($post)) {
 
     </div>
 </main>
-<?php get_footer(); ?>

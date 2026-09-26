@@ -13,23 +13,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe       = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $blogUrl    = $safe(theme_route_url('blog'));
-$page       = max(1, (int) ($_GET['page'] ?? $currentPage ?? 1));
-
-try {
-    if (empty($posts)) {
-        $posts = \CMS\Services\PostService::getPosts(['per_page' => 12, 'page' => $page, 'status' => 'published']);
-    }
-    $total      = $total      ?? \CMS\Services\PostService::getCount(['status' => 'published']);
-    $totalPages = $totalPages ?? (int) ceil(($total ?: 0) / 12);
-} catch (\Throwable) {
-    $posts = [];
-    $total = 0;
-    $totalPages = 1;
-}
+// Der Core übergibt Beiträge und Pagination (?p=N) an das Template.
+$posts      = isset($posts) && is_array($posts) ? $posts : [];
+$page       = max(1, (int) ($currentPage ?? 1));
+$total      = (int) ($total ?? count($posts));
+$totalPages = max(1, (int) ($totalPages ?? 1));
 ?>
 <main id="main" class="mc-main mc-blog-archive" role="main">
     <div class="mc-section mc-section--blog">
@@ -46,14 +37,13 @@ try {
             <?php if (!empty($posts)) : ?>
             <div class="mc-grid mc-grid--blog">
                 <?php foreach ($posts as $p) :
-                    $fallback = mc_href('/blog/' . ($p->slug ?? (string) ($p->id ?? '')));
-                    $url      = $safe((string) ($p->url ?? $fallback));
+                    $url      = $safe(theme_post_url($p));
                     $title    = $safe((string) ($p->title ?? ''));
                     $excerpt  = $safe((string) ($p->excerpt ?? ''));
                     $date     = isset($p->created_at) ? date('d.m.Y', strtotime((string) $p->created_at)) : '';
                     $author   = $safe((string) ($p->author_name ?? ''));
                     $category = $safe((string) ($p->category_name ?? ''));
-                    $imgUrl   = $safe((string) ($p->thumbnail_url ?? ''));
+                    $imgUrl   = $safe((string) ($p->thumbnail_url ?? $p->featured_image ?? ''));
                     $postId   = (int) ($p->id ?? 0);
                 ?>
                 <article class="mc-card mc-post-card" aria-labelledby="post-<?php echo $postId; ?>">
@@ -98,11 +88,11 @@ try {
             <?php if ($totalPages > 1) : ?>
             <nav class="mc-pagination" aria-label="Seitennavigation">
                 <?php if ($page > 1) : ?>
-                    <a href="<?php echo $blogUrl; ?>?page=<?php echo $page - 1; ?>" class="mc-btn mc-btn-outline mc-btn-sm" rel="prev">← Zurück</a>
+                    <a href="<?php echo $blogUrl; ?>?p=<?php echo $page - 1; ?>" class="mc-btn mc-btn-outline mc-btn-sm" rel="prev">← Zurück</a>
                 <?php endif; ?>
                 <span class="mc-pagination__status">Seite <?php echo $page; ?> von <?php echo (int) $totalPages; ?></span>
                 <?php if ($page < $totalPages) : ?>
-                    <a href="<?php echo $blogUrl; ?>?page=<?php echo $page + 1; ?>" class="mc-btn mc-btn-outline mc-btn-sm" rel="next">Weiter →</a>
+                    <a href="<?php echo $blogUrl; ?>?p=<?php echo $page + 1; ?>" class="mc-btn mc-btn-outline mc-btn-sm" rel="next">Weiter →</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>
@@ -110,4 +100,3 @@ try {
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

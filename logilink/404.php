@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $homeUrl  = htmlspecialchars(theme_route_url('home'),     ENT_QUOTES, 'UTF-8');
 $trackUrl = htmlspecialchars(theme_route_url('tracking'), ENT_QUOTES, 'UTF-8');
@@ -27,4 +26,3 @@ $trackUrl = htmlspecialchars(theme_route_url('tracking'), ENT_QUOTES, 'UTF-8');
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

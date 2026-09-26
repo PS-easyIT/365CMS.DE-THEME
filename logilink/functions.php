@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('LOGILINK_THEME_VERSION')) {
-    define('LOGILINK_THEME_VERSION', '1.0.2');
+    define('LOGILINK_THEME_VERSION', '1.1.0');
 }
 
 if (!defined('LOGILINK_THEME_SLUG')) {
@@ -86,6 +86,9 @@ final class LogiLink_Theme
      */
     public function outputGoogleFonts(): void
     {
+        if (theme_use_local_fonts()) {
+            return; // Core bindet lokale Schriften ein (DSGVO)
+        }
         $families = $this->googleFontFamilies();
         if ($families === '') {
             return;
@@ -132,7 +135,7 @@ final class LogiLink_Theme
         $headingFont = htmlspecialchars($this->mapFontChoice($headingChoice, 'heading'), ENT_QUOTES, 'UTF-8');
         $monoFont    = htmlspecialchars($this->mapFontChoice($dataChoice,    'mono'),    ENT_QUOTES, 'UTF-8');
 
-        echo '<style id="ll-custom-vars">:root{';
+        echo '<style id="ll-custom-vars"' . theme_csp_nonce_attr() . '>:root{';
 
         // Brand & colors
         echo '--ll-primary:'       . $p('colors', 'primary_color',   '#0e6ba8') . ';';
@@ -625,5 +628,74 @@ if (!function_exists('ll_safe_headline')) {
             ['<span class="ll-hl">', '</span>'],
             $escaped
         );
+    }
+}
+
+// ── 365CMS 3.4 Laufzeit-Helfer (CSP-Nonce, lokale Schriften) ──────────────────
+
+if (!function_exists('theme_csp_nonce_attr')) {
+    /** Liefert ` nonce="…"` für Inline-<style>/<script> unter der 365CMS-CSP. */
+    function theme_csp_nonce_attr(): string
+    {
+        try {
+            $attr = class_exists('\\CMS\\Security') ? (string) \CMS\Security::instance()->nonceAttr() : '';
+        } catch (\Throwable) {
+            $attr = '';
+        }
+
+        return $attr !== '' ? ' ' . $attr : '';
+    }
+}
+
+if (!function_exists('theme_use_local_fonts')) {
+    /** true, wenn im Core „Schriften lokal einbinden“ (privacy_use_local_fonts) aktiv ist – dann keine Google-Fonts. */
+    function theme_use_local_fonts(): bool
+    {
+        static $useLocal = null;
+        if ($useLocal !== null) {
+            return $useLocal;
+        }
+
+        try {
+            $db  = \CMS\Database::instance();
+            $row = $db->get_row(
+                "SELECT option_value FROM {$db->getPrefix()}settings WHERE option_name = 'privacy_use_local_fonts' LIMIT 1"
+            );
+            $useLocal = $row !== null && (string) ($row->option_value ?? '0') === '1';
+        } catch (\Throwable) {
+            $useLocal = false;
+        }
+
+        return $useLocal;
+    }
+}
+
+if (!function_exists('theme_post_url')) {
+    /** Permalink eines Beitrags (Core-PermalinkService, Fallback /blog/{slug}). */
+    function theme_post_url(object|array $post): string
+    {
+        try {
+            if (class_exists('\\CMS\\Services\\PermalinkService')) {
+                return \CMS\Services\PermalinkService::getInstance()->buildPostUrl($post);
+            }
+        } catch (\Throwable) {
+        }
+        $slug = is_array($post) ? (string) ($post['slug'] ?? '') : (string) ($post->slug ?? '');
+
+        return rtrim((string) SITE_URL, '/') . '/blog/' . rawurlencode($slug);
+    }
+}
+
+if (!function_exists('theme_search_result_url')) {
+    /** URL eines Suchtreffers aus ThemeRouter::renderSearch() (_type + slug). */
+    function theme_search_result_url(object|array $result): string
+    {
+        $data = is_array($result) ? $result : get_object_vars($result);
+        if (($data['_type'] ?? '') === 'post') {
+            return theme_post_url($data);
+        }
+        $slug = ltrim((string) ($data['slug'] ?? ''), '/');
+
+        return rtrim((string) SITE_URL, '/') . '/' . implode('/', array_map('rawurlencode', explode('/', $slug)));
     }
 }

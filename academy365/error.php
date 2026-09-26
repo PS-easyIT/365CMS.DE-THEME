@@ -5,9 +5,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Wird auch vom Fatal-Handler (index.php) direkt eingebunden – Theme-Helfer dann nachladen.
+if (!defined('ACADEMY365_THEME_VERSION') && is_file(__DIR__ . '/functions.php')) {
+    require_once __DIR__ . '/functions.php';
+}
+
 $statusCode = isset($errorCode) ? (int) $errorCode : 500;
 http_response_code($statusCode);
-get_header();
+if (function_exists('get_header')) {
+    get_header();
+}
 $safe = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $siteUrl = rtrim(academy365_safe_url((string) SITE_URL, '/'), '/');
 $siteUrl = $siteUrl !== '' ? $siteUrl : '/';
@@ -29,4 +36,4 @@ $siteUrl = $siteUrl !== '' ? $siteUrl : '/';
         </div>
     </div>
 </main>
-<?php get_footer(); ?>
+<?php if (function_exists('get_footer')) { get_footer(); } ?>

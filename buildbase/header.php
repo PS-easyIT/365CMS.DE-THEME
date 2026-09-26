@@ -5,6 +5,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Header in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_HEADER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_HEADER_RENDERED', true);
+
 try {
     $c = \CMS\Services\ThemeCustomizer::instance();
     $showEmBanner   = filter_var($c->get('header', 'show_emergency_banner', false), FILTER_VALIDATE_BOOLEAN);
@@ -48,6 +54,7 @@ if ($hasEmBanner)  { $bodyClasses[] = 'has-emergency-banner'; }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
     <meta name="description" content="<?php echo $safe($siteDesc); ?>">
     <title><?php echo $safe($siteTitle); ?></title>
     <?php \CMS\Hooks::doAction('head'); ?>

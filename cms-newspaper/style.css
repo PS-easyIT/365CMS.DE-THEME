@@ -4,9 +4,10 @@ Theme URI: https://phin.network
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phin.network
 Description: Editoriales News-/Magazin-Theme – Broadsheet-Typografie, Ink-Schwarz mit sparsam eingesetztem Signal-Rot, Rule-Lines statt Card-Shadows. Für IT-News, Magazine und redaktionelle Portale.
-Version: 1.0.0
+Version: 1.1.0
 Requires PHP: 8.4
-Tested up to CMS: 3.x
+Requires CMS: 3.4.00
+Tested up to CMS: 3.4.00
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: cms-newspaper

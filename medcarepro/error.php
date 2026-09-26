@@ -11,7 +11,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
+// Wird auch vom Fatal-Handler (index.php) direkt eingebunden – Theme-Helfer dann nachladen.
+if (!defined('MEDCAREPRO_THEME_VERSION') && is_file(__DIR__ . '/functions.php')) {
+    require_once __DIR__ . '/functions.php';
+}
+
+if (function_exists('get_header')) {
+    get_header();
+}
 
 $safe         = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $errorCode    = (int) ($errorCode ?? 500);
@@ -30,4 +37,4 @@ $homeUrl      = $safe(theme_route_url('home'));
         </div>
     </div>
 </main>
-<?php get_footer(); ?>
+<?php if (function_exists('get_footer')) { get_footer(); } ?>

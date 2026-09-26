@@ -1,10 +1,10 @@
 # MedCare Pro – Theme für 365 CMS
 
-**Version:** 1.0.3
+**Version:** 1.1.0
 **Autor:** PHINIT.DE / Andreas Hepp
 **Lizenz:** GPL-2.0-or-later
 **Requires PHP:** 8.4
-**Requires 365CMS:** 3.0.0+
+**Requires 365CMS:** 3.4.00+
 **Zielgruppe:** Arztpraxen, Kliniken, Therapeuten, Pflegedienste, Gesundheitsportale
 
 ---
@@ -78,7 +78,7 @@ medcarepro/
 
 | Konstante | Wert |
 |---|---|
-| `MEDCAREPRO_THEME_VERSION` | `1.0.3` |
+| `MEDCAREPRO_THEME_VERSION` | `1.1.0` |
 | `MEDCAREPRO_THEME_SLUG` | `medcarepro` |
 
 | Hook | Priorität | Aktion |

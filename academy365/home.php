@@ -5,7 +5,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 ?>
 <main id="main" class="ac-main-content" role="main">
 <?php
@@ -222,4 +221,3 @@ try {
 </section>
 
 </main>
-<?php get_footer(); ?>

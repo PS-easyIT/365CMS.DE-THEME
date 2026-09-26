@@ -9,13 +9,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
-try {
-    $page = \CMS\Services\PageService::getCurrent();
-} catch (\Throwable) {
-    $page = null;
-}
+// Der Core übergibt die Seite als Array ($page); 'content' ist bereits gerendertes, sanitiertes HTML.
+$page = isset($page) && is_array($page) && $page !== [] ? (object) $page : null;
 
 $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
@@ -28,7 +24,7 @@ $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8'
                 <?php endif; ?>
                 <?php if (!empty($page->content)) : ?>
                     <div class="pf-prose">
-                        <?php echo \CMS\Helpers\ContentHelper::processContent((string) $page->content); ?>
+                        <?php echo (string) $page->content; ?>
                     </div>
                 <?php endif; ?>
             </article>
@@ -44,4 +40,3 @@ $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8'
         <?php endif; ?>
     </div>
 </main>
-<?php get_footer(); ?>

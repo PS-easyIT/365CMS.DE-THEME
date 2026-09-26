@@ -1,7 +1,8 @@
 {
   "name": "CMS Newspaper",
   "slug": "cms-newspaper",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "requires_cms": "3.4.00",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "Editoriales News-Portal-Theme – Broadsheet-Typografie (Playfair Display + Source Sans 3 + IBM Plex Mono), Ink-Schwarz mit Signal-Rot, Rule-Lines statt Card-Shadows. Für Tech-/IT-News, Magazine und redaktionelle Portale.",
   "textdomain": "cms-newspaper",

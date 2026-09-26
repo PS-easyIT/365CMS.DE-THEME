@@ -1,7 +1,8 @@
 {
   "name": "TechNexus",
   "slug": "technexus",
-  "version": "1.0.1",
+  "version": "1.1.0",
+  "requires_cms": "3.4.00",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "IT & Tech Hub Theme – Präzise, technisch, vertrauenswürdig. Für IT-Dienstleister, Softwarehäuser und Tech-Hubs.",
   "tags": ["tech", "it", "dark-mode", "responsive", "cms", "network"],

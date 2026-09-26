@@ -4,9 +4,10 @@ Theme URI: https://365cms.de
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phinit.de
 Description: HR- & Personalvermittlungs-Theme – warmes Amber-Anker-System, redaktionelle Klarheit, semantische Pipeline-Status-Tokens (Beworben → Screening → Interview → Angebot → Eingestellt). Für Personalagenturen, Recruiting-Plattformen und Karriere-Portale.
-Version: 1.0.1
+Version: 1.1.0
 Requires PHP: 8.4
-Tested up to CMS: 3.x
+Requires CMS: 3.4.00
+Tested up to CMS: 3.4.00
 License: GPL-2.0-or-later
 Text Domain: personalflow
 Tags: hr, recruitment, jobs, careers, applicant-tracking, pipeline, warm, editorial, cms

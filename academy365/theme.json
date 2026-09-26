@@ -1,7 +1,8 @@
 {
   "name": "Academy365",
   "slug": "academy365",
-  "version": "3.0.2",
+  "version": "3.1.0",
+  "requires_cms": "3.4.00",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "Bildung & Weiterbildung Theme – Inspirierend, motivierend, modern. Für Weiterbildungsinstitute, Hochschulen und E-Learning-Anbieter.",
   "tags": ["bildung", "elearning", "kurse", "hochschule", "coaching", "responsive", "cms"],

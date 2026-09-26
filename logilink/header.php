@@ -9,6 +9,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Header in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_HEADER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_HEADER_RENDERED', true);
+
 $llTitle      = ll_site_title();
 $llTitleEsc   = htmlspecialchars($llTitle, ENT_QUOTES, 'UTF-8');
 $llBodyClass  = ll_body_class();
@@ -33,6 +39,7 @@ $llIsLoggedIn  = theme_is_logged_in();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
     <title><?php echo $llTitleEsc; ?></title>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>

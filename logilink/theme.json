@@ -1,7 +1,8 @@
 {
   "name": "LogiLink",
   "slug": "logilink",
-  "version": "1.0.2",
+  "version": "1.1.0",
+  "requires_cms": "3.4.00",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "Logistik & Transport Theme – Schnell, präzise, international. Für Speditionen, Kurierdienste und Logistik-Dienstleister.",
   "tags": ["logistik", "transport", "tracking", "dashboard", "responsive", "cms"],

@@ -3,17 +3,20 @@
   "name": "Academy365",
   "type": "theme",
   "license": "free",
-  "version": "3.0.2",
-  "min_cms_version": "3.0.0",
+  "version": "3.1.0",
+  "min_cms_version": "3.4.00",
   "min_php": "8.4",
   "requires_php": "8.4",
-  "released": "2026-05-19",
+  "released": "2026-09-26",
   "download_url": "",
   "checksum_sha256": "",
   "changelog": {
+    "3.1.0": "Kompatibilität mit 365CMS 3.4.00: Kein doppelter Seitenrahmen mehr: Templates binden header.php/footer.php nicht mehr selbst ein – der Core rendert beide in ThemeManager::render(). header.php/footer.php sind zusätzlich gegen Doppel-Einbindung geschützt. header.php lädt die CSP-Runtime des Cores (cms_csp_runtime_tags(): DOMPurify + Trusted-Types-Policy) als erstes Script. Customizer-CSS (<style id=\"…-custom-vars\">) trägt den CSP-Nonce (theme_csp_nonce_attr()); die Produktiv-CSP hatte den Block bisher verworfen, Farben/Typografie/Layout aus dem Customizer blieben wirkungslos. footer.php löst body_end vor </body> aus (Core-Cookie-Consent, Web-Vitals, PhotoSwipe). Das Navigations-Script wird nur noch einmal geladen (bisher doppelt über before_footer, wodurch Toggles sofort wieder schlossen). Google Fonts werden nicht mehr geladen, wenn im Core „Schriften lokal einbinden“ (privacy_use_local_fonts) aktiv ist (DSGVO). error.php lädt die Theme-Helfer nach, wenn der Fatal-Handler (index.php) die Datei direkt einbindet. Manifest: requires_cms/min_cms_version 3.4.00, tested_up_to 3.4.00.",
     "3.0.2": "365CMS-v3.x.x Security-/Robustheits-Pass: Customizer-CSS-Werte werden validiert und begrenzt, eigenes CSS defensiv bereinigt, Header-/Footer-/Error-URLs fail-closed normalisiert und alle PHP-Templates auf strict_types plus ABSPATH-Guard gebracht. Nachtrag 2026-05-19: Changelog und Update-Feed auf den Abschlussstand synchronisiert.",
     "3.0.1": "Re-Audit-Pass: vollständiges Customizer-Mapping (Header/Footer/Layout/Buttons/Typografie), Stylesheet-Preload, identitätsstiftender Hero-Verlauf, alle Inline-Styles in CSS-Klassen extrahiert, Requires PHP: 8.4 deklariert.",
     "3.0.0": "v3-Kompatibilität: cms_init-Menüs, Customizer-Key-Mapping korrigiert, sichere Headline-/Slug-Helper, :focus-visible & reduced-motion.",
     "1.0.0": "Erstveröffentlichung: E-Learning & Kursplattform-Theme."
-  }
+  },
+  "requires_cms": "3.4.00",
+  "tested_up_to": "3.4.00"
 }

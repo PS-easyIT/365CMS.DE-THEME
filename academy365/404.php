@@ -6,7 +6,6 @@ if (!defined('ABSPATH')) {
 }
 
 http_response_code(404);
-get_header();
 $siteUrl = rtrim(academy365_safe_url((string) SITE_URL, '/'), '/');
 $siteUrl = $siteUrl !== '' ? $siteUrl : '/';
 $safe = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
@@ -31,4 +30,3 @@ try {
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

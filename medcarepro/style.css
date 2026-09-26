@@ -4,9 +4,10 @@ Theme URI: https://phin.network
 Author: PHINIT.DE / Andreas Hepp
 Author URI: https://phin.network
 Description: Medizinisches Praxis-Theme – ruhige, vertrauensvolle Identität für Arztpraxen, Kliniken, Therapeuten und Pflegedienste. DSGVO- & § 203 StGB-Posture, WCAG 2.2 AA, editoriale Serif-Akzente.
-Version: 1.0.3
+Version: 1.1.0
 Requires PHP: 8.4
-Tested up to CMS: 3.x
+Requires CMS: 3.4.00
+Tested up to CMS: 3.4.00
 License: GPL-2.0-or-later
 Text Domain: medcarepro
 Tags: medizin, gesundheit, arzt, klinik, dsgvo, barrierefrei, cms

@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
-$page    = \CMS\Services\PageService::getCurrent();
+// Der Core übergibt die Seite als Array ($page); 'content' ist bereits gerendertes, sanitiertes HTML.
+$page = isset($page) && is_array($page) && $page !== [] ? (object) $page : null;
 $safe    = fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $siteUrl = buildbase_safe_url((string) SITE_URL, '/');
 ?>
@@ -19,7 +19,7 @@ $siteUrl = buildbase_safe_url((string) SITE_URL, '/');
                     <h1><?php echo $safe((string) $page->title); ?></h1>
                 <?php endif; ?>
                 <?php if (!empty($page->content)) : ?>
-                    <div class="prose"><?php echo \CMS\Helpers\ContentHelper::processContent((string) $page->content); ?></div>
+                    <div class="prose"><?php echo (string) $page->content; ?></div>
                 <?php endif; ?>
             </article>
         <?php else : ?>
@@ -32,4 +32,3 @@ $siteUrl = buildbase_safe_url((string) SITE_URL, '/');
         <?php endif; ?>
     </div>
 </main>
-<?php get_footer(); ?>

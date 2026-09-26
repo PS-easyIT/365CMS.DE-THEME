@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
@@ -26,4 +25,3 @@ $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8'
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

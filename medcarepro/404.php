@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe       = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $homeUrl    = $safe(theme_route_url('home'));
@@ -28,4 +27,3 @@ $doctorsUrl = $safe(theme_route_url('doctors'));
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

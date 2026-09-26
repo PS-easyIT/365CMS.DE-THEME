@@ -10,6 +10,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Wird auch vom Fatal-Handler (index.php) direkt eingebunden – Theme-Helfer dann nachladen.
+if (!defined('PTC_THEME_VERSION') && is_file(__DIR__ . '/functions.php')) {
+    require_once __DIR__ . '/functions.php';
+}
+
 $errorCode    = $GLOBALS['error_code']    ?? 500;
 $errorMessage = $GLOBALS['error_message'] ?? 'Ein unerwarteter Fehler ist aufgetreten.';
 http_response_code((int) $errorCode);

@@ -1,5 +1,20 @@
 # PTC Theme – Changelog
 
+## 3.1.0 – 2026-09-26
+
+### Kompatibilität mit 365CMS 3.4.00 (CSP, Trusted Types, Layout-Hooks)
+
+- Kein doppelter Seitenrahmen mehr: Templates binden `header.php`/`footer.php` nicht mehr selbst ein – der Core rendert beide in `ThemeManager::render()`. `header.php`/`footer.php` sind zusätzlich gegen Doppel-Einbindung geschützt.
+- `header.php` lädt die CSP-Runtime des Cores (`cms_csp_runtime_tags()`: DOMPurify + Trusted-Types-Policy) als erstes Script.
+- Customizer-CSS (`<style id="…-custom-vars">`) trägt den CSP-Nonce (`theme_csp_nonce_attr()`); die Produktiv-CSP hatte den Block bisher verworfen, Farben/Typografie/Layout aus dem Customizer blieben wirkungslos.
+- `footer.php` löst `body_end` vor `</body>` aus (Core-Cookie-Consent, Web-Vitals, PhotoSwipe). Das Navigations-Script wird nur noch einmal geladen (bisher doppelt über `before_footer`, wodurch Toggles sofort wieder schlossen).
+- Google Fonts werden nicht mehr geladen, wenn im Core „Schriften lokal einbinden“ (`privacy_use_local_fonts`) aktiv ist (DSGVO).
+- `error.php` lädt die Theme-Helfer nach, wenn der Fatal-Handler (`index.php`) die Datei direkt einbindet.
+- Theme-Customizer: Aufruf der entfernten Legacy-Funktionen `renderAdminSidebar()`/`renderAdminSidebarStyles()` beseitigt (Fatal Error im Theme Editor); der Customizer bettet sich jetzt in das Admin-Layout ein.
+- Theme-Customizer: Inline-Handler (`onclick`/`onchange`/`oninput`) und Inline-`<script>`/`<style>` nach `js/customizer-admin.js` und `css/customizer-admin.css` ausgelagert; Bildvorschauen per DOM-API statt `innerHTML`.
+- Theme-Customizer (Sicherheit): SVG-Uploads entfernt (Stored-XSS), MIME-Prüfung per `finfo`, `is_uploaded_file()`, 2-MB-Limit und zufällige Dateinamen; Bild-URLs nur noch als http(s) oder wurzelrelativer Pfad; CSRF-Prüfung kompatibel mit der Section-Shell des Theme Editors.
+- Manifest: `requires_cms`/`min_cms_version` 3.4.00, `tested_up_to` 3.4.00.
+
 ## 3.0.0 Nachtrag (2026-05-19)
 
 ### Abschlussdokumentation der Generisierung

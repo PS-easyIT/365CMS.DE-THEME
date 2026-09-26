@@ -10,6 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Header in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_HEADER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_HEADER_RENDERED', true);
+
 $tm       = \CMS\ThemeManager::instance();
 $title    = ptc_site_title();
 $siteUrl  = ptc_site_url();
@@ -55,6 +61,7 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
     <title><?php echo $title; ?></title>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>

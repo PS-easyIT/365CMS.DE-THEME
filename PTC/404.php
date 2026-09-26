@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 ?>
 
 <section class="ptc-page-hero">
@@ -32,4 +31,3 @@ get_header();
     </div>
 </div>
 
-<?php get_footer(); ?>

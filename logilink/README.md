@@ -1,7 +1,7 @@
 # LogiLink Theme
 
-Version: 1.0.2
-Target: 365CMS v3.x.x, PHP 8.4
+Version: 1.1.0
+Target: 365CMS 3.4.00+, PHP 8.4
 Constant: `LOGILINK_THEME_VERSION`
 
 LogiLink ist ein Logistik- & Transport-Theme für 365CMS. Es ist gebaut für
@@ -125,8 +125,8 @@ Stellt das vollständige Theme-Helper-Set bereit:
 
 ## Versionsabgleich
 
-- `theme.json` → `"version": "1.0.2"`
-- `style.css` → `Version: 1.0.2`, `Requires PHP: 8.4`, `License: GPL-2.0-or-later`,
+- `theme.json` → `"version": "1.1.0"`
+- `style.css` → `Version: 1.1.0`, `Requires PHP: 8.4`, `License: GPL-2.0-or-later`,
   `Text Domain: logilink`
-- `update.json` → `"version": "1.0.2"`
-- `functions.php` → `define('LOGILINK_THEME_VERSION', '1.0.2')`
+- `update.json` → `"version": "1.1.0"`
+- `functions.php` → `define('LOGILINK_THEME_VERSION', '1.1.0')`

@@ -9,6 +9,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Header in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_HEADER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_HEADER_RENDERED', true);
+
 $pfTitle       = pf_site_title();
 $pfTitleEsc    = htmlspecialchars($pfTitle, ENT_QUOTES, 'UTF-8');
 $pfBodyCls     = pf_body_class();
@@ -29,6 +35,7 @@ $pfSearchPh    = (string) pf_get_setting('header', 'search_placeholder', 'Kandid
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
     <title><?php echo $pfTitleEsc; ?></title>
     <?php \CMS\Hooks::doAction('head'); ?>
 </head>

@@ -5,6 +5,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Footer in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_FOOTER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_FOOTER_RENDERED', true);
+
 $themeManager = \CMS\ThemeManager::instance();
 $siteTitle    = (string) $themeManager->getSiteTitle();
 $isLoggedIn   = theme_is_logged_in();
@@ -69,6 +75,11 @@ $baseUrl = rtrim($siteUrl, '/');
     </footer>
 
 </div><!-- #page -->
-<?php \CMS\Hooks::doAction('before_footer'); ?>
+<?php
+// before_footer (Theme-Scripts) und body_end (Core-Cookie-Consent, Web-Vitals, PhotoSwipe)
+// laufen pro Request nur einmal – der Core löst sie ebenfalls aus.
+\CMS\Hooks::doAction('before_footer');
+\CMS\Hooks::doAction('body_end');
+?>
 </body>
 </html>

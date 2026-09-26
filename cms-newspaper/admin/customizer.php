@@ -355,27 +355,7 @@ if (!Auth::instance()->isAdmin()) {
     exit;
 }
 
-// Admin sidebar helpers
-$sidebarPaths = [
-    (defined('ABSPATH') ? rtrim(ABSPATH, '/\\') : '') . '/admin/partials/admin-menu.php',
-    dirname(__DIR__, 3) . '/CMS/admin/partials/admin-menu.php',
-    dirname(__DIR__, 2) . '/admin/partials/admin-menu.php',
-];
-foreach ($sidebarPaths as $path) {
-    if ($path !== '' && is_file($path)) {
-        require_once $path;
-        break;
-    }
-}
-if (!function_exists('renderAdminSidebar')) {
-    function renderAdminSidebar(string $slug): void
-    {
-        echo '<!-- Sidebar fallback: ' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . ' -->';
-    }
-}
-if (!function_exists('renderAdminSidebarStyles')) {
-    function renderAdminSidebarStyles(): void {}
-}
+// Sidebar, Admin-CSS/-JS und CSP-Runtime stellt das Admin-Layout des Theme Editors bereit.
 
 $config = newspaper_build_customizer_config();
 
@@ -557,10 +537,9 @@ if (!$embedInAdminLayout) :
     <?php if ($customizerCssUrl !== '') : ?>
         <link rel="stylesheet" href="<?php echo $esc($customizerCssUrl); ?>">
     <?php endif; ?>
-    <?php renderAdminSidebarStyles(); ?>
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
 </head>
 <body class="admin-body">
-    <?php renderAdminSidebar('theme-customizer'); ?>
 <?php else : ?>
     <?php if ($customizerCssUrl !== '') : ?>
         <link rel="stylesheet" href="<?php echo $esc($customizerCssUrl); ?>">
@@ -649,7 +628,7 @@ if (!$embedInAdminLayout) :
                 <p class="customizer-reset-note">Bereits gespeicherte Anpassungen gehen für diesen Bereich verloren.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-customizer-reset-close">Abbrechen</button>
+                <button type="button" class="btn btn-secondary" data-customizer-reset-close>Abbrechen</button>
                 <button type="button" class="btn btn-danger" data-customizer-reset-confirm">↺ Zurücksetzen</button>
             </div>
         </div>

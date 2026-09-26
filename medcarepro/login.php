@@ -54,7 +54,6 @@ $postedEmail   = filter_var((string) ($_POST['email'] ?? ''), FILTER_SANITIZE_EM
 $forgotUrl     = $safe(mc_href('/forgot-password'));
 $registerUrl   = $safe(theme_route_url('register'));
 
-get_header();
 ?>
 <main id="main" class="mc-main mc-auth-page" role="main">
     <div class="mc-container">
@@ -131,4 +130,3 @@ get_header();
         </div>
     </div>
 </main>
-<?php get_footer(); ?>

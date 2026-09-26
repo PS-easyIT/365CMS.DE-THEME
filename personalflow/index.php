@@ -9,13 +9,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
-try {
-    $posts = \CMS\Services\PostService::getPosts(['per_page' => 12]);
-} catch (\Throwable) {
-    $posts = [];
-}
+// Der Core übergibt die Beiträge ($posts, Objekte) samt Pagination-Daten an das Template.
+$posts = isset($posts) && is_array($posts) ? $posts : [];
 
 $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
@@ -31,7 +27,7 @@ $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8'
                 <?php foreach ($posts as $post) :
                     $title   = (string) ($post->title   ?? '');
                     $excerpt = (string) ($post->excerpt ?? '');
-                    $url     = (string) ($post->url     ?? '#');
+                    $url     = theme_post_url($post);
                     $created = (string) ($post->created_at ?? '');
                     $dateStr = '';
                     if ($created !== '') {
@@ -61,4 +57,3 @@ $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8'
         <?php endif; ?>
     </div>
 </main>
-<?php get_footer(); ?>

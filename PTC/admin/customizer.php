@@ -26,16 +26,105 @@ if (!Auth::instance()->isAdmin()) {
     exit;
 }
 
-// ── Admin-Sidebar laden ──────────────────────────────────────────────────────
-$sidebarPaths = [
-    dirname(__DIR__, 2) . '/../CMS/admin/partials/admin-menu.php',
-    ABSPATH . 'admin/partials/admin-menu.php',
-    dirname(ABSPATH) . '/admin/partials/admin-menu.php',
-];
-foreach ($sidebarPaths as $sp) {
-    if (file_exists($sp)) {
-        require_once $sp;
-        break;
+// Der Theme Editor (/admin/theme-editor) bettet diese Datei in das Admin-Layout ein
+// (Sidebar, CSP-Runtime, Admin-CSS/-JS kommen vom Core).
+$embedInAdminLayout = !empty($embedInAdminLayout);
+
+if (!function_exists('ptc_customizer_verify_csrf')) {
+    function ptc_customizer_verify_csrf(string $token, string $action = 'ptc_customizer'): bool
+    {
+        if (function_exists('cms_admin_section_shell_was_csrf_verified')
+            && cms_admin_section_shell_was_csrf_verified($action)
+        ) {
+            return true;
+        }
+
+        return Security::instance()->verifyToken($token, $action);
+    }
+}
+
+if (!function_exists('ptc_customizer_store_upload')) {
+    /**
+     * Speichert ein hochgeladenes Rasterbild (JPG/PNG/GIF/WebP, max. 2 MB, MIME-geprüft).
+     * SVG ist bewusst ausgeschlossen (aktive Inhalte / Stored-XSS).
+     *
+     * @return array{url:string,error:string}
+     */
+    function ptc_customizer_store_upload(string $field, string $subDir, string $prefix): array
+    {
+        $file = $_FILES[$field] ?? null;
+        if (!is_array($file) || (string) ($file['tmp_name'] ?? '') === '') {
+            return ['url' => '', 'error' => ''];
+        }
+
+        $allowedMimes = [
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png'  => 'image/png',
+            'gif'  => 'image/gif',
+            'webp' => 'image/webp',
+        ];
+        $tmpName = (string) $file['tmp_name'];
+        $fileExt = strtolower(pathinfo((string) ($file['name'] ?? ''), PATHINFO_EXTENSION));
+
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || !is_uploaded_file($tmpName)) {
+            return ['url' => '', 'error' => 'Ungültiger Upload erkannt.'];
+        }
+        if (!isset($allowedMimes[$fileExt])) {
+            return ['url' => '', 'error' => 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, WebP.'];
+        }
+        if ((int) ($file['size'] ?? 0) <= 0 || (int) $file['size'] > 2 * 1024 * 1024) {
+            return ['url' => '', 'error' => 'Die Datei ist zu groß (max. 2 MB).'];
+        }
+
+        $mime = '';
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $mime = (string) finfo_file($finfo, $tmpName);
+                finfo_close($finfo);
+            }
+        }
+        if ($mime === '' && function_exists('getimagesize')) {
+            $info = @getimagesize($tmpName);
+            $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
+        }
+        if ($mime !== $allowedMimes[$fileExt]) {
+            return ['url' => '', 'error' => 'Ungültiger Dateityp. Bitte JPG, PNG, GIF oder WebP hochladen.'];
+        }
+
+        if (!defined('UPLOAD_PATH') || !defined('UPLOAD_URL')) {
+            return ['url' => '', 'error' => 'Upload-Verzeichnis ist nicht konfiguriert.'];
+        }
+
+        $uploadDir = rtrim((string) UPLOAD_PATH, '/\\') . '/' . $subDir;
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            return ['url' => '', 'error' => 'Upload-Verzeichnis konnte nicht angelegt werden.'];
+        }
+
+        $newFileName = $prefix . '-' . date('YmdHis') . '-' . bin2hex(random_bytes(4)) . '.' . ($fileExt === 'jpeg' ? 'jpg' : $fileExt);
+        if (!move_uploaded_file($tmpName, $uploadDir . '/' . $newFileName)) {
+            return ['url' => '', 'error' => 'Upload fehlgeschlagen. Bitte Schreibrechte auf uploads/' . $subDir . '/ prüfen.'];
+        }
+
+        return ['url' => rtrim((string) UPLOAD_URL, '/') . '/' . $subDir . '/' . $newFileName, 'error' => ''];
+    }
+}
+
+if (!function_exists('ptc_customizer_safe_image_url')) {
+    /** Erlaubt nur http(s)-URLs oder wurzelrelative Pfade (kein javascript:, data:, //host). */
+    function ptc_customizer_safe_image_url(string $url): string
+    {
+        $url = trim($url);
+        if ($url === '' || preg_match('/[\x00-\x1F\x7F<>"\'`\\\\]/', $url) === 1) {
+            return '';
+        }
+        if (str_starts_with($url, '/') && !str_starts_with($url, '//')) {
+            return $url;
+        }
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+
+        return in_array($scheme, ['http', 'https'], true) && filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
     }
 }
 
@@ -2035,10 +2124,10 @@ $error   = null;
 
 // -- Reset --
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'reset_theme_tab') {
-    if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'ptc_customizer')) {
+    if (!ptc_customizer_verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
-        $resetTab = $_POST['active_section'] ?? $activeTab;
+        $resetTab = preg_replace('/[^a-z0-9_-]/i', '', (string) ($_POST['active_section'] ?? $activeTab)) ?: $activeTab;
         if (!isset($config[$resetTab])) {
             $resetTab = $activeTab;
         }
@@ -2062,58 +2151,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // -- Save --
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_theme_options') {
-    if (!Security::instance()->verifyToken($_POST['csrf_token'] ?? '', 'ptc_customizer')) {
+    if (!ptc_customizer_verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
         $error = 'Sicherheitscheck fehlgeschlagen. Bitte erneut versuchen.';
     } else {
         // Track uploaded file fields to avoid overwriting with stale POST values
         $uploadedFields = [];
 
         // Logo-Upload
-        if (!empty($_FILES['logo_upload_file']['tmp_name'])) {
-            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
-            $fileExt     = strtolower(pathinfo($_FILES['logo_upload_file']['name'], PATHINFO_EXTENSION));
-            if (in_array($fileExt, $allowedExts, true)) {
-                $uploadDir = UPLOAD_PATH . 'theme-logos';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                $newFileName = 'theme-logo-' . time() . '.' . $fileExt;
-                $destPath    = $uploadDir . '/' . $newFileName;
-                if (move_uploaded_file($_FILES['logo_upload_file']['tmp_name'], $destPath)) {
-                    $customizer->set('header', 'logo_url', UPLOAD_URL . '/theme-logos/' . $newFileName);
-                    $uploadedFields['header:logo_url'] = true;
-                } else {
-                    $error = 'Logo-Upload fehlgeschlagen. Bitte prüfen Sie die Schreibrechte auf uploads/theme-logos/';
-                }
-            } else {
-                $error = 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, SVG, WebP';
-            }
+        $logoUpload = ptc_customizer_store_upload('logo_upload_file', 'theme-logos', 'theme-logo');
+        if ($logoUpload['error'] !== '') {
+            $error = $logoUpload['error'];
+        } elseif ($logoUpload['url'] !== '') {
+            $customizer->set('header', 'logo_url', $logoUpload['url']);
+            $uploadedFields['header:logo_url'] = true;
         }
 
         // Hero-Hintergrundbild-Upload
-        if (!empty($_FILES['hero_bg_upload_file']['tmp_name'])) {
-            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            $fileExt     = strtolower(pathinfo($_FILES['hero_bg_upload_file']['name'], PATHINFO_EXTENSION));
-            if (in_array($fileExt, $allowedExts, true)) {
-                $uploadDir = UPLOAD_PATH . 'theme-images';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                $newFileName = 'theme-hero-' . time() . '.' . $fileExt;
-                $destPath    = $uploadDir . '/' . $newFileName;
-                if (move_uploaded_file($_FILES['hero_bg_upload_file']['tmp_name'], $destPath)) {
-                    $customizer->set('homepage', 'hero_bg_image', UPLOAD_URL . '/theme-images/' . $newFileName);
-                    $uploadedFields['homepage:hero_bg_image'] = true;
-                } else {
-                    $error = 'Bild-Upload fehlgeschlagen. Bitte prüfen Sie die Schreibrechte.';
-                }
-            } else {
-                $error = 'Ungültiges Dateiformat. Erlaubt: JPG, PNG, GIF, WebP';
+        if (!$error) {
+            $heroUpload = ptc_customizer_store_upload('hero_bg_upload_file', 'theme-images', 'theme-hero');
+            if ($heroUpload['error'] !== '') {
+                $error = $heroUpload['error'];
+            } elseif ($heroUpload['url'] !== '') {
+                $customizer->set('homepage', 'hero_bg_image', $heroUpload['url']);
+                $uploadedFields['homepage:hero_bg_image'] = true;
             }
         }
 
         if (!$error) {
-            $saveTab = $_POST['active_section'] ?? $activeTab;
+            $saveTab = preg_replace('/[^a-z0-9_-]/i', '', (string) ($_POST['active_section'] ?? $activeTab)) ?: $activeTab;
             if (!isset($config[$saveTab])) {
                 $saveTab = $activeTab;
             }
@@ -2126,7 +2191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     if (isset($uploadedFields["{$saveTab}:{$fieldKey}"])) {
                         continue; // Datei-Upload hat Vorrang
                     }
-                    $postVal = trim($_POST[$inputName] ?? '');
+                    $postVal = ptc_customizer_safe_image_url((string) ($_POST[$inputName] ?? ''));
                     if ($postVal !== '') {
                         if (!$customizer->set($saveTab, $fieldKey, $postVal)) {
                             $saveFailed = true;
@@ -2138,7 +2203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 if ($fieldConfig['type'] === 'checkbox') {
                     $value = isset($_POST[$inputName]) ? '1' : '0';
                 } else {
-                    $value = $_POST[$inputName] ?? '';
+                    $value = is_scalar($_POST[$inputName] ?? null) ? (string) $_POST[$inputName] : '';
                 }
                 if (!$customizer->set($saveTab, $fieldKey, $value)) {
                     $saveFailed = true;
@@ -2165,61 +2230,38 @@ $coreAdminCssUrl = function_exists('cms_asset_url')
 $coreAdminJsUrl = function_exists('cms_asset_url')
     ? cms_asset_url('js/admin.js')
     : SITE_URL . '/assets/js/admin.js';
+$ptcThemeUrl = class_exists('\\CMS\\ThemeManager')
+    ? rtrim((string) \CMS\ThemeManager::instance()->getThemeUrl('PTC'), '/')
+    : rtrim((string) SITE_URL, '/') . '/themes/PTC';
+$ptcThemeDir = dirname(__DIR__);
+$ptcCustomizerCssUrl = is_file($ptcThemeDir . '/css/customizer-admin.css')
+    ? $ptcThemeUrl . '/css/customizer-admin.css?v=' . rawurlencode((string) filemtime($ptcThemeDir . '/css/customizer-admin.css'))
+    : '';
+$ptcCustomizerJsUrl = is_file($ptcThemeDir . '/js/customizer-admin.js')
+    ? $ptcThemeUrl . '/js/customizer-admin.js?v=' . rawurlencode((string) filemtime($ptcThemeDir . '/js/customizer-admin.js'))
+    : '';
+
+if (!$embedInAdminLayout) :
 ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= function_exists('cms_csp_runtime_tags') ? cms_csp_runtime_tags() : '' ?>
     <title>Theme Customizer – <?php echo defined('SITE_NAME') ? $esc(SITE_NAME) : ''; ?></title>
     <link rel="stylesheet" href="<?php echo $esc($coreMainCssUrl); ?>">
     <link rel="stylesheet" href="<?php echo $esc($coreAdminCssUrl); ?>">
-    <?php renderAdminSidebarStyles(); ?>
-    <style>
-        .customizer-layout { display: flex; gap: 2rem; align-items: flex-start; }
-        .customizer-nav { width: 240px; flex-shrink: 0; background: #fff; border-radius: var(--card-radius, 10px); border: var(--card-border, 1px solid #e2e8f0); overflow: hidden; }
-        .customizer-nav a { display: block; padding: 1rem 1.5rem; color: #64748b; text-decoration: none; border-left: 3px solid transparent; transition: all .2s; font-size: .9rem; }
-        .customizer-nav a:hover { background: #f8fafc; color: var(--admin-primary, #3b82f6); }
-        .customizer-nav a.active { background: #eff6ff; color: var(--admin-primary, #3b82f6); border-left-color: var(--admin-primary, #3b82f6); font-weight: 600; }
-        .customizer-nav-group-label { display: block; padding: .6rem 1.5rem .3rem; font-size: .72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; border-top: 1px solid #f1f5f9; margin-top: .25rem; }
-        .customizer-nav a.customizer-nav-sub { padding-left: 2.25rem; font-size: .85rem; }
-        .customizer-content { flex: 1; }
-        .form-actions-card { position: sticky; bottom: 1rem; z-index: 10; }
-
-        /* Farben-Tab: 3-Spalten */
-        .color-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-        .color-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; }
-        .color-card h4 { margin: 0 0 1rem 0; font-size: .95rem; font-weight: 700; color: #1e293b; padding-bottom: .75rem; border-bottom: 1px solid #f1f5f9; }
-        .color-card .form-group { margin-bottom: 1rem; }
-        .color-card .form-group:last-child { margin-bottom: 0; }
-        .color-card .form-label { font-size: .82rem; margin-bottom: .25rem; }
-        .color-card .form-text { font-size: .75rem; }
-        @media (max-width: 1200px) { .color-cards-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 800px) { .color-cards-grid { grid-template-columns: 1fr; } }
-
-        /* Startseite-Tab: 2-Spalten */
-        .homepage-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-        .homepage-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; }
-        .homepage-card h4 { margin: 0 0 1rem 0; font-size: .95rem; font-weight: 700; color: #1e293b; padding-bottom: .75rem; border-bottom: 1px solid #f1f5f9; }
-        .homepage-card .form-group { margin-bottom: 1rem; }
-        .homepage-card .form-group:last-child { margin-bottom: 0; }
-        .homepage-card .form-label { font-size: .85rem; margin-bottom: .25rem; }
-        .homepage-card .form-text { font-size: .78rem; }
-        @media (max-width: 900px) { .homepage-cards-grid { grid-template-columns: 1fr; } }
-
-        @media (max-width: 960px) {
-            .customizer-layout { flex-direction: column; }
-            .customizer-nav { width: 100%; display: flex; flex-wrap: wrap; gap: 0; }
-            .customizer-nav a { border-left: none; border-bottom: 3px solid transparent; padding: .75rem 1rem; font-size: .8rem; }
-            .customizer-nav a.active { border-bottom-color: var(--admin-primary, #3b82f6); }
-            .customizer-nav a.customizer-nav-sub { padding-left: 1rem; }
-            .customizer-nav-group-label { padding: .4rem .75rem .15rem; border-top: none; margin-top: 0; }
-        }
-    </style>
+    <?php if ($ptcCustomizerCssUrl !== '') : ?>
+    <link rel="stylesheet" href="<?php echo $esc($ptcCustomizerCssUrl); ?>">
+    <?php endif; ?>
 </head>
 <body class="admin-body">
-
-    <?php renderAdminSidebar('theme-customizer'); ?>
+<?php else : ?>
+    <?php if ($ptcCustomizerCssUrl !== '') : ?>
+    <link rel="stylesheet" href="<?php echo $esc($ptcCustomizerCssUrl); ?>">
+    <?php endif; ?>
+<?php endif; ?>
 
     <div class="admin-content">
 
@@ -2328,8 +2370,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                                value="<?php echo $esc($val); ?>"
                                                style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
                                         <input type="text" value="<?php echo $esc($val); ?>"
-                                               class="form-control" style="width:120px;"
-                                               onchange="document.getElementById('<?php echo $esc($inputId); ?>').value = this.value; updateLivePreview();">
+                                               class="form-control" style="width:120px;">
                                     </div>
                                     <?php if (!empty($field['description'])): ?>
                                         <small class="form-text"><?php echo $esc($field['description']); ?></small>
@@ -2405,7 +2446,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                                 <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:.45rem .9rem;background:#3b82f6;color:#fff;border-radius:5px;font-size:.85rem;font-weight:600;">
                                                     📁 Bild hochladen
                                                     <input type="file" name="hero_bg_upload_file" accept="image/*"
-                                                           style="display:none;" onchange="previewImageUpload(this, 'hero-bg-preview')">
+                                                           hidden data-ptc-image-preview="hero-bg-preview">
                                                 </label>
                                                 <span style="color:#64748b;font-size:.8rem;">oder URL:</span>
                                             </div>
@@ -2541,13 +2582,13 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                                 <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:.45rem .9rem;background:#3b82f6;color:#fff;border-radius:5px;font-size:.85rem;font-weight:600;">
                                                     📁 Bild hochladen
                                                     <input type="file" name="logo_upload_file" accept="image/*"
-                                                           style="display:none;" onchange="previewLogoUpload(this)">
+                                                           hidden data-ptc-logo-upload>
                                                 </label>
                                                 <span style="color:#64748b;font-size:.8rem;">oder URL eingeben:</span>
                                             </div>
                                             <input type="text" id="<?php echo $esc($inputId); ?>" name="<?php echo $esc($inputName); ?>"
                                                    value="<?php echo $previewUrl; ?>" class="form-control"
-                                                   placeholder="https://..." oninput="syncLogoUrlPreview(this.value)">
+                                                   placeholder="https://..." data-ptc-logo-url>
                                         </div>
 
                                     <?php elseif ($field['type'] === 'color'): ?>
@@ -2556,8 +2597,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                                    value="<?php echo $esc($val); ?>"
                                                    style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
                                             <input type="text" value="<?php echo $esc($val); ?>"
-                                                   class="form-control" style="width:120px;"
-                                                   onchange="document.getElementById('<?php echo $esc($inputId); ?>').value = this.value; updateLivePreview();">
+                                                   class="form-control" style="width:120px;">
                                         </div>
 
                                     <?php elseif ($field['type'] === 'checkbox'): ?>
@@ -2651,8 +2691,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                                            value="<?php echo $esc($val); ?>"
                                            style="height:38px;padding:2px;width:60px;border:1px solid #ddd;border-radius:4px;">
                                     <input type="text" value="<?php echo $esc($val); ?>"
-                                           class="form-control" style="width:120px;"
-                                           onchange="document.getElementById('<?php echo $esc($inputId); ?>').value = this.value; updateLivePreview();">
+                                           class="form-control" style="width:120px;">
                                 </div>
 
                             <?php elseif ($field['type'] === 'number'): ?>
@@ -2680,7 +2719,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
                         <div class="form-actions" style="justify-content:space-between;">
                             <button type="submit" class="btn btn-primary">💾 Einstellungen speichern</button>
                             <button type="button" class="btn btn-secondary"
-                                    onclick="showResetConfirm()"
+                                    data-ptc-reset-open
                                     title="Alle Einstellungen dieses Tabs auf Standardwerte zurücksetzen">
                                 ↺ Auf Standardwerte zurücksetzen
                             </button>
@@ -2694,7 +2733,7 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
 
     <!-- Reset-Formular (außerhalb des Haupt-Forms) -->
     <?php if (isset($config[$activeTab])): ?>
-    <form id="reset-form" method="POST" action="?tab=<?php echo $esc($activeTab); ?>" style="display:none;">
+    <form id="reset-form" method="POST" action="?tab=<?php echo $esc($activeTab); ?>" hidden>
         <input type="hidden" name="action" value="reset_theme_tab">
         <input type="hidden" name="active_section" value="<?php echo $esc($activeTab); ?>">
         <input type="hidden" name="csrf_token" value="<?php echo $esc($csrfToken); ?>">
@@ -2704,206 +2743,30 @@ $coreAdminJsUrl = function_exists('cms_asset_url')
     </div><!-- /.admin-content -->
 
     <!-- Reset-Bestätigungsmodal -->
-    <div id="confirm-reset-modal" class="modal" style="display:none;">
+    <div id="confirm-reset-modal" class="modal" hidden aria-hidden="true">
         <div class="modal-content" style="max-width:480px;">
             <div class="modal-header">
                 <h3>⚠️ Einstellungen zurücksetzen?</h3>
-                <button class="modal-close" onclick="closeResetModal()">&times;</button>
+                <button type="button" class="modal-close" data-ptc-reset-close aria-label="Schließen">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Alle Einstellungen dieses Tabs werden auf die <strong>Standard-Designwerte</strong> des Themes zurückgesetzt.</p>
                 <p style="color:#64748b;font-size:.875rem;">Bereits gespeicherte Anpassungen gehen für diesen Bereich verloren.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeResetModal()">Abbrechen</button>
-                <button type="button" class="btn btn-danger" onclick="confirmReset()">↺ Zurücksetzen</button>
+                <button type="button" class="btn btn-secondary" data-ptc-reset-close>Abbrechen</button>
+                <button type="button" class="btn btn-danger" data-ptc-reset-confirm>↺ Zurücksetzen</button>
             </div>
         </div>
     </div>
 
+<?php if (!$embedInAdminLayout) : ?>
     <script src="<?php echo $esc($coreAdminJsUrl); ?>"></script>
-    <script>
-    // ── Farb-Picker ↔ Text-Input + Live-Vorschau ─────────────────────────────
-    (function () {
-
-        var liveStyle = document.createElement('style');
-        liveStyle.id  = 'customizer-live-preview';
-        document.head.appendChild(liveStyle);
-
-        // PTC CSS-Variable-Mapping
-        var cssVarMap = {
-            'colors_primary_color':     '--color-primary',
-            'colors_primary_hover':     '--color-primary-hover',
-            'colors_primary_light':     '--color-primary-light',
-            'colors_accent_color':      '--color-accent',
-            'colors_accent_hover':      '--color-accent-hover',
-            'colors_accent_light':      '--color-accent-light',
-            'colors_secondary_color':   '--color-secondary',
-            'colors_text_color':        '--color-text',
-            'colors_heading_color':     '--color-heading',
-            'colors_text_light':        '--color-on-dark',
-            'colors_muted_color':       '--color-muted',
-            'colors_bg_color':          '--color-bg',
-            'colors_bg_secondary':      '--color-bg-alt',
-            'colors_link_color':        '--color-link',
-            'colors_link_hover_color':  '--color-link-hover',
-            'colors_border_color':      '--color-border',
-            'colors_success_color':     '--color-success',
-            'colors_error_color':       '--color-error',
-            'header_header_bg_color':   '--color-primary',
-            'header_header_text_color': '--color-on-dark',
-            'header_header_accent_color': '--color-accent',
-            'footer_footer_bg_color':   '--footer-bg',
-            'footer_footer_text_color': '--footer-text',
-            'footer_footer_link_color': '--footer-link',
-        };
-
-        function updateLivePreview() {
-            var rules = ':root {\n';
-            Object.keys(cssVarMap).forEach(function (name) {
-                var inp = document.querySelector('input[name="' + name + '"][type="color"]');
-                if (inp) {
-                    rules += '  ' + cssVarMap[name] + ': ' + inp.value + ';\n';
-                }
-            });
-            rules += '}';
-            liveStyle.textContent = rules;
-        }
-
-        // Farb-Picker synchronisieren
-        document.querySelectorAll('input[type="color"]').forEach(function (picker) {
-            var textInput = picker.nextElementSibling;
-            if (textInput && textInput.tagName === 'INPUT' && textInput.type === 'text') {
-                picker.addEventListener('input', function () {
-                    textInput.value = this.value;
-                    updateLivePreview();
-                });
-                textInput.addEventListener('input', function () {
-                    var v = this.value.trim();
-                    if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-                        picker.value = v;
-                        updateLivePreview();
-                    }
-                });
-            }
-        });
-
-        // Farbpaletten-Vorschau
-        if (document.querySelector('input[name="colors_primary_color"]')) {
-            var paletteFields = [
-                { name: 'colors_primary_color',   label: 'Navy' },
-                { name: 'colors_accent_color',    label: 'Gold' },
-                { name: 'colors_secondary_color', label: 'Slate' },
-                { name: 'colors_text_color',      label: 'Text' },
-                { name: 'colors_bg_color',        label: 'Hintergrund' },
-                { name: 'colors_bg_secondary',    label: 'Surface' },
-                { name: 'colors_border_color',    label: 'Rahmen' },
-            ];
-            var palette = document.createElement('div');
-            palette.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
-
-            paletteFields.forEach(function (cf) {
-                var inp = document.querySelector('input[name="' + cf.name + '"][type="color"]');
-                if (!inp) { return; }
-                var swatch = document.createElement('div');
-                swatch.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
-                var dot = document.createElement('div');
-                dot.style.cssText = 'width:32px;height:32px;border-radius:50%;border:2px solid rgba(0,0,0,.1);background:' + inp.value + ';';
-                var lbl = document.createElement('span');
-                lbl.style.cssText = 'font-size:.68rem;color:#64748b;max-width:48px;text-align:center;line-height:1.2;';
-                lbl.textContent = cf.label;
-                swatch.appendChild(dot);
-                swatch.appendChild(lbl);
-                palette.appendChild(swatch);
-                inp.addEventListener('input', function () { dot.style.background = this.value; });
-            });
-
-            var firstCard = document.querySelector('.customizer-content .admin-card');
-            if (firstCard) {
-                var previewWrap = document.createElement('div');
-                previewWrap.style.cssText = 'padding:1rem;border-bottom:1px solid #f1f5f9;background:#fafafa;';
-                var title = document.createElement('div');
-                title.style.cssText = 'font-size:.75rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;';
-                title.textContent = 'Farb-Vorschau';
-                previewWrap.appendChild(title);
-                previewWrap.appendChild(palette);
-                firstCard.insertBefore(previewWrap, firstCard.firstChild);
-            }
-        }
-
-        // Strg+S → Speichern
-        document.addEventListener('keydown', function (e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                e.preventDefault();
-                var btn = document.querySelector('button[type="submit"].btn-primary');
-                if (btn) { btn.click(); }
-            }
-        });
-
-    })();
-
-    // Globale Funktion für Text-Input-onchange
-    function updateLivePreview() {
-        var evt = new Event('input', { bubbles: true });
-        document.querySelectorAll('input[type="color"]').forEach(function (p) { p.dispatchEvent(evt); });
-    }
-
-    // ── Logo-Upload Vorschau ─────────────────────────────────────────────────
-    function previewLogoUpload(input) {
-        if (!input.files || !input.files[0]) { return; }
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var wrap = document.getElementById('logo-preview-wrap');
-            var img  = document.getElementById('logo-preview-img');
-            if (img && img.tagName === 'IMG') {
-                img.src = e.target.result;
-            } else if (wrap) {
-                wrap.innerHTML = '<img id="logo-preview-img" src="' + e.target.result + '" style="max-height:48px;max-width:200px;">';
-            }
-            var urlField = document.querySelector('input[name="header_logo_url"]');
-            if (urlField) { urlField.value = ''; }
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-
-    function syncLogoUrlPreview(url) {
-        var wrap = document.getElementById('logo-preview-wrap');
-        if (!wrap) { return; }
-        if (url && url.match(/^https?:\/\//)) {
-            wrap.innerHTML = '<img id="logo-preview-img" src="' + url + '" alt="Logo" style="max-height:48px;max-width:200px;" onerror="this.parentElement.innerHTML=\'<span style=color:#ef4444>Bild konnte nicht geladen werden</span>\'">';
-        }
-    }
-
-    // ── Generischer Bild-Upload-Preview ──────────────────────────────────────
-    function previewImageUpload(input, prefix) {
-        if (!input.files || !input.files[0]) { return; }
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var wrap = document.getElementById(prefix + '-wrap');
-            if (wrap) {
-                wrap.innerHTML = '<img id="' + prefix + '-img" src="' + e.target.result + '" style="max-height:80px;max-width:200px;border-radius:4px;">';
-            }
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-
-    // ── Reset-Modal ──────────────────────────────────────────────────────────
-    function showResetConfirm() {
-        var m = document.getElementById('confirm-reset-modal');
-        if (m) { m.style.display = 'flex'; }
-    }
-    function closeResetModal() {
-        var m = document.getElementById('confirm-reset-modal');
-        if (m) { m.style.display = 'none'; }
-    }
-    function confirmReset() {
-        closeResetModal();
-        document.getElementById('reset-form').submit();
-    }
-    window.addEventListener('click', function (e) {
-        var m = document.getElementById('confirm-reset-modal');
-        if (m && e.target === m) { closeResetModal(); }
-    });
-    </script>
+<?php endif; ?>
+<?php if ($ptcCustomizerJsUrl !== '') : ?>
+    <script src="<?php echo $esc($ptcCustomizerJsUrl); ?>"></script>
+<?php endif; ?>
+<?php if (!$embedInAdminLayout) : ?>
 </body>
 </html>
+<?php endif; ?>

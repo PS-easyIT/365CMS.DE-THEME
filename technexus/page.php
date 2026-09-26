@@ -9,14 +9,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
-$page = null;
-try {
-    $page = \CMS\Services\PageService::getCurrent();
-} catch (\Throwable) {
-    $page = null;
-}
+// Der Core übergibt die Seite als Array ($page); 'content' ist bereits gerendertes, sanitiertes HTML.
+$page = isset($page) && is_array($page) && $page !== [] ? (object) $page : null;
 ?>
 
 <main id="main" class="site-main tn-section" role="main">
@@ -27,7 +22,7 @@ try {
 
                 <?php if (!empty($page->content ?? '')) : ?>
                     <div class="page-body prose">
-                        <?php echo \CMS\Helpers\ContentHelper::processContent($page->content); ?>
+                        <?php echo (string) $page->content; ?>
                     </div>
                 <?php endif; ?>
             </article>
@@ -40,4 +35,3 @@ try {
     </div>
 </main>
 
-<?php get_footer(); ?>

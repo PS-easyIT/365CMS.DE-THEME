@@ -1,7 +1,8 @@
 {
   "name": "BuildBase",
   "slug": "buildbase",
-  "version": "3.0.2",
+  "version": "3.1.0",
+  "requires_cms": "3.4.00",
   "author": "PHINIT.DE / Andreas Hepp",
   "description": "Bau & Handwerk Theme – Robust, solide, handwerklich. Für Bauunternehmen, Architekten und Handwerksbetriebe.",
   "tags": ["bau", "handwerk", "portfolio", "directory", "robust", "cms"],

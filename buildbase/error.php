@@ -5,7 +5,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
+// Wird auch vom Fatal-Handler (index.php) direkt eingebunden – Theme-Helfer dann nachladen.
+if (!defined('BUILDBASE_THEME_VERSION') && is_file(__DIR__ . '/functions.php')) {
+    require_once __DIR__ . '/functions.php';
+}
+
+if (function_exists('get_header')) {
+    get_header();
+}
 
 $errorCode    = isset($errorCode)    ? (int) $errorCode    : 500;
 $errorMessage = isset($errorMessage) ? (string) $errorMessage : 'Ein Fehler ist aufgetreten.';
@@ -22,4 +29,4 @@ $siteUrl      = buildbase_safe_url((string) SITE_URL, '/');
         </div>
     </div>
 </main>
-<?php get_footer(); ?>
+<?php if (function_exists('get_footer')) { get_footer(); } ?>

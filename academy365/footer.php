@@ -5,6 +5,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Der Core rendert den Footer in ThemeManager::render(); doppelte Einbindung verhindern.
+if (defined('CMS_THEME_FOOTER_RENDERED')) {
+    return;
+}
+define('CMS_THEME_FOOTER_RENDERED', true);
+
 $safe = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 try { $c = \CMS\Services\ThemeCustomizer::instance(); } catch (\Throwable $e) { $c = null; }
 $copyrightText = $c ? $c->get('footer', 'copyright_text', '') : '';
@@ -80,6 +86,11 @@ $copyrightLine = str_replace(
     </div>
 </footer><!-- #colophon -->
 </div><!-- #page .ac-page-wrapper -->
-<?php \CMS\Hooks::doAction('before_footer'); ?>
+<?php
+// before_footer (Theme-Scripts) und body_end (Core-Cookie-Consent, Web-Vitals, PhotoSwipe)
+// laufen pro Request nur einmal – der Core löst sie ebenfalls aus.
+\CMS\Hooks::doAction('before_footer');
+\CMS\Hooks::doAction('body_end');
+?>
 </body>
 </html>

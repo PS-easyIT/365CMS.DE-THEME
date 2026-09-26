@@ -1,7 +1,8 @@
 {
   "name": "Business Presentation",
   "slug": "business",
-  "version": "3.0.2",
+  "version": "3.1.0",
+  "requires_cms": "3.4.00",
   "description": "Editorial B2B-Corporate-Theme – Slate-Anker, Kupfer-Gold-Akzent, redaktionelle Whitespace-Disziplin. Für IT-Beratung, Dienstleister und Consultancies.",
   "author": "PHIN IT Solutions",
   "textdomain": "biz-theme",

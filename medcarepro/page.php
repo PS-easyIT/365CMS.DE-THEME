@@ -9,16 +9,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-get_header();
 
 $safe    = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 $homeUrl = $safe(theme_route_url('home'));
 
-try {
-    $page = \CMS\Services\PageService::getCurrent();
-} catch (\Throwable) {
-    $page = null;
-}
+// Der Core übergibt die Seite als Array ($page); 'content' ist bereits gerendertes, sanitiertes HTML.
+$page = isset($page) && is_array($page) && $page !== [] ? (object) $page : null;
 ?>
 <main id="main" class="mc-main mc-page" role="main">
     <div class="mc-container mc-page__container">
@@ -29,7 +25,7 @@ try {
             <?php endif; ?>
             <?php if (!empty($page->content)) : ?>
                 <div class="prose mc-page__content">
-                    <?php echo \CMS\Helpers\ContentHelper::processContent((string) $page->content); ?>
+                    <?php echo (string) $page->content; ?>
                 </div>
             <?php endif; ?>
         </article>
@@ -43,4 +39,3 @@ try {
         <?php endif; ?>
     </div>
 </main>
-<?php get_footer(); ?>
