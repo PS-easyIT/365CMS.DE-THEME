@@ -9,6 +9,12 @@ declare(strict_types=1);
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// Fallback für Blog-/Kategorie-/Schlagwort-Archive: Der Core übergibt dann $posts.
+if (isset($posts) && is_array($posts)) {
+    require __DIR__ . '/blog.php';
+    return;
+}
 ?>
 
 <section class="ptc-page-hero">

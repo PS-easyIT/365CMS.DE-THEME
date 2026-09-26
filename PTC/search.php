@@ -66,7 +66,7 @@ $typeBadges = [
                     $resultSlug    = is_array($result) ? ($result['slug'] ?? '') : ($result->slug ?? '');
                     $resultExcerpt = is_array($result) ? ($result['meta_description'] ?? $result['content'] ?? '') : ($result->meta_description ?? $result->content ?? '');
                     $resultType    = is_array($result) ? ($result['_type'] ?? 'page') : ($result->_type ?? 'page');
-                    $resultUrl     = htmlspecialchars($siteUrl . '/' . $resultSlug, ENT_QUOTES, 'UTF-8');
+                    $resultUrl     = htmlspecialchars(theme_search_result_url($result), ENT_QUOTES, 'UTF-8');
                     $badge         = $typeBadges[$resultType] ?? $typeBadges['page'];
 
                     // Excerpt kürzen

@@ -11,6 +11,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Fallback für Blog-/Kategorie-/Schlagwort-Archive: Der Core übergibt dann $posts.
+if (isset($posts) && is_array($posts)) {
+    require __DIR__ . '/blog.php';
+    return;
+}
+
 $safe = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 ?>
 

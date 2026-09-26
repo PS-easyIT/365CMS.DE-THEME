@@ -1191,3 +1191,12 @@ p { color: var(--news-ink-mid); }
     .news-list-card:hover .news-list-img img,
     .news-tile:hover .news-tile-img img { transform: none; }
 }
+
+/* ── 365CMS 3.4: gemeinsame Template-Bausteine (Beitrag, Suche, Pagination) ── */
+.cms-visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.cms-post-meta { margin: 0 0 1.25rem; font-size: .9rem; opacity: .75; }
+.cms-post-image { margin: 0 0 1.5rem; }
+.cms-post-image img { display: block; width: 100%; height: auto; border-radius: 8px; }
+.cms-pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 2rem 0 0; flex-wrap: wrap; }
+form[role="search"] { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1rem 0 2rem; }
+form[role="search"] input[type="search"] { flex: 1 1 260px; min-width: 0; padding: .65rem .9rem; border: 1px solid currentColor; border-radius: 6px; font: inherit; background: transparent; color: inherit; }
