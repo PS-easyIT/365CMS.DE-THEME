@@ -193,10 +193,12 @@
         }
         var open = function () {
             modal.hidden = false;
+            modal.classList.add('active'); // Core-Admin-CSS: .modal.active = sichtbares Overlay
             modal.setAttribute('aria-hidden', 'false');
         };
         var close = function () {
             modal.hidden = true;
+            modal.classList.remove('active');
             modal.setAttribute('aria-hidden', 'true');
         };
 

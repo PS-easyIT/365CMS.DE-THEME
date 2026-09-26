@@ -94,12 +94,14 @@
 
             const openModal = () => {
                 modal.hidden = false;
+                modal.classList.add('active'); // Core-Admin-CSS: .modal.active = sichtbares Overlay
                 modal.setAttribute('aria-hidden', 'false');
                 modal.querySelector('[data-customizer-reset-confirm]')?.focus();
             };
 
             const closeModal = () => {
                 modal.hidden = true;
+                modal.classList.remove('active');
                 modal.setAttribute('aria-hidden', 'true');
             };
 

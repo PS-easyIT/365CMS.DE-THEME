@@ -70,7 +70,7 @@ $copyrightText = str_replace(
                             <?php if ($tnIsLogged) : ?>
                                 <li><a href="<?php echo tn_html_attr(theme_route_url('member')); ?>">Mein Dashboard</a></li>
                                 <li><a href="<?php echo tn_html_attr(theme_route_url('member/profile')); ?>">Mein Profil</a></li>
-                                <li><a href="<?php echo tn_html_attr(theme_route_url('logout')); ?>">Abmelden</a></li>
+                                <li><a href="<?php echo tn_html_attr(theme_logout_url()); ?>">Abmelden</a></li>
                             <?php else : ?>
                                 <li><a href="<?php echo tn_html_attr(theme_route_url('login')); ?>">Anmelden</a></li>
                                 <li><a href="<?php echo tn_html_attr(theme_route_url('register')); ?>">Registrieren</a></li>

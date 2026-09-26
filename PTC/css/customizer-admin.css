@@ -48,5 +48,5 @@
 .ptc-customizer-logo-preview { max-height: 48px; max-width: 200px; }
 .ptc-customizer-image-preview { max-height: 80px; max-width: 200px; border-radius: 4px; }
 .ptc-customizer-preview-error { color: #ef4444; font-size: .85rem; }
-#confirm-reset-modal:not([hidden]) { display: flex; }
+#confirm-reset-modal[hidden] { display: none !important; }
 #confirm-reset-modal .modal-content { max-width: 480px; }

@@ -346,7 +346,8 @@ $serviceIcon = static function (string $key): string {
                 <p>Anfrage-Skizze: tatsächliche Buchung erfolgt nach Login im Dashboard.</p>
             </div>
 
-            <form class="ll-capacity-form ll-reveal" method="post" action="<?php echo $regUrl; ?>" aria-label="Kapazitätsanfrage">
+            <?php // GET: Die Skizze führt zur Registrierung; ein POST an /register würde ohne CSRF-Token der Aktion „register“ abgewiesen. ?>
+            <form class="ll-capacity-form ll-reveal" method="get" action="<?php echo $regUrl; ?>" aria-label="Kapazitätsanfrage">
                 <div class="ll-form-field">
                     <label for="ll-cap-origin">Von</label>
                     <input id="ll-cap-origin" type="text" name="origin" placeholder="z. B. Hamburg" autocomplete="off">

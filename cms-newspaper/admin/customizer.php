@@ -629,7 +629,7 @@ if (!$embedInAdminLayout) :
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-customizer-reset-close>Abbrechen</button>
-                <button type="button" class="btn btn-danger" data-customizer-reset-confirm">↺ Zurücksetzen</button>
+                <button type="button" class="btn btn-danger" data-customizer-reset-confirm>↺ Zurücksetzen</button>
             </div>
         </div>
     </div>

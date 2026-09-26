@@ -40,6 +40,9 @@ $showBreakingLive = filter_var(
     FILTER_VALIDATE_BOOLEAN
 );
 
+// Lokales Platzhalterbild (keine Drittanbieter-Requests; CSP img-src 'self').
+$newsPlaceholderImg = rtrim((string) \CMS\ThemeManager::instance()->getThemeUrl('cms-newspaper'), '/') . '/images/placeholder.svg';
+
 /**
  * Static editorial placeholders – mirror the broadsheet layout of the
  * original `newspaper.html` prototype. These are intentionally inline
@@ -55,7 +58,7 @@ $breaking = [
         'date'     => '23. Feb 2026',
         'read'     => '8 Min Lesezeit',
         'href'     => '/artikel/multi-tenant-apps-entra-id',
-        'img'      => 'https://picsum.photos/seed/news-security/400/250',
+        'img'      => $newsPlaceholderImg,
     ],
     [
         'badge'    => 'PowerShell',
@@ -65,7 +68,7 @@ $breaking = [
         'date'     => '21. Feb 2026',
         'read'     => '12 Min Lesezeit',
         'href'     => '/artikel/graph-api-user-lifecycle-v24',
-        'img'      => 'https://picsum.photos/seed/news-powershell/400/250',
+        'img'      => $newsPlaceholderImg,
     ],
     [
         'badge'    => 'Compliance',
@@ -75,7 +78,7 @@ $breaking = [
         'date'     => '18. Feb 2026',
         'read'     => '6 Min Lesezeit',
         'href'     => '/artikel/purview-dlp-custom-dialoge',
-        'img'      => 'https://picsum.photos/seed/news-purview/400/250',
+        'img'      => $newsPlaceholderImg,
     ],
     [
         'badge'    => 'Exchange',
@@ -85,7 +88,7 @@ $breaking = [
         'date'     => '15. Feb 2026',
         'read'     => '10 Min Lesezeit',
         'href'     => '/artikel/ews-abschaltung-mai-2027',
-        'img'      => 'https://picsum.photos/seed/news-exchange/400/250',
+        'img'      => $newsPlaceholderImg,
     ],
 ];
 
@@ -96,7 +99,7 @@ $archive = [
         'date'  => '12. Feb 2026',
         'kind'  => 'Guide',
         'href'  => '/artikel/intune-app-protection',
-        'img'   => 'https://picsum.photos/seed/news-intune/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Identity',
@@ -104,7 +107,7 @@ $archive = [
         'date'  => '08. Feb 2026',
         'kind'  => 'Tutorial',
         'href'  => '/artikel/defender-identity-sensor',
-        'img'   => 'https://picsum.photos/seed/news-identity/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Azure',
@@ -112,7 +115,7 @@ $archive = [
         'date'  => '05. Feb 2026',
         'kind'  => 'Docs',
         'href'  => '/artikel/entra-connect-health',
-        'img'   => 'https://picsum.photos/seed/news-azure/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Teams',
@@ -120,7 +123,7 @@ $archive = [
         'date'  => '01. Feb 2026',
         'kind'  => 'Script',
         'href'  => '/artikel/teams-governance-gaeste',
-        'img'   => 'https://picsum.photos/seed/news-teams/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Hardening',
@@ -128,7 +131,7 @@ $archive = [
         'date'  => '28. Jan 2026',
         'kind'  => 'Checkliste',
         'href'  => '/artikel/m365-hardening-baseline-2026',
-        'img'   => 'https://picsum.photos/seed/news-hardening/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Migration',
@@ -136,7 +139,7 @@ $archive = [
         'date'  => '22. Jan 2026',
         'kind'  => 'Guide',
         'href'  => '/artikel/modern-auth-exchange-2019',
-        'img'   => 'https://picsum.photos/seed/news-modernauth/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Purview',
@@ -144,7 +147,7 @@ $archive = [
         'date'  => '15. Jan 2026',
         'kind'  => 'Deep Dive',
         'href'  => '/artikel/ediscovery-premium-tb',
-        'img'   => 'https://picsum.photos/seed/news-ediscovery/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Graph',
@@ -152,7 +155,7 @@ $archive = [
         'date'  => '10. Jan 2026',
         'kind'  => 'Script',
         'href'  => '/artikel/app-permissions-audit',
-        'img'   => 'https://picsum.photos/seed/news-graph/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
     [
         'badge' => 'Storage',
@@ -160,7 +163,7 @@ $archive = [
         'date'  => '02. Jan 2026',
         'kind'  => 'Tutorial',
         'href'  => '/artikel/onedrive-sync-security',
-        'img'   => 'https://picsum.photos/seed/news-onedrive/400/250',
+        'img'   => $newsPlaceholderImg,
     ],
 ];
 

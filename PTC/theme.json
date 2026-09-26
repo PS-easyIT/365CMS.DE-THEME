@@ -1336,7 +1336,7 @@
                     "label": "MS Booking Embed-URL",
                     "type": "text",
                     "default": "",
-                    "description": "Microsoft Booking URL für Inline-Buchungsformular"
+                    "description": "Microsoft-Bookings-URL (https), wird als Button verlinkt (CSP erlaubt keine Fremd-Frames)"
                 },
                 "events_booking_title": {
                     "label": "MS Booking Überschrift",
@@ -1744,13 +1744,13 @@
                     "label": "Custom Head Code (Tracking, Meta)",
                     "type": "textarea",
                     "default": "",
-                    "description": "Wird im <head> ausgegeben"
+                    "description": "Wird im <head> ausgegeben. Hinweis: Die 365CMS-CSP blockiert Inline-Scripts und Fremd-Scripts; Tracking bitte unter SEO → Analytics einrichten (consent-gesteuert)."
                 },
                 "custom_footer_code": {
                     "label": "Custom Footer Code (Analytics, Widgets)",
                     "type": "textarea",
                     "default": "",
-                    "description": "Wird vor </body> ausgegeben"
+                    "description": "Wird vor </body> ausgegeben. Hinweis: Die 365CMS-CSP blockiert Inline-Scripts und Fremd-Scripts; Tracking bitte unter SEO → Analytics einrichten (consent-gesteuert)."
                 }
             }
         }

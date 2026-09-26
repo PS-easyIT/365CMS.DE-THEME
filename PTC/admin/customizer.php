@@ -1605,8 +1605,8 @@ $config = [
 
             // ── Microsoft Booking Integration ──
             'events_booking_url' => [
-                'label'       => '📅 MS Booking – Embed-URL',
-                'description' => 'Vollständige Microsoft Booking URL für das Inline-Buchungsformular. Leer = keine Anzeige.',
+                'label'       => '📅 MS Booking – Buchungs-URL',
+                'description' => 'Vollständige Microsoft-Bookings-URL (https). Wird als Button „Termin buchen“ verlinkt – eingebettete Fremd-Frames blockiert die 365CMS-CSP. Leer = keine Anzeige.',
                 'type'        => 'text',
                 'default'     => '',
             ],
@@ -1618,7 +1618,7 @@ $config = [
             ],
             'events_booking_height' => [
                 'label'       => 'MS Booking – Höhe (px)',
-                'description' => 'Höhe des Booking-Iframes in Pixeln.',
+                'description' => 'Ohne Wirkung seit Theme 3.1.0 (Buchung wird verlinkt statt eingebettet).',
                 'type'        => 'number',
                 'default'     => 600,
             ],
@@ -2092,13 +2092,13 @@ $config = [
             ],
             'custom_head_code' => [
                 'label'       => 'Custom Head Code (Tracking, Meta)',
-                'description' => 'Wird im &lt;head&gt; ausgegeben. Nur vertrauenswürdigen Code einfügen!',
+                'description' => 'Wird im &lt;head&gt; ausgegeben. Nur vertrauenswürdigen Code einfügen! Hinweis: Die 365CMS-CSP blockiert Inline-Scripts und Fremd-Scripts; Tracking bitte unter SEO → Analytics einrichten (consent-gesteuert).',
                 'type'        => 'textarea',
                 'default'     => '',
             ],
             'custom_footer_code' => [
                 'label'       => 'Custom Footer Code (Analytics, Widgets)',
-                'description' => 'Wird vor &lt;/body&gt; ausgegeben.',
+                'description' => 'Wird vor &lt;/body&gt; ausgegeben. Hinweis: Die 365CMS-CSP blockiert Inline-Scripts und Fremd-Scripts; Tracking bitte unter SEO → Analytics einrichten (consent-gesteuert).',
                 'type'        => 'textarea',
                 'default'     => '',
             ],

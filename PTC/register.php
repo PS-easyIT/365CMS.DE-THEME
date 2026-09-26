@@ -104,14 +104,14 @@ $savedEmail    = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
                     <input class="ptc-form-control"
                            type="password"
                            id="password_confirm"
-                           name="password_confirm"
+                           name="password2"
                            autocomplete="new-password"
                            required>
                 </div>
 
                 <!-- Datenschutz-Checkbox -->
                 <div class="ptc-form-group ptc-form-checkbox">
-                    <input type="checkbox" id="privacy" name="privacy" required>
+                    <input type="checkbox" id="privacy" name="terms" value="1" required>
                     <label for="privacy">
                         Ich stimme der
                         <a href="<?php echo htmlspecialchars($siteUrl, ENT_QUOTES, 'UTF-8'); ?>/datenschutz" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>

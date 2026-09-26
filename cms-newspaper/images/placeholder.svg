@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="400" height="250" role="img" aria-label="Platzhalterbild">
+  <rect width="400" height="250" fill="#f1efe9"/>
+  <rect x="24" y="24" width="352" height="202" fill="none" stroke="#1a1a1a" stroke-opacity=".18" stroke-width="2"/>
+  <path d="M150 170l40-48 28 32 20-22 42 38z" fill="#1a1a1a" fill-opacity=".22"/>
+  <circle cx="246" cy="98" r="14" fill="#c8102e" fill-opacity=".55"/>
+</svg>

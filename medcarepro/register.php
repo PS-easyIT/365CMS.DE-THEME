@@ -19,58 +19,25 @@ if (theme_is_logged_in()) {
 }
 
 $isDoctor       = ($_GET['type'] ?? '') === 'doctor';
-$error          = null;
-$success        = null;
 $safe           = static fn(mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
-$postedEmail    = filter_var((string) ($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
-$postedUsername = trim(strip_tags((string) ($_POST['username'] ?? '')));
+$postedEmail    = '';
+$postedUsername = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mc_register'])) {
-    try {
-        if (empty($_POST['honeypot_field'])) {
-            if (!\CMS\Security::instance()->verifyToken((string) ($_POST['csrf_token'] ?? ''), 'mc_register')) {
-                $error = 'Sicherheitscheck fehlgeschlagen. Bitte laden Sie die Seite neu.';
-            } else {
-                $email    = filter_var(trim((string) ($_POST['email'] ?? '')), FILTER_VALIDATE_EMAIL);
-                $username = trim(strip_tags((string) ($_POST['username'] ?? '')));
-                $password = (string) ($_POST['password'] ?? '');
-                $passConf = (string) ($_POST['password_confirm'] ?? '');
-                $privacyAgreed = !empty($_POST['privacy']);
-                $regType  = (($_POST['register_type'] ?? 'patient') === 'doctor') ? 'doctor' : 'patient';
-
-                if (!$email) {
-                    $error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-                } elseif (strlen($username) < 3) {
-                    $error = 'Der Benutzername muss mindestens 3 Zeichen lang sein.';
-                } elseif (strlen($password) < 8) {
-                    $error = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
-                } elseif ($password !== $passConf) {
-                    $error = 'Die Passwörter stimmen nicht überein.';
-                } elseif (!$privacyAgreed) {
-                    $error = 'Bitte akzeptieren Sie die Datenschutzerklärung.';
-                } else {
-                    $result = \CMS\Auth::instance()->register($email, $username, $password, ['role' => $regType]);
-                    if ($result === true) {
-                        $success = 'Registrierung erfolgreich! Sie können sich jetzt anmelden.';
-                    } else {
-                        $error = is_string($result) ? $result : 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.';
-                    }
-                }
-            }
-        }
-    } catch (\Throwable) {
-        $error = 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.';
-    }
-}
+// POST /login bzw. /register verarbeitet der Core (PublicRouter::handleLogin/handleRegister,
+// CSRF-Aktion 'login'/'register'); Meldungen kommen als Session-Flash zurück.
+$error   = isset($_SESSION['error']) && is_string($_SESSION['error']) ? $_SESSION['error'] : null;
+$success = isset($_SESSION['success']) && is_string($_SESSION['success']) ? $_SESSION['success'] : null;
+unset($_SESSION['error'], $_SESSION['success']);
 
 try {
-    $csrfToken = \CMS\Security::instance()->generateToken('mc_register');
+    $csrfToken = \CMS\Security::instance()->generateToken('register');
 } catch (\Throwable) {
     $csrfToken = '';
 }
 
 $privText   = (string) mc_get_setting('dsgvo_medical', 'privacy_form_text', 'Ihre Daten werden gemäß DSGVO und § 203 StGB vertraulich behandelt.');
 $loginUrl   = $safe(theme_route_url('login'));
+$registerAction = $safe(theme_route_url('register'));
 $privacyUrl = $safe(theme_route_url('privacy'));
 
 ?>
@@ -131,10 +98,8 @@ $privacyUrl = $safe(theme_route_url('privacy'));
             <?php endif; ?>
 
             <?php if (empty($success)) : ?>
-            <form method="POST" novalidate class="mc-auth-form">
-                <input type="hidden" name="mc_register" value="1">
+            <form method="POST" action="<?php echo $registerAction; ?>" novalidate class="mc-auth-form">
                 <input type="hidden" name="csrf_token" value="<?php echo $safe($csrfToken); ?>">
-                <input type="hidden" name="register_type" value="<?php echo $isDoctor ? 'doctor' : 'patient'; ?>">
 
                 <div class="mc-honeypot" aria-hidden="true">
                     <label for="honeypot_field">Dieses Feld leer lassen</label>
@@ -195,7 +160,7 @@ $privacyUrl = $safe(theme_route_url('privacy'));
                     </label>
                     <input id="reg-password-confirm"
                            type="password"
-                           name="password_confirm"
+                           name="password2"
                            class="mc-input"
                            autocomplete="new-password"
                            required
@@ -206,7 +171,7 @@ $privacyUrl = $safe(theme_route_url('privacy'));
                 <div class="mc-form-group mc-form-check">
                     <input id="reg-privacy"
                            type="checkbox"
-                           name="privacy"
+                           name="terms"
                            value="1"
                            required
                            aria-required="true"

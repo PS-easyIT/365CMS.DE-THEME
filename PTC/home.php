@@ -428,21 +428,24 @@ $footerPhone = ptc_customizer_get('footer', 'footer_phone', '');
         <?php endif; ?>
 
         <?php
-        // MS Booking Integration
+        // MS Booking Integration – als Link statt iframe: Die 365CMS-CSP erlaubt keine
+        // Fremd-Frames (frame-src 'self'); die URL wird auf http(s) geprüft.
         $bookingUrl   = trim((string) $evtGet('events_booking_url', ''));
         $bookingTitle = trim((string) $evtGet('events_booking_title', 'Online-Termin buchen'));
-        $bookingHeight = (int) $evtGet('events_booking_height', 600);
+        $bookingScheme = strtolower((string) parse_url($bookingUrl, PHP_URL_SCHEME));
+        if (!in_array($bookingScheme, ['http', 'https'], true) || filter_var($bookingUrl, FILTER_VALIDATE_URL) === false) {
+            $bookingUrl = '';
+        }
         if ($bookingUrl !== ''):
         ?>
         <div class="ptc-booking-embed">
             <?php if ($bookingTitle !== ''): ?>
                 <h3><?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?></h3>
             <?php endif; ?>
-            <iframe src="<?php echo htmlspecialchars($bookingUrl, ENT_QUOTES, 'UTF-8'); ?>"
-                    width="100%" height="<?php echo (int) $bookingHeight; ?>"
-                    frameborder="0" scrolling="yes"
-                    title="<?php echo htmlspecialchars($bookingTitle, ENT_QUOTES, 'UTF-8'); ?>"
-                    loading="lazy"></iframe>
+            <a href="<?php echo htmlspecialchars($bookingUrl, ENT_QUOTES, 'UTF-8'); ?>"
+               class="btn-ptc btn-ptc-primary" target="_blank" rel="noopener noreferrer">
+                📅 <?php echo htmlspecialchars($bookingTitle !== '' ? $bookingTitle : 'Online-Termin buchen', ENT_QUOTES, 'UTF-8'); ?> (öffnet in neuem Fenster)
+            </a>
         </div>
         <?php endif; ?>
 

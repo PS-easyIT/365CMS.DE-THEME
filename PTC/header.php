@@ -118,7 +118,7 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
                                     <a href="<?php echo $siteUrl; ?>/admin/" role="menuitem">⚙️ Administration</a>
                                 <?php endif; ?>
                                 <div class="ptc-profile-divider"></div>
-                                <a href="<?php echo $siteUrl; ?>/logout" role="menuitem">🚪 Abmelden</a>
+                                <a href="<?php echo htmlspecialchars(theme_logout_url(), ENT_QUOTES, 'UTF-8'); ?>" role="menuitem">🚪 Abmelden</a>
                             </div>
                         </div>
                     <?php else: ?>
@@ -170,7 +170,7 @@ $_headerAnim    = (string) ptc_customizer_get('header', 'header_animation', 'non
                 <a href="<?php echo $siteUrl; ?>/member" class="btn-ptc btn-ptc-accent ptc-drawer-btn">
                     📊 Dashboard
                 </a>
-                <a href="<?php echo $siteUrl; ?>/logout" class="btn-ptc btn-ptc-ghost ptc-drawer-btn">
+                <a href="<?php echo htmlspecialchars(theme_logout_url(), ENT_QUOTES, 'UTF-8'); ?>" class="btn-ptc btn-ptc-ghost ptc-drawer-btn">
                     🚪 Abmelden
                 </a>
             <?php else: ?>

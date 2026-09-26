@@ -332,7 +332,7 @@ final class IT_Business_Theme
         $clean = preg_replace($protocolSinkPattern, '', $clean) ?? '';
         $clean = preg_replace('/\b(?:behavior|binding)\s*:[^;]+;?/i', '', $clean) ?? '';
 
-        return $clean;
+        return str_replace('</', '<\/', $clean);
     }
 }
 
@@ -429,7 +429,8 @@ if (!function_exists('biz_sanitize_content_html')) {
             return ' ' . $attr . '="' . htmlspecialchars($safe, ENT_QUOTES, 'UTF-8') . '"';
         }, $clean) ?? '';
 
-        return str_replace('</', '<\/', $clean);
+        // Kein '</'-Escaping: Das Ergebnis ist HTML-Body-Inhalt, kein <script>/<style>-Kontext.
+        return $clean;
     }
 }
 

@@ -16,41 +16,22 @@ if (theme_is_logged_in()) {
     exit;
 }
 
-$error   = null;
-$success = null;
 $safe    = static fn(mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mc_login'])) {
-    try {
-        if (!\CMS\Security::instance()->verifyToken((string) ($_POST['csrf_token'] ?? ''), 'mc_login')) {
-            $error = 'Sicherheitscheck fehlgeschlagen. Bitte laden Sie die Seite neu.';
-        } else {
-            $email    = filter_var(trim((string) ($_POST['email'] ?? '')), FILTER_VALIDATE_EMAIL);
-            $password = (string) ($_POST['password'] ?? '');
-
-            if (!$email || $password === '') {
-                $error = 'Bitte E-Mail und Passwort eingeben.';
-            } else {
-                $result = \CMS\Auth::instance()->login($email, $password);
-                if ($result === true) {
-                    header('Location: ' . theme_route_url('member'));
-                    exit;
-                }
-                $error = is_string($result) ? $result : 'Ungültige E-Mail-Adresse oder falsches Passwort.';
-            }
-        }
-    } catch (\Throwable) {
-        $error = 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.';
-    }
-}
+// POST /login bzw. /register verarbeitet der Core (PublicRouter::handleLogin/handleRegister,
+// CSRF-Aktion 'login'/'register'); Meldungen kommen als Session-Flash zurück.
+$error   = isset($_SESSION['error']) && is_string($_SESSION['error']) ? $_SESSION['error'] : null;
+$success = isset($_SESSION['success']) && is_string($_SESSION['success']) ? $_SESSION['success'] : null;
+unset($_SESSION['error'], $_SESSION['success']);
 
 try {
-    $csrfToken = \CMS\Security::instance()->generateToken('mc_login');
+    $csrfToken = \CMS\Security::instance()->generateToken('login');
 } catch (\Throwable) {
     $csrfToken = '';
 }
 
-$postedEmail   = filter_var((string) ($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+$postedEmail   = '';
+$loginAction   = $safe(theme_route_url('login'));
 $forgotUrl     = $safe(mc_href('/forgot-password'));
 $registerUrl   = $safe(theme_route_url('register'));
 
@@ -78,8 +59,7 @@ $registerUrl   = $safe(theme_route_url('register'));
             <div class="mc-alert mc-alert-success" role="status"><?php echo $safe($success); ?></div>
             <?php endif; ?>
 
-            <form method="POST" novalidate class="mc-auth-form">
-                <input type="hidden" name="mc_login" value="1">
+            <form method="POST" action="<?php echo $loginAction; ?>" novalidate class="mc-auth-form">
                 <input type="hidden" name="csrf_token" value="<?php echo $safe($csrfToken); ?>">
 
                 <div class="mc-form-group">

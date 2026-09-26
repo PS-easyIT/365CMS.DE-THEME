@@ -336,7 +336,15 @@ final class MedCarePro_Theme
         if ($trimmed === '') {
             return '';
         }
-        return (string) preg_replace('#</\s*style\s*>#i', '', $trimmed);
+        // Wiederholt bereinigen (verhindert z. B. `</</style>style>`) und jedes `</` neutralisieren,
+        // damit eigenes CSS den <style>-Block nicht verlassen kann.
+        $clean = $trimmed;
+        do {
+            $previous = $clean;
+            $clean = (string) preg_replace('#<\/?\s*style\b[^>]*>#i', '', $clean);
+        } while ($clean !== $previous);
+
+        return str_replace('</', '<\/', $clean);
     }
 }
 

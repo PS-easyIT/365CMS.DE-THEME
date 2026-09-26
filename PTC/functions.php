@@ -389,7 +389,15 @@ final class PTC_Theme
         if ($trimmed === '') {
             return '';
         }
-        return (string) preg_replace('#</\s*style\s*>#i', '', $trimmed);
+        // Wiederholt bereinigen (verhindert z. B. `</</style>style>`) und jedes `</` neutralisieren,
+        // damit eigenes CSS den <style>-Block nicht verlassen kann.
+        $clean = $trimmed;
+        do {
+            $previous = $clean;
+            $clean = (string) preg_replace('#<\/?\s*style\b[^>]*>#i', '', $clean);
+        } while ($clean !== $previous);
+
+        return str_replace('</', '<\/', $clean);
     }
 }
 
@@ -783,5 +791,27 @@ if (!function_exists('theme_search_result_url')) {
         $slug = ltrim((string) ($data['slug'] ?? ''), '/');
 
         return rtrim((string) SITE_URL, '/') . '/' . implode('/', array_map('rawurlencode', explode('/', $slug)));
+    }
+}
+
+if (!function_exists('theme_logout_url')) {
+    /** Logout-URL mit CSRF-Token der Aktion „logout“ (PublicRouter::handleLogout verlangt ihn). */
+    function theme_logout_url(): string
+    {
+        static $url = null;
+        if ($url !== null) {
+            return $url;
+        }
+        $url = rtrim((string) SITE_URL, '/') . '/logout';
+        try {
+            $token = (string) \CMS\Security::instance()->generateToken('logout');
+        } catch (\Throwable) {
+            $token = '';
+        }
+        if ($token !== '') {
+            $url .= '?csrf_token=' . rawurlencode($token);
+        }
+
+        return $url;
     }
 }
