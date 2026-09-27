@@ -71,6 +71,11 @@
       "slug": "kompass",
       "name": "Kompass",
       "manifest": "THEMES/kompass/update.json"
+    },
+    {
+      "slug": "cms-showcase",
+      "name": "365CMS Showcase",
+      "manifest": "THEMES/cms-showcase/update.json"
     }
   ]
 }
