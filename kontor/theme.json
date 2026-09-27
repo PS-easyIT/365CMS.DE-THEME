@@ -1,0 +1,270 @@
+{
+    "name": "Kontor",
+    "slug": "kontor",
+    "version": "1.0.0",
+    "requires_cms": "3.4.00",
+    "requires_php": "8.4",
+    "author": "PHINIT.DE / Andreas Hepp",
+    "description": "Business-Theme für Mittelstand, Kanzleien, Beratungen und Dienstleister – Tannengrün mit Mint-Akzent, Manrope-Typografie, vollständig pflegbare Startseite (Hero, Leistungen, Über uns, Kennzahlen, Ablauf, Referenz, FAQ, Aktuelles, Kontakt-CTA) und seriöse Unterseiten mit Kontaktkarte.",
+    "textdomain": "kontor",
+    "template": "kontor",
+    "tags": ["business", "unternehmen", "mittelstand", "beratung", "kanzlei", "dienstleister", "corporate", "responsive"],
+    "supports": ["custom-logo", "sticky-header", "custom-css", "faq", "testimonial", "contact-cta"],
+    "templates": {
+        "home": "home.php",
+        "blog": "blog.php",
+        "category": "category.php",
+        "tag": "tag.php",
+        "author": "author.php",
+        "blog-single": "blog-single.php",
+        "page": "page.php",
+        "search": "search.php",
+        "404": "404.php",
+        "error": "error.php",
+        "index": "index.php"
+    },
+    "menus": {
+        "primary": "Hauptnavigation (Header)",
+        "footer-nav": "Footer: Unternehmen",
+        "footer-services": "Footer: Leistungen",
+        "footer-legal": "Rechtliche Links (Footer)"
+    },
+    "settings": {
+        "company_name": "Kontor Beratung GmbH"
+    },
+    "customization": {
+        "colors": {
+            "label": "Farben",
+            "description": "Tannengrün als Markenanker, Mint als Akzent für Buttons und Hervorhebungen, Sand für ruhige Flächen.",
+            "settings": {
+                "ink_color": { "label": "Anker (dunkles Tannengrün)", "type": "color", "default": "#0e2f28", "description": "Hero, CTA-Band, Footer und Überschriften." },
+                "primary_color": { "label": "Primärfarbe (Grün)", "type": "color", "default": "#156b52", "description": "Links, Buttons auf hellen Flächen, Icons." },
+                "primary_hover": { "label": "Primärfarbe Hover", "type": "color", "default": "#0f5541" },
+                "accent_color": { "label": "Akzent (Mint)", "type": "color", "default": "#62d6a4", "description": "Buttons und Hervorhebungen auf dunklen Flächen." },
+                "text_color": { "label": "Text", "type": "color", "default": "#1c2b27" },
+                "muted_color": { "label": "Gedämpfter Text", "type": "color", "default": "#5a6b65" },
+                "paper_color": { "label": "Hintergrund", "type": "color", "default": "#ffffff" },
+                "sand_color": { "label": "Sekundärfläche (Sand)", "type": "color", "default": "#f5f2eb" },
+                "border_color": { "label": "Linien & Rahmen", "type": "color", "default": "#e3e6e1" }
+            }
+        },
+        "typography": {
+            "label": "Typografie",
+            "settings": {
+                "font_heading": {
+                    "label": "Schrift für Überschriften",
+                    "type": "select",
+                    "options": {
+                        "manrope": "Manrope (Standard)",
+                        "plus-jakarta-sans": "Plus Jakarta Sans",
+                        "sora": "Sora",
+                        "montserrat": "Montserrat",
+                        "source-serif": "Source Serif 4 (klassisch, z. B. Kanzleien)",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "manrope"
+                },
+                "font_body": {
+                    "label": "Schrift für Fließtext",
+                    "type": "select",
+                    "options": {
+                        "manrope": "Manrope (Standard)",
+                        "inter": "Inter",
+                        "source-sans": "Source Sans 3",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "manrope"
+                },
+                "font_size_base": { "label": "Basis-Schriftgröße (px)", "type": "number", "default": 17, "min": 15, "max": 20 }
+            }
+        },
+        "layout": {
+            "label": "Layout",
+            "settings": {
+                "container_width": { "label": "Maximale Seitenbreite (px)", "type": "number", "default": 1200, "min": 1040, "max": 1440 },
+                "border_radius": { "label": "Eckenradius (px)", "type": "number", "default": 14, "min": 0, "max": 28 },
+                "page_sidebar": { "label": "Kontaktkarte neben Seiten und Beiträgen", "type": "checkbox", "default": true }
+            }
+        },
+        "header": {
+            "label": "Header",
+            "settings": {
+                "logo_url": { "label": "Logo (optional)", "type": "image", "default": "", "description": "Ohne Logo erscheint ein Monogramm mit dem Seitentitel." },
+                "enable_sticky_header": { "label": "Header beim Scrollen fixieren", "type": "checkbox", "default": true },
+                "show_contact_bar": { "label": "Kontaktleiste über dem Header", "type": "checkbox", "default": true },
+                "contact_bar_text": { "label": "Text in der Kontaktleiste", "type": "text", "default": "Mo–Fr 8–18 Uhr persönlich erreichbar" },
+                "header_cta_label": { "label": "Header-Button: Text", "type": "text", "default": "Beratung anfragen" },
+                "header_cta_url": { "label": "Header-Button: Link", "type": "text", "default": "/kontakt" }
+            }
+        },
+        "kt_hero": {
+            "label": "Startseite: Hero",
+            "description": "Wörter in *Sternchen* werden in der Überschrift farbig hervorgehoben.",
+            "settings": {
+                "eyebrow": { "label": "Kicker über der Überschrift", "type": "text", "default": "Beratung für den Mittelstand" },
+                "headline": { "label": "Überschrift", "type": "text", "default": "Wir machen Ihr Unternehmen *zukunftssicher*." },
+                "text": { "label": "Einleitung", "type": "textarea", "default": "Strategie, Digitalisierung und Finanzierung aus einer Hand – mit festen Ansprechpartnern, klaren Festpreisen und Ergebnissen, die im Alltag funktionieren." },
+                "cta_primary_label": { "label": "Button 1: Text", "type": "text", "default": "Kostenloses Erstgespräch" },
+                "cta_primary_url": { "label": "Button 1: Link", "type": "text", "default": "/kontakt" },
+                "cta_secondary_label": { "label": "Button 2: Text", "type": "text", "default": "Unsere Leistungen" },
+                "cta_secondary_url": { "label": "Button 2: Link", "type": "text", "default": "#leistungen" },
+                "image_url": { "label": "Hero-Bild (optional)", "type": "image", "default": "" },
+                "trust_points": { "label": "Vertrauenspunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Über 25 Jahre Erfahrung\nFeste Ansprechpartner\nTransparente Festpreise" },
+                "badge_value": { "label": "Plakette: Wert", "type": "text", "default": "4,9 / 5" },
+                "badge_label": { "label": "Plakette: Beschriftung", "type": "text", "default": "Kundenzufriedenheit aus 180 Bewertungen" }
+            }
+        },
+        "kt_trust": {
+            "label": "Startseite: Kundenleiste",
+            "settings": {
+                "show_trust": { "label": "Kundenleiste anzeigen", "type": "checkbox", "default": true },
+                "trust_heading": { "label": "Überschrift", "type": "text", "default": "Unternehmen aus der Region vertrauen uns" },
+                "trust_names": { "label": "Kundennamen (kommagetrennt)", "type": "textarea", "default": "Nordholz Logistik, Brandt & Söhne, Hafenwerk, Lindner Bau, Mareval, Kessler Medizintechnik" }
+            }
+        },
+        "kt_services": {
+            "label": "Startseite: Leistungen",
+            "settings": {
+                "services_heading": { "label": "Überschrift", "type": "text", "default": "Leistungen, die sich auszahlen" },
+                "services_intro": { "label": "Einleitung", "type": "textarea", "default": "Vom ersten Gespräch bis zur Umsetzung begleiten wir Sie mit einem Team aus Beraterinnen, Technikern und Finanzexperten." },
+                "service_1_title": { "label": "Leistung 1: Titel", "type": "text", "default": "Strategie & Organisation" },
+                "service_1_text": { "label": "Leistung 1: Text", "type": "textarea", "default": "Klare Ziele, schlanke Prozesse und eine Organisation, die Wachstum trägt." },
+                "service_1_icon": { "label": "Leistung 1: Symbol", "type": "select", "options": { "compass": "Kompass", "chart": "Diagramm", "shield": "Schild", "cloud": "Cloud", "people": "Team", "gear": "Zahnrad", "handshake": "Handschlag", "document": "Dokument", "leaf": "Blatt", "bolt": "Blitz", "euro": "Euro", "target": "Zielscheibe" }, "default": "compass" },
+                "service_1_url": { "label": "Leistung 1: Link (optional)", "type": "text", "default": "" },
+                "service_2_title": { "label": "Leistung 2: Titel", "type": "text", "default": "Digitalisierung" },
+                "service_2_text": { "label": "Leistung 2: Text", "type": "textarea", "default": "Moderne Arbeitsplätze, sichere Cloud-Dienste und Software, die Ihre Mitarbeitenden gern nutzen." },
+                "service_2_icon": { "label": "Leistung 2: Symbol", "type": "select", "options": { "compass": "Kompass", "chart": "Diagramm", "shield": "Schild", "cloud": "Cloud", "people": "Team", "gear": "Zahnrad", "handshake": "Handschlag", "document": "Dokument", "leaf": "Blatt", "bolt": "Blitz", "euro": "Euro", "target": "Zielscheibe" }, "default": "cloud" },
+                "service_2_url": { "label": "Leistung 2: Link (optional)", "type": "text", "default": "" },
+                "service_3_title": { "label": "Leistung 3: Titel", "type": "text", "default": "Finanzierung & Förderung" },
+                "service_3_text": { "label": "Leistung 3: Text", "type": "textarea", "default": "Wir finden passende Förderprogramme und begleiten Anträge bis zur Auszahlung." },
+                "service_3_icon": { "label": "Leistung 3: Symbol", "type": "select", "options": { "compass": "Kompass", "chart": "Diagramm", "shield": "Schild", "cloud": "Cloud", "people": "Team", "gear": "Zahnrad", "handshake": "Handschlag", "document": "Dokument", "leaf": "Blatt", "bolt": "Blitz", "euro": "Euro", "target": "Zielscheibe" }, "default": "euro" },
+                "service_3_url": { "label": "Leistung 3: Link (optional)", "type": "text", "default": "" },
+                "service_4_title": { "label": "Leistung 4: Titel", "type": "text", "default": "IT-Sicherheit & Datenschutz" },
+                "service_4_text": { "label": "Leistung 4: Text", "type": "textarea", "default": "Schutzkonzepte, Schulungen und Dokumentation – prüfsicher nach DSGVO und NIS2." },
+                "service_4_icon": { "label": "Leistung 4: Symbol", "type": "select", "options": { "compass": "Kompass", "chart": "Diagramm", "shield": "Schild", "cloud": "Cloud", "people": "Team", "gear": "Zahnrad", "handshake": "Handschlag", "document": "Dokument", "leaf": "Blatt", "bolt": "Blitz", "euro": "Euro", "target": "Zielscheibe" }, "default": "shield" },
+                "service_4_url": { "label": "Leistung 4: Link (optional)", "type": "text", "default": "" },
+                "service_5_title": { "label": "Leistung 5: Titel", "type": "text", "default": "Personal & Führung" },
+                "service_5_text": { "label": "Leistung 5: Text", "type": "textarea", "default": "Recruiting, Onboarding und Führungskräfte-Coaching für Teams, die bleiben." },
+                "service_5_icon": { "label": "Leistung 5: Symbol", "type": "select", "options": { "compass": "Kompass", "chart": "Diagramm", "shield": "Schild", "cloud": "Cloud", "people": "Team", "gear": "Zahnrad", "handshake": "Handschlag", "document": "Dokument", "leaf": "Blatt", "bolt": "Blitz", "euro": "Euro", "target": "Zielscheibe" }, "default": "people" },
+                "service_5_url": { "label": "Leistung 5: Link (optional)", "type": "text", "default": "" },
+                "service_6_title": { "label": "Leistung 6: Titel", "type": "text", "default": "Nachhaltigkeit" },
+                "service_6_text": { "label": "Leistung 6: Text", "type": "textarea", "default": "Energie sparen, Berichte erstellen, Lieferketten verbessern – pragmatisch und messbar." },
+                "service_6_icon": { "label": "Leistung 6: Symbol", "type": "select", "options": { "compass": "Kompass", "chart": "Diagramm", "shield": "Schild", "cloud": "Cloud", "people": "Team", "gear": "Zahnrad", "handshake": "Handschlag", "document": "Dokument", "leaf": "Blatt", "bolt": "Blitz", "euro": "Euro", "target": "Zielscheibe" }, "default": "leaf" },
+                "service_6_url": { "label": "Leistung 6: Link (optional)", "type": "text", "default": "" }
+            }
+        },
+        "kt_about": {
+            "label": "Startseite: Über uns",
+            "settings": {
+                "show_about": { "label": "Abschnitt anzeigen", "type": "checkbox", "default": true },
+                "about_eyebrow": { "label": "Kicker", "type": "text", "default": "Über uns" },
+                "about_heading": { "label": "Überschrift", "type": "text", "default": "Ein Team, das Ihr Geschäft versteht" },
+                "about_text": { "label": "Text", "type": "textarea", "default": "Seit 1998 beraten wir Familienunternehmen, Handwerksbetriebe und Mittelständler zwischen Hamburg und Hannover. Wir hören zu, rechnen nach und bleiben, bis die Lösung trägt." },
+                "about_points": { "label": "Stichpunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Zertifiziert nach ISO 9001\nMitglied im Bundesverband mittelständische Wirtschaft\nEigene Fachleute statt Subunternehmer" },
+                "about_image": { "label": "Bild (optional)", "type": "image", "default": "" },
+                "about_cta_label": { "label": "Link: Text", "type": "text", "default": "Mehr über uns" },
+                "about_cta_url": { "label": "Link: Ziel", "type": "text", "default": "/ueber-uns" }
+            }
+        },
+        "kt_stats": {
+            "label": "Startseite: Kennzahlen",
+            "settings": {
+                "show_stats": { "label": "Kennzahlen anzeigen", "type": "checkbox", "default": true },
+                "stat_1_value": { "label": "Kennzahl 1: Wert", "type": "text", "default": "25+" },
+                "stat_1_label": { "label": "Kennzahl 1: Beschriftung", "type": "text", "default": "Jahre Erfahrung" },
+                "stat_2_value": { "label": "Kennzahl 2: Wert", "type": "text", "default": "480" },
+                "stat_2_label": { "label": "Kennzahl 2: Beschriftung", "type": "text", "default": "abgeschlossene Projekte" },
+                "stat_3_value": { "label": "Kennzahl 3: Wert", "type": "text", "default": "32" },
+                "stat_3_label": { "label": "Kennzahl 3: Beschriftung", "type": "text", "default": "Fachleute im Team" },
+                "stat_4_value": { "label": "Kennzahl 4: Wert", "type": "text", "default": "98 %" },
+                "stat_4_label": { "label": "Kennzahl 4: Beschriftung", "type": "text", "default": "Weiterempfehlungsrate" }
+            }
+        },
+        "kt_process": {
+            "label": "Startseite: Ablauf",
+            "settings": {
+                "show_process": { "label": "Ablauf anzeigen", "type": "checkbox", "default": true },
+                "process_heading": { "label": "Überschrift", "type": "text", "default": "So arbeiten wir zusammen" },
+                "step_1_title": { "label": "Schritt 1: Titel", "type": "text", "default": "Erstgespräch" },
+                "step_1_text": { "label": "Schritt 1: Text", "type": "textarea", "default": "Kostenlos und unverbindlich: Wir verstehen Ausgangslage und Ziele." },
+                "step_2_title": { "label": "Schritt 2: Titel", "type": "text", "default": "Analyse & Angebot" },
+                "step_2_text": { "label": "Schritt 2: Text", "type": "textarea", "default": "Sie erhalten eine klare Empfehlung mit Festpreis und Zeitplan." },
+                "step_3_title": { "label": "Schritt 3: Titel", "type": "text", "default": "Umsetzung" },
+                "step_3_text": { "label": "Schritt 3: Text", "type": "textarea", "default": "Ein festes Team setzt um – mit wöchentlichem Status." },
+                "step_4_title": { "label": "Schritt 4: Titel", "type": "text", "default": "Begleitung" },
+                "step_4_text": { "label": "Schritt 4: Text", "type": "textarea", "default": "Wir messen Ergebnisse und bleiben Ansprechpartner." }
+            }
+        },
+        "kt_testimonial": {
+            "label": "Startseite: Referenz",
+            "settings": {
+                "show_testimonial": { "label": "Referenz anzeigen", "type": "checkbox", "default": true },
+                "quote": { "label": "Zitat", "type": "textarea", "default": "Kontor hat unsere Abläufe in wenigen Monaten spürbar vereinfacht. Wir hatten jederzeit einen Ansprechpartner, der unser Geschäft wirklich kennt." },
+                "person": { "label": "Name", "type": "text", "default": "Katrin Nordholz" },
+                "role": { "label": "Funktion, Unternehmen", "type": "text", "default": "Geschäftsführerin, Nordholz Logistik" }
+            }
+        },
+        "kt_faq": {
+            "label": "Startseite: FAQ",
+            "settings": {
+                "show_faq": { "label": "FAQ anzeigen", "type": "checkbox", "default": true },
+                "faq_heading": { "label": "Überschrift", "type": "text", "default": "Häufige Fragen" },
+                "faq_1_q": { "label": "Frage 1", "type": "text", "default": "Was kostet das Erstgespräch?" },
+                "faq_1_a": { "label": "Antwort 1", "type": "textarea", "default": "Nichts. Das Erstgespräch dauert rund 45 Minuten und ist unverbindlich – vor Ort oder per Video." },
+                "faq_2_q": { "label": "Frage 2", "type": "text", "default": "Arbeiten Sie auch mit kleinen Unternehmen?" },
+                "faq_2_a": { "label": "Antwort 2", "type": "textarea", "default": "Ja. Rund die Hälfte unserer Kundschaft hat weniger als 50 Beschäftigte." },
+                "faq_3_q": { "label": "Frage 3", "type": "text", "default": "Wie schnell können Sie starten?" },
+                "faq_3_a": { "label": "Antwort 3", "type": "textarea", "default": "In der Regel innerhalb von zwei Wochen nach Auftragserteilung." },
+                "faq_4_q": { "label": "Frage 4", "type": "text", "default": "Unterstützen Sie bei Förderanträgen?" },
+                "faq_4_a": { "label": "Antwort 4", "type": "textarea", "default": "Ja, von der Auswahl des passenden Programms bis zum Verwendungsnachweis." },
+                "faq_5_q": { "label": "Frage 5", "type": "text", "default": "" },
+                "faq_5_a": { "label": "Antwort 5", "type": "textarea", "default": "" }
+            }
+        },
+        "kt_news": {
+            "label": "Startseite: Aktuelles",
+            "settings": {
+                "show_news": { "label": "Neueste Beiträge anzeigen", "type": "checkbox", "default": true },
+                "news_heading": { "label": "Überschrift", "type": "text", "default": "Aktuelles & Insights" },
+                "news_count": { "label": "Anzahl Beiträge", "type": "number", "default": 3, "min": 2, "max": 6 }
+            }
+        },
+        "kt_cta": {
+            "label": "Kontakt-Band",
+            "settings": {
+                "show_cta": { "label": "Kontakt-Band vor dem Footer anzeigen", "type": "checkbox", "default": true },
+                "cta_heading": { "label": "Überschrift", "type": "text", "default": "Lassen Sie uns über Ihr Vorhaben sprechen." },
+                "cta_text": { "label": "Text", "type": "textarea", "default": "Rufen Sie uns an oder schreiben Sie uns – Sie erhalten innerhalb eines Werktags eine Antwort." },
+                "cta_label": { "label": "Button: Text", "type": "text", "default": "Termin vereinbaren" },
+                "cta_url": { "label": "Button: Link", "type": "text", "default": "/kontakt" }
+            }
+        },
+        "kt_contact": {
+            "label": "Kontaktdaten",
+            "description": "Erscheinen in Kontaktleiste, Kontaktkarte, Kontakt-Band und Footer.",
+            "settings": {
+                "company_name": { "label": "Firmenname", "type": "text", "default": "" , "description": "Leer = Seitentitel."},
+                "address": { "label": "Anschrift", "type": "textarea", "default": "Speicherstraße 12\n20457 Hamburg" },
+                "phone": { "label": "Telefon", "type": "text", "default": "+49 40 123 456 0" },
+                "email": { "label": "E-Mail", "type": "text", "default": "kontakt@example.org" },
+                "hours": { "label": "Öffnungszeiten", "type": "textarea", "default": "Mo–Do 8–18 Uhr\nFr 8–15 Uhr" },
+                "linkedin_url": { "label": "LinkedIn (URL)", "type": "text", "default": "" },
+                "xing_url": { "label": "XING (URL)", "type": "text", "default": "" },
+                "instagram_url": { "label": "Instagram (URL)", "type": "text", "default": "" }
+            }
+        },
+        "footer": {
+            "label": "Footer",
+            "settings": {
+                "footer_tagline": { "label": "Kurzbeschreibung", "type": "textarea", "default": "Unabhängige Unternehmensberatung für Strategie, Digitalisierung und Finanzierung im Mittelstand." },
+                "footer_copyright": { "label": "Copyright-Text", "type": "text", "default": "© {year} {site_title}", "description": "Platzhalter: {year}, {site_title}" }
+            }
+        },
+        "advanced": {
+            "label": "Erweitert",
+            "settings": {
+                "custom_css": { "label": "Eigenes CSS", "type": "textarea", "default": "", "description": "Wird nach dem Theme-CSS geladen. <style>-Tags, @import, expression() und javascript:-URLs werden entfernt." }
+            }
+        }
+    }
+}

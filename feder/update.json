@@ -1,0 +1,18 @@
+{
+  "slug": "feder",
+  "name": "Feder",
+  "type": "theme",
+  "license": "free",
+  "version": "1.0.0",
+  "min_cms_version": "3.4.00",
+  "min_php": "8.4",
+  "requires_php": "8.4",
+  "released": "2026-09-27",
+  "download_url": "",
+  "checksum_sha256": "",
+  "changelog": {
+    "1.0.0": "Erstveröffentlichung: lesefokussiertes Blog-Theme mit Serifen-Typografie (Fraunces + Literata), Papier-Palette mit Bordeaux-Akzent, Hell-/Dunkelmodus inkl. Schalter, Lesefortschritt, Autorenbox, Teilen-Links ohne Fremd-Scripts, verwandten Beiträgen, Jahres-Beitragsliste, Themen-Chips, Kategorie-/Schlagwort-Übersichten, Autor:innen-Archiv, Suche, 404- und eigenständiger Fehlerseite. SEO-Metadaten über das Core-SEO-Modul, CSP-Nonce für alle Inline-Blöcke, lokale Schriften über den Font-Manager (local_font_slugs) und vollständiger Customizer (theme.json → customization) mit Bild-Upload pro Feld."
+  },
+  "requires_cms": "3.4.00",
+  "tested_up_to": "3.4.00"
+}

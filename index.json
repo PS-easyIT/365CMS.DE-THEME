@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "updated": "2026-09-26",
+  "updated": "2026-09-27",
   "themes": [
     {
       "slug": "academy365",
@@ -51,6 +51,26 @@
       "slug": "cms-newspaper",
       "name": "CMS Newspaper",
       "manifest": "THEMES/cms-newspaper/update.json"
+    },
+    {
+      "slug": "feder",
+      "name": "Feder",
+      "manifest": "THEMES/feder/update.json"
+    },
+    {
+      "slug": "rundschau",
+      "name": "Rundschau",
+      "manifest": "THEMES/rundschau/update.json"
+    },
+    {
+      "slug": "kontor",
+      "name": "Kontor",
+      "manifest": "THEMES/kontor/update.json"
+    },
+    {
+      "slug": "kompass",
+      "name": "Kompass",
+      "manifest": "THEMES/kompass/update.json"
     }
   ]
 }

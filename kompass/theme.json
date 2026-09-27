@@ -1,0 +1,212 @@
+{
+    "name": "Kompass",
+    "slug": "kompass",
+    "version": "1.0.0",
+    "requires_cms": "3.4.00",
+    "requires_php": "8.4",
+    "author": "PHINIT.DE / Andreas Hepp",
+    "description": "Barrierearmes Informations- und Service-Portal für Kommunen, Vereine, Verbände, Hilfe-Center und Wissensdatenbanken – Suche im Mittelpunkt, Themenkacheln aus Kategorien, Schnellzugriffe, Hinweisbanner, automatisches Inhaltsverzeichnis, Themen A–Z, Schriftgrößen- und Kontrastumschaltung, Atkinson-Hyperlegible-Typografie.",
+    "textdomain": "kompass",
+    "template": "kompass",
+    "tags": ["information", "wissen", "hilfe-center", "kommune", "verein", "barrierefrei", "faq", "responsive"],
+    "supports": ["custom-logo", "custom-css", "accessibility-tools", "table-of-contents", "notice-banner", "faq"],
+    "templates": {
+        "home": "home.php",
+        "blog": "blog.php",
+        "category": "category.php",
+        "tag": "tag.php",
+        "author": "author.php",
+        "blog-single": "blog-single.php",
+        "page": "page.php",
+        "search": "search.php",
+        "404": "404.php",
+        "error": "error.php",
+        "index": "index.php"
+    },
+    "menus": {
+        "primary": "Hauptnavigation",
+        "service-nav": "Service-Links (Kopfzeile)",
+        "footer-nav": "Footer: Service",
+        "footer-legal": "Rechtliche Links (Footer)"
+    },
+    "settings": {
+        "hero_title": "Wie können wir Ihnen helfen?"
+    },
+    "customization": {
+        "colors": {
+            "label": "Farben",
+            "description": "Ruhiges Nordblau für Orientierung, Signalgelb für Hinweise und den Tastaturfokus. Alle Standardfarben erfüllen WCAG 2.2 AA.",
+            "settings": {
+                "brand_color": { "label": "Markenfarbe (Blau)", "type": "color", "default": "#1a4d8f" },
+                "brand_dark": { "label": "Markenfarbe dunkel", "type": "color", "default": "#10345f" },
+                "accent_color": { "label": "Signalfarbe (Hinweise & Fokus)", "type": "color", "default": "#ffcc33" },
+                "text_color": { "label": "Text", "type": "color", "default": "#1b2430" },
+                "muted_color": { "label": "Gedämpfter Text", "type": "color", "default": "#4b5868" },
+                "paper_color": { "label": "Hintergrund", "type": "color", "default": "#ffffff" },
+                "surface_color": { "label": "Flächen", "type": "color", "default": "#f2f5f9" },
+                "border_color": { "label": "Linien & Rahmen", "type": "color", "default": "#d3dbe6" }
+            }
+        },
+        "typography": {
+            "label": "Typografie",
+            "settings": {
+                "font_heading": {
+                    "label": "Schrift für Überschriften",
+                    "type": "select",
+                    "options": {
+                        "public-sans": "Public Sans (Standard)",
+                        "atkinson": "Atkinson Hyperlegible",
+                        "source-sans": "Source Sans 3",
+                        "inter": "Inter",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "public-sans"
+                },
+                "font_body": {
+                    "label": "Schrift für Fließtext",
+                    "type": "select",
+                    "options": {
+                        "atkinson": "Atkinson Hyperlegible (Standard, besonders gut lesbar)",
+                        "public-sans": "Public Sans",
+                        "source-sans": "Source Sans 3",
+                        "inter": "Inter",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "atkinson"
+                },
+                "font_size_base": { "label": "Basis-Schriftgröße (px)", "type": "number", "default": 18, "min": 16, "max": 21 }
+            }
+        },
+        "layout": {
+            "label": "Layout",
+            "settings": {
+                "container_width": { "label": "Maximale Seitenbreite (px)", "type": "number", "default": 1200, "min": 1040, "max": 1400 },
+                "border_radius": { "label": "Eckenradius (px)", "type": "number", "default": 8, "min": 0, "max": 20 },
+                "show_toc": { "label": "Inhaltsverzeichnis „Auf dieser Seite“ anzeigen", "type": "checkbox", "default": true, "description": "Wird automatisch aus den Zwischenüberschriften (H2/H3) von Seiten und Beiträgen erzeugt." },
+                "toc_min_headings": { "label": "Inhaltsverzeichnis ab … Überschriften", "type": "number", "default": 3, "min": 2, "max": 8 }
+            }
+        },
+        "header": {
+            "label": "Header & Barrierefreiheit",
+            "settings": {
+                "logo_url": { "label": "Logo (optional)", "type": "image", "default": "", "description": "Ohne Logo erscheint ein Kompass-Symbol mit dem Seitentitel." },
+                "show_a11y_bar": { "label": "Leiste mit Barrierefreiheits-Werkzeugen anzeigen", "type": "checkbox", "default": true },
+                "show_textsize": { "label": "Schriftgröße umschaltbar (A / A+ / A++)", "type": "checkbox", "default": true },
+                "show_contrast": { "label": "Hoher Kontrast umschaltbar", "type": "checkbox", "default": true },
+                "easy_language_url": { "label": "Link „Leichte Sprache“ (optional)", "type": "text", "default": "" },
+                "sign_language_url": { "label": "Link „Gebärdensprache“ (optional)", "type": "text", "default": "" },
+                "show_search": { "label": "Suchfeld im Header", "type": "checkbox", "default": true }
+            }
+        },
+        "kp_notice": {
+            "label": "Hinweisbanner",
+            "settings": {
+                "show_notice": { "label": "Hinweisbanner anzeigen", "type": "checkbox", "default": false },
+                "notice_type": {
+                    "label": "Art des Hinweises",
+                    "type": "select",
+                    "options": { "info": "Information (blau)", "warning": "Wichtig (gelb)", "success": "Erledigt/Positiv (grün)" },
+                    "default": "info"
+                },
+                "notice_title": { "label": "Titel", "type": "text", "default": "Geänderte Öffnungszeiten" },
+                "notice_text": { "label": "Text", "type": "textarea", "default": "Am Freitag, 3. Oktober, bleibt das Servicebüro geschlossen. Online-Anträge sind weiterhin möglich." },
+                "notice_link_label": { "label": "Link: Text", "type": "text", "default": "Mehr erfahren" },
+                "notice_link_url": { "label": "Link: Ziel", "type": "text", "default": "" },
+                "notice_home_only": { "label": "Nur auf der Startseite anzeigen", "type": "checkbox", "default": false }
+            }
+        },
+        "kp_hero": {
+            "label": "Startseite: Suche",
+            "settings": {
+                "hero_title": { "label": "Überschrift", "type": "text", "default": "Wie können wir Ihnen helfen?" },
+                "hero_text": { "label": "Text unter der Überschrift", "type": "textarea", "default": "Finden Sie Informationen, Anleitungen und Ansprechpersonen – schnell, verständlich und barrierearm." },
+                "popular_terms": { "label": "Häufig gesucht (kommagetrennt)", "type": "text", "default": "Anträge, Öffnungszeiten, Datenschutz, Förderung, Anleitung" }
+            }
+        },
+        "kp_quick": {
+            "label": "Startseite: Schnellzugriff",
+            "description": "Bis zu sechs Kacheln zu häufig genutzten Seiten. Leere Kacheln werden ausgeblendet.",
+            "settings": {
+                "quick_heading": { "label": "Überschrift", "type": "text", "default": "Schnellzugriff" },
+                "quick_1_label": { "label": "Kachel 1: Text", "type": "text", "default": "Hilfe & häufige Fragen" },
+                "quick_1_url": { "label": "Kachel 1: Link", "type": "text", "default": "/hilfe-und-faq" },
+                "quick_1_icon": { "label": "Kachel 1: Symbol", "type": "select", "options": { "help": "Fragezeichen", "document": "Dokument", "calendar": "Kalender", "people": "Personen", "phone": "Telefon", "pin": "Ort", "money": "Geld", "home": "Haus", "shield": "Schild", "info": "Info", "download": "Download", "mail": "Brief" }, "default": "help" },
+                "quick_2_label": { "label": "Kachel 2: Text", "type": "text", "default": "Anträge & Formulare" },
+                "quick_2_url": { "label": "Kachel 2: Link", "type": "text", "default": "/search?q=Antrag" },
+                "quick_2_icon": { "label": "Kachel 2: Symbol", "type": "select", "options": { "help": "Fragezeichen", "document": "Dokument", "calendar": "Kalender", "people": "Personen", "phone": "Telefon", "pin": "Ort", "money": "Geld", "home": "Haus", "shield": "Schild", "info": "Info", "download": "Download", "mail": "Brief" }, "default": "document" },
+                "quick_3_label": { "label": "Kachel 3: Text", "type": "text", "default": "Termine & Fristen" },
+                "quick_3_url": { "label": "Kachel 3: Link", "type": "text", "default": "/search?q=Frist" },
+                "quick_3_icon": { "label": "Kachel 3: Symbol", "type": "select", "options": { "help": "Fragezeichen", "document": "Dokument", "calendar": "Kalender", "people": "Personen", "phone": "Telefon", "pin": "Ort", "money": "Geld", "home": "Haus", "shield": "Schild", "info": "Info", "download": "Download", "mail": "Brief" }, "default": "calendar" },
+                "quick_4_label": { "label": "Kachel 4: Text", "type": "text", "default": "Ansprechpersonen" },
+                "quick_4_url": { "label": "Kachel 4: Link", "type": "text", "default": "/ueber-uns" },
+                "quick_4_icon": { "label": "Kachel 4: Symbol", "type": "select", "options": { "help": "Fragezeichen", "document": "Dokument", "calendar": "Kalender", "people": "Personen", "phone": "Telefon", "pin": "Ort", "money": "Geld", "home": "Haus", "shield": "Schild", "info": "Info", "download": "Download", "mail": "Brief" }, "default": "people" },
+                "quick_5_label": { "label": "Kachel 5: Text", "type": "text", "default": "Datenschutz" },
+                "quick_5_url": { "label": "Kachel 5: Link", "type": "text", "default": "/datenschutz" },
+                "quick_5_icon": { "label": "Kachel 5: Symbol", "type": "select", "options": { "help": "Fragezeichen", "document": "Dokument", "calendar": "Kalender", "people": "Personen", "phone": "Telefon", "pin": "Ort", "money": "Geld", "home": "Haus", "shield": "Schild", "info": "Info", "download": "Download", "mail": "Brief" }, "default": "shield" },
+                "quick_6_label": { "label": "Kachel 6: Text", "type": "text", "default": "Kontakt" },
+                "quick_6_url": { "label": "Kachel 6: Link", "type": "text", "default": "/kontakt" },
+                "quick_6_icon": { "label": "Kachel 6: Symbol", "type": "select", "options": { "help": "Fragezeichen", "document": "Dokument", "calendar": "Kalender", "people": "Personen", "phone": "Telefon", "pin": "Ort", "money": "Geld", "home": "Haus", "shield": "Schild", "info": "Info", "download": "Download", "mail": "Brief" }, "default": "phone" }
+            }
+        },
+        "kp_home": {
+            "label": "Startseite: Themen & Aktuelles",
+            "settings": {
+                "topics_heading": { "label": "Überschrift Themenbereiche", "type": "text", "default": "Themenbereiche" },
+                "topics_count": { "label": "Anzahl Themenkacheln (0 = alle)", "type": "number", "default": 0, "min": 0, "max": 24 },
+                "latest_heading": { "label": "Überschrift Aktuelles", "type": "text", "default": "Aktuelle Informationen" },
+                "latest_count": { "label": "Anzahl aktueller Beiträge", "type": "number", "default": 4, "min": 0, "max": 10 }
+            }
+        },
+        "kp_faq": {
+            "label": "Startseite: FAQ",
+            "settings": {
+                "show_faq": { "label": "FAQ anzeigen", "type": "checkbox", "default": true },
+                "faq_heading": { "label": "Überschrift", "type": "text", "default": "Häufige Fragen" },
+                "faq_more_label": { "label": "Link zu allen Fragen: Text", "type": "text", "default": "Alle Fragen und Antworten" },
+                "faq_more_url": { "label": "Link zu allen Fragen: Ziel", "type": "text", "default": "/hilfe-und-faq" },
+                "faq_1_q": { "label": "Frage 1", "type": "text", "default": "Wie erreiche ich das Service-Team?" },
+                "faq_1_a": { "label": "Antwort 1", "type": "textarea", "default": "Telefonisch montags bis freitags von 8 bis 16 Uhr und jederzeit per E-Mail. Wir antworten in der Regel innerhalb von zwei Werktagen." },
+                "faq_2_q": { "label": "Frage 2", "type": "text", "default": "Kann ich Anträge online stellen?" },
+                "faq_2_a": { "label": "Antwort 2", "type": "textarea", "default": "Ja, die meisten Anträge stehen online zur Verfügung. Sie finden sie über die Suche oder im Schnellzugriff „Anträge & Formulare“." },
+                "faq_3_q": { "label": "Frage 3", "type": "text", "default": "Welche Unterlagen benötige ich?" },
+                "faq_3_a": { "label": "Antwort 3", "type": "textarea", "default": "Das hängt vom Anliegen ab. Auf jeder Informationsseite finden Sie eine Liste der benötigten Unterlagen." },
+                "faq_4_q": { "label": "Frage 4", "type": "text", "default": "Gibt es die Informationen in Leichter Sprache?" },
+                "faq_4_a": { "label": "Antwort 4", "type": "textarea", "default": "Ausgewählte Inhalte bieten wir in Leichter Sprache an. Den Link finden Sie oben auf jeder Seite, sofern verfügbar." },
+                "faq_5_q": { "label": "Frage 5", "type": "text", "default": "" },
+                "faq_5_a": { "label": "Antwort 5", "type": "textarea", "default": "" },
+                "faq_6_q": { "label": "Frage 6", "type": "text", "default": "" },
+                "faq_6_a": { "label": "Antwort 6", "type": "textarea", "default": "" }
+            }
+        },
+        "kp_service": {
+            "label": "Service & Kontakt",
+            "description": "Erscheint auf der Startseite, in der 404-Seite und im Footer.",
+            "settings": {
+                "service_heading": { "label": "Überschrift", "type": "text", "default": "Service & Kontakt" },
+                "service_text": { "label": "Text", "type": "textarea", "default": "Sie haben Ihre Antwort nicht gefunden? Wir helfen Ihnen gern persönlich weiter." },
+                "organisation": { "label": "Name der Organisation", "type": "text", "default": "", "description": "Leer = Seitentitel." },
+                "address": { "label": "Anschrift", "type": "textarea", "default": "Marktplatz 1\n12345 Musterstadt" },
+                "phone": { "label": "Telefon", "type": "text", "default": "+49 123 456 789" },
+                "email": { "label": "E-Mail", "type": "text", "default": "service@example.org" },
+                "hours": { "label": "Sprechzeiten", "type": "textarea", "default": "Mo–Do 8–16 Uhr\nFr 8–12 Uhr" },
+                "cta_label": { "label": "Button: Text", "type": "text", "default": "Anliegen online melden" },
+                "cta_url": { "label": "Button: Link", "type": "text", "default": "/kontakt" },
+                "feedback": { "label": "„War diese Seite hilfreich?“ unter Inhalten anzeigen", "type": "checkbox", "default": true, "description": "Rückmeldungen gehen per E-Mail an die oben hinterlegte Adresse." }
+            }
+        },
+        "footer": {
+            "label": "Footer",
+            "settings": {
+                "footer_tagline": { "label": "Kurzbeschreibung", "type": "textarea", "default": "Informationen, Service und Ansprechpersonen – verständlich und barrierearm." },
+                "accessibility_url": { "label": "Link zur Erklärung zur Barrierefreiheit", "type": "text", "default": "/barrierefreiheit" },
+                "footer_copyright": { "label": "Copyright-Text", "type": "text", "default": "© {year} {site_title}", "description": "Platzhalter: {year}, {site_title}" }
+            }
+        },
+        "advanced": {
+            "label": "Erweitert",
+            "settings": {
+                "custom_css": { "label": "Eigenes CSS", "type": "textarea", "default": "", "description": "Wird nach dem Theme-CSS geladen. <style>-Tags, @import, expression() und javascript:-URLs werden entfernt." }
+            }
+        }
+    }
+}

@@ -1,0 +1,177 @@
+{
+    "name": "Rundschau",
+    "slug": "rundschau",
+    "version": "1.0.0",
+    "requires_cms": "3.4.00",
+    "requires_php": "8.4",
+    "author": "PHINIT.DE / Andreas Hepp",
+    "description": "Datengetriebenes Nachrichtenportal für Lokal-, Fach- und Vereinsnachrichten – Top-Themen, Nachrichten-Ticker, Meistgelesen, automatische Ressort-Blöcke mit Ressortfarben, Petrol-Palette mit Signal-Orange und kräftiger Archivo-Typografie.",
+    "textdomain": "rundschau",
+    "template": "rundschau",
+    "tags": ["news", "nachrichten", "magazin", "portal", "zeitung", "ressorts", "ticker", "responsive"],
+    "supports": ["custom-logo", "sticky-header", "custom-css", "news-ticker", "most-read", "ressort-colors"],
+    "templates": {
+        "home": "home.php",
+        "blog": "blog.php",
+        "category": "category.php",
+        "tag": "tag.php",
+        "author": "author.php",
+        "blog-single": "blog-single.php",
+        "page": "page.php",
+        "search": "search.php",
+        "404": "404.php",
+        "error": "error.php",
+        "index": "index.php"
+    },
+    "menus": {
+        "primary": "Ressort-Navigation (Header)",
+        "service-nav": "Service-Leiste (oben)",
+        "footer-nav": "Footer-Navigation",
+        "footer-legal": "Rechtliche Links (Footer)"
+    },
+    "settings": {
+        "brand_claim": "Nachrichten aus der Region",
+        "topbar_label": "Unabhängig · Regional · Aktuell"
+    },
+    "customization": {
+        "colors": {
+            "label": "Farben",
+            "description": "Petrol als Markenfarbe, Signal-Orange für Eilmeldungen und Live-Hinweise. Ressortfarben werden automatisch je Kategorie vergeben.",
+            "settings": {
+                "brand_color": { "label": "Markenfarbe (Petrol)", "type": "color", "default": "#0b3c49", "description": "Service-Leiste, Ressort-Navigation und Footer." },
+                "brand_dark": { "label": "Markenfarbe dunkel", "type": "color", "default": "#072a33" },
+                "accent_color": { "label": "Signalfarbe (Eilmeldung/Live)", "type": "color", "default": "#e8590c" },
+                "link_color": { "label": "Linkfarbe", "type": "color", "default": "#0b5566" },
+                "text_color": { "label": "Text", "type": "color", "default": "#14181c" },
+                "muted_color": { "label": "Gedämpfter Text (Meta)", "type": "color", "default": "#5b6670" },
+                "paper_color": { "label": "Seitenhintergrund", "type": "color", "default": "#ffffff" },
+                "surface_color": { "label": "Flächen (Kästen, Leisten)", "type": "color", "default": "#f2f4f5" },
+                "border_color": { "label": "Linien", "type": "color", "default": "#dde2e5" },
+                "use_ressort_colors": { "label": "Ressortfarben verwenden", "type": "checkbox", "default": true, "description": "Jede Kategorie erhält automatisch eine eigene Kennfarbe für Kicker und Rubrikenlinien." }
+            }
+        },
+        "typography": {
+            "label": "Typografie",
+            "settings": {
+                "font_headline": {
+                    "label": "Schrift für Schlagzeilen & Navigation",
+                    "type": "select",
+                    "options": {
+                        "archivo": "Archivo (Standard, kräftige Grotesk)",
+                        "roboto-condensed": "Roboto Condensed",
+                        "oswald": "Oswald",
+                        "source-serif": "Source Serif 4 (Serifen-Schlagzeilen)",
+                        "merriweather": "Merriweather",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "archivo"
+                },
+                "font_body": {
+                    "label": "Schrift für Artikeltext",
+                    "type": "select",
+                    "options": {
+                        "source-serif": "Source Serif 4 (Standard)",
+                        "merriweather": "Merriweather",
+                        "lora": "Lora",
+                        "source-sans": "Source Sans 3 (serifenlos)",
+                        "inter": "Inter (serifenlos)",
+                        "system-serif": "System-Serif (ohne Webfonts)",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "source-serif"
+                },
+                "font_size_article": { "label": "Schriftgröße Artikeltext (px)", "type": "number", "default": 19, "min": 16, "max": 22 },
+                "condensed_headlines": { "label": "Schlagzeilen leicht schmal setzen", "type": "checkbox", "default": true, "description": "Nutzt die Breitenachse von Archivo für kompakte Zeitungs-Schlagzeilen." }
+            }
+        },
+        "layout": {
+            "label": "Layout",
+            "settings": {
+                "container_width": { "label": "Maximale Seitenbreite (px)", "type": "number", "default": 1280, "min": 1080, "max": 1480 },
+                "border_radius": { "label": "Eckenradius für Bilder & Kästen (px)", "type": "number", "default": 4, "min": 0, "max": 14 },
+                "show_sidebar": { "label": "Seitenleiste in Archiven & Artikeln", "type": "checkbox", "default": true }
+            }
+        },
+        "header": {
+            "label": "Header",
+            "settings": {
+                "logo_url": { "label": "Logo (optional)", "type": "image", "default": "", "description": "Ohne Logo wird der Seitentitel als Wortmarke gesetzt." },
+                "brand_claim": { "label": "Claim unter der Wortmarke", "type": "text", "default": "Nachrichten aus der Region" },
+                "show_topbar": { "label": "Service-Leiste anzeigen", "type": "checkbox", "default": true },
+                "topbar_label": { "label": "Text in der Service-Leiste", "type": "text", "default": "Unabhängig · Regional · Aktuell" },
+                "show_date": { "label": "Aktuelles Datum anzeigen", "type": "checkbox", "default": true },
+                "show_search": { "label": "Suche im Header", "type": "checkbox", "default": true },
+                "enable_sticky_nav": { "label": "Ressort-Navigation beim Scrollen fixieren", "type": "checkbox", "default": true },
+                "nav_append_ressorts": { "label": "Ressorts automatisch in der Navigation ergänzen", "type": "checkbox", "default": true, "description": "Hängt Hauptkategorien mit Beiträgen an die Ressort-Navigation an, sofern sie dort noch nicht verlinkt sind." }
+            }
+        },
+        "rs_ticker": {
+            "label": "Nachrichten-Ticker",
+            "settings": {
+                "show_ticker": { "label": "Ticker unter der Navigation anzeigen", "type": "checkbox", "default": true },
+                "ticker_label": { "label": "Bezeichnung", "type": "text", "default": "Aktuell" },
+                "ticker_source": {
+                    "label": "Quelle",
+                    "type": "select",
+                    "options": {
+                        "latest": "Neueste Beiträge",
+                        "tag": "Beiträge mit Schlagwort (z. B. „eilmeldung“)"
+                    },
+                    "default": "latest"
+                },
+                "ticker_tag": { "label": "Schlagwort-Slug für den Ticker", "type": "text", "default": "eilmeldung", "description": "Nur für Quelle „Schlagwort“. Ohne passende Beiträge werden die neuesten gezeigt." },
+                "ticker_count": { "label": "Anzahl Meldungen", "type": "number", "default": 6, "min": 3, "max": 12 },
+                "ticker_speed": {
+                    "label": "Geschwindigkeit",
+                    "type": "select",
+                    "options": { "slow": "Langsam", "normal": "Normal", "fast": "Schnell" },
+                    "default": "normal"
+                }
+            }
+        },
+        "rs_home": {
+            "label": "Startseite",
+            "settings": {
+                "top_heading": { "label": "Überschrift Top-Themen", "type": "text", "default": "Top-Themen" },
+                "latest_heading": { "label": "Überschrift Neueste Meldungen", "type": "text", "default": "Neueste Meldungen" },
+                "latest_count": { "label": "Anzahl neueste Meldungen", "type": "number", "default": 8, "min": 4, "max": 15 },
+                "popular_heading": { "label": "Überschrift Meistgelesen", "type": "text", "default": "Meistgelesen" },
+                "popular_count": { "label": "Anzahl Meistgelesen", "type": "number", "default": 5, "min": 3, "max": 10 },
+                "popular_days": { "label": "Meistgelesen: Zeitraum in Tagen (0 = gesamt)", "type": "number", "default": 30, "min": 0, "max": 365 },
+                "ressort_count": { "label": "Anzahl Ressort-Blöcke", "type": "number", "default": 4, "min": 0, "max": 8 },
+                "ressort_slugs": { "label": "Ressorts (Kategorie-Slugs, kommagetrennt)", "type": "text", "default": "", "description": "Optional: legt Auswahl und Reihenfolge fest, z. B. „politik, wirtschaft, sport“. Leer = Kategorien mit den meisten Beiträgen." },
+                "focus_tag": { "label": "Im Fokus: Schlagwort-Slug", "type": "text", "default": "", "description": "Optionaler dunkler Themenblock mit Beiträgen zu einem Schlagwort, z. B. „sicherheit“." },
+                "focus_heading": { "label": "Im Fokus: Überschrift", "type": "text", "default": "Im Fokus" },
+                "show_newsletter": { "label": "Newsletter-Band anzeigen", "type": "checkbox", "default": true },
+                "newsletter_heading": { "label": "Newsletter: Überschrift", "type": "text", "default": "Der Morgen-Überblick" },
+                "newsletter_text": { "label": "Newsletter: Text", "type": "textarea", "default": "Die wichtigsten Nachrichten des Tages – werktags um 6 Uhr in Ihrem Postfach." },
+                "newsletter_cta_label": { "label": "Newsletter: Button-Text", "type": "text", "default": "Kostenlos abonnieren" },
+                "newsletter_cta_url": { "label": "Newsletter: Button-Link", "type": "text", "default": "/kontakt" }
+            }
+        },
+        "rs_article": {
+            "label": "Artikel",
+            "settings": {
+                "show_reading_time": { "label": "Lesezeit anzeigen", "type": "checkbox", "default": true },
+                "show_updated": { "label": "Aktualisierungszeitpunkt anzeigen", "type": "checkbox", "default": true },
+                "show_share": { "label": "Teilen-Leiste anzeigen", "type": "checkbox", "default": true },
+                "show_related": { "label": "„Mehr zum Thema“ anzeigen", "type": "checkbox", "default": true },
+                "related_heading": { "label": "Überschrift „Mehr zum Thema“", "type": "text", "default": "Mehr zum Thema" }
+            }
+        },
+        "footer": {
+            "label": "Footer",
+            "settings": {
+                "footer_tagline": { "label": "Kurzbeschreibung", "type": "textarea", "default": "Unabhängige Nachrichten, Hintergründe und Service aus der Region – jeden Tag aktuell." },
+                "show_ressorts": { "label": "Ressorts im Footer auflisten", "type": "checkbox", "default": true },
+                "footer_copyright": { "label": "Copyright-Text", "type": "text", "default": "© {year} {site_title}", "description": "Platzhalter: {year}, {site_title}" }
+            }
+        },
+        "advanced": {
+            "label": "Erweitert",
+            "settings": {
+                "custom_css": { "label": "Eigenes CSS", "type": "textarea", "default": "", "description": "Wird nach dem Theme-CSS geladen. <style>-Tags, @import, expression() und javascript:-URLs werden entfernt." }
+            }
+        }
+    }
+}
