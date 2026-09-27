@@ -1,0 +1,328 @@
+{
+    "name": "365CMS Showcase",
+    "slug": "cms-showcase",
+    "version": "1.0.0",
+    "requires_cms": "3.4.00",
+    "requires_php": "8.4",
+    "author": "PHINIT.DE / Andreas Hepp",
+    "description": "Produkt-Theme, das 365CMS selbst präsentiert – dunkler Hero mit Dashboard-Vorschau, Funktionsübersicht, Rollen-Tabs, Sicherheitskonzept, Entwickler-Bereich mit Code-Beispiel, automatische Theme-Galerie aller installierten Themes, Release-Highlights, Installationsanleitung, FAQ sowie Dokumentationsseiten mit Inhaltsverzeichnis.",
+    "textdomain": "cms-showcase",
+    "template": "cms-showcase",
+    "tags": ["365cms", "produkt", "landingpage", "software", "saas", "dokumentation", "release-notes", "responsive"],
+    "supports": ["custom-logo", "custom-css", "product-landing", "theme-gallery", "code-samples", "table-of-contents"],
+    "templates": {
+        "home": "home.php",
+        "blog": "blog.php",
+        "category": "category.php",
+        "tag": "tag.php",
+        "author": "author.php",
+        "blog-single": "blog-single.php",
+        "page": "page.php",
+        "search": "search.php",
+        "404": "404.php",
+        "error": "error.php",
+        "index": "index.php"
+    },
+    "menus": {
+        "primary": "Hauptnavigation",
+        "footer-product": "Footer: Produkt",
+        "footer-resources": "Footer: Ressourcen",
+        "footer-legal": "Rechtliche Links (Footer)"
+    },
+    "settings": {
+        "product_name": "365CMS"
+    },
+    "customization": {
+        "colors": {
+            "label": "Farben",
+            "description": "Standard ist die 365CMS-Markenpalette: Nachtblau, Blau und der Verlauf aus dem Logo (Violett, Pink, Orange).",
+            "settings": {
+                "night_color": { "label": "Nachtblau (Header, Hero, dunkle Bereiche)", "type": "color", "default": "#0b1120" },
+                "primary_color": { "label": "Primärfarbe (Buttons, Links)", "type": "color", "default": "#2563eb" },
+                "primary_light": { "label": "Primärfarbe hell (auf dunklem Grund)", "type": "color", "default": "#60a5fa" },
+                "gradient_1": { "label": "Verlauf 1 (Violett)", "type": "color", "default": "#8b5cf6" },
+                "gradient_2": { "label": "Verlauf 2 (Pink)", "type": "color", "default": "#ec4899" },
+                "gradient_3": { "label": "Verlauf 3 (Orange)", "type": "color", "default": "#f59e0b" },
+                "text_color": { "label": "Text", "type": "color", "default": "#0f172a" },
+                "muted_color": { "label": "Gedämpfter Text", "type": "color", "default": "#475569" },
+                "paper_color": { "label": "Hintergrund", "type": "color", "default": "#ffffff" },
+                "surface_color": { "label": "Flächen", "type": "color", "default": "#f5f7fb" },
+                "border_color": { "label": "Linien", "type": "color", "default": "#e2e8f0" }
+            }
+        },
+        "typography": {
+            "label": "Typografie",
+            "settings": {
+                "font_heading": {
+                    "label": "Schrift für Überschriften",
+                    "type": "select",
+                    "options": {
+                        "jakarta": "Plus Jakarta Sans (Standard)",
+                        "sora": "Sora",
+                        "space-grotesk": "Space Grotesk",
+                        "inter": "Inter",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "jakarta"
+                },
+                "font_body": {
+                    "label": "Schrift für Fließtext",
+                    "type": "select",
+                    "options": {
+                        "inter": "Inter (Standard)",
+                        "jakarta": "Plus Jakarta Sans",
+                        "dm-sans": "DM Sans",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "inter"
+                },
+                "font_mono": {
+                    "label": "Schrift für Code",
+                    "type": "select",
+                    "options": {
+                        "jetbrains": "JetBrains Mono (Standard)",
+                        "fira-code": "Fira Code",
+                        "system": "System-Monospace (ohne Webfonts)"
+                    },
+                    "default": "jetbrains"
+                },
+                "font_size_base": { "label": "Basis-Schriftgröße (px)", "type": "number", "default": 17, "min": 15, "max": 19 }
+            }
+        },
+        "layout": {
+            "label": "Layout",
+            "settings": {
+                "container_width": { "label": "Maximale Seitenbreite (px)", "type": "number", "default": 1200, "min": 1080, "max": 1440 },
+                "border_radius": { "label": "Eckenradius (px)", "type": "number", "default": 16, "min": 0, "max": 28 },
+                "show_toc": { "label": "Inhaltsverzeichnis auf Seiten und Beiträgen", "type": "checkbox", "default": true, "description": "Wird automatisch aus den Zwischenüberschriften (H2/H3) erzeugt – ideal für Dokumentationsseiten." },
+                "toc_min_headings": { "label": "Inhaltsverzeichnis ab … Überschriften", "type": "number", "default": 3, "min": 2, "max": 8 },
+                "enable_reveal": { "label": "Sanftes Einblenden beim Scrollen", "type": "checkbox", "default": true, "description": "Wird bei „Bewegung reduzieren“ im Betriebssystem automatisch deaktiviert." }
+            }
+        },
+        "header": {
+            "label": "Header",
+            "settings": {
+                "logo_url": { "label": "Logo (optional)", "type": "image", "default": "", "description": "Ohne eigenes Logo wird das mitgelieferte 365CMS-Logo aus /assets/images verwendet." },
+                "brand_text": { "label": "Markenname neben dem Logo", "type": "text", "default": "365CMS" },
+                "cta_label": { "label": "Header-Button: Text", "type": "text", "default": "Jetzt starten" },
+                "cta_url": { "label": "Header-Button: Ziel", "type": "text", "default": "/#installation" },
+                "github_url": { "label": "GitHub-Repository", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE" },
+                "show_search": { "label": "Suche im Header", "type": "checkbox", "default": true }
+            }
+        },
+        "sc_announce": {
+            "label": "Ankündigungsleiste",
+            "settings": {
+                "show_announce": { "label": "Ankündigungsleiste anzeigen", "type": "checkbox", "default": true },
+                "announce_badge": { "label": "Badge", "type": "text", "default": "Neu" },
+                "announce_text": { "label": "Text", "type": "text", "default": "365CMS 3.4 ist da – CSP-Runtime mit Trusted Types, Passkeys und blockweise KI-Übersetzung." },
+                "announce_link_label": { "label": "Link: Text", "type": "text", "default": "Was ist neu?" },
+                "announce_link_url": { "label": "Link: Ziel", "type": "text", "default": "/#neuigkeiten" }
+            }
+        },
+        "sc_hero": {
+            "label": "Startseite: Hero",
+            "settings": {
+                "hero_eyebrow": { "label": "Kicker", "type": "text", "default": "Selbst gehostet · PHP 8.4 · Made for Security" },
+                "hero_title": { "label": "Überschrift", "type": "text", "default": "Das *sichere* CMS für Websites, Portale und Mitglieder.", "description": "Wörter in *Sternchen* erhalten den Farbverlauf." },
+                "hero_text": { "label": "Einleitung", "type": "textarea", "default": "365CMS vereint Block-Editor, SEO-Suite, Mitgliederbereich, Datenschutz-Werkzeuge und ein durchdachtes Sicherheitskonzept – schnell installiert und vollständig auf Ihrem eigenen Server." },
+                "primary_label": { "label": "Button 1: Text", "type": "text", "default": "Jetzt installieren" },
+                "primary_url": { "label": "Button 1: Ziel", "type": "text", "default": "#installation" },
+                "secondary_label": { "label": "Button 2: Text", "type": "text", "default": "Funktionen entdecken" },
+                "secondary_url": { "label": "Button 2: Ziel", "type": "text", "default": "#funktionen" },
+                "show_version": { "label": "Aktuelle Core-Version als Badge anzeigen", "type": "checkbox", "default": true },
+                "trust_points": { "label": "Vertrauenspunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Ihre Daten bleiben auf Ihrem Server\nDSGVO-Werkzeuge bereits integriert\nUpdate-Pakete mit SHA-256-Prüfsumme" },
+                "hero_image": { "label": "Screenshot statt Dashboard-Vorschau (optional)", "type": "image", "default": "", "description": "Ohne Bild zeigt der Hero eine gezeichnete Vorschau des 365CMS-Dashboards." }
+            }
+        },
+        "sc_stats": {
+            "label": "Startseite: Kennzahlen",
+            "settings": {
+                "stat_1_value": { "label": "Kennzahl 1: Wert", "type": "text", "default": "PHP 8.4" },
+                "stat_1_label": { "label": "Kennzahl 1: Text", "type": "text", "default": "moderne, typisierte Laufzeit" },
+                "stat_2_value": { "label": "Kennzahl 2: Wert", "type": "text", "default": "60+" },
+                "stat_2_label": { "label": "Kennzahl 2: Text", "type": "text", "default": "Admin-Bereiche an Bord" },
+                "stat_3_value": { "label": "Kennzahl 3: Wert", "type": "text", "default": "DE / EN" },
+                "stat_3_label": { "label": "Kennzahl 3: Text", "type": "text", "default": "Inhalte zweisprachig pflegen" },
+                "stat_4_value": { "label": "Kennzahl 4: Wert", "type": "text", "default": "0" },
+                "stat_4_label": { "label": "Kennzahl 4: Text", "type": "text", "default": "Tracker ohne Einwilligung" }
+            }
+        },
+        "sc_features": {
+            "label": "Startseite: Funktionen",
+            "description": "Neun Funktionskacheln und eine Liste weiterer Module. Leere Kacheln werden ausgeblendet.",
+            "settings": {
+                "features_eyebrow": { "label": "Kicker", "type": "text", "default": "Funktionen" },
+                "features_heading": { "label": "Überschrift", "type": "text", "default": "Alles an Bord – ohne *Plugin-Zoo*." },
+                "features_text": { "label": "Einleitung", "type": "textarea", "default": "Was bei anderen Systemen erst über Dutzende Erweiterungen zusammengesteckt wird, ist in 365CMS fester Bestandteil des Kerns – aufeinander abgestimmt und gemeinsam gewartet." },
+                "feature_1_title": { "label": "Kachel 1: Titel", "type": "text", "default": "Block-Editor" },
+                "feature_1_text": { "label": "Kachel 1: Text", "type": "textarea", "default": "Editor.js mit Tabellen, Galerien, Akkordeons, Hinweisen und Code – inklusive Revisionen, Kategorien, Tags und Inhaltsverzeichnis." },
+                "feature_1_icon": { "label": "Kachel 1: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "blocks" },
+                "feature_2_title": { "label": "Kachel 2: Titel", "type": "text", "default": "SEO-Suite" },
+                "feature_2_text": { "label": "Kachel 2: Text", "type": "textarea", "default": "SEO-Dashboard und -Prüfung, Meta- und Social-Daten, strukturierte Daten, Sitemap & robots.txt, Weiterleitungen und 404-Monitor." },
+                "feature_2_icon": { "label": "Kachel 2: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "search" },
+                "feature_3_title": { "label": "Kachel 3: Titel", "type": "text", "default": "Sicherheit im Kern" },
+                "feature_3_text": { "label": "Kachel 3: Text", "type": "textarea", "default": "Content-Security-Policy mit Nonces und Trusted Types, CSRF-Schutz, Rollen & Rechte, Firewall, Anti-Spam und Audit-Log." },
+                "feature_3_icon": { "label": "Kachel 3: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "shield" },
+                "feature_4_title": { "label": "Kachel 4: Titel", "type": "text", "default": "Datenschutz" },
+                "feature_4_text": { "label": "Kachel 4: Text", "type": "textarea", "default": "Cookie-Manager mit Einwilligungen, lokal gespeicherte Schriften, Rechtsseiten sowie Auskunfts- und Löschanfragen direkt im Admin." },
+                "feature_4_icon": { "label": "Kachel 4: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "lock" },
+                "feature_5_title": { "label": "Kachel 5: Titel", "type": "text", "default": "Mitgliederbereich" },
+                "feature_5_text": { "label": "Kachel 5: Text", "type": "textarea", "default": "Eigenes Member-Dashboard mit Profil-Feldern, Benachrichtigungen, Onboarding, Widgets sowie Paketen und Abos." },
+                "feature_5_icon": { "label": "Kachel 5: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "users" },
+                "feature_6_title": { "label": "Kachel 6: Titel", "type": "text", "default": "Themes & Design" },
+                "feature_6_text": { "label": "Kachel 6: Text", "type": "textarea", "default": "Theme-Customizer, Theme-Editor und -Explorer, Menüs, Landingpage, Schriftverwaltung und ein Marktplatz für neue Designs." },
+                "feature_6_icon": { "label": "Kachel 6: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "palette" },
+                "feature_7_title": { "label": "Kachel 7: Titel", "type": "text", "default": "Performance" },
+                "feature_7_text": { "label": "Kachel 7: Text", "type": "textarea", "default": "Cache-Verwaltung, Medien-Optimierung, Datenbank-Wartung, Session-Verwaltung, OPcache-Warmup und Core Web Vitals im Blick." },
+                "feature_7_icon": { "label": "Kachel 7: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "gauge" },
+                "feature_8_title": { "label": "Kachel 8: Titel", "type": "text", "default": "KI-Assistenz" },
+                "feature_8_text": { "label": "Kachel 8: Text", "type": "textarea", "default": "Übersetzung, Inhalts- und SEO-Assistent mit Provider-Policy, Quotas und Vorschau – auch mit lokal betriebenen Modellen, ohne automatische Veröffentlichung." },
+                "feature_8_icon": { "label": "Kachel 8: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "sparkles" },
+                "feature_9_title": { "label": "Kachel 9: Titel", "type": "text", "default": "Betrieb & Monitoring" },
+                "feature_9_text": { "label": "Kachel 9: Text", "type": "textarea", "default": "Backup & Restore, Update-Center, Cron, Systemprüfung, Antwortzeit- und Speicher-Monitoring sowie Protokolle mit Audit-Historie." },
+                "feature_9_icon": { "label": "Kachel 9: Symbol", "type": "select", "options": { "blocks": "Blöcke", "search": "SEO", "shield": "Schild", "lock": "Schloss", "users": "Personen", "palette": "Palette", "puzzle": "Puzzle", "gauge": "Tacho", "sparkles": "KI", "server": "Server", "globe": "Globus", "cloud": "Cloud", "key": "Schlüssel", "layers": "Ebenen", "chart": "Diagramm", "mail": "Brief" }, "default": "server" },
+                "modules_heading": { "label": "Überschrift der Modul-Liste", "type": "text", "default": "Und das ist erst der Anfang:" },
+                "modules": { "label": "Weitere Module (kommagetrennt)", "type": "textarea", "default": "Hub-Sites, Tabellen, Inhaltsverzeichnis, Kommentare, Medien-Check, Rollen & Rechte, Gruppen, Mitglieder-Onboarding, Profil-Felder, Pakete & Abos, Landingpage, Schriftverwaltung, CMS-Loginseite, Theme-Explorer, Strukturierte Daten, Sitemap & robots.txt, Weiterleitungen, 404-Monitor, Cookie-Manager, Auskunft & Löschen, Anti-Spam, Firewall, Sicherheits-Audit, Mail & Azure OAuth2, LDAP-Anmeldung, Passkeys & TOTP, Backup & Restore, Update-Center, Cron-Job-Status, Antwortzeit-Monitoring, WordPress-Importer, PDF-Export" }
+            }
+        },
+        "sc_roles": {
+            "label": "Startseite: Rollen-Tabs",
+            "settings": {
+                "roles_eyebrow": { "label": "Kicker", "type": "text", "default": "Für Ihr ganzes Team" },
+                "roles_heading": { "label": "Überschrift", "type": "text", "default": "Ein System, *drei Perspektiven*." },
+                "tab_1_label": { "label": "Tab 1: Beschriftung", "type": "text", "default": "Redaktion" },
+                "tab_1_title": { "label": "Tab 1: Titel", "type": "text", "default": "Schreiben statt suchen" },
+                "tab_1_text": { "label": "Tab 1: Text", "type": "textarea", "default": "Der Block-Editor denkt in Inhalten statt in HTML. Entwürfe, Revisionen und geplante Veröffentlichungen behalten Redaktionen jederzeit im Griff." },
+                "tab_1_points": { "label": "Tab 1: Stichpunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Editor.js mit über 28 Werkzeugen und deutscher Oberfläche\nRevisionen, Entwürfe und geplante Beiträge\nDeutsch- und Englisch-Fassung je Inhalt\nKI-Übersetzung Block für Block mit Vorschau" },
+                "tab_2_label": { "label": "Tab 2: Beschriftung", "type": "text", "default": "Administration" },
+                "tab_2_title": { "label": "Tab 2: Titel", "type": "text", "default": "Alles im Blick, nichts dem Zufall überlassen" },
+                "tab_2_text": { "label": "Tab 2: Text", "type": "textarea", "default": "Das Dashboard zeigt Systemstatus, Sicherheit und Performance auf einen Blick. Rollen, Rechte und Protokolle machen jede Änderung nachvollziehbar." },
+                "tab_2_points": { "label": "Tab 2: Stichpunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Rollen & Rechte mit klarer Berechtigungsmatrix\nBackups, Updates und Cron zentral gesteuert\nSicherheits-Audit, Firewall und Anti-Spam\nMonitoring für Antwortzeiten, Speicher und Aufgaben" },
+                "tab_3_label": { "label": "Tab 3: Beschriftung", "type": "text", "default": "Entwicklung" },
+                "tab_3_title": { "label": "Tab 3: Titel", "type": "text", "default": "Sauberer Code, klare Verträge" },
+                "tab_3_text": { "label": "Tab 3: Text", "type": "textarea", "default": "Themes und Plugins nutzen Hooks, Services und einen dokumentierten Template-Vertrag. Strikte Typen und PHP 8.4 sorgen für wartbaren Code." },
+                "tab_3_points": { "label": "Tab 3: Stichpunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Hooks & Filter für Head, Footer, Menüs und Inhalte\nTheme-Customizer direkt aus der theme.json\nCSP-konforme Assets mit Request-Nonce\nDokumentation für Theme- und Plugin-Entwicklung" }
+            }
+        },
+        "sc_security": {
+            "label": "Startseite: Sicherheit",
+            "settings": {
+                "show_security": { "label": "Bereich anzeigen", "type": "checkbox", "default": true },
+                "security_eyebrow": { "label": "Kicker", "type": "text", "default": "Sicherheit" },
+                "security_heading": { "label": "Überschrift", "type": "text", "default": "Sicherheit ist bei 365CMS *kein Plugin*." },
+                "security_text": { "label": "Text", "type": "textarea", "default": "Jede Antwort wird mit einer strikten Content-Security-Policy ausgeliefert: Inline-Code nur mit Request-Nonce, HTML-Zuweisungen nur über Trusted Types. Dazu kommen gehärtete Sessions, Uploads und Webserver-Regeln." },
+                "security_points": { "label": "Stichpunkte (eine Zeile je Punkt)", "type": "textarea", "default": "Content-Security-Policy mit Request-Nonce\nTrusted Types mit DOMPurify-Policy\nCSRF-Schutz und Capability-Prüfungen\nMFA mit TOTP und Passkeys (WebAuthn)\nFirewall, Anti-Spam und Sicherheits-Audit\nGehärtete Uploads und Webserver-Regeln" }
+            }
+        },
+        "sc_dev": {
+            "label": "Startseite: Entwickler",
+            "settings": {
+                "show_dev": { "label": "Bereich anzeigen", "type": "checkbox", "default": true },
+                "dev_eyebrow": { "label": "Kicker", "type": "text", "default": "Für Entwickler" },
+                "dev_heading": { "label": "Überschrift", "type": "text", "default": "Erweitern, ohne den Kern *anzufassen*." },
+                "dev_text": { "label": "Text", "type": "textarea", "default": "Themes und Plugins docken über Hooks, Filter und Services an. Das Beispiel zeigt, wie ein Theme CSP-konform Styles ausgibt und eine eigene Menüposition registriert." },
+                "code_sample": { "label": "Code-Beispiel (PHP)", "type": "textarea", "default": "<?php\ndeclare(strict_types=1);\n\nuse CMS\\Hooks;\nuse CMS\\Security;\n\n// Styles CSP-konform mit Request-Nonce ausgeben\nHooks::addAction('head', static function (): void {\n    $nonce = Security::instance()->nonceAttr();\n    echo \"<style {$nonce}>:root{--brand:#3b82f6}</style>\";\n}, 16);\n\n// Eigene Menüposition registrieren\nHooks::addFilter('register_menu_locations', static fn (array $l) => [\n    ...$l,\n    ['slug' => 'footer-product', 'label' => 'Footer: Produkt'],\n]);" },
+                "code_filename": { "label": "Dateiname über dem Code", "type": "text", "default": "themes/mein-theme/functions.php" },
+                "doc_1_label": { "label": "Link 1: Text", "type": "text", "default": "Theme-Entwicklung" },
+                "doc_1_url": { "label": "Link 1: Ziel", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE/blob/main/DOC/theme/THEME-DEVELOPMENT.md" },
+                "doc_2_label": { "label": "Link 2: Text", "type": "text", "default": "Plugin-Entwicklung" },
+                "doc_2_url": { "label": "Link 2: Ziel", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE/blob/main/DOC/plugins/PLUGIN-DEVELOPMENT.md" },
+                "doc_3_label": { "label": "Link 3: Text", "type": "text", "default": "Entwickler-Referenz" },
+                "doc_3_url": { "label": "Link 3: Ziel", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE/blob/main/DOC/DEVLIST.md" }
+            }
+        },
+        "sc_themes": {
+            "label": "Startseite: Theme-Galerie",
+            "description": "Zeigt automatisch alle installierten Themes mit Farbpalette, Beschreibung und Schlagwörtern.",
+            "settings": {
+                "show_themes": { "label": "Theme-Galerie anzeigen", "type": "checkbox", "default": true },
+                "themes_eyebrow": { "label": "Kicker", "type": "text", "default": "Themes" },
+                "themes_heading": { "label": "Überschrift", "type": "text", "default": "Ein Kern, *viele Gesichter*." },
+                "themes_text": { "label": "Text", "type": "textarea", "default": "Vom Blog über das Nachrichtenportal bis zum barrierearmen Service-Portal: Themes bringen eigene Customizer-Einstellungen mit und lassen sich mit einem Klick wechseln." },
+                "themes_count": { "label": "Anzahl Themes (0 = alle)", "type": "number", "default": 8, "min": 0, "max": 24 },
+                "themes_link_label": { "label": "Link: Text", "type": "text", "default": "" },
+                "themes_link_url": { "label": "Link: Ziel", "type": "text", "default": "" }
+            }
+        },
+        "sc_releases": {
+            "label": "Startseite: Neuigkeiten",
+            "settings": {
+                "releases_eyebrow": { "label": "Kicker", "type": "text", "default": "Release Notes" },
+                "releases_heading": { "label": "Überschrift", "type": "text", "default": "Was ist *neu*?" },
+                "release_1_version": { "label": "Release 1: Version", "type": "text", "default": "3.4.02" },
+                "release_1_date": { "label": "Release 1: Datum", "type": "text", "default": "26.09.2026" },
+                "release_1_items": { "label": "Release 1: Highlights (eine Zeile je Punkt)", "type": "textarea", "default": "Analytics erstmals consent-gesteuert und CSP-konform\nRund 800 Inline-Styles wirken wieder – ohne die CSP zu lockern\nTOTP-QR-Codes lokal als SVG erzeugt, kein externer Dienst\nEditor.js-Oberfläche vollständig auf Deutsch" },
+                "release_2_version": { "label": "Release 2: Version", "type": "text", "default": "3.4.01" },
+                "release_2_date": { "label": "Release 2: Datum", "type": "text", "default": "12.09.2026" },
+                "release_2_items": { "label": "Release 2: Highlights (eine Zeile je Punkt)", "type": "textarea", "default": "Berechtigungsmatrix mit klaren Schaltern und Standardrechten\nBeitragsliste respektiert Eigentümerrechte in allen Aktionen\nRobuster Dateinamen-Sanitizer in der Medienauslieferung" },
+                "release_3_version": { "label": "Release 3: Version", "type": "text", "default": "3.4.00" },
+                "release_3_date": { "label": "Release 3: Datum", "type": "text", "default": "05.09.2026" },
+                "release_3_items": { "label": "Release 3: Highlights (eine Zeile je Punkt)", "type": "textarea", "default": "KI-Dienste mit Provider-Policy, Quotas und Healthchecks\nInstaller und Updater zeigen Core- und Schema-Version\nUpdates bewahren Konfiguration, Uploads, Logs und Backups" },
+                "show_news": { "label": "Neueste Blogbeiträge darunter anzeigen", "type": "checkbox", "default": true },
+                "news_heading": { "label": "Überschrift Blog", "type": "text", "default": "Aus dem Blog" },
+                "news_count": { "label": "Anzahl Blogbeiträge", "type": "number", "default": 3, "min": 0, "max": 6 }
+            }
+        },
+        "sc_install": {
+            "label": "Startseite: Installation",
+            "settings": {
+                "install_eyebrow": { "label": "Kicker", "type": "text", "default": "Installation" },
+                "install_heading": { "label": "Überschrift", "type": "text", "default": "In wenigen Minuten *startklar*." },
+                "install_text": { "label": "Text", "type": "textarea", "default": "Paket hochladen, Installer im Browser öffnen, Datenbank eintragen – fertig. Der Installer prüft alle Voraussetzungen, bevor er etwas verändert." },
+                "requirements": { "label": "Voraussetzungen (eine Zeile je Punkt)", "type": "textarea", "default": "PHP 8.4 oder neuer\nPDO mit pdo_mysql\nMySQL- oder MariaDB-kompatible Datenbank\nWebserver mit dem Verzeichnis CMS/ als Webroot\nSchreibrechte für Konfiguration, Cache, Logs, Uploads und Backups" },
+                "steps": { "label": "Schritte (eine Zeile je Schritt)", "type": "textarea", "default": "Inhalt von CMS/ in den Webroot kopieren\ninstall.php im Browser öffnen\nDatenbank, Website und Administrator eintragen\nSchema installieren lassen\nInstaller entfernen oder schützen" },
+                "terminal": { "label": "Terminal-Beispiel", "type": "textarea", "default": "unzip 365CMS-3.4.0-full.zip -d /var/www/365cms\nchown -R www-data:www-data /var/www/365cms\n# Webroot auf /var/www/365cms/CMS setzen, dann:\nhttps://ihre-domain.de/install.php" },
+                "download_label": { "label": "Download-Button: Text", "type": "text", "default": "365CMS herunterladen" },
+                "download_url": { "label": "Download-Button: Ziel", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE" },
+                "docs_label": { "label": "Anleitung: Text", "type": "text", "default": "Installationsanleitung" },
+                "docs_url": { "label": "Anleitung: Ziel", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE/blob/main/DOC/INSTALLATION.md" }
+            }
+        },
+        "sc_faq": {
+            "label": "Startseite: FAQ",
+            "settings": {
+                "show_faq": { "label": "FAQ anzeigen", "type": "checkbox", "default": true },
+                "faq_heading": { "label": "Überschrift", "type": "text", "default": "Häufige Fragen" },
+                "faq_1_q": { "label": "Frage 1", "type": "text", "default": "Wo werden meine Daten gespeichert?" },
+                "faq_1_a": { "label": "Antwort 1", "type": "textarea", "default": "Ausschließlich auf Ihrem eigenen Server. 365CMS ist selbst gehostet – Inhalte, Mitglieder, Medien und Protokolle verlassen Ihre Infrastruktur nur, wenn Sie das ausdrücklich einrichten." },
+                "faq_2_q": { "label": "Frage 2", "type": "text", "default": "Kann ich von WordPress umziehen?" },
+                "faq_2_a": { "label": "Antwort 2", "type": "textarea", "default": "Ja. Der mitgelieferte Importer übernimmt WordPress-WXR-Exporte mit Beiträgen, Seiten, Kommentaren, Bildern und SEO-Metadaten und legt passende Weiterleitungen an." },
+                "faq_3_q": { "label": "Frage 3", "type": "text", "default": "Wie laufen Updates ab?" },
+                "faq_3_a": { "label": "Antwort 3", "type": "textarea", "default": "Über das integrierte Update-Center. Update-Pakete tragen eine SHA-256-Prüfsumme; beim Core-Update bleiben Konfiguration, Uploads, Cache, Logs und Backups erhalten." },
+                "faq_4_q": { "label": "Frage 4", "type": "text", "default": "Unterstützt 365CMS mehrere Sprachen?" },
+                "faq_4_a": { "label": "Antwort 4", "type": "textarea", "default": "Seiten und Beiträge lassen sich auf Deutsch und Englisch pflegen – auf Wunsch mit KI-Übersetzung Block für Block und Vorschau vor der Übernahme." },
+                "faq_5_q": { "label": "Frage 5", "type": "text", "default": "Kann ich eigene Themes und Plugins entwickeln?" },
+                "faq_5_a": { "label": "Antwort 5", "type": "textarea", "default": "Ja. Themes und Plugins nutzen Hooks, Services und einen dokumentierten Template-Vertrag. Die Entwicklerdokumentation beschreibt alle Schritte." },
+                "faq_6_q": { "label": "Frage 6", "type": "text", "default": "Welche Anmeldeverfahren gibt es?" },
+                "faq_6_a": { "label": "Antwort 6", "type": "textarea", "default": "Neben Benutzername und Passwort unterstützt 365CMS Zwei-Faktor-Anmeldung per TOTP, Passkeys (WebAuthn) und die Anbindung an LDAP." }
+            }
+        },
+        "sc_cta": {
+            "label": "Abschluss-Band",
+            "settings": {
+                "show_cta": { "label": "Abschluss-Band über dem Footer anzeigen", "type": "checkbox", "default": true },
+                "cta_heading": { "label": "Überschrift", "type": "text", "default": "Bereit für ein CMS, das mitdenkt?" },
+                "cta_text": { "label": "Text", "type": "textarea", "default": "Installieren Sie 365CMS auf Ihrem Server und legen Sie in wenigen Minuten los." },
+                "cta_primary_label": { "label": "Button 1: Text", "type": "text", "default": "Jetzt installieren" },
+                "cta_primary_url": { "label": "Button 1: Ziel", "type": "text", "default": "/#installation" },
+                "cta_secondary_label": { "label": "Button 2: Text", "type": "text", "default": "Auf GitHub ansehen" },
+                "cta_secondary_url": { "label": "Button 2: Ziel", "type": "text", "default": "https://github.com/PS-easyIT/365CMS.DE" }
+            }
+        },
+        "footer": {
+            "label": "Footer",
+            "settings": {
+                "footer_tagline": { "label": "Kurzbeschreibung", "type": "textarea", "default": "Das selbst gehostete CMS für Inhalte, Mitglieder, Themes, Plugins, SEO und Datenschutz." },
+                "show_footer_version": { "label": "Core-Version im Footer anzeigen", "type": "checkbox", "default": true },
+                "footer_copyright": { "label": "Copyright-Text", "type": "text", "default": "© {year} {site_title}", "description": "Platzhalter: {year}, {site_title}" }
+            }
+        },
+        "advanced": {
+            "label": "Erweitert",
+            "settings": {
+                "custom_css": { "label": "Eigenes CSS", "type": "textarea", "default": "", "description": "Wird nach dem Theme-CSS geladen. <style>-Tags, @import, expression() und javascript:-URLs werden entfernt." }
+            }
+        }
+    }
+}

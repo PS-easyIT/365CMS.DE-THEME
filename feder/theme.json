@@ -1,0 +1,193 @@
+{
+    "name": "Feder",
+    "slug": "feder",
+    "version": "1.0.0",
+    "requires_cms": "3.4.00",
+    "requires_php": "8.4",
+    "author": "PHINIT.DE / Andreas Hepp",
+    "description": "Lesefokussiertes Blog-Theme für Autor:innen, Essays und persönliche Blogs – Serifen-Typografie (Fraunces + Literata), Papier-Palette mit Bordeaux-Akzent, Hell-/Dunkelmodus, Lesefortschritt, Autorenbox und verwandte Beiträge.",
+    "textdomain": "feder",
+    "template": "feder",
+    "tags": ["blog", "autor", "essay", "lesen", "serif", "dark-mode", "minimal", "responsive"],
+    "supports": ["custom-logo", "dark-mode", "custom-css", "reading-progress", "author-box", "related-posts"],
+    "templates": {
+        "home": "home.php",
+        "blog": "blog.php",
+        "category": "category.php",
+        "tag": "tag.php",
+        "author": "author.php",
+        "blog-single": "blog-single.php",
+        "page": "page.php",
+        "search": "search.php",
+        "404": "404.php",
+        "error": "error.php",
+        "index": "index.php"
+    },
+    "menus": {
+        "primary": "Hauptnavigation (Header)",
+        "footer-nav": "Footer-Navigation",
+        "footer-legal": "Rechtliche Links (Footer)"
+    },
+    "settings": {
+        "intro_kicker": "Willkommen im Blog",
+        "intro_headline": "Notizen über Arbeit, Technik und das gute Leben.",
+        "intro_text": "Hier schreibe ich über Dinge, die mich beschäftigen: Werkzeuge, Gewohnheiten und Ideen, die den Alltag leichter machen. Neue Texte erscheinen etwa zweimal im Monat."
+    },
+    "customization": {
+        "colors": {
+            "label": "Farben",
+            "description": "Papier-Palette für den Hellmodus und abgestimmte Werte für den Dunkelmodus. Der Akzent färbt Links, Kicker und Hervorhebungen.",
+            "settings": {
+                "accent_color": { "label": "Akzent (Bordeaux)", "type": "color", "default": "#8e2c3a", "description": "Links, Kategorie-Kicker, Zitate und Hervorhebungen." },
+                "accent_hover": { "label": "Akzent Hover", "type": "color", "default": "#6e1f2b" },
+                "ink_color": { "label": "Überschriften (Tinte)", "type": "color", "default": "#211c19" },
+                "text_color": { "label": "Fließtext", "type": "color", "default": "#322b26" },
+                "muted_color": { "label": "Gedämpfter Text (Meta)", "type": "color", "default": "#6d6258" },
+                "paper_color": { "label": "Seitenhintergrund (Papier)", "type": "color", "default": "#fbf8f3" },
+                "surface_color": { "label": "Flächen (Karten, Boxen)", "type": "color", "default": "#ffffff" },
+                "border_color": { "label": "Linien & Rahmen", "type": "color", "default": "#e6ddd0" },
+                "dark_paper_color": { "label": "Dunkelmodus: Hintergrund", "type": "color", "default": "#15120f" },
+                "dark_surface_color": { "label": "Dunkelmodus: Flächen", "type": "color", "default": "#1f1a16" },
+                "dark_text_color": { "label": "Dunkelmodus: Text", "type": "color", "default": "#ece4d8" },
+                "dark_muted_color": { "label": "Dunkelmodus: gedämpfter Text", "type": "color", "default": "#a99d8f" },
+                "dark_accent_color": { "label": "Dunkelmodus: Akzent", "type": "color", "default": "#e8909b" },
+                "dark_border_color": { "label": "Dunkelmodus: Linien", "type": "color", "default": "#352d27" }
+            }
+        },
+        "typography": {
+            "label": "Typografie",
+            "description": "Überschriften, Lesetext und Bedienelemente lassen sich getrennt wählen. System-Schriften laden keine Webfonts.",
+            "settings": {
+                "font_heading": {
+                    "label": "Schrift für Überschriften",
+                    "type": "select",
+                    "options": {
+                        "fraunces": "Fraunces (Standard, weiche Serifenschrift)",
+                        "playfair-display": "Playfair Display",
+                        "source-serif": "Source Serif 4",
+                        "lora": "Lora",
+                        "system-serif": "System-Serif (ohne Webfonts)",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "fraunces"
+                },
+                "font_body": {
+                    "label": "Schrift für Lesetext",
+                    "type": "select",
+                    "options": {
+                        "literata": "Literata (Standard, für langes Lesen)",
+                        "source-serif": "Source Serif 4",
+                        "lora": "Lora",
+                        "merriweather": "Merriweather",
+                        "inter": "Inter (serifenlos)",
+                        "system-serif": "System-Serif (ohne Webfonts)",
+                        "system": "System-Sans (ohne Webfonts)"
+                    },
+                    "default": "literata"
+                },
+                "font_ui": {
+                    "label": "Schrift für Navigation & Metadaten",
+                    "type": "select",
+                    "options": {
+                        "inter": "Inter (Standard)",
+                        "source-sans": "Source Sans 3",
+                        "system": "System-UI (ohne Webfonts)"
+                    },
+                    "default": "inter"
+                },
+                "font_size_base": { "label": "Basis-Schriftgröße Lesetext (px)", "type": "number", "default": 19, "min": 16, "max": 22 },
+                "line_height_base": { "label": "Zeilenhöhe Lesetext", "type": "number", "default": 1.72, "min": 1.4, "max": 2.0, "step": 0.02 },
+                "enable_dropcap": { "label": "Initiale im ersten Absatz", "type": "checkbox", "default": true, "description": "Großer Anfangsbuchstabe in Beiträgen." }
+            }
+        },
+        "layout": {
+            "label": "Layout",
+            "settings": {
+                "content_width": { "label": "Breite der Lesespalte (px)", "type": "number", "default": 690, "min": 580, "max": 820 },
+                "wide_width": { "label": "Breite für Bilder & Übersichten (px)", "type": "number", "default": 1120, "min": 900, "max": 1320 },
+                "border_radius": { "label": "Eckenradius (px)", "type": "number", "default": 6, "min": 0, "max": 18 }
+            }
+        },
+        "header": {
+            "label": "Header",
+            "settings": {
+                "logo_url": { "label": "Logo (optional)", "type": "image", "default": "", "description": "Ohne Logo erscheint ein Monogramm mit dem Seitentitel." },
+                "show_tagline": { "label": "Untertitel (Seitenbeschreibung) anzeigen", "type": "checkbox", "default": true },
+                "enable_sticky_header": { "label": "Header beim Scrollen fixieren", "type": "checkbox", "default": false },
+                "show_search": { "label": "Suche im Header anzeigen", "type": "checkbox", "default": true },
+                "show_darkmode_toggle": { "label": "Schalter Hell/Dunkel anzeigen", "type": "checkbox", "default": true },
+                "color_scheme": {
+                    "label": "Farbschema",
+                    "type": "select",
+                    "options": {
+                        "auto": "Automatisch (Systemeinstellung der Besucher)",
+                        "light": "Immer hell",
+                        "dark": "Immer dunkel"
+                    },
+                    "default": "auto",
+                    "description": "Besucher können mit dem Schalter jederzeit selbst wechseln."
+                }
+            }
+        },
+        "feder_author": {
+            "label": "Autor:in",
+            "description": "Angaben für die Vorstellung auf der Startseite und die Autorenbox unter Beiträgen.",
+            "settings": {
+                "author_name": { "label": "Name", "type": "text", "default": "" , "description": "Leer = Seitentitel verwenden."},
+                "author_role": { "label": "Rolle / Kurzbeschreibung", "type": "text", "default": "Autorin & Redakteurin" },
+                "author_bio": { "label": "Kurzbiografie", "type": "textarea", "default": "Ich schreibe über Technik, Arbeit und Alltag – verständlich, ehrlich und ohne Buzzwords." },
+                "author_image": { "label": "Portrait (Bild-URL)", "type": "image", "default": "" },
+                "author_url": { "label": "Link „Mehr über mich“", "type": "text", "default": "/ueber-uns" },
+                "social_mastodon": { "label": "Mastodon-Profil (URL)", "type": "text", "default": "" },
+                "social_linkedin": { "label": "LinkedIn-Profil (URL)", "type": "text", "default": "" },
+                "social_github": { "label": "GitHub-Profil (URL)", "type": "text", "default": "" },
+                "social_email": { "label": "E-Mail-Adresse", "type": "text", "default": "" },
+                "show_rss": { "label": "RSS-Feed verlinken", "type": "checkbox", "default": true }
+            }
+        },
+        "feder_home": {
+            "label": "Startseite",
+            "settings": {
+                "intro_kicker": { "label": "Intro: Kicker", "type": "text", "default": "Willkommen im Blog" },
+                "intro_headline": { "label": "Intro: Überschrift", "type": "text", "default": "Notizen über Arbeit, Technik und das gute Leben." },
+                "intro_text": { "label": "Intro: Text", "type": "textarea", "default": "Hier schreibe ich über Dinge, die mich beschäftigen: Werkzeuge, Gewohnheiten und Ideen, die den Alltag leichter machen. Neue Texte erscheinen etwa zweimal im Monat." },
+                "show_featured": { "label": "Neuesten Beitrag hervorheben", "type": "checkbox", "default": true },
+                "stream_heading": { "label": "Überschrift der Beitragsliste", "type": "text", "default": "Neueste Texte" },
+                "stream_count": { "label": "Anzahl Beiträge in der Liste", "type": "number", "default": 8, "min": 3, "max": 20 },
+                "show_topics": { "label": "Themen (Kategorien) anzeigen", "type": "checkbox", "default": true },
+                "topics_heading": { "label": "Überschrift Themen", "type": "text", "default": "Themen" },
+                "show_newsletter": { "label": "Newsletter-/Kontaktbox anzeigen", "type": "checkbox", "default": true },
+                "newsletter_heading": { "label": "Box: Überschrift", "type": "text", "default": "Neue Texte per E-Mail" },
+                "newsletter_text": { "label": "Box: Text", "type": "textarea", "default": "Einmal im Monat eine kurze Mail mit neuen Beiträgen und Leseempfehlungen. Kein Spam, jederzeit abbestellbar." },
+                "newsletter_cta_label": { "label": "Box: Button-Text", "type": "text", "default": "Newsletter abonnieren" },
+                "newsletter_cta_url": { "label": "Box: Button-Link", "type": "text", "default": "/kontakt" }
+            }
+        },
+        "feder_article": {
+            "label": "Beiträge",
+            "settings": {
+                "show_reading_time": { "label": "Lesezeit anzeigen", "type": "checkbox", "default": true },
+                "show_progress_bar": { "label": "Lesefortschritt anzeigen", "type": "checkbox", "default": true },
+                "show_share": { "label": "Teilen-Links anzeigen", "type": "checkbox", "default": true },
+                "show_author_box": { "label": "Autorenbox unter Beiträgen", "type": "checkbox", "default": true },
+                "show_post_navigation": { "label": "Vorheriger/nächster Beitrag", "type": "checkbox", "default": true },
+                "show_related": { "label": "Verwandte Beiträge anzeigen", "type": "checkbox", "default": true },
+                "related_heading": { "label": "Überschrift verwandte Beiträge", "type": "text", "default": "Weiterlesen" }
+            }
+        },
+        "footer": {
+            "label": "Footer",
+            "settings": {
+                "footer_tagline": { "label": "Kurzbeschreibung", "type": "textarea", "default": "Ein persönliches Blog über Technik, Arbeit und Alltag." },
+                "footer_copyright": { "label": "Copyright-Text", "type": "text", "default": "© {year} {site_title}", "description": "Platzhalter: {year}, {site_title}" },
+                "show_back_to_top": { "label": "Link „Nach oben“ anzeigen", "type": "checkbox", "default": true }
+            }
+        },
+        "advanced": {
+            "label": "Erweitert",
+            "settings": {
+                "custom_css": { "label": "Eigenes CSS", "type": "textarea", "default": "", "description": "Wird nach dem Theme-CSS geladen. <style>-Tags, @import, expression() und javascript:-URLs werden entfernt." }
+            }
+        }
+    }
+}

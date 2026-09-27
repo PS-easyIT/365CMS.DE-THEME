@@ -1,0 +1,18 @@
+{
+  "slug": "kompass",
+  "name": "Kompass",
+  "type": "theme",
+  "license": "free",
+  "version": "1.0.0",
+  "min_cms_version": "3.4.00",
+  "min_php": "8.4",
+  "requires_php": "8.4",
+  "released": "2026-09-27",
+  "download_url": "",
+  "checksum_sha256": "",
+  "changelog": {
+    "1.0.0": "Erstveröffentlichung: barrierearmes Informations- und Service-Portal für Kommunen, Vereine, Verbände und Hilfe-Center. Barrierefreiheits-Leiste mit Schriftgröße (A/A+/A++), hohem Kontrast sowie Links zu Leichter Sprache und Gebärdensprache, Hinweisbanner (Info/Wichtig/Erledigt), Startseite mit Such-Hero und „Häufig gesucht“, sechs Schnellzugriffen, Themenkacheln aus Kategorien (mit Unterthemen), aktuellen Informationen, FAQ und Service-Kontakt. Informationsseiten mit automatischem Inhaltsverzeichnis „Auf dieser Seite“, Stand-Datum, Drucken, Link kopieren, PDF-Download und „War diese Seite hilfreich?“. Archive mit Themen-Seitenleiste, Themenbereiche-Übersicht, Themen A–Z, Suche mit Suchtipps, 404, Seitenübersicht und eigenständige Fehlerseite. GOV.UK-Fokusstil, Atkinson-Hyperlegible-Typografie, SEO über das Core-SEO-Modul, CSP-Nonce, lokale Schriften (local_font_slugs) und vollständiger Customizer."
+  },
+  "requires_cms": "3.4.00",
+  "tested_up_to": "3.4.00"
+}
